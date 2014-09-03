@@ -25,7 +25,7 @@ describe 'Article Page with pgscritpt' do
   
 end
 
-__END__
+
 describe "page" do
   before do
     @page = Page.new(nil)

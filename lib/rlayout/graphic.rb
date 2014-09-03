@@ -14,46 +14,47 @@ module RLayout
     attr_accessor :grid_x, :grid_y, :grid_width, :grid_height
     
     # TODO
-    attr_accessor :text_record, :image_record
+    attr_accessor :text_record, :image_record, :grid_record, :grid_frame
     
     
     def initialize(parent_graphic, options={}, &block)
-      @parent_graphic = parent_graphic      
-      @klass          = "Rectangle"
-      @tag            = options.fetch(:tag, nil)      
-      @x              = options.fetch(:x, 0)
-      @y              = options.fetch(:y, 0)
-      @width          = options.fetch(:width, 100)
-      @height         = options.fetch(:height, 100)
+      @defaults = defaults
+      @parent_graphic = options.fetch(:parent_graphic, @defaults[:parent_graphic])       
+      @klass          = options.fetch(:klass, @defaults[:klass]) 
+      @tag            = options.fetch(:tag, @defaults[:tag])      
+      @x              = options.fetch(:x, @defaults[:x])
+      @y              = options.fetch(:y, @defaults[:y])
+      @width          = options.fetch(:width, @defaults[:width])
+      @height         = options.fetch(:height, @defaults[:height])
       
-      @fill_type      = options.fetch(:fill_type, defaults[:fill_type])
-      @fill_color     = options.fetch(:fill_color, defaults[:fill_color])
-      @fill_other_color= options.fetch(:fill_other_color, defaults[:fill_other_color])
+      @fill_type      = options.fetch(:fill_type, @defaults[:fill_type])
+      @fill_color     = options.fetch(:fill_color, @defaults[:fill_color])
+      @fill_other_color= options.fetch(:fill_other_color, @defaults[:fill_other_color])
       
-      @line_type      = options.fetch(:line_type, defaults[:line_type])
-      @line_color     = options.fetch(:line_color, defaults[:line_color])
-      @line_width     = options.fetch(:line_width, defaults[:line_width])
-      @line_dash      = options.fetch(:line_dash, defaults[:line_dash])
+      @line_type      = options.fetch(:line_type, @defaults[:line_type])
+      @line_color     = options.fetch(:line_color, @defaults[:line_color])
+      @line_width     = options.fetch(:line_width, @defaults[:line_width])
+      @line_dash      = options.fetch(:line_dash, @defaults[:line_dash])
       
-      @shape          = options.fetch(:shape, defaults[:shape])
-      @shape_bezier   = options.fetch(:shape_bezier, defaults[:shape_bezier])
+      @shape          = options.fetch(:shape, @defaults[:shape])
+      @shape_bezier   = options.fetch(:shape_bezier, @defaults[:shape_bezier])
       
-      @left           = options.fetch(:left, defaults[:left])
-      @top            = options.fetch(:top, defaults[:top])
-      @right          = options.fetch(:right, defaults[:right])
-      @bottom         = options.fetch(:bottom, defaults[:bottom])
-      @left_inset     = options.fetch(:left_inset, defaults[:left_inset])
-      @top_inset      = options.fetch(:top_inset, defaults[:top_inset])
-      @right_inset    = options.fetch(:right_inset, defaults[:right_inset])
-      @bottom_inset   = options.fetch(:bottom_inset, defaults[:bottom_inset])
+      @left           = options.fetch(:left, @defaults[:left])
+      @top            = options.fetch(:top, @defaults[:top])
+      @right          = options.fetch(:right, @defaults[:right])
+      @bottom         = options.fetch(:bottom, @defaults[:bottom])
+      @left_inset     = options.fetch(:left_inset, @defaults[:left_inset])
+      @top_inset      = options.fetch(:top_inset, @defaults[:top_inset])
+      @right_inset    = options.fetch(:right_inset, @defaults[:right_inset])
+      @bottom_inset   = options.fetch(:bottom_inset, @defaults[:bottom_inset])
 
       @auto_layout_member    = options.fetch(:auto_layout_member, true)
-      @layout_expand  = options.fetch(:layout_expand, defaults[:layout_expand])
-      @unit_length    = options.fetch(:unit_length, defaults[:unit_length])
-      @grid_x         = options.fetch(:grid_x, defaults[:grid_x])
-      @grid_y         = options.fetch(:grid_y, defaults[:grid_y])
-      @grid_width     = options.fetch(:grid_width, defaults[:grid_width])
-      @grid_height    = options.fetch(:grid_height, defaults[:grid_height])
+      @layout_expand  = options.fetch(:layout_expand, @defaults[:layout_expand])
+      @unit_length    = options.fetch(:unit_length, @defaults[:unit_length])
+      @grid_x         = options.fetch(:grid_x, @defaults[:grid_x])
+      @grid_y         = options.fetch(:grid_y, @defaults[:grid_y])
+      @grid_width     = options.fetch(:grid_width, @defaults[:grid_width])
+      @grid_height    = options.fetch(:grid_height, @defaults[:grid_height])
       
       @text_record    = options.fetch(:text_record, nil)
       @image_record   = options.fetch(:image_record, nil)
@@ -67,6 +68,7 @@ module RLayout
     
     def defaults
       {
+        parent_graphic: nil,
         klass: "Rectangle",
         x: 0,
         y: 0,
@@ -161,6 +163,15 @@ module RLayout
         s
     end
     
+    COLORS = %w[black blue gray green orange red purple yellow white]
+    WIDTH = [1,3,5,8,10]
+    def random_attributes
+      h={}
+      h[:fill_color] = COLORS.random
+      h[:line_color] = COLORS.random
+      h[:line_width] = WIDTH.random
+      h
+    end
   end
   
   class Rectangle < Graphic
@@ -229,3 +240,4 @@ module RLayout
     end
   end
 end
+

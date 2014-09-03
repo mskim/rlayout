@@ -9,11 +9,10 @@ module RLayout
   class Container
 
     def relayout!
+      puts __method__
       return unless @graphics
       vertical  = @layout_direction == "vertical"
-
       view_size         = [@width,@height]
-      
       starting_position = vertical ? (@y + @top +  @top_inset) : (@left + @left_inset)
       ending_position   = vertical ? (view_size[1] - @top - @bottom - @top_inset - @bottom_inset)  : (view_size[0] - @left - @right - @left_inset - @right_inset)
       expandable_size   = ending_position

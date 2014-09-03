@@ -95,4 +95,8 @@ Once all is done
 $ rlayout pdf
 
 This will generte high resolution PDF
+
+auto_save of/off: This will make it work as REPL
+I can save index.html in server folder and broadcast the progress.
+
  
