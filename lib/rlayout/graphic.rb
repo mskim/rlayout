@@ -16,10 +16,9 @@ module RLayout
     attr_accessor :shape, :shape_bezier    
     attr_accessor :text_string, :text_color, :text_size, :text_font, :text_markup
     
-    attr_accessor :left, :top, :right, :bottom
+    attr_accessor :left_margi , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
-    attr_accessor :auto_layout_member, :unit_length, :layout_expand
-    attr_accessor :grid_x, :grid_y, :grid_width, :grid_height, :grid_frame
+    attr_accessor :auto_layout_member, :unit_length, :layout_expand, :grid_frame
     attr_accessor :text_string, :text_color, :text_size, :text_font, :text_markup
     attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
     
@@ -35,10 +34,10 @@ module RLayout
       @y              = options.fetch(:y, defaults[:y])
       @width          = options.fetch(:width, defaults[:width])
       @height         = options.fetch(:height, defaults[:height])
-      @left           = options.fetch(:left, defaults[:left])
-      @top            = options.fetch(:top, defaults[:top])
-      @right          = options.fetch(:right, defaults[:right])
-      @bottom         = options.fetch(:bottom, defaults[:bottom])
+      @left_margin    = options.fetch(:left_margin, defaults[:left_margin])
+      @top_margin    = options.fetch(:top_margin, defaults[:top_margin])
+      @right_margin   = options.fetch(:right_margin, defaults[:right_margin])
+      @bottom_margin  = options.fetch(:bottom_margin, defaults[:bottom_margin])
       @left_inset     = options.fetch(:left_inset, defaults[:left_inset])
       @top_inset      = options.fetch(:top_inset, defaults[:top_inset])
       @right_inset    = options.fetch(:right_inset, defaults[:right_inset])
@@ -46,11 +45,7 @@ module RLayout
       @auto_layout_member    = options.fetch(:auto_layout_member, true)
       @layout_expand  = options.fetch(:layout_expand, defaults[:layout_expand])
       @unit_length    = options.fetch(:unit_length, defaults[:unit_length])
-      @grid_x         = options.fetch(:grid_x, defaults[:grid_x])
-      @grid_y         = options.fetch(:grid_y, defaults[:grid_y])
-      @grid_width     = options.fetch(:grid_width, defaults[:grid_width])
-      @grid_height    = options.fetch(:grid_height, defaults[:grid_height])
-      
+      @grid_frame     = options.fetch(:grid_frame, defaults[:grid_frame])             
       @tag            = options[:tag]      
       @fill_type      = options[:fill_type]
       @fill_color     = options[:fill_color]
@@ -69,7 +64,7 @@ module RLayout
       @image_path     = options[:image_path]
       @image_frame    = options[:image_frame]
       @mage_fit_type  = options[:mage_fit_type]
-      @image_caption  = options[:image_caption]
+      @image_caption  = options[:image_caption]      
       @auto_save      = options[:auto_save]
 
       self
@@ -91,22 +86,18 @@ module RLayout
         y: 0,
         width: 100,
         height: 100,
-        left: 0,
-        top: 0,
-        right: 0,
-        bottom: 0,
+        left_margin: 0,
+        top_margin: 0,
+        right_margin: 0,
+        bottom_margin: 0,
         auto_layout_member: true,
         left_inset: 0,
         top_inset: 0,
         right_inset: 0,
         bottom_inset: 0,
         layout_expand: [:width, :height], # auto_layout expand 
-        unit_length: 1,      
-        grid_x: 0,
-        grid_y: 0,
-        grid_width: 1,
-        grid_height: 1,
-        
+        unit_length: 1,  
+        grid_frame: [0,0,1,1],            
       }
     end
     

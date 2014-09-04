@@ -34,8 +34,8 @@ module RLayout
     attr_accessor :layout_mode     # layout_mode: "auto_layout" "grid"
     attr_accessor :layout_direction, :layout_strarting, :layout_space, :layout_align
     attr_accessor :grid_column_count, :grid_row_count, :grid_cells, :grid_v_lines, :grid_h_lines, :grid_color, :show_grid
-    attr_accessor :grid_frame, :grid_inset, :grid_top_inset, :grid_bottom_inset, :grid_letf_inset, :grid_right_inset, :grid_x_shift, :grid_y_shift
-    attr_accessor :unit_grid_width, :unit_grid_height, :frame, :content_path
+    attr_accessor :grid_frame, :grid_inset, :grid_top_inset, :grid_bottom_inset, :grid_letf_inset, :grid_right_inset
+    attr_accessor :unit_grid_width, :unit_grid_height, :frame
     
     def initialize(parent_graphic, options={}, &block)
       super
@@ -52,17 +52,13 @@ module RLayout
       @grid_v_lines     = options.fetch(:grid_v_lines, layout_defaults[:grid_v_lines])       
       @grid_h_lines     = options.fetch(:grid_h_lines, layout_defaults[:grid_h_lines])       
       @grid_color       = options.fetch(:grid_color, layout_defaults[:grid_color])       
-      @grid_frame       = options.fetch(:grid_frame, layout_defaults[:grid_frame])       
       @grid_inset       = options.fetch(:grid_inset, layout_defaults[:grid_inset])       
       @grid_top_inset   = options.fetch(:grid_top_inset, layout_defaults[:grid_top_inset])       
       @grid_bottom_inset= options.fetch(:grid_bottom_inset, layout_defaults[:grid_bottom_inset])       
       @grid_letf_inset  = options.fetch(:grid_letf_inset, layout_defaults[:grid_letf_inset])       
       @grid_right_inset = options.fetch(:grid_right_inset, layout_defaults[:grid_right_inset])       
-      @grid_x_shift     = options.fetch(:grid_x_shift, layout_defaults[:grid_x_shift])       
-      @grid_y_shift     = options.fetch(:grid_y_shift, layout_defaults[:grid_y_shift])       
       @unit_grid_width  = options.fetch(:unit_grid_width, layout_defaults[:unit_grid_width])       
       @unit_grid_height = options.fetch(:unit_grid_height, layout_defaults[:unit_grid_height])       
-      @content_path     = options[:content_path] 
       @show_grid        = options.fetch(:show_grid, layout_defaults[:show_grid])
 
       if @layout_mode == "grid"
@@ -92,10 +88,8 @@ module RLayout
       h[:grid_color]        = "blue"
       h[:grid_frame]        = [0,0,1,1]
       h[:grid_inset]        = [0,0,0,0]
-      h[:grid_shift]        = [0,0] #shift x, shift y      
       h[:unit_grid_width]   = 0
       h[:unit_grid_height]  = 0
-      h[:content_path]      = nil
       h[:show_grid]         = true
       h
     end
@@ -145,11 +139,11 @@ module RLayout
     end
     
     def rect(options={})
-      @graphics << Rectangle.new(self, options)
+      Rectangle.new(self, options)
     end
     
     def circle(options={})
-      @graphics << Circle.new(self, options)
+      Circle.new(self, options)
     end
     
     

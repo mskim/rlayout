@@ -13,8 +13,8 @@ module RLayout
       return unless @graphics
       vertical  = @layout_direction == "vertical"
       view_size         = [@width,@height]
-      starting_position = vertical ? (@y + @top +  @top_inset) : (@left + @left_inset)
-      ending_position   = vertical ? (view_size[1] - @top - @bottom - @top_inset - @bottom_inset)  : (view_size[0] - @left - @right - @left_inset - @right_inset)
+      starting_position = vertical ? (@y + @top_margin +  @top_inset) : (@bottom_margin + @left_inset)
+      ending_position   = vertical ? (view_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (view_size[0] - @left_margin - @right - @left_inset - @right_inset)
       expandable_size   = ending_position
       expandable_children = 0
       unit_length_sum   = 0
@@ -39,8 +39,8 @@ module RLayout
          end
          # account for child's margin
           expandable_size -= 
-           vertical ? child.top + child.bottom
-                    : child.left + child.right
+           vertical ? child.top_margin + child.bottom_margin
+                    : child.bottom_margin + child.right
 
        end
 
@@ -61,7 +61,7 @@ module RLayout
          subview_dimension = vertical ? subview_size[1] : subview_size[0]
 
          if vertical
-           view_frame[0] = @left + @left_inset # 2012 4 16
+           view_frame[0] = @bottom_margin + @left_inset # 2012 4 16
            if @layout_strarting == "top"
              view_frame[1] = starting_position             
            else
@@ -73,7 +73,7 @@ module RLayout
            else
              view_frame[0] = ending_position - subview_dimension
            end        
-           view_frame[1] = @top + @top_inset
+           view_frame[1] = @top_margin + @top_inset
 
          end
          if (vertical ? child.expand_height? : child.expand_width?)
@@ -89,9 +89,9 @@ module RLayout
 
          if (vertical ? child.expand_width? : child.expand_height?)
            if vertical
-             view_frame[2] = view_size[0] - (@right + @left + @right_inset + @left_inset) - child.right - child.left
+             view_frame[2] = view_size[0] - (@right_margin + @bottom_margin + @right_inset + @left_inset) - child.right_margin - child.bottom_margin
            else
-             view_frame[3] = view_size[1] - (@top + @bottom + @top_inset + @bottom_inset) - child.top - child.bottom
+             view_frame[3] = view_size[1] - (@top_margin + @bottom_margin + @top_inset + @bottom_inset) - child.top_margin - child.bottom_margin
            end
          else
            case @layout_align
@@ -107,23 +107,23 @@ module RLayout
 
            when "right", "top"
              if vertical
-               view_frame[0] = view_size[0] - subview_size[0] - @left
+               view_frame[0] = view_size[0] - subview_size[0] - @bottom_margin
              else
-               view_frame[1] = view_size[1] - subview_size[1] - @top
+               view_frame[1] = view_size[1] - subview_size[1] - @top_margin
              end
            end
          end
 
 
-         view_frame[0] += child.left
-         view_frame[1] += child.bottom
+         view_frame[0] += child.bottom_margin
+         view_frame[1] += child.bottom_margin
 
          if @layout_strarting == "top"
            starting_position += subview_dimension + @layout_space
            if vertical
-             starting_position += child.bottom + child.top
+             starting_position += child.bottom_margin + child.top_margin
            else
-             starting_position += child.left + child.right
+             starting_position += child.bottom_margin + child.right
            end
          else
            ending_position -= subview_dimension + @layout_space
