@@ -1,3 +1,10 @@
+require 'json'
+# PageScript Verbs
+#  rect
+#  circle
+#  round_rect
+
+#  line_type=
 
 module RLayout
   
@@ -7,59 +14,70 @@ module RLayout
     attr_accessor :fill_type, :fill_color, :fill_other_color
     attr_accessor :line_type, :line_color, :line_width, :line_dash
     attr_accessor :shape, :shape_bezier    
-    attr_accessor :text_string, :text_color, :text_size, :text_font
+    attr_accessor :text_string, :text_color, :text_size, :text_font, :text_markup
+    
     attr_accessor :left, :top, :right, :bottom
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
     attr_accessor :auto_layout_member, :unit_length, :layout_expand
-    attr_accessor :grid_x, :grid_y, :grid_width, :grid_height
+    attr_accessor :grid_x, :grid_y, :grid_width, :grid_height, :grid_frame
+    attr_accessor :text_string, :text_color, :text_size, :text_font, :text_markup
+    attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
     
     # TODO
-    attr_accessor :text_record, :image_record, :grid_record, :grid_frame
+    # attr_accessor :text_record, :image_record, :grid_record, :grid_frame, :auto_save
     
     
     def initialize(parent_graphic, options={}, &block)
-      @defaults = defaults
-      @parent_graphic = options.fetch(:parent_graphic, @defaults[:parent_graphic])       
-      @klass          = options.fetch(:klass, @defaults[:klass]) 
-      @tag            = options.fetch(:tag, @defaults[:tag])      
-      @x              = options.fetch(:x, @defaults[:x])
-      @y              = options.fetch(:y, @defaults[:y])
-      @width          = options.fetch(:width, @defaults[:width])
-      @height         = options.fetch(:height, @defaults[:height])
-      
-      @fill_type      = options.fetch(:fill_type, @defaults[:fill_type])
-      @fill_color     = options.fetch(:fill_color, @defaults[:fill_color])
-      @fill_other_color= options.fetch(:fill_other_color, @defaults[:fill_other_color])
-      
-      @line_type      = options.fetch(:line_type, @defaults[:line_type])
-      @line_color     = options.fetch(:line_color, @defaults[:line_color])
-      @line_width     = options.fetch(:line_width, @defaults[:line_width])
-      @line_dash      = options.fetch(:line_dash, @defaults[:line_dash])
-      
-      @shape          = options.fetch(:shape, @defaults[:shape])
-      @shape_bezier   = options.fetch(:shape_bezier, @defaults[:shape_bezier])
-      
-      @left           = options.fetch(:left, @defaults[:left])
-      @top            = options.fetch(:top, @defaults[:top])
-      @right          = options.fetch(:right, @defaults[:right])
-      @bottom         = options.fetch(:bottom, @defaults[:bottom])
-      @left_inset     = options.fetch(:left_inset, @defaults[:left_inset])
-      @top_inset      = options.fetch(:top_inset, @defaults[:top_inset])
-      @right_inset    = options.fetch(:right_inset, @defaults[:right_inset])
-      @bottom_inset   = options.fetch(:bottom_inset, @defaults[:bottom_inset])
-
+      @parent_graphic = parent_graphic
+      @parent_graphic.graphics << self if  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self) 
+      @klass          = options.fetch(:klass, defaults[:klass]) 
+      @x              = options.fetch(:x, defaults[:x])
+      @y              = options.fetch(:y, defaults[:y])
+      @width          = options.fetch(:width, defaults[:width])
+      @height         = options.fetch(:height, defaults[:height])
+      @left           = options.fetch(:left, defaults[:left])
+      @top            = options.fetch(:top, defaults[:top])
+      @right          = options.fetch(:right, defaults[:right])
+      @bottom         = options.fetch(:bottom, defaults[:bottom])
+      @left_inset     = options.fetch(:left_inset, defaults[:left_inset])
+      @top_inset      = options.fetch(:top_inset, defaults[:top_inset])
+      @right_inset    = options.fetch(:right_inset, defaults[:right_inset])
+      @bottom_inset   = options.fetch(:bottom_inset, defaults[:bottom_inset])
       @auto_layout_member    = options.fetch(:auto_layout_member, true)
-      @layout_expand  = options.fetch(:layout_expand, @defaults[:layout_expand])
-      @unit_length    = options.fetch(:unit_length, @defaults[:unit_length])
-      @grid_x         = options.fetch(:grid_x, @defaults[:grid_x])
-      @grid_y         = options.fetch(:grid_y, @defaults[:grid_y])
-      @grid_width     = options.fetch(:grid_width, @defaults[:grid_width])
-      @grid_height    = options.fetch(:grid_height, @defaults[:grid_height])
+      @layout_expand  = options.fetch(:layout_expand, defaults[:layout_expand])
+      @unit_length    = options.fetch(:unit_length, defaults[:unit_length])
+      @grid_x         = options.fetch(:grid_x, defaults[:grid_x])
+      @grid_y         = options.fetch(:grid_y, defaults[:grid_y])
+      @grid_width     = options.fetch(:grid_width, defaults[:grid_width])
+      @grid_height    = options.fetch(:grid_height, defaults[:grid_height])
       
-      @text_record    = options.fetch(:text_record, nil)
-      @image_record   = options.fetch(:image_record, nil)
+      @tag            = options[:tag]      
+      @fill_type      = options[:fill_type]
+      @fill_color     = options[:fill_color]
+      @fill_other_color= options[:fill_other_color]
+      @line_type      = options[:line_type]
+      @line_color     = options[:line_color]
+      @line_width     = options[:line_width]
+      @line_dash      = options[:line_dash]
+      @shape          = options[:shape]
+      @shape_bezier   = options[:shape_bezier]
+      @text_string    = options[:text_string]
+      @text_color     = options[:text_color]
+      @text_size      = options[:text_size]
+      @text_font      = options[:text_font]
+      @text_markup    = options[:text_markup]
+      @image_path     = options[:image_path]
+      @image_frame    = options[:image_frame]
+      @mage_fit_type  = options[:mage_fit_type]
+      @image_caption  = options[:image_caption]
+      @auto_save      = options[:auto_save]
 
       self
+    end
+    
+    #TODO
+    def graphics_space_sum
+      0
     end
     
     def self.with(parent_graphic, style_name, &block)
@@ -68,32 +86,22 @@ module RLayout
     
     def defaults
       {
-        parent_graphic: nil,
         klass: "Rectangle",
         x: 0,
         y: 0,
         width: 100,
         height: 100,
-        fill_type: "plain",
-        fill_color: "white",
-        fill_other_color: "gray",
-        line_type: "single",
-        line_color: "black",
-        line_width: 0,
-        line_dash: nil,
-        shape: "rect",
-        shape_bezier: nil,
         left: 0,
         top: 0,
         right: 0,
         bottom: 0,
+        auto_layout_member: true,
         left_inset: 0,
         top_inset: 0,
         right_inset: 0,
         bottom_inset: 0,
-        auto_layout_member: true,
         layout_expand: [:width, :height], # auto_layout expand 
-        unit_length: 1,
+        unit_length: 1,      
         grid_x: 0,
         grid_y: 0,
         grid_width: 1,
@@ -128,11 +136,32 @@ module RLayout
       h = {}
       instance_variables.each{|a|
         s = a.to_s
+        next if s=="@parent_graphic"
         n = s[1..s.size] # get rid of @
         v = instance_variable_get a
         h[n.to_sym] = v if !v.nil? && v !=defaults[n.to_sym]
       }
       h
+    end
+    
+    #/0/0/1/2/0
+    def ancestry
+      s = ""
+      if @parent_graphic
+        s += @parent_graphic.ancestry 
+        s += "," + @parent_graphic.graphics.index(self).to_s
+      else
+        s = ",0"
+      end
+      s
+    end
+    
+    def to_mongo
+      h = to_hash
+      h[:_id] = ancestry
+      puts h
+      j = h.to_json
+      j += "\n"
     end
     
     def to_svg
@@ -163,6 +192,22 @@ module RLayout
         s
     end
     
+    def text_record
+      !@text_string.nil? 
+    end
+    
+    def text_svg
+      
+    end
+ 
+    def image_record
+      !@image_path.nil? 
+    end
+
+    def image_svg
+      
+    end
+    
     COLORS = %w[black blue gray green orange red purple yellow white]
     WIDTH = [1,3,5,8,10]
     def random_attributes
@@ -182,6 +227,7 @@ module RLayout
       self
     end
   end
+  
   class Text < Graphic
     def initialize(parent_graphic, options={})
       super

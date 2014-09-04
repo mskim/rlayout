@@ -1,11 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="800">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<rect x="0" y="0" width="10000" height="13300" fill="red"></rect>
-</svg>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<rect x="0" y="0" width="10000" height="13300" fill="blue"></rect>
-</svg>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<circle cx="5000" cy="6650" r="5000" fill="green"></circle>
-</svg>
+<rect x="0" y="0" width="600" height="456" fill="red"></rect>
+<rect x="0" y="476" width="600" height="152" fill="blue"></rect>
+<circle cx="300" cy="724" r="76" fill="green"></circle>
 </svg>

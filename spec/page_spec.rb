@@ -20,7 +20,7 @@ describe 'Article Page with pgscritpt' do
   it 'should save svg' do
     @p.save_svg(@page_svg_test)
     File.exists?(@page_svg_test).must_equal true
-    system("open #{@page_svg_test}") if File.exists?(@page_svg_test)
+    # system("open #{@page_svg_test}") if File.exists?(@page_svg_test)
   end
   
 end
@@ -54,7 +54,7 @@ describe "page from document" do
   end
   
   it 'page should have default values' do
-    @page.document.must_equal @doc
+    @page.document.must_be_kind_of Document
     @page.width.must_equal 600
     @page.height.must_equal 800
     @page.margin.must_equal 50
@@ -80,7 +80,7 @@ describe 'generate svg' do
   it 'should save svg' do
     @page.save_svg(@page_svg_test)
     File.exists?(@page_svg_test).must_equal true
-    system("open #{@page_svg_test}") if File.exists?(@page_svg_test)
+    # system("open #{@page_svg_test}") if File.exists?(@page_svg_test)
   end
   
 end

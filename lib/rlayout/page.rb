@@ -64,9 +64,16 @@ module RLayout
       
     end
     
-    # def heading(options={})
-    #   
-    # end
+    def container(options={}, &block)
+      c = Container.new(self, options, &block)
+      puts "+++++++c.class:#{c.class}"
+      @graphics << c
+      puts "@graphics.lenth:#{@graphics.length}"
+    end
+    
+    def heading(options={}, &block)
+      @graphics << Heading.new(self, options={}, &block)
+    end
     
     # def header(options={})
     #   

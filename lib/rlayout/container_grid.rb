@@ -1,7 +1,7 @@
 #
 #  ggrid.rb
 # 
-#  Created by Min Soo Kim on 9/1/13.
+#  Created by Min Soo Kim on 9/1/2013.
 #  Copyright 2013 SoftwareLab. All rights reserved.
 
 #  GGridRecord .
@@ -9,8 +9,8 @@
 #  Matrix object should use GGridRecord.
 #  GGridRecord handles grid based layout.
 #  We have two layout modes, stack mode and grid mode.
-#  Each graphic can have its own layout mode.
-#  A grid elements can have stack based layer. And it's childd can have grid based layer.
+#  Container can have its own layout mode.
+#  A grid elements can have stack based layer . And it's childd can have grid based layer.
 #  Default layou is the stack mode.
 
 #  
@@ -23,7 +23,7 @@
 #     1. size are set to unit grid block size.
 #     1. sizes are expanded or reduced at grid block width and height.
 #     1. they move by grid block width and height.
-#     1. Grid element can push_a_way elements that overlap to next grid other 
+#     1. Grid element can push_a_way overlaping elements to none overlapping spot. 
 #.
 #  Usually grid mode is used at page level, and auto_layout mode are used in Containers.
 #  ex. Portait Page will have 12 x 6 grid system
@@ -31,9 +31,7 @@
 #  And with each types of publication, we can set the grid system to fit the needs.
 
 
-#  GGridRecord is used for grid based layout, 
-#  In grid mode , we have horizontal and vertical grid.
-
+# TODO
 #  When child graphic is created in grid mode, it looks for empty space where it does not overlap with other grapic
 #  So, the first child will be placed at the upper left corner with size of unit block.
 #  And the second child will be placed the right of the first one, if the first row is filled it will place the next child 
@@ -51,11 +49,12 @@
 #   grid_h_lines:       array of horizontal grid lines
 #   grid_color:         color of the grid lines
 #   show_grid:          boolean whether to show or hide the lines
+#   grid_frame:         frame rect in grid unit
 
-# Graphic frame is expressed in ralative value to grid
+#  Graphic frame is expressed in ralative value to grid
 #   grid_frame: cell origen qne width and height
 
-# When frame is mutated from snapping to the grid
+#  frame can be mutated from snapping to the grid by 
 #   grid_top_inset:
 #   grid_bottom_inset:
 #   grid_letf_inset:
@@ -68,28 +67,14 @@
 # number of ads
 # It should create best fit for given resouces
 
-# History
 
 # Todo
 # combine grid_record with auto_layout in to one, since many of them are overlapping
+# They should be part of Container methods
 
-# 2014 4 8
-# 1. content_path: this is where the cell content is stored as rlib
-# 
-# 2013 9 5
-# 1. Implement GGridRecod with tests
-# 1. Create default GGridRecod in Page as (3 x 3)
-# 1. Set GGridRecod for children graphics, do not crate grid_cells
-# 1. save grid_record for Page
-# 1. Save grid grid_record of children graphics
-# 1. Restore saved grid_record when reading 
-
-# 2003 9 1 
-# 1. started planing and implemented the basic stuff
 require 'yaml'
 
 module  RLayout
-  
   
   # this should go under as Container methods with AutoLayout
   #, since both of them only apply when it has children
@@ -265,7 +250,6 @@ EOF
         @bottom_inset   = 0
       end
       
-      
       x   = @left + @left_inset
       x2  = x
       y   = @top + @top_inset
@@ -301,13 +285,13 @@ EOF
     end
     
     
-    def self.include_relavant_key?(options)
-      keys=[:grid_column_count, :grid_row_count, :grid_color, :grid_frame, :grid_inset]
-      keys.each do |key|
-        return true if options.has_key?(key)
-      end
-      false
-    end
+    # def self.include_relavant_key?(options)
+    #   keys=[:grid_column_count, :grid_row_count, :grid_color, :grid_frame, :grid_inset]
+    #   keys.each do |key|
+    #     return true if options.has_key?(key)
+    #   end
+    #   false
+    # end
     
     # def defaults
     #   hash={}
@@ -329,18 +313,18 @@ EOF
     #   hash   
     # end
     # 
-    def self.awake_from_rlib(rlib_path)
-      unless File.exists?(rlib_path)
-        puts "file #{rlib_path} not found!!!"
-        return 
-      end      
-      GGridRecord.new(nil, YAML::load_file(rlib_path + "/layout.yml"))
-    end
-    
-    # un-archive object from hash
-    def self.from_hash(owner_graphic, grid_hash)
-      GGridRecord.new(owner_graphic, grid_hash)      
-    end
+    # def self.awake_from_rlib(rlib_path)
+    #   unless File.exists?(rlib_path)
+    #     puts "file #{rlib_path} not found!!!"
+    #     return 
+    #   end      
+    #   GGridRecord.new(nil, YAML::load_file(rlib_path + "/layout.yml"))
+    # end
+    # 
+    # # un-archive object from hash
+    # def self.from_hash(owner_graphic, grid_hash)
+    #   GGridRecord.new(owner_graphic, grid_hash)      
+    # end
     
               
     # for macruby
@@ -467,14 +451,11 @@ EOF
       y   = @top + @top_inset
       col = 0
       row = 0
-      puts "@graphics.length:#{@graphics.length}"
       
       @graphics.each_with_index do |graphic, i|
         unless graphic.grid_frame
           graphic.grid_frame   = [0,0,1,1]
         end
-        puts "col:#{col}"
-        puts "row:#{row}"
         graphic.x    = x + graphic.grid_frame[0]*@unit_grid_width
         graphic.y    = y
         graphic.width  = graphic.grid_frame[2]*@unit_grid_width
@@ -483,10 +464,11 @@ EOF
         if graphic.klass == "Image"
           graphic.image_record.apply_fit_type if graphic.image_record
         end
-        if !graphic.respond_to?(:auto_layout) || graphic.auto_layout.nil? || graphic.auto_layout.expand.nil?
-           # no need to do recursive auto_layout for child graphics
-        elsif graphic.respond_to?(:relayout_grid!)
-          graphic.relayout_grid!  # recursive auto_layout for child graphics
+        
+        # recursive layout for children of graphic
+        # it could be relayout! or relayout_grid! depending on the graphic's layout_mode
+        if graphic.kind_of?(Container)
+          graphic.relayout  
         end
         
         x+= graphic.width
@@ -497,24 +479,32 @@ EOF
           y+= graphic.height
           row+=1
         end
-        
       end
+      
+      # when some changes, we want to inform parent_graphic to auto_save 
+      if @auto_save
+        if @parent_grapic
+          @parent_grapic.auto_save
+        else
+          # do save
+        end
+      end
+    end
+    
+    # given a point, return grid cell,
+    def point_in_rect?(point, rect)
+      ((point[0] >= rect[0]) && (point[0] <= rect[0]+rect[2])) && ((point[1] >= rect[1]) && (point[1] <= rect[1]+rect[3]))
     end
     
     # given a point, return grid cell,
     def grid_cell_of(point)
       @grid_cells.each do |cell|
-          return cell if NSPointInRect(point, cell)
+          return cell if point_in_rect?(point, cell)
       end
       nil
     end
     
-    # return index of grids that given graphic is occupying
-    # grid_frame[0] : origin x
-    # grid_frame[1] : origin y
-    # grid_frame[2] : width
-    # grid_frame[3] : height
-    
+        
     def occupying_grids(graphic)
       occupied_grid = []
       starting_grid_index = graphic.grid_record.grid_frame[0]  + graphic.grid_record.grid_frame[1] * @grid_row_count
@@ -575,219 +565,11 @@ EOF
     # ++++++++++++++ getting the  grid at point
     def grid_cell_at_point(point)
       @graphics.each_with_index do |cell, i|
-        if NSPointInRect(point, cell.frame)
+        if point_in_rect?(point, cell.frame)
           return i
         end
       end
       return nil
-    end
-
-    def set_grid_row_position(row_line, new_position)
-      
-    end
-    
-    def set_grid_column_position(column_line, new_position)
-      
-    end
-    
-    def increase_grid_row_count
-      
-    end
-    
-    def increase_grid_column_count
-      
-    end
-    
-    def decrease_grid_row_count
-      
-    end
-    
-    def decrease_grid_column_count
-      
-    end
-    
-    
-    # ++++++++++++++ setting values
-    def grid_column_count=(value)
-      return if value == @grid_column_count
-      undoManager.prepareWithInvocationTarget(self).grid_column_count=(@grid_column_count) if undoManager
-      @grid_column_count = value
-      @graphic_info_changed
-    end
-    
-    def grid_row_count=(value)
-      return if value == @grid_row_count
-      undoManager.prepareWithInvocationTarget(self).grid_row_count=(@grid_row_count) if undoManager
-      @grid_row_count = value
-      @graphic_info_changed
-    end
-    
-    def grid_color=(value)
-      return if value == @grid_color
-      undoManager.prepareWithInvocationTarget(self).grid_color=(@grid_color) if undoManager
-      @grid_color = value
-      @graphic_info_changed
-    end
-        
-    def show_grid=(value)
-      return if value == @show_grid
-      undoManager.prepareWithInvocationTarget(self).show_grid=(@show_grid) if undoManager
-      @show_grid = value
-      @graphic_info_changed
-    end
-
-    BIG_STEP = 10
-    SMALL_STEP = 1
-    
-    def parent_graphic
-      @parent_graphic
-    end
-    
-    def parent_grid
-      @parent_graphic.grid_record
-    end
-    
-    #########################  grid mode move #####
-    
-    # TODO
-    # move undoManager to WindwoController level
-    # relayout_grid! should be triggered with push_away commen
-     
-    
-    def move_up_grid
-      
-      if @grid_frame[1] == 0
-        NSBeep()
-        return
-      end
-      @grid_frame[1] -= 1
-      parent_graphic.relayout_grid!
-      # undoManager.prepareWithInvocationTarget(self).move_down_grid   if undoManager   
-    end
-    
-    
-    def move_down_grid
-      if (@grid_frame[1] + grid_frame[3]) >= parent_grid.grid_row_count
-        NSBeep()
-        return
-      end
-      @grid_frame[1] += 1
-      parent_graphic.relayout_grid!
-      # undoManager.prepareWithInvocationTarget(self).move_up_grid   if undoManager  
-    end
-
-    def move_left_grid
-      if @grid_frame[0] == 0
-        NSBeep()
-        return
-      end
-      @grid_frame[0] -= 1
-      parent_graphic.relayout_grid!
-      # undoManager.prepareWithInvocationTarget(self).move_right_grid    if undoManager
-    end
-    
-    def move_right_grid
-      if (@grid_frame[0] + @grid_frame[2]) >= parent_grid.grid_column_count
-        NSBeep()
-        return
-      end
-      @grid_frame[0] += 1
-      parent_graphic.relayout_grid!
-      # undoManager.prepareWithInvocationTarget(self).move_left_grid  if undoManager    
-    end
-    
-    #########################  grid mode resize #####
-
-    def expand_top_grid
-      if @grid_frame[1] == 0
-        NSBeep()
-        return
-      end
-      @grid_frame[1]   -= 1
-      grid_frame[3]   += 1
-      parent_graphic.relayout_grid! # relayout_grid! if @graphics.length > 0
-      # undoManager.prepareWithInvocationTarget(self).expand_bottom_grid   if undoManager 
-    end
-    
-    
-    def expand_bottom_grid
-      if (@grid_frame[1] + grid_frame[3]) >= parent_grid.grid_row_count
-        NSBeep()
-        return
-      end      
-      grid_frame[3]     += 1        
-      parent_graphic.relayout_grid! # relayout_grid! if @graphics.length > 0
-      # undoManager.prepareWithInvocationTarget(self).expand_top_grid     if undoManager 
-    end
-    
-     
-    def expand_left_grid
-      if @grid_frame[0] == 0
-        NSBeep()
-        return
-      end
-      @grid_frame[0]   -= 1
-      @grid_frame[2]    += 1
-      parent_graphic.relayout_grid! # relayout_grid! if @graphics.length > 0
-      # undoManager.prepareWithInvocationTarget(self).expand_right_grid    if undoManager
-    end
-    
-    
-    def expand_right_grid
-      if (@grid_frame[0] + @grid_frame[2]) >= parent_grid.grid_column_count
-        NSBeep()
-        return
-      end
-      
-      @grid_frame[2] += 1
-      parent_graphic.relayout_grid! #if parent_graphic.graphics.length > 0
-      # undoManager.prepareWithInvocationTarget(self).expand_left_grid   if undoManager   
-    end    
-    
-    
-    ############# reduce
-    def reduce_top_grid
-      if grid_frame[3] == 1 
-        NSBeep()
-        return
-      end
-      @grid_frame[1]   += 1
-      grid_frame[3]   -= 1
-      parent_graphic.relayout_grid! # relayout_grid! if @graphics.length > 0
-      # undoManager.prepareWithInvocationTarget(self).reduce_bottom_grid  if undoManager  
-    end
-    
-    
-    def reduce_bottom_grid
-      if grid_frame[3] == 1
-        NSBeep()
-        return
-      end
-      grid_frame[3]    -= 1
-      parent_graphic.relayout_grid! # relayout_grid! if @graphics.length > 0
-      # undoManager.prepareWithInvocationTarget(self).reduce_top_grid  if undoManager    
-    end
-    
-    
-    def reduce_left_grid
-      if @grid_frame[2] == 1
-        NSBeep()
-        return 
-      end
-      @grid_frame[0]   += 1
-      @grid_frame[2]    -= 1
-      parent_graphic.relayout_grid! # relayout_grid! if @graphics.length > 0
-      # undoManager.prepareWithInvocationTarget(self).reduce_right_grid  if undoManager  
-    end
-        
-    def reduce_right_grid
-      if @grid_frame[2] == 1
-        NSBeep()
-        return 
-      end
-      @grid_frame[2]    -= 1
-      parent_graphic.relayout_grid! # relayout_grid! if @graphics.length > 0
-      # undoManager.prepareWithInvocationTarget(self).reduce_left_grid  if undoManager      
     end
      
   end
