@@ -9,12 +9,12 @@ module RLayout
   class Container
 
     def relayout!
-      puts __method__
+      # puts __method__
       return unless @graphics
       vertical  = @layout_direction == "vertical"
       view_size         = [@width,@height]
       starting_position = vertical ? (@y + @top_margin +  @top_inset) : (@bottom_margin + @left_inset)
-      ending_position   = vertical ? (view_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (view_size[0] - @left_margin - @right - @left_inset - @right_inset)
+      ending_position   = vertical ? (view_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (view_size[0] - @left_margin - @right_margin - @left_inset - @right_inset)
       expandable_size   = ending_position
       expandable_children = 0
       unit_length_sum   = 0
@@ -40,7 +40,7 @@ module RLayout
          # account for child's margin
           expandable_size -= 
            vertical ? child.top_margin + child.bottom_margin
-                    : child.bottom_margin + child.right
+                    : child.bottom_margin + child.right_margin
 
        end
 
@@ -123,7 +123,7 @@ module RLayout
            if vertical
              starting_position += child.bottom_margin + child.top_margin
            else
-             starting_position += child.bottom_margin + child.right
+             starting_position += child.bottom_margin + child.right_margin
            end
          else
            ending_position -= subview_dimension + @layout_space

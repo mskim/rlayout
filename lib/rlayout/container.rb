@@ -36,6 +36,7 @@ module RLayout
     attr_accessor :grid_column_count, :grid_row_count, :grid_cells, :grid_v_lines, :grid_h_lines, :grid_color, :show_grid
     attr_accessor :grid_frame, :grid_inset, :grid_top_inset, :grid_bottom_inset, :grid_letf_inset, :grid_right_inset
     attr_accessor :unit_grid_width, :unit_grid_height, :frame
+    attr_accessor :gutter_line_type, :gutter_line_width, :gutter_line_color, :gutter_line_dash
     
     def initialize(parent_graphic, options={}, &block)
       super
@@ -61,6 +62,11 @@ module RLayout
       @unit_grid_height = options.fetch(:unit_grid_height, layout_defaults[:unit_grid_height])       
       @show_grid        = options.fetch(:show_grid, layout_defaults[:show_grid])
 
+      @gutter_line_type = options[:gutter_line_type]     
+      @gutter_line_width= options[:gutter_line_width]
+      @gutter_line_color= options[:gutter_line_color]
+      @gutter_line_dash = options[:gutter_line_dash]
+      
       if @layout_mode == "grid"
         # @unit_grid_width    = @owner_graphic.drawing_area[SIZE_WIDTH]/@grid_column_count 
         # @unit_grid_height   = @owner_graphic.drawing_area[SIZE_HEIGHT]/@grid_row_count 
@@ -103,6 +109,10 @@ module RLayout
       end
     end
     
+    def layout_area
+      [@width - @left_margin - @right_margin - @left_inset - @right_inset, @height - @top_margin - @top_inset - @bottom_margin - @bottom_inset]
+    end
+    
     def to_hash
       h = {}
       instance_variables.each{|a|
@@ -133,7 +143,7 @@ module RLayout
     end
     
     def to_svg
-      s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"#{width}\" height=\"#{height}\">\n"
+      s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"#{@x}\" y=\"#{@y}\" width=\"#{width}\" height=\"#{height}\">\n"
       @graphics.each do |graphics|
         s += graphics.to_svg
       end
