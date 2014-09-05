@@ -29,20 +29,20 @@ module RLayout
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
       @parent_graphic.graphics << self if  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self) 
-      @klass          = options.fetch(:klass, defaults[:klass]) 
+      @klass          = options.fetch(:klass, "Rectangle") 
       @x              = options.fetch(:x, defaults[:x])
       @y              = options.fetch(:y, defaults[:y])
       @width          = options.fetch(:width, defaults[:width])
       @height         = options.fetch(:height, defaults[:height])
       @left_margin    = options.fetch(:left_margin, defaults[:left_margin])
-      @top_margin    = options.fetch(:top_margin, defaults[:top_margin])
+      @top_margin     = options.fetch(:top_margin, defaults[:top_margin])
       @right_margin   = options.fetch(:right_margin, defaults[:right_margin])
       @bottom_margin  = options.fetch(:bottom_margin, defaults[:bottom_margin])
       @left_inset     = options.fetch(:left_inset, defaults[:left_inset])
       @top_inset      = options.fetch(:top_inset, defaults[:top_inset])
       @right_inset    = options.fetch(:right_inset, defaults[:right_inset])
       @bottom_inset   = options.fetch(:bottom_inset, defaults[:bottom_inset])
-      @auto_layout_member    = options.fetch(:auto_layout_member, true)
+      @auto_layout_member = options.fetch(:auto_layout_member, defaults[:auto_layout_member])
       @layout_expand  = options.fetch(:layout_expand, defaults[:layout_expand])
       @unit_length    = options.fetch(:unit_length, defaults[:unit_length])
       @grid_frame     = options.fetch(:grid_frame, defaults[:grid_frame])             
@@ -81,23 +81,22 @@ module RLayout
     
     def defaults
       {
-        klass: "Rectangle",
-        x: 0,
-        y: 0,
-        width: 100,
-        height: 100,
-        left_margin: 0,
-        top_margin: 0,
+        x:            0,
+        y:            0,
+        width:        100,
+        height:       100,
+        left_margin:  0,
+        top_margin:   0,
         right_margin: 0,
         bottom_margin: 0,
         auto_layout_member: true,
-        left_inset: 0,
-        top_inset: 0,
-        right_inset: 0,
+        left_inset:   0,
+        top_inset:    0,
+        right_inset:  0,
         bottom_inset: 0,
         layout_expand: [:width, :height], # auto_layout expand 
-        unit_length: 1,  
-        grid_frame: [0,0,1,1],            
+        unit_length:  1,  
+        grid_frame:   [0,0,1,1],            
       }
     end
     
@@ -122,6 +121,13 @@ module RLayout
     def expand_height?
       @layout_expand.include?(:height)
     end
+    
+    def pretty_json
+      require 'json'
+      # my_json = { :array => [1, 2, 3, { :sample => "hash"} ], :foo => "bar" }
+      JSON.pretty_generate(to_hash)
+    end
+    
     
     def to_hash
       h = {}

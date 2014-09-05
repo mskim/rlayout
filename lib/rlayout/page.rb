@@ -6,6 +6,7 @@ module RLayout
     
     def initialize(parent_graphic, options={}, &block)
       super
+      @klass = "Page"
       if @parent_graphic && @parent_graphic.width
         @width  = @parent_graphic.width 
       else
@@ -27,7 +28,7 @@ module RLayout
       if block
         instance_eval(&block)
       end
-            
+      
       self
     end
     
@@ -49,6 +50,14 @@ module RLayout
         s += graphics.to_svg
       end
       s += "</svg>"      
+    end
+    
+    def save_json(path)
+      require 'json'
+      # my_json = { :array => [1, 2, 3, { :sample => "hash"} ], :foo => "bar" }
+      
+      h = to_hash
+      File.open(path, 'w'){|f| f.write JSON.pretty_generate(h)}
     end
     
     def save_svg(path)
