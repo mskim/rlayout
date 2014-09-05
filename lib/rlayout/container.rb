@@ -143,11 +143,11 @@ module RLayout
     end
     
     def to_svg
-      s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"#{@x}\" y=\"#{@y}\" width=\"#{width}\" height=\"#{height}\">\n"
+      s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\">\n"
       @graphics.each do |graphics|
         s += graphics.to_svg
       end
-      s += "</svg>"      
+      s += "</svg>\n"      
     end
     
     def save_svg(path)

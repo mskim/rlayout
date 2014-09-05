@@ -31,6 +31,7 @@ module RLayout
       relayout!
     end
     
+    # layout_items is used for batch layout
     # steps
     # 1. Ask each flowing objects to adjust their width to column width.
     # 2. Each flowing objects changes their width and their height.
@@ -38,7 +39,6 @@ module RLayout
     # 4. Place them in the column
     # 5. And go on to the next column
     
-     
     def layout_items(flowing_items, starting_index=0)
       column_index = 0
       current_column = @graphics[column_index]
@@ -68,6 +68,19 @@ module RLayout
         end
       end
         
+    end
+    
+    
+    #TODO
+    ####### interactive mode ##########
+    def insert_item_at(item, column_index, index)
+      # insert an item at 
+    end
+    
+    def delete_item
+    end
+    
+    def delete_item_at(column_index, index)
     end
   end
   

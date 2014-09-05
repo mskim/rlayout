@@ -5,8 +5,12 @@ module RLayout
     attr_accessor :heading, :body, :header, :footer, :side_box, :images, :quotes
     
     def initialize(parent_graphic, options={}, &block)
-      super
+      @parent_graphic = parent_graphic
+      @parent_graphic.pages << self if  @parent_graphic && @parent_graphic.pages && !@parent_graphic.pages.include?(self)       
+      @graphics = []
       @klass = "Page"
+      @x = 0
+      @y = 0
       if @parent_graphic && @parent_graphic.width
         @width  = @parent_graphic.width 
       else
@@ -25,6 +29,7 @@ module RLayout
         @margin  = defaults[:margin]
       end
       
+      
       if block
         instance_eval(&block)
       end
@@ -38,6 +43,8 @@ module RLayout
     
     def defaults
       {
+        x: 0,
+        y: 0,
         width: 600,
         height: 800,
         margin: 50,
@@ -45,9 +52,9 @@ module RLayout
     end
     
     def to_svg
-      s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"#{width}\" height=\"#{height}\">\n"
-      @graphics.each do |graphics|
-        s += graphics.to_svg
+      s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\">\n"
+      @graphics.each do |graphic|
+        s += graphic.to_svg
       end
       s += "</svg>"      
     end

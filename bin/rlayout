@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+# rlayout shell script 
+
+# rlayout new --template=magazine 	: create new project with magazine template
+# rlayout layout 			: layout project
+# rlayout pdf	 			: generate pdf
+# rlayout jpg	 			: generate jpg
+# rlayout upload			: upload the project to web server
+# rlayout update			: update gem
+
+# rlayout --help			: show  this text
+
+# folder structure
+#  content.md
+#  data.csv
+#  image/
+#  content.pdf
+#  content.jpg
+
+#  .rlayout
+#    config.yml
+#	email: mskimsid@gmail.ocm
+#       password: ******** or this should be entered at the time of access
+#    layout.yml
+#    rakefile
+

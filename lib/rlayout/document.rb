@@ -9,8 +9,10 @@ module RLayout
       @title      = options.fetch(:title, "untitled")
       @path       = options.fetch(:path, nil)
       @paper_size = options.fetch(:paper_size, "A4")
-      @portrait   = options.fetch(:portrait, true)
-      @width      = options.fetch(:portrai, defaults[:width])
+      @portrait   = options.fetch(:portrait, defaults[:portrait])
+      @dobule_side= options.fetch(:dobule_side, defaults[:dobule_side])
+      @starts_left= options.fetch(:dobule_side, defaults[:starts_left])
+      @width      = options.fetch(:width, defaults[:width])
       @height     = options.fetch(:width, defaults[:height])
       @margin     = options.fetch(:margin, defaults[:margin])
       if options[:pages]
@@ -24,6 +26,9 @@ module RLayout
     
     def defaults
       {
+        portrait: true,
+        double_side: false,
+        starts_left: true,
         width: 600,
         height: 800,
         margin: 50,
@@ -31,18 +36,50 @@ module RLayout
     end
     
     def page(options={}, &block)
-      @pages << Page.new(self, options, &block)
+      Page.new(self, options, &block)
+    end
+    
+    def layout_page
+      side_margin = 100
+      top_margin = 50
+      horizontal_gutter = 20
+      
+      if @double_side
+        @document_width   = @width * 2 + side_margin*2
+        page_pairs = @pages.length / 2
+        page_pairs += 1 if @pages.length % 2 !=0
+        @document_height  = @height*page_pairs + top_margin*2 + horizontal_gutter*(page_pairs-1)
+        
+        #TODO do it for double_side
+        #TODO for starts_left
+      
+      else
+        puts "single side"
+        puts "@pages.length:#{@pages.length}"
+        @document_width   = @width + side_margin*2
+        @document_height  = @height*@pages.length + top_margin*2 + horizontal_gutter*(@pages.length-1)
+        x = side_margin
+        y = top_margin
+        @pages.each do |page|
+          page.x = x
+          page.y = y
+          y += page.height + horizontal_gutter
+        end
+      end
+    end
+    
+    def to_svg
+      layout_page
+      s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0\" y=\"0\" width=\"#{@document_width}\" height=\"#{@document_height}\">\n"
+      @pages.each do |page|
+        s += page.to_svg
+      end
+      s += "</svg>"      
     end
     
     def save_svg(path)
-      s = ""
-      @pages.each do |page|
-        s = "<document heading>\n"
-        s += page.to_svg
-        s += "</document ending>\n"
-      end
-      svg_path = path 
-      File.opne(svg_path, 'w'){|f| f.write s}
+      s = to_svg
+      File.open(path, 'w'){|f| f.write s}
     end
   end
   

@@ -3,9 +3,12 @@ require File.dirname(__FILE__) + "/spec_helper"
 describe "document" do
   before do
     @doc = Document.new(:tite=>"my_test") do
-      page
-      page
-      page
+      page do
+        rect fill_color: "green"
+        rect fill_color: "red", x:200, y:200
+        rect fill_color: "black" , x:300, y:300
+        rect fill_color: "blue", x:500, y:500
+      end
     end
   end
   
@@ -21,10 +24,17 @@ describe "document" do
     @doc.height.must_equal 800
     @doc.margin.must_equal 50
     @doc.portrait.must_equal true
-    @doc.pages.length.must_equal 3
+    @doc.pages.length.must_equal 1
   end
   
   it 'should have pages' do
-    @doc.pages.length.must_equal 3
+    @doc.pages.length.must_equal 1
+  end
+  
+  it 'should save svg' do
+    @svg_path = File.dirname(__FILE__) + "/output/document_test.svg"
+    @doc.save_svg(@svg_path)
+    File.exists?(@svg_path).must_equal true
+    
   end
 end
