@@ -20,10 +20,8 @@ end
 describe 'testing container with graphics' do
   before do
     @container = Container.new(nil)
-    @g1 = Graphic.new(self)
-    @container.place_graphic(@g1)
-    @container.place_graphic(Graphic.new(nil))
-    
+    @g1 = Graphic.new(@container)
+    @g2 = Graphic.new(@container)
   end
   
   it 'should add graphics' do

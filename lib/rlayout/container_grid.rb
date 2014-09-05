@@ -39,7 +39,7 @@
 #  needing following cells to change it's size.
 #  There can be several options for changes the other cells.
 
-#  grid_frame [x,y, width, height]
+#  grid_rect [x,y, width, height]
 #  cell_position x,y, position of cell
 
 #   grid_column_count:  number of columns
@@ -49,10 +49,10 @@
 #   grid_h_lines:       array of horizontal grid lines
 #   grid_color:         color of the grid lines
 #   show_grid:          boolean whether to show or hide the lines
-#   grid_frame:         frame rect in grid unit
+#   grid_rect:         frame rect in grid unit
 
 #  Graphic frame is expressed in ralative value to grid
-#   grid_frame: cell origen qne width and height
+#   grid_rect: cell origen qne width and height
 
 #  frame can be mutated from snapping to the grid by 
 #   grid_top_inset:
@@ -88,12 +88,12 @@ module  RLayout
       @unit_grid_width*@unit_grid_height
     end
     
-    def frame_for(grid_frame)
-      [left_inset + grid_frame[0]*@unit_grid_width, @left_inset + grid_frame[1]*@unit_grid_height, grid_frame[2]*@unit_grid_width, grid_frame[3]*@unit_grid_height]
+    def frame_for(grid_rect)
+      [left_inset + grid_rect[0]*@unit_grid_width, @left_inset + grid_rect[1]*@unit_grid_height, grid_rect[2]*@unit_grid_width, grid_rect[3]*@unit_grid_height]
     end
     
     # size of single grid
-    def single_grid_frame_size
+    def single_grid_size
       [@unit_grid_width, @unit_grid_height]      
     end
     
@@ -111,7 +111,7 @@ module  RLayout
     end
     
     def flipp_cell_horizontally(cell)
-      frame    = cell.grid_record.grid_frame
+      frame    = cell.grid_record.grid_rect
       right_space = @grid_column_count - (frame[0] + frame[2])
       frame[0] = right_space
     end
@@ -119,7 +119,7 @@ module  RLayout
     
     def flipp_cell_vertically(cell)
       puts __method__
-      frame    = cell.grid_record.grid_frame
+      frame    = cell.grid_record.grid_rect
       bottom_space = @grid_row_count - (frame[1] + frame[3])
       frame[1] = bottom_space
     end
@@ -227,7 +227,7 @@ EOF
     def map
       list = []
       @graphics.each do |cell|
-        list << cell.grid_record.grid_frame
+        list << cell.grid_record.grid_rect
       end
       h = {}
       h[grid_name.to_sym]= list
@@ -286,7 +286,7 @@ EOF
     
     
     # def self.include_relavant_key?(options)
-    #   keys=[:grid_column_count, :grid_row_count, :grid_color, :grid_frame, :grid_inset]
+    #   keys=[:grid_column_count, :grid_row_count, :grid_color, :grid_rect, :grid_inset]
     #   keys.each do |key|
     #     return true if options.has_key?(key)
     #   end
@@ -295,7 +295,7 @@ EOF
     
     # def defaults
     #   hash={}
-    #   hash[:grid_frame] = [0,0,1,1]
+    #   hash[:grid_rect] = [0,0,1,1]
     #   hash[:grid_column_count]  = 3
     #   hash[:grid_row_count]     = 3
     #   hash[:grid_color]         = "blue"
@@ -305,7 +305,7 @@ EOF
     #     
     # def to_hash
     #   hash={}
-    #   hash[:grid_frame] = @grid_frame
+    #   hash[:grid_rect] = @grid_rect
     #   hash[:grid_column_count]  = @grid_column_count  if @grid_column_count  != defaults[:grid_column_count]
     #   hash[:grid_row_count]     = @grid_row_count     if @grid_row_count     != defaults[:grid_row_count]
     #   hash[:grid_color]         = GraphicRecord.string_from_color(@grid_color)  if @grid_color!= defaults[:grid_color] && GraphicRecord.string_from_color(@grid_color) != ""
@@ -426,7 +426,7 @@ EOF
       row     = 0
       column  = 0
       @graphics.each_with_index do |graphic, i|
-        graphic.grid_record.grid_frame=[column,row,1,1]
+        graphic.grid_record.grid_rect=[column,row,1,1]
         column +=1
         if column >= @grid_column_count 
           row += 1 
@@ -453,13 +453,13 @@ EOF
       row = 0
       
       @graphics.each_with_index do |graphic, i|
-        unless graphic.grid_frame
-          graphic.grid_frame   = [0,0,1,1]
+        unless graphic.grid_rect
+          graphic.grid_rect   = [0,0,1,1]
         end
-        graphic.x    = x + graphic.grid_frame[0]*@unit_grid_width
+        graphic.x    = x + graphic.grid_rect[0]*@unit_grid_width
         graphic.y    = y
-        graphic.width  = graphic.grid_frame[2]*@unit_grid_width
-        graphic.height = graphic.grid_frame[3]*@unit_grid_height
+        graphic.width  = graphic.grid_rect[2]*@unit_grid_width
+        graphic.height = graphic.grid_rect[3]*@unit_grid_height
                 
         if graphic.klass == "Image"
           graphic.image_record.apply_fit_type if graphic.image_record
@@ -507,9 +507,9 @@ EOF
         
     def occupying_grids(graphic)
       occupied_grid = []
-      starting_grid_index = graphic.grid_record.grid_frame[0]  + graphic.grid_record.grid_frame[1] * @grid_row_count
-      @grid_frame[3].times do 
-        @grid_frame[2].times do |i|
+      starting_grid_index = graphic.grid_record.grid_rect[0]  + graphic.grid_record.grid_rect[1] * @grid_row_count
+      @grid_rect[3].times do 
+        @grid_rect[2].times do |i|
           occupied_grid << starting_grid_index + i
         end
         starting_grid_index = starting_grid_index + @grid_row_count
@@ -525,9 +525,9 @@ EOF
       
       occupied = []
       @graphics.each do |graphic|
-        starting_grid_index = graphic.grid_record.grid_frame[0]  + graphic.grid_record.grid_frame[1] * @grid_row_count
-        graphic.grid_record.grid_frame[3].times do 
-          graphic.grid_record.grid_frame[2].times do |i|
+        starting_grid_index = graphic.grid_record.grid_rect[0]  + graphic.grid_record.grid_rect[1] * @grid_row_count
+        graphic.grid_record.grid_rect[3].times do 
+          graphic.grid_record.grid_rect[2].times do |i|
             occupied << starting_grid_index + i
           end
           starting_grid_index = starting_grid_index + @grid_row_count
@@ -543,14 +543,14 @@ EOF
     
     # place the graphic at given grid index of parent grid with width of 1 and height of 1
     def place_graphic_at(grid_index)
-      @grid_frame = grid_rect_of(grid_index)
+      @grid_rect = grid_rect_of(grid_index)
     end
     
     def place_child_at(child, grid_index)
       if child.grid_record.nil?
         child.grid_record   = RLayout::GGridRecord.new(graphic)
       end
-      child.grid_record.grid_frame = grid_rect_of(grid_index)
+      child.grid_record.grid_rect = grid_rect_of(grid_index)
     end
     
     # This assums that all childern are unit side,

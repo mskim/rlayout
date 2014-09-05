@@ -70,8 +70,6 @@ describe 'ancestry test' do
       
   end
   it 'should create tree' do
-    puts "nested.class:#{@nested.parent_graphic.class}"
-    puts "nested.ancestry:#{@nested.ancestry}"
     @page.graphics.length.must_equal 1
     puts @nested.to_mongo
   end

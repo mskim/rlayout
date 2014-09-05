@@ -6,9 +6,22 @@ describe "document" do
       page do
         rect fill_color: "green"
         rect fill_color: "red", x:200, y:200
+        rect fill_color: "black" , x:200, y:300
+        rect fill_color: "blue", x:200, y:500
+      end
+      page do
+        rect fill_color: "green"
+        rect fill_color: "red", x:400, y:200
+        rect fill_color: "black" , x:400, y:300
+        rect fill_color: "blue", x:400, y:500
+      end
+      page do
+        rect fill_color: "green"
+        rect fill_color: "red", x:200, y:200
         rect fill_color: "black" , x:300, y:300
         rect fill_color: "blue", x:500, y:500
       end
+      
     end
   end
   
@@ -24,11 +37,11 @@ describe "document" do
     @doc.height.must_equal 800
     @doc.margin.must_equal 50
     @doc.portrait.must_equal true
-    @doc.pages.length.must_equal 1
+    @doc.pages.length.must_equal 3
   end
   
   it 'should have pages' do
-    @doc.pages.length.must_equal 1
+    @doc.pages.length.must_equal 3
   end
   
   it 'should save svg' do

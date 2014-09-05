@@ -30,7 +30,7 @@ describe 'testing container creation' do
   it 'should save' do
     @con.save_svg(@path)
     File.exists?(@path).must_equal true
-    system("open #{@path}") if File.exists?(@path)
+    # system("open #{@path}") if File.exists?(@path)
     
   end
 end

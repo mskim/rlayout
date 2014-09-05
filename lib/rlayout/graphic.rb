@@ -18,17 +18,19 @@ module RLayout
     
     attr_accessor :left_margi , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
-    attr_accessor :auto_layout_member, :unit_length, :layout_expand, :grid_frame
+    attr_accessor :layout_member, :layout_length, :layout_expand, :grid_rect
     attr_accessor :text_string, :text_color, :text_size, :text_font, :text_markup
     attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
     
     # TODO
-    # attr_accessor :text_record, :image_record, :grid_record, :grid_frame, :auto_save
+    # attr_accessor :text_record, :image_record, :grid_record, :grid_rect, :auto_save
     
     
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
-      @parent_graphic.graphics << self if  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self) 
+      if  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
+        @parent_graphic.graphics << self  
+      end
       @klass          = options.fetch(:klass, "Rectangle") 
       @x              = options.fetch(:x, defaults[:x])
       @y              = options.fetch(:y, defaults[:y])
@@ -42,10 +44,10 @@ module RLayout
       @top_inset      = options.fetch(:top_inset, defaults[:top_inset])
       @right_inset    = options.fetch(:right_inset, defaults[:right_inset])
       @bottom_inset   = options.fetch(:bottom_inset, defaults[:bottom_inset])
-      @auto_layout_member = options.fetch(:auto_layout_member, defaults[:auto_layout_member])
+      @layout_member  = options.fetch(:layout_member, defaults[:layout_member])
       @layout_expand  = options.fetch(:layout_expand, defaults[:layout_expand])
-      @unit_length    = options.fetch(:unit_length, defaults[:unit_length])
-      @grid_frame     = options.fetch(:grid_frame, defaults[:grid_frame])             
+      @layout_length  = options.fetch(:layout_length, defaults[:layout_length])
+      @grid_rect      = options.fetch(:grid_rect, defaults[:grid_rect])             
       @tag            = options[:tag]      
       @fill_type      = options[:fill_type]
       @fill_color     = options[:fill_color]
@@ -89,14 +91,14 @@ module RLayout
         top_margin:   0,
         right_margin: 0,
         bottom_margin: 0,
-        auto_layout_member: true,
+        layout_member: true,
         left_inset:   0,
         top_inset:    0,
         right_inset:  0,
         bottom_inset: 0,
         layout_expand: [:width, :height], # auto_layout expand 
-        unit_length:  1,  
-        grid_frame:   [0,0,1,1],            
+        layout_length:  1,  
+        grid_rect:   [0,0,1,1],            
       }
     end
     

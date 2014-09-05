@@ -23,7 +23,7 @@
 #  stack_graphic 
 #  implies the graphic is stacked at the end of the stack. 
 #  Location and the size is auto-layed out 
-#  Size can be set by "unit_length", which is relative size to others in the stack.
+#  Size can be set by "layout_length", which is relative size to others in the stack.
 #  They can be set in two different layers or they can reside in the same layer.
 #  There is a special case, where some graphic sits in stack layout
 
@@ -34,7 +34,7 @@ module RLayout
     attr_accessor :layout_mode     # layout_mode: "auto_layout" "grid"
     attr_accessor :layout_direction, :layout_strarting, :layout_space, :layout_align
     attr_accessor :grid_column_count, :grid_row_count, :grid_cells, :grid_v_lines, :grid_h_lines, :grid_color, :show_grid
-    attr_accessor :grid_frame, :grid_inset, :grid_top_inset, :grid_bottom_inset, :grid_letf_inset, :grid_right_inset
+    attr_accessor :grid_rect, :grid_inset, :grid_top_inset, :grid_bottom_inset, :grid_letf_inset, :grid_right_inset
     attr_accessor :unit_grid_width, :unit_grid_height, :frame
     attr_accessor :gutter_line_type, :gutter_line_width, :gutter_line_color, :gutter_line_dash
     
@@ -92,7 +92,7 @@ module RLayout
       h[:grid_v_lines]      = Array.new
       h[:grid_h_lines]      = Array.new
       h[:grid_color]        = "blue"
-      h[:grid_frame]        = [0,0,1,1]
+      h[:grid_rect]        = [0,0,1,1]
       h[:grid_inset]        = [0,0,0,0]
       h[:unit_grid_width]   = 0
       h[:unit_grid_height]  = 0

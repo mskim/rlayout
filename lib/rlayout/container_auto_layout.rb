@@ -17,20 +17,20 @@ module RLayout
       ending_position   = vertical ? (view_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (view_size[0] - @left_margin - @right_margin - @left_inset - @right_inset)
       expandable_size   = ending_position
       expandable_children = 0
-      unit_length_sum   = 0
+      layout_length_sum   = 0
 
        # This is the first pass
        @graphics.each_with_index do |child, index|
-         next if !child.auto_layout_member || child.layout_expand.nil?         
+         next if !child.layout_member || child.layout_expand.nil?         
          # binding.pry
          
          if (vertical ? child.expand_height? : child.expand_width?)
-           # size child according to unit_length ratio
-           # get total unit_length, and total heigth of expandable graphics
-           # divide them by unit_length ratio
+           # size child according to layout_length ratio
+           # get total layout_length, and total heigth of expandable graphics
+           # divide them by layout_length ratio
            # count only expandable child
            expandable_children += 1
-           unit_length_sum +=child.unit_length
+           layout_length_sum +=child.layout_length
          else
            # non-expanding graphic
            # do not count it in expandable_children
@@ -49,12 +49,12 @@ module RLayout
        unit_size = expandable_size
        if spacing_number>0
          expandable_size -= spacing_number*@layout_space 
-         unit_size       = expandable_size/unit_length_sum
+         unit_size       = expandable_size/layout_length_sum
        end
        # expandable_size /= expandable_children
 
        @graphics.each do |child|
-         next if !child.auto_layout_member || child.layout_expand.nil?         
+         next if !child.layout_member || child.layout_expand.nil?         
          
          subview_size = [child.width, child.height]
          view_frame = [0, 0, subview_size[0],subview_size[1]]
@@ -79,12 +79,12 @@ module RLayout
          if (vertical ? child.expand_height? : child.expand_width?)
            if vertical
              # view_frame[3] = expandable_size
-             # view_frame[3] = unit_size*child.unit_length
-             view_frame[3] = unit_size*child.unit_length
+             # view_frame[3] = unit_size*child.layout_length
+             view_frame[3] = unit_size*child.layout_length
            else
-             view_frame[2] = unit_size*child.unit_length
+             view_frame[2] = unit_size*child.layout_length
            end
-           subview_dimension = unit_size*child.unit_length
+           subview_dimension = unit_size*child.layout_length
          end
 
          if (vertical ? child.expand_width? : child.expand_height?)
@@ -133,7 +133,7 @@ module RLayout
 
          if child.layout_expand.nil?
          else
-           child.relayout! if child.kind_of?(Container) # recursive auto_layout_member for child graphics
+           child.relayout! if child.kind_of?(Container) # recursive layout_member for child graphics
            child.text_record.update_text_fit if child.kind_of?(Text) # update_text_fit 
          end
        end 

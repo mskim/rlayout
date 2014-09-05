@@ -1,9 +1,17 @@
 {
   "klass": "Page",
   "graphics": [
-    "#<RLayout::Container:0x007fcc697ed190>",
-    "#<RLayout::Container:0x007fcc6e002688>",
-    "#<RLayout::Container:0x007fcc697f0110>",
-    "#<RLayout::Container:0x007fcc697f3018>"
+    {
+      "klass": "Rectangle"
+    },
+    {
+      "klass": "Rectangle"
+    },
+    {
+      "klass": "Rectangle"
+    },
+    {
+      "klass": "Rectangle"
+    }
   ]
 }

@@ -49,7 +49,6 @@ module RLayout
           
         else
           column_index += 1
-          puts "+++++ column_index:#{column_index}"
           current_column = @graphics[column_index]
           if column_index == @column_count
             # we have done for this ObjectBox
@@ -97,15 +96,12 @@ module RLayout
     end
     
     def push_item(item)
-      puts __method__
-      puts item
       if (item.height + @layout_space + @current_position) <= @height
         # insert item
         item.parent_graphic = self
         item.y = @current_position
         item.x = @left_margin + @left_inset
         @graphics << item
-        puts "@graphics.length:#{@graphics.length}"
         @current_position += item.height + @layout_space
         true
       else
