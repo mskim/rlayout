@@ -68,19 +68,9 @@ module RLayout
       @mage_fit_type  = options[:mage_fit_type]
       @image_caption  = options[:image_caption]      
       @auto_save      = options[:auto_save]
-
       self
     end
-    
-    #TODO
-    def graphics_space_sum
-      0
-    end
-    
-    def self.with(parent_graphic, style_name, &block)
-      Graphic.new(parent_graphic, Style.shared_style(style_name), &block)
-    end
-    
+
     def defaults
       {
         x:            0,
@@ -101,7 +91,54 @@ module RLayout
         grid_rect:   [0,0,1,1],            
       }
     end
+       
+    COLOR_NAMES = %w[black blue brown clear cyan darkGray gray green lightGray magenta orange red white yellow white]
+    KLASS_NAMES = %w[Rectangle Circle RoundRect]
+
+    def self.random_graphic_atts
+      atts = {}
+      atts[:fill_color] = COLOR_NAMES.sample
+      atts[:x]          = Random.new.rand(0..600)
+      atts[:y]          = Random.new.rand(0..800)
+      atts[:width]      = Random.new.rand(10..200)
+      atts[:height]     = Random.new.rand(10..200)
+      atts[:line_width] = Random.new.rand(0..10)
+      atts[:line_color] = COLOR_NAMES.sample
+      atts
+    end
     
+    def self.random_graphics(number=1)
+      #TODO
+      samples = []
+      number.times do
+        samples << Graphic.klass_of(nil, KLASS_NAMES.sample, Graphic.random_graphic_atts)
+      end
+      samples
+    end
+    
+    def self.klass_of(parent_graphic, klass, options={})
+      case klass
+      when "Rectanle"
+        Rectangle.new(parent_graphic, options)
+      when "Circle"
+        Circle.new(parent_graphic, options)
+      when "RoundRect"
+        RoundRect.new(parent_graphic, options)
+      else
+        Rectangle.new(parent_graphic, options)
+      end
+    end
+    
+    #TODO
+    def graphics_space_sum
+      0
+    end
+    
+    def self.with(parent_graphic, style_name, &block)
+      Graphic.new(parent_graphic, Style.shared_style(style_name), &block)
+    end
+    
+        
     def puts_frame
       puts "@x:#{@x}"
       puts "@y:#{@y}"
@@ -158,7 +195,6 @@ module RLayout
     def to_mongo
       h = to_hash
       h[:_id] = ancestry
-      puts h
       j = h.to_json
       j += "\n"
     end
@@ -206,16 +242,7 @@ module RLayout
     def image_svg
       
     end
-    
-    COLORS = %w[black blue gray green orange red purple yellow white]
-    WIDTH = [1,3,5,8,10]
-    def random_attributes
-      h={}
-      h[:fill_color] = COLORS.random
-      h[:line_color] = COLORS.random
-      h[:line_width] = WIDTH.random
-      h
-    end
+  
   end
   
   class Rectangle < Graphic

@@ -87,7 +87,7 @@ describe 'generate svg' do
   it 'should save JSON' do
     @page.save_json(@page_json_test)
     File.exists?(@page_json_test).must_equal true
-    system("open #{@page_svg_test}") if File.exists?(@page_svg_test)
+    # system("open #{@page_svg_test}") if File.exists?(@page_svg_test)
   end
 end
 

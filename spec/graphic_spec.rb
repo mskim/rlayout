@@ -1,5 +1,21 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+describe 'Graphic.random(number) ' do
+  before do
+    @g = Graphic.random_graphics(100)
+    @path = File.dirname(__FILE__) + "/output/graphic_random_test.svg"
+  end
+  
+  it 'should create Graphic' do
+    @g.must_be_kind_of Array
+  end
+  
+  it 'should save random grapics' do    
+    p = Page.new(nil)
+    p.add_graphics(@g)
+    p.save_svg(@path)
+  end
+end
 # describe "graphic" do
 #   before do
 #     @graphic = Graphic.new(nil)
@@ -63,14 +79,15 @@ require File.dirname(__FILE__) + "/spec_helper"
 #   
 # end
 
-describe 'ancestry test' do
-  before do
-    @page = Page.new(nil)
-    @nested = Container.new(@page)
-      
-  end
-  it 'should create tree' do
-    @page.graphics.length.must_equal 1
-    puts @nested.to_mongo
-  end
-end
+# describe 'ancestry test' do
+#   before do
+#     @page = Page.new(nil)
+#     @nested = Container.new(@page)
+#       
+#   end
+#   
+#   it 'should create tree' do
+#     @page.graphics.length.must_equal 1
+#     puts @nested.to_mongo
+#   end
+# end

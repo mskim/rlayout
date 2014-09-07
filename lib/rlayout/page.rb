@@ -59,6 +59,12 @@ module RLayout
       s += "</svg>"      
     end
     
+    def save_hash(path)
+      h = to_hash
+      File.open(path, 'w'){|f| f.write h.to_yaml}
+      
+    end
+    
     def save_json(path)
       require 'json'
       # my_json = { :array => [1, 2, 3, { :sample => "hash"} ], :foo => "bar" }
@@ -69,6 +75,11 @@ module RLayout
     
     def save_svg(path)
       File.open(path, 'w'){|f| f.write to_svg}
+    end
+    
+    ##########  sample ###########
+    def self.sample_page
+      
     end
     
     ########### PageScritp Verbs #############
@@ -82,9 +93,8 @@ module RLayout
     
     def container(options={}, &block)
       c = Container.new(self, options, &block)
-      puts "+++++++c.class:#{c.class}"
       @graphics << c
-      puts "@graphics.lenth:#{@graphics.length}"
+      # puts "@graphics.lenth:#{@graphics.length}"
     end
     
     def heading(options={}, &block)

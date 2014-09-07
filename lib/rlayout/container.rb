@@ -163,8 +163,16 @@ module RLayout
     end
     
     
-    def add_graphic(graphic, layout_mode="stack")
-      
+    def add_graphics(graphic)
+      if graphic.is_a?(Array)
+        graphic.each do |item|
+          item.parent_graphic = self
+          @graphics << item unless @graphics.include?(graphic)
+        end
+      else
+        graphic.parent_graphic = self
+        @graphics << graphic unless @graphics.include?(graphic)
+      end
     end
     
     def place_graphic(graphic)

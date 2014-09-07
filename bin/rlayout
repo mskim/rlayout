@@ -26,3 +26,14 @@
 #    layout.yml
 #    rakefile
 
+require "thor"
+ 
+class RLayout < Thor
+  desc "hello NAME", "say hello to NAME"
+  def hello(name)
+    puts "Welcome to RLayout!, #{name}"
+  end
+end
+ 
+RLayout.start(ARGV)
+
