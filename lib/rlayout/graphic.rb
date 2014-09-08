@@ -14,13 +14,11 @@ module RLayout
     attr_accessor :graphics
     attr_accessor :fill_type, :fill_color, :fill_other_color
     attr_accessor :line_type, :line_color, :line_width, :line_dash
-    attr_accessor :shape, :shape_bezier    
-    attr_accessor :text_string, :text_color, :text_size, :text_font, :text_markup
-    
+    attr_accessor :shape, :shape_bezier        
     attr_accessor :left_margi , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
     attr_accessor :layout_member, :layout_length, :layout_expand, :grid_rect
-    attr_accessor :text_string, :text_color, :text_size, :text_font, :text_markup
+    attr_accessor :text_string, :text_color, :text_size, :text_font, :text_fit_type
     attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
     
     # TODO
@@ -64,12 +62,13 @@ module RLayout
       @text_color     = options[:text_color]
       @text_size      = options[:text_size]
       @text_font      = options[:text_font]
-      @text_markup    = options[:text_markup]
+      @text_fit_type  = options[:text_fit_type]
       @image_path     = options[:image_path]
       @image_frame    = options[:image_frame]
       @mage_fit_type  = options[:mage_fit_type]
       @image_caption  = options[:image_caption]      
       @auto_save      = options[:auto_save]
+      
       self
     end
 
@@ -96,8 +95,9 @@ module RLayout
     end
        
     COLOR_NAMES = %w[black blue brown clear cyan darkGray gray green lightGray magenta orange red white yellow white]
-    KLASS_NAMES = %w[Rectangle Circle RoundRect]
-
+    KLASS_NAMES = %w[Rectangle Circle RoundRect Text]
+    TEXT_STRING_SAMPLES = ["This is a text", "Good Morning", "Nice", "Cool", "RLayout", "PageScript"]
+    
     def self.random_graphic_atts
       atts = {}
       atts[:fill_color] = COLOR_NAMES.sample
@@ -114,7 +114,12 @@ module RLayout
       #TODO
       samples = []
       number.times do
-        samples << Graphic.klass_of(nil, KLASS_NAMES.sample, Graphic.random_graphic_atts)
+        klass_name = KLASS_NAMES.sample
+        data = Graphic.random_graphic_atts
+        if klass_name == "Text"
+          data[:text_string] = TEXT_STRING_SAMPLES.sample
+        end
+        samples << Graphic.klass_of(nil,klass_name, data)
       end
       samples
     end
@@ -127,6 +132,8 @@ module RLayout
         Circle.new(parent_graphic, options)
       when "RoundRect"
         RoundRect.new(parent_graphic, options)
+      when "Text"
+        Text.new(parent_graphic, options)
       else
         Rectangle.new(parent_graphic, options)
       end
@@ -270,10 +277,12 @@ module RLayout
     def initialize(parent_graphic, options={})
       super
       @klass = "Text"
-      @text_string  = options.fetch(:string, "")
-      @text_color   = options.fetch(:text_color, "black")
-      @text_font   = options.fetch(:font, "Times")
-      @text_size    = options.fetch(:text_size, 16)
+      @text_string    = options.fetch(:text_string, "")
+      @text_color     = options.fetch(:text_color, "black")
+      @text_font      = options.fetch(:text_font, "Times")
+      @text_size      = options.fetch(:text_size, 16)
+      @text_fit_type  = options.fetch(:text_fit_type, 0)
+      @text_alignment = options.fetch(:text_alignment, "center")
       self
     end
     

@@ -179,6 +179,9 @@ module RLayout
       Circle.new(self, options)
     end
     
+    def random_graphics(number)
+      add_graphics(Graphic.random_graphics(number))
+    end
     
     def add_graphics(graphic)
       if graphic.is_a?(Array)

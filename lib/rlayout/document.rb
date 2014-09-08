@@ -1,6 +1,6 @@
 module RLayout
   attr_accessor :title, :path, :paper_size, :portrait, :width, :height, :margin
-  attr_accessor :pages
+  attr_accessor :pages, :document_view
   
   class Document
     
@@ -66,6 +66,14 @@ module RLayout
           y += page.height + horizontal_gutter
         end
       end
+    end
+        
+    def to_data
+      h = {}
+      h[:title] = @title
+      h[:width] = @width
+      h[:pages] = @pages.map{|page| page.to_data}
+      h
     end
     
     def to_svg

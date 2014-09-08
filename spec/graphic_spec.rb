@@ -10,12 +10,11 @@ describe 'save pdf' do
     @g.save_pdf(path)
     File.exists?(@path).must_equal true
   end
-  
 end
 
 describe 'save pdf random' do
   before do
-    @g = Graphic.random_graphics(100)
+    @g = Graphic.random_graphics(200)
     @path = File.dirname(__FILE__) + "/output/graphic_random_test.pdf"
   end
   
