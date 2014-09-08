@@ -9,8 +9,9 @@ require 'json'
 module RLayout
   
   class Graphic
-    attr_accessor :parent_graphic, :klass, :tag
+    attr_accessor :parent_graphic, :klass, :tag, :ns_view
     attr_accessor :x, :y, :width, :height
+    attr_accessor :graphics
     attr_accessor :fill_type, :fill_color, :fill_other_color
     attr_accessor :line_type, :line_color, :line_width, :line_dash
     attr_accessor :shape, :shape_bezier    
@@ -47,7 +48,9 @@ module RLayout
       @layout_member  = options.fetch(:layout_member, defaults[:layout_member])
       @layout_expand  = options.fetch(:layout_expand, defaults[:layout_expand])
       @layout_length  = options.fetch(:layout_length, defaults[:layout_length])
-      @grid_rect      = options.fetch(:grid_rect, defaults[:grid_rect])             
+      @grid_rect      = options.fetch(:grid_rect, defaults[:grid_rect]) 
+      @shape          = options.fetch(:shape, defaults[:shape])
+                  
       @tag            = options[:tag]      
       @fill_type      = options[:fill_type]
       @fill_color     = options[:fill_color]
@@ -56,7 +59,6 @@ module RLayout
       @line_color     = options[:line_color]
       @line_width     = options[:line_width]
       @line_dash      = options[:line_dash]
-      @shape          = options[:shape]
       @shape_bezier   = options[:shape_bezier]
       @text_string    = options[:text_string]
       @text_color     = options[:text_color]
@@ -88,7 +90,8 @@ module RLayout
         bottom_inset: 0,
         layout_expand: [:width, :height], # auto_layout expand 
         layout_length:  1,  
-        grid_rect:   [0,0,1,1],            
+        grid_rect:   [0,0,1,1], 
+        shape:       0,          
       }
     end
        
@@ -180,6 +183,21 @@ module RLayout
       h
     end
     
+    # difference between to_hash and to_data:
+    # to_hash does not save values, if they are equal to default
+    # to_data save values, even if they are equal to default
+    # to_data is uesed to send the data for drawing in the view
+    def to_data
+      h = {}
+      instance_variables.each{|a|
+        s = a.to_s
+        next if s=="@parent_graphic"
+        n = s[1..s.size] # get rid of @
+        v = instance_variable_get a
+        h[n.to_sym] = v if !v.nil?
+      }
+      h
+    end
     #/0/0/1/2/0
     def ancestry
       s = ""
@@ -227,29 +245,23 @@ module RLayout
         s
     end
     
-    def text_record
-      !@text_string.nil? 
-    end
-    
-    def text_svg
+    def save_pdf(path)
+      if RUBY_ENGINE == 'macruby'
+        @ns_view = GraphicViewMac.from_data(to_data)
+        @ns_view.save_pdf(path)
+      else
+        #TODO
+        puts "Not a Mac! or no DRb not found!!!!"
+      end
       
     end
- 
-    def image_record
-      !@image_path.nil? 
-    end
-
-    def image_svg
-      
-    end
-  
   end
   
   class Rectangle < Graphic
     def initialize(parent_graphic, options={})
       super
       @klass = "Rectangle"
-      
+      @shape = 0
       self
     end
   end
@@ -271,6 +283,7 @@ module RLayout
     def initialize(parent_graphic, options={})
       super
       @klass = "Circle"
+      @shape = 2
       
       self
     end
@@ -293,6 +306,7 @@ module RLayout
     def initialize(parent_graphic, options={})
       super
       @klass = "RoundRect"
+      @shape = 1
       
       self
     end

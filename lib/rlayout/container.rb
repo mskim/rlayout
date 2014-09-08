@@ -30,7 +30,6 @@
 module RLayout
   
   class Container < Graphic
-    attr_accessor :graphics
     attr_accessor :layout_mode     # layout_mode: "auto_layout" "grid"
     attr_accessor :layout_direction, :layout_strarting, :layout_space, :layout_align
     attr_accessor :grid_column_count, :grid_row_count, :grid_cells, :grid_v_lines, :grid_h_lines, :grid_color, :show_grid
@@ -122,6 +121,24 @@ module RLayout
         n = s[1..s.size] # get rid of @
         v = instance_variable_get a
         h[n.to_sym] = v if !v.nil? && v !=defaults[n.to_sym] && v !=layout_defaults[n.to_sym]
+      }
+      if @graphics.length > 0
+        h[:graphics]= @graphics.map do |child|
+          child.to_hash
+        end
+      end
+      h
+    end
+    
+    def to_data
+      h = {}
+      instance_variables.each{|a|
+        s = a.to_s
+        next if s=="@parent_graphic"
+        next if s=="@graphics"
+        n = s[1..s.size] # get rid of @
+        v = instance_variable_get a
+        h[n.to_sym] = v if !v.nil?
       }
       if @graphics.length > 0
         h[:graphics]= @graphics.map do |child|

@@ -73,6 +73,8 @@ module RLayout
       File.open(path, 'w'){|f| f.write JSON.pretty_generate(h)}
     end
     
+
+    
     def save_svg(path)
       File.open(path, 'w'){|f| f.write to_svg}
     end
