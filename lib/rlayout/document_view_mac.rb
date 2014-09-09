@@ -1,6 +1,4 @@
-puts "DocumentViewMac loaded ....."
 framework 'quartz'
-
 
 class DocumentViewMac
   attr_accessor :title, :data, :page_views, :pdf_doc
@@ -15,7 +13,6 @@ class DocumentViewMac
         @page_views << GraphicViewMac.from_data(page_data)
       end
     end
-    # create pdf documnet
     self
   end
   

@@ -95,7 +95,7 @@ module RLayout
     end
        
     COLOR_NAMES = %w[black blue brown clear cyan darkGray gray green lightGray magenta orange red white yellow white]
-    KLASS_NAMES = %w[Rectangle Circle RoundRect Text]
+    KLASS_NAMES = %w[Rectangle Circle RoundRect Text Image]
     TEXT_STRING_SAMPLES = ["This is a text", "Good Morning", "Nice", "Cool", "RLayout", "PageScript"]
     
     def self.random_graphic_atts
@@ -118,6 +118,10 @@ module RLayout
         data = Graphic.random_graphic_atts
         if klass_name == "Text"
           data[:text_string] = TEXT_STRING_SAMPLES.sample
+        elsif klass_name == "Image"
+          # puts path = File.dirname(__FILE__) + "/../../spec/image/1.jpg"
+          # puts File.exists?(path)
+          data[:image_path] = File.dirname(__FILE__) + "/../../spec/image/1.jpg"
         end
         samples << Graphic.klass_of(nil,klass_name, data)
       end
@@ -285,7 +289,15 @@ module RLayout
       @text_alignment = options.fetch(:text_alignment, "center")
       self
     end
-    
+  end
+
+  class Image < Graphic
+    def initialize(parent_graphic, options={})
+      super
+      @klass        = "Image"
+      @image_path   = options.fetch(:image_path, "")
+      self
+    end
   end
   
   class Circle < Graphic

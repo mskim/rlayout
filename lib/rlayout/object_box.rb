@@ -31,38 +31,44 @@ module RLayout
       relayout!
     end
     
-    # layout_items is used for batch layout
     # steps
     # 1. Ask each flowing objects to adjust their width to column width.
     # 2. Each flowing objects changes their width and their height.
-    # 3. Take group of flowing items by their height sum
-    # 4. Place them in the column
-    # 5. And go on to the next column
+    # 3. Place them in the column, if it doen't fit ask if we can break the item into parts.
+    # 4. And go on to the next column
     
     def layout_items(flowing_items, starting_index=0)
       column_index = 0
       current_column = @graphics[column_index]
-      flowing_items.each {|item| item.change_width(current_column.layout_area[0])}
+      
+      # Adjusting width of flow item all at once is an option,
+      # if we are sure that all column width are same
+      # but, this could be ineffient if we have the varing width columns
+      # flowing_items.each {|item| item.change_width(current_column.layout_area[0])}
       
       while front_most_item = flowing_items.shift do
+
+        # change the width and height of item to place it in the current column, right before we place them
+        # This way we can suppoert varing column widthed text_box
+        front_most_item.change_width(current_column.layout_area[0])
         if current_column.push_item(front_most_item)
-          
+          # item fit into column successfully!
         else
           column_index += 1
           current_column = @graphics[column_index]
           if column_index == @column_count
-            # we have done for this ObjectBox
+            # we are finished for this ObjectBox
             if @next_link
               @next_link.layout_flowing_objects(flowing_items)
             else
-              puts "+++++ overflow in this box"
+              puts "+++++ overflow, we have no more link"
               return false
             end
           else
             # TODO what if this fails
-            # This is the case where the item does not if even if this is the new empty column
+            # This is the case where the item does not fit even if this is the new empty column
+            # For this case we have to force fit it into this column, since it is not going to fit anywhere.
             current_column.push_item(front_most_item)
-            # should go to next or force?
           end
         end
       end

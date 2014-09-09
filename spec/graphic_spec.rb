@@ -1,16 +1,6 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
-describe 'save pdf' do
-  before do
-    @g = Graphic.new(nil, :fill_color=>"red", :line_width=>5, :line_color=>"black")
-    @path = File.dirname(__FILE__) + "/output/graphic_pdf_test.pdf"
-  end
-  
-  it 'should save pdf' do
-    @g.save_pdf(path)
-    File.exists?(@path).must_equal true
-  end
-end
+
 
 describe 'save pdf random' do
   before do
@@ -32,6 +22,18 @@ end
 
 
 __END__
+
+describe 'save pdf' do
+  before do
+    @g = Graphic.new(nil, :fill_color=>"red", :line_width=>5, :line_color=>"black")
+    @path = File.dirname(__FILE__) + "/output/graphic_pdf_test.pdf"
+  end
+  
+  it 'should save pdf' do
+    @g.save_pdf(path)
+    File.exists?(@path).must_equal true
+  end
+end
 
 describe 'Graphic.random(number) ' do
   before do
