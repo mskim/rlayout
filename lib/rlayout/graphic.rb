@@ -15,9 +15,9 @@ module RLayout
     attr_accessor :fill_type, :fill_color, :fill_other_color
     attr_accessor :line_type, :line_color, :line_width, :line_dash
     attr_accessor :shape, :shape_bezier        
-    attr_accessor :left_margi , :top_margin, :right_margin, :bottom_margin
+    attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
-    attr_accessor :layout_member, :layout_length, :layout_expand, :grid_rect
+    attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand, :grid_rect
     attr_accessor :text_string, :text_color, :text_size, :text_font, :text_fit_type
     attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
     
@@ -43,6 +43,7 @@ module RLayout
       @top_inset      = options.fetch(:top_inset, defaults[:top_inset])
       @right_inset    = options.fetch(:right_inset, defaults[:right_inset])
       @bottom_inset   = options.fetch(:bottom_inset, defaults[:bottom_inset])
+      @layout_direction= options.fetch(:layout_direction, defaults[:layout_direction])
       @layout_member  = options.fetch(:layout_member, defaults[:layout_member])
       @layout_expand  = options.fetch(:layout_expand, defaults[:layout_expand])
       @layout_length  = options.fetch(:layout_length, defaults[:layout_length])
@@ -87,6 +88,7 @@ module RLayout
         top_inset:    0,
         right_inset:  0,
         bottom_inset: 0,
+        layout_direction: "vertical",
         layout_expand: [:width, :height], # auto_layout expand 
         layout_length:  1,  
         grid_rect:   [0,0,1,1], 

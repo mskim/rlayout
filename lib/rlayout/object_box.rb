@@ -51,7 +51,7 @@ module RLayout
         # change the width and height of item to place it in the current column, right before we place them
         # This way we can suppoert varing column widthed text_box
         front_most_item.change_width(current_column.layout_area[0])
-        if current_column.push_item(front_most_item)
+        if current_column.insert_item(front_most_item)
           # item fit into column successfully!
         else
           column_index += 1
@@ -68,11 +68,14 @@ module RLayout
             # TODO what if this fails
             # This is the case where the item does not fit even if this is the new empty column
             # For this case we have to force fit it into this column, since it is not going to fit anywhere.
-            current_column.push_item(front_most_item)
+            current_column.insert_item(front_most_item)
           end
+          
         end
       end
-        
+      # binding.pry
+      
+      
     end
     
     
@@ -101,7 +104,7 @@ module RLayout
       self
     end
     
-    def push_item(item)
+    def insert_item(item)
       if (item.height + @layout_space + @current_position) <= @height
         # insert item
         item.parent_graphic = self
@@ -117,55 +120,7 @@ module RLayout
     end
   end
   
-  # Paragraph, CatalogItem, Address, or quiz item are typical FlowingObject.
-  # FlowingObject can be allowed to be broken into parts, for better fit into column.
-  # Sometime FlowingObject can not be broken, so "breakable" variable tells, whether they can be broken.
-  # ex. Text Paragraph can be broken into parts, but product box may not.
-  class Paragraph < Container
-    attr_accessor :breakable, :part # head, body, tail
-    attr_accessor :markup, :text_string
-    
-    def change_width(new_width)
-      @width = new_width
-      # TODO
-      # change height we need to
-    end
-    def to_svg
-      if @parent_graphic
-        return svg
-      else
-        svg_string = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n"
-        svg_string += svg
-        svg_string += "</svg>\n"
-        return svg_string
-      end
-    end
-    
-    def svg
-        s = "<rect x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\""
-        if @fill_color!=nil && @fill_color != ""
-          s+= " fill=\"#{@fill_color}\""
-        end
-        if @line_width!=nil && @line_width > 0
-          s+= " stroke=\"#{@line_color}\""
-          s+= " stroke-width=\"#{@line_width}\""
-        end
-        s+= "></rect>\n"
-        
-        if @text_string !=nil && @text_string != ""
-          s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"
-        end
-        s
-    end
-    
-    def self.generate(number)
-      list = []
-      number.times do
-        list << Paragraph.new(nil, fill_color: "gray")
-      end
-      list
-    end
-  end
+
   
   class CatalogItem < Container
     attr_accessor :breakable, :part # head, body, tail

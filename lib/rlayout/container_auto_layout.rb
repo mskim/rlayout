@@ -21,8 +21,9 @@ module RLayout
 
        # This is the first pass
        @graphics.each_with_index do |child, index|
-         next if !child.layout_member || child.layout_expand.nil?         
-         # binding.pry
+         
+         
+         next if !child.layout_member || child.layout_expand.nil?                  
          
          if (vertical ? child.expand_height? : child.expand_width?)
            # size child according to layout_length ratio
@@ -35,7 +36,7 @@ module RLayout
            # non-expanding graphic
            # do not count it in expandable_children
            # only subtract it's area from total 
-           expandable_size -= vertical ? child.frame.size.height : child.frame.size.width            
+           expandable_size -= vertical ? child.height : child.width            
          end
          # account for child's margin
           expandable_size -= 
@@ -49,7 +50,12 @@ module RLayout
        unit_size = expandable_size
        if spacing_number>0
          expandable_size -= spacing_number*@layout_space 
-         unit_size       = expandable_size/layout_length_sum
+         #TODO
+         if layout_length_sum ==0
+           unit_size    = expandable_size
+         else
+           unit_size    = expandable_size/layout_length_sum
+         end
        end
        # expandable_size /= expandable_children
 
@@ -134,7 +140,8 @@ module RLayout
          if child.layout_expand.nil?
          else
            child.relayout! if child.kind_of?(Container) # recursive layout_member for child graphics
-           child.text_record.update_text_fit if child.kind_of?(Text) # update_text_fit 
+           #TODO
+           # child.update_text_fit if child.kind_of?(Text) # update_text_fit 
          end
        end 
 
