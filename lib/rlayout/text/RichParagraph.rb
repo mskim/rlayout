@@ -1,39 +1,51 @@
 
 module RLayout
   
-  class Paragraph < Container
+  class RichParagraph < Container
     attr_accessor :breakable, :part # head, body, tail
-    attr_accessor :markup, :text_string, :tokens
+    attr_accessor :markup, :para_string, :tokens, :line_height
     def initialize(parent_graphic, options={})
       super
+      @klass = "Paragraph"
       @layout_expand = []
-      @text_string  = options.fetch(:text_string,"")
+      @para_string  = options.fetch(:para_string,"")
       @markup       = options.fetch(:markup,'p')
       @text_font    = options.fetch(:text_font,'Times')
       @text_size    = options.fetch(:text_size,16)
       @text_color   = options.fetch(:text_color, 'black')
+      @layout_space = options.fetch(:layout_space, 10)
+      @left_inset  = 4
+      @right_inset = 4
+      @top_margin   = 3
+      @line_color = 'red'
+      @line_width = 1
+      
       create_tokens      
       self
     end
     
     def create_tokens
-      @tokens = @text_string.split(" ").collect do |token_string|
+      @tokens = @para_string.split(" ").collect do |token_string|
         width    = token_string.length*@text_size/2
-        height   = @text_size
+        @line_height   = @text_size
         if RUBY_ENGINE == "macruby"
           atts = {}
           atts[NSFontAttributeName] = NSFont.fontWithName(@text_font, size:@text_size)
           att_string=NSMutableAttributedString.alloc.initWithString(token_string, attributes:atts)
           width    = att_string.size.width
-          height   = att_string.size.height
+          @line_height   = att_string.size.height
         end
-        Text.new(nil, :text_string=>token_string, :width=>width, :height=>height, :layout_expand=>[])
+        Text.new(nil, :text_string=>token_string, :width=>width, :height=>@line_height+3, :layout_expand=>[]) #, :line_width=>1, :line_color=>'green'
       end
     end
     
     # create a line 
     def add_line
-      TextLine.new(self, :width=>@width, :height=>@text_size, :layout_space=>@text_size/4, :layout_expand=>[])
+      t =TextLine.new(self, :x=>@left_inset, :width=>(@width - @left_inset - @right_inset) , :height=>@line_height, :layout_space=>@text_size/4, :layout_expand=>[:width], :line_width=>1, :line_color=>'yellow' )
+      puts "+++++++++++ t.x:#{t.x}"
+      puts t.width
+      
+      t
     end
     
     # This is very similar to layout_items for ObjectBox
@@ -51,8 +63,6 @@ module RLayout
         if current_line.insert_token(front_most_token)
           # item fit into column successfully!
         else
-          puts "current_line.graphics.length:#{current_line.graphics.length}"
-          puts "current_line.graphics.last.text_string:#{current_line.graphics.last.text_string}"
           add_line 
           current_line = @graphics.last
           current_line.insert_token(front_most_token)
@@ -60,9 +70,17 @@ module RLayout
       end
       # now change the height of paragraph
       @sum = 0
-      @graphics.each {|g| @sum += g.height + 5}
+      puts "@graphics.length:#{@graphics.length}"
+      puts "@layout_space:#{@layout_space}"
+      @graphics.each do |g| 
+        puts "g.x:#{g.x}"
+        puts "g.y:#{g.y}"
+        puts "g.height:#{g.height}"
+        @sum += g.height + @layout_space
+      end
       @height = @sum
       relayout!
+      # binding.pry
     end
 
     def change_width(new_width)
@@ -102,9 +120,9 @@ module RLayout
     
     def self.generate(number)
       list = []
-      text = "This is some string and I like it. "*2
+      text = "One two  three four five six seven eight nine ten eleven twelve thirteen."
       number.times do
-        list << Paragraph.new(nil, :text_string=>text)
+        list << Paragraph.new(nil, :para_string=>text)
       end
       list
     end
@@ -115,11 +133,21 @@ module RLayout
     
     def initialize(parent_graphic, options={})
       super
+      puts "+++++ @width:#{width}"
+      # @line_color = "gray"
+      # @line_width = 1
       @layout_direction = "horizontal"
       @layout_expand = []
       self
     end
-        
+    
+    # def graphics_width_sum
+    #   return 0 if @graphics.length == 0
+    #   @sum = 0
+    #   @graphics.each {|g| @sum+= g.width + @layout_space}
+    #   return @sum 
+    # end
+    
     
     def insert_token(token)      
       if (graphics_width_sum + token.width) < @width
@@ -140,6 +168,7 @@ module RLayout
       end
     end
   end
+  
   # 
   # class TextToken < Graphic
   #       

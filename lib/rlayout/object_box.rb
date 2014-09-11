@@ -54,6 +54,7 @@ module RLayout
         if current_column.insert_item(front_most_item)
           # item fit into column successfully!
         else
+          current_column.relayout!
           column_index += 1
           current_column = @graphics[column_index]
           if column_index == @column_count
@@ -96,6 +97,7 @@ module RLayout
     attr_accessor :current_position
     def initialize(parent_graphic, options={}, &block)
       super
+      @layout_space = 10
       @current_position = @top_margin + @top_inset
       
       if block

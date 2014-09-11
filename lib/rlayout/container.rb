@@ -115,7 +115,7 @@ module RLayout
     def graphics_width_sum
       return 0 if @graphics.length == 0
       @sum = 0
-      @graphics.each {|g| @sum+= g.width}
+      @graphics.each {|g| @sum+= g.width + @layout_space}
       return @sum 
     end
     

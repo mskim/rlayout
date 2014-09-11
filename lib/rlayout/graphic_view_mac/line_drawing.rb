@@ -64,9 +64,22 @@ class GraphicViewMac < NSView
   def drawLine(rect, withTrap:trap)  
     # return if @line_width == 0 &&  @graphic.drawing_mode == "printing"
     return if @line_width == 0 
-
+    if @data[:klass] == "Rectangle" || @data[:klass] == "Paragraph"
+      puts "++++++++++++ #{__method__}"
+      puts @data[:klass]
+      puts "x:#{rect.origin.x}"
+      puts "width:#{rect.size.width}"
+    end
     # clipLine = false
     rect = getLineRect(rect)
+    if @data[:klass] == "Rectangle" || @data[:klass] == "Paragraph"
+      puts "After++++++++++++ #{__method__}"
+      puts @data[:klass]
+      puts "x:#{rect.origin.x}"
+      puts "width:#{rect.size.width}"
+      puts "superview.class:#{superview.class}"
+    end
+    
     @line_color  = convert_to_nscolor(@line_color)    unless @line_color.class == NSColor  
     @line_color.set
     

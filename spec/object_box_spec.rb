@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/spec_helper"
 
 describe ' ObjectBox creation' do
   before do
-    @ob = ObjectBox.new(nil, :width=>600, :height=>800)
+    @ob = ObjectBox.new(nil, x:50, y:50, :width=>600, :height=>800, :column_count=>2)
     @flowomg_text =Paragraph.generate(3)
     @svg_path = File.dirname(__FILE__) + "/output/object_box_test.svg"
   end
