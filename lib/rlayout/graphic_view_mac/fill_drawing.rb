@@ -26,8 +26,8 @@ class GraphicViewMac < NSView
     if @fill_type == 0   #clearColor
       path=bezierPathWithRect(r)
       NSColor.clearColor.set
-      # @fill_color.set if @fill_color
       path.fill
+
     elsif @fill_type == 1 #normal fill
       path=bezierPathWithRect(r)
       @fill_color = convert_to_nscolor(@fill_color)    unless @fill_color.class == NSColor  

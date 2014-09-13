@@ -1,9 +1,14 @@
 
+
 IMAGE_FIT_TYPE_ORIGINAL       = 0
 IMAGE_FIT_TYPE_VIRTICAL       = 1
 IMAGE_FIT_TYPE_HORIZONTAL     = 2
 IMAGE_FIT_TYPE_KEEP_RATIO     = 3
 IMAGE_FIT_TYPE_IGNORE_RATIO   = 4
+
+# background image should be either stretchable or repeatable
+# should be able to repeat same image, instead of straching
+IMAGE_FIT_TYPE_REPEAT_MUTIPLE = 5
 
 class GraphicViewMac < NSView
   attr_accessor :image_object, :source_frame, :image_frame

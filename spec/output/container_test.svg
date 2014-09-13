@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="600" height="800">
-<rect x="0" y="0" width="600" height="253" fill="red"></rect>
-<rect x="0" y="273" width="600" height="253" fill="blue"></rect>
-<circle cx="300" cy="672" r="126" fill="green"></circle>
+<rect x="0" y="0" width="135" height="800" fill="red"></rect>
+<rect x="155" y="0" width="135" height="800" fill="blue"></rect>
+<circle cx="377" cy="400" r="67" fill="green"></circle>
+<circle cx="532" cy="400" r="67" fill="yellow"></circle>
 </svg>

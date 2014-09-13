@@ -1,5 +1,4 @@
 framework 'quartz'
-
 class DocumentViewMac
   attr_accessor :title, :data, :page_views, :pdf_doc
   

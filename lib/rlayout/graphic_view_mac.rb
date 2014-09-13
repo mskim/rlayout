@@ -1,3 +1,6 @@
+
+if RUBY_ENGINE == "macruby"
+
 require File.dirname(__FILE__) + '/graphic_view_mac/line_drawing'
 require File.dirname(__FILE__) + '/graphic_view_mac/fill_drawing'
 require File.dirname(__FILE__) + '/graphic_view_mac/image_drawing'
@@ -198,5 +201,7 @@ class GraphicViewMac < NSView
     @color
   end
 
+end
+else
 
 end

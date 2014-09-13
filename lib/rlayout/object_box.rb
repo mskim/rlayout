@@ -1,13 +1,11 @@
 module RLayout
   
   # ObjectBox is general pulpose container of flowing objexts.
-  # When Text paragraphs flow, it acts as traditional TextBox.
-  # ObjectBox is a general purpose container handling other types of objects as well.
-  # Product items, BoxAds, Directory elements, quiz items or any other objects shoud be able to flow, 
-
   # ObjectBox contains Columns. Objects are layed out along columns.
+  # When Text paragraphs flow, it acts as traditional TextBox.
   # ObjectBox can be linek to other ObjectBox, "next_link" and "previous_link" points to them.
-  
+  # ObjectBox can handling other types of objects as well, Product items, BoxAds, Directory elements, quiz items or any other objects shoud be able to flow, 
+
   
   class ObjectBox < Container
     attr_accessor :column_count, :next_link, :previous_link
@@ -54,6 +52,10 @@ module RLayout
         if current_column.insert_item(front_most_item)
           # item fit into column successfully!
         else
+          if front_most_item.respond_to?(:breakable?)
+            # TODO
+            
+          end
           current_column.relayout!
           column_index += 1
           current_column = @graphics[column_index]
