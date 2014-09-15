@@ -1,11 +1,13 @@
 module RLayout
   
   # ObjectBox is general pulpose container of flowing objexts.
-  # ObjectBox contains Columns. Objects are layed out along columns.
-  # When Text paragraphs flow, it acts as traditional TextBox.
+  # ObjectBox contains Columns. Objects flow along columns. 
   # ObjectBox can be linek to other ObjectBox, "next_link" and "previous_link" points to them.
-  # ObjectBox can handling other types of objects as well, Product items, BoxAds, Directory elements, quiz items or any other objects shoud be able to flow, 
-
+  # When Text paragraphs flow, it acts as traditional TextBox.
+  # ObjectBox can handling other types of objects as well, 
+  # Product items, BoxAds, Directory elements, quiz items or any other objects 
+  # that supports flowing item protocol, namely "set_width_and_adjust_height"
+  # one other flowing item protocol is :breakable?, whick tells the flowing item can be broken into parts.
   
   class ObjectBox < Container
     attr_accessor :column_count, :next_link, :previous_link
@@ -42,13 +44,13 @@ module RLayout
       # Adjusting width of flow item all at once is an option,
       # if we are sure that all column width are same
       # but, this could be ineffient if we have the varing width columns
-      # flowing_items.each {|item| item.change_width(current_column.layout_area[0])}
+      # flowing_items.each {|item| item.change_width_and_adjust_height(current_column.layout_area[0])}
       
       while front_most_item = flowing_items.shift do
 
         # change the width and height of item to place it in the current column, right before we place them
         # This way we can suppoert varing column widthed text_box
-        front_most_item.change_width(current_column.layout_area[0])
+        front_most_item.change_width_and_adjust_height(current_column.layout_area[0])
         if current_column.insert_item(front_most_item)
           # item fit into column successfully!
         else
@@ -129,7 +131,7 @@ module RLayout
   class CatalogItem < Container
     attr_accessor :breakable, :part # head, body, tail
     
-    def change_width(new_width)
+    def change_width_and_adjust_height(new_width)
       @width = new_width
       # change height we need to
     end

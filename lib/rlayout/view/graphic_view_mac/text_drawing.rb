@@ -100,5 +100,9 @@ class GraphicViewMac < NSView
     att_string
   end
   
-  
+  def make_att_string(string, font, size, options={})
+    atts={}
+    atts[NSFontAttributeName] = NSFont.fontWithName(font, size:size)
+    att_string=NSMutableAttributedString.alloc.initWithString(string, attributes:atts)
+  end
 end

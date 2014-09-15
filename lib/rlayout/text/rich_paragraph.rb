@@ -1,3 +1,12 @@
+# 
+# TextBox
+# Column
+# Paragraph
+# Line
+# TextRun
+# Token
+# TextToken
+# MathToken
 
 module RLayout
   
@@ -169,14 +178,36 @@ module RLayout
     end
   end
   
+  class TextRun < Graphic
+    attr_accessor :attrs, :space
+      attr_accessor :font, :size, :rich_style, :horizontal
+      attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
+    
+    def initialize(parent_graphic, options={})
+      super
+      @attrs = options[:atts]
+      
+      
+      self
+    end
+    
+  end
+  
+  # Toke is very basic element of layout
+  # in Text case it is word
+  # Token can also be math element or image
+  class Token
+    attr_accessor :type, :width, :height
+    
+    
+  end
   # 
-  # class TextToken < Graphic
+  # class TextToken < Token 
   #       
   #   # keep attributes that are diffrent from paragraph only
-  #   attr_accessor :font, :size, :rich_style, :horizontal
   #   attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
-  #   attr_accessor :token_width, :markup
-  #   def initialize(parent_graphic, options={}, &block)
+  #   attr_accessor :token_width, :token_height
+  #   def initialize(text_run, options={}, &block)
   #     super
   #     @layout_expand = []
   #     @paragraph    = options[:paragraph]

@@ -6,7 +6,6 @@ describe 'testing container creation' do
       rect(:fill_color=>"red", :unit_length=>3)
       rect(:fill_color=>"blue")
       circle(:fill_color=>"green")
-      circle(:fill_color=>"yellow")
       relayout!
     end
     puts @container.graphics.length

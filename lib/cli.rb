@@ -10,7 +10,7 @@ module RLayout
     method_option :version, aliases: '-v',
                             desc: "Print version number", type: :boolean
     def version
-      require 'softcover/version'
+      require 'rlayout/version'
       puts "RLayout #{RLayout::VERSION}"
       exit 0
     end
@@ -138,7 +138,7 @@ module RLayout
     method_option :silent, aliases: '-s',
                            desc: "Silent output", type: :boolean
     def publish
-      require 'softcover/commands/publisher'
+      require 'rlayout/commands/publisher'
 
       invoke :login unless logged_in?
 
@@ -155,7 +155,7 @@ module RLayout
     # TODO: make screencasts dir .book configurable
     define_method "publish:media" do |dir=
       RLayout::Book::DEFAULT_MEDIA_DIR|
-      require 'softcover/commands/publisher'
+      require 'rlayout/commands/publisher'
 
       puts "Publishing media bundles..."
       RLayout::Commands::Publisher.
@@ -169,7 +169,7 @@ module RLayout
     method_option :force, aliases: '-f',
                           desc: "Force", type: :boolean
     def unpublish
-      require 'softcover/commands/publisher'
+      require 'rlayout/commands/publisher'
 
       invoke :login unless logged_in?
       slug = options[:slug] || unpublish_slug
@@ -228,14 +228,14 @@ module RLayout
 
     desc "config", "View local config"
     def config
-      require "softcover/config"
+      require "rlayout/config"
       puts "Reading contents of #{RLayout::Config.path}:"
       RLayout::Config.read
     end
 
     desc "config:add key=value", "Add to your local config vars"
     define_method "config:add" do |pair|
-      require "softcover/config"
+      require "rlayout/config"
       key, value = pair.split "="
       RLayout::Config[key] = value
 
@@ -245,7 +245,7 @@ module RLayout
 
     desc "config:remove key", "Remove key from local config vars"
     define_method "config:remove" do |key|
-      require "softcover/config"
+      require "rlayout/config"
       RLayout::Config[key] = nil
 
       puts 'Config var removed.'

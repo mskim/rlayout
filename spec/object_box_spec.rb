@@ -27,12 +27,12 @@ describe ' ObjectBox creation' do
      File.exists?(@flowing_path).must_equal true
    end
    
-  it 'should save pdf' do
-    puts result = @ob.layout_items(@flowomg_text, 0)
-    @flowing_path = File.dirname(__FILE__) + "/output/object_box_flowingtest.pdf"
-    @ob.save_pdf(@flowing_path)
-    File.exists?(@flowing_path).must_equal true
-  end
+  # it 'should save pdf' do
+  #   puts result = @ob.layout_items(@flowomg_text, 0)
+  #   @flowing_path = File.dirname(__FILE__) + "/output/object_box_flowingtest.pdf"
+  #   @ob.save_pdf(@flowing_path)
+  #   File.exists?(@flowing_path).must_equal true
+  # end
 end
 
 # describe 'Paragraph test' do
