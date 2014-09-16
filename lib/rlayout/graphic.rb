@@ -9,7 +9,7 @@ require 'json'
 module RLayout
   
   class Graphic
-    attr_accessor :parent_graphic, :klass, :tag, :ns_view
+    attr_accessor :parent_graphic, :klass, :tag, :ns_view, :svg_view
     attr_accessor :x, :y, :width, :height
     attr_accessor :graphics
     attr_accessor :fill_type, :fill_color, :fill_other_color
@@ -220,6 +220,7 @@ module RLayout
       }
       h
     end
+    
     #/0/0/1/2/0
     def ancestry
       s = ""
@@ -239,41 +240,12 @@ module RLayout
       j += "\n"
     end
     
-    def to_svg
-      if @parent_graphic
-        return svg
-      else
-        svg_string = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n"
-        svg_string += svg
-        svg_string += "</svg>\n"
-        return svg_string
-      end
-    end
-    
-    def svg
-        s = "<rect x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\""
-        if @fill_color!=nil && @fill_color != ""
-          s+= " fill=\"#{@fill_color}\""
-        end
-        if @line_width!=nil && @line_width > 0
-          s+= " stroke=\"#{@line_color}\""
-          s+= " stroke-width=\"#{@line_width}\""
-        end
-        s+= "></rect>\n"
-        
-        if @text_string !=nil && @text_string != ""
-          s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"
-        end
-        s
-    end
-    
     def save_pdf(path)
       if RUBY_ENGINE == 'macruby'
         @ns_view = GraphicViewMac.from_data(to_data)
         @ns_view.save_pdf(path)
-      else
         #TODO
-        puts "Not a Mac! or no DRb not found!!!!"
+        # puts "DRb not found!!!!"
       end
       
     end
@@ -320,18 +292,6 @@ module RLayout
       self
     end
     
-    def svg
-      r = (@width <= @height) ? @width/2 : @height/2
-      s = "<circle cx=\"#{@x+@width/2}\" cy=\"#{@y+@height/2}\" r=\"#{r}\""
-      if @fill_color!=nil && @fill_color != ""
-        s+= " fill=\"#{@fill_color}\""
-      end
-      if @line_width!=nil && @line_width > 0
-        s+= " stroke=\"#{@line_color}\""
-        s+= " stroke-width=\"#{@line_width}\""
-      end
-      s+= "></circle>\n"      
-    end
   end
   
   class RoundRect < Graphic
@@ -343,19 +303,6 @@ module RLayout
       self
     end
     
-    def svg
-      shorter=(@width <= @height) ? @width : @height
-      r=shorter*0.1
-      s = "<rect x=\"#{@x}\" y=\"#{@y}\"  rx=\"#{r}\" ry=\"#{r}\" width=\"#{@width}\" height=\"#{@height}\""
-      if @fill_color!=nil && @fill_color != ""
-        s+= " fill=\"#{@fill_color}\""
-      end
-      if @line_width!=nil && @line_width > 0
-        s+= " stroke=\"#{@line_color}\""
-        s+= " stroke-width=\"#{@line_width}\""
-      end
-      s+= "></rect>\n"
-    end
   end
 end
 

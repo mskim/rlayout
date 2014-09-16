@@ -51,14 +51,6 @@ module RLayout
       }
     end
     
-    def to_svg
-      s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\">\n"
-      @graphics.each do |graphic|
-        s += graphic.to_svg
-      end
-      s += "</svg>"      
-    end
-    
     def save_hash(path)
       h = to_hash
       File.open(path, 'w'){|f| f.write h.to_yaml}
@@ -75,9 +67,6 @@ module RLayout
     
 
     
-    def save_svg(path)
-      File.open(path, 'w'){|f| f.write to_svg}
-    end
     
     ##########  sample ###########
     def self.sample_page

@@ -8,7 +8,6 @@ describe 'testing container creation' do
       circle(:fill_color=>"green")
       relayout!
     end
-    puts @container.graphics.length
     @path = File.dirname(__FILE__) + "/output/container_test.svg"
     
   end
