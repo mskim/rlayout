@@ -169,6 +169,15 @@ module RLayout
       @height = frame[3]
     end
     
+    def change_width_and_adjust_height(new_width, options={})
+      old_width = @width
+      old_height = @height
+      @width  = new_width
+      @height = new_width/old_width*old_height
+            
+      # change height we need to
+    end
+    
     def expand_width?
       @layout_expand.include?(:width)
     end
