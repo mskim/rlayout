@@ -1,7 +1,20 @@
-module RLayout 
+
+# 
+# ObjectBox
+# ColumnObject
+# Paragraph
+# Line
+# TextRun
+# Token
+# TextToken
+# MathToken
+
+module RLayout
+  
   class Paragraph < Container
     attr_accessor :breakable, :part # head, body, tail
     attr_accessor :markup, :para_string, :tokens, :line_height
+    attr_accessor :font_object
     def initialize(parent_graphic, options={})
       super
       @klass = "Paragraph"
@@ -17,10 +30,21 @@ module RLayout
       @top_margin   = 3
       @line_color = 'red'
       @line_width = 1
-      
+      @font_object = Font.new(@text_font, @text_size)
+      create_tokens      
       self
     end
-        
+    
+    def create_tokens
+      @tokens = @para_string.split(" ").collect do |token_string|
+        size  = @font_object.width_with_font(token_string)
+        width    = 
+        @line_height   = @text_size
+
+        TextToken.new(nil, :text_string=>token_string, :width=>size[0], :height=>size[1] + 2, :layout_expand=>[]) #, :line_width=>1, :line_color=>'green'
+      end
+    end
+    
     # create a line 
     def add_line
       t =TextLine.new(self, :x=>@left_inset, :width=>(@width - @left_inset - @right_inset) , :height=>@line_height, :layout_space=>@text_size/4, :layout_expand=>[:width], :line_width=>1, :line_color=>'yellow' )
@@ -38,50 +62,39 @@ module RLayout
       # create line as we layout tokens
       # clear lines
       @graphics = []
-      #TODO I should look this up in the width table, but for now make the widht as 70% of the font size
-      # total_with = @text_string.length*@text_size
-      # lines = total_with / @width
-      @para_string.split("").each_slice(@width/@text_size.to_i) do |a| 
-        line_string = a.join("")
-        TextLine.new(self, :text_string=>line_string, :x=>@left_inset, :width=>(@width - @left_inset - @right_inset) , :height=>@line_height, :layout_space=>@text_size/4, :layout_expand=>[:width], :line_width=>1, :line_color=>'yellow' )
+      add_line 
+      current_line = @graphics.last
+      while front_most_token = @tokens.shift do
+        if current_line.insert_token(front_most_token)
+          # item fit into column successfully!
+        else
+          add_line 
+          current_line = @graphics.last
+          current_line.insert_token(front_most_token)
+        end
       end
+      # now change the height of paragraph
+      @sum = 0
+      puts "@graphics.length:#{@graphics.length}"
+      puts "@layout_space:#{@layout_space}"
+      @graphics.each do |g| 
+        puts "g.x:#{g.x}"
+        puts "g.y:#{g.y}"
+        puts "g.height:#{g.height}"
+        @sum += g.height + @layout_space
+      end
+      @height = @sum
+      relayout!
+      # binding.pry
     end
 
-    def change_width_and_adjust_height(new_width)
+    def change_width(new_width)
       @width = new_width
       layout_lines
       # TODO
-      # change height
+      # change height we need to
     end
-        
-    def to_svg
-      if @parent_graphic
-        return svg
-      else
-        svg_string = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n"
-        svg_string += svg
-        svg_string += "</svg>\n"
-        return svg_string
-      end
-    end
-    
-    def svg
-        s = "<rect x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\""
-        if @fill_color!=nil && @fill_color != ""
-          s+= " fill=\"#{@fill_color}\""
-        end
-        if @line_width!=nil && @line_width > 0
-          s+= " stroke=\"#{@line_color}\""
-          s+= " stroke-width=\"#{@line_width}\""
-        end
-        s+= "></rect>\n"
-        
-        if @text_string !=nil && @text_string != ""
-          s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"
-        end
-        s
-    end
-    
+
     def self.generate(number)
       list = []
       text = "One two  three four five six seven eight nine ten eleven twelve thirteen."
@@ -92,5 +105,86 @@ module RLayout
     end
   end
   
+  class TextLine < Container
+    attr_accessor 
+    
+    def initialize(parent_graphic, options={})
+      super
+      puts "+++++ @width:#{width}"
+      # @line_color = "gray"
+      # @line_width = 1
+      @layout_direction = "horizontal"
+      @layout_expand = []
+      self
+    end
+    
+    # def graphics_width_sum
+    #   return 0 if @graphics.length == 0
+    #   @sum = 0
+    #   @graphics.each {|g| @sum+= g.width + @layout_space}
+    #   return @sum 
+    # end
+    
+    
+    def insert_token(token)      
+      if (graphics_width_sum + token.width) < @width
+        # insert the token into the line
+        token.parent_graphic = self
+        @graphics << token
+        
+        #TODO
+        # Chack the size of the token, if this new one has bigger size than the height,
+        # change the height of the line.
+        # if token.height > @height
+        #   @height = token.height
+        # end
+        return true
+      else
+        # can not fit, reject it
+        return false
+      end
+    end
+  end
+  
+  class TextRun < Graphic
+    attr_accessor :attrs, :space
+      attr_accessor :font, :size, :rich_style, :horizontal
+      attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
+    
+    def initialize(parent_graphic, options={})
+      super
+      @attrs = options[:atts]
+      
+      
+      self
+    end
+    
+  end
+  
+  # Toke is very basic element of layout
+  # in Text case it is word
+  # Token can also be math element or image
+  
+  
+  class TextToken < Graphic 
+        
+    # keep attributes that are diffrent from paragraph only
+    attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
+    def initialize(parent_graphic, options={}, &block)
+      super
+      @layout_expand = []
+      @text_string  = options[:text_string]      
+      self
+    end
+    
+    def layout_length
+      @width
+    end
+        
+    #TODO
+    def hyphenate
+      
+    end    
+  end
   
 end

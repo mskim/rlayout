@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'Paragraph creation test' do
   before do
-    @para = Paragraph.new(nil, :text_string=>"This is a text", :markup=>"p")
+    @para = Paragraph.new(nil, :para_string=>"This is a text", :markup=>"p")
     @path = File.dirname(__FILE__) + "/../output/text_drawing_test.pdf"
     # puts @para.inspect
   end
@@ -11,8 +11,8 @@ describe 'Paragraph creation test' do
     @para.must_be_kind_of Paragraph
   end
   
-  it 'shuld have attribute of text_string' do
-    @para.text_string.must_equal "This is a text"
+  it 'shuld have attribute of para_string' do
+    @para.para_string.must_equal "This is a text"
     @para.markup.must_equal "p"
     @para.text_size.must_equal 16
     @para.text_font.must_equal "Times"
@@ -22,7 +22,7 @@ end
 
 describe 'Paragraph line creation test' do
   before do
-    @para = Paragraph.new(nil, :text_string=>"This is a text and I like it very very much lets see if you can layout this one.", :markup=>"p")
+    @para = Paragraph.new(nil, :para_string=>"This is a text and I like it very very much lets see if you can layout this one.", :markup=>"p")
   end
   
   it 'should create Pagragraph object' do
@@ -44,7 +44,7 @@ end
 describe 'Paragraph should change width and layout lines' do
   before do
     @para = Paragraph.new(nil, :para_string=>"This is a text and I like it very very much lets see if you can layout this one.", :markup=>"p")
-    @para.change_width(300)
+    @para.change_width_and_adjust_height(300)
     @path = File.dirname(__FILE__) + "/output/paragraph_test.pdf"
     
   end
