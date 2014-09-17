@@ -180,14 +180,4 @@ module RLayout
     end
   end
   
-
-  
-  class CatalogItem < Container
-    attr_accessor :breakable, :part # head, body, tail
-    
-    def change_width_and_adjust_height(new_width, options={})
-      @width = new_width
-      # change height we need to
-    end
-  end
 end

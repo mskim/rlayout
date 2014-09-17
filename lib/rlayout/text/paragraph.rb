@@ -1,13 +1,9 @@
 
-# 
 # ObjectBox
 # ColumnObject
 # Paragraph
 # Line
-# TextRun
-# Token
 # TextToken
-# MathToken
 
 module RLayout
   
@@ -30,24 +26,24 @@ module RLayout
       @top_margin   = 3
       @line_color = 'red'
       @line_width = 1
-      @font_object = Font.new(@text_font, @text_size)
+      @font_object = RFont.new(@text_font, @text_size)
+      @layout_space = @text_size/2  #@font_object.space_width
       create_tokens      
       self
     end
     
     def create_tokens
       @tokens = @para_string.split(" ").collect do |token_string|
-        size  = @font_object.width_with_font(token_string)
-        width    = 
-        @line_height   = @text_size
-
-        TextToken.new(nil, :text_string=>token_string, :width=>size[0], :height=>size[1] + 2, :layout_expand=>[]) #, :line_width=>1, :line_color=>'green'
+        size  = @font_object.string_size(token_string)
+        @line_height   = size[1] + 2
+        t= TextToken.new(nil, :text_string=>token_string, :width=>size[0], :height=>@line_height, :layout_expand=>[], :text_font=>@text_font, :text_size=>@text_size) #, :line_width=>1, :line_color=>'green'
+        t
       end
     end
     
     # create a line 
     def add_line
-      t =TextLine.new(self, :x=>@left_inset, :width=>(@width - @left_inset - @right_inset) , :height=>@line_height, :layout_space=>@text_size/4, :layout_expand=>[:width], :line_width=>1, :line_color=>'yellow' )
+      t =TextLine.new(self, :x=>@left_inset, :width=>(@width - @left_inset - @right_inset) , :height=>@line_height, :layout_space=>@layout_space, :layout_expand=>[:width], :line_width=>1, :line_color=>'yellow' )
       puts "+++++++++++ t.x:#{t.x}"
       puts t.width
       t
@@ -68,11 +64,14 @@ module RLayout
         if current_line.insert_token(front_most_token)
           # item fit into column successfully!
         else
+          current_line.relayout!
           add_line 
           current_line = @graphics.last
           current_line.insert_token(front_most_token)
         end
       end
+      relayout!
+      
       # now change the height of paragraph
       @sum = 0
       puts "@graphics.length:#{@graphics.length}"
@@ -84,11 +83,10 @@ module RLayout
         @sum += g.height + @layout_space
       end
       @height = @sum
-      relayout!
       # binding.pry
     end
 
-    def change_width(new_width)
+    def change_width_and_adjust_height(new_width)
       @width = new_width
       layout_lines
       # TODO
@@ -110,7 +108,8 @@ module RLayout
     
     def initialize(parent_graphic, options={})
       super
-      puts "+++++ @width:#{width}"
+      @klass = "TextLine"
+      # puts "+++++ @width:#{width}"
       # @line_color = "gray"
       # @line_width = 1
       @layout_direction = "horizontal"
@@ -127,12 +126,17 @@ module RLayout
     
     
     def insert_token(token)      
-      if (graphics_width_sum + token.width) < @width
+      puts __method__
+      puts "graphics_width_sum: #{graphics_width_sum}"
+      puts "token.width: #{token.width}"
+      puts "token.text_string: #{token.text_string}"
+      if (graphics_width_sum + token.width + @layout_space) < (@width - @left_margin - @right_margin)
         # insert the token into the line
         token.parent_graphic = self
         @graphics << token
         
         #TODO
+        # change line height if taller token is inserted
         # Chack the size of the token, if this new one has bigger size than the height,
         # change the height of the line.
         # if token.height > @height
@@ -166,14 +170,20 @@ module RLayout
   # Token can also be math element or image
   
   
-  class TextToken < Graphic 
+  class TextToken < Text 
         
     # keep attributes that are diffrent from paragraph only
     attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
     def initialize(parent_graphic, options={}, &block)
       super
+      puts "in TextToken"
+      puts "@x: #{@x}"
+      puts "@width: #{@width}"
+      puts "@text_string: #{@text_string}"
+      
+      @klass = "TextToken"
       @layout_expand = []
-      @text_string  = options[:text_string]      
+      # @text_string  = options[:text_string]      
       self
     end
     

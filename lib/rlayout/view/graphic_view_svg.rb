@@ -77,9 +77,20 @@ module RLayout
     end
   end
   
+  class TextToken
+    def svg
+
+        s = ""
+        if @text_string !=nil && @text_string != ""
+          s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y + @height*0.8}\">#{@text_string}</text>\n"
+        
+        end
+        s
+    end
+  end
   class Container < Graphic
     def to_svg
-      s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\">\n"
+      s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" class=\"#{@klass}\" x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\">\n"
       @graphics.each do |graphic|
         s += graphic.to_svg
       end

@@ -11,7 +11,7 @@ require 'rake/testtask'
  
 Rake::TestTask.new do |task|
   task.libs << %w(spec lib)
-  task.pattern = 'spec/*_spec.rb'
+  task.pattern = 'spec/**/*_spec.rb'
 end
  
 desc "Run tests"
