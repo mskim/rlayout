@@ -1,9 +1,23 @@
 
 # ObjectBox
 # ColumnObject
+# TextColumn
 # Paragraph
 # Line
 # TextToken
+
+# Paragraph
+# Number one requsted feature for text implemetation was auto line alignment to grid line.
+# Paragraph aligns lines with TextColumn line grid, making lines of adjacent column's lines align vertically.
+# When head paragraph, which might have difference height than the body paragraph, is placed in the middle of the column
+# causing vertical misalignment, follinging body paragraph should snap back to next grid.
+
+# heading paragrph
+# heading paragrph lines should be vertically centers within head's paragraph box. 
+# change_width_and_adjust_height for heading paragrph should set height as multiples of grid_line_height
+
+# Paragraph is initialize with para_string, it creates series of TextTokens with default size and font.
+# When it is inserted into column, it generates lines(TextLine).
 
 module RLayout
   
@@ -84,9 +98,22 @@ module RLayout
       end
       @height = @sum
     end
-
-    def change_width_and_adjust_height(new_width)
+    
+    def layout_para_at(column)
+      
+    end
+    
+    def change_width_and_adjust_height(new_width, options={})
+      # for heading paragrph, should set height as multiples of grid_line_height
+      
       @width = new_width
+      if options[:line_grid_height] 
+        #TODO
+        
+        # if @line_height != options[:line_grid_height]
+        # @line_height = options[:line_grid_height]
+        # update token size
+      end
       layout_lines
     end
 

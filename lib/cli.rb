@@ -19,41 +19,41 @@ module RLayout
     # Builder
     # ===============================================
 
-    desc 'build, build:all', 'Build all formats'
-    method_option :quiet, aliases: '-q',
-                          desc: "Quiet output", type: :boolean
-    method_option :silent, aliases: '-s',
-                           desc: "Silent output", type: :boolean
-    def build
-      RLayout::Commands::Build.all_formats(options)
-    end
-    map "build:all" => "build"
-
-    RLayout::FORMATS.each do |format|
-      desc "build:#{format}", "Build #{format.upcase}"
-      if format == 'pdf'
-        method_option :debug, aliases: '-d',
-                              desc: "Run raw xelatex for debugging purposes",
-                              type: :boolean
-        method_option :once, aliases: '-o',
-                             desc: "Run PDF generator once (no xref update)",
-                             type: :boolean
-        method_option :'find-overfull', aliases: '-f',
-                                        desc: "Find overfull hboxes",
-                                        type: :boolean
-      elsif format == 'mobi'
-        method_option :calibre, aliases: '-c',
-                                desc: "Use Calibre to build the MOBI",
-                                type: :boolean
-      end
-      method_option :quiet, aliases: '-q',
-                            desc: "Quiet output", type: :boolean
-      method_option :silent, aliases: '-s',
-                             desc: "Silent output", type: :boolean
-      define_method "build:#{format}" do
-        RLayout::Commands::Build.for_format format, options
-      end
-    end
+    # desc 'build, build:all', 'Build all formats'
+    # method_option :quiet, aliases: '-q',
+    #                       desc: "Quiet output", type: :boolean
+    # method_option :silent, aliases: '-s',
+    #                        desc: "Silent output", type: :boolean
+    # def build
+    #   RLayout::Commands::Build.all_formats(options)
+    # end
+    # map "build:all" => "build"
+    # 
+    # RLayout::FORMATS.each do |format|
+    #   desc "build:#{format}", "Build #{format.upcase}"
+    #   if format == 'pdf'
+    #     method_option :debug, aliases: '-d',
+    #                           desc: "Run raw xelatex for debugging purposes",
+    #                           type: :boolean
+    #     method_option :once, aliases: '-o',
+    #                          desc: "Run PDF generator once (no xref update)",
+    #                          type: :boolean
+    #     method_option :'find-overfull', aliases: '-f',
+    #                                     desc: "Find overfull hboxes",
+    #                                     type: :boolean
+    #   elsif format == 'mobi'
+    #     method_option :calibre, aliases: '-c',
+    #                             desc: "Use Calibre to build the MOBI",
+    #                             type: :boolean
+    #   end
+    #   method_option :quiet, aliases: '-q',
+    #                         desc: "Quiet output", type: :boolean
+    #   method_option :silent, aliases: '-s',
+    #                          desc: "Silent output", type: :boolean
+    #   define_method "build:#{format}" do
+    #     RLayout::Commands::Build.for_format format, options
+    #   end
+    # end
 
     # ===============================================
     # Preview

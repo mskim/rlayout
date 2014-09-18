@@ -9,8 +9,9 @@ require "rlayout/heading"
 require "rlayout/page"
 require "rlayout/document"
 require "rlayout/view"
-
-
+require "rlayout/utils"
+require "rlayout/utility"
+require "cli"
 module RLayout
   # Your code goes here...
 end
