@@ -33,18 +33,15 @@ module RLayout
     def create_tokens
       font_object  = RFont.new(@text_font, @text_size)
       @token_space  = font_object.space_char_width
-      
       @tokens = @para_string.split(" ").collect do |token_string|
         size  = font_object.string_size(token_string)
         @line_height   = @text_size*1.2 + @top_margin + @bottom_margin
-        t= TextToken.new(nil, :text_string=>token_string, :width=>size[0], :height=>@line_height, :layout_expand=>[], :text_font=>@text_font, :text_size=>@text_size) #, :line_width=>1, :line_color=>'green'
-        t
+        TextToken.new(nil, :text_string=>token_string, :width=>size[0], :height=>@line_height, :layout_expand=>[], :text_font=>@text_font, :text_size=>@text_size) #, :line_width=>1, :line_color=>'green'
       end
     end
     
     # create a line 
     def add_line
-      puts __method__
       t= TextLine.new(self, :x=>@left_inset, :y=>@line_y, :width=>(@width - @left_inset - @right_inset) , :height=>@line_height, :layout_space=>@token_space, :layout_expand=>[:width], :line_width=>1, :line_color=>'black' )
       @line_y += t.height
       t
@@ -80,16 +77,12 @@ module RLayout
       @sum = 0
       line_y = 0
       @graphics.each do |line| 
-        puts "line.class:#{line.class}"
         line.y = line_y
-        puts "++++++++++ line.y:#{line.y}"
         line_height = line.height
         @sum += line_height + @layout_space
         line_y += line_height + @layout_space
       end
       @height = @sum
-      puts "@layout_space:#{@layout_space}"
-      puts "@height:#{@height}"
     end
 
     def change_width_and_adjust_height(new_width)
@@ -115,8 +108,6 @@ module RLayout
       @klass = "TextLine"
       @top_margin = 2
       @top_inset  = 2
-      puts "in TextLine init"
-      puts "@y:#{@y}"
       @layout_direction = "horizontal"
       @layout_expand = []
       self

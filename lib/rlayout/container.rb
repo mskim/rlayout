@@ -174,6 +174,10 @@ module RLayout
       Circle.new(self, options)
     end
     
+    def container(options={}, &block)
+      Container.new(self, options, &block)
+    end
+    
     def random_graphics(number)
       add_graphics(Graphic.random_graphics(number))
     end

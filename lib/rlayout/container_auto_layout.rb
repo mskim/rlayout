@@ -21,7 +21,7 @@ module RLayout
       return unless @graphics
       vertical  = @layout_direction == "vertical"
       view_size         = [@width,@height]
-      starting_position = vertical ? (@y + @top_margin +  @top_inset) : (@bottom_margin + @left_inset)
+      starting_position = vertical ? (@y + @top_margin +  @top_inset) : (@bottom_margin + @bottom_inset)
       ending_position   = vertical ? (view_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (view_size[0] - @left_margin - @right_margin - @left_inset - @right_inset)
       expandable_size   = ending_position
       expandable_children = 0
@@ -75,7 +75,7 @@ module RLayout
          subview_dimension = vertical ? subview_size[1] : subview_size[0]
 
          if vertical
-           view_frame[0] = @bottom_margin + @left_inset # 2012 4 16
+           view_frame[0] = @left_margin + @left_inset # 2012 4 16
            if @layout_strarting == "top"
              view_frame[1] = starting_position             
            else
@@ -103,7 +103,7 @@ module RLayout
 
          if (vertical ? child.expand_width? : child.expand_height?)
            if vertical
-             view_frame[2] = view_size[0] - (@right_margin + @bottom_margin + @right_inset + @left_inset) - child.right_margin - child.bottom_margin
+             view_frame[2] = view_size[0] - (@left_margin + @right_margin + @right_inset + @left_inset) - child.right_margin - child.bottom_margin
            else
              view_frame[3] = view_size[1] - (@top_margin + @bottom_margin + @top_inset + @bottom_inset) - child.top_margin - child.bottom_margin
            end

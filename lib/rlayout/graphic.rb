@@ -30,45 +30,59 @@ module RLayout
       if  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
         @parent_graphic.graphics << self  
       end
-      @klass          = options.fetch(:klass, "Rectangle") 
-      @x              = options.fetch(:x, defaults[:x])
-      @y              = options.fetch(:y, defaults[:y])
-      @width          = options.fetch(:width, defaults[:width])
-      @height         = options.fetch(:height, defaults[:height])
-      @left_margin    = options.fetch(:left_margin, defaults[:left_margin])
-      @top_margin     = options.fetch(:top_margin, defaults[:top_margin])
-      @right_margin   = options.fetch(:right_margin, defaults[:right_margin])
-      @bottom_margin  = options.fetch(:bottom_margin, defaults[:bottom_margin])
-      @left_inset     = options.fetch(:left_inset, defaults[:left_inset])
-      @top_inset      = options.fetch(:top_inset, defaults[:top_inset])
-      @right_inset    = options.fetch(:right_inset, defaults[:right_inset])
-      @bottom_inset   = options.fetch(:bottom_inset, defaults[:bottom_inset])
-      @layout_direction= options.fetch(:layout_direction, defaults[:layout_direction])
-      @layout_member  = options.fetch(:layout_member, defaults[:layout_member])
-      @layout_expand  = options.fetch(:layout_expand, defaults[:layout_expand])
-      @layout_length  = options.fetch(:layout_length, defaults[:layout_length])
-      @grid_rect      = options.fetch(:grid_rect, defaults[:grid_rect]) 
-      @shape          = options.fetch(:shape, defaults[:shape])
+      @klass            = options.fetch(:klass, "Rectangle") 
+      @x                = options.fetch(:x, defaults[:x])
+      @y                = options.fetch(:y, defaults[:y])
+      @width            = options.fetch(:width, defaults[:width])
+      @height           = options.fetch(:height, defaults[:height])
+      if options[:margin]
+        @left_margin    = options[:margin]
+        @top_margin     = options[:margin]
+        @right_margin   = options[:margin]
+        @bottom_margin  = options[:margin]        
+      else
+        @left_margin    = options.fetch(:left_margin, defaults[:left_margin])
+        @top_margin     = options.fetch(:top_margin, defaults[:top_margin])
+        @right_margin   = options.fetch(:right_margin, defaults[:right_margin])
+        @bottom_margin  = options.fetch(:bottom_margin, defaults[:bottom_margin])
+      end
+      if options[:inset]
+        @left_inset     = options[:inset]
+        @top_inset      = options[:inset]
+        @right_inset    = options[:inset]
+        @bottom_inset   = options[:inset]
+      else
+        @left_inset     = options.fetch(:left_inset, defaults[:left_inset])
+        @top_inset      = options.fetch(:top_inset, defaults[:top_inset])
+        @right_inset    = options.fetch(:right_inset, defaults[:right_inset])
+        @bottom_inset   = options.fetch(:bottom_inset, defaults[:bottom_inset])
+      end
+      @layout_direction = options.fetch(:layout_direction, defaults[:layout_direction])
+      @layout_member    = options.fetch(:layout_member, defaults[:layout_member])
+      @layout_expand    = options.fetch(:layout_expand, defaults[:layout_expand])
+      @layout_length    = options.fetch(:layout_length, defaults[:layout_length])
+      @grid_rect        = options.fetch(:grid_rect, defaults[:grid_rect]) 
+      @shape            = options.fetch(:shape, defaults[:shape])
                   
-      @tag            = options[:tag]      
-      @fill_type      = options[:fill_type]
-      @fill_color     = options[:fill_color]
-      @fill_other_color= options[:fill_other_color]
-      @line_type      = options[:line_type]
-      @line_color     = options[:line_color]
-      @line_width     = options[:line_width]
-      @line_dash      = options[:line_dash]
-      @shape_bezier   = options[:shape_bezier]
-      @text_string    = options[:text_string]
-      @text_color     = options[:text_color]
-      @text_size      = options[:text_size]
-      @text_font      = options[:text_font]
-      @text_fit_type  = options[:text_fit_type]
-      @image_path     = options[:image_path]
-      @image_frame    = options[:image_frame]
-      @mage_fit_type  = options[:mage_fit_type]
-      @image_caption  = options[:image_caption]      
-      @auto_save      = options[:auto_save]
+      @tag              = options[:tag]      
+      @fill_type        = options[:fill_type]
+      @fill_color       = options[:fill_color]
+      @fill_other_color = options[:fill_other_color]
+      @line_type        = options[:line_type]
+      @line_color       = options[:line_color]
+      @line_width       = options[:line_width]
+      @line_dash        = options[:line_dash]
+      @shape_bezier     = options[:shape_bezier]
+      @text_string      = options[:text_string]
+      @text_color       = options[:text_color]
+      @text_size        = options[:text_size]
+      @text_font        = options[:text_font]
+      @text_fit_type    = options[:text_fit_type]
+      @image_path       = options[:image_path]
+      @image_frame      = options[:image_frame]
+      @mage_fit_type    = options[:mage_fit_type]
+      @image_caption    = options[:image_caption]      
+      @auto_save        = options[:auto_save]
       
       self
     end

@@ -64,24 +64,6 @@ class GraphicViewMac < NSView
   def drawLine(rect, withTrap:trap)  
     # return if @line_width == 0 &&  @graphic.drawing_mode == "printing"
     return if @line_width == 0 
-    puts __method__
-    puts "@data[:klass]:#{@data[:klass]}"
-    if @data[:klass] == "Paragraph"
-      puts "rect.origin.x:#{rect.origin.x}"
-      puts "rect.origin.y:#{rect.origin.y}"
-      puts "rect.origin.width:#{rect.size.width}"
-      puts "rect.origin.height:#{rect.size.height}"
-      if @data[:graphics]
-        puts "@data[:graphics].length:#{@data[:graphics].length}" 
-        @data[:graphics].each do |text_line|
-          puts "@text_line[:x]:#{text_line[:x]}"
-          puts "@text_line[:y]:#{text_line[:y]}"
-          puts "@text_line[:width]:#{text_line[:width]}"
-          puts "@text_line[:height]:#{text_line[:height]}"
-        end
-        
-      end
-    end
     
     # clipLine = false
     rect = getLineRect(rect)    
