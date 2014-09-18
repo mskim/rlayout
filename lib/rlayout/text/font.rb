@@ -5,8 +5,8 @@ class String
   def width_with_font(width_table,font_size)    
     char_width_sum = 0
     (self.length).times do |i|
-      puts self[i]
-      puts width_table[self[i].ord]
+      # puts self[i]
+      # puts width_table[self[i].ord]
       char_width_sum += width_table[self[i].ord]
     end
     char_width_sum*font_size/1000
@@ -28,6 +28,10 @@ module RLayout
     
     def string_size(text_string)
       w = text_string.width_with_font(FONT_WIDTH_TABLE[@font_name][:width_array],@size)
+      # puts FONT_WIDTH_TABLE[@font_name][:acender]
+      #  puts FONT_WIDTH_TABLE[@font_name][:descender]
+      
+      #TODO h is too big !!!!!!! something is wrong
       h = (FONT_WIDTH_TABLE[@font_name][:acender] + FONT_WIDTH_TABLE[@font_name][:descender])/@size
       # char_width = 0
       # text_string.split("").each do |c|
@@ -37,6 +41,11 @@ module RLayout
       [w,h]
     end
     
+    def space_char_width
+      width_table = FONT_WIDTH_TABLE[@font_name][:width_array]
+      width_table[" ".ord]*@size/1000
+    end
+    
     def self.string_size(font_name, size, string)
       RFont.new(font_name, size).string_size(string)
     end
@@ -44,8 +53,8 @@ module RLayout
 
 end
 
-puts RLayout::RFont.string_size("Times", 16, "One")
 __END__
+puts RLayout::RFont.string_size("Times", 16, "One")
 
 f= RLayout::RFont.new("Times",16)
 puts f.string_size("This is a string")

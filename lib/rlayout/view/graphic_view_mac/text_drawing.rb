@@ -64,12 +64,8 @@ class GraphicViewMac < NSView
   end
   
   def draw_text(r)  
-    # puts "+++++++"  
-    # puts @data[:klass]
-    # puts r.origin.x
-    # puts r.origin.y
+
     return if @att_string.string == ""
-    puts @att_string.string
     @att_string.drawInRect(r)
   end
 

@@ -2,9 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'Paragraph creation test' do
   before do
-    @para = Paragraph.new(nil, :para_string=>"One Two Three Four Five Six", :markup=>"p")
-    # puts @para.inspect
-    
+    @para = Paragraph.new(nil, :para_string=>"One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen", :markup=>"p")    
   end
   
   it 'should create Pagragraph object' do
@@ -12,7 +10,7 @@ describe 'Paragraph creation test' do
   end
   
   it 'shuld have attribute of para_string' do
-    @para.para_string.must_equal "This is a text"
+    @para.para_string.must_equal "One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen"
     @para.markup.must_equal "p"
     @para.text_size.must_equal 16
     @para.text_font.must_equal "Times"
@@ -60,11 +58,7 @@ describe 'Paragraph should change width and layout lines' do
   end
   
   it 'should have lines' do
-    @para.graphics.length.must_equal 2
-    # @para.graphics.each do |line|
-    #   puts line.graphics.length
-    # end
-    puts "@path:#{@path}"
+    @para.graphics.length.must_equal 3
     @para.save_svg(@path)
     File.exists?(@path).must_equal true
   end

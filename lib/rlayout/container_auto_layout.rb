@@ -5,6 +5,14 @@
 #   2. horizontal_stack
 #   3. grid
 
+#TODO
+# def layout_vertical_stack
+# end
+# def layout_horizontal_stack
+# end
+# def layout_grid_matrix
+# end
+
 module RLayout
   class Container
 
