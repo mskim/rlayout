@@ -5,7 +5,7 @@ module RLayout::Utils
   def current_book
     # using module level variable because it should be context independent
     @@current_book ||= begin
-      in_book_directory? ? Softcover::Book.new(origin: source) : false
+      in_book_directory? ? RLayout::Book.new(origin: source) : false
     end
   end
 
@@ -16,7 +16,7 @@ module RLayout::Utils
 
   # Returns the slug to be unpublished.
   def unpublish_slug
-    Softcover::BookManifest.new(origin: source).slug
+    RLayout::BookManifest.new(origin: source).slug
   end
 
   def reset_current_book!
@@ -24,22 +24,22 @@ module RLayout::Utils
   end
 
   def in_book_directory?
-    Softcover::BookManifest::find_book_root!
+    RLayout::BookManifest::find_book_root!
 
     files = Dir['**/*']
 
-    Softcover::FORMATS.each do |format|
+    RLayout::FORMATS.each do |format|
       unless files.any?{ |file| File.extname(file) == ".#{format}" }
         puts "No #{format} found, skipping."
       end
     end
 
-    return Softcover::BookManifest::valid_directory?
+    return RLayout::BookManifest::valid_directory?
   end
 
   def logged_in?
     require 'softcover/config'
-    Softcover::Config['api_key'].present?
+    RLayout::Config['api_key'].present?
   end
 
   UNITS = %W(B KB MB GB TB).freeze
@@ -117,7 +117,7 @@ module RLayout::Utils
     subtitle = manifest.subtitle.nil? ? "" : "\\subtitle{#{manifest.subtitle}}"
     <<-EOS
 #{preamble}
-\\usepackage{#{Softcover::Directories::STYLES}/softcover}
+\\usepackage{#{RLayout::Directories::STYLES}/softcover}
 \\VerbatimFootnotes % Allows verbatim text in footnotes
 \\title{#{manifest.title}}
 #{subtitle}
@@ -131,7 +131,7 @@ module RLayout::Utils
   # Returns the tmp version of a filename.
   # E.g., tmpify('foo.tex') => 'foo.tmp.tex'
   def tmpify(manifest, filename)
-    tmp = Softcover::Directories::TMP
+    tmp = RLayout::Directories::TMP
     mkdir tmp
     sep = File::SEPARATOR
     filename.sub(manifest.polytex_dir + sep, tmp + sep).
@@ -206,7 +206,7 @@ module RLayout::Utils
   # The issue here is that `exec` is awful in tests, since it exits the process.
   # This command arranges to use `system` in tests instead.
   def execute(command)
-    Softcover.test? ? system(command) : exec(command)
+    RLayout.test? ? system(command) : exec(command)
   end
 
   def silence
@@ -271,7 +271,7 @@ module RLayout::Utils
 
   # Returns the language labels from the config file.
   def language_labels
-    YAML.load_file(File.join(Softcover::Directories::CONFIG, 'lang.yml'))
+    YAML.load_file(File.join(RLayout::Directories::CONFIG, 'lang.yml'))
   end
 
   def chapter_label(chapter_number)
