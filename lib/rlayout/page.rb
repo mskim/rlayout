@@ -24,11 +24,14 @@ module RLayout
       end
       
       if @parent_graphic && @parent_graphic.margin
-        @margin  = @parent_graphic.margin 
+        @margin         = @parent_graphic.margin        
       else
         @margin  = defaults[:margin]
       end
-      
+      @left_margin    = @margin
+      @rigith_margin  = @margin
+      @top_margin     = @margin
+      @bottom_margin  = @margin
       
       if block
         instance_eval(&block)

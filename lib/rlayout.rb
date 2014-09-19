@@ -9,14 +9,13 @@ require "rlayout/heading"
 require "rlayout/page"
 require "rlayout/document"
 require "rlayout/view"
-require "rlayout/utils"
 
 # require_relative 'rLayout/book'
 # require_relative 'rLayout/book_manifest'
-require_relative 'softcover/formats'
-require_relative 'softcover/utils'
-require_relative 'softcover/output'
-require_relative 'softcover/directories'
+require_relative 'rLayout/formats'
+require_relative 'rLayout/utils'
+require_relative 'rLayout/output'
+require_relative 'rLayout/directories'
 
 require_relative 'rLayout/builder'
 require_relative 'rLayout/builders/epub'
