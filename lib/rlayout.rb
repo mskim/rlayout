@@ -34,7 +34,6 @@ require_relative 'rLayout/commands/opener'
 require_relative 'rLayout/commands/server'
 require_relative 'rLayout/mathjax'
 require_relative 'rLayout/uploader'
-require_relative 'rLayout/version'
 
 
 

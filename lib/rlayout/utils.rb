@@ -1,4 +1,3 @@
-puts "utiles loaded ....."
 module RLayout::Utils
   extend self
 
