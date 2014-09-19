@@ -29,11 +29,11 @@ module RLayout
         @margin  = defaults[:margin]
       end
       @left_margin    = @margin
-      @rigith_margin  = @margin
+      @right_margin  = @margin
       @top_margin     = @margin
       @bottom_margin  = @margin
       @left_inset     = 0
-      @rigith_inset   = 0
+      @right_inset   = 0
       @top_inset      = 0
       @bottom_inset   = 0
       

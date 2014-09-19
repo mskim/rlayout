@@ -8,12 +8,11 @@ describe 'testing container creation' do
       rect(:fill_color=>"blue")
       circle(:fill_color=>"green")
       circle(:fill_color=>"green")
-      container :line_color =>'black', :margin=>10, :line_width =>2, :layout_direction=>"horizontal"  do
+      container :line_color =>'black', :margin=>10, :line_width =>2, :layout_direction=>"horizontal", :layout_space=>10  do
         rect(:fill_color=>"yellow")
         circle(:fill_color=>"black")
+        circle(:fill_color=>"blue")
         circle(:fill_color=>"black")
-        circle(:fill_color=>"black")
-        
       end
       relayout!
     end

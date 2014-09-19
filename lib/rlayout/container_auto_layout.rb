@@ -21,6 +21,7 @@ module RLayout
       return unless @graphics
       vertical  = @layout_direction == "vertical"
       view_size         = [@width,@height]
+      # binding.pry
       starting_position = vertical ? (@y + @top_margin +  @top_inset) : (@bottom_margin + @bottom_inset)
       ending_position   = vertical ? (view_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (view_size[0] - @left_margin - @right_margin - @left_inset - @right_inset)
       expandable_size   = ending_position
