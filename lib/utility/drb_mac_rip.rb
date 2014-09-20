@@ -12,7 +12,7 @@ class MacRip
   #   :output_types     => [pdf, jpg, thumbnail]
   # }  
   
-  def rip_it(data)
+  def rip_data(data)
     puts __method__
     if data[:klass] == 'Document'
       d= RLayout::DocumentViewMac.new(data)
@@ -29,6 +29,11 @@ class MacRip
       return "success"
     end
     'Failed'
+  end
+  
+  # This is when sending path of pg_script
+  def rip_pgscript(pg_script_path)
+    # read the file, preproxess it into data and send it to rip_it(data)
   end
   
 end

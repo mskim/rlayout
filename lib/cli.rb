@@ -1,6 +1,6 @@
 
-require_relative 'cli/book'
-require_relative 'cli/book_manifest'
+# require_relative 'cli/book'
+# require_relative 'cli/book_manifest'
 require_relative 'cli/formats'
 require_relative 'cli/utils'
 require_relative 'cli/output'

@@ -1,9 +1,13 @@
+#
 # require 'rlayout' #install rlayout in in the system ruby
 
 require 'yaml'
 
-puts @styles = YAML::load_file(File.dirname(__FILE__) + "/../styles.rb")
+styles_path = File.dirname(__FILE__) + "/../styles.rb"
 
+if File.exits?(styles_path)
+  puts @styles = YAML::load_file(styles_path)
+end
 
 path = File.dirname(__FILE__) + "/../content.md"
 unless File.exists?(path)
