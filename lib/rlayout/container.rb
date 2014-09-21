@@ -1,32 +1,5 @@
-# PageScript Verbs
-#  h1
-#  h2
-#  h3
-#  h4
-#  h5
-#  p
-#  image
-#  rect
-#  circle
-#  round_rect
-#  line
-#  set_layout_mode
-#  set_grid_base
-#  place(graphic, grid_x,grid_y,grid_with,grid_height)
 
-
-# Layout 
-#  place_graphic 
-#  implied that graphic is added at specified location
-#  Graphic should have x,y,width,height or grid_x,grid_y,grid_width,grid_height
-#  
-#  stack_graphic 
-#  implies the graphic is stacked at the end of the stack. 
-#  Location and the size is auto-layed out 
-#  Size can be set by "layout_length", which is relative size to others in the stack.
-#  They can be set in two different layers or they can reside in the same layer.
-#  There is a special case, where some graphic sits in stack layout
-
+require File.dirname(__FILE__) + "/container/pgscript"
 module RLayout
   
   class Container < Graphic
@@ -39,6 +12,7 @@ module RLayout
     
     def initialize(parent_graphic, options={}, &block)
       super
+      @klass            = "Container"
       @graphics         = options.fetch(:graphics, [])      
       @layout_mode      = options.fetch(:layout_mode, layout_defaults[:layout_mode])
       @layout_direction = options.fetch(:layout_direction, layout_defaults[:layout_direction])       
@@ -166,21 +140,6 @@ module RLayout
       s += "\n"
     end
     
-    def rect(options={})
-      Rectangle.new(self, options)
-    end
-    
-    def circle(options={})
-      Circle.new(self, options)
-    end
-    
-    def container(options={}, &block)
-      Container.new(self, options, &block)
-    end
-    
-    def random_graphics(number)
-      add_graphics(Graphic.random_graphics(number))
-    end
     
     def add_graphics(graphic)
       if graphic.is_a?(Array)
@@ -194,30 +153,11 @@ module RLayout
       end
     end
     
-    def place_graphic(graphic)
-      graphic.parent_graphic = self
-      unless @graphics.include?(graphic)
-        @graphics << graphic 
-      end
-    end
     
-    
-    def stack_graphic(graphic)
-      graphic.parent_graphic = self
-      unless @graphics.include?(graphic)
-        @graphics << graphic 
-        relayout!
-      end
-    end
-    
-    def change_stack_direction
-      
-    end
-    
-    def relayout!
-      # puts __method__
-      
-    end
+    # def relayout!
+    #   # puts __method__
+    #   
+    # end
     
     ########### pgscript verbes
     def flatten

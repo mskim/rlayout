@@ -17,7 +17,7 @@ module RLayout
   class Container < Graphic
 
     def relayout!
-      # puts __method__
+      puts __method__
       return unless @graphics
       vertical  = @layout_direction == "vertical"
       view_size         = [@width,@height]

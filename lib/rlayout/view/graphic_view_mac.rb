@@ -18,10 +18,11 @@ class GraphicViewMac < NSView
   attr_accessor :data, :shape
   
   def self.from_data(data)
+    puts data
     x = data.fetch(:x, 0)
     y = data.fetch(:y, 0)
-    width = data.fetch(:width, 0)
-    height = data.fetch(:height, 0)
+    width = data.fetch(:width, 100)
+    height = data.fetch(:height, 100)
     
     frame = NSMakeRect(x, y, width, height)
     view = GraphicViewMac.alloc.initWithFrame(frame)
@@ -30,7 +31,10 @@ class GraphicViewMac < NSView
   end
   
   def init_with_data(data)
+    
     @data = data
+    puts @data
+    
     init_fill
     init_line
     init_text
@@ -40,6 +44,8 @@ class GraphicViewMac < NSView
     if @data[:graphics]
       @data[:graphics].each do |child|     
         child_view = GraphicViewMac.from_data(child)
+        puts child_view
+        puts "child_view.data[:fill_color]:#{child_view.data[:fill_color]}"
         # child_view = GraphicViewMac.alloc.initWithFrame(NSMakeRect(child[:x], child[:y], child[:width], child[:height]))
         # child_view.init_with_data(child)
         addSubview(child_view)
@@ -51,10 +57,18 @@ class GraphicViewMac < NSView
   
   def drawRect(r)
     # @shape = @data.fetch(:shape,0)
+    puts "drawRect"
     draw_fill(r)
     draw_line(r)
     draw_text(r)
     draw_image(r)
+    puts "subviews.length:#{subviews.length}"
+    subviews.each do |subview|
+      puts subview.frame.origin.x
+      puts subview.frame.origin.y
+      puts subview.frame.size.width
+      puts subview.frame.size.height
+    end
   end
     
   # make it flopped view
