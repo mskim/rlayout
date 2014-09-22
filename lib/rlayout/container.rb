@@ -19,7 +19,6 @@ module RLayout
       @layout_strarting = options.fetch(:layout_strarting, layout_defaults[:layout_strarting])       
       @layout_space     = options.fetch(:layout_space, layout_defaults[:layout_space])       
       @layout_align     = options.fetch(:layout_align, layout_defaults[:layout_align])       
-            
       @grid_cells       = options.fetch(:grid_cells, layout_defaults[:grid_cells])       
       @grid_column_count= options.fetch(:grid_column_count, layout_defaults[:grid_column_count])       
       @grid_row_count   = options.fetch(:grid_row_count, layout_defaults[:grid_row_count])       

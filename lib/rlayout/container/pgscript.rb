@@ -37,6 +37,11 @@ module RLayout
     
     def split(number=2, options={})
       @layout_direction = options.fetch(:layout_direction, "vertical")
+      if options[:layout_space]
+        # layout_space applies to self, not to children
+        @layout_space = options[:layout_space]
+        options.delete(:layout_space)
+      end
       
       if number.class == Fixnum
         number.times do

@@ -65,6 +65,7 @@ module RLayout
            unit_size    = expandable_size/layout_length_sum
          end
        end
+              
        # expandable_size /= expandable_children
 
        @graphics.each do |child|
@@ -159,7 +160,7 @@ module RLayout
        # relayout @owner_graphic's matrix_record with new geometry 
        # @matrix_record.relayout! if @matrix_record
        # @adjust_height_for_children if @is_a?(Paragraph)
-
+       
     end
 
 

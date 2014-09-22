@@ -23,8 +23,6 @@ class GraphicViewMac < NSView
   end
   
   def draw_fill(r)
-    puts "@fill_type:#{@fill_type}"
-    puts "@fill_color:#{@fill_color}"
     if @fill_type == 0   #clearColor
       path=bezierPathWithRect(r)
       NSColor.clearColor.set
