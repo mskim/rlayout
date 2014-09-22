@@ -31,12 +31,16 @@ module RLayout
         fill_color = 'white'
         fill_color = @fill_color if @fill_color
         s = "<rect x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\" fill=\"#{fill_color}\""
-        
         if @line_width!=nil && @line_width > 0
           s+= " stroke=\"#{@line_color}\""
           s+= " stroke-width=\"#{@line_width}\""
         end
         s+= "></rect>\n"
+        
+        if @image_path !=nil
+          s+= "<image x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}px\" height=\"#{@height}px\" xlink:href=\"#{@image_path}\"></image>"
+        end
+        
         
         if @text_string !=nil && @text_string != ""
           s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y + @text_size*1.2}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"

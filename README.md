@@ -1,9 +1,12 @@
 
+2014 9 23
+Paragraph Object
+TextColumn
+TextBox linking
+
 2014 9 22
 svg generation Image
- 
 
-2014 9 21
 svg generation for Container 
 do not wrap into a svg <svg></svg>, do not make it multiple page svg
 use rect or graphic shape, fill, and line

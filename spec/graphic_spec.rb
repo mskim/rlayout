@@ -133,6 +133,6 @@ describe 'ancestry test' do
   
   it 'should create tree' do
     @page.graphics.length.must_equal 1
-    puts @nested.to_mongo
+    @nested.to_mongo
   end
 end
