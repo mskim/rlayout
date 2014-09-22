@@ -5,8 +5,6 @@ fix svg generation for Container
 	do not wrap into a svg <svg></svg>
 	use rect or graphic shape, fill, and line
 	
-Using DRb
-
 2014 9 19
 Using DRb
 

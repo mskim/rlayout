@@ -14,13 +14,13 @@
 # end
 
 module RLayout
-  class Container < Graphic
+  class Container
 
     def relayout!
-      puts __method__
       return unless @graphics
+      return if @graphics.length <= 0
       vertical  = @layout_direction == "vertical"
-      view_size         = [@width,@height]
+      view_size = [@width,@height]
       # binding.pry
       starting_position = vertical ? (@y + @top_margin +  @top_inset) : (@bottom_margin + @bottom_inset)
       ending_position   = vertical ? (view_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (view_size[0] - @left_margin - @right_margin - @left_inset - @right_inset)
@@ -30,7 +30,6 @@ module RLayout
 
        # This is the first pass
        @graphics.each_with_index do |child, index|
-         
          
          next if !child.layout_member || child.layout_expand.nil?                  
          
@@ -66,6 +65,7 @@ module RLayout
            unit_size    = expandable_size/layout_length_sum
          end
        end
+              
        # expandable_size /= expandable_children
 
        @graphics.each do |child|
@@ -160,6 +160,7 @@ module RLayout
        # relayout @owner_graphic's matrix_record with new geometry 
        # @matrix_record.relayout! if @matrix_record
        # @adjust_height_for_children if @is_a?(Paragraph)
+       
     end
 
 
