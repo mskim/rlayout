@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/spec_helper"
+require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'testing container creation' do
   before do
@@ -14,7 +14,7 @@ describe 'testing container creation' do
       rect(:fill_color=>"black")
       relayout_grid!
     end
-    @path = File.dirname(__FILE__) + "/output/container_grid_test.svg"
+    @path = File.dirname(__FILE__) + "/../output/container_grid_test.svg"
     
   end
   

@@ -1,6 +1,17 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
-
+describe 'graphic text test' do
+  before do
+    @t = Text.new(nil, :text_string=>"this is text", :width =>300)
+    @pdf_path = File.dirname(__FILE__) + "/output/graphic_text_test.pdf"
+    @svg_path = File.dirname(__FILE__) + "/output/graphic_text_test.svg"
+  end
+  
+  it 'should save random grapics' do    
+    @t.save_svg(@svg_path)
+    @t.save_pdf(@pdf_path)
+  end
+end
 
 describe 'save pdf random' do
   before do
@@ -21,7 +32,6 @@ end
 
 
 
-__END__
 
 describe 'save pdf' do
   before do

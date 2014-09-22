@@ -1,13 +1,15 @@
 
 2014 9 22
+svg generation Image
+ 
 
-fix svg generation for Container 
-	do not wrap into a svg <svg></svg>
-	use rect or graphic shape, fill, and line
+2014 9 21
+svg generation for Container 
+do not wrap into a svg <svg></svg>, do not make it multiple page svg
+use rect or graphic shape, fill, and line
 	
 2014 9 19
 Using DRb
-
 
 Using DRb & Git
 

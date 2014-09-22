@@ -39,9 +39,13 @@ module RLayout
         s+= "></rect>\n"
         
         if @text_string !=nil && @text_string != ""
-          s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"
+          s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y + @text_size*1.2}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"
         end
         s
+    end
+    
+    def save_svg(path)
+      File.open(path, 'w'){|f| f.write to_svg}
     end
     
   end

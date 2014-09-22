@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/spec_helper"
+require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'testing container creation' do
   before do
@@ -20,35 +20,22 @@ describe 'testing container creation' do
       circle(:fill_color=>"green")
       relayout!
     end
-    @path = File.dirname(__FILE__) + "/output/container_test.svg"
-    @pdf_path = File.dirname(__FILE__) + "/output/container_test.pdf"
+    @path = File.dirname(__FILE__) + "/../output/container_test.svg"
+    @pdf_path = File.dirname(__FILE__) + "/../output/container_test.pdf"
   end
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   
   it 'should save' do
     @container.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true
-    system("open #{@pdf_path}") if File.exists?(@pdf_path)
+    # system("open #{@pdf_path}") if File.exists?(@pdf_path)
     
   end
   
-  # it 'should create container' do
-  #   @container.must_be_kind_of Container
-  #   @container.graphics.length.must_equal 3
-  #   @container.graphics[0].must_be_kind_of Rectangle
-  # end
+  it 'should create container' do
+    @container.must_be_kind_of Container
+    @container.graphics.length.must_equal 5
+    @container.graphics[0].must_be_kind_of Container
+  end
   
 end

@@ -261,7 +261,6 @@ module RLayout
         #TODO
         # puts "DRb not found!!!!"
       end
-      
     end
   end
   

@@ -13,18 +13,9 @@ describe 'generate svg' do
   it 'should save svg' do
      @p.save_pdf(@page_pdf_test)
      File.exists?(@page_pdf_test).must_equal true
-     system("open #{@page_pdf_test}") if File.exists?(@page_pdf_test)
+     # system("open #{@page_pdf_test}") if File.exists?(@page_pdf_test)
    end
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
+      
    
    
   # it 'should save JSON' do

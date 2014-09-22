@@ -42,7 +42,6 @@ module RLayout
       else
         @width = @parent_graphic.width if @parent_graphic
       end
-      
       @top_inset      = 5
       @bottom_inset   = 5
       @left_inset     = 10
