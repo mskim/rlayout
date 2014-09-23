@@ -1,9 +1,5 @@
-# require File.dirname(__FILE__) + '/graphic_view_svg/line_drawing'
-# require File.dirname(__FILE__) + '/graphic_view_svg/fill_drawing'
-# require File.dirname(__FILE__) + '/graphic_view_svg/image_drawing'
-# require File.dirname(__FILE__) + '/graphic_view_svg/text_drawing'
-# require File.dirname(__FILE__) + '/graphic_view_svg/text_drawing'
-require "rexml/document"
+
+require "rexml/document"  # used for pretty xml printing
 
 module RLayout  
   class Graphic
@@ -26,26 +22,24 @@ module RLayout
       end
     end
     
-    
     def svg
-        fill_color = 'white'
-        fill_color = @fill_color if @fill_color
-        s = "<rect x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\" fill=\"#{fill_color}\""
-        if @line_width!=nil && @line_width > 0
-          s+= " stroke=\"#{@line_color}\""
-          s+= " stroke-width=\"#{@line_width}\""
-        end
-        s+= "></rect>\n"
-        
-        if @image_path !=nil
-          s+= "<image x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}px\" height=\"#{@height}px\" xlink:href=\"#{@image_path}\"></image>"
-        end
-        
-        
-        if @text_string !=nil && @text_string != ""
-          s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y + @text_size*1.2}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"
-        end
-        s
+      fill_color = 'white'
+      fill_color = @fill_color if @fill_color
+      s = "<rect x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\" fill=\"#{fill_color}\""
+      if @line_width!=nil && @line_width > 0
+        s+= " stroke=\"#{@line_color}\""
+        s+= " stroke-width=\"#{@line_width}\""
+      end
+      s+= "></rect>\n"
+      
+      if @image_path !=nil
+        s+= "<image x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}px\" height=\"#{@height}px\" xlink:href=\"#{@image_path}\"></image>"
+      end
+      
+      if @text_string !=nil && @text_string != ""
+        s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y + @text_size*1.2}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"
+      end
+      s
     end
     
     def save_svg(path)
@@ -67,6 +61,8 @@ module RLayout
         s+= " stroke-width=\"#{@line_width}\""
       end
       s+= "></circle>\n"      
+      
+      # TODO Image & Text
     end
   end
   
@@ -84,16 +80,26 @@ module RLayout
         s+= " stroke-width=\"#{@line_width}\""
       end
       s+= "></rect>\n"
+      
+      if @image_path !=nil
+        s+= "<image x=\"#{@x}\" y=\"#{@y}\" rx=\"#{r}\" ry=\"#{r}\" width=\"#{@width}px\" height=\"#{@height}px\" xlink:href=\"#{@image_path}\"></image>"
+      end
+      
+      if @text_string !=nil && @text_string != ""
+        s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y + @text_size*1.2}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"
+      end
+      
     end
   end
   
   class TextToken
     def svg
-
+      
+      # TODO Line Fill Shape Image & Text
+      
       s = ""
       if @text_string !=nil && @text_string != ""
         s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y + @height*0.8}\">#{@text_string}</text>\n"
-      
       end
       s
     end
@@ -133,6 +139,8 @@ module RLayout
         s+= " stroke-width=\"#{@line_width}\""
       end
       s+= "></rect>\n"
+      
+      # TODO Image
       
       if @text_string !=nil && @text_string != ""
         s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"

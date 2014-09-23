@@ -61,8 +61,10 @@ module RLayout
       if options[:title]
         atts          = @style_service.style_for_markup("title", options)
         atts[:string] = options[:title]
-        height        = GTextRecord.text_height_with_atts(width, atts)
-        height_sum    += height
+        # TODO use RFont instead of GTextRecord
+        
+        # height        = GTextRecord.text_height_with_atts(width, atts)
+        height_sum    += 32
         @title        = Text.new(self, :ns_atts_array=>[atts], :line_with=>5, :text_fit=>FIT_FONT_SIZE)         
         @title.layout_expand=[:width, :height]
         @title.unit_length  = height
@@ -71,8 +73,8 @@ module RLayout
       if options[:subtitle]        
         atts = @style_service.style_for_markup("subtitle", options)        
         atts[:string] = options[:subtitle]
-        height        = GTextRecord.text_height_with_atts(width, atts)
-        height_sum    += height
+        # height        = GTextRecord.text_height_with_atts(width, atts)
+        height_sum    += 24
         @subtitle     = Text.new(self, :ns_atts_array=>[atts], :text_fit=>FIT_FONT_SIZE)         
         @title.layout_expand=[:width, :height]
         @subtitle.unit_lengthunit_lengthunit_length  = height
@@ -81,8 +83,8 @@ module RLayout
       if options[:leading]
         atts = @style_service.style_for_markup("leading", options)
         atts[:string] = options[:leading]
-        height        = GTextRecord.text_height_with_atts(width, atts)
-        height_sum    += height
+        # height        = GTextRecord.text_height_with_atts(width, atts)
+        height_sum    += 20
         @leading      = Text.new(self, :ns_atts_array=>[atts], :text_fit=>FIT_FONT_SIZE)         
         @leading.layout_expand=[:width, :height]
         @leading.unit_length  = height
@@ -91,8 +93,8 @@ module RLayout
       if options[:author]
         atts = @style_service.style_for_markup("author", options)
         atts[:string] = options[:author]
-        height        = GTextRecord.text_height_with_atts(width, atts)
-        height_sum    += height
+        # height        = GTextRecord.text_height_with_atts(width, atts)
+        height_sum    += 14
         @author      = Text.new(self, :ns_atts_array=>[atts], :text_fit=>FIT_FONT_SIZE)         
         @author.layout_expand=[:width, :height]
         @author.unit_length  = height
