@@ -73,8 +73,6 @@ module RLayout
       File.open(path, 'w'){|f| f.write JSON.pretty_generate(h)}
     end
     
-
-    
     
     ##########  sample ###########
     def self.sample_page
@@ -84,20 +82,11 @@ module RLayout
     ########### PageScritp Verbs #############
     def article_layout(options={:column=>2, :images=>0, side_box=>0})
       @heading  = Heading.new(self)
-      @body     = Body.new(self, options)
-      @graphics << @heading
-      @graphics << @body
-      
+      @body     = Body.new(self, options)      
     end
-    
-    def container(options={}, &block)
-      c = Container.new(self, options, &block)
-      @graphics << c
-      # puts "@graphics.lenth:#{@graphics.length}"
-    end
-    
+        
     def heading(options={}, &block)
-      @graphics << Heading.new(self, options={}, &block)
+      @heading = Heading.new(self, options={}, &block)
     end
     
     # def header(options={})
@@ -108,7 +97,7 @@ module RLayout
     #   
     # end
     # 
-    # def image
+    # def image(options={})
     #   
     # end
     

@@ -99,6 +99,13 @@ module RLayout
         page.save_svg(path)
       end
     end
+    
+    def save_pdf(path)
+      if RUBY_ENGINE == 'macruby'
+        @ns_view = DocumentViewMac.new(to_data)
+        @ns_view.save_pdf(path)
+      end
+    end
   end
   
 end

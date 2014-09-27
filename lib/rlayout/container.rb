@@ -81,6 +81,12 @@ module RLayout
       end
     end
     
+    #TODO
+    def graphics_space_sum
+      return 0 if @graphics.length == 0
+      @layout_space * (@graphics.length-1)
+    end
+    
     def layout_area
       [@width - @left_margin - @right_margin - @left_inset - @right_inset, @height - @top_margin - @top_inset - @bottom_margin - @bottom_inset]
     end

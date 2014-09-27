@@ -25,7 +25,6 @@ class DocumentViewMac
   end
   
   def save_pdf(path, options={})
-    puts __method__
     pdf_path=path
     unless File.extname(path) == '.pdf'
       pdf_path=path + ".pdf"

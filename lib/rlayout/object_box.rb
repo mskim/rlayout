@@ -17,9 +17,9 @@ module RLayout
     
     def initialize(parent_graphic, options={}, &block)
       super
-      @layout_direction  = options.fetch(:layout_direction, "horizontal")
-      @layout_space  = options.fetch(:layout_space, 10)
-      @column_count = options.fetch(:column_count, 3)
+      @layout_direction = options.fetch(:layout_direction, "horizontal")
+      @layout_space     = options.fetch(:layout_space, 10)
+      @column_count     = options.fetch(:column_count, 3)
       create_columns
       # binding.pry
       if block
@@ -154,9 +154,6 @@ module RLayout
       self
     end
     
-    def layout_area
-      [@width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
-    end
     
     def insert_item(item, options={})
       if ((item.height + @layout_space + @current_position) <= @height) || (options[:fortce_fit]==true)

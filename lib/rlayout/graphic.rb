@@ -159,10 +159,6 @@ module RLayout
       end
     end
     
-    #TODO
-    def graphics_space_sum
-      0
-    end
     
     def self.with(parent_graphic, style_name, &block)
       Graphic.new(parent_graphic, Style.shared_style(style_name), &block)

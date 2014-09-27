@@ -23,6 +23,10 @@ module RLayout
       Rectangle.new(self, options)
     end
     
+    def text(options={})
+      Text.new(self, options)
+    end
+    
     def circle(options={})
       Circle.new(self, options)
     end

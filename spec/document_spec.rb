@@ -2,6 +2,26 @@ require File.dirname(__FILE__) + "/spec_helper"
 
 
 
+describe 'save multiple page document' do
+  before do
+    @doc = Document.new(:title=>"long_page_doc") do
+      20.times do
+        page
+      end
+    end
+    @pdf_path = File.dirname(__FILE__) + "/output/document_long_page_test.pdf"
+    
+  end
+  it 'should have 50 pages' do
+    @doc.pages.length.must_equal 20
+  end
+  it 'should save 50 pages' do
+    @doc.save_pdf(@pdf_path)
+    File.exists?(@pdf_path).must_equal true
+  end
+end
+
+__END__
 describe "document" do
   before do
     @doc = Document.new(:tite=>"my_test") do
@@ -48,8 +68,11 @@ describe "document" do
   
   it 'should save svg' do
     @svg_path = File.dirname(__FILE__) + "/output/document_test.svg"
+    @svg0_path = File.dirname(__FILE__) + "/output/document_test0.svg"
+    @pdf_path = File.dirname(__FILE__) + "/output/document_test.pdf"
     @doc.save_svg(@svg_path)
-    File.exists?(@svg_path).must_equal true
-    
+    @doc.save_pdf(@pdf_path)
+    File.exists?(@svg0_path).must_equal true
+    File.exists?(@pdf_path).must_equal true
   end
 end

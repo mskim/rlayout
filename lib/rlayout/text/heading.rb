@@ -19,15 +19,16 @@
 # 1. get heading box width from page by calling "drawing_area"
 # 1. get the text height of each heading elements
 # 1. create each element with expand=>[:width, :height]
-# 1. set set unit_length as height, so that their height is proportional to height
+# 1. set set layout_length as height, so that their height is proportional to height
 # 1. set Heading expand =>:width
 
 
 module RLayout
   
+  # heading width is set to parents's layout_area[width]. 
   # heading height is set to content height sum initially. 
   # And the height is re-adjusted by the parent.
-  # Each heading element unit_length is set to it's height
+  # Each heading element layout_length is set to it's height
   # This way, parent can shrink or expand heading and maintain each elements's height propotion. 
 
   class Heading < Container
@@ -39,9 +40,12 @@ module RLayout
       @layout_space = 2
       if options[:width]
         @width = options[:width]
+      elsif @parent_graphic
+        @width = @parent_graphic.layout_area[0]
       else
-        @width = @parent_graphic.width if @parent_graphic
+        @width = 600
       end
+      
       @top_inset      = 5
       @bottom_inset   = 5
       @left_inset     = 10
@@ -57,58 +61,33 @@ module RLayout
             
       
       width = @width - @left_inset - @right_inset
-      height_sum = 0
       if options[:title]
-        atts          = @style_service.style_for_markup("title", options)
-        atts[:string] = options[:title]
-        # TODO use RFont instead of GTextRecord
-        
-        # height        = GTextRecord.text_height_with_atts(width, atts)
-        height_sum    += 32
-        @title        = Text.new(self, :ns_atts_array=>[atts], :line_with=>5, :text_fit=>FIT_FONT_SIZE)         
-        @title.layout_expand=[:width, :height]
-        @title.unit_length  = height
+        @title_text = title(options[:title], options)
       end
 
       if options[:subtitle]        
-        atts = @style_service.style_for_markup("subtitle", options)        
-        atts[:string] = options[:subtitle]
-        # height        = GTextRecord.text_height_with_atts(width, atts)
-        height_sum    += 24
-        @subtitle     = Text.new(self, :ns_atts_array=>[atts], :text_fit=>FIT_FONT_SIZE)         
-        @title.layout_expand=[:width, :height]
-        @subtitle.unit_lengthunit_lengthunit_length  = height
+        @subtitle_text = subtitle(options[:subtitle], options)
       end
 
       if options[:leading]
-        atts = @style_service.style_for_markup("leading", options)
-        atts[:string] = options[:leading]
-        # height        = GTextRecord.text_height_with_atts(width, atts)
-        height_sum    += 20
-        @leading      = Text.new(self, :ns_atts_array=>[atts], :text_fit=>FIT_FONT_SIZE)         
-        @leading.layout_expand=[:width, :height]
-        @leading.unit_length  = height
+        @leading_text = leading(options[:leading], options)
       end
 
       if options[:author]
-        atts = @style_service.style_for_markup("author", options)
-        atts[:string] = options[:author]
-        # height        = GTextRecord.text_height_with_atts(width, atts)
-        height_sum    += 14
-        @author      = Text.new(self, :ns_atts_array=>[atts], :text_fit=>FIT_FONT_SIZE)         
-        @author.layout_expand=[:width, :height]
-        @author.unit_length  = height
+        @author_text = author(options[:author], options)
       end
 
-      @height = height_sum + graphics_space_sum
-      @line_type=2
+      @line_type=0
       @line_width=1
       @line_color="lightGray"
+      height_sum = 0      
+      height_sum +=@title_text.height    if @title_text
+      height_sum +=@subtitle_text.height if @subtitle_text
+      height_sum +=@leading_text.height  if @leading_text
+      height_sum +=@author_text.height   if @author_text
+      @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset
+      relayout!
       
-      if block
-        instance_eval(&block)
-      end
-
       self
     end
     
@@ -120,7 +99,7 @@ module RLayout
       height_sum    += height
       @title        = Text.new(self, :ns_atts_array=>[atts], :line_with=>5, :text_fit=>FIT_FONT_SIZE)         
       @title.layout_expand=[:width, :height]
-      @title.unit_length  = height
+      @title.layout_length  = height
       news_setting = {
         :title => "Newspaper sample title",
         :author => "Min Soo Kim",
@@ -197,25 +176,41 @@ module RLayout
       end
     end
     
-    ######## PageScript verbes
+    #TODO
+    # def change_width_and_adjust_height(new_width, options={})
+    # 
+    # end
     
+    ######## PageScript verbes
     def title(string)
-      @title_text = Text.new(self, text_string: string, text_markup: "title")
+      @title_text = Text.new(self, text_string: string, text_markup: "title", text_size: 32, text_color:"black", :width=>@width)
+      @title_text.layout_expand  = :width
+      @title_text.layout_length  = 32
+      @title_text.height  = 32*1.2
     end
     
     def subtitle(string)
-      @subtitle_text = Text.new(self, text_string: string, text_markup: "subtitle")
-      
-    end
-    
-    def author(string)
-      @author_text = Text.new(self, text_string: string, text_markup: "author")
+      @subtitle_text = Text.new(self, text_string: string, text_markup: "subtitle", text_size: 24, :width=>@width)
+      @subtitle_text.layout_expand = :width
+      @subtitle_text.layout_length = 24
+      @subtitle_text.height = 24*1.2
       
     end
     
     def leading(string)
-      @leading_text = Text.new(self, text_string: string, text_markup: "leading")
+      @leading_text = Text.new(self, text_string: string, text_markup: "leading", text_size: 20, :width=>@width)
+      @leading_text.layout_expand  = :width
+      @leading_text.layout_length  = 20
+      @leading_text.height = 20*1.2
     end
+    
+    def author(string)
+       @author_text = Text.new(self, text_string: string, text_markup: "author", text_size: 14, :width=>@width)
+       @author_text.layout_expand  = :width
+       @author_text.layout_length  = 14
+       @author_text.height = 14*1.2
+     end
+    
   end
 
     

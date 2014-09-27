@@ -46,7 +46,8 @@ class GraphicViewMac < NSView
   end
 
   def linePathWithRect(r)
-    path = bezierPathWithRect(r)
+    path = NSBezierPath.bezierPathWithRect(r)
+		
     # path = @owner_graphic.bezierPathWithRect(r)
     path.setLineCapStyle(@line_cap) if @line_cap
     path.setLineJoinStyle(@line_join) if @line_join
@@ -62,9 +63,12 @@ class GraphicViewMac < NSView
   end  
   
   def drawLine(rect, withTrap:trap)  
+    
     # return if @line_width == 0 &&  @graphic.drawing_mode == "printing"
     return if @line_width == 0 
-    
+    unless trap
+      trap = 0
+    end
     # clipLine = false
     rect = getLineRect(rect)    
     @line_color  = convert_to_nscolor(@line_color)    unless @line_color.class == NSColor  
@@ -73,9 +77,10 @@ class GraphicViewMac < NSView
     if @line_type==nil
       @line_type=0
     end
-    
+    puts "@line_type:#{@line_type}"
     if(@line_type == 0)   
-      path = linePathWithRect(rect)      
+      path = linePathWithRect(rect)  
+      puts "path:#{path}"    
       if @line_width == 0
         NSColor.lightGrayColor.set
       end
