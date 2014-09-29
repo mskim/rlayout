@@ -90,7 +90,14 @@ module RLayout
     def layout_area
       [@width - @left_margin - @right_margin - @left_inset - @right_inset, @height - @top_margin - @top_inset - @bottom_margin - @bottom_inset]
     end
-
+    
+    def graphics_height_sum
+      return 0 if @graphics.length == 0
+      @sum = 0
+      @graphics.each {|g| @sum+= g.height + @layout_space}
+      return @sum       
+    end
+    
     def graphics_width_sum
       return 0 if @graphics.length == 0
       @sum = 0

@@ -88,7 +88,7 @@ module RLayout
       if @text_string !=nil && @text_string != ""
         s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y + @text_size*1.2}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"
       end
-      
+      s
     end
   end
   
@@ -122,10 +122,11 @@ module RLayout
           s +="</g>\n"
         s += "</svg>\n"
       end
-      doc = REXML::Document.new s
-      out = ""
-      doc.write(out, 2)
-      out
+      s
+      # doc = REXML::Document.new s
+      # out = ""
+      # doc.write(out, 2)
+      # out
     end
     
     def container_svg

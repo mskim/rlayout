@@ -20,15 +20,15 @@ require File.dirname(__FILE__) + "/../spec_helper"
 describe 'testing heading block' do
   before do
     @h = Heading.new(nil) do
-      title("This is a title.")
+      title("This title looks great.")
       subtitle("This is subtitle.")
       leading("This is the leading")
-      author("This is the author")
+      author("- Min Soo Kim")
     end
   end
   
   it 'should have height heading' do
-    @h.height.must_equal  50
+    @h.height.must_equal  123.99999999999999
   end
   
   it 'should create heading' do
@@ -49,7 +49,6 @@ describe 'testing heading block' do
     File.exists?(@svg_path).must_equal true
     @h.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true
-    
   end
   
 end

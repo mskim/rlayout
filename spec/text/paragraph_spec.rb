@@ -1,77 +1,46 @@
+
 require File.dirname(__FILE__) + "/../spec_helper"
 
-describe 'Paragraph creation test' do
+describe 'ParagraphModel creation' do
   before do
-    @para = Paragraph.new(nil, :para_string=>"One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen", :markup=>"p")    
+    @pm = ParagraphModel.new
   end
   
-  it 'should create Pagragraph object' do
-    @para.must_be_kind_of Paragraph
+  it 'should create ParagraphModel' do
+    @pm.must_be_kind_of ParagraphModel
   end
   
-  it 'shuld have attribute of para_string' do
-    @para.para_string.must_equal "One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen"
-    @para.markup.must_equal "p"
-    @para.text_size.must_equal 12
-    @para.text_font.must_equal "Times"
-    @para.text_color.must_equal "black"
-  end
-  
-  if RUBY_ENGINE == 'macruby'
-    it 'should save pdf' do
-      @para.change_width_and_adjust_height(300)
-      # puts "@para.inspect:#{@para.inspect}"
-      @pdf_path = File.dirname(__FILE__) + "/../output/paragraph_test.pdf"
-      @para.save_pdf(@pdf_path)
-      File.exists?(@pdf_path).must_equal true
-      system "open #{@pdf_path}"
-    end
+  it 'should have markpu' do
+    @pm.markup.must_equal 'p'
+    @pm.string.must_equal ''
   end
 end
 
-describe 'Paragraph line creation test' do
-  before do
-    @para = Paragraph.new(nil, :para_string=>"This is a text and I like it very very much lets see if you can layout this one.", :markup=>"p")
-  end
-  
-  it 'should create Pagragraph object' do
-    @para.must_be_kind_of Paragraph
-  end
-  
-  it 'shuld have attribute of text_string' do
-    @para.tokens.must_be_kind_of Array
-    # @para.tokens[1].height.must_equal 22
-    # @para.tokens.each {|token| puts token.text_string}
-  end
-  
-  it 'should not have any lines' do
-    @para.graphics.length.must_equal 0
-  end
-  
-end
 
-describe 'Paragraph should change width and layout lines' do
+__END__
+describe 'create Paragraph' do
   before do
-    @para = Paragraph.new(nil, :para_string=>"This is a text and I like it very very much lets see if you can layout this one.", :markup=>"p")
-    @para.change_width_and_adjust_height(300)
-    @path = File.dirname(__FILE__) + "/../output/paragraph_test.svg"
+    options = {:string=>"This is a paragraph test string", :markup=>'title'}
+    @para = Paragraph.new(nil, :para_data=>options)
+  end
     
+  it 'should create Paragraph' do
+    @para.x.must_equal 0
+    # @para.y.must_equal 0
+    @para.width.must_equal 100
+    if RUBY_ENGINE == 'macruby'
+      @para.height.must_equal 57
+    else
+      @para.height.must_equal 100
+    end
+    @para.must_be_kind_of Paragraph
+    @para.graphics.length.must_equal 1
+    @para.graphics.first.must_be_kind_of Text
   end
   
-  it 'should have lines' do
-    @para.graphics.length.must_equal 2
-    @para.save_svg(@path)
-    File.exists?(@path).must_equal true
+  it 'should save paragraph' do
+    pdf_path = File.dirname(__FILE__) + "/../output/paragraph_test.pdf"
+    @para.save_pdf(pdf_path)
   end
 end
 
-describe 'TextLine test' do
-  before do
-    @para = TextLine.new(nil)    
-  end
-  
-  it 'should create TextLine object' do
-    @para.must_be_kind_of TextLine
-  end
-  
-end

@@ -83,11 +83,11 @@ describe "graphic" do
     @graphic.line_width.must_equal nil
     @graphic.line_dash.must_equal nil
     
-    @graphic.unit_length.must_equal 1
-    @graphic.grid_x.must_equal 0
-    @graphic.grid_y.must_equal 0
-    @graphic.grid_width.must_equal 1
-    @graphic.grid_height.must_equal 1
+    @graphic.layout_length.must_equal 1
+    @graphic.grid_rect[0].must_equal 0
+    @graphic.grid_rect[1].must_equal 0
+    @graphic.grid_rect[2].must_equal 1
+    @graphic.grid_rect[3].must_equal 1
     @graphic.layout_expand.must_equal [:width,:height]
   end
   
@@ -111,18 +111,7 @@ describe 'graphic svg' do
   end
 end
 
-describe 'test getters and setter' do
-  before do
-    @graphic = Graphic.new(nil) do
-      line_width=10
-    end
-  end
-  
-  it 'should set instance variable value' do
-    @graphic.line_width.must_equal 10
-  end
-  
-end
+
 
 describe 'ancestry test' do
   before do

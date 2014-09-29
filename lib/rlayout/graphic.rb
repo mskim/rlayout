@@ -5,6 +5,11 @@ require 'json'
 #  round_rect
 
 #  line_type=
+require File.dirname(__FILE__) + "/graphic/layout"
+require File.dirname(__FILE__) + "/graphic/fill"
+require File.dirname(__FILE__) + "/graphic/line"
+require File.dirname(__FILE__) + "/graphic/image"
+require File.dirname(__FILE__) + "/graphic/text"
 
 module RLayout
   
@@ -18,7 +23,7 @@ module RLayout
     attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
     attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand, :grid_rect
-    attr_accessor :text_string, :text_color, :text_size, :text_font, :text_fit_type
+    attr_accessor :text_string, :text_color, :text_size, :text_font, :text_fit_type, :text_alignment
     attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
     
     # TODO
@@ -30,65 +35,29 @@ module RLayout
       if  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
         @parent_graphic.graphics << self  
       end
-      @klass            = options.fetch(:klass, "Rectangle") 
+      @klass            = options.fetch(:klass, defaults[:klass]) 
       @x                = options.fetch(:x, defaults[:x])
       @y                = options.fetch(:y, defaults[:y])
       @width            = options.fetch(:width, defaults[:width])
       @height           = options.fetch(:height, defaults[:height])
-      if options[:margin]
-        @left_margin    = options[:margin]
-        @top_margin     = options[:margin]
-        @right_margin   = options[:margin]
-        @bottom_margin  = options[:margin]        
-      else
-        @left_margin    = options.fetch(:left_margin, defaults[:left_margin])
-        @top_margin     = options.fetch(:top_margin, defaults[:top_margin])
-        @right_margin   = options.fetch(:right_margin, defaults[:right_margin])
-        @bottom_margin  = options.fetch(:bottom_margin, defaults[:bottom_margin])
-      end
-      if options[:inset]
-        @left_inset     = options[:inset]
-        @top_inset      = options[:inset]
-        @right_inset    = options[:inset]
-        @bottom_inset   = options[:inset]
-      else
-        @left_inset     = options.fetch(:left_inset, defaults[:left_inset])
-        @top_inset      = options.fetch(:top_inset, defaults[:top_inset])
-        @right_inset    = options.fetch(:right_inset, defaults[:right_inset])
-        @bottom_inset   = options.fetch(:bottom_inset, defaults[:bottom_inset])
-      end
-      @layout_direction = options.fetch(:layout_direction, defaults[:layout_direction])
-      @layout_member    = options.fetch(:layout_member, defaults[:layout_member])
-      @layout_expand    = options.fetch(:layout_expand, defaults[:layout_expand])
-      @layout_length    = options.fetch(:layout_length, defaults[:layout_length])
       @grid_rect        = options.fetch(:grid_rect, defaults[:grid_rect]) 
       @shape            = options.fetch(:shape, defaults[:shape])
-                  
       @tag              = options[:tag]      
-      @fill_type        = options[:fill_type]
-      @fill_color       = options[:fill_color]
-      @fill_other_color = options[:fill_other_color]
-      @line_type        = options[:line_type]
-      @line_color       = options[:line_color]
-      @line_width       = options[:line_width]
-      @line_dash        = options[:line_dash]
       @shape_bezier     = options[:shape_bezier]
-      @text_string      = options[:text_string]
-      @text_color       = options[:text_color]
-      @text_size        = options[:text_size]
-      @text_font        = options[:text_font]
-      @text_fit_type    = options[:text_fit_type]
-      @image_path       = options[:image_path]
-      @image_frame      = options[:image_frame]
-      @mage_fit_type    = options[:mage_fit_type]
-      @image_caption    = options[:image_caption]      
       @auto_save        = options[:auto_save]
+      
+      init_layout(options)
+      init_line(options)
+      init_text(options)
+      init_image(options)
+      
       
       self
     end
 
     def defaults
       {
+        klass:        'Rectangle',
         x:            0,
         y:            0,
         width:        100,
@@ -97,12 +66,12 @@ module RLayout
         top_margin:   0,
         right_margin: 0,
         bottom_margin: 0,
-        layout_member: true,
         left_inset:   0,
         top_inset:    0,
         right_inset:  0,
         bottom_inset: 0,
         layout_direction: "vertical",
+        layout_member: true,
         layout_expand: [:width, :height], # auto_layout expand 
         layout_length:  1,  
         grid_rect:   [0,0,1,1], 
@@ -218,7 +187,7 @@ module RLayout
     # difference between to_hash and to_data:
     # to_hash does not save values, if they are equal to default
     # to_data save values, even if they are equal to default
-    # to_data is uesed to send the data for drawing in the view
+    # to_data is uesed to send the data to view for drawing 
     def to_data
       h = {}
       instance_variables.each{|a|
@@ -260,6 +229,23 @@ module RLayout
     end
   end
   
+  class Text < Graphic
+    def initialize(parent_graphic, options={})
+      super
+      @klass = "Text"
+      self
+    end
+    
+    def self.sample(options={})
+      if options[:number] > 0
+        Text.new(nil, text_string: "This is a sample text string"*options[:number])
+      else
+        Text.new(nil, text_string: "This is a sample text string")
+      end
+    end
+    
+  end
+  
   class Rectangle < Graphic
     def initialize(parent_graphic, options={})
       super
@@ -269,20 +255,6 @@ module RLayout
     end
   end
   
-  class Text < Graphic
-    def initialize(parent_graphic, options={})
-      super
-      @klass = "Text"
-      @text_string    = options.fetch(:text_string, "")
-      @text_color     = options.fetch(:text_color, "black")
-      @text_font      = options.fetch(:text_font, "Times")
-      @text_size      = options.fetch(:text_size, 16)
-      @text_fit_type  = options.fetch(:text_fit_type, 0)
-      @text_alignment = options.fetch(:text_alignment, "center")
-      self
-    end
-  end
-
   class Image < Graphic
     def initialize(parent_graphic, options={})
       super

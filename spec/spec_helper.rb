@@ -4,7 +4,7 @@
 # puts "RLayout test: Running on Ruby Version: #{RUBY_VERSION}"
 unless RUBY_ENGINE == "macruby"
   require 'minitest'
-  require 'pry-rescue/minitest'
+  # require 'pry-rescue/minitest'
 end
 
 require 'minitest/autorun'

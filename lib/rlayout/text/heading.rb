@@ -36,6 +36,12 @@ module RLayout
     attr_accessor :style_service
     
     def initialize(parent_graphic, options={}, &block)
+      if options[:style_service] 
+        @style_service = options[:style_service]
+      else
+        @style_service ||= StyleService.new(options)
+      end
+      puts  "@style_service:#{@style_service}"
       super      
       @layout_space = 2
       if options[:width]
@@ -51,14 +57,7 @@ module RLayout
       @left_inset     = 10
       @right_inset    = 10
       
-      @layout_expand = :width
-      if options[:style_service] 
-        @style_service = options[:style_service]
-      else
-        #TODO
-        # @style_service ||= StyleService.new(options)
-      end
-            
+      @layout_expand = [:width]
       
       width = @width - @left_inset - @right_inset
       if options[:title]
@@ -182,35 +181,45 @@ module RLayout
     # end
     
     ######## PageScript verbes
-    def title(string)
-      @title_text = Text.new(self, text_string: string, text_markup: "title", text_size: 32, text_color:"black", :width=>@width)
-      @title_text.layout_expand  = :width
-      @title_text.layout_length  = 32
-      @title_text.height  = 32*1.2
+    def title(string, options={})
+      atts  = @style_service.style_for_markup("title", options)
+      atts[:text_string] = string
+      atts[:width] = @width
+      @title_text = Text.new(self, atts)
+      @title_text.layout_expand  = [:width]
+      @title_text.layout_length  = atts[:text_size]
+      @title_text.height  = atts[:text_size]*1.2
     end
     
-    def subtitle(string)
-      @subtitle_text = Text.new(self, text_string: string, text_markup: "subtitle", text_size: 24, :width=>@width)
-      @subtitle_text.layout_expand = :width
-      @subtitle_text.layout_length = 24
-      @subtitle_text.height = 24*1.2
-      
+    def subtitle(string, options={})
+      atts  = @style_service.style_for_markup("subtitle", options)
+      atts[:text_string] = string
+      atts[:width] = @width
+      @subtitle_text = Text.new(self, atts)
+      @subtitle_text.layout_expand  = [:width]
+      @subtitle_text.layout_length  = atts[:text_size]
+      @subtitle_text.height  = atts[:text_size]*1.2      
     end
     
-    def leading(string)
-      @leading_text = Text.new(self, text_string: string, text_markup: "leading", text_size: 20, :width=>@width)
-      @leading_text.layout_expand  = :width
-      @leading_text.layout_length  = 20
-      @leading_text.height = 20*1.2
+    def leading(string, options={})
+      atts  = @style_service.style_for_markup("leading", options)
+      atts[:text_string] = string
+      atts[:width] = @width
+      @leading_text = Text.new(self, atts)
+      @leading_text.layout_expand  = [:width]
+      @leading_text.layout_length  = atts[:text_size]
+      @leading_text.height  = atts[:text_size]*1.2      
     end
     
-    def author(string)
-       @author_text = Text.new(self, text_string: string, text_markup: "author", text_size: 14, :width=>@width)
-       @author_text.layout_expand  = :width
-       @author_text.layout_length  = 14
-       @author_text.height = 14*1.2
-     end
-    
+    def author(string, options={})
+      atts  = @style_service.style_for_markup("author", options)
+      atts[:text_string] = string
+      atts[:width] = @width
+      @author_text = Text.new(self, atts)
+      @author_text.layout_expand  = [:width]
+      @author_text.layout_length  = atts[:text_size]
+      @author_text.height  = atts[:text_size]*1.2      
+    end
   end
 
     

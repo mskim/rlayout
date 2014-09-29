@@ -48,7 +48,7 @@ class GraphicViewMac < NSView
       @text_alignment = NSLeftTextAlignment
     end
     
-    @att_string = att_string
+    @att_string = make_att_string_from(@data)
     # convert to NSRect
   end
   
@@ -69,11 +69,30 @@ class GraphicViewMac < NSView
     @att_string.drawInRect(r)
   end
 
+  def make_att_string_from(data={})
+    if data[:atts_array]
+      return atts_array_to_att_string(data[:atts_array])
+    else
+      return att_string
+    end
+  end
+  
+  def atts_array_to_att_string(atts_array)
+    text_storage = NSTextStorage.alloc.init
+    atts_array.each do |atts|
+      att_string.appendAttributedString(att_string(atts))
+    end
+    text_storage
+  end
+  
+    
   def att_string
     
     #TODO
     # implement text_fit_type
     # atts[NSKernAttributeName] = @text_track           if @text_track
+    # implement inline element, italic, bold, underline, sub, super, emphasis(color)
+    
     right_align   = NSMutableParagraphStyle.alloc.init.setAlignment(NSRightTextAlignment)          
     center_align  = NSMutableParagraphStyle.alloc.init.setAlignment(NSCenterTextAlignment)          
     

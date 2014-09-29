@@ -49,7 +49,6 @@ module RLayout
       
       if number.class == Fixnum
         number.times do
-          # puts "options:#{options}"
           Container.new(self, options)
         end
       elsif number.class == Array
