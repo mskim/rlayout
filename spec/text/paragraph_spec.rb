@@ -17,11 +17,10 @@ describe 'ParagraphModel creation' do
 end
 
 
-__END__
 describe 'create Paragraph' do
   before do
-    options = {:string=>"This is a paragraph test string", :markup=>'title'}
-    @para = Paragraph.new(nil, :para_data=>options)
+    options = {:text_string=>"This is a paragraph test string", :markup=>'title'}
+    @para = Paragraph.new(nil, options)
   end
     
   it 'should create Paragraph' do
@@ -34,8 +33,6 @@ describe 'create Paragraph' do
       @para.height.must_equal 100
     end
     @para.must_be_kind_of Paragraph
-    @para.graphics.length.must_equal 1
-    @para.graphics.first.must_be_kind_of Text
   end
   
   it 'should save paragraph' do

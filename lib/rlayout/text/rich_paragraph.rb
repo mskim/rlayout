@@ -7,6 +7,20 @@
 # TextToken
 
 # Paragraph
+#  Paragraph
+#  Paragraph is desinged to automate complex, design rich paragraph, layout. 
+#  It has been difficult to automate design rich publiscations, 
+#  which contain various boxed paragraphs, graphics based numbering, graphics based paragraph identifiers, specially designed dropcap. 
+#  They are usually implemented using multiple graphics. 
+#  But, that process makes it difficult to automate and keep in sync as a resuable data once thay are created.
+#  Solution is to use Paragraph.
+#  Paragraph uses pre-defined templates and treat them as varibale graphics.
+#  Paragraph content is stored in each paragraph separate from grphiphcs, and only this part is edited and synced to representing graphics. 
+#  Paragraphs are also made to flow along columns.
+#  Paragraph is layed out in object_column, which belongs to object_box.
+#  For case where paragraph has to be split into different columns, child text can be created to hanle overflowing text.
+#  This enable us to automate design rich publication.
+
 # Number one requsted feature for text implemetation was auto line alignment to grid line.
 # Paragraph aligns lines with TextColumn line grid, making lines of adjacent column's lines align vertically.
 # When head paragraph, which might have difference height than the body paragraph, is placed in the middle of the column

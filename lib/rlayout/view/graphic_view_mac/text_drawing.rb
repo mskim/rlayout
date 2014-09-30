@@ -33,6 +33,12 @@ class GraphicViewMac < NSView
     @text_color     = @data.fetch(:text_color, text_defaults[:text_color])
     @text_alignment = @data.fetch(:text_alignment, text_defaults[:text_alignment])
     # convert to NSColor
+    # puts "in init text drawing"
+    # puts "@data[:height]:#{@data[:height]}"
+    # puts "@data[:width]:#{@data[:width]}"
+    # puts @text_font
+    # puts @text_size
+    # puts @text_string
     
     @text_color  = convert_to_nscolor(@text_color)    unless @text_color.class == NSColor  
     case @text_alignment 
@@ -67,6 +73,17 @@ class GraphicViewMac < NSView
 
     return if @att_string.string == ""
     @att_string.drawInRect(r)
+    # 
+    # @text_storage=NSTextStorage.alloc.init
+    # @text_storage.setAttributedString @att_string
+    # @layout_manager = NSLayoutManager.alloc.init        
+    # @text_storage.addLayoutManager(@layout_manager)
+    # @text_container = NSTextContainer.alloc.initWithContainerSize(@frame.size)
+    # @text_container.setLineFragmentPadding(0.0)
+    # @layout_manager.addTextContainer(@text_container)
+    # origin=@frame.origin
+    # glyphRange=@layout_manager.glyphRangeForTextContainer(@text_container)   
+    # @layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:origin)
   end
 
   def make_att_string_from(data={})

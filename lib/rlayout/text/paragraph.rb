@@ -1,18 +1,5 @@
 module RLayout
 
-#  Paragraph
-#  Paragraph is desinged to automate complex, design rich paragraph, layout. 
-#  It has been difficult to automate design rich publiscations, 
-#  which contain various boxed paragraphs, graphics based numbering, graphics based paragraph identifiers, specially designed dropcap. 
-#  They are usually implemented using multiple graphics. 
-#  But, that process makes it difficult to automate and keep in sync as a resuable data once thay are created.
-#  Solution is to use Paragraph.
-#  Paragraph uses pre-defined templates and treat them as varibale graphics.
-#  Paragraph content is stored in each paragraph separate from grphiphcs, and only this part is edited and synced to representing graphics. 
-#  Paragraphs are also made to flow along columns.
-#  Paragraph is layed out in object_column, which belongs to object_box.
-#  For case where paragraph has to be split into different columns, child text can be created to hanle overflowing text.
-#  This enable us to automate design rich publication.
 
 
 #  illegular shaped text flow
@@ -32,25 +19,24 @@ FIT_EACH_LINE   = 2   # adjust font size for each line to fit text into lines.
 FIT_STYLE_RUN   = 3
 
 
-  class Paragraph < Container
+  class Paragraph < Text
     # attr_accessor :paragraph_data
     attr_accessor :main_text, :number, :drop_cap
     attr_accessor :drop_cap_lines, :drop_cap_char_count
     
     def initialize(parent_graphic, options={})
-      
       super
-      @layout_expand = [:width]
-      if options[:markup] == 'img'
-        Image.new(self, :image_path=>options[:string])
-      else
-        # TODO inline element with multiple atts
-        # Text.new(self, options :text_string=>options[:string],  :atts_array=>[atts], :text_fit=>FIT_FONT_SIZE, :layout_expand=>[:width])
-        Text.new(self, options)
-      end
+      # @layout_expand = [:width]
+      # if options[:markup] == 'img'
+      #   Image.new(self, :image_path=>options[:string])
+      # else
+      #   # TODO inline element with multiple atts
+      #   # Text.new(self, options :text_string=>options[:string],  :atts_array=>[atts], :text_fit=>FIT_FONT_SIZE, :layout_expand=>[:width])
+      #   # Text.new(self, options)
+      # end
 
-      @width  = options[:width] if options[:width]
-      @height = graphics_height_sum + graphics_space_sum
+      # @width  = options[:width] if options[:width]
+      # @height = graphics_height_sum + graphics_space_sum
       self
     end
     
@@ -63,10 +49,18 @@ FIT_STYLE_RUN   = 3
     end
     
     def change_width_and_adjust_height(new_width, options={})
-      #TODO 
-      @graphics.first.change_width_and_adjust_height(new_width, options={})
-      @height = @graphics.first.height
+      # puts "+++++++++ change_width_and_adjust_height of Paragraph"
+      # for heading paragrph, should set height as multiples of grid_line_height
+      @width = new_width
+      if options[:line_grid_height] 
+        #TODO
+        # if @line_height != options[:line_grid_height]
+        # @line_height = options[:line_grid_height]
+        # update token size
+      end
+      layout_lines
     end
+    
     
     # def adjust_height
     #   text_size           = NSSize.new(@frame.size.width, 300)

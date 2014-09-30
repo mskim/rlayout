@@ -151,6 +151,7 @@ module RLayout
     end
     
     def change_width_and_adjust_height(new_width, options={})
+      puts "change_width_and_adjust_height of Graphic"
       old_width = @width
       old_height = @height
       @width  = new_width
@@ -238,14 +239,14 @@ module RLayout
       self
     end
     
-    def change_width_and_adjust_height(new_width, options={})
-      old_width = @width
-      old_height = @height
-      @width  = new_width
-      layout_lines
-            
-      # change height we need to
-    end
+    # def change_width_and_adjust_height(new_width, options={})
+    #   old_width = @width
+    #   old_height = @height
+    #   @width  = new_width
+    #   layout_lines
+    #         
+    #   # change height we need to
+    # end
     
     def self.sample(options={})
       if options[:number] > 0

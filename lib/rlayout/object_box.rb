@@ -64,7 +64,6 @@ module RLayout
       # flowing_items.each {|item| item.change_width_and_adjust_height(current_column.layout_area[0])}
       
       while front_most_item = flowing_items.shift do
-
         # change the width and height of item to place it in the current column, right before we place them
         # This way we can suppoert varing column widthed text_box
         front_most_item.change_width_and_adjust_height(current_column.layout_area[0]) if front_most_item.respond_to?(:change_width_and_adjust_height)

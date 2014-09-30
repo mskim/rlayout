@@ -32,14 +32,14 @@ module RLayout
         @atts_array = options[:attrs_array]
         layout_lines(:attrs_array=>options[:attrs_array])
       elsif options[:text_string] && options[:text_string]!=""
-        
         @text_string    = options.fetch(:text_string, "")
         @text_color     = options.fetch(:text_color, "black")
         @text_font      = options.fetch(:text_font, "Times")
         @text_size      = options.fetch(:text_size, 16)
         @text_fit_type  = options.fetch(:text_fit_type, 0)
         @text_alignment = options.fetch(:text_alignment, "center")
-        layout_lines
+        layout_lines if @parent_graphics
+        
       end
       
     end
@@ -119,6 +119,7 @@ module RLayout
           text_storage = atts_array_to_att_string(options[:attrs_array])
         else
           text_storage  = NSTextStorage.alloc.initWithString(@text_string, attributes:atts)
+          # puts "text_storage.string;#{text_storage.string}"
         end
         text_container = NSTextContainer.alloc.initWithContainerSize([@width,1000])
         layout_manager = NSLayoutManager.alloc.init
@@ -128,6 +129,12 @@ module RLayout
         layout_manager.glyphRangeForTextContainer(text_container)
         used_size=layout_manager.usedRectForTextContainer(text_container).size
         @height = used_size.height
+        # puts "+++++ in layout_lines"
+        # puts "@height:#{@height}"
+        # puts "@width:#{@width}"
+        # puts @text_font
+        # puts @text_size
+        # puts @text_string
       else
         # TODO
         # adjust height

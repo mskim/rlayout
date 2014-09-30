@@ -9,10 +9,10 @@ describe 'should create StoryBox' do
     @sb = StoryBox.new(nil, :width=>500, :height=>800, :story_path=>@story_path)
   end
   
-  # 
-  it 'should create StoryBox' do
-    @sb.must_be_kind_of StoryBox
-  end
+  # # 
+  # it 'should create StoryBox' do
+  #   @sb.must_be_kind_of StoryBox
+  # end
   # 
   # it 'should save rlib' do
   #   @sb.save_rlib(@rlib_path)

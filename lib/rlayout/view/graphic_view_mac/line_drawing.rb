@@ -64,6 +64,8 @@ class GraphicViewMac < NSView
   
   def drawLine(rect, withTrap:trap)  
     
+    # @line_width = 2
+    
     # return if @line_width == 0 &&  @graphic.drawing_mode == "printing"
     return if @line_width == 0 
     unless trap
@@ -78,10 +80,11 @@ class GraphicViewMac < NSView
       @line_type=0
     end
     if(@line_type == 0)   
-      path = linePathWithRect(rect)  
+      path = linePathWithRect(rect) 
       if @line_width == 0
         NSColor.lightGrayColor.set
       end
+      # NSColor.lightGrayColor.set
       path.setLineWidth(@line_width + trap)
       path.stroke
       

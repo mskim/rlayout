@@ -1,14 +1,10 @@
 
 module RLayout
   
-  class Paragraph < Container
+  class Paragraph < Text
 
     def to_svg
-      s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" class=\"#{@klass}\" x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\">\n"
-      @graphics.each do |graphic|
-        s += graphic.to_svg
-      end
-      s += "</svg>\n"      
+      svg
     end
 
     def svg
