@@ -7,13 +7,13 @@ describe 'should create StoryBox' do
     @pdf_path = "/Users/mskim/news_article/2012-12-18-making-rlayout-for-variable-publishing.pdf"
     @svg_path = "/Users/mskim/news_article/2012-12-18-making-rlayout-for-variable-publishing.svg"
     @sb = StoryBox.new(nil, :width=>500, :height=>800, :story_path=>@story_path)
-
   end
   
+  # 
   it 'should create StoryBox' do
     @sb.must_be_kind_of StoryBox
   end
-  
+  # 
   # it 'should save rlib' do
   #   @sb.save_rlib(@rlib_path)
   #   File.exists?(@rlib_path).must_equal true
