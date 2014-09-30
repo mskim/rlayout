@@ -28,7 +28,7 @@ describe 'testing heading block' do
   end
   
   it 'should have height heading' do
-    @h.height.must_equal  123.99999999999999
+    @h.height.must_equal  164.79999999999998
   end
   
   it 'should create heading' do

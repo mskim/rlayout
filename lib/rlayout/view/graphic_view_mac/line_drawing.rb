@@ -77,10 +77,8 @@ class GraphicViewMac < NSView
     if @line_type==nil
       @line_type=0
     end
-    puts "@line_type:#{@line_type}"
     if(@line_type == 0)   
       path = linePathWithRect(rect)  
-      puts "path:#{path}"    
       if @line_width == 0
         NSColor.lightGrayColor.set
       end

@@ -11,9 +11,13 @@ module RLayout
   # Product items, BoxAds, Directory elements, quiz items or any other objects 
   # that supports flowing item protocol, namely "set_width_and_adjust_height"
   # one other flowing item protocol is :breakable?, whick tells the flowing item can be broken into parts.
-  
+  # ObjectBox has another layer called "floats"
+  # floats sit on top layer and pushes out text content under neath
+  # Typocal floats are Heading, Image, Quates, SideBox
+   
   class ObjectBox < Container
     attr_accessor :column_count, :next_link, :previous_link
+    attr_accessor :floats
     
     def initialize(parent_graphic, options={}, &block)
       super
@@ -21,10 +25,15 @@ module RLayout
       @layout_space     = options.fetch(:layout_space, 10)
       @column_count     = options.fetch(:column_count, 3)
       create_columns
-      # binding.pry
+      @floats           = options.fetch(:floats, [])
       if block
         instance_eval(&block)
       end
+      
+      @floats.each do |float|
+        float.init_float
+      end
+      
       self
     end
     
@@ -128,6 +137,41 @@ module RLayout
       end      
     end
     
+    # insert array items into ObjectBox
+    def insert_flowing_items_in_array(an_array, options={})
+      even_column_height = options.fetch(:even_column_height, false)
+      an_array.each do |item|
+        result= insert_flowing_item(item)
+        return result if !result
+      end
+      result
+    end
+    
+    # insert flowing item to current object_box
+    def insert_flowing_item(flowing_item) 
+      result = false
+      return false if @current_column_index >= @graphics.length
+      
+      if flowing_item.is_a?(Paragraph)
+        flowing_item.set_width_and_update_height(current_column_content_width)
+      end
+      if flowing_item.respond_to?(:graphics) && flowing_item.graphics.length > 0
+        flowing_item.graphics.each do |part|
+          if insert_part_to_column(part)
+            return true
+          else  
+            # return false #return rejected part
+            return part #return rejected part
+          end
+        end
+        return false
+      else # flowing_item doesn't respond_to parts
+        result = insert_item_to_column(flowing_item)
+      end
+      result
+    end
+
+    
     #TODO
     ####### interactive mode ##########
     def insert_item_at(item, column_index, index)
@@ -143,6 +187,8 @@ module RLayout
   
   class ColumnObject < Container
     attr_accessor :current_position
+    attr_accessor :floats
+    
     def initialize(parent_graphic, options={}, &block)
       super
       @layout_space = 10
@@ -160,6 +206,9 @@ module RLayout
         # insert item
         item.parent_graphic = self
         item.y = @current_position
+        # puts "@current_position:#{@current_position}"
+        # puts "item.y:#{item.y}"
+        # puts "item.class:#{item.class}"
         item.x = @left_margin + @left_inset
         @graphics << item
         @current_position += item.height + @layout_space

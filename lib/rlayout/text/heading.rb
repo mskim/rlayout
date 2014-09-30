@@ -41,7 +41,6 @@ module RLayout
       else
         @style_service ||= StyleService.new(options)
       end
-      puts  "@style_service:#{@style_service}"
       super      
       @layout_space = 2
       if options[:width]
@@ -60,6 +59,7 @@ module RLayout
       @layout_expand = [:width]
       
       width = @width - @left_inset - @right_inset
+      
       if options[:title]
         @title_text = title(options[:title], options)
       end
@@ -80,10 +80,10 @@ module RLayout
       @line_width=1
       @line_color="lightGray"
       height_sum = 0      
-      height_sum +=@title_text.height    if @title_text
-      height_sum +=@subtitle_text.height if @subtitle_text
-      height_sum +=@leading_text.height  if @leading_text
-      height_sum +=@author_text.height   if @author_text
+      height_sum +=@title_text.height    unless @title_text.nil?
+      height_sum +=@subtitle_text.height unless @subtitle_text.nil?
+      height_sum +=@leading_text.height  unless @leading_text.nil?
+      height_sum +=@author_text.height   unless @author_text.nil?
       @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset
       relayout!
       
@@ -189,6 +189,7 @@ module RLayout
       @title_text.layout_expand  = [:width]
       @title_text.layout_length  = atts[:text_size]
       @title_text.height  = atts[:text_size]*1.2
+      @title_text
     end
     
     def subtitle(string, options={})
@@ -199,6 +200,7 @@ module RLayout
       @subtitle_text.layout_expand  = [:width]
       @subtitle_text.layout_length  = atts[:text_size]
       @subtitle_text.height  = atts[:text_size]*1.2      
+      @subtitle_text
     end
     
     def leading(string, options={})
@@ -209,6 +211,7 @@ module RLayout
       @leading_text.layout_expand  = [:width]
       @leading_text.layout_length  = atts[:text_size]
       @leading_text.height  = atts[:text_size]*1.2      
+      @leading_text
     end
     
     def author(string, options={})
@@ -219,6 +222,7 @@ module RLayout
       @author_text.layout_expand  = [:width]
       @author_text.layout_length  = atts[:text_size]
       @author_text.height  = atts[:text_size]*1.2      
+      @author_text
     end
   end
 

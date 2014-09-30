@@ -17,7 +17,7 @@ CIRCULAR    = 2
 class GraphicViewMac < NSView
   attr_accessor :data, :shape
   
-  def self.from_data(data)
+  def self.from_data(data={})
     x = data.fetch(:x, 0)
     y = data.fetch(:y, 0)
     width = data.fetch(:width, 100)
@@ -29,14 +29,12 @@ class GraphicViewMac < NSView
     view
   end
   
-  def init_with_data(data)
+  def init_with_data(data={})
     @data = data  
-      
     init_fill
     init_line
     init_text
     init_image
-    
     # for Containers, add the children graphics
     if @data[:graphics]
       @data[:graphics].each do |child|     

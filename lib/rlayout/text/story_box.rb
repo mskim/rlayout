@@ -54,7 +54,6 @@ module RLayout
   HEADING_WIDTH_LOOKUP_TABLE = [1,2,2,2,3,3,4] #for 7 column page
    
   class StoryBox < ObjectBox
-    attr_accessor :floats
     attr_accessor :heading, :image, :side_box, :quote_box, :grid_frame, :grid_size
     attr_accessor :story, :story_path, :category
     attr_accessor :paragraphs, :starting_item_index, :ending_item_index,  :head_story_box
@@ -125,16 +124,15 @@ module RLayout
       ######### calling super after seting up parameters for story bpx #####
       super 
       ######### super #####
-      @floats = []  unless @floats
-      @float_record = GFloatRecord.new(self) unless @float_record
+      # @float_record = GFloatRecord.new(self) unless @float_record
       
       if @story  
         if @parent_graphic && @grid_frame      
-          @frame = @parent_graphic.grid_record.frame_for(@grid_frame)         
-          @grid_size = @parent_graphic.grid_record.grid_size
+          @frame = @parent_graphic.frame_for(@grid_frame)         
+          @grid_size = @parent_graphic.grid_size
         elsif @grid_size && @grid_frame
           f_g = @grid_frame
-          @frame      = NSMakeRect(f_g[0]*@grid_size[0], f_g[1]*@grid_size[1], f_g[2]*@grid_size[0], f_g[3]*@grid_size[1]) 
+          # @frame      = NSMakeRect(f_g[0]*@grid_size[0], f_g[1]*@grid_size[1], f_g[2]*@grid_size[0], f_g[3]*@grid_size[1]) 
         end
         relayout!   # make sure column are set in place, before adding floats
 
@@ -144,27 +142,28 @@ module RLayout
           place_quotes if @story.heading[:quotes]  
         end
         
-        @float_record.set_non_overlapping_frame_for_chidren_graphics
+        set_non_overlapping_frame_for_chidren_graphics
         # get the sub array of items excluding the previous ones 
-        @story.paragraphs[@starting_item_index..-1].each_with_index do |para, i| 
-          para_options = {}
+        paragraphs =[]
+        @story.paragraphs[@starting_item_index..-1].map do |para, i| 
+          para_options  = @style_service.style_for_markup(para[:markup], options)
           para_options[:markup]   = para[:markup]
-          para_options[:string]   = para[:string]
-          para_options[:style]    = @style_service.style_for(para, :category=>@category)
-          para_options[:expand]   = :width
-          
-          item = Paragraph.new(nil, para_options)
-          unless insert_flowing_item(item)
-            break
-          end
+          para_options[:text_string]   = para[:string]
+          # para_options[:style]    = @style_service.style_for(para, :category=>@category)
+          para_options[:layout_expand]   = [:width]
+          para_options[:text_fit] = FIT_FONT_SIZE
+          paragraphs << Paragraph.new(nil, para_options)
+          # unless insert_flowing_item(item)
+          #   break
+          # end
           @story.current_item_index += 1 # @story.paragraphs.index(para)      
           @ending_item_index        = @story.paragraphs.index(para)
         end
-        
       end
+      layout_items(paragraphs, 0)
       
       relayout!
-                 
+
       self
     end
     
@@ -194,7 +193,7 @@ module RLayout
       if @grid_frame      
         heading_options[:width] = HEADING_WIDTH_LOOKUP_TABLE[@grid_frame[2]-1] * @grid_size[0]
       else
-        heading_options[:width] = @frame.size.width
+        heading_options[:width] = @width
       end
       heading_options[:style_service]  ||= @StyleService
       heading_options[:category]       = options.fetch(:category, "news")
@@ -236,7 +235,7 @@ module RLayout
         if @graphics.length > 1
           width = @graphics[0].frame.size.width
         else
-          width = @frame.size.width 
+          width = @width 
         end
       end
       y = 0

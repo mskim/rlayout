@@ -33,21 +33,20 @@ FIT_STYLE_RUN   = 3
 
 
   class Paragraph < Container
-    attr_accessor :paragraph_data
+    # attr_accessor :paragraph_data
     attr_accessor :main_text, :number, :drop_cap
     attr_accessor :drop_cap_lines, :drop_cap_char_count
     
     def initialize(parent_graphic, options={})
+      
       super
-      @paragraph_data = options[:para_data] 
-      if @paragraph_data[:markup] == 'img'
-        Image.new(self, :image_path=>@paragraph_data[:string])
+      
+      if options[:markup] == 'img'
+        Image.new(self, :image_path=>options[:string])
       else
         # TODO inline element with multiple atts
-        atts = {}
-        atts          = @paragraph_data[:style] if @paragraph_data[:style]
-        atts[:string] = @paragraph_data[:string]
-        Text.new(self, :text_string=>@paragraph_data[:string],  :atts_array=>[atts], :text_fit=>FIT_FONT_SIZE, :layout_expand=>[:width])
+        # Text.new(self, options :text_string=>options[:string],  :atts_array=>[atts], :text_fit=>FIT_FONT_SIZE, :layout_expand=>[:width])
+        Text.new(self, options)
       end
 
       @width  = options[:width] if options[:width]
@@ -70,9 +69,6 @@ FIT_STYLE_RUN   = 3
     #   @frame.size.height = bounding_rect.size.height      
     # end
     
-    def to_hash
-      
-    end
     
     def self.generate(number)
       para_array = []

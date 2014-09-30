@@ -2,14 +2,14 @@
 <g transform="translate(0,0)">
 <rect x="0" y="0" width="600" height="800" fill="white"></rect>
 
-<rect x="0" y="0" width="100" height="133" fill="white"></rect>
-<rect x="100" y="0" width="100" height="133" fill="white"></rect>
-<circle cx="250" cy="66" r="50" fill="white"></circle>
-<rect x="300" y="0" width="100" height="133" fill="white"></rect>
-<rect x="400" y="0" width="100" height="133" fill="white"></rect>
-<rect x="500" y="0" width="100" height="133" fill="white"></rect>
-<rect x="0" y="133" width="100" height="133" fill="white"></rect>
-<rect x="100" y="133" width="100" height="133" fill="white"></rect>
-<rect x="200" y="133" width="100" height="133" fill="white"></rect>
+<rect x="0" y="0" width="100" height="133" fill="red"></rect>
+<rect x="100" y="0" width="100" height="133" fill="yellow"></rect>
+<circle cx="250" cy="66" r="50" fill="green"></circle>
+<rect x="300" y="0" width="100" height="133" fill="gray"></rect>
+<rect x="400" y="0" width="100" height="133" fill="blue"></rect>
+<rect x="500" y="0" width="100" height="133" fill="red"></rect>
+<rect x="0" y="133" width="100" height="133" fill="orange"></rect>
+<rect x="100" y="133" width="100" height="133" fill="brown"></rect>
+<rect x="200" y="133" width="100" height="133" fill="black"></rect>
 </g>
 </svg>

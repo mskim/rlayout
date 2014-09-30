@@ -2,7 +2,6 @@
 #  Created by Min Soo Kim on 12/9/13.
 #  Copyright 2013 SoftwareLab. All rights reserved.
 
-
 # TODO
 # things after "'" gets ingnored
 # example: when I try to do doesn't  
@@ -19,8 +18,6 @@ module RLayout
     attr_accessor :current_item_index
     
     def initialize(options={})
-      # options.each {|name,value| __send__("#{name}=" ,value)}
-      # set_defaults
       @heading     = options.fetch(:heading, defaults)
       @published  = heading.fetch(:published, false)
       @paragraphs = options.fetch(:paragraphs,[])

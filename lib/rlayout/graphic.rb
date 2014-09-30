@@ -10,6 +10,7 @@ require File.dirname(__FILE__) + "/graphic/fill"
 require File.dirname(__FILE__) + "/graphic/line"
 require File.dirname(__FILE__) + "/graphic/image"
 require File.dirname(__FILE__) + "/graphic/text"
+require File.dirname(__FILE__) + "/graphic/float"
 
 module RLayout
   
@@ -35,23 +36,24 @@ module RLayout
       if  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
         @parent_graphic.graphics << self  
       end
-      @klass            = options.fetch(:klass, defaults[:klass]) 
-      @x                = options.fetch(:x, defaults[:x])
-      @y                = options.fetch(:y, defaults[:y])
-      @width            = options.fetch(:width, defaults[:width])
-      @height           = options.fetch(:height, defaults[:height])
-      @grid_rect        = options.fetch(:grid_rect, defaults[:grid_rect]) 
-      @shape            = options.fetch(:shape, defaults[:shape])
+      defaults_hash     = defaults
+      @klass            = options.fetch(:klass, defaults_hash[:klass]) 
+      @x                = options.fetch(:x, defaults_hash[:x])
+      @y                = options.fetch(:y, defaults_hash[:y])
+      @width            = options.fetch(:width, defaults_hash[:width])
+      @height           = options.fetch(:height, defaults_hash[:height])
+      @grid_rect        = options.fetch(:grid_rect, defaults_hash[:grid_rect]) 
+      @shape            = options.fetch(:shape, defaults_hash[:shape])
       @tag              = options[:tag]      
       @shape_bezier     = options[:shape_bezier]
       @auto_save        = options[:auto_save]
       
       init_layout(options)
+      init_fill(options)
       init_line(options)
       init_text(options)
       init_image(options)
-      
-      
+      # init_float(options) # for ObjectBox where float makes sense      
       self
     end
 
