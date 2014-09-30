@@ -238,6 +238,15 @@ module RLayout
       self
     end
     
+    def change_width_and_adjust_height(new_width, options={})
+      old_width = @width
+      old_height = @height
+      @width  = new_width
+      layout_lines
+            
+      # change height we need to
+    end
+    
     def self.sample(options={})
       if options[:number] > 0
         Text.new(nil, text_string: "This is a sample text string"*options[:number])

@@ -40,7 +40,7 @@ FIT_STYLE_RUN   = 3
     def initialize(parent_graphic, options={})
       
       super
-      
+      @layout_expand = [:width]
       if options[:markup] == 'img'
         Image.new(self, :image_path=>options[:string])
       else
@@ -51,7 +51,6 @@ FIT_STYLE_RUN   = 3
 
       @width  = options[:width] if options[:width]
       @height = graphics_height_sum + graphics_space_sum
-      
       self
     end
     
@@ -61,6 +60,12 @@ FIT_STYLE_RUN   = 3
     
     def adjust_height
       @graphics.first.adjust_height
+    end
+    
+    def change_width_and_adjust_height(new_width, options={})
+      #TODO 
+      @graphics.first.change_width_and_adjust_height(new_width, options={})
+      @height = @graphics.first.height
     end
     
     # def adjust_height

@@ -136,11 +136,11 @@ module RLayout
         end
         relayout!   # make sure column are set in place, before adding floats
 
-        if @head_story_box
-          place_heading(options)
-          place_head_images if @story.heading[:image]  || @story.heading[:image_path]
-          place_quotes if @story.heading[:quotes]  
-        end
+        # if @head_story_box
+        #   place_heading(options)
+        #   place_head_images if @story.heading[:image]  || @story.heading[:image_path]
+        #   place_quotes if @story.heading[:quotes]  
+        # end
         
         set_non_overlapping_frame_for_chidren_graphics
         # get the sub array of items excluding the previous ones 
