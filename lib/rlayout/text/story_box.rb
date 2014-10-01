@@ -37,7 +37,7 @@
 #
 #  Linked Story
 #  Story can overflow from one StoryBox and linked to the next one.
-#  Story object is kept in the first StoryBox(@head_story_box == true).
+#  Story object is kept in the first StoryBox(@heading_story_box == true).
 #  First StoryBox is reaponsiable for saving and reading Story.
 # 
 #  Laying out Story
@@ -56,17 +56,17 @@ module RLayout
   class StoryBox < ObjectBox
     attr_accessor :heading, :image, :side_box, :quote_box, :grid_frame, :grid_size
     attr_accessor :story, :story_path, :category
-    attr_accessor :paragraphs, :starting_item_index, :ending_item_index,  :head_story_box
+    attr_accessor :paragraphs, :starting_item_index, :ending_item_index,  :heading_story_box
     
     def initialize(parent_graphic, options={})
       @starting_item_index  = 0
       @ending_item_index    = 0
-      @head_story_box       = true
+      @heading_story_box       = true
       if options[:story_path]
         # when story_path is given
         @story_path = options[:story_path]
         @story      = Story.from_meta_markdown(@story_path)
-        
+                
         if @story.heading[:grid_frame]
           options[:grid_frame] = eval(@story.heading[:grid_frame])
           options[:column_count] = options[:grid_frame][2]
@@ -103,7 +103,7 @@ module RLayout
         
       elsif options[:linked_story]
         # when story is overflowing from the previous story_box
-        @head_story_box = false
+        @heading_story_box = false
         @story = options[:linked_story]
         # options[:column_count] = options[:grid_frame][2]
         # start from where previous story box has left off
@@ -136,11 +136,11 @@ module RLayout
         end
         relayout!   # make sure column are set in place, before adding floats
 
-        # if @head_story_box
-        #   place_heading(options)
-        #   place_head_images if @story.heading[:image]  || @story.heading[:image_path]
-        #   place_quotes if @story.heading[:quotes]  
-        # end
+        if @heading_story_box
+          place_heading(options)
+          place_head_images if @story.heading[:image]  || @story.heading[:image_path]
+          place_quotes if @story.heading[:quotes]  
+        end
         
         set_non_overlapping_frame_for_chidren_graphics
         # get the sub array of items excluding the previous ones 
@@ -199,6 +199,7 @@ module RLayout
       heading_options[:category]       = options.fetch(:category, "news")
       # heading_options[:fill_color]     = NSColor.lightGrayColor
       heading_options[:is_float]       = true
+      puts "heading_options:#{heading_options}"
       @heading  = Heading.new(self, heading_options)
       @heading.relayout!  
     end

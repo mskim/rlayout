@@ -26,6 +26,7 @@ module RLayout
     attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand, :grid_rect
     attr_accessor :text_string, :text_color, :text_size, :text_font, :text_fit_type, :text_alignment
     attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
+    attr_accessor :non_overlapping_rect, :overlapping_rects
     
     # TODO
     # attr_accessor :text_record, :image_record, :grid_record, :grid_rect, :auto_save
@@ -33,9 +34,14 @@ module RLayout
     
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
-      if  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
+      if options[:is_float]
+        @parent_graphic.floats << self if @parent_graphic.floats && !@parent_graphic.floats.include?(self)
+        init_float(options)
+        # @parent_graphic.float_record = GFloatRecord.new(@parent_graphic) if @parent_graphic.float_record.nil?      
+      elsif  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
         @parent_graphic.graphics << self  
       end
+      
       defaults_hash     = defaults
       @klass            = options.fetch(:klass, defaults_hash[:klass]) 
       @x                = options.fetch(:x, defaults_hash[:x])
@@ -135,7 +141,16 @@ module RLayout
       Graphic.new(parent_graphic, Style.shared_style(style_name), &block)
     end
     
-        
+    def frame_rect
+      [@x,@y,@width,@height]
+    end 
+    
+    # non_overlapping_rect is a actual layout frame that is not overlapping with flaots
+    def non_overlapping_frame
+      return @non_overlapping_rect if @non_overlapping_rect
+      frame_rect
+    end
+    
     def puts_frame
       puts "@x:#{@x}"
       puts "@y:#{@y}"

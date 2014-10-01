@@ -59,45 +59,77 @@ module RLayout
     #
     def non_overlapping_area(column_rect, float_rect, min_gap =10)
       # they don't intersect
-      if !NSIntersectsRect(column_rect, float_rect)
+      if !intersects_rect(column_rect, float_rect)
         return column_rect
 
       # float_rect covers the entire column_rect
       elsif NSContainsRect(float_rect, column_rect)
-        return NSZeroRect
+        return [0,0,0,0]
 
       # we have hole or block in the middle 
-      elsif NSMinY(float_rect) <= NSMinY(column_rect) && NSMaxY(float_rect) >= NSMaxY(column_rect)
+      elsif min_y(float_rect) <= min_y(column_rect) && max_y(float_rect) >= max_y(column_rect)
         rects_array = []
         upper_rect = column_rect.dup
-        upper_rect.size.height = NSMinY(float_rect) 
+        upper_rect.size.height = min_y(float_rect) 
         # return only if rect height is larger than minimun   
         rects_array << upper_rect if  upper_rect.size.height > min_gap
         lower_rect = column_rect.dup
-        lower_rect.origin.y = NSMaxY(float_rect)
-        lower_rect.size.height -= NSMaxY(float_rect)
+        lower_rect.origin.y = max_y(float_rect)
+        lower_rect.size.height -= max_y(float_rect)
         # return only if rect height is larger than minimun   
         rects_array << lower_rect if  lower_rect.size.height > min_gap
-        # return NSZeroRect if none of them are big enough 
-        return NSZeroRect if rects_array.length == 0
+        # return [0,0,0,0] if none of them are big enough 
+        return [0,0,0,0] if rects_array.length == 0
         # return single rect rather than the Array, if one of them is big enough 
         return rects_array[0] if rects_array.length == 1
         # return both rects in array, if both are big enough 
         return rects_array
 
       # overlapping at the top 
-      elsif NSMinY(float_rect) <= NSMinY(column_rect)
+      elsif min_y(float_rect) <= min_y(column_rect)
         new_rect = column_rect.dup
-        new_rect.origin.y = NSMaxY(float_rect)
-        new_rect.size.height -= float_rect.size.height
+        new_rect[1] = max_y(float_rect)
+        new_rect[3] -= float_rect[3]
         return new_rect
 
       # overlapping at the bottom 
-      elsif NSMaxY(float_rect) >= NSMaxY(column_rect)
+      elsif max_y(float_rect) >= max_y(column_rect)
         new_rect = column_rect.dup
-        new_rect.size.height = NSMinY(float_rect)    
+        new_rect[3] = min_y(float_rect)    
         return new_rect
       end
+    end
+    
+    def min_x(rect)
+      rect[0]
+    end
+    
+    def min_y(rect)
+      rect[1]
+    end
+    
+    def mid_x(rect)
+      
+    end
+    
+    def mid_y(rect)
+      
+    end
+    
+    def max_x(rect)
+      rect[0] + rect[2]
+    end
+    
+    def max_y(rect)
+      rect[1] + rect[3]
+    end
+    
+    def contains_rect(rect_1,rect_2)
+      (rect_1[0]<=rect_2[0] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) <= max_y(rect_2))
+    end
+    
+    def intersects_rect(rect_1, rect_2)
+      (rect_1[0]>=rect_2[0] && rect_1[0] <= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && rect_1[0] <= max_x(rect_2))
     end
     
     # it sets the children graphic's non_overlapping_frame value
@@ -106,8 +138,8 @@ module RLayout
       
       @floats.each do |float|
         @graphics.each_with_index do |graphic, i|
-          if NSIntersectsRect(float.frame, graphic.frame)
-            graphic.non_overlapping_rect = non_overlapping_area(graphic.non_overlapping_frame, float.frame) 
+          if intersects_rect(frame_rect, graphic.frame_rect)
+            graphic.non_overlapping_rect = non_overlapping_area(graphic.non_overlapping_frame, float.frame_rect) 
           end
         end
       end
@@ -119,7 +151,7 @@ module RLayout
       case position_option
         
       when  TOP_LEFT 
-        NSPoint.new(0,0)
+        [0,0]
       # when  TOP_CENTER
       # when  TOP_RIGHT
       # when  MIDDLE_LEFT
@@ -129,7 +161,7 @@ module RLayout
       # when  BOTTOM_CENTER 
       # when  BOTTOM_RIGHT
       else
-        NSPoint.new(0,0)
+        [0,0]
       end
     end
     
@@ -144,7 +176,7 @@ module RLayout
         size.width  *= 4
         size.height *= 4
       when  SIZE_LARGE
-        NSSize.new(300,300)
+        [300,300]
         size.width  *= 6
         size.height *= 6
         
@@ -156,28 +188,12 @@ module RLayout
       
       size
   
-  
-      # case size_option
-      # when  SIZE_SMALL
-      #   NSSize.new(20,20)
-      #   
-      # when  SIZE_MEDIUM
-      #   NSSize.new(50,50)
-      # 
-      # when  SIZE_LARGE
-      #   NSSize.new(300,300)
-      #   
-      # when  SIZE_X_LARGE
-      #   NSSize.new(400,400)
-      # else
-      #   NSSize.new(100,100)
-      # end
     end
     
     
     def set_origin_and_size(float)
-      float.frame.origin  = float_origin_for(float.float_record.float_position)
-      float.frame.size    = float_size_for(float.float_record.float_size)
+      float.origin  = float_origin_for(float.float_position)
+      float.size    = float_size_for(float.float_size)
     end
     
     
