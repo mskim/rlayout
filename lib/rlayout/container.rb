@@ -141,6 +141,19 @@ module RLayout
           child.to_hash
         end
       end
+      
+      if @floats && @floats.length > 0
+        h[:floats]= @floats.map do |child|
+          child.to_hash
+        end
+      end
+      
+      if @fixtures && @fixtures.length > 0
+        h[:fixtures]= @fixtures.map do |child|
+          child.to_hash
+        end
+      end
+      
       h
     end
     

@@ -57,14 +57,13 @@ module RLayout
     def layout_items(flowing_items, starting_index=0)
       column_index = 0
       current_column = @graphics[column_index]
+      current_column.set_starting_position_at_non_overlapping_area
       
-      # Adjusting width of flow item all at once is an option,
-      # if we are sure that all column width are same
-      # but, this could be ineffient if we have the varing width columns
-      # flowing_items.each {|item| item.change_width_and_adjust_height(current_column.layout_area[0])}
       
       while front_most_item = flowing_items.shift do
-        # change the width and height of item to place it in the current column, right before we place them
+        # Adjusting width of flow item all at once is an option, if we are sure that all column width are same
+        # but, we could have varing width columns
+        # flowing_items.each {|item| item.change_width_and_adjust_height(current_column.layout_area[0])}
         # This way we can suppoert varing column widthed text_box
         front_most_item.change_width_and_adjust_height(current_column.layout_area[0]) if front_most_item.respond_to?(:change_width_and_adjust_height)
         if current_column.insert_item(front_most_item)
@@ -91,6 +90,7 @@ module RLayout
                   end      
                 end
                 current_column = @graphics[column_index]
+                current_column.set_starting_position_at_non_overlapping_area
                 if current_column.insert_part(part)
                 else
                   # force fit
@@ -105,6 +105,7 @@ module RLayout
           current_column.relayout!
           column_index += 1
           current_column = @graphics[column_index]
+          current_column.set_starting_position_at_non_overlapping_area if current_column
           if column_index == @column_count
             # we are finished for this ObjectBox
             if @next_link
@@ -199,6 +200,11 @@ module RLayout
       self
     end
     
+    # set @current_pasotion as start of non-overlapping y
+    def set_starting_position_at_non_overlapping_area
+      rect = non_overlapping_frame
+      @current_position = rect[1] + @top_margin + @top_inset      
+    end
     
     def insert_item(item, options={})
       if ((item.height + @layout_space + @current_position) <= @height) || (options[:fortce_fit]==true)

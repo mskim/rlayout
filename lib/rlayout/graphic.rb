@@ -37,7 +37,9 @@ module RLayout
       if options[:is_float]
         @parent_graphic.floats << self if @parent_graphic.floats && !@parent_graphic.floats.include?(self)
         init_float(options)
-        # @parent_graphic.float_record = GFloatRecord.new(@parent_graphic) if @parent_graphic.float_record.nil?      
+      elsif options[:is_fixture]
+        #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics
+        @parent_graphic.fixtures << self if @parent_graphic.fixtures && !@parent_graphic.fixtures.include?(self)        
       elsif  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
         @parent_graphic.graphics << self  
       end
@@ -87,9 +89,9 @@ module RLayout
       }
     end
        
-    COLOR_NAMES = %w[black blue brown clear cyan darkGray gray green lightGray magenta orange red white yellow white]
-    KLASS_NAMES = %w[Rectangle Circle RoundRect Text Image]
-    TEXT_STRING_SAMPLES = ["This is a text", "Good Morning", "Nice", "Cool", "RLayout", "PageScript"]
+COLOR_NAMES =%w[black blue brown clear cyan darkGray gray green lightGray magenta orange red white yellow white]
+KLASS_NAMES =%w[Rectangle Circle RoundRect Text Image]
+TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout", "PageScript"]
     
     def self.random_graphic_atts
       atts = {}
@@ -166,13 +168,10 @@ module RLayout
     end
     
     def change_width_and_adjust_height(new_width, options={})
-      puts "change_width_and_adjust_height of Graphic"
       old_width = @width
       old_height = @height
       @width  = new_width
       @height = new_width/old_width*old_height
-            
-      # change height we need to
     end
     
     def expand_width?

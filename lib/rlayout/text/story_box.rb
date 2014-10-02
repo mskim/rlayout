@@ -37,7 +37,7 @@
 #
 #  Linked Story
 #  Story can overflow from one StoryBox and linked to the next one.
-#  Story object is kept in the first StoryBox(@heading_story_box == true).
+#  Story object is kept in the first StoryBox(@heading_box == true).
 #  First StoryBox is reaponsiable for saving and reading Story.
 # 
 #  Laying out Story
@@ -56,73 +56,57 @@ module RLayout
   class StoryBox < ObjectBox
     attr_accessor :heading, :image, :side_box, :quote_box, :grid_frame, :grid_size
     attr_accessor :story, :story_path, :category
-    attr_accessor :paragraphs, :starting_item_index, :ending_item_index,  :heading_story_box
+    attr_accessor :paragraphs, :starting_item_index, :ending_item_index,  :heading_box
     
     def initialize(parent_graphic, options={})
       @starting_item_index  = 0
       @ending_item_index    = 0
-      @heading_story_box       = true
+      @heading_box          = true
+      
       if options[:story_path]
         # when story_path is given
         @story_path = options[:story_path]
         @story      = Story.from_meta_markdown(@story_path)
-                
-        if @story.heading[:grid_frame]
-          options[:grid_frame] = eval(@story.heading[:grid_frame])
-          options[:column_count] = options[:grid_frame][2]
-        elsif @story.heading[:column_count]
-          options[:column_count] = @story.heading[:column_count]
-        end
-        if @story.heading[:grid_size]
-          options[:grid_size] = eval(@story.heading[:grid_size])
-        end
-        
       elsif options[:story_hash]
         # when story is passed as hash data
         @story  = Story.new(options[:story_hash])
-        if @story.heading[:grid_frame]
-          options[:grid_frame]    = @story.heading[:grid_frame]
-          options[:column_count]  = options[:grid_frame][2]
-        end
-        if @story.heading[:grid_size]
-          options[:grid_size] = @story.heading[:grid_size]
-        end
-        if @story.heading[:category]
-          options[:category] = @story.heading[:category]
-        end
       elsif options[:story]
         # when story is passed as story
         @story = options[:story]
-        if @story.heading[:grid_frame]
-          options[:grid_frame]    = @story.heading[:grid_frame]
-          options[:column_count]  = options[:grid_frame][2]
-        end
-        if @story.heading[:grid_size]
-          options[:grid_size] = eval(@story.heading[:grid_size])
-        end
-        
       elsif options[:linked_story]
         # when story is overflowing from the previous story_box
-        @heading_story_box = false
-        @story = options[:linked_story]
-        # options[:column_count] = options[:grid_frame][2]
+        @heading_box          = false
+        @story                = options[:linked_story]
         # start from where previous story box has left off
         @starting_item_index  = @story.current_item_index
         @ending_item_index    = @starting_item_index
       end
+        
+      if @story.heading[:grid_frame]
+        options[:grid_frame] = eval(@story.heading[:grid_frame])
+        options[:column_count] = options[:grid_frame][2]
+      elsif @story.heading[:column_count]
+        options[:column_count] = @story.heading[:column_count]
+      end
+      if @story.heading[:grid_size]
+        options[:grid_size] = eval(@story.heading[:grid_size])
+      end
+      if @story.heading[:category]
+        options[:category] = @story.heading[:category]
+      end
       
-      @style_service                ||= StyleService.new
+      @style_service  ||= StyleService.new
       @grid_size  = options[:grid_size]       if options[:grid_size]
       @grid_frame = options[:grid_frame]      if options[:grid_frame]
       @image_map  = options[:image_map]       if options[:image_map]
       @category   = options.fetch(:category, "Magazine")
       # if @parent_graphic is using grid based layout like newspaper
       # snapp to parent's grid system
-        
       options[:column_count] = @grid_frame[2] if @grid_frame
       
       ######### calling super after seting up parameters for story bpx #####
       super 
+      @klass = 'StoryBox'
       ######### super #####
       # @float_record = GFloatRecord.new(self) unless @float_record
       
@@ -136,34 +120,28 @@ module RLayout
         end
         relayout!   # make sure column are set in place, before adding floats
 
-        if @heading_story_box
+        if @heading_box
           place_heading(options)
           place_head_images if @story.heading[:image]  || @story.heading[:image_path]
-          place_quotes if @story.heading[:quotes]  
+          place_quotes if @story.heading[:quotes] 
         end
         
         set_non_overlapping_frame_for_chidren_graphics
-        # get the sub array of items excluding the previous ones 
         paragraphs =[]
         @story.paragraphs[@starting_item_index..-1].map do |para, i| 
           para_options  = @style_service.style_for_markup(para[:markup], options)
           para_options[:markup]   = para[:markup]
           para_options[:text_string]   = para[:string]
-          # para_options[:style]    = @style_service.style_for(para, :category=>@category)
           para_options[:layout_expand]   = [:width]
           para_options[:text_fit] = FIT_FONT_SIZE
           paragraphs << Paragraph.new(nil, para_options)
-          # unless insert_flowing_item(item)
-          #   break
-          # end
           @story.current_item_index += 1 # @story.paragraphs.index(para)      
           @ending_item_index        = @story.paragraphs.index(para)
         end
       end
+      relayout!
       layout_items(paragraphs, 0)
       
-      relayout!
-
       self
     end
     
@@ -197,9 +175,8 @@ module RLayout
       end
       heading_options[:style_service]  ||= @StyleService
       heading_options[:category]       = options.fetch(:category, "news")
-      # heading_options[:fill_color]     = NSColor.lightGrayColor
+      heading_options[:fill_color]     = "lightGray"
       heading_options[:is_float]       = true
-      puts "heading_options:#{heading_options}"
       @heading  = Heading.new(self, heading_options)
       @heading.relayout!  
     end

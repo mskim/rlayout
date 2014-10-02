@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + "/spec_helper"
 # 
-describe 'generate svg' do
+describe 'create page' do
   before do
     @p = Page.new(nil)
     Container.new(@p, :fill_color=>'green')
@@ -15,18 +15,34 @@ describe 'generate svg' do
      File.exists?(@page_pdf_test).must_equal true
      # system("open #{@page_pdf_test}") if File.exists?(@page_pdf_test)
    end
-      
-   
-   
-  # it 'should save JSON' do
-  # @page_json_test = File.dirname(__FILE__) + "/output/page_svg_test.json"
-  
-  #   @p.save_json(@page_json_test)
-  #   File.exists?(@page_json_test).must_equal true
-  #   # system("open #{@page_svg_test}") if File.exists?(@page_svg_test)
-  # end
 end
 
+describe 'create page with fixtures' do
+  before do
+    options = {}
+    options[:header]     = true
+    options[:footer]     = true 
+    options[:header]     = true 
+    options[:story_box]  = true
+    @p = Page.new(self, options)    
+  end
+
+  it 'should have header' do
+    @p.must_be_kind_of Page
+    @p.header.must_be_kind_of Header
+    @p.footer.must_be_kind_of Footer
+    @p.side_bar.must_be_kind_of SideBar
+    
+  end
+  
+  it 'should save pdf' do
+    @pdf_path = File.dirname(__FILE__) + "/output/page_fixture_test.pdf"
+    @p.save_pdf(@pdf_path)
+    File.exists?(@pdf_path).must_equal true
+    # system("open #{@page_svg_test}") if File.exists?(@page_svg_test)
+  end
+  
+end
 # describe 'Article Page with pgscritpt' do
 #   before do
 #     @p = Page.new(nil) do

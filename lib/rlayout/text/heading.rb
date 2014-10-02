@@ -41,7 +41,8 @@ module RLayout
       else
         @style_service ||= StyleService.new(options)
       end
-      super      
+      super   
+      @klass = "Heading"   
       @layout_space = 2
       if options[:width]
         @width = options[:width]

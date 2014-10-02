@@ -1,3 +1,4 @@
+
 module RLayout
   attr_accessor :title, :path, :paper_size, :portrait, :width, :height, :margin
   attr_accessor :pages, :document_view
@@ -38,7 +39,7 @@ module RLayout
     def page(options={}, &block)
       Page.new(self, options, &block)
     end
-    
+        
     def layout_page
       side_margin = 100
       top_margin = 50
@@ -109,3 +110,4 @@ module RLayout
   end
   
 end
+

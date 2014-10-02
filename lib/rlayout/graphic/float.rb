@@ -58,16 +58,17 @@ module RLayout
     # If there is a hole in the middle, return Array of two rects if upper and lower area is big enough
     #
     def non_overlapping_area(column_rect, float_rect, min_gap =10)
-      # they don't intersect
       if !intersects_rect(column_rect, float_rect)
+        # puts "they don't intersect"
         return column_rect
 
-      # float_rect covers the entire column_rect
-      elsif NSContainsRect(float_rect, column_rect)
+      elsif contains_rect(float_rect, column_rect)
+        # puts "float_rect covers the entire column_rect"
+        
         return [0,0,0,0]
 
-      # we have hole or block in the middle 
       elsif min_y(float_rect) <= min_y(column_rect) && max_y(float_rect) >= max_y(column_rect)
+        # puts "hole or block in the middle"
         rects_array = []
         upper_rect = column_rect.dup
         upper_rect.size.height = min_y(float_rect) 
@@ -85,15 +86,15 @@ module RLayout
         # return both rects in array, if both are big enough 
         return rects_array
 
-      # overlapping at the top 
       elsif min_y(float_rect) <= min_y(column_rect)
+        # puts "overlapping at the top "
         new_rect = column_rect.dup
         new_rect[1] = max_y(float_rect)
         new_rect[3] -= float_rect[3]
         return new_rect
 
-      # overlapping at the bottom 
       elsif max_y(float_rect) >= max_y(column_rect)
+        # puts "overlapping at the bottom "
         new_rect = column_rect.dup
         new_rect[3] = min_y(float_rect)    
         return new_rect
@@ -125,7 +126,7 @@ module RLayout
     end
     
     def contains_rect(rect_1,rect_2)
-      (rect_1[0]<=rect_2[0] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) <= max_y(rect_2))
+      (rect_1[0]<=rect_2[0] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) >= max_y(rect_2))
     end
     
     def intersects_rect(rect_1, rect_2)
@@ -135,7 +136,6 @@ module RLayout
     # it sets the children graphic's non_overlapping_frame value
     # this method is called when float is added and after relayout!
     def set_non_overlapping_frame_for_chidren_graphics
-      
       @floats.each do |float|
         @graphics.each_with_index do |graphic, i|
           if intersects_rect(frame_rect, graphic.frame_rect)

@@ -32,7 +32,7 @@ describe 'testing container creation' do
   it 'should save' do
     @container.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true
-    system("open #{@pdf_path}") if File.exists?(@pdf_path)
+    # system("open #{@pdf_path}") if File.exists?(@pdf_path)
     
   end
   

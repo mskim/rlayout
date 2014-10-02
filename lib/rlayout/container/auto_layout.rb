@@ -20,7 +20,8 @@ module RLayout
       return unless @graphics
       return if @graphics.length <= 0
       vertical  = @layout_direction == "vertical"
-      view_size = [@width,@height]
+      non_overlapping_rect = non_overlapping_frame 
+      view_size = [non_overlapping_rect[2],non_overlapping_rect[3]]
       # binding.pry
       starting_position = vertical ? (@y + @top_margin +  @top_inset) : (@bottom_margin + @bottom_inset)
       ending_position   = vertical ? (view_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (view_size[0] - @left_margin - @right_margin - @left_inset - @right_inset)
