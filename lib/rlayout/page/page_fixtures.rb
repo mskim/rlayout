@@ -2,18 +2,18 @@ module RLayout
   
   class Header < Text
     def initialize(parent_graphic, options={})
+      options[:text_size] = 10 unless options[:text_size]
       super
       if @parent_graphic.left_page?
-        @x      = 50
-        @y      = 30
+        @x      = 50  #@left_margin
+        @y      = 50  #@top_margin
         @width  = 300
         @text_alignment = 'left'
       else
-        @x      = @parent_graphic.width - 300
-        @y      = 30
         @width  = 300
+        @x      = @parent_graphic.width - @width - 50 # @right_margin
+        @y      = 30
         @text_alignment = 'right'
-        
       end
       self
     end
@@ -22,12 +22,13 @@ module RLayout
   class Footer < Text
     attr_accessor :pre_string, :post_string, :page_number
     def initialize(parent_graphic, options={})
+      options[:text_size] = 10 unless options[:text_size]
       super
       @text_alignment = 'center'
       @page_number = @parent_graphic.page_number
       @pre_string  = options.fetch(:pre_string, "-")
       @post_string = options.fetch(:post_string, "-")
-      @text_string = @pre_string + " " + @page_number + " " + @post_string
+      @text_string = @pre_string + " " + @page_number.to_s + " " + @post_string
       @width  = 300
       @height = 20
       @x = @parent_graphic.width/2 - @width/2

@@ -1,6 +1,6 @@
 
 module RLayout
-  attr_accessor :title, :path, :paper_size, :portrait, :width, :height, :margin
+  attr_accessor :title, :path, :paper_size, :portrait, :margin, :width, :height, :starts_left, :double_side
   attr_accessor :pages, :document_view
   
   class Document
@@ -11,14 +11,16 @@ module RLayout
       @path       = options.fetch(:path, nil)
       @paper_size = options.fetch(:paper_size, "A4")
       @portrait   = options.fetch(:portrait, defaults[:portrait])
-      @dobule_side= options.fetch(:dobule_side, defaults[:dobule_side])
-      @starts_left= options.fetch(:dobule_side, defaults[:starts_left])
+      @double_side= options.fetch(:double_side, defaults[:double_side])
+      @starts_left= options.fetch(:starts_left, defaults[:starts_left])
       @width      = options.fetch(:width, defaults[:width])
       @height     = options.fetch(:width, defaults[:height])
       @margin     = options.fetch(:margin, defaults[:margin])
       if options[:pages]
         @pages = options[:pages]
       end
+      
+      
       if block
         instance_eval(&block)
       end

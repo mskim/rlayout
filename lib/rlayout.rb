@@ -8,7 +8,6 @@ require "rlayout/text"
 require "rlayout/page"
 require "rlayout/view"
 require "rlayout/document"
-require 'rlayout/document/magazine_article'
 
 
 module RLayout
