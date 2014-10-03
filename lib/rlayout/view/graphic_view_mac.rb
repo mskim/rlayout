@@ -57,10 +57,7 @@ class GraphicViewMac < NSView
     end
     
     if @data[:fixtures]
-      puts "drawing fixtures"
-      puts "@data[:fixtures].length:#{@data[:fixtures].length}"
       @data[:fixtures].each do |child|     
-        puts "child:#{child}"
         child_view = GraphicViewMac.from_data(child)
         
         # child_view = GraphicViewMac.alloc.initWithFrame(NSMakeRect(child[:x], child[:y], child[:width], child[:height]))

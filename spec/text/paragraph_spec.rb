@@ -19,7 +19,7 @@ end
 
 describe 'create Paragraph' do
   before do
-    options = {:text_string=>"This is a paragraph test string", :markup=>'title'}
+    options = {:text_string=>"This is a paragraph test string", :markup=>'body', :text_line_spacing=>10}
     @para = Paragraph.new(nil, options)
   end
     
@@ -28,7 +28,7 @@ describe 'create Paragraph' do
     # @para.y.must_equal 0
     @para.width.must_equal 100
     if RUBY_ENGINE == 'macruby'
-      @para.height.must_equal 57
+      @para.height.must_equal 100
     else
       @para.height.must_equal 100
     end

@@ -25,6 +25,10 @@ FIT_STYLE_RUN   = 3
     attr_accessor :drop_cap_lines, :drop_cap_char_count
     
     def initialize(parent_graphic, options={})
+      if options[:markup]
+        @style_service ||= StyleService.new
+        options.merge @style_service.style_for_markup(options[:markup])
+      end
       super
       # @layout_expand = [:width]
       # if options[:markup] == 'img'

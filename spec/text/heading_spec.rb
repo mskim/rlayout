@@ -36,10 +36,10 @@ describe 'testing heading block' do
   end
   
   it 'should have default types' do
-    @h.title_text.must_be_kind_of Text
-    @h.subtitle_text.must_be_kind_of Text
-    @h.leading_text.must_be_kind_of Text
-    @h.author_text.must_be_kind_of Text
+    @h.title_object.must_be_kind_of Text
+    @h.subtitle_object.must_be_kind_of Text
+    @h.leading_object.must_be_kind_of Text
+    @h.author_object.must_be_kind_of Text
   end
   
   it 'should save heading' do

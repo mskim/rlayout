@@ -43,6 +43,33 @@ describe 'create page with fixtures' do
   end
   
 end
+
+describe 'create right_side page  ' do
+  before do
+    options = {}
+    options[:header]     = true
+    options[:footer]     = true 
+    options[:header]     = true 
+    options[:story_box]  = true
+    @p = Page.new(self, options)    
+  end
+
+  it 'should have header' do
+    @p.must_be_kind_of Page
+    @p.header_object.must_be_kind_of Header
+    @p.footer_object.must_be_kind_of Footer
+    @p.side_bar_object.must_equal nil
+    
+  end
+  
+  it 'should save pdf' do
+    @pdf_path = File.dirname(__FILE__) + "/output/page_fixture_test.pdf"
+    @p.save_pdf(@pdf_path)
+    File.exists?(@pdf_path).must_equal true
+    # system("open #{@page_svg_test}") if File.exists?(@page_svg_test)
+  end
+  
+end
 # describe 'Article Page with pgscritpt' do
 #   before do
 #     @p = Page.new(nil) do

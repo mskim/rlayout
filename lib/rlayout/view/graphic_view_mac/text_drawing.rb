@@ -29,17 +29,11 @@ class GraphicViewMac < NSView
     @text_fit_type  = @data.fetch(:text_fit_type, text_defaults[:text_fit_type])
     @text_font      = @data.fetch(:text_font, text_defaults[:text_font])
     @text_size      = @data.fetch(:text_size, text_defaults[:text_size])
+    @text_line_spacing = @data.fetch(:text_line_spacing, nil)
     @text_style     = @data.fetch(:text_style, text_defaults[:text_style])
     @text_color     = @data.fetch(:text_color, text_defaults[:text_color])
     @text_alignment = @data.fetch(:text_alignment, text_defaults[:text_alignment])
-    # convert to NSColor
-    # puts "in init text drawing"
-    # puts "@data[:height]:#{@data[:height]}"
-    # puts "@data[:width]:#{@data[:width]}"
-    # puts @text_font
-    # puts @text_size
-    # puts @text_string
-    
+
     @text_color  = convert_to_nscolor(@text_color)    unless @text_color.class == NSColor  
     case @text_alignment 
     when "left"
@@ -53,7 +47,6 @@ class GraphicViewMac < NSView
     else
       @text_alignment = NSLeftTextAlignment
     end
-    
     @att_string = make_att_string_from(@data)
     # convert to NSRect
   end
@@ -123,11 +116,12 @@ class GraphicViewMac < NSView
       atts[NSStrokeColorAttributeName]=GraphicRecord.color_from_string(attributes[:guguri_color])
     end 
     
-    if @text_alignment != 0
-      newParagraphStyle  = NSMutableParagraphStyle.alloc.init
-      newParagraphStyle.setAlignment(@text_alignment)
-      atts[NSParagraphStyleAttributeName] = newParagraphStyle         
-    end     
+    # if @text_alignment != 0
+    newParagraphStyle  = NSMutableParagraphStyle.alloc.init
+    newParagraphStyle.setAlignment(@text_alignment)
+    newParagraphStyle.setLineSpacing(@text_line_spacing) if @text_line_spacing
+    atts[NSParagraphStyleAttributeName] = newParagraphStyle         
+    # end     
     att_string=NSMutableAttributedString.alloc.initWithString(@text_string, attributes:atts)
     att_string
   end

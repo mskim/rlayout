@@ -19,9 +19,9 @@ STYLES={
   "Head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
-  "p"       =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
-  "Body"    =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
-  "body"    =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
+  "p"       =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
+  "Body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
+  "body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
   "caption" =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
 }
 

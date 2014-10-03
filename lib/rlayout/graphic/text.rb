@@ -36,6 +36,7 @@ module RLayout
         @text_color     = options.fetch(:text_color, "black")
         @text_font      = options.fetch(:text_font, "Times")
         @text_size      = options.fetch(:text_size, 16)
+        @text_line_spacing= options.fetch(:text_line_spacing, @text_size*1.5)
         @text_fit_type  = options.fetch(:text_fit_type, 0)
         @text_alignment = options.fetch(:text_alignment, "center")
         layout_lines if @parent_graphics
@@ -79,16 +80,19 @@ module RLayout
       
       right_align   = NSMutableParagraphStyle.alloc.init.setAlignment(NSRightTextAlignment)          
       center_align  = NSMutableParagraphStyle.alloc.init.setAlignment(NSCenterTextAlignment)          
-      if @text_alignment != "left"
-        newParagraphStyle  = NSMutableParagraphStyle.alloc.init
-        case @text_alignment
-        when "right"
-          newParagraphStyle = right_align
-        when "center"
-          newParagraphStyle = center_align
-        end
-        atts[NSParagraphStyleAttributeName] = newParagraphStyle         
+      newParagraphStyle  = NSMutableParagraphStyle.alloc.init
+      case @text_alignment
+      when "right"
+        newParagraphStyle = right_align
+      when "center"
+        newParagraphStyle = center_align
       end
+      puts "@text_line_spacing:#{@text_line_spacing}"
+      puts "@text_markup:#{@text_markup}"
+      puts "before newParagraphStyle.lineSpacing:#{newParagraphStyle.lineSpacing}"
+      newParagraphStyle.setLineSpacing = @text_line_spacing
+      puts "after newParagraphStyle.lineSpacing:#{newParagraphStyle.lineSpacing}"
+      atts[NSParagraphStyleAttributeName] = newParagraphStyle         
       atts
     end
     

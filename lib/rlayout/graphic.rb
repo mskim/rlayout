@@ -24,7 +24,7 @@ module RLayout
     attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
     attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand, :grid_rect
-    attr_accessor :text_string, :text_color, :text_size, :text_font, :text_fit_type, :text_alignment
+    attr_accessor :text_string, :text_color, :text_size, :text_line_spacing, :text_font, :text_fit_type, :text_alignment
     attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
     attr_accessor :non_overlapping_rect, :overlapping_rects
     

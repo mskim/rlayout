@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/page/page_fixtures'
 module RLayout
   
   class Page < Container
-    attr_accessor :page_number, :header, :footer, :side_bar, :fixtures
+    attr_accessor :page_number, :header_object, :footer_object, :side_bar_object, :fixtures
     attr_accessor :heading, :body, :side_box, :images, :quotes, :left_page
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
@@ -43,10 +43,10 @@ module RLayout
       @page_number = options.fetch(:page_number, '1')
       
       if options[:header]
-        header
+        @header_object = header
       end
       if options[:footer]
-        footer
+        @footer_object = footer
       end
       if options[:story_box]
         story_box
@@ -112,15 +112,15 @@ module RLayout
     end
     
     def header(options={})
-      @header = Header.new(self, :text_string=>"This is header text", :font_size=>9, :is_fixture=>true)
+      @header_object = Header.new(self, :text_string=>"This is header text", :font_size=>9, :is_fixture=>true)
     end
     
     def footer(options={})
-      @footer = Footer.new(self, :text_string=>"This is header text", :is_fixture=>true)
+      @footer_object = Footer.new(self, :text_string=>"This is header text", :is_fixture=>true)
     end
     
     def side_bar(options={})
-      @side_bar = SideBar.new(self, :text_string=>"This is side_bar text", :is_fixture=>true)
+      @side_bar_object = SideBar.new(self, :text_string=>"This is side_bar text", :is_fixture=>true)
     end
     
     # 

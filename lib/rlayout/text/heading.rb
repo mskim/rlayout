@@ -32,7 +32,7 @@ module RLayout
   # This way, parent can shrink or expand heading and maintain each elements's height propotion. 
 
   class Heading < Container
-    attr_accessor :title_text, :subtitle_text, :leading_text, :author_text
+    attr_accessor :title_object, :subtitle_object, :leading_object, :author_object
     attr_accessor :style_service
     
     def initialize(parent_graphic, options={}, &block)
@@ -62,29 +62,29 @@ module RLayout
       width = @width - @left_inset - @right_inset
       
       if options[:title]
-        @title_text = title(options[:title], options)
+        @title_object = title(options[:title], options)
       end
 
       if options[:subtitle]        
-        @subtitle_text = subtitle(options[:subtitle], options)
+        @subtitle_object = subtitle(options[:subtitle], options)
       end
 
       if options[:leading]
-        @leading_text = leading(options[:leading], options)
+        @leading_object = leading(options[:leading], options)
       end
 
       if options[:author]
-        @author_text = author(options[:author], options)
+        @author_object = author(options[:author], options)
       end
 
       @line_type=0
       @line_width=1
       @line_color="lightGray"
       height_sum = 0      
-      height_sum +=@title_text.height    unless @title_text.nil?
-      height_sum +=@subtitle_text.height unless @subtitle_text.nil?
-      height_sum +=@leading_text.height  unless @leading_text.nil?
-      height_sum +=@author_text.height   unless @author_text.nil?
+      height_sum +=@title_object.height    unless @title_object.nil?
+      height_sum +=@subtitle_object.height unless @subtitle_object.nil?
+      height_sum +=@leading_object.height  unless @leading_object.nil?
+      height_sum +=@author_object.height   unless @author_object.nil?
       @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset
       relayout!
       
@@ -186,44 +186,44 @@ module RLayout
       atts  = @style_service.style_for_markup("title", options)
       atts[:text_string] = string
       atts[:width] = @width
-      @title_text = Text.new(self, atts)
-      @title_text.layout_expand  = [:width]
-      @title_text.layout_length  = atts[:text_size]
-      @title_text.height  = atts[:text_size]*1.2
-      @title_text
+      @title_object = Text.new(self, atts)
+      @title_object.layout_expand  = [:width]
+      @title_object.layout_length  = atts[:text_size]
+      @title_object.height  = atts[:text_size]*1.2
+      @title_object
     end
     
     def subtitle(string, options={})
       atts  = @style_service.style_for_markup("subtitle", options)
       atts[:text_string] = string
       atts[:width] = @width
-      @subtitle_text = Text.new(self, atts)
-      @subtitle_text.layout_expand  = [:width]
-      @subtitle_text.layout_length  = atts[:text_size]
-      @subtitle_text.height  = atts[:text_size]*1.2      
-      @subtitle_text
+      @subtitle_object = Text.new(self, atts)
+      @subtitle_object.layout_expand  = [:width]
+      @subtitle_object.layout_length  = atts[:text_size]
+      @subtitle_object.height  = atts[:text_size]*1.2      
+      @subtitle_object
     end
     
     def leading(string, options={})
       atts  = @style_service.style_for_markup("leading", options)
       atts[:text_string] = string
       atts[:width] = @width
-      @leading_text = Text.new(self, atts)
-      @leading_text.layout_expand  = [:width]
-      @leading_text.layout_length  = atts[:text_size]
-      @leading_text.height  = atts[:text_size]*1.2      
-      @leading_text
+      @leading_object = Text.new(self, atts)
+      @leading_object.layout_expand  = [:width]
+      @leading_object.layout_length  = atts[:text_size]
+      @leading_object.height  = atts[:text_size]*1.2      
+      @leading_object
     end
     
     def author(string, options={})
       atts  = @style_service.style_for_markup("author", options)
       atts[:text_string] = string
       atts[:width] = @width
-      @author_text = Text.new(self, atts)
-      @author_text.layout_expand  = [:width]
-      @author_text.layout_length  = atts[:text_size]
-      @author_text.height  = atts[:text_size]*1.2      
-      @author_text
+      @author_object = Text.new(self, atts)
+      @author_object.layout_expand  = [:width]
+      @author_object.layout_length  = atts[:text_size]
+      @author_object.height  = atts[:text_size]*1.2      
+      @author_object
     end
   end
 
