@@ -36,6 +36,15 @@ class GraphicViewMac < NSView
     init_text
     init_image
     
+    if @data[:fixtures]
+      @data[:fixtures].each do |child|     
+        child_view = GraphicViewMac.from_data(child)
+        
+        # child_view = GraphicViewMac.alloc.initWithFrame(NSMakeRect(child[:x], child[:y], child[:width], child[:height]))
+        # child_view.init_with_data(child)
+        addSubview(child_view)
+      end
+    end
 
     # for Containers, add the children graphics
     if @data[:graphics]
@@ -56,15 +65,6 @@ class GraphicViewMac < NSView
       end
     end
     
-    if @data[:fixtures]
-      @data[:fixtures].each do |child|     
-        child_view = GraphicViewMac.from_data(child)
-        
-        # child_view = GraphicViewMac.alloc.initWithFrame(NSMakeRect(child[:x], child[:y], child[:width], child[:height]))
-        # child_view.init_with_data(child)
-        addSubview(child_view)
-      end
-    end
     self
   end
   

@@ -81,20 +81,23 @@ module  RLayout
   class Container < Graphic
     
     def grid_size
-      [@unit_grid_width, @unit_grid_height]
+      [@grid_unit_width, @grid_unit_height]
     end
     
     def grid_area
-      @unit_grid_width*@unit_grid_height
+      @grid_unit_width*@grid_unit_height
     end
     
     def frame_for(grid_rect)
-      [left_inset + grid_rect[0]*@unit_grid_width, @left_inset + grid_rect[1]*@unit_grid_height, grid_rect[2]*@unit_grid_width, grid_rect[3]*@unit_grid_height]
+      puts __method__
+      puts "grid_rect:#{grid_rect}"
+      puts "@grid_unit_width:#{@grid_unit_width}"
+      [left_inset + grid_rect[0]*@grid_unit_width, @left_inset + grid_rect[1]*@grid_unit_height, grid_rect[2]*@grid_unit_width, grid_rect[3]*@grid_unit_height]
     end
     
     # size of single grid
     def single_grid_size
-      [@unit_grid_width, @unit_grid_height]      
+      [@grid_unit_width, @grid_unit_height]      
     end
     
     def move_cell_to_left_most(cell)
@@ -256,8 +259,8 @@ EOF
       y2  = @height - @bottom - @bottom_inset      
       (@grid_column_count + 1).times do
         @grid_v_lines << [x, y, x2, y2]
-        x   += @unit_grid_width
-        x2  += @unit_grid_width
+        x   += @grid_unit_width
+        x2  += @grid_unit_width
       end
 
       x   = @left + @left_inset
@@ -270,15 +273,15 @@ EOF
       (@grid_row_count + 1).times do |i|
         line = [x, y, x2, y2]
         @grid_h_lines << line
-        y   += @unit_grid_height
-        y2  += @unit_grid_height
+        y   += @grid_unit_height
+        y2  += @grid_unit_height
       end
             
       @grid_cells   = []
       @grid_h_lines.each do |h_line|
         @grid_v_lines.each do |v_line|
           next if v_line == @grid_v_lines.last
-          @grid_cells << [v_line[0], h_line[1], @unit_grid_width, @unit_grid_height]
+          @grid_cells << [v_line[0], h_line[1], @grid_unit_width, @grid_unit_height]
         end
         next if h_line == @grid_h_lines.last
       end      
@@ -435,16 +438,16 @@ EOF
       end
     end
     
-    def unit_grid_size
-      [@unit_grid_width, @unit_grid_height]
+    def grid_unit_size
+      [@grid_unit_width, @grid_unit_height]
     end
     
     # set grid_cell index
-    # adjust grid cells with unit_grid_width, unit_grid_height
+    # adjust grid cells with grid_unit_width, grid_unit_height
     def relayout_grid! 
       return unless @grid_cells
-      @unit_grid_width  = (@width - @left - @left_inset - @right - @right_inset)/@grid_column_count 
-      @unit_grid_height = (@height - @top - @top_inset - @bottom - @bottom_inset)/@grid_row_count 
+      @grid_unit_width  = (@width - @left - @left_inset - @right - @right_inset)/@grid_column_count 
+      @grid_unit_height = (@height - @top - @top_inset - @bottom - @bottom_inset)/@grid_row_count 
       
       update_grids
       x   = @left + @left_inset
@@ -456,10 +459,10 @@ EOF
         unless graphic.grid_rect
           graphic.grid_rect   = [0,0,1,1]
         end
-        graphic.x    = x + graphic.grid_rect[0]*@unit_grid_width
+        graphic.x    = x + graphic.grid_rect[0]*@grid_unit_width
         graphic.y    = y
-        graphic.width  = graphic.grid_rect[2]*@unit_grid_width
-        graphic.height = graphic.grid_rect[3]*@unit_grid_height
+        graphic.width  = graphic.grid_rect[2]*@grid_unit_width
+        graphic.height = graphic.grid_rect[3]*@grid_unit_height
                 
         if graphic.klass == "Image"
           graphic.image_record.apply_fit_type if graphic.image_record

@@ -205,11 +205,13 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
     # to_hash does not save values, if they are equal to default
     # to_data save values, even if they are equal to default
     # to_data is uesed to send the data to view for drawing 
-    def to_data
+    def to_data      
       h = {}
       instance_variables.each{|a|
         s = a.to_s
         next if s=="@parent_graphic"
+        next if s=="@floats"
+        next if s=="@graphics"
         n = s[1..s.size] # get rid of @
         v = instance_variable_get a
         h[n.to_sym] = v if !v.nil?

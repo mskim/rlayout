@@ -7,7 +7,7 @@ module RLayout
     attr_accessor :layout_direction, :layout_strarting, :layout_space, :layout_align
     attr_accessor :grid_column_count, :grid_row_count, :grid_cells, :grid_v_lines, :grid_h_lines, :grid_color, :show_grid
     attr_accessor :grid_rect, :grid_inset, :grid_top_inset, :grid_bottom_inset, :grid_letf_inset, :grid_right_inset
-    attr_accessor :unit_grid_width, :unit_grid_height, :frame
+    attr_accessor :grid_unit_width, :grid_unit_height, :grid_frame
     attr_accessor :gutter_line_type, :gutter_line_width, :gutter_line_color, :gutter_line_dash
     
     def initialize(parent_graphic, options={}, &block)
@@ -31,8 +31,8 @@ module RLayout
       @grid_bottom_inset= options.fetch(:grid_bottom_inset, layout_defaults_hash[:grid_bottom_inset])       
       @grid_letf_inset  = options.fetch(:grid_letf_inset, layout_defaults_hash[:grid_letf_inset])       
       @grid_right_inset = options.fetch(:grid_right_inset, layout_defaults_hash[:grid_right_inset])       
-      @unit_grid_width  = options.fetch(:unit_grid_width, layout_defaults_hash[:unit_grid_width])       
-      @unit_grid_height = options.fetch(:unit_grid_height, layout_defaults_hash[:unit_grid_height])       
+      @grid_unit_width  = options.fetch(:grid_unit_width, layout_defaults_hash[:grid_unit_width])       
+      @grid_unit_height = options.fetch(:grid_unit_height, layout_defaults_hash[:grid_unit_height])       
       @show_grid        = options.fetch(:show_grid, layout_defaults_hash[:show_grid])
 
       @gutter_line_type = options[:gutter_line_type]     
@@ -43,8 +43,8 @@ module RLayout
       @floats           = options[:floats]
       
       if @layout_mode == "grid"
-        # @unit_grid_width    = @owner_graphic.drawing_area[SIZE_WIDTH]/@grid_column_count 
-        # @unit_grid_height   = @owner_graphic.drawing_area[SIZE_HEIGHT]/@grid_row_count 
+        # @grid_unit_width    = @owner_graphic.drawing_area[SIZE_WIDTH]/@grid_column_count 
+        # @grid_unit_height   = @owner_graphic.drawing_area[SIZE_HEIGHT]/@grid_row_count 
         update_grids
       end
       
@@ -69,8 +69,8 @@ module RLayout
       h[:grid_color]        = "blue"
       h[:grid_rect]        = [0,0,1,1]
       h[:grid_inset]        = [0,0,0,0]
-      h[:unit_grid_width]   = 0
-      h[:unit_grid_height]  = 0
+      h[:grid_unit_width]   = 0
+      h[:grid_unit_height]  = 0
       h[:show_grid]         = true
       h
     end
@@ -132,6 +132,8 @@ module RLayout
         s = a.to_s
         next if s=="@parent_graphic"
         next if s=="@graphics"
+        next if s=="@floats"
+        next if s=="@fixtures"
         n = s[1..s.size] # get rid of @
         v = instance_variable_get a
         h[n.to_sym] = v if !v.nil?

@@ -87,11 +87,7 @@ module RLayout
       when "center"
         newParagraphStyle = center_align
       end
-      puts "@text_line_spacing:#{@text_line_spacing}"
-      puts "@text_markup:#{@text_markup}"
-      puts "before newParagraphStyle.lineSpacing:#{newParagraphStyle.lineSpacing}"
-      newParagraphStyle.setLineSpacing = @text_line_spacing
-      puts "after newParagraphStyle.lineSpacing:#{newParagraphStyle.lineSpacing}"
+      newParagraphStyle.setLineSpacing(@text_line_spacing) if @text_line_spacing
       atts[NSParagraphStyleAttributeName] = newParagraphStyle         
       atts
     end
@@ -123,7 +119,6 @@ module RLayout
           text_storage = atts_array_to_att_string(options[:attrs_array])
         else
           text_storage  = NSTextStorage.alloc.initWithString(@text_string, attributes:atts)
-          # puts "text_storage.string;#{text_storage.string}"
         end
         text_container = NSTextContainer.alloc.initWithContainerSize([@width,1000])
         layout_manager = NSLayoutManager.alloc.init
@@ -133,12 +128,6 @@ module RLayout
         layout_manager.glyphRangeForTextContainer(text_container)
         used_size=layout_manager.usedRectForTextContainer(text_container).size
         @height = used_size.height
-        # puts "+++++ in layout_lines"
-        # puts "@height:#{@height}"
-        # puts "@width:#{@width}"
-        # puts @text_font
-        # puts @text_size
-        # puts @text_string
       else
         # TODO
         # adjust height

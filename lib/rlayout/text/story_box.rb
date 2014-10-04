@@ -54,11 +54,23 @@ module RLayout
   HEADING_WIDTH_LOOKUP_TABLE = [1,2,2,2,3,3,4] #for 7 column page
    
   class StoryBox < ObjectBox
-    attr_accessor :heading, :image, :side_box, :quote_box, :grid_frame, :grid_size
+    attr_accessor :heading, :image, :side_box, :quote_box, :grid_size
     attr_accessor :story, :story_path, :category
     attr_accessor :paragraphs, :starting_item_index, :ending_item_index,  :heading_box
     
     def initialize(parent_graphic, options={})
+      super 
+      @klass = 'StoryBox'
+      ######### super #####
+      # @float_record = GFloatRecord.new(self) unless @float_record
+      if options[:story_path] || options[:story_hash] || options[:story]
+        layout_story(options)
+      end
+            
+      self
+    end
+    
+    def layout_story(options={})
       @starting_item_index  = 0
       @ending_item_index    = 0
       @heading_box          = true
@@ -70,9 +82,6 @@ module RLayout
       elsif options[:story_hash]
         # when story is passed as hash data
         @story  = Story.new(options[:story_hash])
-      elsif options[:story]
-        # when story is passed as story
-        @story = options[:story]
       elsif options[:linked_story]
         # when story is overflowing from the previous story_box
         @heading_box          = false
@@ -81,18 +90,21 @@ module RLayout
         @starting_item_index  = @story.current_item_index
         @ending_item_index    = @starting_item_index
       end
-        
-      if @story.heading[:grid_frame]
+      if @story.heading[:column_count]
+        options[:column_count] = @story.heading[:column_count]
+      elsif @story.heading[:grid_frame]
         options[:grid_frame] = eval(@story.heading[:grid_frame])
         options[:column_count] = options[:grid_frame][2]
-      elsif @story.heading[:column_count]
-        options[:column_count] = @story.heading[:column_count]
+        if @story.heading[:grid_size]
+          options[:grid_size] = eval(@story.heading[:grid_size])
+        end
       end
-      if @story.heading[:grid_size]
-        options[:grid_size] = eval(@story.heading[:grid_size])
-      end
-      if @story.heading[:category]
-        options[:category] = @story.heading[:category]
+      
+      #TODO
+      if options[:category]
+        #
+      elsif @story.heading[:category]
+          options[:category] = @story.heading[:category]
       end
       
       @style_service  ||= StyleService.new
@@ -100,49 +112,29 @@ module RLayout
       @grid_frame = options[:grid_frame]      if options[:grid_frame]
       @image_map  = options[:image_map]       if options[:image_map]
       @category   = options.fetch(:category, "Magazine")
-      # if @parent_graphic is using grid based layout like newspaper
-      # snapp to parent's grid system
-      options[:column_count] = @grid_frame[2] if @grid_frame
-      
-      ######### calling super after seting up parameters for story bpx #####
-      super 
-      @klass = 'StoryBox'
-      ######### super #####
-      # @float_record = GFloatRecord.new(self) unless @float_record
-      
-      if @story  
-        if @parent_graphic && @grid_frame      
-          @frame = @parent_graphic.frame_for(@grid_frame)         
-          @grid_size = @parent_graphic.grid_size
-        elsif @grid_size && @grid_frame
-          f_g = @grid_frame
-          # @frame      = NSMakeRect(f_g[0]*@grid_size[0], f_g[1]*@grid_size[1], f_g[2]*@grid_size[0], f_g[3]*@grid_size[1]) 
-        end
-        relayout!   # make sure column are set in place, before adding floats
+      relayout!   # make sure column are set in place, before adding floats
 
-        if @heading_box
-          place_heading(options)
-          place_head_images if @story.heading[:image]  || @story.heading[:image_path]
-          place_quotes if @story.heading[:quotes] 
-        end
-        
-        set_non_overlapping_frame_for_chidren_graphics
-        paragraphs =[]
-        @story.paragraphs[@starting_item_index..-1].map do |para, i| 
-          para_options  = @style_service.style_for_markup(para[:markup], options)
-          para_options[:markup]   = para[:markup]
-          para_options[:text_string]   = para[:string]
-          para_options[:layout_expand]   = [:width]
-          para_options[:text_fit] = FIT_FONT_SIZE
-          paragraphs << Paragraph.new(nil, para_options)
-          @story.current_item_index += 1 # @story.paragraphs.index(para)      
-          @ending_item_index        = @story.paragraphs.index(para)
-        end
+      if @heading_box
+        place_heading(options)
+        place_head_images if @story.heading[:image]  || @story.heading[:image_path]
+        place_quotes if @story.heading[:quotes] 
+      end
+      
+      set_non_overlapping_frame_for_chidren_graphics
+      paragraphs =[]
+      @story.paragraphs[@starting_item_index..-1].map do |para, i| 
+        para_options  = @style_service.style_for_markup(para[:markup], options)
+        para_options[:markup]   = para[:markup]
+        para_options[:text_string]   = para[:string]
+        para_options[:layout_expand]   = [:width]
+        para_options[:text_fit] = FIT_FONT_SIZE
+        paragraphs << Paragraph.new(nil, para_options)
+        @story.current_item_index += 1 # @story.paragraphs.index(para)      
+        @ending_item_index        = @story.paragraphs.index(para)
       end
       relayout!
       layout_items(paragraphs, 0)
       
-      self
     end
     
     def to_hash
@@ -175,7 +167,7 @@ module RLayout
       end
       heading_options[:style_service]  ||= @StyleService
       heading_options[:category]       = options.fetch(:category, "news")
-      heading_options[:fill_color]     = "lightGray"
+      # heading_options[:fill_color]     = "lightGray"
       heading_options[:is_float]       = true
       @heading  = Heading.new(self, heading_options)
       @heading.relayout!  
@@ -208,7 +200,7 @@ module RLayout
       
       if @parent_graphic && @parent_graphic.grid_record
         # check of @image_map
-        width= 2 * @parent_graphic.grid_record.unit_grid_width - 3
+        width= 2 * @parent_graphic.grid_record.grid_unit_width - 3
       else
         if @graphics.length > 1
           width = @graphics[0].frame.size.width
@@ -267,6 +259,40 @@ module RLayout
       end
     end
     
+    def to_data
+      h = {}
+      instance_variables.each{|a|
+        s = a.to_s
+        next if s=="@parent_graphic"        
+        next if s=="@graphics"
+        next if s=="@floats"
+        next if s=="@fixtures"
+        next if s=="@heading"
+        
+        n = s[1..s.size] # get rid of @
+        v = instance_variable_get a
+        h[n.to_sym] = v if !v.nil?
+      }
+      if @graphics.length > 0
+        h[:graphics]= @graphics.map do |child|
+          child.to_hash
+        end
+      end
+      
+      if @floats && @floats.length > 0
+        h[:floats]= @floats.map do |child|
+          child.to_hash
+        end
+      end
+      
+      if @fixtures && @fixtures.length > 0
+        h[:fixtures]= @fixtures.map do |child|
+          child.to_hash
+        end
+      end
+      
+      h
+    end
 	end
 	
 	# StoryBox should adjust its sizes with parent grid values

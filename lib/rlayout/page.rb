@@ -4,7 +4,7 @@ module RLayout
   
   class Page < Container
     attr_accessor :page_number, :header_object, :footer_object, :side_bar_object, :fixtures
-    attr_accessor :heading, :body, :side_box, :images, :quotes, :left_page
+    attr_accessor :left_page, :story_box_object
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
       @parent_graphic.pages << self if  @parent_graphic && @parent_graphic.pages && !@parent_graphic.pages.include?(self)       
@@ -49,7 +49,12 @@ module RLayout
         @footer_object = footer
       end
       if options[:story_box]
-        story_box
+        options[:x] = @left_margin
+        options[:y] = @top_margin
+        options[:width] = @width - @left_margin - @right_margin
+        options[:height] = @height - @top_margin - @bottom_margin
+        options[:column_count] = 1
+        @story_box_object = story_box(options)
       end
             
       if block
@@ -71,6 +76,40 @@ module RLayout
         height: 800,
         margin: 50,
       }
+    end
+    
+    def to_data
+      h = {}
+      instance_variables.each{|a|
+        s = a.to_s
+        next if s=="@parent_graphic"
+        next if s=="@graphics"
+        next if s=="@floats"
+        next if s=="@fixtures"
+        next if s=="@header_object"
+        next if s=="@footer_object"
+        next if s=="@side_bar_object"
+        next if s=="@story_box_object"
+        n = s[1..s.size] # get rid of @
+        v = instance_variable_get a
+        h[n.to_sym] = v if !v.nil?
+      }
+      if @graphics.length > 0
+        h[:graphics]= @graphics.map do |child|
+          child.to_data
+        end
+      end
+      if @floats && @floats.length > 0
+        h[:floats]= @floats.map do |child|
+          child.to_data
+        end
+      end
+      if @fixtures && @fixtures.length > 0
+        h[:fixtures]= @fixtures.map do |child|
+          child.to_data
+        end
+      end
+      h
     end
     
     def left_page?
@@ -97,20 +136,12 @@ module RLayout
       
     end
     
-    ########### PageScritp Verbs #############
-    def article_layout(options={:column=>2, :images=>0, side_box=>0})
-      @heading  = Heading.new(self)
-      @body     = Body.new(self, options)      
-    end
-    
+    ########### PageScritp Verbs #############    
     def story_box(options={}, &block)
+      @story_box_object     = StoryBox.new(self, options)      
       
     end
-    
-    def heading(options={}, &block)
-      @heading = Heading.new(self, options={}, &block)
-    end
-    
+        
     def header(options={})
       @header_object = Header.new(self, :text_string=>"This is header text", :font_size=>9, :is_fixture=>true)
     end
