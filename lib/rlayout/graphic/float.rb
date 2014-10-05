@@ -134,12 +134,12 @@ module RLayout
     end
     
     # it sets the children graphic's non_overlapping_frame value
-    # this method is called when float is added and after relayout!
+    # this method is called after float is added and relayout!
     def set_non_overlapping_frame_for_chidren_graphics
       @floats.each do |float|
         @graphics.each_with_index do |graphic, i|
-          if intersects_rect(frame_rect, graphic.frame_rect)
-            graphic.non_overlapping_rect = non_overlapping_area(graphic.non_overlapping_frame, float.frame_rect) 
+          if intersects_rect(float.frame_rect, graphic.frame_rect)
+            graphic.non_overlapping_rect = non_overlapping_area(graphic.frame_rect, float.frame_rect) 
           end
         end
       end

@@ -63,9 +63,9 @@ module RLayout
       @klass = 'StoryBox'
       ######### super #####
       # @float_record = GFloatRecord.new(self) unless @float_record
-      if options[:story_path] || options[:story_hash] || options[:story]
-        layout_story(options)
-      end
+      # if options[:story_path] || options[:story_hash] || options[:story]
+      #   layout_story(options)
+      # end
             
       self
     end
@@ -115,7 +115,7 @@ module RLayout
       relayout!   # make sure column are set in place, before adding floats
 
       if @heading_box
-        place_heading(options)
+        place_heading(options)        
         place_head_images if @story.heading[:image]  || @story.heading[:image_path]
         place_quotes if @story.heading[:quotes] 
       end
@@ -134,7 +134,6 @@ module RLayout
       end
       relayout!
       layout_items(paragraphs, 0)
-      
     end
     
     def to_hash
@@ -170,7 +169,10 @@ module RLayout
       # heading_options[:fill_color]     = "lightGray"
       heading_options[:is_float]       = true
       @heading  = Heading.new(self, heading_options)
-      @heading.relayout!  
+      @graphics.each do |g|
+        puts g.class
+        puts g.non_overlapping_frame
+      end
     end
     
       

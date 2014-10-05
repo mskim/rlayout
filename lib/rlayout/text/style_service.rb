@@ -26,22 +26,17 @@ STYLES={
 }
 
 CHAPTER_STYLES={
-  "Title"   =>{:text_font => 'Times', :text_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
   "title"   =>{:text_font => 'Times', :text_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
-  "SubTitle"=>{:text_font => 'Times', :text_size=>16.0, :text_color => 'black'},
   "subtitle"=>{:text_font => 'Times', :text_size=>16.0, :text_color => 'black'},
-  "Author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
   "author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
   "Lead"    =>{:text_font => 'Helvetica', :text_size=>14.0, :text_color => 'black'},
   "lead"    =>{:text_font => 'Helvetica', :text_size=>14.0, :text_color => 'black'},
-  "Leading" =>{:text_font => 'Times', :text_size=>18.0, :text_color => 'black'},
   "leading" =>{:text_font => 'Times', :text_size=>18.0, :text_color => 'black'},
   "h1"      =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "h2"      =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "h3"      =>{:text_font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
   "h4"      =>{:text_font => 'Helvetica', :text_size=>14.0, :text_color => 'black'},
   "h5"      =>{:text_font => 'Helvetica', :text_size=>10.0, :text_color => 'black'},
-  "Head"    =>{:text_font => 'Helvetica', :text_size=>9.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>9.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>9.0, :text_color => 'black'},
   "p"       =>{:text_font => 'Times', :text_size=>9.0, :text_line_spacing=>10, :text_color => 'black'},
@@ -51,13 +46,9 @@ CHAPTER_STYLES={
 }
 
 NEWS_STYLES={
-  "Title"   =>{:text_font => 'Times', :text_size=>36.0, :text_color => 'black', :text_alignment=>'center'},
   "title"   =>{:text_font => 'Times', :text_size=>36.0, :text_color => 'black', :text_alignment=>'center'},
-  "SubTitle"=>{:text_font => 'Times', :text_size=>20.0, :text_color => 'black'},
   "subtitle"=>{:text_font => 'Times', :text_size=>20.0, :text_color => 'black'},
-  "Author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_alignment=>'right'},
   "author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_alignment=>'right'},
-  "Lead"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "lead"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "Leading" =>{:text_font => 'Times', :text_size=>18.0, :text_color => 'black'},
   "leading" =>{:text_font => 'Times', :text_size=>18.0, :text_color => 'black'},
@@ -66,7 +57,6 @@ NEWS_STYLES={
   "h3"      =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "h4"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h5"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
-  "Head"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
   "p"       =>{:text_font => 'Times', :text_size=>12.0, :text_color => 'black'},

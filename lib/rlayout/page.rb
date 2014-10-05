@@ -48,6 +48,7 @@ module RLayout
       if options[:footer]
         @footer_object = footer
       end
+      
       if options[:story_box]
         options[:x] = @left_margin
         options[:y] = @top_margin

@@ -21,6 +21,7 @@ module RLayout
     
     def initialize(parent_graphic, options={}, &block)
       super
+      @klass = "ObjectBox"   
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)
       @column_count     = options.fetch(:column_count, 3)
@@ -191,6 +192,7 @@ module RLayout
     
     def initialize(parent_graphic, options={}, &block)
       super
+      @klass = "ColumnObject"
       @layout_space = 10
       @current_position = @top_margin + @top_inset
       
@@ -211,9 +213,6 @@ module RLayout
         # insert item
         item.parent_graphic = self
         item.y = @current_position
-        # puts "@current_position:#{@current_position}"
-        # puts "item.y:#{item.y}"
-        # puts "item.class:#{item.class}"
         item.x = @left_margin + @left_inset
         @graphics << item
         @current_position += item.height + @layout_space

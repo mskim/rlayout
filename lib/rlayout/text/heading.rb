@@ -41,7 +41,7 @@ module RLayout
       else
         @style_service ||= StyleService.new(options)
       end
-      super   
+      super         
       @klass = "Heading"   
       @layout_space = 2
       if options[:width]
@@ -56,6 +56,7 @@ module RLayout
       @bottom_inset   = 5
       @left_inset     = 10
       @right_inset    = 10
+      @bottom_margin  = 10
       
       @layout_expand = [:width]
       
@@ -85,7 +86,7 @@ module RLayout
       height_sum +=@subtitle_object.height unless @subtitle_object.nil?
       height_sum +=@leading_object.height  unless @leading_object.nil?
       height_sum +=@author_object.height   unless @author_object.nil?
-      @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset
+      @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
       relayout!
       
       self

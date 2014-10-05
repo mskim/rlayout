@@ -48,7 +48,10 @@ class GraphicViewMac < NSView
 
     # for Containers, add the children graphics
     if @data[:graphics]
-      @data[:graphics].each do |child|     
+      
+      
+      @data[:graphics].each do |child| 
+            
         child_view = GraphicViewMac.from_data(child)
         # child_view = GraphicViewMac.alloc.initWithFrame(NSMakeRect(child[:x], child[:y], child[:width], child[:height]))
         # child_view.init_with_data(child)
@@ -57,7 +60,7 @@ class GraphicViewMac < NSView
     end
     
     if @data[:floats]
-      @data[:floats].each do |child|     
+      @data[:floats].each do |child|    
         child_view = GraphicViewMac.from_data(child)
         # child_view = GraphicViewMac.alloc.initWithFrame(NSMakeRect(child[:x], child[:y], child[:width], child[:height]))
         # child_view.init_with_data(child)

@@ -216,6 +216,12 @@ module RLayout
     end
   end
   
+  # container with title 
+  class TitledBox < Container
+    attr_accessor :title, :title_type, :title_position
+    
+    
+  end
   
   class Body < Container
     attr_accessor :columns, :drws_interline, :gutter

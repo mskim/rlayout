@@ -59,6 +59,7 @@ module RLayout
         end
         Page.new(self, options)
       end
+      
       if options[:story_path]
         options[:category] = 'chapter'
         @pages.first.story_box_object.layout_story(options)

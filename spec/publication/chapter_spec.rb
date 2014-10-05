@@ -41,9 +41,7 @@ describe 'create Chapter page with StoryBox' do
   
   
   it 'should save' do
-    @heading.graphics.each do |g|
-      puts g.text_string
-    end
+
     @pdf_path = File.dirname(__FILE__) + "/../output/chapter_test.pdf"
     @m.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true
