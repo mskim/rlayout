@@ -3,16 +3,33 @@ require File.dirname(__FILE__) + '/page/page_fixtures'
 module RLayout
   
   class Page < Container
-    attr_accessor :page_number, :header_object, :footer_object, :side_bar_object, :fixtures
-    attr_accessor :left_page, :story_box_object
+    attr_accessor :page_number, :left_page
+    attr_accessor :header_object, :footer_object, :story_box_object, :side_bar_object
+    attr_accessor :fixtures
+     
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
       @parent_graphic.pages << self if  @parent_graphic && @parent_graphic.pages && !@parent_graphic.pages.include?(self)       
       @klass = "Page"
+      
+      @page_number = options.fetch(:page_number, '1')
+      
+      if @parent_graphic && @parent_graphic.double_side
+        if @parent_graphic.starts_left
+          @left_page  = @page_number.even?
+        else
+          @left_page  = @page_number.odd?
+        end
+      else
+        @left_page  = true
+      end
+      
       @graphics = []
       @fixtures = []
       @x = 0
       @y = 0
+      
+      #TODO refactore this
       if @parent_graphic && @parent_graphic.width
         @width  = @parent_graphic.width 
       else
@@ -38,10 +55,7 @@ module RLayout
       @right_inset    = 0
       @top_inset      = 0
       @bottom_inset   = 0
-      
-      @left_page = options.fetch(:left_page, true)
-      @page_number = options.fetch(:page_number, '1')
-      
+            
       if options[:header]
         @header_object = header
       end

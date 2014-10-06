@@ -20,10 +20,11 @@ module RLayout
       return unless @graphics
       return if @graphics.length <= 0
       vertical  = @layout_direction == "vertical"
-      non_overlapping_rect = non_overlapping_frame 
-      view_size = [non_overlapping_rect[2],non_overlapping_rect[3]]
-      # binding.pry
-      starting_position = vertical ? (@y + @top_margin +  @top_inset) : (@bottom_margin + @bottom_inset)
+      view_size = [non_overlapping_frame[2], non_overlapping_frame[3]]
+      
+      #TODO starting_position for horizontal
+      @non_overlapping_y =non_overlapping_frame[1]
+      starting_position = vertical ? (@non_overlapping_y + @top_margin +  @top_inset) : (@bottom_margin + @bottom_inset)
       ending_position   = vertical ? (view_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (view_size[0] - @left_margin - @right_margin - @left_inset - @right_inset)
       expandable_size   = ending_position
       expandable_children = 0
@@ -70,8 +71,7 @@ module RLayout
        # expandable_size /= expandable_children
 
        @graphics.each do |child|
-         next if !child.layout_member || child.layout_expand.nil?         
-         
+         next if !child.layout_member || child.layout_expand.nil?                  
          subview_size = [child.width, child.height]
          view_frame = [0, 0, subview_size[0],subview_size[1]]
          subview_dimension = vertical ? subview_size[1] : subview_size[0]

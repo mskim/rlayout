@@ -29,19 +29,23 @@ describe 'create Chapter page with StoryBox' do
   end
   
   # it 'should create Chapter' do
-  #   @m.must_be_kind_of Chapter
-  #   @m.pages.length.must_equal 2
-  # end
-  
+  #     @m.must_be_kind_of Chapter
+  #     @m.pages.length.must_equal 2
+  #   end
+  #   
   # it 'should create pages' do
   #   @first_page.story_box_object.must_be_kind_of StoryBox
   #   @first_page.story_box_object.floats.length.must_equal 1
   #   @first_page.story_box_object.floats.first.must_be_kind_of Heading
+  #   @first_page.story_box_object.graphics.each do |col|
+  #     puts col.non_overlapping_frame
+  #     col.graphics.first.puts_frame
+  #   end
   # end
   
   
   it 'should save' do
-
+  
     @pdf_path = File.dirname(__FILE__) + "/../output/chapter_test.pdf"
     @m.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true

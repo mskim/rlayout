@@ -4,15 +4,15 @@
 module RLayout
   
   # ObjectBox is general pulpose container of flowing objexts.
-  # ObjectBox contains Columns. Objects flow along columns. 
+  # ObjectBox has Columns. Objects flow along columns. 
   # ObjectBox can be linek to other ObjectBox, "next_link" and "previous_link" points to them.
   # When Text paragraphs flow, it acts as traditional TextBox.
-  # ObjectBox can handling other types of objects as well, 
-  # Product items, BoxAds, Directory elements, quiz items or any other objects 
-  # that supports flowing item protocol, namely "set_width_and_adjust_height"
-  # one other flowing item protocol is :breakable?, whick tells the flowing item can be broken into parts.
-  # ObjectBox has another layer called "floats"
-  # floats sit on top layer and pushes out text content under neath
+  # ObjectBox handls other types of objects as well, such as 
+  # product items, BoxAds, Directory elements, quiz items or any other graphic objects, 
+  # that support flowing item protocol, namely "set_width_and_adjust_height"
+  # one other flowing item protocol is :breakable?, whick tells whether the flowing item can be broken into parts.
+  # ObjectBox adds another layer called "floats"
+  # floats sit on top layer and pushes out text content underneath
   # Typocal floats are Heading, Image, Quates, SideBox
    
   class ObjectBox < Container
@@ -46,21 +46,21 @@ module RLayout
     end
     
     # steps
-    # 1. Ask each flowing objects to adjust their width to current_column width.
-    # 2. Each flowing objects changes their width and their height.
-    # 3. Place them in the column if it fits, 
+    # 1. take out front_most_item from the array
+    # 1. adjust their width to current_column width.
+    # 1. each flowing objects changes their width and their height.
+    # 1. place them in the column if it fits, 
     #    if it doen't fit, ask if we can break the item into parts.
     #    if they can be broken, try putting each parts until they all fit
     #    for the left over parts?
     #       go on to the next column and fit rest of the parts
     #       What if the next column can not fit all parts?
-    
-    def layout_items(flowing_items, starting_index=0)
+    # 1. if the last column is reached with un-placed item, place item back at the fornt of the array and return no
+    # 
+    def layout_items(flowing_items)
       column_index = 0
       current_column = @graphics[column_index]
       current_column.set_starting_position_at_non_overlapping_area
-      
-      
       while front_most_item = flowing_items.shift do
         # Adjusting width of flow item all at once is an option, if we are sure that all column width are same
         # but, we could have varing width columns
@@ -83,12 +83,10 @@ module RLayout
                 # go to next column
                 column_index += 1
                 if column_index == @column_count
-                  if @next_link
-                    @next_link.layout_flowing_objects(flowing_items)
-                  else
-                    # puts "+++++ overflow, we have no more link"
-                    return false
-                  end      
+                  # place back un-inserted part  in the front of the array
+                  flowing_items.unshift(part)
+                  return false
+                    
                 end
                 current_column = @graphics[column_index]
                 current_column.set_starting_position_at_non_overlapping_area
@@ -109,12 +107,10 @@ module RLayout
           current_column.set_starting_position_at_non_overlapping_area if current_column
           if column_index == @column_count
             # we are finished for this ObjectBox
-            if @next_link
-              @next_link.layout_flowing_objects(flowing_items)
-            else
-              # puts "+++++ overflow, we have no more link"
-              return false
-            end      
+            # place back un-inserted item  in the front of the array
+            #TODO
+            flowing_items.unshift(front_most_item)
+            return false
             
           else
             # This is the case where the item does not fit, even if this is the new empty column
@@ -124,19 +120,12 @@ module RLayout
           
         end
       end
-      # binding.pry
       
+      # all item is placed!!! return true
+      true
       
     end
     
-    def link_to_next(flowing_items)
-      if @next_link
-        @next_link.layout_flowing_objects(flowing_items)
-      else
-        puts "+++++ overflow, we have no more link"
-        return false
-      end      
-    end
     
     # insert array items into ObjectBox
     def insert_flowing_items_in_array(an_array, options={})
@@ -214,8 +203,10 @@ module RLayout
         item.parent_graphic = self
         item.y = @current_position
         item.x = @left_margin + @left_inset
+        # puts "item.frame_rect:#{item.frame_rect}"
         @graphics << item
         @current_position += item.height + @layout_space
+        # @current_position = max_y(item.frame_rect) + @layout_space
         true
       else
         # cant't insert 

@@ -21,7 +21,7 @@ describe ' ObjectBox creation' do
   end
   
   it 'should layout_items' do
-     result = @ob.layout_items(@flowomg_graphics, 0)
+     result = @ob.layout_items(@flowomg_graphics)
      @flowing_path = File.dirname(__FILE__) + "/output/object_box_flowing_test.svg"
      @ob.save_svg(@flowing_path)
      File.exists?(@flowing_path).must_equal true

@@ -26,11 +26,7 @@ describe 'testing heading block' do
       author("- Min Soo Kim")
     end
   end
-  
-  it 'should have height heading' do
-    @h.height.must_equal  164.79999999999998
-  end
-  
+    
   it 'should create heading' do
     @h.must_be_kind_of Heading
   end
