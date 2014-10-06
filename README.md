@@ -1,23 +1,33 @@
+2014 9 23
+ 1. Dovira heading top and bottom margin or 
+		should heading height be set with layout_width
+ 1. first line indent
+ 1. newline in body text with carriage return
+ 1. chapter heading only header
+ 1. book title and page number footer on left side
+ 1. chapter title and page number footer on right side
+ 1. footer page number font is different from footer title text
+
 
 2014 9 23
-Paragraph Object
-TextColumn
-TextBox linking
+ Paragraph Object
+ TextColumn
+ TextBox linking
 
 2014 9 22
-svg generation Image
+ svg generation Image
 
 svg generation for Container 
 do not wrap into a svg <svg></svg>, do not make it multiple page svg
 use rect or graphic shape, fill, and line
 	
 2014 9 19
-Using DRb
+ Using DRb
 
-Using DRb & Git
+ Using DRb & Git
 
 
-Using Git
+ Using Git
 	
 	setup account at bitbucket or github with user name rlayout
 	this account will serve all the clents for the site

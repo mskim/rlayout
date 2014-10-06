@@ -33,6 +33,7 @@ class GraphicViewMac < NSView
     @text_style     = @data.fetch(:text_style, text_defaults[:text_style])
     @text_color     = @data.fetch(:text_color, text_defaults[:text_color])
     @text_alignment = @data.fetch(:text_alignment, text_defaults[:text_alignment])
+    @text_first_line_head_indent = @data.fetch(:text_first_line_head_indent, nil)
 
     @text_color  = convert_to_nscolor(@text_color)    unless @text_color.class == NSColor  
     case @text_alignment 
@@ -116,10 +117,11 @@ class GraphicViewMac < NSView
       atts[NSStrokeColorAttributeName]=GraphicRecord.color_from_string(attributes[:guguri_color])
     end 
     
-    # if @text_alignment != 0
     newParagraphStyle  = NSMutableParagraphStyle.alloc.init
     newParagraphStyle.setAlignment(@text_alignment)
     newParagraphStyle.setLineSpacing(@text_line_spacing) if @text_line_spacing
+    newParagraphStyle.setFirstLineHeadIndent(@text_first_line_head_indent) if @text_first_line_head_indent
+    
     atts[NSParagraphStyleAttributeName] = newParagraphStyle         
     # end     
     att_string=NSMutableAttributedString.alloc.initWithString(@text_string, attributes:atts)

@@ -39,6 +39,7 @@ module RLayout
         @text_line_spacing= options.fetch(:text_line_spacing, @text_size*1.5)
         @text_fit_type  = options.fetch(:text_fit_type, 0)
         @text_alignment = options.fetch(:text_alignment, "center")
+        @text_first_line_head_indent = options.fetch(:text_first_line_head_indent, nil)
         layout_lines if @parent_graphics
         
       end
@@ -88,6 +89,7 @@ module RLayout
         newParagraphStyle = center_align
       end
       newParagraphStyle.setLineSpacing(@text_line_spacing) if @text_line_spacing
+      newParagraphStyle.setFirstLineHeadIndent(@text_first_line_head_indent) if @text_first_line_head_indent
       atts[NSParagraphStyleAttributeName] = newParagraphStyle         
       atts
     end

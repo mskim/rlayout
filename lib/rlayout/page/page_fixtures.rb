@@ -1,8 +1,18 @@
 module RLayout
   
+  # chpater_front_only, 
+  # every_page, 
+  # every_page_except_chapter_front
+  # left_only
+  # right_only
   class Header < Text
+    attr_accessor :chpater_front, :left, :right         # what_pages_to_display, 
+    attr_accessor :left_side_string, :right_side_string # what to display, 
+    attr_accessor :post_string, :page_number
+    
     def initialize(parent_graphic, options={})
       options[:text_size] = 8 unless options[:text_size]
+      options[:text_font] = 'Helvetica' unless options[:text_size]
       super
       if @parent_graphic.left_page?
         @x      = @parent_graphic.left_margin
@@ -20,9 +30,16 @@ module RLayout
   end
   
   class Footer < Text
+    attr_accessor :chpater_front, :left, :right         # what_pages_to_display, 
+    attr_accessor :position                             # sides, middle
+    attr_accessor :left_side_string, :right_side_string # what to display, 
+    attr_accessor :post_string, :page_number
     attr_accessor :pre_string, :post_string, :page_number
+    
     def initialize(parent_graphic, options={})
       options[:text_size] = 8 unless options[:text_size]
+      options[:text_font] = 'Helvetica' unless options[:text_size]
+      
       super
       @text_alignment = 'center'
       @page_number = @parent_graphic.page_number

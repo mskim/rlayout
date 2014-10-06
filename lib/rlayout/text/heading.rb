@@ -56,7 +56,8 @@ module RLayout
       @bottom_inset   = 5
       @left_inset     = 10
       @right_inset    = 10
-      @bottom_margin  = 10
+      @top_margin     = 100
+      @bottom_margin  = 100
       
       @layout_expand = [:width]
       
@@ -79,7 +80,7 @@ module RLayout
       end
 
       @line_type=0
-      @line_width=1
+      # @line_width=1
       @line_color="lightGray"
       height_sum = 0      
       height_sum +=@title_object.height    unless @title_object.nil?

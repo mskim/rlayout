@@ -69,11 +69,11 @@ module RLayout
       if options[:heading]
         if options[:heading][:column_count]
           options[:column_count] = options[:heading][:column_count]
-        elsif @story.heading[:grid_frame]
-          options[:grid_frame] = eval(@story.heading[:grid_frame])
+        elsif options[:heading][:grid_frame]
+          options[:grid_frame] = eval(options[:heading][:grid_frame])
           options[:column_count] = options[:grid_frame][2]
-          if @story.heading[:grid_size]
-            options[:grid_size] = eval(@story.heading[:grid_size])
+          if options[:heading][:grid_size]
+            options[:grid_size] = eval(options[:heading][:grid_size])
           end
         end
         
@@ -133,11 +133,11 @@ module RLayout
     # place imaegs that are in the head of the story
     def place_head_images
       image_path = nil
-      if @story.heading[:image_path]
-        image_path = @story.heading[:image_path]
+      if options[:heading][:image_path]
+        image_path = options[:heading][:image_path]
         return if image_path == ""
       else
-        image_name = @story.heading[:image]
+        image_name = options[:heading][:image]
         image_path = image_folder + "/#{image_name}"
         return if image == ""
       end

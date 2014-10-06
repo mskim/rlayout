@@ -39,9 +39,9 @@ CHAPTER_STYLES={
   "h5"      =>{:text_font => 'Helvetica', :text_size=>10.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>9.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>9.0, :text_color => 'black'},
-  "p"       =>{:text_font => 'Times', :text_size=>9.0, :text_line_spacing=>10, :text_alignment=>'left'},
-  "Body"    =>{:text_font => 'Times', :text_size=>9.0, :text_line_spacing=>10, :text_alignment=>'left'},
-  "body"    =>{:text_font => 'Times', :text_size=>9.0, :text_line_spacing=>10, :text_alignment=>'left'},
+  "p"       =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'left', :text_first_line_head_indent=>20},
+  "Body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'left', :text_first_line_head_indent=>20},
+  "body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'left', :text_first_line_head_indent=>20},
   "caption" =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
 }
 
