@@ -1,20 +1,26 @@
 # encoding: utf-8
 
-
+require 'yaml'
 module RLayout
+    
   
   class Book
     attr_accessor :folder_path, :front_matter, :body_matter, :rear_matter
     def initialize(folder_path)
+      @front_matter = []
+      @body_matter = []
+      @rear_matter = []
       @folder_path = folder_path
       self
     end
     
     def markdown2pdf
       Dir.glob("#{@folder_path}/*.markdown") do |m|
-        puts m
-        convert_markdown2pdf(m)
+        node = convert_markdown2pdf(m).book_node
+        @body_matter << node.to_a
       end
+      book_tree_path = @folder_path + "/chapter_tree.yml"
+      File.open(book_tree_path, 'w'){|f| f.write @body_matter.to_yaml} 
     end
     
     def delete_markdown_files
@@ -26,12 +32,12 @@ module RLayout
     end
     
     def convert_markdown2pdf(markdown_path)
-      puts __method__
       pdf_path = markdown_path.gsub(".markdown", ".pdf")
       puts markdown_path
       title = File.basename(markdown_path, ".markdown")
-      @m = Chapter.new(:title =>title, :starts_left=>false, :story_path=>markdown_path)
-      @m.save_pdf(pdf_path)
+      chapter = Chapter.new(:title =>title, :starts_left=>false, :story_path=>markdown_path)
+      chapter.save_pdf(pdf_path)
+      chapter
     end
     
     def txt2markdown

@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 SIZES = { "4A0" => [4767.87, 6740.79],
           "2A0" => [3370.39, 4767.87],
            "A0" => [2383.94, 3370.39],
@@ -53,10 +55,17 @@ SIZES = { "4A0" => [4767.87, 6740.79],
 
 
 module RLayout
-  attr_accessor :title, :path, :paper_size, :portrait, :margin, :width, :height, :starts_left, :double_side
-  attr_accessor :pages, :document_view
+  BookNode = Struct.new(:category, :title, :starting_page, :page_count) do
+    def next_node_starting_page
+      @starting_page + @page_count
+    end
+  end
   
+  TocNode = Struct.new(:markup, :text_string, :page_number)
+    
   class Document
+    attr_accessor :title, :path, :paper_size, :portrait, :margin, :width, :height, :starts_left, :double_side
+    attr_accessor :pages, :document_view, :page_view_count, :toc_elements
     
     def initialize(options={}, &block)
       @pages      = []
@@ -69,10 +78,16 @@ module RLayout
       @width      = options.fetch(:width, defaults[:width])
       @height     = options.fetch(:width, defaults[:height])
       @margin     = options.fetch(:margin, defaults[:margin])
+      @toc_on     = options.fetch(:toc_on, false)
+      
       if options[:pages]
         @pages = options[:pages]
       end
       
+      if @toc_on
+        # save_toc elements for this document
+        @toc_elements = []
+      end
       
       if block
         instance_eval(&block)
@@ -159,8 +174,12 @@ module RLayout
     def save_pdf(path)
       if RUBY_ENGINE == 'macruby'
         @ns_view = DocumentViewMac.new(to_data)
-        @ns_view.save_pdf(path)
+        @page_view_count = @ns_view.save_pdf(path)
       end
+    end
+    
+    def save_toc(path)
+      File.open(path, 'w'){|f| f.write toc_element.to_yaml}
     end
   end
   

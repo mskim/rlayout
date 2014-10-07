@@ -45,6 +45,23 @@ module RLayout
       relayout!
     end
     
+    def toc_on?
+      false
+    end
+    
+    def is_toc_item?
+      false
+    end
+    
+    def document
+      
+    end
+    
+    def add_to_toc_list(item)
+      if is_toc_item?(item)
+        document.add_to_toc_list(item)
+      end
+    end
     # steps
     # 1. take out front_most_item from the array
     # 1. adjust their width to current_column width.
@@ -68,6 +85,7 @@ module RLayout
         # This way we can suppoert varing column widthed text_box
         front_most_item.change_width_and_adjust_height(current_column.layout_area[0]) if front_most_item.respond_to?(:change_width_and_adjust_height)
         if current_column.insert_item(front_most_item)
+          add_to_toc_list(front_most_item) if toc_on?
           # item fit into column successfully!
         else
           # puts "it does not fit this column!!"

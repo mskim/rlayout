@@ -30,6 +30,7 @@ class DocumentViewMac
       pdf_path=path + ".pdf"
     end
     pdf_document.writeToFile(pdf_path)
+    @page_views.length
   end
   
   def doc_pdf(path)

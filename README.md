@@ -4,6 +4,7 @@
  1. book title and page number footer on left side
  1. chapter title and page number footer on right side
  1. newline in body text with carriage return
+
  1. footer page number font is different from footer title text
 
 2014 10 6

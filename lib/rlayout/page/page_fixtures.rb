@@ -16,13 +16,13 @@ module RLayout
       super
       if @parent_graphic.left_page?
         @x      = @parent_graphic.left_margin
-        @y      = @parent_graphic.top_margin - @text_size - 10 #TODO
+        @y      = @parent_graphic.top_margin - @text_size  #TODO
         @width  = 300
         @text_alignment = 'left'
       else
         @width  = 300
         @x      = @parent_graphic.width - @width - @parent_graphic.right_margin # @right_margin
-        @y      = @parent_graphic.top_margin - @text_size - 10 #TODO
+        @y      = @parent_graphic.top_margin - @text_size #TODO
         @text_alignment = 'right'
       end
       self
@@ -39,17 +39,27 @@ module RLayout
     def initialize(parent_graphic, options={})
       options[:text_size] = 8 unless options[:text_size]
       options[:text_font] = 'Helvetica' unless options[:text_size]
-      
       super
-      @text_alignment = 'center'
+      @y = @parent_graphic.height - 50
       @page_number = @parent_graphic.page_number
       @pre_string  = options.fetch(:pre_string, "-")
       @post_string = options.fetch(:post_string, "-")
-      @text_string = @pre_string + " " + @page_number.to_s + " " + @post_string
-      @width  = 300
+      @width  = 500
       @height = 20
-      @x = @parent_graphic.width/2 - @width/2
-      @y = @parent_graphic.height - 50
+      
+      if @parent_graphic.left_page?
+        @x      = @parent_graphic.left_margin
+        @width  = 300
+        @text_alignment = 'left'
+        @text_string = @page_number.to_s + " " + @text_string
+        
+      else
+        @width  = 300
+        @x      = @parent_graphic.width - @width - @parent_graphic.right_margin # @right_margin
+        @text_alignment = 'right'
+        @text_string += " " + @page_number.to_s
+        
+      end
       self
     end
     

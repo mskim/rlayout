@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/page/page_fixtures'
 module RLayout
   
   class Page < Container
-    attr_accessor :page_number, :left_page
+    attr_accessor :page_number, :left_page, :no_fixture_page
     attr_accessor :header_object, :footer_object, :story_box_object, :side_bar_object
     attr_accessor :fixtures
      
@@ -55,15 +55,7 @@ module RLayout
       @right_inset    = 0
       @top_inset      = 0
       @bottom_inset   = 0
-            
-      if options[:header]
-        @header_object = header(options[:header])
-      end
-      
-      if options[:footer]
-        @footer_object = footer(options[:footer])
-      end
-      
+                  
       if options[:story_box]
         options[:x] = @left_margin
         options[:y] = @top_margin
@@ -92,6 +84,44 @@ module RLayout
         height: 800,
         margin: 50,
       }
+    end
+    
+    def update_header_and_footer(options={})
+      return if @no_fixture_page # for pictures page 
+      options[:header][:font] = 8
+      options[:footer][:font] = 8
+      
+      if first_page?
+        if options[:header] && (header_rule[:first_page_only] || header_rule[:first_page])
+          options[:header][:text_string] = options[:header][:first_page_text]
+          @header_object = header(options[:header])
+        end
+        if options[:footer] && (footer_rule[:first_page_only] || footer_rule[:first_page])
+          options[:footer][:text_string] = options[:footer][:first_page_text]
+          @footer_object = footer(options[:footer])
+        end
+        
+      elsif left_page?
+        if options[:header] && header_rule[:left_page] && !header_rule[:first_page_only]
+          options[:header][:text_string] = options[:header][:left_page_text]
+          @header_object = header(options[:header])
+        end
+        if options[:footer] && footer_rule[:left_page] && !footer_rule[:first_page_only]
+          options[:footer][:text_string] = options[:footer][:left_page_text]
+          @footer_object = footer(options[:footer])
+        end
+      else
+        if options[:header] && header_rule[:right_page] && !header_rule[:first_page_only]
+          options[:header][:text_string] = options[:header][:right_page_text]
+          @header_object = header(options[:header])
+        end
+        if options[:footer] && footer_rule[:right_page] && !footer_rule[:first_page_only]
+          options[:footer][:text_string] = options[:footer][:right_page_text]
+          @footer_object = footer(options[:footer])
+        end
+        
+      end
+      
     end
     
     def to_data
@@ -140,6 +170,16 @@ module RLayout
       @left_page == true
     end
     
+    def header_rule
+      return Hash.new unless @parent_graphic
+      @parent_graphic.header_rule.dup
+    end
+    
+    def footer_rule
+      return Hash.new unless @parent_graphic
+      @parent_graphic.footer_rule.dup
+    end
+    
     def save_hash(path)
       h = to_hash
       File.open(path, 'w'){|f| f.write h.to_yaml}
@@ -167,17 +207,19 @@ module RLayout
     end
         
     def header(options={})
-      #TODO
-      @header_object = Header.new(self, :text_string=>"This is header text", :font_size=>9, :is_fixture=>true)
+      #TODO      
+      @header_object = Header.new(self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
     end
     
     def footer(options={})
       #TODO
-      @footer_object = Footer.new(self, :text_string=>"This is header text", :is_fixture=>true)
+      @footer_object = Footer.new(self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
+      # @footer_object = Footer.new(self, :text_string=>"This is header text", :is_fixture=>true)
     end
     
     def side_bar(options={})
-      @side_bar_object = SideBar.new(self, :text_string=>"This is side_bar text", :is_fixture=>true)
+      # @side_bar_object = SideBar.new(self, :text_string=>"This is side_bar text", :is_fixture=>true)
+      @side_bar_object = SideBar.new(self, :text_string=>options[:text_string], :is_fixture=>true)
     end
     
     # 

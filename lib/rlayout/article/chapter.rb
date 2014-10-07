@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require File.dirname(__FILE__) + '/chapter_story_box'
 require File.dirname(__FILE__) + '/story'
 module RLayout
@@ -56,8 +58,11 @@ module RLayout
     end
     
     def read_story
-      story      = Story.from_meta_markdown(@story_path)
-      @heading = story.heading
+      story       = Story.from_meta_markdown(@story_path)
+      @heading    = story.heading
+      @title      = @heading[:title]
+      @book_title = @heading[:book_title]
+      
       @style_service ||= StyleService.new()
       @paragraphs =[]
       story.paragraphs.each do |para| 
@@ -91,6 +96,14 @@ module RLayout
         end
         @pages[page_index].story_box_object.layout_story(:heading=>nil, :paragraphs=>@paragraphs, )
       end
+      update_header_and_footer
+    end
+    
+    def book_node
+      BookNode.new("chapter", @title, @starting_page, @page_view_count)
+    end
+    
+    def save_toc(path)
       
     end
     
@@ -106,6 +119,39 @@ module RLayout
         right_margin: 50,
         bottom_margin: 100,
       }
+    end
+    
+    def update_header_and_footer
+      header= {}
+      header[:first_page_text]  = "| #{@book_title} |" if @book_title
+      header[:left_page_text]   = "| #{@book_title} |" if @book_title
+      header[:right_page_text]  = @title if @title      
+      
+      footer= {}
+      footer[:first_page_text]  = @book_title if @book_title
+      footer[:left_page_text]   = @book_title if @book_title
+      footer[:right_page_text]  = @title if @title      
+      options = {
+        :header => header,
+        :footer => footer,
+      }
+      @pages.each {|page| page.update_header_and_footer(options)}
+    end
+        
+    def header_rule
+      h={
+        :first_page_only  => true,
+        :left_page        => false,
+        :right_page       => false,
+      }
+    end
+    
+    def footer_rule
+      h ={}
+      h[:first_page]      = true
+      h[:left_page]       = true
+      h[:right_page]      = true
+      h
     end
   end
   

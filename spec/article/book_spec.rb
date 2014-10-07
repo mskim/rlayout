@@ -9,7 +9,8 @@ describe 'parse book folder' do
   end
   
   it 'shoul convert markdown files to pdf' do
-    @book.markdown2pdf
+    @book.markdown2pdf        
+    @book.body_matter.must_be_kind_of Array
   end
   
   # it 'should create Book' do
