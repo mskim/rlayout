@@ -54,12 +54,11 @@ module RLayout
                     : child.bottom_margin + child.right_margin
 
        end
-
-       spacing_number  = @graphics.length-1
-       # subtract spaces from total
+       spacing_number  = @graphics.length - 1
        unit_size = expandable_size
+       @layout_space = 0 if @layout_space.nil?
        if spacing_number>0
-         expandable_size -= spacing_number*@layout_space 
+         expandable_size -= spacing_number*@layout_space if @layout_space
          #TODO
          if layout_length_sum ==0
            unit_size    = expandable_size
@@ -67,7 +66,6 @@ module RLayout
            unit_size    = expandable_size/layout_length_sum
          end
        end
-              
        # expandable_size /= expandable_children
 
        @graphics.each do |child|
@@ -137,9 +135,9 @@ module RLayout
          if @layout_strarting == "top"
            starting_position += subview_dimension + @layout_space
            if vertical
-             starting_position += child.bottom_margin + child.top_margin
+             starting_position += child.bottom_margin + child.top_margin if child.bottom_margin && child.top_margin
            else
-             starting_position += child.bottom_margin + child.right_margin
+             starting_position += child.left_margin + child.right_margin if child.left_margin && child.right_margin
            end
          else
            ending_position -= subview_dimension + @layout_space

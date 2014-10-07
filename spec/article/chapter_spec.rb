@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + "/../spec_helper"
-require File.dirname(__FILE__) + '/../../lib/rlayout/publication/chapter'
+require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 
 # describe 'create Chapter' do
 #   before do
@@ -44,8 +44,7 @@ describe 'create Chapter page with StoryBox' do
   # end
   
   
-  it 'should save' do
-  
+  it 'should save' do    
     @pdf_path = File.dirname(__FILE__) + "/../output/chapter_test.pdf"
     @m.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true

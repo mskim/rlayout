@@ -56,10 +56,10 @@ module RLayout
       @bottom_inset   = 5
       @left_inset     = 10
       @right_inset    = 10
-      @top_margin     = 100
-      @bottom_margin  = 100
+      @top_margin     = 10
+      @bottom_margin  = 10
       
-      @layout_expand = [:width]
+      @layout_expand = [:width, :height]
       
       width = @width - @left_inset - @right_inset
       

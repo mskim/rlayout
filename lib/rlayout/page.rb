@@ -8,7 +8,7 @@ module RLayout
     attr_accessor :fixtures
      
     def initialize(parent_graphic, options={}, &block)
-      @parent_graphic = parent_graphic
+      super
       @parent_graphic.pages << self if  @parent_graphic && @parent_graphic.pages && !@parent_graphic.pages.include?(self)       
       @klass = "Page"
       
@@ -57,10 +57,11 @@ module RLayout
       @bottom_inset   = 0
             
       if options[:header]
-        @header_object = header
+        @header_object = header(options[:header])
       end
+      
       if options[:footer]
-        @footer_object = footer
+        @footer_object = footer(options[:footer])
       end
       
       if options[:story_box]
@@ -127,6 +128,14 @@ module RLayout
       h
     end
     
+    def first_page?
+      if @parent_graphic
+        @parent_graphic.pages.index(self) == 0
+      else
+        true
+      end
+    end
+    
     def left_page?
       @left_page == true
     end
@@ -158,10 +167,12 @@ module RLayout
     end
         
     def header(options={})
+      #TODO
       @header_object = Header.new(self, :text_string=>"This is header text", :font_size=>9, :is_fixture=>true)
     end
     
     def footer(options={})
+      #TODO
       @footer_object = Footer.new(self, :text_string=>"This is header text", :is_fixture=>true)
     end
     

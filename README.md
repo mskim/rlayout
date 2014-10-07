@@ -1,13 +1,14 @@
-2014 9 23
- 1. Dovira heading top and bottom margin or 
-		should heading height be set with layout_width
- 1. first line indent
- 1. newline in body text with carriage return
+
+2014 10 7
  1. chapter heading only header
  1. book title and page number footer on left side
  1. chapter title and page number footer on right side
+ 1. newline in body text with carriage return
  1. footer page number font is different from footer title text
 
+2014 10 6
+ 1. Chapter heading should be set with layout_unit_length, not as floats
+ 1. first line indent
 
 2014 9 23
  Paragraph Object
@@ -113,7 +114,6 @@ TODO: Write usage instructions here
 #    Heading
 #    ImageBlock
 #    Body
-#    TextBox
 #    ObjectBox
 #    Matrix
 #    SideBox

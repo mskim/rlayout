@@ -40,6 +40,8 @@ module RLayout
       elsif options[:is_fixture]
         #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics
         @parent_graphic.fixtures << self if @parent_graphic.fixtures && !@parent_graphic.fixtures.include?(self)        
+      elsif  @parent_graphic && @parent_graphic.kind_of?(Document) && !@parent_graphic.pages.include?(self)
+        @parent_graphic.pages << self  
       elsif  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
         @parent_graphic.graphics << self  
       end

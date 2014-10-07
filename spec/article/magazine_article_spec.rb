@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + "/../spec_helper"
-require File.dirname(__FILE__) + '/../../lib/rlayout/publication/magazine_article'
+require File.dirname(__FILE__) + '/../../lib/rlayout/article/magazine_article'
 
 describe 'create magazine_article' do
   before do
