@@ -15,11 +15,7 @@ module RLayout
       @page_number = options.fetch(:page_number, '1')
       
       if @parent_graphic && @parent_graphic.double_side
-        if @parent_graphic.starts_left
-          @left_page  = @page_number.even?
-        else
-          @left_page  = @page_number.odd?
-        end
+        @left_page  = @page_number.even?
       else
         @left_page  = true
       end

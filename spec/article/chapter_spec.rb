@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 
+
 # describe 'create Chapter' do
 #   before do
 #     @m = Chapter.new(:title =>"Chapter Title", :starts_left=>false)
@@ -53,5 +54,4 @@ describe 'create Chapter page with StoryBox' do
     File.exists?(@pdf_path).must_equal true
   end
 end
-
 

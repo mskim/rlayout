@@ -65,7 +65,8 @@ module RLayout
     
   class Document
     attr_accessor :title, :path, :paper_size, :portrait, :margin, :width, :height, :starts_left, :double_side
-    attr_accessor :pages, :document_view, :page_view_count, :toc_elements
+    attr_accessor :pages, :document_view, :starting_page_number
+    attr_accessor :page_view_count, :toc_elements
     
     def initialize(options={}, &block)
       @pages      = []
@@ -78,7 +79,16 @@ module RLayout
       @width      = options.fetch(:width, defaults[:width])
       @height     = options.fetch(:width, defaults[:height])
       @margin     = options.fetch(:margin, defaults[:margin])
-      @toc_on     = options.fetch(:toc_on, false)
+      if options[:starting_page_number]
+        @starting_page_number = options[:starting_page_number]
+        if @starting_page_number.odd?
+          @starts_left = false
+        end
+      elsif @starts_left
+        @starting_page_number = 2
+      else
+        @starting_page_number = 1
+      end
       
       if options[:pages]
         @pages = options[:pages]

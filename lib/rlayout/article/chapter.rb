@@ -35,16 +35,19 @@ module RLayout
   #  keep going until we have no more leftover paragraphs.
   
   class Chapter < Document
-    attr_accessor :story_path, :heading, :paragraphs, :starting_page_number
+    attr_accessor :story_path, :heading, :paragraphs
+    attr_accessor :toc_on
+    
     def initialize(options={})
       super
       @double_side  = true
       @page_count = options.fetch(:page_count, 2)
+      @toc_on     = options.fetch(:toc_on, false)
       options[:footer]    = true 
       options[:header]    = true 
       options[:story_box] = true
       @page_count.times do |i|
-        options[:page_number] = i+1
+        options[:page_number] = @starting_page_number + i
         Page.new(self, options)
       end
       
@@ -91,7 +94,7 @@ module RLayout
           options[:footer]     = true 
           options[:header]     = true 
           options[:story_box]  = true
-          options[:page_number]= page_index + 1
+          options[:page_number]= @starting_page_number + page_index
           Page.new(self, options)
         end
         @pages[page_index].story_box_object.layout_story(:heading=>nil, :paragraphs=>@paragraphs, )
@@ -100,7 +103,11 @@ module RLayout
     end
     
     def book_node
-      BookNode.new("chapter", @title, @starting_page, @page_view_count)
+      BookNode.new("chapter", @title, @starting_page_number, @page_view_count)
+    end
+    
+    def next_chapter_starting_page_number
+      @starting_page_number + @page_view_count
     end
     
     def save_toc(path)
