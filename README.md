@@ -1,4 +1,8 @@
 
+2014 10 8
+ 1. alignment justify
+ 1. vertical text for Japanese
+
 2014 10 7
  1. chapter heading only header
  1. book title and page number footer on left side

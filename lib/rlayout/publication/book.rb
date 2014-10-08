@@ -1,9 +1,11 @@
 # encoding: utf-8
-framework 'Quartz'
-
+if RUBY_ENGINE == 'macruby'
+  framework 'Quartz'
+end
 require 'yaml'
 module RLayout
-    
+  
+
   class Book
     attr_accessor :folder_path, :front_matter, :body_matter, :rear_matter
     def initialize(folder_path)
@@ -15,7 +17,7 @@ module RLayout
     end
     
     def merge_pdf_chpaters
-
+      return unless RUBY_ENGINE == 'macruby'
       book_pdf = PDFDocument.new
       Dir.glob("#{@folder_path}/*.pdf") do |path|
         next if path =~ /book.pdf$/
@@ -33,6 +35,7 @@ module RLayout
       
       book_pdf.writeToFile("#{@folder_path}/book.pdf")
     end
+    
     # def save_pdf_doc(path, options={})
     #   return if @pages.length == 0
     #   pdf_data=pages[0].page_view.pdf_data
@@ -48,7 +51,8 @@ module RLayout
     def markdown2pdf
       options = {:starting_page_number=>1}
       Dir.glob("#{@folder_path}/*.markdown") do |m|
-        options[:starting_page_number] = convert_markdown2pdf(m, options).next_chapter_starting_page_number
+        result = convert_markdown2pdf(m, options)
+        options[:starting_page_number] = result.next_chapter_starting_page_number if result
       end
       
     end
@@ -87,8 +91,19 @@ module RLayout
       #TODO
       # starting_page = options[:starting_page] if options[:starting_page]
       pdf_path = markdown_path.gsub(".markdown", ".pdf")
+      # if File.exists?(pdf_path)
+      #   if File.ctime(pdf_path) > File.ctime(markdown_path)
+      #     puts "#{pdf_path} is upto date...."
+      #     return nil
+      #   end
+      # end
+      puts "generating #{pdf_path}..."
       title = File.basename(markdown_path, ".markdown")
-      chapter = Chapter.new(:title =>title, :starts_left=>false, :story_path=>markdown_path, :starting_page_number=>options[:starting_page_number])
+      if options[:starting_page_number]
+        chapter = Chapter.new(:title =>title, :starts_left=>false, :story_path=>markdown_path, :starting_page_number=>options[:starting_page_number])
+      else
+        chapter = Chapter.new(:title =>title, :starts_left=>false, :story_path=>markdown_path)
+      end
       chapter.save_pdf(pdf_path)
       chapter
     end

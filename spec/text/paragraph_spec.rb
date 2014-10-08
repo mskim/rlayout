@@ -16,10 +16,16 @@ describe 'ParagraphModel creation' do
   end
 end
 
+# NSTextAlignmentLeft       = 0,
+# NSTextAlignmentCenter     = 1,
+# NSTextAlignmentRight      = 2,
+# NSTextAlignmentJustified  = 3,
+# NSTextAlignmentNatural    = 4,
+
 
 describe 'create Paragraph' do
   before do
-    options = {:text_string=>"This is a paragraph test string", :markup=>'body', :text_line_spacing=>10}
+    options = {:width=>200, :text_alignment=>'justified', :text_string=>"This is a paragraph test string and it looks good to me.", :markup=>'body', :text_line_spacing=>10}
     @para = Paragraph.new(nil, options)
   end
     

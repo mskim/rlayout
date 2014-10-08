@@ -39,9 +39,9 @@ CHAPTER_STYLES={
   "h5"      =>{:text_font => 'Helvetica', :text_size=>10.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>9.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>9.0, :text_color => 'black'},
-  "p"       =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'left', :text_first_line_head_indent=>20},
-  "Body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'left', :text_first_line_head_indent=>20},
-  "body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'left', :text_first_line_head_indent=>20},
+  "p"       =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
+  "Body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
+  "body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "caption" =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
 }
 
@@ -59,9 +59,9 @@ NEWS_STYLES={
   "h5"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
-  "p"       =>{:text_font => 'Times', :text_size=>12.0, :text_color => 'black'},
-  "Body"    =>{:text_font => 'Times', :text_size=>12.0, :text_color => 'black'},
-  "body"    =>{:text_font => 'Times', :text_size=>12.0, :text_color => 'black'},
+  "p"       =>{:text_font => 'Times', :text_size=>12.0, :text_color => 'black', :text_alignment=>'justified'},
+  "Body"    =>{:text_font => 'Times', :text_size=>12.0, :text_color => 'black', :text_alignment=>'justified'},
+  "body"    =>{:text_font => 'Times', :text_size=>12.0, :text_color => 'black', :text_alignment=>'justified'},
   "caption" =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
 }
 

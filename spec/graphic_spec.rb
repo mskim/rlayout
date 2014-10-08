@@ -40,7 +40,7 @@ describe 'save pdf' do
   end
   
   it 'should save pdf' do
-    @g.save_pdf(path)
+    @g.save_pdf(@path)
     File.exists?(@path).must_equal true
   end
 end
