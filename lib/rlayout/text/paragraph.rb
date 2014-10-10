@@ -21,7 +21,7 @@ FIT_STYLE_RUN   = 3
 
   class Paragraph < Text
     # attr_accessor :paragraph_data
-    attr_accessor :main_text, :number, :drop_cap
+    attr_accessor :main_text, :number, :drop_cap, :style_service, :category
     attr_accessor :drop_cap_lines, :drop_cap_char_count
     
     def initialize(parent_graphic, options={})
@@ -30,6 +30,10 @@ FIT_STYLE_RUN   = 3
         @style_service ||= StyleService.new
         text_options = @style_service.style_for_markup(options[:markup])
       end
+      if options[:category]
+        @category = options[:category]        
+      end
+      
       options.merge! text_options
       super
       # @line_width=1

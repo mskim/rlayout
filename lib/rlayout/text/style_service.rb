@@ -1,16 +1,16 @@
 
 
 STYLES={
-  "Title"   =>{:text_font => 'Times', :text_size=>52.0, :text_color => 'red', :text_alignment=>'center'},
-  "title"   =>{:text_font => 'Times', :text_size=>52.0, :text_color => 'red', :text_alignment=>'center'},
-  "SubTitle"=>{:text_font => 'Times', :text_size=>36.0, :text_color => 'black'},
-  "subtitle"=>{:text_font => 'Times', :text_size=>36.0, :text_color => 'black'},
+  "Title"   =>{:text_font => 'Times',     :text_size=>52.0, :text_color => 'red', :text_alignment=>'center'},
+  "title"   =>{:text_font => 'Times',     :text_size=>52.0, :text_color => 'red', :text_alignment=>'center'},
+  "SubTitle"=>{:text_font => 'Times',     :text_size=>36.0, :text_color => 'black'},
+  "subtitle"=>{:text_font => 'Times',     :text_size=>36.0, :text_color => 'black'},
   "Author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
   "author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
   "Lead"    =>{:text_font => 'Helvetica', :text_size=>24.0, :text_color => 'black'},
   "lead"    =>{:text_font => 'Helvetica', :text_size=>24.0, :text_color => 'black'},
-  "Leading" =>{:text_font => 'Times', :text_size=>24.0, :text_color => 'black'},
-  "leading" =>{:text_font => 'Times', :text_size=>24.0, :text_color => 'black'},
+  "Leading" =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black'},
+  "leading" =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black'},
   "h1"      =>{:text_font => 'Helvetica', :text_size=>70.0, :text_color => 'black'},
   "h2"      =>{:text_font => 'Helvetica', :text_size=>36.0, :text_color => 'black'},
   "h3"      =>{:text_font => 'Helvetica', :text_size=>24.0, :text_color => 'black'},
@@ -19,39 +19,37 @@ STYLES={
   "Head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
-  "p"       =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
-  "Body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
-  "body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
-  "caption" =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+  "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
+  "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
+  "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
 }
 
 CHAPTER_STYLES={
-  "title"   =>{:text_font => 'Times', :text_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
-  "subtitle"=>{:text_font => 'Times', :text_size=>16.0, :text_color => 'black'},
+  "title"   =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
+  "subtitle"=>{:text_font => 'Times',     :text_size=>16.0, :text_color => 'black'},
   "author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
   "Lead"    =>{:text_font => 'Helvetica', :text_size=>14.0, :text_color => 'black'},
   "lead"    =>{:text_font => 'Helvetica', :text_size=>14.0, :text_color => 'black'},
-  "leading" =>{:text_font => 'Times', :text_size=>18.0, :text_color => 'black'},
+  "leading" =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'black'},
   "h1"      =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "h2"      =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "h3"      =>{:text_font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
   "h4"      =>{:text_font => 'Helvetica', :text_size=>14.0, :text_color => 'black'},
-  "h5"      =>{:text_font => 'Helvetica', :text_size=>10.0, :text_color => 'black'},
-  "head"    =>{:text_font => 'Helvetica', :text_size=>9.0, :text_color => 'black'},
-  "h6"      =>{:text_font => 'Helvetica', :text_size=>9.0, :text_color => 'black', :text_line_spacing=>10,},
-  "p"       =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
-  "Body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
-  "body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
-  "caption" =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+  "h5"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>12, :text_alignment=>'left'},
+  "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>12, :text_alignment=>'left'},
+  "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>12, :text_alignment=>'left'},
+  "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
+  "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
+  "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
 }
 
 NEWS_STYLES={
-  "title"   =>{:text_font => 'Times', :text_size=>36.0, :text_color => 'black', :text_alignment=>'center'},
-  "subtitle"=>{:text_font => 'Times', :text_size=>20.0, :text_color => 'black'},
+  "title"   =>{:text_font => 'Times',     :text_size=>36.0, :text_color => 'black', :text_alignment=>'center'},
+  "subtitle"=>{:text_font => 'Times',     :text_size=>20.0, :text_color => 'black'},
   "author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_alignment=>'right'},
   "lead"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
-  "Leading" =>{:text_font => 'Times', :text_size=>18.0, :text_color => 'black'},
-  "leading" =>{:text_font => 'Times', :text_size=>18.0, :text_color => 'black'},
+  "Leading" =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'black'},
+  "leading" =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'black'},
   "h1"      =>{:text_font => 'Helvetica', :text_size=>36.0, :text_color => 'black'},
   "h2"      =>{:text_font => 'Helvetica', :text_size=>20.0, :text_color => 'black'},
   "h3"      =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
@@ -59,10 +57,9 @@ NEWS_STYLES={
   "h5"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
-  "p"       =>{:text_font => 'Times', :text_size=>12.0, :text_color => 'black', :text_alignment=>'justified'},
-  "Body"    =>{:text_font => 'Times', :text_size=>12.0, :text_color => 'black', :text_alignment=>'justified'},
-  "body"    =>{:text_font => 'Times', :text_size=>12.0, :text_color => 'black', :text_alignment=>'justified'},
-  "caption" =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+  "p"       =>{:text_font => 'Times',     :text_size=>12.0, :text_color => 'black', :text_alignment=>'justified'},
+  "body"    =>{:text_font => 'Times',     :text_size=>12.0, :text_color => 'black', :text_alignment=>'justified'},
+  "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
 }
 
 HEADING_KIND= %w[h1 h2 h3 h4 title subtitle author lead]
@@ -89,6 +86,18 @@ module RLayout
       self
     end
     
+    def body_height(options={})
+      h = {}
+      if options[:category] == "news" 
+        h = NEWS_STYLES['p']
+      elsif options[:category] == "chapter" 
+        h = CHAPTER_STYLES['p']
+      else
+        h =STYLES['p']
+      end
+      h[:text_size] + h[:text_line_spacing]      
+    end
+    
     def style_for(paragraph, options={})
       if options[:category] == "news" 
         NEWS_STYLES[paragraph[:markup]]
@@ -100,7 +109,6 @@ module RLayout
     end
         
     def style_for_markup(markup, options={})
-      
       if options[:category] == "news" 
         NEWS_STYLES[markup]
       elsif options[:category] == "chapter" 

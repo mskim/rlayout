@@ -32,6 +32,8 @@ module RLayout
         @atts_array = options[:attrs_array]
         layout_lines(:attrs_array=>options[:attrs_array])
       elsif options[:text_string] || options[:text_size] #&& options[:text_string]!=""
+        @text_markup    = options.fetch(:text_markup, @text_markup)
+        @text_markup    = options.fetch(:markup, "p")
         @text_string    = options.fetch(:text_string, "")
         @text_color     = options.fetch(:text_color, "black")
         @text_font      = options.fetch(:text_font, "Times")
@@ -56,12 +58,6 @@ module RLayout
     def change_width_and_adjust_height(new_width, options={})
       # for heading paragrph, should set height as multiples of grid_line_height
       @width = new_width
-      if options[:line_grid_height] 
-        #TODO
-        # if @line_height != options[:line_grid_height]
-        # @line_height = options[:line_grid_height]
-        # update token size
-      end
       layout_lines
     end
     
@@ -112,9 +108,21 @@ module RLayout
       text_storage
     end
     
-
+    def body_line_height_multiple(head_para_height)
+      puts __method__
+      puts "head_para_height:#{head_para_height}"
+      @style_service = @style_service ||= StyleService.new
+      body_height = @style_service.body_height(:category=>@category)
+      puts "initial body_height:#{body_height}"
+      body_multiple = body_height
+      while body_multiple <= head_para_height
+        body_multiple += body_height
+        puts "body_multiple:#{body_multiple}"
+      end
+      body_multiple
+    end
+    
     def layout_lines(options={})
-      
       if RUBY_ENGINE =='macruby'        
         text_storage = nil
         if options[:attrs_array]
@@ -130,6 +138,14 @@ module RLayout
         layout_manager.glyphRangeForTextContainer(text_container)
         used_size=layout_manager.usedRectForTextContainer(text_container).size
         @height = used_size.height + @text_line_spacing
+        if @text_markup && @text_markup != 'p' #&& options[:aling_to_grid]
+          # puts "Make the head paragraph height as body text multiples"
+          # by adjusting @top_margin and @bottom_margin around it
+          body_multiple_height = body_line_height_multiple(@height)
+          @top_margin = (body_multiple_height - @height)/2
+          @bottom_margin = @top_margin
+          @height = body_multiple_height
+        end
       else
         # TODO
         # adjust height
