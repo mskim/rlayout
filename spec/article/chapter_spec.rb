@@ -27,7 +27,6 @@ describe 'create Chapter page with StoryBox' do
     @m = Chapter.new(:title =>"Chapter Title", :starts_left=>false, :story_path=>@story_path)
     @first_page = @m.pages.first
     @heading = @m.pages.first.story_box_object.heading
-    puts "running before block.... "
   end
   
   # it 'should create Chapter' do
@@ -49,8 +48,6 @@ describe 'create Chapter page with StoryBox' do
   it 'should save' do    
     @pdf_path = File.dirname(__FILE__) + "/../output/chapter_test.pdf"
     @m.save_pdf(@pdf_path)
-    puts "@m.page_view_count:#{@m.page_view_count}"
-    puts "@m.book_node:#{@m.book_node}"
     File.exists?(@pdf_path).must_equal true
   end
 end

@@ -50,8 +50,6 @@
  
 module RLayout
 
-
-  HEADING_WIDTH_LOOKUP_TABLE = [1,2,2,2,3,3,4] #for 7 column page
    
   class StoryBox < ObjectBox
     attr_accessor :heading, :image, :side_box, :quote_box, :grid_size

@@ -38,7 +38,7 @@ CHAPTER_STYLES={
   "h4"      =>{:text_font => 'Helvetica', :text_size=>14.0, :text_color => 'black'},
   "h5"      =>{:text_font => 'Helvetica', :text_size=>10.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>9.0, :text_color => 'black'},
-  "h6"      =>{:text_font => 'Helvetica', :text_size=>9.0, :text_color => 'black'},
+  "h6"      =>{:text_font => 'Helvetica', :text_size=>9.0, :text_color => 'black', :text_line_spacing=>10,},
   "p"       =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "Body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "body"    =>{:text_font => 'Times', :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
@@ -100,6 +100,7 @@ module RLayout
     end
         
     def style_for_markup(markup, options={})
+      
       if options[:category] == "news" 
         NEWS_STYLES[markup]
       elsif options[:category] == "chapter" 

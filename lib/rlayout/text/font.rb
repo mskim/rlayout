@@ -13,7 +13,6 @@ class String
   end
 end
 
-
 module RLayout
   
   class RFont

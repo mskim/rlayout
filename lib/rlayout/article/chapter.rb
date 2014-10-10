@@ -64,16 +64,19 @@ module RLayout
       story       = Story.from_meta_markdown(@story_path)
       @heading    = story.heading
       @title      = @heading[:title]
+      #TODO read it form book_config.rb?
       @book_title = @heading[:book_title]
       
       @style_service ||= StyleService.new()
       @paragraphs =[]
       story.paragraphs.each do |para| 
-        para_options  = @style_service.style_for_markup(para[:markup], :category=>"chapter")
-        para_options[:markup]   = para[:markup]
-        para_options[:text_string]   = para[:string]
-        para_options[:layout_expand]   = [:width]
-        para_options[:text_fit] = FIT_FONT_SIZE
+        para_options = {}
+        para_options[:category] = 'chapter'
+        # para_options  = @style_service.style_for_markup(para[:markup], :category=>"chapter")
+        para_options[:markup]         = para[:markup]
+        para_options[:text_string]    = para[:string]
+        para_options[:layout_expand]  = [:width]
+        para_options[:text_fit]       = FIT_FONT_SIZE
         @paragraphs << Paragraph.new(nil, para_options)
       end
     end
@@ -107,6 +110,8 @@ module RLayout
     end
     
     def next_chapter_starting_page_number
+      @starting_page_number=1 if @starting_page_number.nil?
+      @page_view_count = 0   if @page_view_count.nil?
       @starting_page_number + @page_view_count
     end
     

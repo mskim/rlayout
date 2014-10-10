@@ -25,11 +25,16 @@ FIT_STYLE_RUN   = 3
     attr_accessor :drop_cap_lines, :drop_cap_char_count
     
     def initialize(parent_graphic, options={})
+      text_options = {}
       if options[:markup]
         @style_service ||= StyleService.new
-        options.merge @style_service.style_for_markup(options[:markup])
+        text_options = @style_service.style_for_markup(options[:markup])
       end
+      options.merge! text_options
       super
+      # @line_width=1
+      # @line_color='red'
+      
       # @layout_expand = [:width]
       # if options[:markup] == 'img'
       #   Image.new(self, :image_path=>options[:string])
@@ -71,6 +76,24 @@ FIT_STYLE_RUN   = 3
     #   bounding_rect       = @text_storage.boundingRectWithSize(text_size, options:NSStringDrawingUsesLineFragmentOrigin)
     #   @frame.size.height = bounding_rect.size.height      
     # end
+    
+    def to_data      
+      puts "to_data of paragraph"
+      h = {}
+      instance_variables.each{|a|
+        s = a.to_s
+        next if s=="@parent_graphic"
+        next if s=="@style_service"
+        next if s=="@floats"
+        next if s=="@graphics"
+        n = s[1..s.size] # get rid of @
+        v = instance_variable_get a
+        h[n.to_sym] = v if !v.nil?
+      }
+      puts "++++++++ in "
+      puts h
+      h
+    end
     
     
     def self.generate(number)

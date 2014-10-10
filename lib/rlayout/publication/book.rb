@@ -97,7 +97,7 @@ module RLayout
       #     return nil
       #   end
       # end
-      puts "generating #{pdf_path}..."
+      # puts "generating #{pdf_path}..."
       title = File.basename(markdown_path, ".markdown")
       if options[:starting_page_number]
         chapter = Chapter.new(:title =>title, :starts_left=>false, :story_path=>markdown_path, :starting_page_number=>options[:starting_page_number])

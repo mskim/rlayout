@@ -31,7 +31,7 @@ module RLayout
       if options[:attrs_array]
         @atts_array = options[:attrs_array]
         layout_lines(:attrs_array=>options[:attrs_array])
-      elsif options[:text_string] && options[:text_string]!=""
+      elsif options[:text_string] || options[:text_size] #&& options[:text_string]!=""
         @text_string    = options.fetch(:text_string, "")
         @text_color     = options.fetch(:text_color, "black")
         @text_font      = options.fetch(:text_font, "Times")
@@ -115,7 +115,7 @@ module RLayout
 
     def layout_lines(options={})
       
-      if RUBY_ENGINE =='macruby'
+      if RUBY_ENGINE =='macruby'        
         text_storage = nil
         if options[:attrs_array]
           text_storage = atts_array_to_att_string(options[:attrs_array])
@@ -129,7 +129,7 @@ module RLayout
         text_container.setLineFragmentPadding(0.0)
         layout_manager.glyphRangeForTextContainer(text_container)
         used_size=layout_manager.usedRectForTextContainer(text_container).size
-        @height = used_size.height
+        @height = used_size.height + @text_line_spacing
       else
         # TODO
         # adjust height

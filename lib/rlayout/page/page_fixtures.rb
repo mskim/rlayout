@@ -14,6 +14,7 @@ module RLayout
       options[:text_size] = 8 unless options[:text_size]
       options[:text_font] = 'Helvetica' unless options[:text_size]
       super
+      @text_string = "" if @text_string.nil?
       if @parent_graphic.left_page?
         @x      = @parent_graphic.left_margin
         @y      = @parent_graphic.top_margin - @text_size  #TODO
@@ -46,7 +47,7 @@ module RLayout
       @post_string = options.fetch(:post_string, "-")
       @width  = 500
       @height = 20
-      
+      @text_string = "" if @text_string.nil?
       if @parent_graphic.left_page?
         @x      = @parent_graphic.left_margin
         @width  = 300

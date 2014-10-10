@@ -208,6 +208,7 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
     # to_data save values, even if they are equal to default
     # to_data is uesed to send the data to view for drawing 
     def to_data      
+      
       h = {}
       instance_variables.each{|a|
         s = a.to_s

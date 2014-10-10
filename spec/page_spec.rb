@@ -24,7 +24,7 @@ describe 'create page with fixtures' do
     options[:footer]     = true 
     options[:header]     = true 
     options[:story_box]  = true
-    @p = Page.new(self, options)    
+    @p = Page.new(nil, options)    
   end
 
   it 'should have header' do
@@ -46,18 +46,17 @@ end
 describe 'create right_side page  ' do
   before do
     options = {}
-    options[:header]     = true
-    options[:footer]     = true 
-    options[:header]     = true 
+    # options[:header]     = true
+    # options[:footer]     = true 
     options[:story_box]  = true
     options[:left_page]  = false
-    @p = Page.new(self, options)    
+    @p = Page.new(nil, options)    
   end
 
   it 'should have header' do
     @p.must_be_kind_of Page
-    @p.header_object.must_be_kind_of Header
-    @p.footer_object.must_be_kind_of Footer
+    # @p.header_object.must_be_kind_of Header
+    # @p.footer_object.must_be_kind_of Footer
     @p.side_bar_object.must_equal nil
   end
   

@@ -1,15 +1,27 @@
 
+2014 10 10
+ 1. Fix Paragraph clipping bug, fixed by adding text_line_spacing to the height.
+ 1. justification justifies the last line, it should align left.(put return char at the end of paragraph)
+ 1. newline in body text with carriage return
+ 1. head1, head2 height should be multiples of body height, and vertically centerd
+ 1. toc.rb
+ 1. text_bar.rb
+ 1. footer page number font is different from footer title text
+
+ 1. Git based workflow
+ 1. rake file markdown2pdf
+ 1. Git repos webhook for triggering DRb
+ 1. DRb server
+ 1. book_config.rb
+ 1. vertical text for Japanese
+
 2014 10 8
  1. alignment justify
- 1. vertical text for Japanese
 
 2014 10 7
  1. chapter heading only header
  1. book title and page number footer on left side
  1. chapter title and page number footer on right side
- 1. newline in body text with carriage return
-
- 1. footer page number font is different from footer title text
 
 2014 10 6
  1. Chapter heading should be set with layout_unit_length, not as floats

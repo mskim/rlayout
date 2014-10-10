@@ -32,7 +32,7 @@ describe 'create Paragraph' do
   it 'should create Paragraph' do
     @para.x.must_equal 0
     # @para.y.must_equal 0
-    @para.width.must_equal 100
+    @para.width.must_equal 200
     if RUBY_ENGINE == 'macruby'
       @para.height.must_equal 100
     else

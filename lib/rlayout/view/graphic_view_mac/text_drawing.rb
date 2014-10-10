@@ -34,7 +34,12 @@ class GraphicViewMac < NSView
     @text_color     = @data.fetch(:text_color, text_defaults[:text_color])
     @text_alignment = @data.fetch(:text_alignment, text_defaults[:text_alignment])
     @text_first_line_head_indent = @data.fetch(:text_first_line_head_indent, nil)
-
+    # puts "in init text of view"
+    # # puts @data
+    # puts @text_string
+    # puts @text_font
+    # puts @text_size
+    
     @text_color  = convert_to_nscolor(@text_color)    unless @text_color.class == NSColor  
     case @text_alignment 
     when "left"
@@ -45,6 +50,8 @@ class GraphicViewMac < NSView
       @text_alignment = NSCenterTextAlignment
     when "justified"
       @text_alignment = NSJustifiedTextAlignment
+    when "natural"
+      @text_alignment = NSNaturalTextAlignment
     else
       @text_alignment = NSLeftTextAlignment
     end

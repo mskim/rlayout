@@ -85,6 +85,7 @@ module RLayout
         # This way we can suppoert varing column widthed text_box
         front_most_item.change_width_and_adjust_height(current_column.layout_area[0]) if front_most_item.respond_to?(:change_width_and_adjust_height)
         if current_column.insert_item(front_most_item)
+          #TODO
           add_to_toc_list(front_most_item) if toc_on?
           # item fit into column successfully!
         else
