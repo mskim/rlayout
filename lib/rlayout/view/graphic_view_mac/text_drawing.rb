@@ -34,11 +34,6 @@ class GraphicViewMac < NSView
     @text_color     = @data.fetch(:text_color, text_defaults[:text_color])
     @text_alignment = @data.fetch(:text_alignment, text_defaults[:text_alignment])
     @text_first_line_head_indent = @data.fetch(:text_first_line_head_indent, nil)
-    # puts "in init text of view"
-    # # puts @data
-    # puts @text_string
-    # puts @text_font
-    # puts @text_size
     
     @text_color  = convert_to_nscolor(@text_color)    unless @text_color.class == NSColor  
     case @text_alignment 
@@ -110,11 +105,7 @@ class GraphicViewMac < NSView
     # implement text_fit_type
     # atts[NSKernAttributeName] = @text_track           if @text_track
     # implement inline element, italic, bold, underline, sub, super, emphasis(color)
-    
-    right_align   = NSMutableParagraphStyle.alloc.init.setAlignment(NSRightTextAlignment)          
-    center_align  = NSMutableParagraphStyle.alloc.init.setAlignment(NSCenterTextAlignment)          
-    
-    
+        
     atts={}
     atts[NSFontAttributeName]             = NSFont.fontWithName(@text_font, size:@text_size)
     atts[NSForegroundColorAttributeName]  = @text_color      

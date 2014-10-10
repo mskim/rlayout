@@ -19,7 +19,7 @@ STYLES={
   "Head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
-  "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
+  "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
 }
@@ -35,9 +35,9 @@ CHAPTER_STYLES={
   "h2"      =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "h3"      =>{:text_font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
   "h4"      =>{:text_font => 'Helvetica', :text_size=>14.0, :text_color => 'black'},
-  "h5"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>12, :text_alignment=>'left'},
-  "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>12, :text_alignment=>'left'},
-  "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>12, :text_alignment=>'left'},
+  "h5"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'left', :fill_color=>"lightGray"},
+  "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'left', :fill_color=>"lightGray"},
+  "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'left', :fill_color=>"lightGray"},
   "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
@@ -70,7 +70,7 @@ module RLayout
   # when asked, returns NSAttributedString for paragraph
   class StyleService
     attr_accessor :paragraph_styles, :char_styles
-    
+    attr_accessor :current_style
     @@style_service = nil
     def self.shared_style_service
       @@style_service ||= StyleService.new
@@ -82,41 +82,21 @@ module RLayout
       end
       @paragraph_styles = options[:paragraph_styles]
       @char_styles      = options[:char_styles]
-      
+      @current_style    = CHAPTER_STYLES
       self
     end
     
     def body_height(options={})
-      h = {}
-      if options[:category] == "news" 
-        h = NEWS_STYLES['p']
-      elsif options[:category] == "chapter" 
-        h = CHAPTER_STYLES['p']
-      else
-        h =STYLES['p']
-      end
+      h = @current_style['p']
       h[:text_size] + h[:text_line_spacing]      
     end
     
     def style_for(paragraph, options={})
-      if options[:category] == "news" 
-        NEWS_STYLES[paragraph[:markup]]
-      elsif options[:category] == "chapter" 
-        CHAPTER_STYLES[paragraph[:markup]]
-      else
-        STYLES[paragraph[:markup]]
-      end
+      @current_style[paragraph[:markup]]
     end
         
     def style_for_markup(markup, options={})
-      if options[:category] == "news" 
-        NEWS_STYLES[markup]
-      elsif options[:category] == "chapter" 
-        CHAPTER_STYLES[markup]
-      else
-        STYLES[markup]
-      end
-      
+      @current_style[markup]
     end
     
     def self.cation_style

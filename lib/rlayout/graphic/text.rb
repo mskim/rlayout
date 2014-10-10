@@ -42,6 +42,7 @@ module RLayout
         @text_fit_type  = options.fetch(:text_fit_type, 0)
         @text_alignment = options.fetch(:text_alignment, "center")
         @text_first_line_head_indent = options.fetch(:text_first_line_head_indent, nil)
+        @fill_color     = options[:fill_color] if options[:fill_color]
         layout_lines if @parent_graphics
         
       end
@@ -77,12 +78,15 @@ module RLayout
       
       right_align   = NSMutableParagraphStyle.alloc.init.setAlignment(NSRightTextAlignment)          
       center_align  = NSMutableParagraphStyle.alloc.init.setAlignment(NSCenterTextAlignment)          
+      justified_align  = NSMutableParagraphStyle.alloc.init.setAlignment(NSJustifiedTextAlignment)          
       newParagraphStyle  = NSMutableParagraphStyle.alloc.init
       case @text_alignment
       when "right"
         newParagraphStyle = right_align
       when "center"
         newParagraphStyle = center_align
+      when 'justified'
+        newParagraphStyle = justified_align
       end
       newParagraphStyle.setLineSpacing(@text_line_spacing) if @text_line_spacing
       newParagraphStyle.setFirstLineHeadIndent(@text_first_line_head_indent) if @text_first_line_head_indent
@@ -109,15 +113,11 @@ module RLayout
     end
     
     def body_line_height_multiple(head_para_height)
-      puts __method__
-      puts "head_para_height:#{head_para_height}"
       @style_service = @style_service ||= StyleService.new
       body_height = @style_service.body_height(:category=>@category)
-      puts "initial body_height:#{body_height}"
       body_multiple = body_height
       while body_multiple <= head_para_height
         body_multiple += body_height
-        puts "body_multiple:#{body_multiple}"
       end
       body_multiple
     end
