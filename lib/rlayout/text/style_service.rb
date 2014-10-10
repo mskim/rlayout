@@ -22,6 +22,9 @@ STYLES={
   "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+  "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
+  "footer"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
+  "footer_page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
 }
 
 CHAPTER_STYLES={
@@ -41,6 +44,10 @@ CHAPTER_STYLES={
   "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+  "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+  "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
+  "footer"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
+  "footer_page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
 }
 
 NEWS_STYLES={
@@ -60,6 +67,9 @@ NEWS_STYLES={
   "p"       =>{:text_font => 'Times',     :text_size=>12.0, :text_color => 'black', :text_alignment=>'justified'},
   "body"    =>{:text_font => 'Times',     :text_size=>12.0, :text_color => 'black', :text_alignment=>'justified'},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+  "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
+  "footer"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
+  "footer_page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
 }
 
 HEADING_KIND= %w[h1 h2 h3 h4 title subtitle author lead]
@@ -86,7 +96,7 @@ module RLayout
       self
     end
     
-    def body_height(options={})
+    def body_height
       h = @current_style['p']
       h[:text_size] + h[:text_line_spacing]      
     end

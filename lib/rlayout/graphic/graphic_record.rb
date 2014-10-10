@@ -9,7 +9,7 @@ module RLayout
     
   end
 
-  LineRecord    = Struct.new(:type, :color, :width, :dash) do
+  LineRecord    = Struct.new(:type, :color, :width, :dash, :other_color) do
     
   end
   
@@ -30,7 +30,7 @@ module RLayout
         color: color,
         line_spacing: line_spacing,
         alignment: alignment,
-        }
+      }
     end
     
     def to_hash

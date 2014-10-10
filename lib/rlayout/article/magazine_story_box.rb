@@ -80,7 +80,6 @@ module RLayout
         @grid_size  = options[:grid_size]       if options[:grid_size]
         @grid_frame = options[:grid_frame]      if options[:grid_frame]
         @image_map  = options[:image_map]       if options[:image_map]
-        # @category   = options.fetch(:category, "Magazine")
 
         place_heading(options[:heading])        
         place_head_images if options[:heading][:image]  || options[:heading][:image_path]
@@ -106,7 +105,6 @@ module RLayout
       else
         heading_options[:width] = @width
       end
-      heading_options[:category]       = options.fetch(:category, "news")
       # heading_options[:fill_color]     = "lightGray"
       heading_options[:is_float]       = true
       @heading  = Heading.new(self, heading_options)
@@ -207,6 +205,7 @@ module RLayout
         next if s=="@floats"
         next if s=="@fixtures"
         next if s=="@heading"
+        next if s=="@style_service"
         
         n = s[1..s.size] # get rid of @
         v = instance_variable_get a
@@ -214,19 +213,19 @@ module RLayout
       }
       if @graphics.length > 0
         h[:graphics]= @graphics.map do |child|
-          child.to_hash
+          child.to_data
         end
       end
       
       if @floats && @floats.length > 0
         h[:floats]= @floats.map do |child|
-          child.to_hash
+          child.to_data
         end
       end
       
       if @fixtures && @fixtures.length > 0
         h[:fixtures]= @fixtures.map do |child|
-          child.to_hash
+          child.to_data
         end
       end
       

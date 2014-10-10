@@ -24,7 +24,8 @@ module RLayout
     attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
     attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand, :grid_rect
-    attr_accessor :text_markup, :text_string, :text_color, :text_size, :text_line_spacing, :text_font, :text_fit_type, :text_alignment, :text_first_line_head_indent
+    attr_accessor :text_markup, :text_string, :text_color, :text_size, :text_line_spacing, :text_font
+    attr_accessor :text_fit_type, :text_alignment, :text_first_line_head_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
     attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
     attr_accessor :non_overlapping_rect, :overlapping_rects
     
@@ -208,13 +209,13 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
     # to_data save values, even if they are equal to default
     # to_data is uesed to send the data to view for drawing 
     def to_data      
-      
       h = {}
       instance_variables.each{|a|
         s = a.to_s
         next if s=="@parent_graphic"
         next if s=="@floats"
         next if s=="@graphics"
+        next if s=="@style_service"
         n = s[1..s.size] # get rid of @
         v = instance_variable_get a
         h[n.to_sym] = v if !v.nil?

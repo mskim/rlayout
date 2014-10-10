@@ -1,9 +1,6 @@
 2014 10 11
-1. justification justifies the last line, it should align left.(put return char at the end of paragraph)
-1. newline in body text with carriage return
-
+1. get rid of styles category, use @current_style
 1. toc.rb
-
 1. text_bar.rb
 1. footer page number font is different from footer title text
 

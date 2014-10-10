@@ -41,8 +41,11 @@ module RLayout
         @text_line_spacing= options.fetch(:text_line_spacing, @text_size*1.5)
         @text_fit_type  = options.fetch(:text_fit_type, 0)
         @text_alignment = options.fetch(:text_alignment, "center")
-        @text_first_line_head_indent = options.fetch(:text_first_line_head_indent, nil)
-        @fill_color     = options[:fill_color] if options[:fill_color]
+        @text_first_line_head_indent    = options.fetch(:text_first_line_head_indent, nil)
+        @text_paragraph_spacing_before  = options[:text_paragraph_spacing_before] if options[:text_paragraph_spacing_before]
+        @text_paragraph_spacing         = options[:text_paragraph_spacing]        if options[:text_paragraph_spacing]
+        @fill_color                     = options[:fill_color]                    if options[:fill_color]
+        puts "@text_paragraph_spacing_before:#{@text_paragraph_spacing_before}"
         layout_lines if @parent_graphics
         
       end
@@ -114,7 +117,7 @@ module RLayout
     
     def body_line_height_multiple(head_para_height)
       @style_service = @style_service ||= StyleService.new
-      body_height = @style_service.body_height(:category=>@category)
+      body_height = @style_service.body_height
       body_multiple = body_height
       while body_multiple <= head_para_height
         body_multiple += body_height
@@ -142,8 +145,12 @@ module RLayout
           # puts "Make the head paragraph height as body text multiples"
           # by adjusting @top_margin and @bottom_margin around it
           body_multiple_height = body_line_height_multiple(@height)
-          @top_margin = (body_multiple_height - @height)/2
-          @bottom_margin = @top_margin
+          @text_paragraph_spacing_before = (body_multiple_height - @height)/2
+          @text_paragraph_spacing        = @text_paragraph_spacing_before
+          puts "@text_paragraph_spacing_before:#{@text_paragraph_spacing_before }"
+          puts "@text_paragraph_spacing:#{@text_paragraph_spacing }"
+          # @top_margin = (body_multiple_height - @height)/2
+          # @bottom_margin = @top_margin
           @height = body_multiple_height
         end
       else

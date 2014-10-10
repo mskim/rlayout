@@ -132,6 +132,8 @@ module RLayout
         next if s=="@footer_object"
         next if s=="@side_bar_object"
         next if s=="@story_box_object"
+        next if s=="@style_service"
+        
         n = s[1..s.size] # get rid of @
         v = instance_variable_get a
         h[n.to_sym] = v if !v.nil?

@@ -8,12 +8,6 @@
 # Header < Container
 # TextBar < Container
 
-# TEXT_ALIGNMENT_LEFT       = NSLeftTextAlignment
-# TEXT_ALIGNMENT_RIGHT      = NSRightTextAlignment
-# TEXT_ALIGNMENT_CENTER     = NSCenterTextAlignment
-# TEXT_ALIGNMENT_JUSTIFIED  = NSJustifiedTextAlignment
-# TEXT_ALIGNMENT_NATURAL    = NSJustifiedTextAlignment
-
 # NSLeftTextAlignment
 # NSRightTextAlignment
 # NSCenterTextAlignment
@@ -33,9 +27,11 @@ class GraphicViewMac < NSView
     @text_style     = @data.fetch(:text_style, text_defaults[:text_style])
     @text_color     = @data.fetch(:text_color, text_defaults[:text_color])
     @text_alignment = @data.fetch(:text_alignment, text_defaults[:text_alignment])
-    @text_first_line_head_indent = @data.fetch(:text_first_line_head_indent, nil)
+    @text_first_line_head_indent    = @data.fetch(:text_first_line_head_indent, nil)
+    @text_paragraph_spacing_before  = @data[:text_paragraph_spacing_before] if @data[:text_paragraph_spacing_before]
+    @text_paragraph_spacing         = @data[:text_paragraph_spacing] if @data[:text_paragraph_spacing]
+    @text_color                     = convert_to_nscolor(@text_color)    unless @text_color.class == NSColor  
     
-    @text_color  = convert_to_nscolor(@text_color)    unless @text_color.class == NSColor  
     case @text_alignment 
     when "left"
       @text_alignment = NSLeftTextAlignment
@@ -68,19 +64,20 @@ class GraphicViewMac < NSView
   def draw_text(r)  
 
     return if @att_string.string == ""
-    @att_string.drawInRect(r)
+    # @att_string.drawInRect(r)
     # 
-    # @text_storage=NSTextStorage.alloc.init
-    # @text_storage.setAttributedString @att_string
-    # @layout_manager = NSLayoutManager.alloc.init        
-    # @text_storage.addLayoutManager(@layout_manager)
-    # @text_container = NSTextContainer.alloc.initWithContainerSize(@frame.size)
-    # @text_container.setLineFragmentPadding(0.0)
-    # @layout_manager.addTextContainer(@text_container)
-    # origin=@frame.origin
-    # glyphRange=@layout_manager.glyphRangeForTextContainer(@text_container)   
-    # @layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:origin)
-  end
+    @text_storage=NSTextStorage.alloc.init
+    @text_storage.setAttributedString @att_string
+    @layout_manager = NSLayoutManager.alloc.init        
+    @text_storage.addLayoutManager(@layout_manager)
+    @text_container = NSTextContainer.alloc.initWithContainerSize(r.size)
+    @text_container.setLineFragmentPadding(0.0)
+    @layout_manager.addTextContainer(@text_container)
+    glyphRange=@layout_manager.glyphRangeForTextContainer(@text_container) 
+    origin = r.origin
+    origin.y = origin.y + @data[:text_paragraph_spacing_before] if @data[:text_paragraph_spacing_before]
+    @layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:r.origin)
+   end
 
   def make_att_string_from(data={})
     if data[:atts_array]
@@ -100,7 +97,6 @@ class GraphicViewMac < NSView
   
     
   def att_string
-    
     #TODO
     # implement text_fit_type
     # atts[NSKernAttributeName] = @text_track           if @text_track
@@ -119,7 +115,8 @@ class GraphicViewMac < NSView
     newParagraphStyle.setAlignment(@text_alignment)
     newParagraphStyle.setLineSpacing(@text_line_spacing) if @text_line_spacing
     newParagraphStyle.setFirstLineHeadIndent(@text_first_line_head_indent) if @text_first_line_head_indent
-    
+    newParagraphStyle.setParagraphSpacingBefore(@text_paragraph_spacing_before) if @text_paragraph_spacing_before
+    newParagraphStyle.setParagraphSpacing(@text_paragraph_spacing) if @text_paragraph_spacing    
     atts[NSParagraphStyleAttributeName] = newParagraphStyle         
     # end     
     att_string=NSMutableAttributedString.alloc.initWithString(@text_string, attributes:atts)

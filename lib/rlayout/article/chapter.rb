@@ -71,8 +71,6 @@ module RLayout
       @paragraphs =[]
       story.paragraphs.each do |para| 
         para_options = {}
-        para_options[:category] = 'chapter'
-        # para_options  = @style_service.style_for_markup(para[:markup], :category=>"chapter")
         para_options[:markup]         = para[:markup]
         para_options[:text_string]    = para[:string]
         para_options[:layout_expand]  = [:width]
@@ -84,11 +82,10 @@ module RLayout
     def layout_story
       page_index = 0
       @first_page = @pages[page_index]
-      @heading[:category] = 'chapter'
       @heading[:layout_expand] = [:width, :height]
       @first_page.graphics.unshift(Heading.new(nil, @heading))
       @first_page.relayout!
-      @first_page.story_box_object.layout_story(:heading=>nil, :paragraphs=>@paragraphs, :category=>'chapter')
+      @first_page.story_box_object.layout_story(:heading=>nil, :paragraphs=>@paragraphs)
       
       while @paragraphs.length > 0
         page_index += 1

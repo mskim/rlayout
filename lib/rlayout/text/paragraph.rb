@@ -21,16 +21,17 @@ FIT_STYLE_RUN   = 3
 
   class Paragraph < Text
     # attr_accessor :paragraph_data
-    attr_accessor :main_text, :number, :drop_cap, :style_service, :category
+    attr_accessor :main_text, :number, :drop_cap, :style_service
     attr_accessor :drop_cap_lines, :drop_cap_char_count
     
     def initialize(parent_graphic, options={})
+      
       text_options = nil
       if options[:markup]
         @style_service ||= StyleService.new
         text_options = @style_service.style_for_markup(options[:markup])
+        options.merge! text_options if text_options
       end
-      options.merge! text_options
       super
       # @line_width=1
       # @line_color='red'
@@ -76,22 +77,7 @@ FIT_STYLE_RUN   = 3
     #   bounding_rect       = @text_storage.boundingRectWithSize(text_size, options:NSStringDrawingUsesLineFragmentOrigin)
     #   @frame.size.height = bounding_rect.size.height      
     # end
-    
-    # def to_data      
-    #   h = {}
-    #   instance_variables.each{|a|
-    #     s = a.to_s
-    #     next if s=="@parent_graphic"
-    #     next if s=="@style_service"
-    #     next if s=="@floats"
-    #     next if s=="@graphics"
-    #     n = s[1..s.size] # get rid of @
-    #     v = instance_variable_get a
-    #     h[n.to_sym] = v if !v.nil?
-    #   }
-    #   h
-    # end
-    
+        
     
     def self.generate(number)
       para_array = []

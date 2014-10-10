@@ -134,25 +134,26 @@ module RLayout
         next if s=="@graphics"
         next if s=="@floats"
         next if s=="@fixtures"
+        next if s=="@style_service"
         n = s[1..s.size] # get rid of @
         v = instance_variable_get a
         h[n.to_sym] = v if !v.nil?
       }
       if @graphics.length > 0
         h[:graphics]= @graphics.map do |child|
-          child.to_hash
+          child.to_data
         end
       end
       
       if @floats && @floats.length > 0
         h[:floats]= @floats.map do |child|
-          child.to_hash
+          child.to_data
         end
       end
       
       if @fixtures && @fixtures.length > 0
         h[:fixtures]= @fixtures.map do |child|
-          child.to_hash
+          child.to_data
         end
       end
       
