@@ -25,14 +25,12 @@ module RLayout
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
     attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand, :grid_rect
     attr_accessor :text_markup, :text_string, :text_color, :text_size, :text_line_spacing, :text_font
-    attr_accessor :text_fit_type, :text_alignment, :text_first_line_head_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
+    attr_accessor :text_fit_type, :text_alignment, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
     attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
     attr_accessor :non_overlapping_rect, :overlapping_rects
     
     # TODO
-    # attr_accessor :text_record, :image_record, :grid_record, :grid_rect, :auto_save
-    
-    
+    # attr_accessor :fill_record, :line_record, :shape_record, :text_record, :image_record, :grid_record, :layout_record    
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
       if options[:is_float]
@@ -200,7 +198,8 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
         next if a == @style_service
         next if a == @graphics        
         v = instance_variable_get a
-        h[a] = v  if defaults[a] != v && !defaults[a].nil?
+        s = a.to_s.sub("@","")        
+        h[s.to_sym] = v  if defaults[a] != v && !defaults[a].nil?
       end
       h
     end
@@ -216,9 +215,10 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
         next if a == @parent_graphic
         next if a == @floats
         next if a == @style_service
-        next if a == @graphics        
+        next if a == @graphics  
         v = instance_variable_get a
-        h[a] = v  if !v.nil?
+        s = a.to_s.sub("@","")
+        h[s.to_sym] = v  if !v.nil?
       end
       h
     end

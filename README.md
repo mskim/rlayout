@@ -1,3 +1,4 @@
+
 2014 10 12
  1. vertical text for Japanese
  1. breaking paragraph
@@ -5,7 +6,6 @@
 
  1. line_edge=[1,1,1,1] or [0,1,0,1] for top and bottom only
  		[0,{line_type: 2, line_color: "red"},0,1]
- 1. GraphicRecords as Struct
  1. make CustomStyle as subclass  of  BaseStyles
 	- title, subtitle, as methods that return hash values
 	- heading, 

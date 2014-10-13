@@ -42,6 +42,9 @@ module RLayout
         @text_fit_type  = options.fetch(:text_fit_type, 0)
         @text_alignment = options.fetch(:text_alignment, "center")
         @text_first_line_head_indent    = options.fetch(:text_first_line_head_indent, nil)
+        @text_head_indent               = options.fetch(:text_head_indent, nil)
+        @text_tail_indent               = options.fetch(:text_tail_indent, nil)
+        
         @text_paragraph_spacing_before  = options[:text_paragraph_spacing_before] if options[:text_paragraph_spacing_before]
         @text_paragraph_spacing         = options[:text_paragraph_spacing]        if options[:text_paragraph_spacing]
         @fill_color                     = options[:fill_color]                    if options[:fill_color]
@@ -92,6 +95,10 @@ module RLayout
       end
       newParagraphStyle.setLineSpacing(@text_line_spacing) if @text_line_spacing
       newParagraphStyle.setFirstLineHeadIndent(@text_first_line_head_indent) if @text_first_line_head_indent
+      newParagraphStyle.setHeadIndent(@text_head_indent) if @text_head_indent
+      newParagraphStyle.setTailIndent(@text_tail_indent) if @text_tail_indent
+      
+      
       atts[NSParagraphStyleAttributeName] = newParagraphStyle         
       atts
     end

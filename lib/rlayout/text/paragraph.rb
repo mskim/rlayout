@@ -33,6 +33,7 @@ FIT_STYLE_RUN   = 3
         options.merge! text_options if text_options
       end
       super
+      @klass = "Paragraph"
       # @line_width=1
       # @line_color='red'
       

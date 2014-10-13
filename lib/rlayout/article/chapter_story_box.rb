@@ -194,7 +194,8 @@ module RLayout
         next if a == @graphics        
         next if a == @heading        
         v = instance_variable_get a
-        h[a] = v if !v.nil?
+        s = a.to_s.sub("@","")        
+        h[s.to_sym] = v if !v.nil?
       }
       
       if @graphics.length > 0

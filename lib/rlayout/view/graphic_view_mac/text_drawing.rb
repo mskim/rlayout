@@ -115,6 +115,8 @@ class GraphicViewMac < NSView
     newParagraphStyle.setAlignment(@text_alignment)
     newParagraphStyle.setLineSpacing(@text_line_spacing) if @text_line_spacing
     newParagraphStyle.setFirstLineHeadIndent(@text_first_line_head_indent) if @text_first_line_head_indent
+    newParagraphStyle.setHeadIndent(@text_head_indent) if @text_head_indent
+    newParagraphStyle.setTailIndent(@text_tail_indent) if @text_tail_indent
     newParagraphStyle.setParagraphSpacingBefore(@text_paragraph_spacing_before) if @text_paragraph_spacing_before
     newParagraphStyle.setParagraphSpacing(@text_paragraph_spacing) if @text_paragraph_spacing    
     atts[NSParagraphStyleAttributeName] = newParagraphStyle         
