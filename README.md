@@ -1,18 +1,47 @@
-2014 10 11
-1. get rid of styles category, use @current_style
-1. toc.rb
-1. text_bar.rb
-1. footer page number font is different from footer title text
+2014 10 12
+ 1. vertical text for Japanese
+ 1. breaking paragraph
+ 1. DropCap
 
-1. Git based workflow
-1. rake file markdown2pdf
-1. Git repos webhook for triggering DRb
-1. DRb server
-1. book_config.rb
-1. vertical text for Japanese
+ 1. line_edge=[1,1,1,1] or [0,1,0,1] for top and bottom only
+ 		[0,{line_type: 2, line_color: "red"},0,1]
+ 1. GraphicRecords as Struct
+ 1. make CustomStyle as subclass  of  BaseStyles
+	- title, subtitle, as methods that return hash values
+	- heading, 
+
+2014 10 11
+
+ 1. Git based workflow
+ 1. User downloads the project folder from the site
+ 1. User makes changes to the content.md or image/
+ 1. Web_hook for repos, 
+	- user commits changes, and pushes
+	- on the repos, post_commit 
+		- cd into_users_folder && rake 
+			- rake pulls
+			- triggers DRb
+			- DRb generate pdf markdown2pdf
+			- after successful pdf generation, push it back to repo
+	- once it is in the repo, waits for user to pull
+	- users pulls the updated pdf version
+	
+ 1. rake file markdown2pdf
+ 1. toc.rb
+
+ 1. DRb server
+ 1. book_config.rb
 
 
 2014 10 10
+ 1. get rid of styles category, use @current_style
+
+ 1. text_bar.rb
+ 1. footer page number font is different from footer title text
+
+
+
+2014 10 9
  1. fixed Paragraph clipping bug, by adding text_line_spacing to the height.
  1. head1, head2 height should be multiples of body height, and vertically centered
 

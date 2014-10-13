@@ -24,7 +24,7 @@ STYLES={
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
-  "footer_page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
+  "page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
 }
 
 CHAPTER_STYLES={
@@ -38,16 +38,16 @@ CHAPTER_STYLES={
   "h2"      =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "h3"      =>{:text_font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
   "h4"      =>{:text_font => 'Helvetica', :text_size=>14.0, :text_color => 'black'},
-  "h5"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'left', :fill_color=>"lightGray"},
-  "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'left', :fill_color=>"lightGray"},
-  "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'left', :fill_color=>"lightGray"},
+  "h5"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
+  "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
+  "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
   "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
-  "footer_page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
+  "page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
 }
 
 NEWS_STYLES={
@@ -69,7 +69,7 @@ NEWS_STYLES={
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
-  "footer_page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
+  "page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
 }
 
 HEADING_KIND= %w[h1 h2 h3 h4 title subtitle author lead]

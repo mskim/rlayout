@@ -45,7 +45,6 @@ module RLayout
         @text_paragraph_spacing_before  = options[:text_paragraph_spacing_before] if options[:text_paragraph_spacing_before]
         @text_paragraph_spacing         = options[:text_paragraph_spacing]        if options[:text_paragraph_spacing]
         @fill_color                     = options[:fill_color]                    if options[:fill_color]
-        puts "@text_paragraph_spacing_before:#{@text_paragraph_spacing_before}"
         layout_lines if @parent_graphics
         
       end
@@ -147,8 +146,6 @@ module RLayout
           body_multiple_height = body_line_height_multiple(@height)
           @text_paragraph_spacing_before = (body_multiple_height - @height)/2
           @text_paragraph_spacing        = @text_paragraph_spacing_before
-          puts "@text_paragraph_spacing_before:#{@text_paragraph_spacing_before }"
-          puts "@text_paragraph_spacing:#{@text_paragraph_spacing }"
           # @top_margin = (body_multiple_height - @height)/2
           # @bottom_margin = @top_margin
           @height = body_multiple_height
