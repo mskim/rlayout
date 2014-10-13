@@ -48,7 +48,7 @@
 #   grid_v_lines:       array of vertical grid lines
 #   grid_h_lines:       array of horizontal grid lines
 #   grid_color:         color of the grid lines
-#   show_grid:          boolean whether to show or hide the lines
+#   grid_show:          boolean whether to show or hide the lines
 #   grid_rect:         frame rect in grid unit
 
 #  Graphic frame is expressed in ralative value to grid
@@ -332,7 +332,7 @@ EOF
               
     # for macruby
     # def draw_lines(r)
-    #   return unless @show_grid
+    #   return unless @grid_show
     #   if RUBY_ENGINE == 'macruby'
     #     @grid_color  = GraphicRecord.convert_to_nscolor(@grid_color)    unless @grid_color.class == NSColor  
     #     @grid_color.set
@@ -360,7 +360,7 @@ EOF
     # def drawRecord(r) 
     #   # NSColor.lightGrayColor.set
     #   # NSBezierPath.bezierPathWithRect(r).fill
-    #   draw_lines(r) if @show_grid
+    #   draw_lines(r) if @grid_show
     # end
     
     # Push other cell away from the selected cell

@@ -14,6 +14,7 @@ module RLayout
         @right_margin   = options.fetch(:right_margin, defaults[:right_margin])
         @bottom_margin  = options.fetch(:bottom_margin, defaults[:bottom_margin])
       end
+      
       if options[:inset]
         @left_inset     = options[:inset]
         @top_inset      = options[:inset]
@@ -25,6 +26,7 @@ module RLayout
         @right_inset    = options.fetch(:right_inset, defaults[:right_inset])
         @bottom_inset   = options.fetch(:bottom_inset, defaults[:bottom_inset])
       end
+      
       @layout_direction = options.fetch(:layout_direction, defaults[:layout_direction])
       @layout_member    = options.fetch(:layout_member, defaults[:layout_member])
       @layout_expand    = options.fetch(:layout_expand, defaults[:layout_expand])

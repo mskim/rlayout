@@ -4,8 +4,8 @@ module RLayout
   
   class Container < Graphic
     attr_accessor :layout_mode     # layout_mode: "auto_layout" "grid"
-    attr_accessor :layout_direction, :layout_strarting, :layout_space, :layout_align
-    attr_accessor :grid_column_count, :grid_row_count, :grid_cells, :grid_v_lines, :grid_h_lines, :grid_color, :show_grid
+    attr_accessor :layout_direction, :layout_space, :layout_align, :layout_strarting
+    attr_accessor :grid_column_count, :grid_row_count, :grid_cells, :grid_v_lines, :grid_h_lines, :grid_color, :grid_show
     attr_accessor :grid_rect, :grid_inset, :grid_top_inset, :grid_bottom_inset, :grid_letf_inset, :grid_right_inset
     attr_accessor :grid_unit_width, :grid_unit_height, :grid_frame
     attr_accessor :gutter_line_type, :gutter_line_width, :gutter_line_color, :gutter_line_dash
@@ -17,9 +17,9 @@ module RLayout
       layout_defaults_hash = layout_defaults
       @layout_mode      = options.fetch(:layout_mode, layout_defaults_hash[:layout_mode])
       @layout_direction = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
-      @layout_strarting = options.fetch(:layout_strarting, layout_defaults_hash[:layout_strarting])       
       @layout_space     = options.fetch(:layout_space, layout_defaults_hash[:layout_space])       
       @layout_align     = options.fetch(:layout_align, layout_defaults_hash[:layout_align])       
+      @layout_strarting = options.fetch(:layout_strarting, layout_defaults_hash[:layout_strarting])       
       @grid_cells       = options.fetch(:grid_cells, layout_defaults_hash[:grid_cells])       
       @grid_column_count= options.fetch(:grid_column_count, layout_defaults_hash[:grid_column_count])       
       @grid_row_count   = options.fetch(:grid_row_count, layout_defaults_hash[:grid_row_count])       
@@ -33,7 +33,7 @@ module RLayout
       @grid_right_inset = options.fetch(:grid_right_inset, layout_defaults_hash[:grid_right_inset])       
       @grid_unit_width  = options.fetch(:grid_unit_width, layout_defaults_hash[:grid_unit_width])       
       @grid_unit_height = options.fetch(:grid_unit_height, layout_defaults_hash[:grid_unit_height])       
-      @show_grid        = options.fetch(:show_grid, layout_defaults_hash[:show_grid])
+      @grid_show        = options.fetch(:grid_show, layout_defaults_hash[:grid_show])
 
       @gutter_line_type = options[:gutter_line_type]     
       @gutter_line_width= options[:gutter_line_width]
@@ -58,9 +58,9 @@ module RLayout
       h = {}
       h[:layout_mode]       = "auto_layout"
       h[:layout_direction]  = "vertical"
-      h[:layout_strarting]  = "top"
       h[:layout_space]      = 0
       h[:layout_align]      = "top"
+      h[:layout_strarting]  = "top"
       h[:grid_cells]        = Array.new
       h[:grid_column_count] = 6
       h[:grid_row_count]    = 6
@@ -71,7 +71,7 @@ module RLayout
       h[:grid_inset]        = [0,0,0,0]
       h[:grid_unit_width]   = 0
       h[:grid_unit_height]  = 0
-      h[:show_grid]         = true
+      h[:grid_show]         = true
       h
     end
     
@@ -129,15 +129,13 @@ module RLayout
     def to_data
       h = {}
       instance_variables.each{|a|
-        s = a.to_s
-        next if s=="@parent_graphic"
-        next if s=="@graphics"
-        next if s=="@floats"
-        next if s=="@fixtures"
-        next if s=="@style_service"
-        n = s[1..s.size] # get rid of @
+        next if a==@parent_graphic
+        next if a==@graphics
+        next if a==@floats
+        next if a==@fixtures
+        next if a==@style_service
         v = instance_variable_get a
-        h[n.to_sym] = v if !v.nil?
+        h[a] = v if !v.nil?
       }
       if @graphics.length > 0
         h[:graphics]= @graphics.map do |child|

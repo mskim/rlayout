@@ -194,13 +194,14 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
     
     def to_hash
       h = {}
-      instance_variables.each{|a|
-        s = a.to_s
-        next if s=="@parent_graphic"
-        n = s[1..s.size] # get rid of @
+      instance_variables.each do |a|
+        next if a == @parent_graphic
+        next if a == @floats
+        next if a == @style_service
+        next if a == @graphics        
         v = instance_variable_get a
-        h[n.to_sym] = v if !v.nil? && v !=defaults[n.to_sym]
-      }
+        h[a] = v  if defaults[a] != v && !defaults[a].nil?
+      end
       h
     end
     
@@ -208,18 +209,17 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
     # to_hash does not save values, if they are equal to default
     # to_data save values, even if they are equal to default
     # to_data is uesed to send the data to view for drawing 
-    def to_data      
+    
+    def to_data  
       h = {}
-      instance_variables.each{|a|
-        s = a.to_s
-        next if s=="@parent_graphic"
-        next if s=="@floats"
-        next if s=="@graphics"
-        next if s=="@style_service"
-        n = s[1..s.size] # get rid of @
+      instance_variables.each do |a|
+        next if a == @parent_graphic
+        next if a == @floats
+        next if a == @style_service
+        next if a == @graphics        
         v = instance_variable_get a
-        h[n.to_sym] = v if !v.nil?
-      }
+        h[a] = v  if !v.nil?
+      end
       h
     end
     

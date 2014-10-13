@@ -199,16 +199,14 @@ module RLayout
     def to_data
       h = {}
       instance_variables.each{|a|
-        s = a.to_s
-        next if s=="@parent_graphic"        
-        next if s=="@graphics"
-        next if s=="@floats"
-        next if s=="@fixtures"
-        next if s=="@heading"
-        
-        n = s[1..s.size] # get rid of @
+        next if a == @parent_graphic
+        next if a == @style_service
+        next if a == @floats
+        next if a == @fixtures        
+        next if a == @graphics        
+        next if a == @heading        
         v = instance_variable_get a
-        h[n.to_sym] = v if !v.nil?
+        h[a] = v if !v.nil?
       }
       if @graphics.length > 0
         h[:graphics]= @graphics.map do |child|

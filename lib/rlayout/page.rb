@@ -123,20 +123,17 @@ module RLayout
     def to_data
       h = {}
       instance_variables.each{|a|
-        s = a.to_s
-        next if s=="@parent_graphic"
-        next if s=="@graphics"
-        next if s=="@floats"
-        next if s=="@fixtures"
-        next if s=="@header_object"
-        next if s=="@footer_object"
-        next if s=="@side_bar_object"
-        next if s=="@story_box_object"
-        next if s=="@style_service"
-        
-        n = s[1..s.size] # get rid of @
+        next if a==@parent_graphic
+        next if a==@graphics
+        next if a==@floats
+        next if a==@fixtures
+        next if a==@header_object
+        next if a==@footer_object
+        next if a==@side_bar_object
+        next if a==@story_box_object
+        next if a==@style_service
         v = instance_variable_get a
-        h[n.to_sym] = v if !v.nil?
+        h[a] = v if !v.nil?
       }
       if @graphics.length > 0
         h[:graphics]= @graphics.map do |child|
