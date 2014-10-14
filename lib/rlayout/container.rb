@@ -126,9 +126,7 @@ module RLayout
       h
     end
     
-    def to_data
-      puts "to_data ++++++++ #{@klass} "
-      
+    def to_data      
       h = {}
       instance_variables.each{|a|
         next if a==@parent_graphic

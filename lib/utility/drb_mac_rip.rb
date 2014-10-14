@@ -1,7 +1,10 @@
 # client.rb
 
 require 'drb'
-require 'rlayout'
+require File.dirname(__FILE__) + '/../rlayout'
+require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
+require File.dirname(__FILE__) + '/../../lib/rlayout/publication/book'
+
 URI = "druby://127.0.0.1:8222"
 puts "runing drb at 127.0.0.1:8222..."
 
@@ -11,6 +14,15 @@ class MacRip
   #   :output_path      => "output/path"
   #   :output_types     => [pdf, jpg, thumbnail]
   # }  
+  
+  def generate_book(path, options={})
+    @book = Book.new(path)
+    @book.markdown2pdf        
+    if options[:merge_chapters]
+      @book.merge_pdf_chpaters
+    end
+    
+  end
   
   def rip_data(data)
     puts __method__
