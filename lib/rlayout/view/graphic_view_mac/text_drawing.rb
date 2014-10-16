@@ -14,6 +14,13 @@
 # NSJustifiedTextAlignment
 # NSNaturalTextAlignment
 
+
+# CTFrame
+# CTLIne
+# CTRun
+# CGGlyph
+framework 'ApplicationServices'
+
 class GraphicViewMac < NSView
   
   attr_accessor :att_string
@@ -62,23 +69,41 @@ class GraphicViewMac < NSView
   end
   
   def draw_text(r)  
-
     return if @att_string.string == ""
     # @att_string.drawInRect(r)
     # 
-    @text_storage=NSTextStorage.alloc.init
-    @text_storage.setAttributedString @att_string
-    @layout_manager = NSLayoutManager.alloc.init        
-    @text_storage.addLayoutManager(@layout_manager)
-    @text_container = NSTextContainer.alloc.initWithContainerSize(r.size)
-    @text_container.setLineFragmentPadding(0.0)
-    @layout_manager.addTextContainer(@text_container)
-    glyphRange=@layout_manager.glyphRangeForTextContainer(@text_container) 
-    origin = r.origin
-    origin.y = origin.y + @data[:text_paragraph_spacing_before] if @data[:text_paragraph_spacing_before]
-    @layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:r.origin)
-   end
-
+        context =NSGraphicsContext.currentContext.graphicsPort
+        CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
+        CGContextSetAllowsFontSmoothing(context, true);
+        CGContextSetShouldSmoothFonts(context, true);
+        framesetter = CTFramesetterCreateWithAttributedString(att_string);
+    puts "framesetter:#{framesetter}"
+    path = CGPathCreateMutable()
+    bounds = CGRectMake(r.origin.x, r.origin.y, r.size.width, r.size.height)
+        CGPathAddRect(path, nil, bounds)
+        puts "path.class:#{path.class}"
+    frame_attributes = {}
+    frame_attributes = NSDictionary.dictionaryWithObject(NSNumber.numberWithInt(kCTFrameProgressionRightToLeft), forKey:kCTFrameProgressionAttributeName)
+    frame_attributes[kCTFrameProgressionAttributeName] = 1
+    frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, frame_attributes)
+    CTFrameDraw(frame, context)
+    puts "frame:#{frame}"
+		
+    #     
+    # @text_storage=NSTextStorage.alloc.init
+    # @text_storage.setAttributedString @att_string
+    # @layout_manager = NSLayoutManager.alloc.init        
+    # @text_storage.addLayoutManager(@layout_manager)
+    # @text_container = NSTextContainer.alloc.initWithContainerSize(r.size)
+    # @text_container.setLineFragmentPadding(0.0)
+    # @layout_manager.addTextContainer(@text_container)
+    # glyphRange=@layout_manager.glyphRangeForTextContainer(@text_container) 
+    # origin = r.origin
+    # origin.y = origin.y + @data[:text_paragraph_spacing_before] if @data[:text_paragraph_spacing_before]
+    # @layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:r.origin)
+  end
+    
   def make_att_string_from(data={})
     if data[:atts_array]
       return atts_array_to_att_string(data[:atts_array])
@@ -94,17 +119,22 @@ class GraphicViewMac < NSView
     end
     text_storage
   end
-  
     
   def att_string
     #TODO
     # implement text_fit_type
     # atts[NSKernAttributeName] = @text_track           if @text_track
     # implement inline element, italic, bold, underline, sub, super, emphasis(color)
-        
     atts={}
-    atts[NSFontAttributeName]             = NSFont.fontWithName(@text_font, size:@text_size)
+    atts[NSFontAttributeName]     = NSFont.fontWithName(@text_font, size:@text_size)
+    if atts[NSFontAttributeName].nil?
+      puts "font nameed #{@text_font} not found!!"
+      @text_font = "Times"
+      atts[NSFontAttributeName]   = NSFont.fontWithName(@text_font, size:@text_size)
+    end
+    
     atts[NSForegroundColorAttributeName]  = @text_color      
+    atts["kCTVerticalFormsAttributeName"]  = true # for vertical      
 
     if @guguri_width && @guguri_width < 0
       atts[NSStrokeWidthAttributeName] = atts_hash[:guguri_width] #0, -2,-5,-10 

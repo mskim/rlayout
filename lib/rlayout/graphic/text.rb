@@ -3,15 +3,14 @@ module RLayout
   class Graphic
     attr_accessor :atts_array # for ns_att_string
     # There twe cases of how we keep the paragraph data.
-    # 1. Entire Paragaph has uniform attrbutes
-    # 2. Paragaph has mixed attrbutes in the middle of paragraph
-    # for the second case, we keep changing attributes in atts_array
+    # 1. When entire Paragaph has uniform attrbutes
+    # 2. Paragaph has mixed attrbutes, for this case, we keep changing attributes in atts_array
 
     # atts_array
     # atts_array is used to represent AttributtedString in Model
     # Each run is represented as hash of attributes with string
-    # First hash has all the attribures and the follwing hashes string and only changed attributes. 
-    # Array of atts represent mixed attributtedString.
+    # First hash has all the attribures and the follwing hashes have string and changed attributes from the previous one. 
+    # for example:
     # [{font: 'Helvetical, size:16, style:plaine string:"this is "}, {style:italic string:"a string"}] 
 
     # def markup2atts_array
@@ -23,9 +22,9 @@ module RLayout
     # end
     
     # Apple's NSAttributtedString does this slightly diffrently,
-    # They keep a whole string in one, and attributes points to range, this effienct, 
+    # They keep a whole string in one, and attributes points to range, 
     # but it make it very difficult to edit, since you have to update the entire ranges as you change the string length of each run.
-    # I am keeping attributes and string together.
+    # I am keeping attributes and string together in a single hash.
     
     def init_text(options)
       if options[:attrs_array]

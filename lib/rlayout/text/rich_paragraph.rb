@@ -185,8 +185,8 @@ module RLayout
   
   class TextRun < Graphic
     attr_accessor :attrs, :space
-      attr_accessor :font, :size, :rich_style, :horizontal
-      attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
+    attr_accessor :font, :size, :rich_style, :horizontal
+    attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
     
     def initialize(parent_graphic, options={})
       super
@@ -198,10 +198,9 @@ module RLayout
     
   end
   
-  # Toke is very basic element of layout
+  # Token is very basic element of layout
   # in Text case it is word
   # Token can also be math element or image
-  
   
   class TextToken < Text 
         

@@ -21,7 +21,7 @@ FIT_STYLE_RUN   = 3
 
   class Paragraph < Text
     # attr_accessor :paragraph_data
-    attr_accessor :main_text, :number, :drop_cap, :style_service
+    attr_accessor :drop_cap, :style_service
     attr_accessor :drop_cap_lines, :drop_cap_char_count
     
     def initialize(parent_graphic, options={})
@@ -100,7 +100,7 @@ require 'lorem'
   
   class ParagraphModel
     attr_accessor :markup, :string 
-    attr_accessor :page_number, :x,:y,:width, :height
+    # attr_accessor :x,:y,:width, :height
     attr_accessor :footnote, :index
     
     def initialize(options={})
