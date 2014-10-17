@@ -80,9 +80,9 @@ class GraphicViewMac < NSView
   end
     
   # make it flopped view
-  def isFlipped
-    true
-  end  
+  # def isFlipped
+  #   true
+  # end  
 
   def save_pdf(path, options={})
     pdf_data.writeToFile(path, atomically:false)

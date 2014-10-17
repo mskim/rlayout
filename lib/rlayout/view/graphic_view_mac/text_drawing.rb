@@ -71,39 +71,57 @@ class GraphicViewMac < NSView
   def draw_text(r)  
     return if @att_string.string == ""
     # @att_string.drawInRect(r)
+
+    # context =NSGraphicsContext.currentContext.graphicsPort
+    # CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+    # # CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
+    # CGContextSetAllowsFontSmoothing(context, true);
+    # CGContextSetShouldSmoothFonts(context, true);
+    # framesetter = CTFramesetterCreateWithAttributedString(att_string);
+    # path = CGPathCreateMutable()
+    # bounds = CGRectMake(r.origin.x, r.origin.y, r.size.width, r.size.height)
+    # CGPathAddRect(path, nil, bounds)
+    # frame_attributes = {}
+    # frame_attributes = NSDictionary.dictionaryWithObject(NSNumber.numberWithInt(1), forKey:"kCTFrameProgressionAttributeName")
+    # # frame_attributes[kCTFrameProgressionAttributeName] = 1
+    # frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, nil)
+
+    # lines = CTFrameGetLines(frame)
+    # y = @text_size
+    # line_height = @text_size + @text_line_spacing
+    # puts "r.size.height:#{bounds.size.height}"
+    # lines.each do |line|
+    #   CGContextSetTextPosition(context, 0, y)
+    #   CTLineDraw(line, context)
+    #   y += line_height
+    # end
+    # origins = Pointer.new('f')
     # 
-        context =NSGraphicsContext.currentContext.graphicsPort
-        CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
-        CGContextSetAllowsFontSmoothing(context, true);
-        CGContextSetShouldSmoothFonts(context, true);
-        framesetter = CTFramesetterCreateWithAttributedString(att_string);
-    puts "framesetter:#{framesetter}"
-    path = CGPathCreateMutable()
-    bounds = CGRectMake(r.origin.x, r.origin.y, r.size.width, r.size.height)
-        CGPathAddRect(path, nil, bounds)
-        puts "path.class:#{path.class}"
-    frame_attributes = {}
-    frame_attributes = NSDictionary.dictionaryWithObject(NSNumber.numberWithInt(kCTFrameProgressionRightToLeft), forKey:kCTFrameProgressionAttributeName)
-    frame_attributes[kCTFrameProgressionAttributeName] = 1
-    frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, frame_attributes)
-    CTFrameDraw(frame, context)
-    puts "frame:#{frame}"
-		
-    #     
-    # @text_storage=NSTextStorage.alloc.init
-    # @text_storage.setAttributedString @att_string
-    # @layout_manager = NSLayoutManager.alloc.init        
-    # @text_storage.addLayoutManager(@layout_manager)
-    # @text_container = NSTextContainer.alloc.initWithContainerSize(r.size)
-    # @text_container.setLineFragmentPadding(0.0)
-    # @layout_manager.addTextContainer(@text_container)
-    # glyphRange=@layout_manager.glyphRangeForTextContainer(@text_container) 
-    # origin = r.origin
-    # origin.y = origin.y + @data[:text_paragraph_spacing_before] if @data[:text_paragraph_spacing_before]
-    # @layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:r.origin)
-  end
+    # CTFrameGetLineOrigins(frame, CFRangeMake(0,total), origins)
+    # lines.each do |line|
+    #   puts line
+    # end
     
+    # CTFrameDraw(frame, context)
+    #     
+    #     
+    @text_storage=NSTextStorage.alloc.init
+    @text_storage.setAttributedString @att_string
+    @layout_manager = NSLayoutManager.alloc.init        
+    @text_storage.addLayoutManager(@layout_manager)
+    @text_container = NSTextContainer.alloc.initWithContainerSize(r.size)
+    @text_container.setLineFragmentPadding(0.0)
+    @layout_manager.addTextContainer(@text_container)
+    glyphRange=@layout_manager.glyphRangeForTextContainer(@text_container) 
+    origin = r.origin
+    origin.y = origin.y + @data[:text_paragraph_spacing_before] if @data[:text_paragraph_spacing_before]
+    @layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:r.origin)
+  end
+  
+  def isFlipped
+    true
+  end
+  
   def make_att_string_from(data={})
     if data[:atts_array]
       return atts_array_to_att_string(data[:atts_array])
