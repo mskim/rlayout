@@ -1,4 +1,11 @@
-
+2014 10 18
+ 1. changes from previous RLayout/working
+	- No GraphicRecord, make them part of graphics, flatten it, except TextLayoutManger for text, replacement of TextRecord 
+	- TextlayoutManager: vertical text, FatText(SuperRichText) support 
+	- Use views and subviews instead of calculating translated coordinate, support graphic rotation
+	- drawRect and text layout in one place, in Model, only
+	- split paragraph
+	
 2014 10 12
  1. vertical text for Japanese
  1. breaking paragraph

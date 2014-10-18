@@ -11,6 +11,10 @@ module RLayout
   # product items, BoxAds, Directory elements, quiz items or any other graphic objects, 
   # that support flowing item protocol, namely "set_width_and_adjust_height"
   # one other flowing item protocol is :breakable?, whick tells whether the flowing item can be broken into parts.
+
+  # Breakable item should split itself into two parts, if it can with no orphan or widow. 
+  # TODO Currently I have parts as children graphics, but I should break it up into two.
+
   # ObjectBox adds another layer called "floats"
   # floats sit on top layer and pushes out text content underneath
   # Typocal floats are Heading, Image, Quates, SideBox

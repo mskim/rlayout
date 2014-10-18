@@ -26,6 +26,7 @@ class GraphicViewMac < NSView
   attr_accessor :att_string
   
   def init_text
+    @text_direction = @data.fetch(:text_direction, 'left_to_right')
     @text_string    = @data.fetch(:text_string, "")
     @text_fit_type  = @data.fetch(:text_fit_type, text_defaults[:text_fit_type])
     @text_font      = @data.fetch(:text_font, text_defaults[:text_font])
@@ -71,7 +72,6 @@ class GraphicViewMac < NSView
   def draw_text(r)  
     return if @att_string.string == ""
     # @att_string.drawInRect(r)
-
     # context =NSGraphicsContext.currentContext.graphicsPort
     # CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     # # CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
@@ -105,17 +105,49 @@ class GraphicViewMac < NSView
     # CTFrameDraw(frame, context)
     #     
     #     
-    @text_storage=NSTextStorage.alloc.init
-    @text_storage.setAttributedString @att_string
-    @layout_manager = NSLayoutManager.alloc.init        
-    @text_storage.addLayoutManager(@layout_manager)
-    @text_container = NSTextContainer.alloc.initWithContainerSize(r.size)
-    @text_container.setLineFragmentPadding(0.0)
-    @layout_manager.addTextContainer(@text_container)
-    glyphRange=@layout_manager.glyphRangeForTextContainer(@text_container) 
-    origin = r.origin
-    origin.y = origin.y + @data[:text_paragraph_spacing_before] if @data[:text_paragraph_spacing_before]
-    @layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:r.origin)
+    if @text_direction == 'left_to_right'
+      @text_storage=NSTextStorage.alloc.init
+      @text_storage.setAttributedString @att_string
+      @layout_manager = NSLayoutManager.alloc.init        
+      @text_storage.addLayoutManager(@layout_manager)
+      @text_container = NSTextContainer.alloc.initWithContainerSize(r.size)
+      @text_container.setLineFragmentPadding(0.0)
+      @layout_manager.addTextContainer(@text_container)
+      glyphRange=@layout_manager.glyphRangeForTextContainer(@text_container) 
+      origin = r.origin
+      origin.y = origin.y + @data[:text_paragraph_spacing_before] if @data[:text_paragraph_spacing_before]
+      @layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:r.origin)
+    else
+      v_line_count = @data[:width]/(@text_size + @text_line_spacing)            
+      y = @data[:top_margin] + @data[:top_inset]
+      width = @text_size*0.7
+      x = @data[:width] - width - @data[:right_inset] - @data[:right_margin]
+      height = @data[:height]  - @data[:top_margin] - @data[:top_inset] - @data[:bottom_margin] - @data[:bottom_inset]
+      @vertical_lines = []
+             
+      v_line_count.to_i.times do
+        @vertical_lines << NSMakeRect(x,y,width,height)
+        x -= @text_size + @text_line_spacing
+      end
+      
+      @text_storage=NSTextStorage.alloc.init
+      @text_storage.setAttributedString @att_string
+      @layout_manager = NSLayoutManager.alloc.init        
+      @text_storage.addLayoutManager(@layout_manager)
+      @vertical_lines.each do |v_line|
+        @text_container = NSTextContainer.alloc.initWithContainerSize(v_line.size)
+        @text_container.setLineFragmentPadding(0.0)
+        @layout_manager.addTextContainer(@text_container)
+        glyphRange=@layout_manager.glyphRangeForTextContainer(@text_container) 
+        origin = v_line.origin
+        origin.y = origin.y
+        @layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:v_line.origin)
+      end
+      
+      
+      
+      
+    end
   end
   
   def isFlipped
