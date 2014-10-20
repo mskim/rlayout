@@ -1,6 +1,6 @@
 
 if RUBY_ENGINE == "macruby"
-
+framework 'cocoa'
 require File.dirname(__FILE__) + '/graphic_view_mac/line_drawing'
 require File.dirname(__FILE__) + '/graphic_view_mac/fill_drawing'
 require File.dirname(__FILE__) + '/graphic_view_mac/image_drawing'
@@ -51,8 +51,6 @@ class GraphicViewMac < NSView
   end
   
   def drawRect(r)
-    # @shape = @data.fetch(:shape,0)
-    puts "drawRect of View @graphic.class:#{@graphic.class}"
     @graphic.draw_fill(r)
     @graphic.draw_line(r)
     @graphic.text_layout_manager.draw_text(r)  if @graphic.text_layout_manager

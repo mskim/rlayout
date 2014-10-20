@@ -150,7 +150,7 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
     end 
     
     def text_rect
-      [@x + @left_margin + @left_inset , @y + @top_margin + @top_inset, @width - @left_margin - @left_inset - @right_margin - @right_inset, @height - @top_margin - @top_inset - @bottom_margin - @bottom_inset]
+      [@x + @left_inset , @y + @top_inset, @width - @left_inset - @right_inset, @height - @top_inset - @bottom_inset]
     end
     
     # non_overlapping_rect is a actual layout frame that is not overlapping with flaots
@@ -171,13 +171,21 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
       @y = frame[1]
       @width = frame[2]
       @height = frame[3]
+      if @text_layout_manager
+        @text_layout_manager.set_frame(frame)
+      end
     end
     
     def change_width_and_adjust_height(new_width, options={})
-      old_width = @width
-      old_height = @height
-      @width  = new_width
-      @height = new_width/old_width*old_height
+      unless @text_layout_manager.nil?
+        @text_layout_manager.change_width_and_adjust_height(new_width, options={})
+        @height = @text_layout_manager.text_container[3] + @top_margin + @top_inset + @bottom_margin + @bottom_inset
+      else
+        old_width = @width
+        old_height = @height
+        @width  = new_width
+        @height = new_width/old_width*old_height
+      end
     end
     
     def expand_width?
@@ -470,16 +478,7 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
       @klass = "Text"
       self
     end
-    
-    # def change_width_and_adjust_height(new_width, options={})
-    #   old_width = @width
-    #   old_height = @height
-    #   @width  = new_width
-    #   layout_lines
-    #         
-    #   # change height we need to
-    # end
-    
+        
     def self.sample(options={})
       if options[:number] > 0
         Text.new(nil, text_string: "This is a sample text string"*options[:number])

@@ -1,18 +1,18 @@
 
 module RLayout
   class TextLayoutManager
-    attr_accessor :att_string, :text_container, :line_fragments, :token_list
+    attr_accessor :owner_graphic, :att_string, :text_container, :line_fragments, :token_list
     attr_accessor :current_token_index, :text_direction
     
-    attr_accessor :width, :height # TODO remove this use text_container
-    def initialize(text_container, options={})
+    def initialize(owner_graphic, options={})
+      @owner_graphic = owner_graphic
       if RUBY_ENGINE =='macruby'        
         if options[:ns_text_container]
           # this is second half of linked TextLayoutManager
           @ns_text_container = options[:ns_text_container]
           @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
         else
-          @text_container = text_container
+          @text_container = @owner_graphic.text_rect
           @att_string     = make_att_string_from_option(options)  
           @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
           @width          = @text_container[2]
@@ -20,7 +20,7 @@ module RLayout
           # line_fragments  = []
           # make_tokens
           # layout_lines_custom
-          layout_lines
+          layout_lines if options[:layout_lines=>true]
         end
       else
         
@@ -28,6 +28,16 @@ module RLayout
       self
     end
     
+    def set_frame(new_frame)
+      @text_container = new_frame
+      # layout_lines
+    end
+    
+    def change_width_and_adjust_height(new_width, options={})
+      @text_container[2] = new_width
+      # layout_lines
+      # TODO change owner_graphic height
+    end
     
     def make_atts
       @text_color = Graphic.convert_to_nscolor(@text_color)    unless @text_color.class == NSColor  
@@ -89,9 +99,9 @@ module RLayout
       @text_line_spacing= options.fetch(:text_line_spacing, @text_size*1.5)
       @text_fit_type  = options.fetch(:text_fit_type, 0)
       @text_alignment = options.fetch(:text_alignment, "center")
-      @text_first_line_head_indent    = options.fetch(:text_first_line_head_indent, nil)
-      @text_head_indent               = options.fetch(:text_head_indent, nil)
-      @text_tail_indent               = options.fetch(:text_tail_indent, nil)
+      @text_first_line_head_indent    = options.fetch(:text_first_line_head_indent, 0)
+      @text_head_indent               = options.fetch(:text_head_indent, 0)
+      @text_tail_indent               = options.fetch(:text_tail_indent, 0)
       @text_paragraph_spacing_before  = options[:text_paragraph_spacing_before] if options[:text_paragraph_spacing_before]
       @text_paragraph_spacing         = options[:text_paragraph_spacing]        if options[:text_paragraph_spacing]
       att_string=NSMutableAttributedString.alloc.initWithString(@text_string, attributes:make_atts)
@@ -113,8 +123,6 @@ module RLayout
     end
     
     def body_line_height_multiple(head_para_height)
-      puts __method__
-      puts "head_para_height:#{head_para_height}"
       # TODO
       # @style_service = @style_service ||= StyleService.new
       # body_height = @style_service.body_height
@@ -128,28 +136,31 @@ module RLayout
     
     
     def layout_lines(options={})
+      puts __method__
       if RUBY_ENGINE =='macruby'        
-                        
+        puts "@text_direction:#{@text_direction}"
         if @text_direction == 'left_to_right'
           text_storage = NSTextStorage.alloc.init
           text_storage.setAttributedString @att_string
-          ns_text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(text_container[2],text_container[3])) #[@width,1000]
+          ns_text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@text_container[2],500)) #[@width,1000]
           ns_layout_manager = NSLayoutManager.alloc.init        
           ns_layout_manager.addTextContainer(ns_text_container)
           text_storage.addLayoutManager(ns_layout_manager)
-          ns_layout_manager.glyphRangeForTextContainer(ns_text_container)
+          range = ns_layout_manager.glyphRangeForTextContainer(ns_text_container)
           used_size=ns_layout_manager.usedRectForTextContainer(ns_text_container).size
           @height = used_size.height + @text_line_spacing
-          
+          @text_container[3] = @height
           if @text_markup && @text_markup != 'p' #&& options[:aling_to_grid]
             # puts "Make the head paragraph height as body text multiples"
             # by adjusting @top_margin and @bottom_margin around it
-            body_multiple_height = body_line_height_multiple(@height)
-            @text_paragraph_spacing_before = (body_multiple_height - @height)/2
-            @text_paragraph_spacing        = @text_paragraph_spacing_before
+            # body_multiple_height = body_line_height_multiple(@height)
+            # @text_paragraph_spacing_before = (body_multiple_height - @height)/2
+            # @text_paragraph_spacing        = @text_paragraph_spacing_before
             # @top_margin = (body_multiple_height - @height)/2
             # @bottom_margin = @top_margin
-            @height = body_multiple_height
+            # puts "body_multiple_height:#{body_multiple_height}"
+            # @text_container[3] = body_multiple_height
+            # @height = body_multiple_height
           end
         else
           # for vertival text
@@ -279,8 +290,22 @@ module RLayout
         ns_layout_manager.addTextContainer(ns_text_container)
         text_storage.addLayoutManager(ns_layout_manager)
         glyphRange=ns_layout_manager.glyphRangeForTextContainer(ns_text_container) 
+        origin = r.origin
         origin.y = origin.y + @text_paragraph_spacing_before if @text_paragraph_spacing_before
-        ns_layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:r.origin)
+        if @text_markup == 'h6'
+          range=NSMakeRange(0,0)
+          # puts atts = text_storage.attributesAtIndex(0, effectiveRange:range) 
+          puts "++++++++ in draw_text"
+          puts "@text_direction:#{@text_direction}"
+          puts "@text_container:#{@text_container}"
+          puts "@text_size:#{@text_size}"
+          puts "@text_string:#{@text_string}"
+          puts "ns_text_container.containerSize.width:#{ns_text_container.containerSize.width}"
+          puts "ns_text_container.containerSize.height:#{ns_text_container.containerSize.height}"
+          puts "glyphRange.location:#{glyphRange.location}"
+          puts "glyphRange.length:#{glyphRange.length}"
+        end
+        ns_layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:origin)
       else
         puts "vertival"
         v_line_count = @graphic.width/(@text_size + @text_line_spacing)            

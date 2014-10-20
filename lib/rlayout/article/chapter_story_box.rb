@@ -77,6 +77,7 @@ module RLayout
       # end
 
       if options[:paragraphs]
+        puts "options[:paragraphs].length:#{options[:paragraphs].length}"
         layout_items(options[:paragraphs])
       end
 

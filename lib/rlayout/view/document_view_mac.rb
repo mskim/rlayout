@@ -4,9 +4,8 @@ class DocumentViewMac
   
   def initialize(document)
     @document   = document
-    @title  = @document.title
     @page_views = []
-    pages   = data[:pages]
+    pages   = @document.pages
     if pages
       pages.each do |page|
         @page_views << GraphicViewMac.from_graphic(page)

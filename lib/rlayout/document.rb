@@ -183,7 +183,7 @@ module RLayout
     
     def save_pdf(path)
       if RUBY_ENGINE == 'macruby'
-        @ns_view = DocumentViewMac.new(to_data)
+        @ns_view = DocumentViewMac.new(self)
         @page_view_count = @ns_view.save_pdf(path)
       end
     end

@@ -13,19 +13,19 @@ module RLayout
     def initialize(parent_graphic, options={})
       options[:text_size] = 8 unless options[:text_size]
       options[:text_font] = 'Helvetica' unless options[:text_size]
-      super
-      @text_string = "" if @text_string.nil?
-      if @parent_graphic.left_page?
-        @x      = @parent_graphic.left_margin
-        @y      = @parent_graphic.top_margin - 8  #TODO
-        @width  = 300
-        @text_alignment = 'left'
+      options[:text_string] = "" if options[:text_string].nil?
+      options[:y]       = 50 - 8  #TODO
+      options[:width]   = 300
+      options[:height]  = 20
+      if parent_graphic.left_page?
+        options[:x]      = parent_graphic.left_inset
+        options[:text_alignment] = 'left'
+        
       else
-        @width  = 300
-        @x      = @parent_graphic.width - @width - @parent_graphic.right_margin # @right_margin
-        @y      = @parent_graphic.top_margin - 8 #TODO
-        @text_alignment = 'right'
+        options[:x] = parent_graphic.width - options[:width] - parent_graphic.left_margin - parent_graphic.left_inset
+        options[:text_alignment] = 'right'
       end
+      super
       self
     end
   end
@@ -35,32 +35,29 @@ module RLayout
     attr_accessor :position                             # sides, middle
     attr_accessor :left_side_string, :right_side_string # what to display, 
     attr_accessor :post_string, :page_number
-    attr_accessor :pre_string, :post_string, :page_number
+    attr_accessor :pre_string, :post_string
     
     def initialize(parent_graphic, options={})
       options[:text_size] = 8 unless options[:text_size]
       options[:text_font] = 'Helvetica' unless options[:text_size]
-      super
-      @y = @parent_graphic.height - 50
-      @page_number = @parent_graphic.page_number
-      @pre_string  = options.fetch(:pre_string, "-")
-      @post_string = options.fetch(:post_string, "-")
-      @width  = 500
-      @height = 20
-      @text_string = "" if @text_string.nil?
-      if @parent_graphic.left_page?
-        @x      = @parent_graphic.left_margin
-        @width  = 300
-        @text_alignment = 'left'
-        @text_string = @page_number.to_s + " " + @text_string
-        
+      options[:y] = parent_graphic.height - 50
+      page_number = parent_graphic.page_number
+      pre_string  = options.fetch(:pre_string, "-")
+      post_string = options.fetch(:post_string, "-")
+      options[:width]  = 300
+      options[:height] = 20
+      options[:text_string] = "" if options[:text_string].nil?
+      if parent_graphic.left_page?
+        options[:x] = parent_graphic.left_inset + parent_graphic.left_margin
+        options[:text_alignment] = 'left'
+        options[:text_string] = page_number.to_s + " " + options[:text_string]
       else
-        @width  = 300
-        @x      = @parent_graphic.width - @width - @parent_graphic.right_margin # @right_margin
-        @text_alignment = 'right'
-        @text_string += " " + @page_number.to_s
-        
+        options[:x] = parent_graphic.width - options[:width] - parent_graphic.left_margin - parent_graphic.left_inset
+        options[:text_alignment] = 'right'
+        options[:text_string] += " " + page_number.to_s
       end
+      super
+      
       self
     end
     

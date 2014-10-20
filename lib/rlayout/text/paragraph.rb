@@ -65,19 +65,19 @@ FIT_STYLE_RUN   = 3
       @graphics.first.adjust_height
     end
     
-    def change_width_and_adjust_height(new_width, options={})
-      # puts "+++++++++ change_width_and_adjust_height of Paragraph"
-      # for heading paragrph, should set height as multiples of grid_line_height
-      @width = new_width
-      if options[:line_grid_height] 
-        #TODO
-        # if @line_height != options[:line_grid_height]
-        # @line_height = options[:line_grid_height]
-        # update token size
-      end
-      layout_lines
-    end
-    
+    # def change_width_and_adjust_height(new_width, options={})
+    #   # puts "+++++++++ change_width_and_adjust_height of Paragraph"
+    #   # for heading paragrph, should set height as multiples of grid_line_height
+    #   @width = new_width
+    #   if options[:line_grid_height] 
+    #     #TODO
+    #     # if @line_height != options[:line_grid_height]
+    #     # @line_height = options[:line_grid_height]
+    #     # update token size
+    #   end
+    #   layout_lines
+    # end
+    #     
     
     # def adjust_height
     #   text_size           = NSSize.new(@frame.size.width, 300)

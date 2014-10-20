@@ -44,9 +44,8 @@ CHAPTER_STYLES={
   "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
-  "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
-  "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
-  "footer"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
+  "header"  =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black'},
+  "footer"  =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black'},
   "page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
 }
 
