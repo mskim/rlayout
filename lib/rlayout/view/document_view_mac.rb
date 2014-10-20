@@ -1,15 +1,15 @@
 framework 'quartz'
 class DocumentViewMac
-  attr_accessor :title, :data, :page_views, :pdf_doc
+  attr_accessor :title, :document, :page_views, :pdf_doc
   
-  def initialize(data)
-    @data   = data
-    @title  = data.fetch(data[:title], "untitled")
+  def initialize(document)
+    @document   = document
+    @title  = @document.title
     @page_views = []
     pages   = data[:pages]
     if pages
-      pages.each do |page_data|
-        @page_views << GraphicViewMac.from_data(page_data)
+      pages.each do |page|
+        @page_views << GraphicViewMac.from_graphic(page)
       end
     end
     self

@@ -17,7 +17,7 @@ module RLayout
   class Graphic
     attr_accessor :parent_graphic, :klass, :tag, :ns_view, :svg_view
     attr_accessor :x, :y, :width, :height
-    attr_accessor :graphics
+    attr_accessor :graphics, :fixtures, :floats
     attr_accessor :fill_type, :fill_color, :fill_other_color
     attr_accessor :line_type, :line_color, :line_width, :line_dash
     attr_accessor :shape, :shape_bezier        
@@ -26,6 +26,7 @@ module RLayout
     attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand, :grid_rect
     attr_accessor :text_markup, :text_direction, :text_string, :text_color, :text_size, :text_line_spacing, :text_font
     attr_accessor :text_fit_type, :text_alignment, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
+    attr_accessor :text_layout_manager
     attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
     attr_accessor :non_overlapping_rect, :overlapping_rects
     
@@ -148,6 +149,10 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
       [@x,@y,@width,@height]
     end 
     
+    def text_rect
+      [@x + @left_margin + @left_inset , @y + @top_margin + @top_inset, @width - @left_margin - @left_inset - @right_margin - @right_inset, @height - @top_margin - @top_inset - @bottom_margin - @bottom_inset]
+    end
+    
     # non_overlapping_rect is a actual layout frame that is not overlapping with flaots
     def non_overlapping_frame
       return @non_overlapping_rect if @non_overlapping_rect
@@ -242,14 +247,221 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
       j += "\n"
     end
     
+    def drawRect(r)
+      puts "drawRec of Graphic @klass:#{@klass}"
+      draw_fill(r)
+      draw_line(r)
+      draw_text(r)
+      draw_image(r)
+    end
+    
     def save_pdf(path)
-      if RUBY_ENGINE == 'macruby'
-        @ns_view = GraphicViewMac.from_data(to_data)
+      if RUBY_ENGINE == 'macruby'        
+        @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path)
         #TODO
         # puts "DRb not found!!!!"
       end
     end
+    
+    
+    def bezierPathWithRect(r)
+      #TODO
+
+      case @shape
+      when 0   #{}"rectangle", '사각형'
+        path = NSBezierPath.bezierPathWithRect(r)
+      when 1    #{}"round_corner", '둥근사각형'
+        path=NSBezierPath.bezierPath
+        if r.size.width > r.size.height
+          smaller_side = r.size.height 
+        else
+          smaller_side = r.size.width 
+        end
+
+        if @corner_size == 0 # "small" || @corner_size == '소'
+          radious = smaller_side*0.1 
+        elsif @corner_size == 1 # "medium" || @corner_size == '중'
+          radious = smaller_side*0.2
+        elsif @corner_size == 2 #{}"large" || @corner_size == '대'
+          radious = smaller_side*0.3
+        else
+          radious = smaller_side*0.1 
+        end
+
+        if @inverted_corner
+          path = path.appendBezierPathWithRoundedRect(r, xRadius:radious ,yRadius:radious)
+        else
+          # do inverted corner
+          path = path.appendBezierPathWithRoundedRect(r, xRadius:radious ,yRadius:radious)
+        end
+      when 2 #{}"circle", '원'
+        path = NSBezierPath.bezierPathWithOvalInRect(r)
+      when 3 #{}"bloon"
+        # pointer_direction 0, 45 , 90, 135, 180 ....
+        path = NSBezierPath.bezierPathWithOvalInRect(r)
+      when 4 #{}"spike"
+        # density large, medium, small
+        path = NSBezierPath.bezierPathWithOvalInRect(r)
+      else
+        path = NSBezierPath.bezierPathWithRect(r)
+      end
+      path
+    end
+
+
+    # convert any color to NSColor
+    def self.convert_to_nscolor(color)
+      return self.color_from_string(color) if color.class == String
+      color
+      
+    end
+    
+    def convert_to_nscolor(color)
+      return color_from_string(color) if color.class == String
+      color
+    end
+
+    def self.color_from_name(name)
+      case name
+      when "black"
+        return NSColor.blackColor
+      when "blue"
+        return NSColor.blueColor
+      when "brown"
+        return NSColor.brownColor
+      when "clear"
+        return NSColor.clearColor
+      when "cyan"
+        return NSColor.cyanColor
+      when "dark_gray", "darkGray"
+        return NSColor.darkGrayColor
+      when "gray"
+        return NSColor.grayColor
+      when "green"
+        return NSColor.greenColor
+      when "light_gray", "lightGray"
+        return NSColor.lightGrayColor
+      when "magenta"
+        return NSColor.magentaColor
+      when "orange"
+        return NSColor.orangeColor
+      when "purple"
+        return NSColor.purpleColor
+      when "red"
+        return NSColor.redColor
+      when "white"
+        return NSColor.whiteColor
+      when "yellow"
+        return NSColor.yellowColor      
+      else
+        return NSColor.whiteColor      
+      end
+    end  
+    
+    
+    def color_from_name(name)
+      case name
+      when "black"
+        return NSColor.blackColor
+      when "blue"
+        return NSColor.blueColor
+      when "brown"
+        return NSColor.brownColor
+      when "clear"
+        return NSColor.clearColor
+      when "cyan"
+        return NSColor.cyanColor
+      when "dark_gray", "darkGray"
+        return NSColor.darkGrayColor
+      when "gray"
+        return NSColor.grayColor
+      when "green"
+        return NSColor.greenColor
+      when "light_gray", "lightGray"
+        return NSColor.lightGrayColor
+      when "magenta"
+        return NSColor.magentaColor
+      when "orange"
+        return NSColor.orangeColor
+      when "purple"
+        return NSColor.purpleColor
+      when "red"
+        return NSColor.redColor
+      when "white"
+        return NSColor.whiteColor
+      when "yellow"
+        return NSColor.yellowColor      
+      else
+        return NSColor.whiteColor      
+      end
+    end  
+    
+    def self.color_from_string(color_string) 
+      if color_string == nil
+        return NSColor.whiteColor
+      end
+
+      if color_string==""
+        return NSColor.whiteColor
+      end
+
+      if COLOR_NAMES.include?(color_string)
+        return self.color_from_name(color_string)
+      end
+      # TODO
+      # elsif color_string=~/^#   for hex color
+
+      color_array=color_string.split("=")
+      color_kind=color_array[0]
+      color_values=color_array[1].split(",")
+      if color_kind=~/RGB/
+          @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
+      elsif color_kind=~/CMYK/
+          @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
+      elsif color_kind=~/NSCalibratedWhiteColorSpace/
+          @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
+      elsif color_kind=~/NSCalibratedBlackColorSpace/
+          @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)      
+      else 
+          @color = GraphicRecord.color_from_name(color_string)    
+      end
+      @color
+    end 
+    
+
+    def color_from_string(color_string)    
+      if color_string == nil
+        return NSColor.whiteColor
+      end
+
+      if color_string==""
+        return NSColor.whiteColor
+      end
+
+      if COLOR_NAMES.include?(color_string)
+        return color_from_name(color_string)
+      end
+      # TODO
+      # elsif color_string=~/^#   for hex color
+
+      color_array=color_string.split("=")
+      color_kind=color_array[0]
+      color_values=color_array[1].split(",")
+      if color_kind=~/RGB/
+          @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
+      elsif color_kind=~/CMYK/
+          @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
+      elsif color_kind=~/NSCalibratedWhiteColorSpace/
+          @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
+      elsif color_kind=~/NSCalibratedBlackColorSpace/
+          @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)      
+      else 
+          @color = GraphicRecord.color_from_name(color_string)    
+      end
+      @color
+    end
+
   end
   
   class Text < Graphic

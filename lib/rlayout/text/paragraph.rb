@@ -51,6 +51,12 @@ FIT_STYLE_RUN   = 3
       self
     end
     
+    # split paragraph into two at y position
+    # apply widow_orphan rule
+    def split_paragraph_at(y)
+      
+    end
+    
     def overlapping_graphics
       []
     end

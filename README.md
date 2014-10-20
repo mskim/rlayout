@@ -1,3 +1,10 @@
+2014 10 19
+ 1. widow/orphan rule
+ 1. text_starts_at
+ 1. text_drop_cap_line_count, text_drop_cap_char_count
+ 1. text_tracking
+ 1. text_colors in hex/cmyk/rgb
+
 2014 10 18
  1. changes from previous RLayout/working
 	- No GraphicRecord, make them part of graphics, flatten it, except TextLayoutManger for text, replacement of TextRecord 

@@ -1,7 +1,6 @@
 module RLayout
   
   class Graphic
-    attr_accessor :atts_array 
     # There two of ways to save paragraph data.
     # 1. When entire Paragaph has uniform attrbutes, use atts hash.
     # 2. When paragaph has mixed attrbutes, keep them in atts_array
@@ -28,46 +27,17 @@ module RLayout
     # That is the reson why I am keeping attributes and string together in a single hash(atts).
     # Make it much easier to edit them.
     
-    def text_rect
-      text_container = [@x + @left_margin + @left_inset , @y + @top_margin + @top_inset, @width - @left_margin - @left_inset - @right_marigh - @right_inset, @height - @top_margin - @top_inset - @bottom_margin - @bottom_inset]
-    end
-    
     def init_text(options)
-      # create TextLayoutManager
-      # @text_layout_manager = TextLayoutManager.new(text_rect, optopns)
-      if options[:attrs_array]
-        @atts_array = options[:attrs_array]
-        layout_lines(:attrs_array=>options[:attrs_array])
-      elsif options[:text_string] || options[:text_size] #&& options[:text_string]!=""
-        @text_markup    = options.fetch(:text_markup, 'p')
-        @text_markup    = options.fetch(:markup, "p")
-        @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
-        @text_string    = options.fetch(:text_string, "")
-        @text_color     = options.fetch(:text_color, "black")
-        @text_font      = options.fetch(:text_font, "Times")
-        @text_size      = options.fetch(:text_size, 16)
-        @text_line_spacing= options.fetch(:text_line_spacing, @text_size*1.5)
-        @text_fit_type  = options.fetch(:text_fit_type, 0)
-        @text_alignment = options.fetch(:text_alignment, "center")
-        @text_first_line_head_indent    = options.fetch(:text_first_line_head_indent, nil)
-        @text_head_indent               = options.fetch(:text_head_indent, nil)
-        @text_tail_indent               = options.fetch(:text_tail_indent, nil)
-        
-        @text_paragraph_spacing_before  = options[:text_paragraph_spacing_before] if options[:text_paragraph_spacing_before]
-        @text_paragraph_spacing         = options[:text_paragraph_spacing]        if options[:text_paragraph_spacing]
-        @fill_color                     = options[:fill_color]                    if options[:fill_color]
-        layout_lines if @parent_graphics
-        
+      if options[:text_string] || options[:text_atts_array]
+        @text_layout_manager = TextLayoutManager.new(text_rect, options)
       end
     end
     
-    def text_defaults
-      {
-        
-      }
-      
+    def draw_text(r)
+      puts "draw_text of graphic"
+      @text_layout_manager.draw_text(r) if @text_layout_manager
     end
-
+    
     def change_width_and_adjust_height(new_width, options={})
       # for heading paragrph, should set height as multiples of grid_line_height
       @width = new_width

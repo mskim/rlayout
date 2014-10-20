@@ -17,13 +17,13 @@ module RLayout
       @text_string = "" if @text_string.nil?
       if @parent_graphic.left_page?
         @x      = @parent_graphic.left_margin
-        @y      = @parent_graphic.top_margin - @text_size  #TODO
+        @y      = @parent_graphic.top_margin - 8  #TODO
         @width  = 300
         @text_alignment = 'left'
       else
         @width  = 300
         @x      = @parent_graphic.width - @width - @parent_graphic.right_margin # @right_margin
-        @y      = @parent_graphic.top_margin - @text_size #TODO
+        @y      = @parent_graphic.top_margin - 8 #TODO
         @text_alignment = 'right'
       end
       self

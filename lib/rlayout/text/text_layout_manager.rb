@@ -1,59 +1,43 @@
-framework 'cocoa'
 
 module RLayout
   class TextLayoutManager
     attr_accessor :att_string, :text_container, :line_fragments, :token_list
     attr_accessor :current_token_index, :text_direction
+    
     attr_accessor :width, :height # TODO remove this use text_container
     def initialize(text_container, options={})
-      @att_string     = make_att_string(options)
-      @text_container = text_container
-      @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
-      @width          = @text_container[2]
-      @height         = @text_container[3]
-      # line_fragments  = []
-      # make_tokens
-      # layout_lines_custom
-      layout_lines
-      self
-    end
-        
-    def make_att_string(options)
-      #TODO
-      # implement text_fit_type
-      # atts[NSKernAttributeName] = @text_track           if @text_track
-      # implement inline element, italic, bold, underline, sub, super, emphasis(color)
-      if options[:attrs_array]
-        @atts_array = options[:attrs_array]
-        # layout_lines(:attrs_array=>options[:attrs_array])
-      elsif options[:text_string] || options[:text_size] #&& options[:text_string]!=""
-        @text_markup    = options.fetch(:text_markup, 'p')
-        @text_markup    = options.fetch(:markup, "p")
-        @text_string    = options.fetch(:text_string, "")
-        @text_color     = options.fetch(:text_color, "black")
-        @text_font      = options.fetch(:text_font, "Times")
-        @text_size      = options.fetch(:text_size, 16)
-        @text_line_spacing= options.fetch(:text_line_spacing, @text_size*1.5)
-        @text_fit_type  = options.fetch(:text_fit_type, 0)
-        @text_alignment = options.fetch(:text_alignment, "center")
-        @text_first_line_head_indent    = options.fetch(:text_first_line_head_indent, nil)
-        @text_head_indent               = options.fetch(:text_head_indent, nil)
-        @text_tail_indent               = options.fetch(:text_tail_indent, nil)
-        @text_paragraph_spacing_before  = options[:text_paragraph_spacing_before] if options[:text_paragraph_spacing_before]
-        @text_paragraph_spacing         = options[:text_paragraph_spacing]        if options[:text_paragraph_spacing]
+      if RUBY_ENGINE =='macruby'        
+        if options[:ns_text_container]
+          # this is second half of linked TextLayoutManager
+          @ns_text_container = options[:ns_text_container]
+          @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
+        else
+          @text_container = text_container
+          @att_string     = make_att_string_from_option(options)  
+          @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
+          @width          = @text_container[2]
+          @height         = @text_container[3]
+          # line_fragments  = []
+          # make_tokens
+          # layout_lines_custom
+          layout_lines
+        end
+      else
         
       end
-      
+      self
+    end
+    
+    
+    def make_atts
+      @text_color = Graphic.convert_to_nscolor(@text_color)    unless @text_color.class == NSColor  
       atts={}
-      
       atts[NSFontAttributeName]             = NSFont.fontWithName(@text_font, size:@text_size)
       atts[NSForegroundColorAttributeName]  = @text_color      
-
       if @guguri_width && @guguri_width < 0
         atts[NSStrokeWidthAttributeName] = atts_hash[:guguri_width] #0, -2,-5,-10 
         atts[NSStrokeColorAttributeName]=GraphicRecord.color_from_string(attributes[:guguri_color])
       end 
-      
       right_align   = NSMutableParagraphStyle.alloc.init.setAlignment(NSRightTextAlignment)          
       center_align  = NSMutableParagraphStyle.alloc.init.setAlignment(NSCenterTextAlignment)          
       justified_align  = NSMutableParagraphStyle.alloc.init.setAlignment(NSJustifiedTextAlignment)          
@@ -71,7 +55,46 @@ module RLayout
       newParagraphStyle.setHeadIndent(@text_head_indent) if @text_head_indent
       newParagraphStyle.setTailIndent(@text_tail_indent) if @text_tail_indent
       atts[NSParagraphStyleAttributeName] = newParagraphStyle         
-      att_string=NSMutableAttributedString.alloc.initWithString(@text_string, attributes:atts)
+      atts
+    end
+    
+    def make_att_string_from_option(options)
+      if options[:atts_array]
+        make_att_string_from_atts_array(options[:atts_array])
+      else
+        make_att_string(options)
+      end
+    end
+    
+    def make_att_string_from_atts_array(atts_array)
+      att_string = NSMutableAttributedString.alloc.init
+      atts_array.each do |atts|
+        att_string.appendAttributedString(att_string(atts))
+      end
+      att_string
+    end
+    
+    
+    def make_att_string(options={})
+      #TODO
+      # implement text_fit_type
+      # atts[NSKernAttributeName] = @text_track           if @text_track
+      # implement inline element, italic, bold, underline, sub, super, emphasis(color)        
+      @text_markup    = options.fetch(:text_markup, 'p')
+      @text_markup    = options.fetch(:markup, "p")
+      @text_string    = options.fetch(:text_string, "")
+      @text_color     = options.fetch(:text_color, "black")
+      @text_font      = options.fetch(:text_font, "Times")
+      @text_size      = options.fetch(:text_size, 16)
+      @text_line_spacing= options.fetch(:text_line_spacing, @text_size*1.5)
+      @text_fit_type  = options.fetch(:text_fit_type, 0)
+      @text_alignment = options.fetch(:text_alignment, "center")
+      @text_first_line_head_indent    = options.fetch(:text_first_line_head_indent, nil)
+      @text_head_indent               = options.fetch(:text_head_indent, nil)
+      @text_tail_indent               = options.fetch(:text_tail_indent, nil)
+      @text_paragraph_spacing_before  = options[:text_paragraph_spacing_before] if options[:text_paragraph_spacing_before]
+      @text_paragraph_spacing         = options[:text_paragraph_spacing]        if options[:text_paragraph_spacing]
+      att_string=NSMutableAttributedString.alloc.initWithString(@text_string, attributes:make_atts)
       att_string
     end
     
@@ -80,10 +103,10 @@ module RLayout
       starting = 0
       # def initialize(att_string, start, length, text_direction)
       @token_list = []
-      @att_string.string.split(" ").collect do |token_string|
-        @token_list << TextToken.new(@att_string, starting, token_string.length, @text_direction, 'text_kind')
+      @text_storage.string.split(" ").collect do |token_string|
+        @token_list << TextToken.new(@text_storage, starting, token_string.length, @text_direction, 'text_kind')
         starting += token_string.length
-        @token_list << TextToken.new(@att_string, starting, 1, @text_direction, 'space_kind')
+        @token_list << TextToken.new(@text_storage, starting, 1, @text_direction, 'space_kind')
         starting += 1
       end
       @token_list.last.token_type = 'end_of_para'
@@ -106,25 +129,16 @@ module RLayout
     
     def layout_lines(options={})
       if RUBY_ENGINE =='macruby'        
-        text_storage  = NSTextStorage.alloc.init
-        
-        if options[:attrs_array]
-          # text_storage = atts_array_to_att_string(options[:attrs_array])
-          text_storage.setAttributedString(@att_string)
-        else
-          # text_storage  = NSTextStorage.alloc.initWithString(@text_string, attributes:atts)
-          text_storage.setAttributedString(@att_string)
-          
-        end
-                
+                        
         if @text_direction == 'left_to_right'
-          text_container = NSTextContainer.alloc.initWithContainerSize([@width,1000])
-          layout_manager = NSLayoutManager.alloc.init
-          layout_manager.addTextContainer(text_container)
-          text_storage.addLayoutManager(layout_manager)
-          text_container.setLineFragmentPadding(0.0)
-          layout_manager.glyphRangeForTextContainer(text_container)
-          used_size=layout_manager.usedRectForTextContainer(text_container).size
+          text_storage = NSTextStorage.alloc.init
+          text_storage.setAttributedString @att_string
+          ns_text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(text_container[2],text_container[3])) #[@width,1000]
+          ns_layout_manager = NSLayoutManager.alloc.init        
+          ns_layout_manager.addTextContainer(ns_text_container)
+          text_storage.addLayoutManager(ns_layout_manager)
+          ns_layout_manager.glyphRangeForTextContainer(ns_text_container)
+          used_size=ns_layout_manager.usedRectForTextContainer(ns_text_container).size
           @height = used_size.height + @text_line_spacing
           
           if @text_markup && @text_markup != 'p' #&& options[:aling_to_grid]
@@ -163,12 +177,12 @@ module RLayout
             x -= @text_size + @text_line_spacing
           end
           layout_manager = NSLayoutManager.alloc.init        
-          text_storage.addLayoutManager(@layout_manager)
+          text_storage.addLayoutManager(@ns_layout_manager)
           @vertical_lines.each do |v_line|
-            @text_container = NSTextContainer.alloc.initWithContainerSize(v_line.size)
-            @text_container.setLineFragmentPadding(0.0)
-            @layout_manager.addTextContainer(@text_container)
-            glyphRange=@layout_manager.glyphRangeForTextContainer(@text_container) 
+            @@ns_text_container = NSTextContainer.alloc.initWithContainerSize(v_line.size)
+            @@ns_text_container.setLineFragmentPadding(0.0)
+            @ns_layout_manager.addTextContainer(@ns_text_container)
+            glyphRange=@ns_layout_manager.glyphRangeForTextContainer(@ns_text_container) 
             # if layout is done  
             # @height = body_multiple_height
             # origin = v_line.origin
@@ -213,9 +227,87 @@ module RLayout
       
     end
     
-    def draw_text(options={})
-      
+    def draw_text(r) 
+      # text_direction = @graphic.text_layout_manager.text_direction
+      # text_container = @graphic.text_layout_manager.text_container
+      return if @att_string.string == ""
+      # atts1 = {
+      #   NSFontAttributeName => NSFont.fontWithName('Helvetica', size:36.0),
+      # }
+      # str = "This is plane text for attstring"
+      # attString1 = NSAttributedString.alloc.initWithString str, attributes:atts1
+      # # attString1.drawAtPoint .origin
+      # attString1.drawInRect(r)
+      # context =NSGraphicsContext.currentContext.graphicsPort
+      # CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+      # # CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
+      # CGContextSetAllowsFontSmoothing(context, true);
+      # CGContextSetShouldSmoothFonts(context, true);
+      # framesetter = CTFramesetterCreateWithAttributedString(att_string);
+      # path = CGPathCreateMutable()
+      # bounds = CGRectMake(r.origin.x, r.origin.y, r.size.width, r.size.height)
+      # CGPathAddRect(path, nil, bounds)
+      # frame_attributes = {}
+      # frame_attributes = NSDictionary.dictionaryWithObject(NSNumber.numberWithInt(1), forKey:"kCTFrameProgressionAttributeName")
+      # # frame_attributes[kCTFrameProgressionAttributeName] = 1
+      # frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, nil)
+
+      # lines = CTFrameGetLines(frame)
+      # y = @text_size
+      # line_height = @text_size + @text_line_spacing
+      # puts "r.size.height:#{bounds.size.height}"
+      # lines.each do |line|
+      #   CGContextSetTextPosition(context, 0, y)
+      #   CTLineDraw(line, context)
+      #   y += line_height
+      # end
+      # origins = Pointer.new('f')
+      # 
+      # CTFrameGetLineOrigins(frame, CFRangeMake(0,total), origins)
+      # lines.each do |line|
+      #   puts line
+      # end
+
+      # CTFrameDraw(frame, context)
+      #     
+      #     
+      if @text_direction == 'left_to_right'
+        text_storage = NSTextStorage.alloc.init
+        text_storage.setAttributedString @att_string
+        ns_text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@text_container[2],@text_container[3])) #[@width,1000]
+        ns_layout_manager = NSLayoutManager.alloc.init        
+        ns_layout_manager.addTextContainer(ns_text_container)
+        text_storage.addLayoutManager(ns_layout_manager)
+        glyphRange=ns_layout_manager.glyphRangeForTextContainer(ns_text_container) 
+        origin.y = origin.y + @text_paragraph_spacing_before if @text_paragraph_spacing_before
+        ns_layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:r.origin)
+      else
+        puts "vertival"
+        v_line_count = @graphic.width/(@text_size + @text_line_spacing)            
+        y = @graphic.top_margin + @graphic.top_inset
+        width = @text_size*0.7
+        x = @graphic.width - width - @graphic.right_inset - @graphic.right_margin
+        height = @graphic.height  - @graphic.top_margin - @graphic.top_inset - @graphic.bottom_margin - @graphic.bottom_inset
+        @vertical_lines = []
+
+        v_line_count.to_i.times do
+          @vertical_lines << NSMakeRect(x,y,width,height)
+          x -= @text_size + @text_line_spacing
+        end
+
+        @vertical_lines.each do |v_line|
+          @ns_text_container = NSTextContainer.alloc.initWithContainerSize(v_line.size)
+          @ns_text_container.setLineFragmentPadding(0.0)
+          @ns_layout_manager.addTextContainer(@ns_text_container)
+          glyphRange=@ns_layout_manager.glyphRangeForTextContainer(@ns_text_container) 
+          origin = v_line.origin
+          origin.y = origin.y
+          @ns_layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:v_line.origin)
+        end
+      end
     end
+
+
   end
   
   class TextLine
@@ -294,30 +386,3 @@ module RLayout
   
 end
 
-
-require 'minitest/autorun'
-include RLayout
-
-describe 'create TextLayoutManager' do
-  before do
-    # @att_string = {:fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>200, :text_alignment=>'justified', :text_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
-    options = {}
-    options[:text_string]     = "This is some sample string."
-    options[:text_direction]     = "left_to_right"
-    @text_container = [0,0,300,200]
-    @tlm = TextLayoutManager.new(@text_container, options)
-  end
-  
-  it 'should create TextLayoutManager' do
-    @tlm.must_be_kind_of TextLayoutManager
-  end
-  
-  # it 'should create TextTokens' do
-  #   @tlm.token_list.must_be_kind_of Array
-  #   @tlm.token_list.length.must_equal 10
-  #   @tlm.token_list.each do |token|
-  #     puts token.inspect
-  #   end
-  # end
-  
-end
