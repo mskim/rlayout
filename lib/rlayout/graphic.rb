@@ -153,6 +153,12 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
       [@x + @left_inset , @y + @top_inset, @width - @left_inset - @right_inset, @height - @top_inset - @bottom_inset]
     end
     
+    # when text_rect is changed, update frame size considering insets
+    def adjust_size_with_text_rect_change(text_rect)
+      @width  = text_rect.width + @left_inset + @right_inset
+      @height = text_rect.height + @top_inset + @bottom_inset      
+    end
+    
     # non_overlapping_rect is a actual layout frame that is not overlapping with flaots
     def non_overlapping_frame
       return @non_overlapping_rect if @non_overlapping_rect
@@ -172,7 +178,7 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
       @width = frame[2]
       @height = frame[3]
       if @text_layout_manager
-        @text_layout_manager.set_frame(frame)
+        @text_layout_manager.set_frame
       end
     end
     

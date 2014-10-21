@@ -11,12 +11,12 @@
 #  StoryBox adds concept of "float" to the ObjectBox
 #  
 #  Float
-#  Floats sit layer on top of the base layer.
+#  Floats sit in the layer on top of the base layer.
 #  Float are Heading, Image, quote_box and side_box.
 #  StoryBox has instance variable called "@floats", which keeps them as list.
 #  Floats push out text contents underneath them.
-#  Floats can also be set not to push out, push out as Share or Rectangle.
-#  Floats force each columns to generates modified frames 
+#  Floats can also be set not to push out, push out has Shapes, Rectangle, Circle ect...
+#  Floats force each columns to generate modified frames 
 #  called "non_overlapping_frame", and column layout is done using non_overlapping_frame
 #  So, the text content results as pushed out .
 #  
@@ -26,8 +26,9 @@
 #  and the other way is to pass the image info in heading info hash.
 #  For the first case, image will be inserted as flowing paraggraph image, with column width and proportional image height.
 #  And the second way is to place images as floats.
-#  We have more control using them as floats, variout image posiion and size can be applied.
+#  We have more control using them as floats, various image posiion and size can be applied using images as floats.
 #  "size: SMALL" "position: TOP_LEFT"
+
 #  quote_box & side_box 
 #  quote_box & side_boxes are handled similar to float image.
 # 
@@ -37,8 +38,8 @@
 #
 #  Linked Story
 #  Story can overflow from one StoryBox and linked to the next one.
-#  Story object is kept in the StoryBox's parent.
-#  First StoryBox's parent object is reaponsiable for saving and reading Story.
+#  Story object manager is kept in the StoryBox's parent.
+#  Story object manager is reaponsiable for saving and reading Story.
 # 
 #  Laying out Story ?? this might change
 #  Story has  "current_item_index" variable, 
@@ -62,7 +63,7 @@ module RLayout
     end
     
     def layout_story(options={})
-      # for chapter_story_box, heading is placed as graphis by page, not as float
+      # for chapter_story_box, heading is placed as graphic by page, not as float
       # so, no need to warry about heading, heading doen't get passed to story_box
       # if options[:heading]
       #   if options[:heading][:column_count]
@@ -77,7 +78,6 @@ module RLayout
       # end
 
       if options[:paragraphs]
-        puts "options[:paragraphs].length:#{options[:paragraphs].length}"
         layout_items(options[:paragraphs])
       end
 

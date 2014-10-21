@@ -28,14 +28,14 @@ module RLayout
       self
     end
     
-    def set_frame(new_frame)
-      @text_container = new_frame
-      # layout_lines
+    def set_frame
+      @text_container = @owner_graphic.text_rect
+      layout_lines
     end
     
     def change_width_and_adjust_height(new_width, options={})
       @text_container[2] = new_width
-      # layout_lines
+      layout_lines
       # TODO change owner_graphic height
     end
     
@@ -136,10 +136,8 @@ module RLayout
     
     
     def layout_lines(options={})
-      puts __method__
       if RUBY_ENGINE =='macruby'        
-        puts "@text_direction:#{@text_direction}"
-        if @text_direction == 'left_to_right'
+        # if @text_direction == 'left_to_right'
           text_storage = NSTextStorage.alloc.init
           text_storage.setAttributedString @att_string
           ns_text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@text_container[2],500)) #[@width,1000]
@@ -148,10 +146,15 @@ module RLayout
           text_storage.addLayoutManager(ns_layout_manager)
           range = ns_layout_manager.glyphRangeForTextContainer(ns_text_container)
           used_size=ns_layout_manager.usedRectForTextContainer(ns_text_container).size
-          @height = used_size.height + @text_line_spacing
-          @text_container[3] = @height
-          if @text_markup && @text_markup != 'p' #&& options[:aling_to_grid]
-            # puts "Make the head paragraph height as body text multiples"
+          # adjust owner_graphics size
+          # TODO if fit_mode is fit_box, reduce text_size to fit the text
+          # owner_graphic.set_text_rect(used_size.height + @text_line_spacing)
+          used_size.height += @text_line_spacing
+          owner_graphic.adjust_size_with_text_rect_change(used_size)
+          @text_container[3] = used_size.height 
+          if @text_markup && (@text_markup == 'h5' || @text_markup == 'h6') #&& options[:aling_to_grid]
+            puts "we have running head ...."
+            # Make the head paragraph height as body text multiples"
             # by adjusting @top_margin and @bottom_margin around it
             # body_multiple_height = body_line_height_multiple(@height)
             # @text_paragraph_spacing_before = (body_multiple_height - @height)/2
@@ -162,47 +165,48 @@ module RLayout
             # @text_container[3] = body_multiple_height
             # @height = body_multiple_height
           end
-        else
-          # for vertival text
-          # TODO using NSASTysetter sub class
-          #  1. rotate glyphs 90 to left, except English and numbers
-          #  1. rotate line 90 to right
+        # end
+        # else
+        #   # for vertival text
+        #   # TODO using NSASTysetter sub class
+        #   #  1. rotate glyphs 90 to left, except English and numbers
+        #   #  1. rotate line 90 to right
+        #   
+        #   # NSLineBreakByCharWrapping
+        #   
+        #   # issues
+        #   #  1. line height control
+        #   #  1. horozontal alignment for non-square English, and commas.
+        #   #  1. English string that rotates
+        #   #  1. Two or more digit Numbers
+        #   #  1. Commas, etc....
+        #    
+        #   v_line_count = @width/(@text_size + @text_line_spacing)
+        #   y = @top_margin + @top_inset
+        #   width = @text_size*0.7
+        #   x = @width - width
+        #   heigth = @height
+        #   @vertical_lines = []
+        #   v_line_count.to_i.times do
+        #     @vertical_lines << NSMakeRect(x,y,width,height)
+        #     x -= @text_size + @text_line_spacing
+        #   end
+        #   layout_manager = NSLayoutManager.alloc.init        
+        #   text_storage.addLayoutManager(@ns_layout_manager)
+        #   @vertical_lines.each do |v_line|
+        #     @@ns_text_container = NSTextContainer.alloc.initWithContainerSize(v_line.size)
+        #     @@ns_text_container.setLineFragmentPadding(0.0)
+        #     @ns_layout_manager.addTextContainer(@ns_text_container)
+        #     glyphRange=@ns_layout_manager.glyphRangeForTextContainer(@ns_text_container) 
+        #     # if layout is done  
+        #     # @height = body_multiple_height
+        #     # origin = v_line.origin
+        #     # origin.y = origin.y
+        #     # @layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:v_line.origin)
+        #   end
+        #   
           
-          # NSLineBreakByCharWrapping
-          
-          # issues
-          #  1. line height control
-          #  1. horozontal alignment for non-square English, and commas.
-          #  1. English string that rotates
-          #  1. Two or more digit Numbers
-          #  1. Commas, etc....
-           
-          v_line_count = @width/(@text_size + @text_line_spacing)
-          y = @top_margin + @top_inset
-          width = @text_size*0.7
-          x = @width - width
-          heigth = @height
-          @vertical_lines = []
-          v_line_count.to_i.times do
-            @vertical_lines << NSMakeRect(x,y,width,height)
-            x -= @text_size + @text_line_spacing
-          end
-          layout_manager = NSLayoutManager.alloc.init        
-          text_storage.addLayoutManager(@ns_layout_manager)
-          @vertical_lines.each do |v_line|
-            @@ns_text_container = NSTextContainer.alloc.initWithContainerSize(v_line.size)
-            @@ns_text_container.setLineFragmentPadding(0.0)
-            @ns_layout_manager.addTextContainer(@ns_text_container)
-            glyphRange=@ns_layout_manager.glyphRangeForTextContainer(@ns_text_container) 
-            # if layout is done  
-            # @height = body_multiple_height
-            # origin = v_line.origin
-            # origin.y = origin.y
-            # @layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:v_line.origin)
-          end
-          
-          
-        end
+        # end
       else
         # TODO
         # for non -macruby env
@@ -238,50 +242,13 @@ module RLayout
       
     end
     
+    def text_rect
+      @owner_graphic.text_rect
+    end
+    
     def draw_text(r) 
-      # text_direction = @graphic.text_layout_manager.text_direction
-      # text_container = @graphic.text_layout_manager.text_container
       return if @att_string.string == ""
-      # atts1 = {
-      #   NSFontAttributeName => NSFont.fontWithName('Helvetica', size:36.0),
-      # }
-      # str = "This is plane text for attstring"
-      # attString1 = NSAttributedString.alloc.initWithString str, attributes:atts1
-      # # attString1.drawAtPoint .origin
-      # attString1.drawInRect(r)
-      # context =NSGraphicsContext.currentContext.graphicsPort
-      # CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-      # # CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
-      # CGContextSetAllowsFontSmoothing(context, true);
-      # CGContextSetShouldSmoothFonts(context, true);
-      # framesetter = CTFramesetterCreateWithAttributedString(att_string);
-      # path = CGPathCreateMutable()
-      # bounds = CGRectMake(r.origin.x, r.origin.y, r.size.width, r.size.height)
-      # CGPathAddRect(path, nil, bounds)
-      # frame_attributes = {}
-      # frame_attributes = NSDictionary.dictionaryWithObject(NSNumber.numberWithInt(1), forKey:"kCTFrameProgressionAttributeName")
-      # # frame_attributes[kCTFrameProgressionAttributeName] = 1
-      # frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, nil)
 
-      # lines = CTFrameGetLines(frame)
-      # y = @text_size
-      # line_height = @text_size + @text_line_spacing
-      # puts "r.size.height:#{bounds.size.height}"
-      # lines.each do |line|
-      #   CGContextSetTextPosition(context, 0, y)
-      #   CTLineDraw(line, context)
-      #   y += line_height
-      # end
-      # origins = Pointer.new('f')
-      # 
-      # CTFrameGetLineOrigins(frame, CFRangeMake(0,total), origins)
-      # lines.each do |line|
-      #   puts line
-      # end
-
-      # CTFrameDraw(frame, context)
-      #     
-      #     
       if @text_direction == 'left_to_right'
         text_storage = NSTextStorage.alloc.init
         text_storage.setAttributedString @att_string
@@ -295,17 +262,51 @@ module RLayout
         if @text_markup == 'h6'
           range=NSMakeRange(0,0)
           # puts atts = text_storage.attributesAtIndex(0, effectiveRange:range) 
-          puts "++++++++ in draw_text"
-          puts "@text_direction:#{@text_direction}"
-          puts "@text_container:#{@text_container}"
-          puts "@text_size:#{@text_size}"
-          puts "@text_string:#{@text_string}"
-          puts "ns_text_container.containerSize.width:#{ns_text_container.containerSize.width}"
-          puts "ns_text_container.containerSize.height:#{ns_text_container.containerSize.height}"
-          puts "glyphRange.location:#{glyphRange.location}"
-          puts "glyphRange.length:#{glyphRange.length}"
         end
         ns_layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:origin)
+        
+        # atts1 = {
+        #   NSFontAttributeName => NSFont.fontWithName('Helvetica', size:36.0),
+        # }
+        # str = "This is plane text for attstring"
+        # attString1 = NSAttributedString.alloc.initWithString str, attributes:atts1
+        # # attString1.drawAtPoint .origin
+        # attString1.drawInRect(r)
+        # context =NSGraphicsContext.currentContext.graphicsPort
+        # CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+        # # CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
+        # CGContextSetAllowsFontSmoothing(context, true);
+        # CGContextSetShouldSmoothFonts(context, true);
+        # framesetter = CTFramesetterCreateWithAttributedString(att_string);
+        # path = CGPathCreateMutable()
+        # bounds = CGRectMake(r.origin.x, r.origin.y, r.size.width, r.size.height)
+        # CGPathAddRect(path, nil, bounds)
+        # frame_attributes = {}
+        # frame_attributes = NSDictionary.dictionaryWithObject(NSNumber.numberWithInt(1), forKey:"kCTFrameProgressionAttributeName")
+        # # frame_attributes[kCTFrameProgressionAttributeName] = 1
+        # frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, nil)
+
+        # lines = CTFrameGetLines(frame)
+        # y = @text_size
+        # line_height = @text_size + @text_line_spacing
+        # puts "r.size.height:#{bounds.size.height}"
+        # lines.each do |line|
+        #   CGContextSetTextPosition(context, 0, y)
+        #   CTLineDraw(line, context)
+        #   y += line_height
+        # end
+        # origins = Pointer.new('f')
+        # 
+        # CTFrameGetLineOrigins(frame, CFRangeMake(0,total), origins)
+        # lines.each do |line|
+        #   puts line
+        # end
+
+        # CTFrameDraw(frame, context)
+        #     
+        #
+      
+      
       else
         puts "vertival"
         v_line_count = @graphic.width/(@text_size + @text_line_spacing)            

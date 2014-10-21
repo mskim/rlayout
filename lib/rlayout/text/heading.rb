@@ -51,7 +51,6 @@ module RLayout
       else
         @width = 600
       end
-      
       @top_inset      = 5
       @bottom_inset   = 5
       @left_inset     = 10
@@ -192,6 +191,7 @@ module RLayout
       @title_object.layout_expand  = [:width]
       @title_object.layout_length  = atts[:text_size]
       @title_object.height  = atts[:text_size]*1.2
+      @title_object.puts_frame
       @title_object
     end
     
