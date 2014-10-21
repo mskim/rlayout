@@ -36,9 +36,12 @@ module RLayout
         clip_path: nil,
         rotation: 0
       }
-
     end
-
+    
+    def image_to_hash
+      h = {}
+    end
+    
     def draw_image(rect)      
       return unless @image_object
 

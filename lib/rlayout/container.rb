@@ -14,7 +14,7 @@ module RLayout
       super
       @klass            = "Container"
       @graphics         = options.fetch(:graphics, []) 
-      layout_defaults_hash = layout_defaults
+      layout_defaults_hash = auto_layout_defaults
       @layout_mode      = options.fetch(:layout_mode, layout_defaults_hash[:layout_mode])
       @layout_direction = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
       @layout_space     = options.fetch(:layout_space, layout_defaults_hash[:layout_space])       
@@ -54,7 +54,7 @@ module RLayout
       self
     end
     
-    def layout_defaults
+    def auto_layout_defaults
       h = {}
       h[:layout_mode]       = "auto_layout"
       h[:layout_direction]  = "vertical"
@@ -108,23 +108,46 @@ module RLayout
       return @sum 
     end
     
-    def to_hash
-      h = {}
-      instance_variables.each{|a|
-        s = a.to_s
-        next if s=="@parent_graphic"
-        next if s=="@graphics"
-        n = s[1..s.size] # get rid of @
-        v = instance_variable_get a
-        h[n.to_sym] = v if !v.nil? && v !=defaults[n.to_sym] && v !=layout_defaults[n.to_sym]
-      }
+    def to_hash      
+      h=super
       if @graphics.length > 0
-        h[:graphics]= @graphics.map do |child|
-          child.to_hash
+        h[:graphics]=[]
+        @graphics.each do |child|
+          h[:graphics] << child.to_hash
         end
       end
+      if @floats && @floats.length > 0
+        h[:floats]=[]
+        @floats.each do |float|
+          h[:floats] << float.to_hash
+        end
+      end
+      
+      # if @fixtures && @fixtures.length > 0
+      #   h[:fixtures]=[]
+      #   @fixtures.each do |fixture|
+      #     h[:fixtures] << fixture.to_hash
+      #   end
+      # end
       h
     end
+    # def to_hash
+    #   h = {}
+    #   instance_variables.each{|a|
+    #     s = a.to_s
+    #     next if s=="@parent_graphic"
+    #     next if s=="@graphics"
+    #     n = s[1..s.size] # get rid of @
+    #     v = instance_variable_get a
+    #     h[n.to_sym] = v if !v.nil? && v !=defaults[n.to_sym] && v !=auto_layout_defaults[n.to_sym]
+    #   }
+    #   if @graphics.length > 0
+    #     h[:graphics]= @graphics.map do |child|
+    #       child.to_hash
+    #     end
+    #   end
+    #   h
+    # end
     
     def to_data      
       h = {}

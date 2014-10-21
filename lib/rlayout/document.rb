@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'yaml'
+
 SIZES = { "4A0" => [4767.87, 6740.79],
           "2A0" => [3370.39, 4767.87],
            "A0" => [2383.94, 3370.39],
@@ -157,6 +159,20 @@ module RLayout
       h
     end
     
+    def to_hash
+      h = {}
+      h[:title]   = @title
+      h[:width]   = @width
+      h[:height]  = @height
+      if @pages.length > 0
+        h[:pages]=[]
+        @pages.each do |page|
+          h[:pages] << page.to_hash
+        end
+      end
+      h
+    end
+    
     def to_svg
       # TODO
       # SVG 1.1 does not support multipe page svg, SVG 1.2 has <pageSet> for multiple page support
@@ -169,6 +185,10 @@ module RLayout
       #   s += page.save_svg(page)
       # end
       # s += "</svg>"      
+    end
+    
+    def save_yml(path)
+      File.open(path, 'w'){|f| f.write to_hash.to_yaml}
     end
     
     def save_svg(path)

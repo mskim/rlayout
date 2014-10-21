@@ -6,6 +6,7 @@ require 'json'
 
 #  line_type=
 require File.dirname(__FILE__) + "/graphic/layout"
+require File.dirname(__FILE__) + "/graphic/grid"
 require File.dirname(__FILE__) + "/graphic/fill"
 require File.dirname(__FILE__) + "/graphic/line"
 require File.dirname(__FILE__) + "/graphic/image"
@@ -59,11 +60,12 @@ module RLayout
       @auto_save        = options[:auto_save]
       
       init_layout(options)
+      init_grid(options)
       init_fill(options)
       init_line(options)
       init_text(options)
       init_image(options)
-      # init_float(options) # for ObjectBox where float makes sense      
+      init_float(options) # for ObjectBox where float makes sense      
       self
     end
 
@@ -74,23 +76,50 @@ module RLayout
         y:            0,
         width:        100,
         height:       100,
-        left_margin:  0,
-        top_margin:   0,
-        right_margin: 0,
-        bottom_margin: 0,
-        left_inset:   0,
-        top_inset:    0,
-        right_inset:  0,
-        bottom_inset: 0,
-        layout_direction: "vertical",
-        layout_member: true,
-        layout_expand: [:width, :height], # auto_layout expand 
-        layout_length:  1,  
+
         grid_rect:   [0,0,1,1], 
         shape:       0,          
       }
     end
-       
+    
+    
+    def to_hash
+      defaults_hash = defaults
+      h = {}
+      h[:klass]   = @klass
+      h[:x]       = @x        if @x != defaults_hash[:x]
+      h[:y]       = @y        if @x != defaults_hash[:y]
+      h[:width]   = @width    if @x != defaults_hash[:width]
+      h[:height]  = @height   if @x != defaults_hash[:height]
+      h.merge(layout_to_hash)
+      h.merge(grid_to_hash)
+      h.merge(fill_to_hash)
+      h.merge(line_to_hash)
+      h.merge(text_to_hash)
+      h.merge(image_to_hash)
+      # h[:grid_rect]  = @grid_rect   if @grid_rect != defaults_hash[:grid_rect]
+      # h[:shape]  = @shape   if @shape != defaults_hash[:shape]
+      h
+    end
+    
+    # difference between to_hash and to_data:
+    # to_hash does not save values, if they are equal to default
+    # to_data save values, even if they are equal to default
+    # to_data is uesed to send the data to view for drawing 
+    
+    def to_data  
+      h = {}
+      instance_variables.each do |a|
+        next if a == @parent_graphic
+        next if a == @floats
+        next if a == @style_service
+        next if a == @graphics  
+        v = instance_variable_get a
+        s = a.to_s.sub("@","")
+        h[s.to_sym] = v  if !v.nil?
+      end
+      h
+    end
 COLOR_NAMES =%w[black blue brown clear cyan darkGray gray green lightGray magenta orange red white yellow white]
 KLASS_NAMES =%w[Rectangle Circle RoundRect Text Image]
 TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout", "PageScript"]
@@ -208,39 +237,7 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
       JSON.pretty_generate(to_hash)
     end
     
-    
-    def to_hash
-      h = {}
-      instance_variables.each do |a|
-        next if a == @parent_graphic
-        next if a == @floats
-        next if a == @style_service
-        next if a == @graphics        
-        v = instance_variable_get a
-        s = a.to_s.sub("@","")        
-        h[s.to_sym] = v  if defaults[a] != v && !defaults[a].nil?
-      end
-      h
-    end
-    
-    # difference between to_hash and to_data:
-    # to_hash does not save values, if they are equal to default
-    # to_data save values, even if they are equal to default
-    # to_data is uesed to send the data to view for drawing 
-    
-    def to_data  
-      h = {}
-      instance_variables.each do |a|
-        next if a == @parent_graphic
-        next if a == @floats
-        next if a == @style_service
-        next if a == @graphics  
-        v = instance_variable_get a
-        s = a.to_s.sub("@","")
-        h[s.to_sym] = v  if !v.nil?
-      end
-      h
-    end
+
     
     #/0/0/1/2/0
     def ancestry

@@ -11,12 +11,20 @@ module RLayout
     
     def fill_defaults
       h = {}
-      h[:fill_type] = 1
-      h[:fill_color] = "white"
-      h[:fill_other_color] = "gray"
+      h[:fill_type]         = 1
+      h[:fill_color]        = "white"
+      h[:fill_other_color]  = "gray"
       h
     end
-
+    
+    def fill_to_hash
+      h = {}
+      h[:fill_type]         = @fill_type        if @fill_type && @fill_type != fill_defaults[:fill_type]
+      h[:fill_color]        = @fill_color       if @fill_color && @fill_color != fill_defaults[:fill_color]
+      h[:fill_other_color]  = @fill_other_color if @fill_other_color && @fill_other_color != fill_defaults[:fill_other_color]
+      h
+    end
+    
     def draw_fill(r)
       if @fill_type == 0   #clearColor
         path=bezierPathWithRect(r)

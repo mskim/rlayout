@@ -33,6 +33,16 @@ module RLayout
       layout_lines
     end
     
+    def att_string_to_hash(att_string)
+      Hash.new
+    end
+    
+    def to_hash
+      h = att_string_to_hash(@att_string)
+      h[:line_direction] = @line_direction if @line_direction == "vertical"
+      h
+    end
+    
     def change_width_and_adjust_height(new_width, options={})
       @text_container[2] = new_width
       layout_lines

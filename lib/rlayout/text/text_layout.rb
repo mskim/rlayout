@@ -29,6 +29,8 @@ module RLayout
       make_lines
     end
     
+    
+    
     # returns the range of characters that actually fit in the frame
     def fitting_string_range
       

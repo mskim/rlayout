@@ -46,12 +46,14 @@ module RLayout
   class Graphic
     attr_accessor :float_weight, :float_position, :float_size
     def init_float(options={})
-
       @float_weight   = options.fetch(:float_weight, FLOAT_PUSH_RECT)
       @float_position = options.fetch(:float_position, TOP_LEFT)
       @float_size     = options.fetch(:float_size, SIZE_MEDIUM)
-      
       self
+    end
+    
+    def float_to_hash
+      h = {}
     end
     
     # givein column rect and float_rect return non_ovelapping new rect for column
@@ -61,12 +63,9 @@ module RLayout
       if !intersects_rect(column_rect, float_rect)
         # puts "they don't intersect"
         return column_rect
-
       elsif contains_rect(float_rect, column_rect)
         # puts "float_rect covers the entire column_rect"
-        
         return [0,0,0,0]
-
       elsif min_y(float_rect) <= min_y(column_rect) && max_y(float_rect) >= max_y(column_rect)
         # puts "hole or block in the middle"
         rects_array = []
@@ -85,14 +84,12 @@ module RLayout
         return rects_array[0] if rects_array.length == 1
         # return both rects in array, if both are big enough 
         return rects_array
-
       elsif min_y(float_rect) <= min_y(column_rect)
         # puts "overlapping at the top "
         new_rect = column_rect.dup
         new_rect[1] = max_y(float_rect)
         new_rect[3] -= float_rect[3]
         return new_rect
-
       elsif max_y(float_rect) >= max_y(column_rect)
         # puts "overlapping at the bottom "
         new_rect = column_rect.dup
