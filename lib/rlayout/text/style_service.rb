@@ -101,11 +101,15 @@ module RLayout
     end
     
     def style_for(paragraph, options={})
-      @current_style[paragraph[:markup]]
+      h=@current_style[paragraph[:markup]]
+      h[:text_markup] = paragraph[:markup]
+      h
     end
         
     def style_for_markup(markup, options={})
-      @current_style[markup]
+      h = @current_style[markup]
+      h[:text_markup] = markup
+      h
     end
     
     def self.cation_style

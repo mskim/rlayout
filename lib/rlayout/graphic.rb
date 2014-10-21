@@ -91,12 +91,12 @@ module RLayout
       h[:y]       = @y        if @x != defaults_hash[:y]
       h[:width]   = @width    if @x != defaults_hash[:width]
       h[:height]  = @height   if @x != defaults_hash[:height]
-      h.merge(layout_to_hash)
-      h.merge(grid_to_hash)
-      h.merge(fill_to_hash)
-      h.merge(line_to_hash)
-      h.merge(text_to_hash)
-      h.merge(image_to_hash)
+      h.merge!(layout_to_hash)
+      h.merge!(grid_to_hash)
+      h.merge!(fill_to_hash)
+      h.merge!(line_to_hash)
+      h.merge!(text_to_hash)
+      h.merge!(image_to_hash)
       # h[:grid_rect]  = @grid_rect   if @grid_rect != defaults_hash[:grid_rect]
       # h[:shape]  = @shape   if @shape != defaults_hash[:shape]
       h
@@ -183,9 +183,8 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
     end
     
     # when text_rect is changed, update frame size considering insets
-    def adjust_size_with_text_rect_change(text_rect)
-      @width  = text_rect.width + @left_inset + @right_inset
-      @height = text_rect.height + @top_inset + @bottom_inset      
+    def adjust_height_with_text_height_change(text_height)
+      @height = text_height + @top_inset + @bottom_inset      
     end
     
     # non_overlapping_rect is a actual layout frame that is not overlapping with flaots

@@ -34,15 +34,18 @@ module RLayout
     end
     
     def text_to_hash
-      h = {}
-      text_hash = @text_layout_manager.to_hash if @text_layout_manager
-      h.merge(text_hash) unless text_hash.nil?
-      h
+      unless @text_layout_manager.nil?
+        @text_layout_manager.to_hash if @text_layout_manager
+      else
+        Hash.new
+      end
+      
     end
     
     def draw_text(r)
       puts "draw_text of graphic"
-      @text_layout_manager.draw_text(r) if @text_layout_manager
+      @text_layout_manager.draw_text(r) 
+      
     end
         
     # 

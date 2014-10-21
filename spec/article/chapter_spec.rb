@@ -24,10 +24,7 @@ require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 describe 'create Chapter page with StoryBox' do
   before do
     @story_path = "/Users/mskim/chapter/2012-12-18-making-rlayout-for-variable-publishing.markdown"
-    @m = Chapter.new(:title =>"Chapter Title", :starts_left=>false, :story_path=>@story_path)
-    puts "+++++++ before ++++++++++ "
-    puts @m.to_hash
-    
+    @m = Chapter.new(:title =>"Chapter Title", :starts_left=>false, :story_path=>@story_path)    
     @first_page = @m.pages.first
     @heading = @m.pages.first.story_box_object.heading
   end
@@ -43,22 +40,21 @@ describe 'create Chapter page with StoryBox' do
   #   @first_page.story_box_object.floats.first.must_be_kind_of Heading
   #   @first_page.story_box_object.graphics.each do |col|
   #     puts col.non_overlapping_frame
-  #     col.graphics.first.puts_frame
+  #     col.graphics.first.
   #   end
   # end
   
   
-  # it 'should save' do    
-  #   @pdf_path = File.dirname(__FILE__) + "/../output/chapter_test.pdf"
-  #   @m.save_pdf(@pdf_path)
-  #   File.exists?(@pdf_path).must_equal true
-  # end
+  it 'should save' do    
+    @pdf_path = File.dirname(__FILE__) + "/../output/chapter_test.pdf"
+    @m.save_pdf(@pdf_path)
+    File.exists?(@pdf_path).must_equal true
+  end
   
   it 'should save hash' do
     @yml_path = File.dirname(__FILE__) + "/../output/chapter_test.yml"
     @m.save_yml(@yml_path)
     File.exists?(@yml_path).must_equal true
-    
   end
 end
 

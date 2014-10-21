@@ -32,7 +32,7 @@ module RLayout
       h = {}
       h[:fill_type] = @line_type if @line_type && @line_type != line_defaults[:line_type]
       h[:line_color] = @line_color if @line_color && @line_color != line_defaults[:line_color]
-      h[:line_width] = @line_width if @line_width && @line_width != fill_defaults[:line_width]
+      h[:line_width] = @line_width if @line_width && @line_width != line_defaults[:line_width]
       h
     end
     

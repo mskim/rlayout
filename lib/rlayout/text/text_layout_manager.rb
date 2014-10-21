@@ -3,7 +3,7 @@ module RLayout
   class TextLayoutManager
     attr_accessor :owner_graphic, :att_string, :text_container, :line_fragments, :token_list
     attr_accessor :current_token_index, :text_direction
-    
+    attr_accessor :text_markup
     def initialize(owner_graphic, options={})
       @owner_graphic = owner_graphic
       if RUBY_ENGINE =='macruby'        
@@ -33,18 +33,27 @@ module RLayout
       layout_lines
     end
     
+    #TODO
     def att_string_to_hash(att_string)
       Hash.new
     end
     
     def to_hash
-      h = att_string_to_hash(@att_string)
+      h = {}
+      h[:text_markup] = @text_markup
+      h[:text_string] = @att_string.string
+      #TODO
+      # h = att_string_to_hash(@att_string)
       h[:line_direction] = @line_direction if @line_direction == "vertical"
       h
     end
     
     def change_width_and_adjust_height(new_width, options={})
-      @text_container[2] = new_width
+      if @text_container.nil?
+        @text_container=[0,0,new_width,1000]
+      else
+        @text_container[2] = new_width
+      end
       layout_lines
       # TODO change owner_graphic height
     end
@@ -100,8 +109,15 @@ module RLayout
       # implement text_fit_type
       # atts[NSKernAttributeName] = @text_track           if @text_track
       # implement inline element, italic, bold, underline, sub, super, emphasis(color)        
-      @text_markup    = options.fetch(:text_markup, 'p')
-      @text_markup    = options.fetch(:markup, "p")
+      if options[:text_markup]
+        @text_markup = options[:text_markup]
+      elsif options[:markup]
+        @text_markup = options[:markup]
+      else
+        @text_markup = 'p'
+      end
+      # @text_markup    = options.fetch(:text_markup, 'p')
+      # @text_markup    = options.fetch(:markup, "p")
       @text_string    = options.fetch(:text_string, "")
       @text_color     = options.fetch(:text_color, "black")
       @text_font      = options.fetch(:text_font, "Times")
@@ -160,7 +176,7 @@ module RLayout
           # TODO if fit_mode is fit_box, reduce text_size to fit the text
           # owner_graphic.set_text_rect(used_size.height + @text_line_spacing)
           used_size.height += @text_line_spacing
-          owner_graphic.adjust_size_with_text_rect_change(used_size)
+          owner_graphic.adjust_height_with_text_height_change(used_size.height)
           @text_container[3] = used_size.height 
           if @text_markup && (@text_markup == 'h5' || @text_markup == 'h6') #&& options[:aling_to_grid]
             puts "we have running head ...."
