@@ -1,17 +1,26 @@
-2014 10 19
- 1. widow/orphan rule
- 1. text_starts_at
+2014 10 22
+ 1. split paragraph among two different columns, using one layout_manager, one text_storage, two text_containers
+ 1. applying widow/orphan rule
+	{widow: 2, orphan: 2}
+ 
+2014 10 21
+ 1. Vertical Text using NSTextView 
+
+2014 10 20
+ 1. text_starts_at anywhere, column, text_box, page, right_pg, left_pg
  1. text_drop_cap_line_count, text_drop_cap_char_count
  1. text_tracking
  1. text_colors in hex/cmyk/rgb
+	- drawRect and text layout in one place, in Model, only
+
+2014 10 19
+ 1. implement to_hash
 
 2014 10 18
  1. changes from previous RLayout/working
 	- No GraphicRecord, make them part of graphics, flatten it, except TextLayoutManger for text, replacement of TextRecord 
 	- TextlayoutManager: vertical text, FatText(SuperRichText) support 
 	- Use views and subviews instead of calculating translated coordinate, support graphic rotation
-	- drawRect and text layout in one place, in Model, only
-	- split paragraph
 	
 2014 10 12
  1. vertical text for Japanese

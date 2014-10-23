@@ -33,6 +33,9 @@ FIT_STYLE_RUN   = 3
         options.merge! text_options if text_options
       end
       super
+      if options[:linked_text_layout_manager]
+        @text_layout_manager = TextLayoutManager.new(self, options)
+      end
       @klass = "Paragraph"
       # @line_width=1
       # @line_color='red'
@@ -51,12 +54,19 @@ FIT_STYLE_RUN   = 3
       self
     end
     
+    # create and return linked_paragraph
+    # def linked_paragraph
+    #   if @text_layout_manager
+    #     return @text_layout_manager.lineked_paragraph
+    #   end
+    #   nil
+    # end
     # split paragraph into two at y position
     # apply widow_orphan rule
-    def split_paragraph_at(y)
-      
-    end
-    
+    # def split_paragraph_at(y)
+    #    
+    #  end
+     
     def overlapping_graphics
       []
     end
