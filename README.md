@@ -1,3 +1,10 @@
+2014 10 23
+ 1. html generation for chapter 
+ 1. last line single character ending (at least 2 characters or some % of previous line.)
+
+2014 10 23
+ 1. modified columnObject insert item  with new text_layout_manager 
+
 2014 10 22
  1. split paragraph among two different columns, using one layout_manager, one text_storage, two text_containers
  1. applying widow/orphan rule

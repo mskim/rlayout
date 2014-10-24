@@ -51,10 +51,10 @@ describe 'create Chapter page with StoryBox' do
     File.exists?(@pdf_path).must_equal true
   end
   
-  it 'should save hash' do
-    @yml_path = File.dirname(__FILE__) + "/../output/chapter_test.yml"
-    @m.save_yml(@yml_path)
-    File.exists?(@yml_path).must_equal true
-  end
+  # it 'should save hash' do
+  #   @yml_path = File.dirname(__FILE__) + "/../output/chapter_test.yml"
+  #   @m.save_yml(@yml_path)
+  #   File.exists?(@yml_path).must_equal true
+  # end
 end
 

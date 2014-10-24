@@ -76,7 +76,6 @@ module RLayout
         y:            0,
         width:        100,
         height:       100,
-
         grid_rect:   [0,0,1,1], 
         shape:       0,          
       }

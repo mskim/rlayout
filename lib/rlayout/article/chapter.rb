@@ -40,6 +40,7 @@ module RLayout
     
     def initialize(options={})
       super
+      @bottom_margin = 100
       @double_side  = true
       @page_count = options.fetch(:page_count, 2)
       @toc_on     = options.fetch(:toc_on, false)
@@ -75,6 +76,8 @@ module RLayout
         para_options[:text_string]    = para[:string]
         para_options[:layout_expand]  = [:width]
         para_options[:text_fit]       = FIT_FONT_SIZE
+        # para_options[:line_width]       = 1
+        # para_options[:line_color]       = 'black'
         @paragraphs << Paragraph.new(nil, para_options)
       end
     end
@@ -86,7 +89,6 @@ module RLayout
       @first_page.graphics.unshift(Heading.new(nil, @heading))
       @first_page.relayout!
       @first_page.story_box_object.layout_story(:heading=>nil, :paragraphs=>@paragraphs)
-      
       while @paragraphs.length > 0
         page_index += 1
         if page_index >= @pages.length
@@ -97,7 +99,8 @@ module RLayout
           options[:page_number]= @starting_page_number + page_index
           Page.new(self, options)
         end
-        @pages[page_index].story_box_object.layout_story(:heading=>nil, :paragraphs=>@paragraphs, )
+        @pages[page_index].story_box_object.layout_story(:heading=>nil, :paragraphs=>@paragraphs)
+      
       end
       update_header_and_footer
     end

@@ -43,14 +43,14 @@ module RLayout
   class TextLayoutManager
     attr_accessor :owner_graphic, :att_string, :text_container, :line_fragments, :token_list
     attr_accessor :current_token_index, :text_direction, :previous_link
-    attr_accessor :text_markup, :text_overflow, :text_storage, :ns_layout_manager, :ns_text_container
+    attr_accessor :text_markup, :text_overflow, :text_underflow, :text_storage, :ns_layout_manager, :ns_text_container
     def initialize(owner_graphic, options={})
       @owner_graphic = owner_graphic
       @att_string     = make_att_string_from_option(options)  
       if RUBY_ENGINE =='macruby'        
         @text_container = @owner_graphic.text_rect
         if options[:linked_text_layout_manager]
-          @previous_link      = options[:linked_text_layout_manager]
+          @previous_link  = options[:linked_text_layout_manager]
           # linked TextLayoutManager
           # @ns_text_layout     = options[:ns_text_container]
           # @ns_text_container  = options[:ns_text_container]
@@ -82,7 +82,6 @@ module RLayout
     end
     
     def to_hash
-      puts __method__
       h = {}
       h[:previous_link] = @previous_link
       h[:text_markup]   = @text_markup
@@ -209,6 +208,23 @@ module RLayout
       RLayput::TextLayoutManager.new(owner_graphic, options)
     end
     
+    # text_overflow and any line was created 
+    def partialLy_inserted?
+      @text_overflow && @ns_layout_manager.textContainers.count > 0
+    end
+    
+    def line_count
+      #TODO
+      #used_rect/@text_size ???
+      used_size=@ns_layout_manager.usedRectForTextContainer(@ns_text_container).size
+      used_size.height/(@text_size + @text_line_spacing)
+    end
+    
+    # do not break paragraph that is less than 4 lines
+    # apply widow/orphan rule and last_line_small_char_set rule.
+    def is_breakable?
+      line_count >= 4
+    end
     
     # text_layout_manager layout_lines
     # layout_lines lays out lines att_string into text_container
@@ -227,13 +243,13 @@ module RLayout
     #    splited ns_layout_manager should be set as linked paragraphs ns_layout_manager
     
     def layout_lines(options={})
-      puts __method__
       # this is a link, so no need to layout lines
       # is is done by the head link
       return if !@previous_link.nil?
       if RUBY_ENGINE =='macruby' 
-        puts "++++++ layout_lines"       
         # if @text_direction == 'left_to_right'
+          @text_overflow = false
+          @text_container = @owner_graphic.text_rect
           @text_storage = NSTextStorage.alloc.init
           @text_storage.setAttributedString @att_string
           proposed_height = @text_container[3]
@@ -269,13 +285,18 @@ module RLayout
           
           # set text_overflow
           # returns true, if the text overflows the text box
-            # check, if we have overflow
+          # and also check if the overflow is text_undeflow
+          # text_undeflow is when overflowing container doen's have any lines, no line fit into container area.
           firstContainer=@ns_layout_manager.textContainers.first
           @textStorage_length=@text_storage.string.length
           range=@ns_layout_manager.glyphRangeForTextContainer(firstContainer)
           last_char_index=range.location+range.length
           if @textStorage_length > last_char_index 
             @text_overflow = true
+            if proposed_height < used_size.height
+              @text_underflow = true
+            end
+            
           end
         # end
         # else
@@ -500,7 +521,6 @@ module RLayout
     end
     
     def last_token_index
-      puts __method__
       puts "@starting_token_index:#{@starting_token_index}"
       puts "@length:#{@length}"
       @starting_token_index + @length

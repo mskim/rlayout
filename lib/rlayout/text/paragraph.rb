@@ -25,7 +25,6 @@ FIT_STYLE_RUN   = 3
     attr_accessor :drop_cap_lines, :drop_cap_char_count
     
     def initialize(parent_graphic, options={})
-      
       text_options = nil
       if options[:markup]
         @style_service ||= StyleService.new
@@ -37,36 +36,20 @@ FIT_STYLE_RUN   = 3
         @text_layout_manager = TextLayoutManager.new(self, options)
       end
       @klass = "Paragraph"
-      # @line_width=1
-      # @line_color='red'
-      
-      # @layout_expand = [:width]
-      # if options[:markup] == 'img'
-      #   Image.new(self, :image_path=>options[:string])
-      # else
-      #   # TODO inline element with multiple atts
-      #   # Text.new(self, options :text_string=>options[:string],  :atts_array=>[atts], :text_fit=>FIT_FONT_SIZE, :layout_expand=>[:width])
-      #   # Text.new(self, options)
-      # end
-
-      # @width  = options[:width] if options[:width]
-      # @height = graphics_height_sum + graphics_space_sum
       self
     end
     
-    # create and return linked_paragraph
-    # def linked_paragraph
-    #   if @text_layout_manager
-    #     return @text_layout_manager.lineked_paragraph
-    #   end
-    #   nil
-    # end
-    # split paragraph into two at y position
-    # apply widow_orphan rule
-    # def split_paragraph_at(y)
-    #    
-    #  end
-     
+    def layout_text(room)
+      return unless @text_layout_manager
+      options={:proposed_height=>room}
+      @text_layout_manager.layout_lines(options)
+    end
+    
+    def is_linked?
+      @text_layout_manager && !@text_layout_manager.previous_link.nil?
+    end
+    
+
     def overlapping_graphics
       []
     end
