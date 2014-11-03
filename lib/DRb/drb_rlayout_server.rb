@@ -8,15 +8,10 @@ require File.dirname(__FILE__) + '/../../lib/rlayout/publication/book'
 URI = "druby://127.0.0.1:8222"
 puts "runing drb at 127.0.0.1:8222..."
 
-class MacRip
-  # {
-  #   :klass            => klass_name,
-  #   :output_path      => "output/path"
-  #   :output_types     => [pdf, jpg, thumbnail]
-  # }  
+class RLayoutServer
   
   def generate_book(path, options={})
-    @book = Book.new(path)
+    @book = RLayout::Book.new(path)
     @book.markdown2pdf        
     if options[:merge_chapters]
       @book.merge_pdf_chpaters
@@ -50,6 +45,6 @@ class MacRip
   
 end
 
-DRb.start_service(URI, MacRip.new)
+DRb.start_service(URI, RLayoutServer.new)
 DRb.thread.join
 

@@ -22,6 +22,8 @@ module RLayout
       
       @graphics = []
       @fixtures = []
+      @floats = []
+      
       @x = 0
       @y = 0
       
@@ -58,6 +60,11 @@ module RLayout
         options[:width] = @width - @left_margin - @right_margin
         options[:height] = @height - @top_margin - @bottom_margin
         options[:column_count] = 1
+        
+        # #####
+        # options[:line_width] = 2
+        # options[:line_color] = 'black'
+        
         @story_box_object = story_box(options)
       end
             

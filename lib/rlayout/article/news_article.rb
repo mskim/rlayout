@@ -1,3 +1,14 @@
-require File.dirname(__FILE__) + '/news_story_box'
-require File.dirname(__FILE__) + '/story'
+
+module RLayout
+  
+  class MagazineArticle < Chapter
+    attr_accessor :story_path
+    def initialize(options={})
+      super  
+      @chapter_kind = "news_article"
+      self
+    end    
+  end
+  
+end
 

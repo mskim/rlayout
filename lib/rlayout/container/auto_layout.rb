@@ -51,7 +51,7 @@ module RLayout
          # account for child's margin
           expandable_size -= 
            vertical ? child.top_margin + child.bottom_margin
-                    : child.bottom_margin + child.right_margin
+                    : child.left_margin + child.right_margin
 
        end
        spacing_number  = @graphics.length - 1
@@ -103,13 +103,13 @@ module RLayout
 
          if (vertical ? child.expand_width? : child.expand_height?)
            if vertical
-             view_frame[2] = view_size[0] - (@left_margin + @right_margin + @right_inset + @left_inset) - child.right_margin - child.bottom_margin
+             view_frame[2] = view_size[0] - (@left_margin + @right_margin + @right_inset + @left_inset) - child.right_margin - child.left_margin
            else
              view_frame[3] = view_size[1] - (@top_margin + @bottom_margin + @top_inset + @bottom_inset) - child.top_margin - child.bottom_margin
            end
          else
            case @layout_align
-           when "left", "bottom"
+           when "left", "top" #{}"bottom"
              # Nothing to do
 
            when "center"
@@ -118,8 +118,9 @@ module RLayout
              else
                view_frame[1] = (view_size[1] / 2.0) - (subview_size[1] / 2.0)
              end
-
-           when "right", "top"
+          
+           #TODO
+           when "right", "bottom"
              if vertical
                view_frame[0] = view_size[0] - subview_size[0] - @bottom_margin
              else
@@ -129,8 +130,8 @@ module RLayout
          end
 
 
-         view_frame[0] += child.bottom_margin
-         view_frame[1] += child.bottom_margin
+         view_frame[0] += child.left_margin
+         view_frame[1] += child.top_margin
 
          if @layout_strarting == "top"
            starting_position += subview_dimension + @layout_space

@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require File.dirname(__FILE__) + '/chapter_story_box'
+require File.dirname(__FILE__) + '/story_box'
 require File.dirname(__FILE__) + '/story'
 module RLayout
   # There are three types of articles, chapter, magazine_article, and news article/
@@ -36,14 +36,15 @@ module RLayout
   
   class Chapter < Document
     attr_accessor :story_path, :heading, :paragraphs
-    attr_accessor :toc_on
+    attr_accessor :toc_on, :chapter_kind
     
     def initialize(options={})
       super
       @bottom_margin = 100
       @double_side  = true
-      @page_count = options.fetch(:page_count, 2)
-      @toc_on     = options.fetch(:toc_on, false)
+      @page_count   = options.fetch(:page_count, 2)
+      @toc_on       = options.fetch(:toc_on, false)
+      @chapter_kind = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
       options[:footer]    = true 
       options[:header]    = true 
       options[:story_box] = true
@@ -83,11 +84,27 @@ module RLayout
     end
     
     def layout_story
-      page_index = 0
-      @first_page = @pages[page_index]
-      @heading[:layout_expand] = [:width, :height]
-      @first_page.graphics.unshift(Heading.new(nil, @heading))
-      @first_page.relayout!
+      page_index                = 0
+      @first_page               = @pages[page_index]
+      @heading[:layout_expand]  = [:width, :height]
+      # @heading[:line_width]  = 2
+      # @heading[:line_color]  = 'black'
+      # this is where we make heading as graphics or float
+      # for book chapter, we make it as graphic
+      # for magazine, news_article , we make it as float
+      if @chapter_kind == "magazine_article" || @chapter_kind == "news_article"
+        #make it a flost for magazine, news_article
+        @first_page.story_box_object.floats << Heading.new(nil, @heading)
+        @first_page.relayout!
+        @first_page.story_box_object.relayout_floats!
+      else 
+        # make head a as one of graphics
+        heading_object = Heading.new(nil, @heading)
+        @first_page.graphics.unshift(heading_object)
+        heading_object.parent_graphic = @first_page
+        @first_page.relayout!
+      end
+      
       @first_page.story_box_object.layout_story(:heading=>nil, :paragraphs=>@paragraphs)
       while @paragraphs.length > 0
         page_index += 1
@@ -100,7 +117,6 @@ module RLayout
           Page.new(self, options)
         end
         @pages[page_index].story_box_object.layout_story(:heading=>nil, :paragraphs=>@paragraphs)
-      
       end
       update_header_and_footer
     end

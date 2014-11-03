@@ -1,6 +1,5 @@
 
 #
-#
 #  story_box.rb
 #
 #  Created by Min Soo Kim on 4/15/14.

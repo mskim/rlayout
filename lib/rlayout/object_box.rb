@@ -128,6 +128,16 @@ module RLayout
       # all item is placed!!! return true
       true
     end
+    
+    # adjust float sizes with object_box size change
+    def relayout_floats!
+      @floats.each do |float|
+        #TODO adjust size with grid values
+        float.width = text_rect[2]
+        float.relayout!
+      end
+      
+    end
   end
   
   

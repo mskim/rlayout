@@ -1,7 +1,6 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 
-
 # describe 'create Chapter' do
 #   before do
 #     @m = Chapter.new(:title =>"Chapter Title", :starts_left=>false)
@@ -51,10 +50,10 @@ describe 'create Chapter page with StoryBox' do
     File.exists?(@pdf_path).must_equal true
   end
   
-  # it 'should save hash' do
-  #   @yml_path = File.dirname(__FILE__) + "/../output/chapter_test.yml"
-  #   @m.save_yml(@yml_path)
-  #   File.exists?(@yml_path).must_equal true
-  # end
+  it 'should save hash' do
+    @yml_path = File.dirname(__FILE__) + "/../output/chapter_test.yml"
+    @m.save_yml(@yml_path)
+    File.exists?(@yml_path).must_equal true
+  end
 end
 

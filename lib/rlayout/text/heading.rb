@@ -53,8 +53,8 @@ module RLayout
       end
       @top_inset      = 5
       @bottom_inset   = 5
-      @left_inset     = 10
-      @right_inset    = 10
+      @left_inset     = 0
+      @right_inset    = 0
       @top_margin     = 10
       @bottom_margin  = 10
       
@@ -185,12 +185,12 @@ module RLayout
     ######## PageScript verbes
     def title(string, options={})
       atts  = @style_service.style_for_markup("title", options)
-      atts[:text_string] = string
-      atts[:width] = @width
-      @title_object = Text.new(self, atts)
-      @title_object.layout_expand  = [:width]
-      @title_object.layout_length  = atts[:text_size]
-      @title_object.height  = atts[:text_size]*1.2
+      atts[:text_string]            = string
+      atts[:width]                  = @width
+      atts[:layout_expand]          = [:width]
+      @title_object                 = Text.new(self, atts)
+      @title_object.layout_length   = atts[:text_size]
+      @title_object.height          = atts[:text_size]*1.2
       @title_object
     end
     

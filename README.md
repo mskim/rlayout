@@ -1,7 +1,28 @@
+2014 11 1
+    - Book build web-site, ebook, mobi
+	- Dropbox integration
+	- Make DRb_server
+	
+2014 10 30
+	- tracking support
+	- font with weight support, get the postscript names
+	
+2014 10 29
+	- ePub generation
+	
 2014 10 23
  1. html generation for chapter 
- 1. last line single character ending (at least 2 characters or some % of previous line.)
+	- book navigation bar
+	- book cover page
+	- toc
+	- file task
+	- bootstrap
+	- WordPress Import / Naver blog import
+ 1. rake file for auto template generation
 
+ 1. dangling  last line character removable (less than 2 characters at last line is removed by tracking previous line text.)
+ 1. inserting images in markdown
+  
 2014 10 23
  1. modified columnObject insert item  with new text_layout_manager 
 

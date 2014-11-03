@@ -41,7 +41,7 @@ CHAPTER_STYLES={
   "h5"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
   "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray", :text_head_indent=>0, :text_tail_indent=>0},
-  "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
+  "p"       =>{:text_font => 'SDMyoungjo',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black'},

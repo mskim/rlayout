@@ -5,7 +5,6 @@ end
 require 'yaml'
 module RLayout
   
-
   class Book
     attr_accessor :folder_path, :front_matter, :body_matter, :rear_matter
     def initialize(folder_path)
