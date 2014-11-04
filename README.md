@@ -1,12 +1,19 @@
+TODO List
+	- DBItem import from host
+	- fix nested object_item_drawing
+ 	- include Image to Markdown 
+	- font with weight support, get the postscript names
+	- apply StyleSheet at runtime with default fall back
+	- ePub generation
+	
 2014 11 4
-	- DBItem import
 	- object_chapter
 	- create TextBox for paragraph flow
 	- Merge StoryBox with TextBox into one
+	- fix left header position
 	
 2014 11 3
  	- fix auto_layout bug
- 	- Including Image to Markdown 
 
 2014 11 1
     - Book build web-site, ebook, mobi
@@ -15,10 +22,8 @@
 	
 2014 10 30
 	- tracking support #TODO need to test this
-	- font with weight support, get the postscript names
 	
 2014 10 29
-	- ePub generation
 	
 2014 10 23
  1. html generation for chapter 
@@ -34,7 +39,7 @@
  1. inserting images in markdown
   
 2014 10 23
- 1. modified columnObject insert item  with new text_layout_manager 
+ 1. modified columnObject insert item with text_layout_manager 
 
 2014 10 22
  1. split paragraph among two different columns, using one layout_manager, one text_storage, two text_containers
@@ -45,7 +50,7 @@
  1. Vertical Text using NSTextView 
 
 2014 10 20
- 1. text_starts_at anywhere, column, text_box, page, right_pg, left_pg
+ 1. text_starts_at anywhere, column, text_box, page, right_page, left_page
  1. text_drop_cap_line_count, text_drop_cap_char_count
  1. text_tracking
  1. text_colors in hex/cmyk/rgb
@@ -96,11 +101,8 @@
 
 2014 10 10
  1. get rid of styles category, use @current_style
-
  1. text_bar.rb
  1. footer page number font is different from footer title text
-
-
 
 2014 10 9
  1. fixed Paragraph clipping bug, by adding text_line_spacing to the height.
@@ -124,10 +126,9 @@
  TextBox linking
 
 2014 9 22
- svg generation Image
-
-svg generation for Container 
-do not wrap into a svg <svg></svg>, do not make it multiple page svg
+ - svg generation for Image
+ - svg generation for Container 
+ - do not wrap into a svg <svg></svg>, do not make it multiple page svg
 use rect or graphic shape, fill, and line
 	
 2014 9 19
@@ -164,7 +165,7 @@ use rect or graphic shape, fill, and line
 	 	can have own account, and multiple collaborators
 		can create more templates depending on the payment plan
 		
-Container Verbs
+Container PageScript Verbs
 	split(number=2)	# same as split_v
 	split_v(number=2, options=>{})
 	split_h(number=2)
@@ -270,7 +271,7 @@ Once all is done
 
 $ rlayout pdf
 
-This will generte high resolution PDF
+This will generate high resolution PDF
 
 auto_save of/off: This will make it work as REPL
 I can save index.html in server folder and broadcast the progress.
