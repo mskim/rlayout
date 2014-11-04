@@ -26,7 +26,7 @@ module RLayout
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
     attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand, :grid_rect
     attr_accessor :text_markup, :text_direction, :text_string, :text_color, :text_size, :text_line_spacing, :text_font
-    attr_accessor :text_fit_type, :text_alignment, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
+    attr_accessor :text_fit_type, :text_alignment, :text_tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
     attr_accessor :text_layout_manager
     attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
     attr_accessor :non_overlapping_rect, :overlapping_rects
@@ -122,6 +122,19 @@ module RLayout
 COLOR_NAMES =%w[black blue brown clear cyan darkGray gray green lightGray magenta orange red white yellow white]
 KLASS_NAMES =%w[Rectangle Circle RoundRect Text Image]
 TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout", "PageScript"]
+    
+    def random_color
+      COLOR_NAMES.sample
+    end
+    
+    def random_klass
+      KLASS_NAMES.sample
+    end
+    
+    def random_text
+      TEXT_STRING_SAMPLES.sample
+    end
+    
     
     def self.random_graphic_atts
       atts = {}
@@ -317,7 +330,6 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
       end
       path
     end
-
 
     # convert any color to NSColor
     def self.convert_to_nscolor(color)

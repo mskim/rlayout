@@ -87,11 +87,7 @@ module RLayout
       page_index                = 0
       @first_page               = @pages[page_index]
       @heading[:layout_expand]  = [:width, :height]
-      # @heading[:line_width]  = 2
-      # @heading[:line_color]  = 'black'
       # this is where we make heading as graphics or float
-      # for book chapter, we make it as graphic
-      # for magazine, news_article , we make it as float
       if @chapter_kind == "magazine_article" || @chapter_kind == "news_article"
         #make it a flost for magazine, news_article
         @first_page.story_box_object.floats << Heading.new(nil, @heading)

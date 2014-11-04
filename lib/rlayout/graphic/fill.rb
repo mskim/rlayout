@@ -9,6 +9,7 @@ module RLayout
       @fill_other_color = options[:fill_other_color]
     end
     
+    
     def fill_defaults
       h = {}
       h[:fill_type]         = 1

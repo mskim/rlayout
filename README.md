@@ -1,10 +1,17 @@
+2014 11 4
+	- DBItem import
+
+2014 11 3
+ 	- fix auto_layout bug
+ 	- Including Image to Markdown 
+
 2014 11 1
     - Book build web-site, ebook, mobi
 	- Dropbox integration
 	- Make DRb_server
 	
 2014 10 30
-	- tracking support
+	- tracking support #TODO need to test this
 	- font with weight support, get the postscript names
 	
 2014 10 29

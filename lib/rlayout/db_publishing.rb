@@ -1,0 +1,8 @@
+require File.dirname(__FILE__) + "/db_publishing/db_source"
+require File.dirname(__FILE__) + "/db_publishing/ad_box_source"
+require File.dirname(__FILE__) + "/db_publishing/member_source"
+require File.dirname(__FILE__) + "/db_publishing/product_source"
+require File.dirname(__FILE__) + "/db_publishing/quiz_source"
+# require File.dirname(__FILE__) + "/db_publishing/travel_spot_source"
+# require File.dirname(__FILE__) + "/db_publishing/business_spot_source"
+require File.dirname(__FILE__) + "/db_publishing/db_chapter"

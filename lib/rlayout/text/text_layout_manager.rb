@@ -16,12 +16,12 @@
 
 # Text Fit Mode
 # Three are two text fitting mode
-# one is fiiting text inside of the box, change font size to fit
-# and the other way is to layout text by give font size, expand size or overflow
+# one is fiiting text inside of the box, changing font size to fit
+# and the other way is to layout text by give font size, expanding size or overflow
 # for Pargaraph class, default fit mode is fit_font_size
 # for Text class, default fit mode is fit_to_box_size
 
-# for Paragaph layout_lines
+# Paragaph layout_lines
 # TextLayoutManager is designed to make it easy for column layout of Paragraphs.
 # I usually set text_container height to inserting column room. 
 # after layout_lines, it will adjust Paragaph height to the used_rect + text_line_spaceing, if used rect is less than the given rect height
@@ -111,6 +111,11 @@ module RLayout
         atts[NSStrokeWidthAttributeName] = atts_hash[:guguri_width] #0, -2,-5,-10 
         atts[NSStrokeColorAttributeName]=GraphicRecord.color_from_string(attributes[:guguri_color])
       end 
+      
+      if @text_tracking
+        atts[NSKernAttributeName] = @text_tracking
+      end
+      
       right_align   = NSMutableParagraphStyle.alloc.init.setAlignment(NSRightTextAlignment)          
       center_align  = NSMutableParagraphStyle.alloc.init.setAlignment(NSCenterTextAlignment)          
       justified_align  = NSMutableParagraphStyle.alloc.init.setAlignment(NSJustifiedTextAlignment)          
@@ -162,19 +167,20 @@ module RLayout
       end
       # @text_markup    = options.fetch(:text_markup, 'p')
       # @text_markup    = options.fetch(:markup, "p")
-      @text_string    = options.fetch(:text_string, "")
-      @text_color     = options.fetch(:text_color, "black")
-      @text_font      = options.fetch(:text_font, "Times")
-      @text_size      = options.fetch(:text_size, 16)
+      @text_string      = options.fetch(:text_string, "")
+      @text_color       = options.fetch(:text_color, "black")
+      @text_font        = options.fetch(:text_font, "Times")
+      @text_size        = options.fetch(:text_size, 16)
       @text_line_spacing= options.fetch(:text_line_spacing, @text_size*1.5)
-      @text_fit_type  = options.fetch(:text_fit_type, 0)
-      @text_alignment = options.fetch(:text_alignment, "center")
+      @text_fit_type    = options.fetch(:text_fit_type, 0)
+      @text_alignment   = options.fetch(:text_alignment, "center")
+      @text_tracking    = options.fetch(:text_tracking, 0)  if options[:text_tracking ]      
       @text_first_line_head_indent    = options.fetch(:text_first_line_head_indent, 0)
       @text_head_indent               = options.fetch(:text_head_indent, 0)
       @text_tail_indent               = options.fetch(:text_tail_indent, 0)
       @text_paragraph_spacing_before  = options[:text_paragraph_spacing_before] if options[:text_paragraph_spacing_before]
       @text_paragraph_spacing         = options[:text_paragraph_spacing]        if options[:text_paragraph_spacing]
-      att_string=NSMutableAttributedString.alloc.initWithString(@text_string, attributes:make_atts)
+      att_string        =NSMutableAttributedString.alloc.initWithString(@text_string, attributes:make_atts)
       att_string
     end
     

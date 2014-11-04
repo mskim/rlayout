@@ -1,5 +1,6 @@
 
 require File.dirname(__FILE__) + "/container/pgscript"
+
 module RLayout
   
   class Container < Graphic
@@ -206,11 +207,23 @@ module RLayout
       end
     end
     
+    def self.samples_of(number)
+      item = []
+      number.times do
+        item << self.sample
+      end
+      ad
+    end
     
-    # def relayout!
-    #   # puts __method__
-    #   
-    # end
+    def self.sample
+      ad = AdBox.new(nil) do
+        rect(fill_color: random_color)
+        rect(fill_color: random_color)
+        rect(fill_color: random_color)
+      end
+      ad
+    end
+    
     
     ########### pgscript verbes
     def flatten
@@ -246,16 +259,4 @@ module RLayout
     
   end
   
-  class Body < Container
-    attr_accessor :columns, :drws_interline, :gutter
-    def initialize(parent_graphic, options={})
-      super
-      @columns = []
-      @column_count = options.fetch(:columns, 2)
-      @column_count.times do
-        @columns << Container.new(self)
-      end
-      self
-    end
-  end
 end

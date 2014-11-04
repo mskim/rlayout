@@ -175,8 +175,11 @@ module RLayout
       end      
       room = @height - @current_position - @bottom_margin - @bottom_inset - @layout_space
       item.height = room
-      item.layout_text(room)
       
+      #TODO
+      return unless item.text_layout_manager
+      
+      item.layout_text(room)
       # @current_position = max_y(item.frame_rect) + @layout_space
       if item.text_layout_manager.text_overflow == false
         @graphics << item

@@ -59,7 +59,7 @@ module RLayout
         options[:y] = @top_margin
         options[:width] = @width - @left_margin - @right_margin
         options[:height] = @height - @top_margin - @bottom_margin
-        options[:column_count] = 1
+        options[:column_count] = options.fetch(:column_count, 1)
         
         # #####
         # options[:line_width] = 2
