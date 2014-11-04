@@ -43,7 +43,6 @@ class GraphicViewMac < NSView
     
     if @graphic.floats 
       @graphic.floats.each do |child|    
-        puts "child.class:#{child.class}"
         child_view = GraphicViewMac.from_graphic(child)
         addSubview(child_view)
       end

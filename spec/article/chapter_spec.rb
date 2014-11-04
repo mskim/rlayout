@@ -25,7 +25,7 @@ describe 'create Chapter page with StoryBox' do
     @story_path = "/Users/mskim/chapter/2012-12-18-making-rlayout-for-variable-publishing.markdown"
     @m = Chapter.new(:title =>"Chapter Title", :starts_left=>false, :story_path=>@story_path)    
     @first_page = @m.pages.first
-    @heading = @m.pages.first.story_box_object.heading
+    @heading = @m.pages.first.main_box.heading
   end
   
   # it 'should create Chapter' do
@@ -34,10 +34,10 @@ describe 'create Chapter page with StoryBox' do
   #   end
   #   
   # it 'should create pages' do
-  #   @first_page.story_box_object.must_be_kind_of StoryBox
-  #   @first_page.story_box_object.floats.length.must_equal 1
-  #   @first_page.story_box_object.floats.first.must_be_kind_of Heading
-  #   @first_page.story_box_object.graphics.each do |col|
+  #   @first_page.main_box.must_be_kind_of StoryBox
+  #   @first_page.main_box.floats.length.must_equal 1
+  #   @first_page.main_box.floats.first.must_be_kind_of Heading
+  #   @first_page.main_box.graphics.each do |col|
   #     puts col.non_overlapping_frame
   #     col.graphics.first.
   #   end

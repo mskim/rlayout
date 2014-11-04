@@ -1,7 +1,6 @@
 # encoding: utf-8
 
-require File.dirname(__FILE__) + '/story_box'
-require File.dirname(__FILE__) + '/story'
+
 module RLayout
   # There are three types of articles, chapter, magazine_article, and news article/
   # chapter: 
@@ -20,18 +19,18 @@ module RLayout
   
   
   # Chapter
-  # create two initial pages with StoryBox, header, footer, side_bar(optional)
+  # create two initial pages with TextBox, header, footer, side_bar(optional)
   # given Story path
   #  read the story
   #  set @heading and @paragraphs
-  #  call @pages.first.story_box_object.layout_story(:heading=>@heading, :paragraphs=> @paragraphs)
-  #    story_box_object takes heading data and creates chapter front page heading
-  #    story_box_object take @paragraphs data out of Array and inserts it into story_box.
+  #  call @pages.first.main_box.layout_story(:heading=>@heading, :paragraphs=> @paragraphs)
+  #    main_box takes heading data and creates chapter front page heading
+  #    main_box take @paragraphs data out of Array and inserts it into text_box.
   #  if the changed paragraphs length is 0, which means all the paragraphs have been layed out
   #    we are done.
-  #  else means we have some left over paragraphs, go to next page, if no page, create one with StoryBox
+  #  else means we have some left over paragraphs, go to next page, if no page, create one with TextBox
   #    after first page :heading is nil, and the paragraphs are the rest of the left overs
-  #    call story_box_object.layout_story agoin with (:heading=>nil, :paragraphs=> @paragraphs)
+  #    call main_box.layout_story agoin with (:heading=>nil, :paragraphs=> @paragraphs)
   #  keep going until we have no more leftover paragraphs.
   
   class Chapter < Document
@@ -47,7 +46,7 @@ module RLayout
       @chapter_kind = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
       options[:footer]    = true 
       options[:header]    = true 
-      options[:story_box] = true
+      options[:text_box] = true
       @page_count.times do |i|
         options[:page_number] = @starting_page_number + i
         Page.new(self, options)
@@ -90,9 +89,9 @@ module RLayout
       # this is where we make heading as graphics or float
       if @chapter_kind == "magazine_article" || @chapter_kind == "news_article"
         #make it a flost for magazine, news_article
-        @first_page.story_box_object.floats << Heading.new(nil, @heading)
+        @first_page.main_box.floats << Heading.new(nil, @heading)
         @first_page.relayout!
-        @first_page.story_box_object.relayout_floats!
+        @first_page.main_box.relayout_floats!
       else 
         # make head a as one of graphics
         heading_object = Heading.new(nil, @heading)
@@ -101,18 +100,18 @@ module RLayout
         @first_page.relayout!
       end
       
-      @first_page.story_box_object.layout_story(:heading=>nil, :paragraphs=>@paragraphs)
+      @first_page.main_box.layout_items(@paragraphs)
       while @paragraphs.length > 0
         page_index += 1
         if page_index >= @pages.length
           options ={}
           options[:footer]     = true 
           options[:header]     = true 
-          options[:story_box]  = true
+          options[:text_box]  = true
           options[:page_number]= @starting_page_number + page_index
           Page.new(self, options)
         end
-        @pages[page_index].story_box_object.layout_story(:heading=>nil, :paragraphs=>@paragraphs)
+        @pages[page_index].main_box.layout_items(@paragraphs)
       end
       update_header_and_footer
     end

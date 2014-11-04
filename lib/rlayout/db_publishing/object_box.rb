@@ -3,9 +3,9 @@
 
 module RLayout
   
-  # ObjectBox is general pulpose container of flowing objexts.
+  # ObjectBox is general pulpose container of flowing objects.
   # ObjectBox has Columns. Objects flow along columns. 
-  # ObjectBox can be linek to other ObjectBox, "next_link" and "previous_link" points to them.
+  # ObjectBox can be linked to other ObjectBox, "next_link" and "previous_link" points to them.
   # When Text paragraphs flow, it acts as traditional TextBox.
   # ObjectBox handls other types of objects as well, such as 
   # product items, BoxAds, Directory elements, quiz items or any other graphic objects, 
@@ -21,11 +21,12 @@ module RLayout
    
   class ObjectBox < Container
     attr_accessor :column_count, :next_link, :previous_link
+    attr_accessor :starting_item_index, :ending_item_index
     attr_accessor :floats
     
     def initialize(parent_graphic, options={}, &block)
       super
-      @klass = "ObjectBox"   
+      @klass = "ObjctBox"   
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)
       @column_count     = options.fetch(:column_count, 3)
@@ -44,7 +45,7 @@ module RLayout
     
     def create_columns
       @column_count.times do
-        ColumnObject.new(self)
+        ObjectColumn.new(self)
       end
       relayout!      
     end
@@ -76,13 +77,13 @@ module RLayout
     #    if partilly_fit? go to next column and insert the left over to the next column
     # 1. if the last column is reached with un-placed item, place item back at the fornt of the array and return no
     # 1. if teh next column is available , repeat colum insert with partial item.
-    
+        
     def layout_items(flowing_items)
       column_index = 0
       current_column = @graphics[column_index]
       current_column.set_starting_position_at_non_overlapping_area
       while front_most_item = flowing_items.shift do
-        result = current_column.insert_item(front_most_item)
+        result = current_column.insert_item(front_most_item)        
         if result == true
           # item fit into column successfully!
           #TODO
@@ -142,13 +143,13 @@ module RLayout
   
   
   
-  class ColumnObject < Container
+  class ObjectColumn < Container
     attr_accessor :current_position
     attr_accessor :floats
     
     def initialize(parent_graphic, options={}, &block)
       super
-      @klass = "ColumnObject"
+      @klass = "ObjectColumn"
       @layout_space = 0
       @current_position = @top_margin + @top_inset
       if block
@@ -167,39 +168,27 @@ module RLayout
       item.parent_graphic = self
       item.y = @current_position
       item.x = @left_margin + @left_inset
+      original_width = item.width
       item.width = layout_area[0]
-      if item.is_linked?   
-        # puts " linked item was successfully inserted to column"     
-        @current_position += item.height + @layout_space
-        return true
-      end      
-      room = @height - @current_position - @bottom_margin - @bottom_inset - @layout_space
-      item.height = room
       
       #TODO
-      return unless item.text_layout_manager
-      
-      item.layout_text(room)
-      # @current_position = max_y(item.frame_rect) + @layout_space
-      if item.text_layout_manager.text_overflow == false
-        @graphics << item
-        @current_position += item.height + @layout_space
-        # puts " item was successfully inserted to column"
-        return true
+      # if item.is_breakable?   
+      #   # puts " linked item was successfully inserted to column"     
+      #   @current_position += item.height + @layout_space
+      #   return true
+      # end 
+      room = @height - @current_position - @bottom_margin - @bottom_inset - @layout_space
+      item.height = item.width/original_width*item.height
+      item.relayout!
+      if item.height > room
+        return false  
       else
-        # we have overflow
-        #check if text_underflow, any lines were created in the text_container
-        if item.text_layout_manager.text_underflow
-          # puts " item was not inserted to column at all, no lines"
-          return item
-        # check if some was partialLy_inserted?
-        elsif item.text_layout_manager.partialLy_inserted?
-          # puts " item was partially inserted to column"
-          @graphics << item
-          @current_position += item.height + @layout_space
-          return item.text_layout_manager.split_overflowing_paragraph
-        end
+        item.parent_graphic = self
+        @graphics << item
+        @current_position += item.height
+        return true  
       end
+          
     end
     
   end

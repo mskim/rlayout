@@ -1,6 +1,6 @@
 
 module RLayout
-  class DBChapter < Document
+  class ObjectChapter < Document
     attr_accessor :db_info, :db_items, :heading
     def initialize(options={}, &block)
       super
@@ -10,8 +10,8 @@ module RLayout
       @chapter_kind = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
       options[:footer]    = true 
       options[:header]    = true 
-      options[:story_box] = true
-      # options[:column_count] = 4
+      options[:object_box] = true
+      options[:column_count] = 3
       
       @page_count.times do |i|
         options[:page_number] = @starting_page_number + i
@@ -51,9 +51,9 @@ module RLayout
       # this is where we make heading as graphics or float
       # if @chapter_kind == "magazine_article" || @chapter_kind == "news_article"
       #   #make it a flost for magazine, news_article
-      #   @first_page.story_box_object.floats << Heading.new(nil, @heading)
+      #   @first_page.main_box.floats << Heading.new(nil, @heading)
       #   @first_page.relayout!
-      #   @first_page.story_box_object.relayout_floats!
+      #   @first_page.main_box.relayout_floats!
       # else 
       #   # make head a as one of graphics
       #   heading_object = Heading.new(nil, @heading)
@@ -62,21 +62,23 @@ module RLayout
       #   @first_page.relayout!
       # end
       
-      puts "+++++++++ @db_items.length:#{@db_items.length}"
-      @first_page.story_box_object.layout_story(:heading=>nil, :paragraphs=>@db_items)
+      @first_page.main_box.layout_items(@db_items)
       while @db_items.length > 0
         page_index += 1
         if page_index >= @pages.length
           options ={}
           options[:footer]     = true 
           options[:header]     = true 
-          options[:story_box]  = true
+          options[:object_box] = true
+          options[:column_count] = 3
           options[:page_number]= @starting_page_number + page_index
           Page.new(self, options)
         end
-        @pages[page_index].story_box_object.layout_story(:heading=>nil, :paragraphs=>@db_items)
+        @pages[page_index].main_box.layout_items(@db_items)
       end
       update_header_and_footer
+      
+      column = @first_page.main_box.graphics.first      
     end
     
     def update_header_and_footer

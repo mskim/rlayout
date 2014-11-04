@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + "/article/story"
-require File.dirname(__FILE__) + "/article/story_box"
+require File.dirname(__FILE__) + "/article/text_box"
 require File.dirname(__FILE__) + "/article/chapter"
 require File.dirname(__FILE__) + "/article/chapter"
 require File.dirname(__FILE__) + "/article/magazine_article"

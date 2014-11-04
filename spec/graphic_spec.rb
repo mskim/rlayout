@@ -1,35 +1,47 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
-describe 'graphic text test' do
-  before do
-    @t = Text.new(nil, :text_string=>"this is text at last.", :width =>300)
-    @pdf_path = File.dirname(__FILE__) + "/output/graphic_text_test.pdf"
-    @svg_path = File.dirname(__FILE__) + "/output/graphic_text_test.svg"
-  end
-  
-  it 'should save random grapics' do    
-    @t.save_svg(@svg_path)
-    @t.save_pdf(@pdf_path)
-  end
-end
-# 
-# describe 'save pdf random' do
+# describe 'graphic text test' do
 #   before do
-#     @g = Graphic.random_graphics(200)
-#     @path = File.dirname(__FILE__) + "/output/graphic_random_test.pdf"
-#   end
-#   
-#   it 'should create Graphic' do
-#     @g.must_be_kind_of Array
+#     @t = Text.new(nil, :text_string=>"this is text at last.", :width =>300)
+#     @pdf_path = File.dirname(__FILE__) + "/output/graphic_text_test.pdf"
+#     @svg_path = File.dirname(__FILE__) + "/output/graphic_text_test.svg"
 #   end
 #   
 #   it 'should save random grapics' do    
-#     p = Page.new(nil)
-#     p.add_graphics(@g)
-#     p.save_pdf(@path)
+#     @t.save_svg(@svg_path)
+#     @t.save_pdf(@pdf_path)
 #   end
 # end
-# 
+
+describe 'graphic fill test' do
+  before do
+    @g = Graphic.new(nil, fill_color: 'red', line_width: 5, line_color: 'yellow')
+    @pdf_path = File.dirname(__FILE__) + "/output/graphic_fill_test.pdf"
+  end
+  
+  it 'shuold save graphic' do
+    @g.save_pdf(@pdf_path)
+  end
+  
+end
+
+describe 'save pdf random' do
+  before do
+    @g = Graphic.random_graphics(200)
+    @path = File.dirname(__FILE__) + "/output/graphic_random_test.pdf"
+  end
+  
+  it 'should create Graphic' do
+    @g.must_be_kind_of Array
+  end
+  
+  it 'should save random grapics' do    
+    p = Page.new(nil)
+    p.add_graphics(@g)
+    p.save_pdf(@path)
+  end
+end
+
 # describe 'save pdf' do
 #   before do
 #     @g = Graphic.new(nil, :fill_color=>"red", :line_width=>5, :line_color=>"black")

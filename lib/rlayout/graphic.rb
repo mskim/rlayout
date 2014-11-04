@@ -123,6 +123,10 @@ COLOR_NAMES =%w[black blue brown clear cyan darkGray gray green lightGray magent
 KLASS_NAMES =%w[Rectangle Circle RoundRect Text Image]
 TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout", "PageScript"]
     
+    def self.random_color
+      COLOR_NAMES.sample
+    end
+    
     def random_color
       COLOR_NAMES.sample
     end

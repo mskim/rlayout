@@ -2,7 +2,7 @@
 module RLayout
   
   class AdBox < Container
-    def initialize(parent_graphic, options={})
+    def initialize(parent_graphic, options={}, &block)
       super
       @klass = "AdBox"
       
@@ -18,12 +18,14 @@ module RLayout
     end
     
     def self.sample
-      ad = AdBox.new(nil) do
-        rect(fill_color: random_color)
-        rect(fill_color: random_color)
-        rect(fill_color: random_color)
-      end
-      ad
+      # ad = AdBox.new(nil, line_width: 2, line_color: 'gray') do
+      #   rect(fill_color: random_color, line_with: 2, line_color: 'red')
+      #   rect(fill_color: random_color)
+      #   rect(fill_color: random_color, line_with: 2, line_color: 'red')
+      # end
+      # ad.relayout!
+      # ad
+      AdBox.new(nil, fill_color: Graphic.random_color, line_width: 2, line_color: 'gray')
     end
     
     def layout_text
@@ -34,7 +36,7 @@ module RLayout
       
     end
     
-    def is_linked?
+    def is_breakable?
       false
     end
   end

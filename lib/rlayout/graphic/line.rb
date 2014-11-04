@@ -123,6 +123,7 @@ module RLayout
 
 
     def draw_line(r)
+      
       drawLine(r, withTrap:0)
       drawArrow if @start_arrow && @owner_graphic
     end

@@ -23,7 +23,7 @@ describe 'create page with fixtures' do
     options[:header]     = true
     options[:footer]     = true 
     options[:header]     = true 
-    options[:story_box]  = true
+    options[:text_box]  = true
     @p = Page.new(nil, options)    
   end
 
@@ -48,7 +48,7 @@ describe 'create right_side page  ' do
     options = {}
     # options[:header]     = true
     # options[:footer]     = true 
-    options[:story_box]  = true
+    options[:text_box]  = true
     options[:left_page]  = false
     @p = Page.new(nil, options)    
   end

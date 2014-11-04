@@ -6,8 +6,8 @@
 #  Copyright 2014 SoftwareLab. All rights reserved.
 #
 #  StoryBox
-#  StoryBox is subclass of ObjectBox, which has columns that can flow items
-#  StoryBox adds concept of "float" to the ObjectBox
+#  StoryBox is subclass of TextBox, which has columns that can flow items
+#  StoryBox adds concept of "float" to the TextBox
 #  
 #  Float
 #  Floats sit in the layer on top of the base layer.
@@ -51,7 +51,7 @@
 module RLayout
 
    
-  class StoryBox < ObjectBox
+  class StoryBox < TextBox
     attr_accessor :heading, :image, :side_box, :quote_box, :grid_size
     attr_accessor :starting_item_index, :ending_item_index
     

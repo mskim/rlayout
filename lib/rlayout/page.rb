@@ -4,7 +4,7 @@ module RLayout
   
   class Page < Container
     attr_accessor :page_number, :left_page, :no_fixture_page
-    attr_accessor :header_object, :footer_object, :story_box_object, :side_bar_object
+    attr_accessor :main_box, :header_object, :footer_object, :side_bar_object
     attr_accessor :fixtures
      
     def initialize(parent_graphic, options={}, &block)
@@ -53,19 +53,16 @@ module RLayout
       @right_inset    = 0
       @top_inset      = 0
       @bottom_inset   = 0
+      options[:x] = @left_margin
+      options[:y] = @top_margin
+      options[:width] = @width - @left_margin - @right_margin
+      options[:height] = @height - @top_margin - @bottom_margin
+      options[:column_count] = options.fetch(:column_count, 1)
                   
-      if options[:story_box]
-        options[:x] = @left_margin
-        options[:y] = @top_margin
-        options[:width] = @width - @left_margin - @right_margin
-        options[:height] = @height - @top_margin - @bottom_margin
-        options[:column_count] = options.fetch(:column_count, 1)
-        
-        # #####
-        # options[:line_width] = 2
-        # options[:line_color] = 'black'
-        
-        @story_box_object = story_box(options)
+      if options[:text_box]
+        @main_box = text_box(options)
+      elsif options[:object_box]
+        @main_box = object_box(options)
       end
             
       if block
@@ -137,7 +134,7 @@ module RLayout
         next if a==@header_object
         next if a==@footer_object
         next if a==@side_bar_object
-        next if a==@story_box_object
+        next if a==@main_box
         next if a==@style_service
         v = instance_variable_get a
         s = a.to_s.sub("@","")                        
@@ -204,11 +201,14 @@ module RLayout
     end
     
     ########### PageScritp Verbs #############    
-    def story_box(options={}, &block)
-      @story_box_object     = StoryBox.new(self, options)      
-      
+    def text_box(options={}, &block)
+      @main_box     = TextBox.new(self, options)      
     end
-        
+    
+    def object_box(options={}, &block)
+      @main_box     = ObjectBox.new(self, options)      
+    end
+    
     def header(options={})
       #TODO      
       @header_object = Header.new(self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
@@ -232,7 +232,7 @@ module RLayout
     
     
     def self.magazine_page(document)
-      Page.new(document, :header=>true, :footer=>true, :story_box=>true)
+      Page.new(document, :header=>true, :footer=>true, :text_box=>true)
     end
   end
   

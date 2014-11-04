@@ -4,9 +4,9 @@ module RLayout
   class Graphic
     
     def init_fill(options)
-      @fill_type        = options[:fill_type]
-      @fill_color       = options[:fill_color]
-      @fill_other_color = options[:fill_other_color]
+      @fill_type        = options.fetch(:fill_type, fill_defaults[:fill_type])
+      @fill_color       = options.fetch(:fill_color, fill_defaults[:fill_color])
+      @fill_other_color = options.fetch(:fill_other_color, fill_defaults[:fill_other_color])
     end
     
     
@@ -27,6 +27,7 @@ module RLayout
     end
     
     def draw_fill(r)
+      
       if @fill_type == 0   #clearColor
         path=bezierPathWithRect(r)
         NSColor.clearColor.set

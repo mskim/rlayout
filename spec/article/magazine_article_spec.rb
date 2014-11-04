@@ -26,7 +26,7 @@ describe 'create Chapter page with StoryBox' do
     @story_path = "/Users/mskim/chapter/2012-12-18-making-rlayout-for-variable-publishing.markdown"
     @m = MagazineArticle.new(:title =>"Chapter Title", :starts_left=>false, :story_path=>@story_path)    
     @first_page = @m.pages.first
-    @heading = @m.pages.first.story_box_object.heading
+    @heading = @m.pages.first.main_box.heading
   end
   
   it 'should save' do    

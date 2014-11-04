@@ -1,6 +1,9 @@
 2014 11 4
 	- DBItem import
-
+	- object_chapter
+	- create TextBox for paragraph flow
+	- Merge StoryBox with TextBox into one
+	
 2014 11 3
  	- fix auto_layout bug
  	- Including Image to Markdown 
