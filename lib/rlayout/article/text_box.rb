@@ -20,7 +20,7 @@ module RLayout
   # Typocal floats are Heading, Image, Quates, SideBox
    
   class TextBox < Container
-    attr_accessor :heading, :image, :side_box, :quote_box, :grid_size
+    attr_accessor :heading, :image, :side_box, :quote_box, :shoulder_column, :grid_size
     attr_accessor :starting_item_index, :ending_item_index
     attr_accessor :column_count, :next_link, :previous_link
     attr_accessor :floats

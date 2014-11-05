@@ -22,9 +22,8 @@ module RLayout
       vertical  = @layout_direction == "vertical"
       view_size = [non_overlapping_frame[2], non_overlapping_frame[3]]
       
-      #TODO starting_position for horizontal
-      @non_overlapping_y =non_overlapping_frame[1]
-      starting_position = vertical ? (@non_overlapping_y + @top_margin +  @top_inset) : (@bottom_margin + @bottom_inset)
+      @starting_y = non_overlapping_bounds[1] # i need non_overlapping_bounds, not non_overlapping_frame
+      starting_position = vertical ? (@starting_y + @top_margin +  @top_inset) : (@left_margin + @left_inset)
       ending_position   = vertical ? (view_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (view_size[0] - @left_margin - @right_margin - @left_inset - @right_inset)
       expandable_size   = ending_position
       expandable_children = 0
@@ -32,42 +31,29 @@ module RLayout
 
        # This is the first pass
        @graphics.each_with_index do |child, index|
-         
          next if !child.layout_member || child.layout_expand.nil?                  
-         
          if (vertical ? child.expand_height? : child.expand_width?)
-           # size child according to layout_length ratio
-           # get total layout_length, and total heigth of expandable graphics
-           # divide them by layout_length ratio
-           # count only expandable child
            expandable_children += 1
            layout_length_sum +=child.layout_length
          else
-           # non-expanding graphic
-           # do not count it in expandable_children
-           # only subtract it's area from total 
            expandable_size -= vertical ? child.height : child.width            
          end
-         # account for child's margin
           expandable_size -= 
            vertical ? child.top_margin + child.bottom_margin
                     : child.left_margin + child.right_margin
-
        end
        spacing_number  = @graphics.length - 1
        unit_size = expandable_size
        @layout_space = 0 if @layout_space.nil?
        if spacing_number>0
          expandable_size -= spacing_number*@layout_space if @layout_space
-         #TODO
          if layout_length_sum ==0
            unit_size    = expandable_size
          else
            unit_size    = expandable_size/layout_length_sum
          end
        end
-       # expandable_size /= expandable_children
-
+       
        @graphics.each do |child|
          next if !child.layout_member || child.layout_expand.nil?                  
          subview_size = [child.width, child.height]

@@ -5,6 +5,13 @@
 # require 'active_record'
 # require 'rest_client'
 
+# This is base class for connecting to database
+# There are two ways of fatching data, 
+# One is direct connection, and the other way is through REST API
+# We have bundch of subclasses of this for specific database field setup
+# MemberSource for memership database
+# ProductSource for product database
+# AdSource for box ad database
 
 module RLayout
   class DBSource

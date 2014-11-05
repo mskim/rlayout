@@ -1,10 +1,16 @@
 TODO List
 	- DBItem import from host
-	- fix nested object_item_drawing
  	- include Image to Markdown 
-	- font with weight support, get the postscript names
+	- add ShoulderColumn, add footnote_area
 	- apply StyleSheet at runtime with default fall back
 	- ePub generation
+
+2014 11 5
+	- fix nested object_item_drawing, non_overlapping_bounds
+	
+2014 11 5
+    - font with weight support, get the postscript names
+	- try smSSMyungjoP-W30, smSSMyungjoP-W35
 	
 2014 11 4
 	- object_chapter

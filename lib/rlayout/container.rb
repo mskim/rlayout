@@ -40,7 +40,6 @@ module RLayout
       @gutter_line_width= options[:gutter_line_width]
       @gutter_line_color= options[:gutter_line_color]
       @gutter_line_dash = options[:gutter_line_dash]
-      
       @floats           = options[:floats]
       
       if @layout_mode == "grid"
@@ -52,6 +51,7 @@ module RLayout
       if block
         instance_eval(&block)
       end
+            
       self
     end
     

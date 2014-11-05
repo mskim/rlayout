@@ -65,19 +65,20 @@ module RLayout
       init_line(options)
       init_text(options)
       init_image(options)
-      init_float(options) # for ObjectBox where float makes sense      
+      init_float(options) # for ObjectBox where float makes sense 
+      
       self
     end
 
     def defaults
       {
-        klass:        'Rectangle',
-        x:            0,
-        y:            0,
-        width:        100,
-        height:       100,
-        grid_rect:   [0,0,1,1], 
-        shape:       0,          
+        klass: 'Rectangle',
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100,
+        grid_rect: [0,0,1,1], 
+        shape: 0,          
       }
     end
     
@@ -205,8 +206,18 @@ TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout
     
     # non_overlapping_rect is a actual layout frame that is not overlapping with flaots
     def non_overlapping_frame
-      return @non_overlapping_rect if @non_overlapping_rect
+      if @non_overlapping_rect
+        return @non_overlapping_rect 
+      end
       frame_rect
+    end
+    
+    def non_overlapping_bounds
+      if @non_overlapping_rect
+        non_overlapping_rect = @non_overlapping_rect.dup
+        [non_overlapping_rect[0] - @x,non_overlapping_rect[1] - @y,@width,@height]
+      end
+      [0,0,@width,@height]
     end
     
     def puts_frame

@@ -26,7 +26,7 @@ module RLayout
       h
     end
     
-    def draw_fill(r)
+    def draw_fill(r)      
       
       if @fill_type == 0   #clearColor
         path=bezierPathWithRect(r)
