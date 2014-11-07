@@ -14,7 +14,7 @@ module RLayout
     def initialize(parent_graphic, options={}, &block)
       super
       @klass            = "Container"
-      @graphics         = options.fetch(:graphics, []) 
+      @graphics         = []
       layout_defaults_hash = auto_layout_defaults
       @layout_mode      = options.fetch(:layout_mode, layout_defaults_hash[:layout_mode])
       @layout_direction = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
@@ -35,23 +35,21 @@ module RLayout
       @grid_unit_width  = options.fetch(:grid_unit_width, layout_defaults_hash[:grid_unit_width])       
       @grid_unit_height = options.fetch(:grid_unit_height, layout_defaults_hash[:grid_unit_height])       
       @grid_show        = options.fetch(:grid_show, layout_defaults_hash[:grid_show])
-
       @gutter_line_type = options[:gutter_line_type]     
       @gutter_line_width= options[:gutter_line_width]
       @gutter_line_color= options[:gutter_line_color]
       @gutter_line_dash = options[:gutter_line_dash]
       @floats           = options[:floats]
+      if options[:graphics]
+        create_children(options[:graphics])
+      end
       
       if @layout_mode == "grid"
-        # @grid_unit_width    = @owner_graphic.drawing_area[SIZE_WIDTH]/@grid_column_count 
-        # @grid_unit_height   = @owner_graphic.drawing_area[SIZE_HEIGHT]/@grid_row_count 
         update_grids
-      end
-      
+      end      
       if block
         instance_eval(&block)
-      end
-            
+      end      
       self
     end
     
@@ -132,24 +130,7 @@ module RLayout
       # end
       h
     end
-    # def to_hash
-    #   h = {}
-    #   instance_variables.each{|a|
-    #     s = a.to_s
-    #     next if s=="@parent_graphic"
-    #     next if s=="@graphics"
-    #     n = s[1..s.size] # get rid of @
-    #     v = instance_variable_get a
-    #     h[n.to_sym] = v if !v.nil? && v !=defaults[n.to_sym] && v !=auto_layout_defaults[n.to_sym]
-    #   }
-    #   if @graphics.length > 0
-    #     h[:graphics]= @graphics.map do |child|
-    #       child.to_hash
-    #     end
-    #   end
-    #   h
-    # end
-    
+        
     def to_data      
       h = {}
       instance_variables.each{|a|
@@ -179,7 +160,6 @@ module RLayout
           child.to_data
         end
       end
-      
       h
     end
     
@@ -224,6 +204,63 @@ module RLayout
       ad
     end
     
+    def create_graphic_of_type(klass, options={})
+      case klass 
+      when "Rectangle"
+        Rectangle.new(self, options)
+      when "Circle"
+        Circle.new(self, options)
+      when "Text"
+        Text.new(self, options)
+      when "Image"
+        Image.new(self, options)
+      when "Line"
+        Line.new(self, options)
+      when "Container"
+        Container.new(self, options)
+      when "Matrix"
+        Matrix.new(self, options)
+      when "ActionBox"
+        ActionBox.new(self, options)
+      when "AudioBox"
+        AudioBox.new(self, options)
+      when "MovieBox"
+        MovieBox.new(self, options)
+      when "SlideBox"
+        SlideBox.new(self, options)
+      when "WebBox"
+        WebBox.new(self, options)
+      when "TextRun"
+        TextRun.new(self, options)
+      when "TextLine"
+        TextBar.new(self, options)
+      when "TextBox"
+        TextBox.new(self, options)
+      when "TextColumn"
+        TextColumn.new(self, options)
+      when "ObjectBox"
+        ObjectBox.new(self, options)
+      when "ObjectColumn"
+        ObjectColumn.new(self, options)
+      when "StoryBox"
+        StoryBox.new(self, options)
+      when "StoryColumn"
+        StoryColumn.new(self, options)
+      else 
+        puts "Creating Rectangle instead of graphic class named #{klass}!"
+        Rectangle.new(self,options)
+      end            
+    end
+    
+    # create_children
+    def create_children(graphics_hash_array)
+      return if graphics_hash_array.nil?
+      graphics_hash_array.each do |graphic_hash|
+        klass_name=graphic_hash[:klass] 
+        create_graphic_of_type(klass_name,graphic_hash)
+      end
+      relayout!
+    end
     
     ########### pgscript verbes
     def flatten

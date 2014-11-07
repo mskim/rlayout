@@ -8,51 +8,99 @@ module RLayout
     attr_accessor :fixtures
      
     def initialize(parent_graphic, options={}, &block)
+      #TODO refactore this
+      if options[:width]
+      elsif @parent_graphic && @parent_graphic.width
+        options[:width]  = @parent_graphic.width 
+      else
+        options[:width]  = defaults[:width]
+      end
+      
+      if options[:height]
+      elsif @parent_graphic && @parent_graphic.height
+        options[:height]  = @parent_graphic.height 
+      else
+        options[:height]  = defaults[:height]
+      end
+      
+      if options[:margin]
+      elsif @parent_graphic && @parent_graphic.margin
+        options[:margin]  = @parent_graphic.margin        
+      else
+        options[:margin]  = defaults[:margin]
+      end
+      
+      if options[:left_margin]
+      elsif @parent_graphic && @parent_graphic.left_margin
+        options[:left_margin]  = @parent_graphic.left_margin        
+      else
+        options[:left_margin]  = defaults[:margin]
+      end
+      
+      if options[:right_margin]
+      elsif @parent_graphic && @parent_graphic.right_margin
+        options[:right_margin]  = @parent_graphic.right_margin        
+      else
+        options[:right_margin]  = defaults[:margin]
+      end
+      
+      if options[:top_margin]
+      elsif @parent_graphic && @parent_graphic.top_margin
+        options[:top_margin]  = @parent_graphic.top_margin        
+      else
+        options[:top_margin]  = defaults[:margin]
+      end
+      
+      if options[:bottom_margin]
+      elsif @parent_graphic && @parent_graphic.bottom_margin
+        options[:bottom_margin]  = @parent_graphic.bottom_margin        
+      else
+        options[:bottom_margin]  = defaults[:margin]
+      end
+      
+      if options[:left_inset]
+      elsif @parent_graphic && @parent_graphic.left_inset
+        options[:left_inset]  = @parent_graphic.left_inset        
+      else
+        options[:left_inset]  = defaults[:inset]
+      end
+      
+      if options[:right_inset]
+      elsif @parent_graphic && @parent_graphic.right_inset
+        options[:right_inset]  = @parent_graphic.right_inset        
+      else
+        options[:right_inset]  = defaults[:inset]
+      end
+      
+      if options[:top_inset]
+      elsif @parent_graphic && @parent_graphic.top_inset
+        options[:top_inset]  = @parent_graphic.top_inset        
+      else
+        options[:top_inset]  = defaults[:inset]
+      end
+      
+      if options[:bottom_inset]
+      elsif @parent_graphic && @parent_graphic.bottom_inset
+        options[:bottom_inset]  = @parent_graphic.bottom_inset        
+      else
+        options[:bottom_inset]  = defaults[:inset]
+      end
+            
       super
       @parent_graphic.pages << self if  @parent_graphic && @parent_graphic.pages && !@parent_graphic.pages.include?(self)       
       @klass = "Page"
-      
       @page_number = options.fetch(:page_number, '1')
-      
       if @parent_graphic && @parent_graphic.double_side
         @left_page  = @page_number.even?
       else
         @left_page  = true
       end
-      
-      @graphics = []
       @fixtures = []
       @floats = []
-      
       @x = 0
       @y = 0
       
-      #TODO refactore this
-      if @parent_graphic && @parent_graphic.width
-        @width  = @parent_graphic.width 
-      else
-        @width  = defaults[:width]
-      end
-      
-      if @parent_graphic && @parent_graphic.height
-        @height  = @parent_graphic.height 
-      else
-        @height  = defaults[:height]
-      end
-      
-      if @parent_graphic && @parent_graphic.margin
-        @margin         = @parent_graphic.margin        
-      else
-        @margin  = defaults[:margin]
-      end
-      @left_margin    = @margin
-      @right_margin   = @margin
-      @top_margin     = @margin
-      @bottom_margin  = @margin
-      @left_inset     = 0
-      @right_inset    = 0
-      @top_inset      = 0
-      @bottom_inset   = 0
+
       options[:x] = @left_margin
       options[:y] = @top_margin
       options[:width] = @width - @left_margin - @right_margin
@@ -83,6 +131,7 @@ module RLayout
         width: 600,
         height: 800,
         margin: 50,
+        inset: 0,
       }
     end
     
@@ -180,7 +229,7 @@ module RLayout
       @parent_graphic.footer_rule.dup
     end
     
-    def save_hash(path)
+    def save_yml(path)
       h = to_hash
       File.open(path, 'w'){|f| f.write h.to_yaml}
       

@@ -12,7 +12,7 @@ module RLayout
   
   class Graphic
     def init_image(options)
-      return unless @image_path
+      return unless options[:image_path]
       @image_path       = options[:image_path]
       @image_frame      = options[:image_frame]
       @image_fit_type   = options[:image_fit_type]
@@ -21,6 +21,9 @@ module RLayout
       @image_path       = options.fetch(:image_path, nil)
       @image_frame      = NSZeroRect
       if @image_path
+        # image_types = %w[.pdf .PDF .jpg .JPG .png .tiff]
+        # if @image_path =~ /[pdf|PDF|jpg|JPG|png|tiff]$/
+        #   
         @image_object=NSImage.alloc.initByReferencingFile(@image_path)
       end
       apply_fit_type
@@ -106,7 +109,7 @@ module RLayout
       end
       # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
       # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
-      source_width = frame.size.width / (frame.size.height/@image_frame.size.height)
+      source_width = @width / (height/@image_frame.size.height)
       @source_frame.origin.x = (@image_frame.size.width - source_width)/2.0
       @source_frame.origin.y = 0
       @source_frame.size.width = source_width

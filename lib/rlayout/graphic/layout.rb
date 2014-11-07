@@ -26,11 +26,11 @@ module RLayout
         @right_inset    = options.fetch(:right_inset, layout_default[:right_inset])
         @bottom_inset   = options.fetch(:bottom_inset, layout_default[:bottom_inset])
       end
-      
       @layout_direction = options.fetch(:layout_direction, layout_default[:layout_direction])
       @layout_member    = options.fetch(:layout_member, layout_default[:layout_member])
       @layout_expand    = options.fetch(:layout_expand, layout_default[:layout_expand])
       @layout_length    = options.fetch(:layout_length, layout_default[:layout_length])
+          
     end
     
     def layout_default

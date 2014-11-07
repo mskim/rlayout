@@ -46,7 +46,6 @@ module RLayout
       elsif  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
         @parent_graphic.graphics << self  
       end
-      
       defaults_hash     = defaults
       @klass            = options.fetch(:klass, defaults_hash[:klass]) 
       @x                = options.fetch(:x, defaults_hash[:x])
@@ -58,15 +57,12 @@ module RLayout
       @tag              = options[:tag]      
       @shape_bezier     = options[:shape_bezier]
       @auto_save        = options[:auto_save]
-      
-      init_layout(options)
+      init_layout(options)      
       init_grid(options)
       init_fill(options)
       init_line(options)
       init_text(options)
       init_image(options)
-      init_float(options) # for ObjectBox where float makes sense 
-      
       self
     end
 
@@ -91,6 +87,8 @@ module RLayout
       h[:y]       = @y        if @x != defaults_hash[:y]
       h[:width]   = @width    if @x != defaults_hash[:width]
       h[:height]  = @height   if @x != defaults_hash[:height]
+      h[:tag]     = @tag      if @tag 
+      
       h.merge!(layout_to_hash)
       h.merge!(grid_to_hash)
       h.merge!(fill_to_hash)
@@ -123,6 +121,13 @@ module RLayout
 COLOR_NAMES =%w[black blue brown clear cyan darkGray gray green lightGray magenta orange red white yellow white]
 KLASS_NAMES =%w[Rectangle Circle RoundRect Text Image]
 TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout", "PageScript"]
+IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
+    def self.ramdom_text
+      TEXT_STRING_SAMPLES.sample
+    end
+    def ramdom_text
+      TEXT_STRING_SAMPLES.sample
+    end
     
     def self.random_color
       COLOR_NAMES.sample

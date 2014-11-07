@@ -4,7 +4,17 @@ TODO List
 	- add ShoulderColumn, add footnote_area
 	- apply StyleSheet at runtime with default fall back
 	- ePub generation
+	- fix left_page header location bug
 
+2014 11 7
+	- variable page, variable document
+	- image drawing
+	- symlink middleman book to 80 port web folder
+	
+2014 11 6
+	- product_box with image
+	- product_box with template
+	 
 2014 11 5
 	- fix nested object_item_drawing, non_overlapping_bounds
 	
