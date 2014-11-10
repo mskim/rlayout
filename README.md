@@ -1,15 +1,26 @@
 TODO List
-	- DBItem import from host
  	- include Image to Markdown 
 	- add ShoulderColumn, add footnote_area
 	- apply StyleSheet at runtime with default fall back
 	- ePub generation
 	- fix left_page header location bug
+	- find hosting middleman build static book 
+	- Merge Grid and Float
+	- Dropbox business for sharing
+		- instead of user giving permission to rlayout server
+			give user permission from the Dropbox server
 
+2014 11 10
+	- image drawing, 
+	- update image with frame changes
+	- smart image fit, best_fit, best_fill
 2014 11 7
 	- variable page, variable document
-	- image drawing
-	- symlink middleman book to 80 port web folder
+	- DB_Chapter 
+		control column_count 	from options
+		column_gutter 			from options
+		item_space				from options
+		Floating Heading		from options
 	
 2014 11 6
 	- product_box with image

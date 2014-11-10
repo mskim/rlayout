@@ -2,7 +2,9 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'create db_chapter' do
   before do
-    @db_ch    = DBChapter.new(title: 'my first db publishing sample')
+    @source_path = "/Users/mskim/membership/pdf"
+    @source_path = "/Users/mskim/MediaWill/pdf/79x113"
+    @db_ch    = DBChapter.new(title: 'my first db publishing sample', source_path: @source_path)
     @pdf_path = File.dirname(__FILE__) + "/../output/db_chapter_sample.pdf"
   end
   

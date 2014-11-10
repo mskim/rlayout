@@ -1,47 +1,35 @@
 
 module RLayout
   class DBChapter < Document
-    attr_accessor :db_info, :db_items, :heading
+    attr_accessor :db_items, :heading, :source_path, :page_options
     def initialize(options={}, &block)
+      @page_options = options.dup
       super
+      @source_path  = options[:source_path]
       @double_side  = true
       @page_count   = options.fetch(:page_count, 2)
       @toc_on       = options.fetch(:toc_on, false)
       @chapter_kind = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
-      options[:footer]    = true 
-      options[:header]    = true 
-      options[:object_box] = true
-      options[:column_count] = 3
-      
+      @page_options[:footer]        = true 
+      @page_options[:header]        = true 
+      @page_options[:object_box]    = true
+      @page_options[:column_count]  = 4
+      @page_options[:column_layout_space]  = 5
+      @page_options[:item_space]    = 3
       @page_count.times do |i|
-        options[:page_number] = @starting_page_number + i
-        Page.new(self, options)
+        @page_options[:page_number] = @starting_page_number + i
+        p = Page.new(self, @page_options)
       end
-            
-
-      # if options[:db_info]
-        @db_info = options[:db_info]
-        read_db_item
-        layout_db_item
-      # end
+      read_pdf_item
+      layout_db_item
       self
     end
     
-    # def read_story
-
-    def read_db_item
-      # db_source       = DBSource.fetch(@db_info)
-      # @heading    = db_source.heading
-      # @title      = @heading[:title]
-      # @book_title = @heading[:book_title]
-      # 
-      # @style_service ||= StyleService.new()
-      # @db_items = []
-      
-      # db_source.items.each do |item_info| 
-      #   @db_items << AdBox.new(nil, item_info)
-      # end
-      @db_items = AdBox.samples_of(200)
+    def read_pdf_item
+      @db_items = []
+      Dir.glob("#{@source_path}/**.pdf") do |f|
+        @db_items << Image.new(nil, image_path: f)
+      end
     end
     
     def layout_db_item
@@ -66,13 +54,15 @@ module RLayout
       while @db_items.length > 0
         page_index += 1
         if page_index >= @pages.length
-          options ={}
-          options[:footer]     = true 
-          options[:header]     = true 
-          options[:object_box] = true
-          options[:column_count] = 3
-          options[:page_number]= @starting_page_number + page_index
-          Page.new(self, options)
+          @page_options[:footer]      = true 
+          @page_options[:header]      = true 
+          @page_options[:object_box]  = true
+          @page_options[:column_count]= 4
+          @page_options[:item_space]  = 5
+          @page_options[:page_number] = @starting_page_number + page_index
+          p= Page.new(self, @page_options)
+          puts "p.width:#{p.width}"
+          
         end
         @pages[page_index].main_box.layout_items(@db_items)
       end

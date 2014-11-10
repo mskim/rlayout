@@ -1,12 +1,6 @@
 
 if RUBY_ENGINE == "macruby"
 framework 'cocoa'
-require File.dirname(__FILE__) + '/graphic_view_mac/line_drawing'
-require File.dirname(__FILE__) + '/graphic_view_mac/fill_drawing'
-require File.dirname(__FILE__) + '/graphic_view_mac/image_drawing'
-require File.dirname(__FILE__) + '/graphic_view_mac/text_drawing'
-require File.dirname(__FILE__) + '/graphic_view_mac/text_drawing'
-
 COLOR_NAMES = %w[black blue brown clear cyan darkGray gray green lightGray magenta orange red white yellow white]
 
 #shape

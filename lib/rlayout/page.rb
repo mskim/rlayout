@@ -15,7 +15,7 @@ module RLayout
       else
         options[:width]  = defaults[:width]
       end
-      
+
       if options[:height]
       elsif @parent_graphic && @parent_graphic.height
         options[:height]  = @parent_graphic.height 
@@ -87,6 +87,7 @@ module RLayout
       end
             
       super
+            
       @parent_graphic.pages << self if  @parent_graphic && @parent_graphic.pages && !@parent_graphic.pages.include?(self)       
       @klass = "Page"
       @page_number = options.fetch(:page_number, '1')
@@ -100,17 +101,19 @@ module RLayout
       @x = 0
       @y = 0
       
-
-      options[:x] = @left_margin
-      options[:y] = @top_margin
-      options[:width] = @width - @left_margin - @right_margin
-      options[:height] = @height - @top_margin - @bottom_margin
-      options[:column_count] = options.fetch(:column_count, 1)
+      main_box_options = {}
+      main_box_options[:x]            = @left_margin
+      main_box_options[:y]            = @top_margin
+      main_box_options[:width]        = @width - @left_margin - @right_margin
+      main_box_options[:height]       = @height - @top_margin - @bottom_margin
+      main_box_options[:column_count] = options.fetch(:column_count, 1)
+      main_box_options[:layout_space] = options.fetch(:column_layout_space, 10)
+      main_box_options[:item_space]   = options.fetch(:item_space, 3)
                   
       if options[:text_box]
-        @main_box = text_box(options)
+        @main_box = text_box(main_box_options)
       elsif options[:object_box]
-        @main_box = object_box(options)
+        @main_box = object_box(main_box_options)
       end
             
       if block

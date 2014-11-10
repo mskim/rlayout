@@ -28,7 +28,7 @@ module RLayout
     attr_accessor :text_markup, :text_direction, :text_string, :text_color, :text_size, :text_line_spacing, :text_font
     attr_accessor :text_fit_type, :text_alignment, :text_tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
     attr_accessor :text_layout_manager
-    attr_accessor :image_path, :image_frame, :image_fit_type, :image_caption
+    attr_accessor :image_object, :image_path, :image_frame, :image_fit_type, :image_caption
     attr_accessor :non_overlapping_rect, :overlapping_rects
     
     # TODO
@@ -239,6 +239,10 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       @height = frame[3]
       if @text_layout_manager
         @text_layout_manager.set_frame
+      end
+      
+      if @image_object
+        apply_fit_type
       end
     end
     

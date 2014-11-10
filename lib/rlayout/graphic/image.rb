@@ -14,19 +14,13 @@ module RLayout
     def init_image(options)
       return unless options[:image_path]
       @image_path       = options[:image_path]
-      @image_frame      = options[:image_frame]
-      @image_fit_type   = options[:image_fit_type]
+      @image_frame      = options.fetch(:image_frame, image_defaults[:image_frame])
       @image_caption    = options[:image_caption]      
       @image_fit_type   = options.fetch(:image_fit_type, image_defaults[:image_fit_type])
-      @image_path       = options.fetch(:image_path, nil)
-      @image_frame      = NSZeroRect
       if @image_path
-        # image_types = %w[.pdf .PDF .jpg .JPG .png .tiff]
-        # if @image_path =~ /[pdf|PDF|jpg|JPG|png|tiff]$/
-        #   
         @image_object=NSImage.alloc.initByReferencingFile(@image_path)
+        apply_fit_type
       end
-      apply_fit_type
     end
     
     def image_defaults
@@ -47,25 +41,35 @@ module RLayout
     
     def draw_image(rect)      
       return unless @image_object
-
-      case @image_fit_type
-      when  IMAGE_FIT_TYPE_ORIGINAL
-        @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-        # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
-      when  IMAGE_FIT_TYPE_VIRTICAL
-        @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      when  IMAGE_FIT_TYPE_HORIZONTAL
-        @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      when  IMAGE_FIT_TYPE_KEEP_RATIO 
+      # This is confusing. 
+      # If I want to displace image with reduced % , I have to make the source_frame larger
+      if @image_fit_type == IMAGE_FIT_TYPE_IGNORE_RATIO 
         @image_object.drawInRect(rect, fromRect:NSZeroRect, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      when   IMAGE_FIT_TYPE_IGNORE_RATIO
-        @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
       else
-        @image_object.drawInRect(rect, fromRect:NSZeroRect, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
+        @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
       end
+      
+      # case @image_fit_type
+      # when  IMAGE_FIT_TYPE_ORIGINAL
+      #   @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
+      # when  IMAGE_FIT_TYPE_VIRTICAL
+      #   @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
+      # when  IMAGE_FIT_TYPE_HORIZONTAL
+      #   @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
+      # when  IMAGE_FIT_TYPE_KEEP_RATIO 
+      #   @image_object.drawInRect(rect, fromRect:NSZeroRect, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
+      # when   IMAGE_FIT_TYPE_IGNORE_RATIO
+      #   @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
+      # else
+      #   @image_object.drawInRect(rect, fromRect:NSZeroRect, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
+      # end
 
     end
 
+    def image_object_height_to_width_ratio
+      return 1 unless @image_object
+      @image_object.size.height/@image_object.size.width
+    end
 
     def apply_fit_type
       case @image_fit_type

@@ -28,9 +28,9 @@ module RLayout
       super
       @klass = "ObjctBox"   
       @layout_direction = options.fetch(:layout_direction, "horizontal")
-      @layout_space     = options.fetch(:layout_space, 10)
+      @layout_space     = options.fetch(:layout_space, 5)
       @column_count     = options.fetch(:column_count, 3)
-      create_columns
+      create_columns(options)
       @floats           = options.fetch(:floats, [])
       if block
         instance_eval(&block)
@@ -43,9 +43,11 @@ module RLayout
       self
     end
     
-    def create_columns
+    def create_columns(options={})
+      column_options = {}
+      column_options[:layout_space] = options.fetch(:item_space, 0)
       @column_count.times do
-        ObjectColumn.new(self)
+        ObjectColumn.new(self, column_options)
       end
       relayout!      
     end
@@ -149,8 +151,11 @@ module RLayout
     
     def initialize(parent_graphic, options={}, &block)
       super
+      @line_width = 1
+      @line_color = "black"
+      
       @klass = "ObjectColumn"
-      @layout_space = 0
+      @layout_space = options.fetch(:item_space, 0)
       @current_position = @top_margin + @top_inset
       if block
         instance_eval(&block)
@@ -166,11 +171,12 @@ module RLayout
     
     def insert_item(item, options={})
       item.parent_graphic = self
-      item.y = @current_position
-      item.x = @left_margin + @left_inset
+      new_frame = [0,0,0,0]
+      new_frame[0] = @left_margin + @left_inset
+      new_frame[1] = @current_position
       original_width = item.width
-      item.width = layout_area[0]
-      
+      original_height = item.height
+      new_frame[2] = layout_area[0]
       #TODO
       # if item.is_breakable?   
       #   # puts " linked item was successfully inserted to column"     
@@ -178,12 +184,23 @@ module RLayout
       #   return true
       # end 
       room = @height - @current_position - @bottom_margin - @bottom_inset - @layout_space
-      item.height = item.width/original_width*item.height
-      item.relayout!
+      if item.image_object
+        # if item is image, height should be proportional to image_object ratio, not frame width height ratio
+        new_frame[3] = item.image_object_height_to_width_ratio*new_frame[2]
+      else
+        new_frame[3] = original_height/original_width*new_frame[2]
+      end
+      puts "original_width:#{original_height}"
+      puts "new_frame[2]:#{new_frame[2]}"
+      puts "original_height:#{original_height}"
+      puts "new_frame[3]:#{new_frame[3]}"
+      item.set_frame(new_frame)
+      item.relayout! if item.kind_of?(Container)
       if item.height > room
         return false  
       else
         item.parent_graphic = self
+        # set_frame triggers image re-adjusting
         @graphics << item
         @current_position += item.height
         return true  
