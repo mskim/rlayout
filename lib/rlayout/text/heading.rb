@@ -57,29 +57,22 @@ module RLayout
       @right_inset    = 0
       @top_margin     = 10
       @bottom_margin  = 10
-      
       @layout_expand = [:width, :height]
-      
       width = @width - @left_inset - @right_inset
       puts "options:#{options}"
       if options[:title]
         @title_object = title(options[:title], options)
       end
-
       if options[:subtitle]        
         @subtitle_object = subtitle(options[:subtitle], options)
       end
-
       if options[:leading]
         @leading_object = leading(options[:leading], options)
       end
-
       if options[:author]
         @author_object = author(options[:author], options)
       end
-
       @line_type=0
-      # @line_width=1
       @line_color="lightGray"
       height_sum = 0      
       height_sum +=@title_object.height    unless @title_object.nil?
@@ -88,10 +81,8 @@ module RLayout
       height_sum +=@author_object.height   unless @author_object.nil?
       @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
       relayout!
-      
       self
     end
-    
 
     def self.news_article_heading(options={})
       atts          = @style_service.style_for_markup("title", options)

@@ -60,9 +60,7 @@ module RLayout
           @page_options[:column_count]= 4
           @page_options[:item_space]  = 5
           @page_options[:page_number] = @starting_page_number + page_index
-          p= Page.new(self, @page_options)
-          puts "p.width:#{p.width}"
-          
+          p= Page.new(self, @page_options)          
         end
         @pages[page_index].main_box.layout_items(@db_items)
       end

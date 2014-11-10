@@ -101,12 +101,10 @@ module RLayout
           else
             current_column = @graphics[column_index]
             current_column.set_starting_position_at_non_overlapping_area if current_column
-            
             # This is the case where the item does not fit, even if this is the new empty column
             # For this case, force fit it into this column, since it is not going to fit anywhere.
             current_column.insert_item(front_most_item, :force_fit=>true)
           end
-          
         else
             # second half of partial fit
             # relayout current column before going to the next
@@ -135,7 +133,7 @@ module RLayout
     def relayout_floats!
       @floats.each do |float|
         #TODO adjust size with grid values
-        float.width = text_rect[2]
+        float.width = text_rect[WIDTH_IDX]
         float.relayout!
       end
       
@@ -162,14 +160,14 @@ module RLayout
     # set @current_pasotion as start of non-overlapping y
     def set_starting_position_at_non_overlapping_area
       rect = non_overlapping_frame
-      @current_position = rect[1] + @top_margin + @top_inset 
+      @current_position = rect[Y_IDX] + @top_margin + @top_inset 
     end
     
     def insert_item(item, options={})
       item.parent_graphic = self
       item.y = @current_position
       item.x = @left_margin + @left_inset
-      item.width = layout_area[0]
+      item.width = layout_area[X_IDX]
       if item.is_linked?   
         # puts " linked item was successfully inserted to column"     
         @current_position += item.height + @layout_space

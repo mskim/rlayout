@@ -61,8 +61,8 @@ module RLayout
       book_tree_hash  = YAML.load_file(book_tree_path)
       starting_page   = options.fetch(:strating_page, 1)
       book_tree_hash.each do |node|
-        node[2] = starting_page
-        starting_page += node[3]
+        node[WIDTH_IDX] = starting_page
+        starting_page += node[HEIGHT_IDX]
       end
       File.open(book_tree_path, 'w'){|f| f.write book_tree_hash.to_yaml} 
     end

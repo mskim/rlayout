@@ -88,18 +88,18 @@ module RLayout
         # puts "overlapping at the top "
         new_rect = column_rect.dup
         new_rect[1] = max_y(float_rect)
-        new_rect[3] -= float_rect[3]
+        new_rect[HEIGHT_VAL] -= float_rect[HEIGHT_VAL]
         return new_rect
       elsif max_y(float_rect) >= max_y(column_rect)
         # puts "overlapping at the bottom "
         new_rect = column_rect.dup
-        new_rect[3] = min_y(float_rect)    
+        new_rect[HEIGHT_VAL] = min_y(float_rect)    
         return new_rect
       end
     end
     
     def min_x(rect)
-      rect[0]
+      rect[X_POS]
     end
     
     def min_y(rect)
@@ -115,19 +115,19 @@ module RLayout
     end
     
     def max_x(rect)
-      rect[0] + rect[2]
+      rect[X_POS] + rect[WIDTH_VAL]
     end
     
     def max_y(rect)
-      rect[1] + rect[3]
+      rect[1] + rect[HEIGHT_VAL]
     end
     
     def contains_rect(rect_1,rect_2)
-      (rect_1[0]<=rect_2[0] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) >= max_y(rect_2))
+      (rect_1[X_POS]<=rect_2[X_POS] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) >= max_y(rect_2))
     end
     
     def intersects_rect(rect_1, rect_2)
-      (rect_1[0]>=rect_2[0] && rect_1[0] <= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && rect_1[0] <= max_x(rect_2))
+      (rect_1[X_POS]>=rect_2[X_POS] && rect_1[X_POS] <= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && rect_1[X_POS] <= max_x(rect_2))
     end
     
     # it sets the children graphic's non_overlapping_frame value

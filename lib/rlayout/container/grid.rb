@@ -92,7 +92,7 @@ module  RLayout
       puts __method__
       puts "grid_rect:#{grid_rect}"
       puts "@grid_unit_width:#{@grid_unit_width}"
-      [left_inset + grid_rect[0]*@grid_unit_width, @left_inset + grid_rect[1]*@grid_unit_height, grid_rect[2]*@grid_unit_width, grid_rect[3]*@grid_unit_height]
+      [left_inset + grid_rect[X_POS]*@grid_unit_width, @left_inset + grid_rect[Y_POS]*@grid_unit_height, grid_rect[WIDTH_VAL]*@grid_unit_width, grid_rect[HEIGHT_VAL]*@grid_unit_height]
     end
     
     # size of single grid
@@ -115,16 +115,16 @@ module  RLayout
     
     def flipp_cell_horizontally(cell)
       frame    = cell.grid_record.grid_rect
-      right_space = @grid_column_count - (frame[0] + frame[2])
-      frame[0] = right_space
+      right_space = @grid_column_count - (frame[X_POS] + frame[WIDTH_VAL])
+      frame[X_POS] = right_space
     end
     
     
     def flipp_cell_vertically(cell)
       puts __method__
       frame    = cell.grid_record.grid_rect
-      bottom_space = @grid_row_count - (frame[1] + frame[3])
-      frame[1] = bottom_space
+      bottom_space = @grid_row_count - (frame[Y_POS] + frame[HEIGHT_VAL])
+      frame[Y_POS] = bottom_space
     end
     
     def flipp_grid_cells_horizontally
@@ -281,7 +281,7 @@ EOF
       @grid_h_lines.each do |h_line|
         @grid_v_lines.each do |v_line|
           next if v_line == @grid_v_lines.last
-          @grid_cells << [v_line[0], h_line[1], @grid_unit_width, @grid_unit_height]
+          @grid_cells << [v_line[X_POS], h_line[Y_POS], @grid_unit_width, @grid_unit_height]
         end
         next if h_line == @grid_h_lines.last
       end      
@@ -342,16 +342,16 @@ EOF
     #   @grid_v_lines.each do |line|
     #     path = NSBezierPath.new
     #     path.lineWidth = 0.5                
-    #     path.moveToPoint NSMakePoint(line[0] + x_offset, line[1] + y_offset)
-    #     path.lineToPoint NSMakePoint(line[2] + x_offset, line[3] + y_offset)
+    #     path.moveToPoint NSMakePoint(line[X_POS] + x_offset, line[Y_POS] + y_offset)
+    #     path.lineToPoint NSMakePoint(line[WIDTH] + x_offset, line[HEIGHT_VAL] + y_offset)
     #     path.stroke
     #   end
     # 
     #   @grid_h_lines.each do |line|
     #     path = NSBezierPath.new
     #     path.lineWidth = 0.2        
-    #     path.moveToPoint NSMakePoint(line[0] + x_offset, line[1] + y_offset)
-    #     path.lineToPoint NSMakePoint(line[2] + x_offset, line[3] + y_offset)
+    #     path.moveToPoint NSMakePoint(line[X_POS] + x_offset, line[Y_POS] + y_offset)
+    #     path.lineToPoint NSMakePoint(line[WIDTH_VAL] + x_offset, line[HEIGHT_VAL] + y_offset)
     #     path.stroke
     #   end      
     # 
@@ -459,10 +459,10 @@ EOF
         unless graphic.grid_rect
           graphic.grid_rect   = [0,0,1,1]
         end
-        graphic.x    = x + graphic.grid_rect[0]*@grid_unit_width
+        graphic.x    = x + graphic.grid_rect[X_POS]*@grid_unit_width
         graphic.y    = y
-        graphic.width  = graphic.grid_rect[2]*@grid_unit_width
-        graphic.height = graphic.grid_rect[3]*@grid_unit_height
+        graphic.width  = graphic.grid_rect[WIDTH_VAL]*@grid_unit_width
+        graphic.height = graphic.grid_rect[HEIGHT_VAL]*@grid_unit_height
                 
         if graphic.klass == "Image"
           graphic.image_record.apply_fit_type if graphic.image_record
@@ -496,7 +496,7 @@ EOF
     
     # given a point, return grid cell,
     def point_in_rect?(point, rect)
-      ((point[0] >= rect[0]) && (point[0] <= rect[0]+rect[2])) && ((point[1] >= rect[1]) && (point[1] <= rect[1]+rect[3]))
+      ((point[X_POS] >= rect[X_POS]) && (point[X_POS] <= rect[X_POS]+rect[WIDTH_VAL])) && ((point[Y_POS] >= rect[Y_POS]) && (point[Y_POS] <= rect[Y_POS]+rect[HEIGHT_VAL]))
     end
     
     # given a point, return grid cell,
@@ -510,9 +510,9 @@ EOF
         
     def occupying_grids(graphic)
       occupied_grid = []
-      starting_grid_index = graphic.grid_record.grid_rect[0]  + graphic.grid_record.grid_rect[1] * @grid_row_count
-      @grid_rect[3].times do 
-        @grid_rect[2].times do |i|
+      starting_grid_index = graphic.grid_record.grid_rect[X_POS]  + graphic.grid_record.grid_rect[Y_POS] * @grid_row_count
+      @grid_rect[HEIGHT_VAL].times do 
+        @grid_rect[WIDTH_VAL].times do |i|
           occupied_grid << starting_grid_index + i
         end
         starting_grid_index = starting_grid_index + @grid_row_count
@@ -528,9 +528,9 @@ EOF
       
       occupied = []
       @graphics.each do |graphic|
-        starting_grid_index = graphic.grid_record.grid_rect[0]  + graphic.grid_record.grid_rect[1] * @grid_row_count
-        graphic.grid_record.grid_rect[3].times do 
-          graphic.grid_record.grid_rect[2].times do |i|
+        starting_grid_index = graphic.grid_record.grid_rect[X_POS]  + graphic.grid_record.grid_rect[Y_POS] * @grid_row_count
+        graphic.grid_record.grid_rect[HEIGHT_VAL].times do 
+          graphic.grid_record.grid_rect[WIDTH_VAL].times do |i|
             occupied << starting_grid_index + i
           end
           starting_grid_index = starting_grid_index + @grid_row_count

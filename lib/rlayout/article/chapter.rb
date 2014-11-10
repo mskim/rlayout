@@ -94,7 +94,6 @@ module RLayout
         @first_page.main_box.relayout_floats!
       else 
         # make head a as one of graphics
-        puts "@chapter_kind:#{@chapter_kind}"
         heading_object = Heading.new(nil, @heading)
         @first_page.graphics.unshift(heading_object)
         heading_object.parent_graphic = @first_page

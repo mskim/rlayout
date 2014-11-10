@@ -13,6 +13,11 @@ require File.dirname(__FILE__) + "/graphic/image"
 require File.dirname(__FILE__) + "/graphic/text"
 require File.dirname(__FILE__) + "/graphic/float"
 
+X_POS       = 0
+Y_POS       = 1
+WIDTH_VAL   = 2
+HEIGHT_VAL  = 3
+
 module RLayout
   
   class Graphic
@@ -220,7 +225,7 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     def non_overlapping_bounds
       if @non_overlapping_rect
         non_overlapping_rect = @non_overlapping_rect.dup
-        [non_overlapping_rect[0] - @x,non_overlapping_rect[1] - @y,@width,@height]
+        [non_overlapping_rect[X_POS] - @x,non_overlapping_rect[1] - @y,@width,@height]
       end
       [0,0,@width,@height]
     end
@@ -233,10 +238,10 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     end
     
     def set_frame(frame)
-      @x = frame[0]
+      @x = frame[X_POS]
       @y = frame[1]
-      @width = frame[2]
-      @height = frame[3]
+      @width = frame[WIDTH_VAL]
+      @height = frame[HEIGHT_VAL]
       if @text_layout_manager
         @text_layout_manager.set_frame
       end
@@ -249,7 +254,7 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     def change_width_and_adjust_height(new_width, options={})
       unless @text_layout_manager.nil?
         @text_layout_manager.change_width_and_adjust_height(new_width, options={})
-        @height = @text_layout_manager.text_container[3] + @top_margin + @top_inset + @bottom_margin + @bottom_inset
+        @height = @text_layout_manager.text_container[HEIGHT_VAL] + @top_margin + @top_inset + @bottom_margin + @bottom_inset
       else
         old_width = @width
         old_height = @height
@@ -461,9 +466,9 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       color_kind=color_array[0]
       color_values=color_array[1].split(",")
       if color_kind=~/RGB/
-          @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
+          @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[WIDTH_VAL].to_f, alpha:color_values[HEIGHT_VAL].to_f)
       elsif color_kind=~/CMYK/
-          @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
+          @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[WIDTH_VAL].to_f, black:color_values[HEIGHT_VAL].to_f, alpha:color_values[4].to_f)
       elsif color_kind=~/NSCalibratedWhiteColorSpace/
           @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
       elsif color_kind=~/NSCalibratedBlackColorSpace/
@@ -494,9 +499,9 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       color_kind=color_array[0]
       color_values=color_array[1].split(",")
       if color_kind=~/RGB/
-          @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
+          @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[WIDTH_VAL].to_f, alpha:color_values[HEIGHT_VAL].to_f)
       elsif color_kind=~/CMYK/
-          @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
+          @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[WIDTH_VAL].to_f, black:color_values[HEIGHT_VAL].to_f, alpha:color_values[4].to_f)
       elsif color_kind=~/NSCalibratedWhiteColorSpace/
           @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
       elsif color_kind=~/NSCalibratedBlackColorSpace/

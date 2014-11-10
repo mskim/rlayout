@@ -59,8 +59,8 @@ module RLayout
         else
           @att_string     = make_att_string_from_option(options)  
           @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
-          @width          = @text_container[2]
-          @height         = @text_container[3]
+          @width          = @text_container[WIDTH_VAL]
+          @height         = @text_container[HEIGHT_VAL]
           # line_fragments  = []
           # make_tokens
           # layout_lines_custom
@@ -97,7 +97,7 @@ module RLayout
       if @text_container.nil?
         @text_container=[0,0,new_width,1000]
       else
-        @text_container[2] = new_width
+        @text_container[WIDTH_VAL] = new_width
       end
       layout_lines
       # TODO change owner_graphic height
@@ -239,7 +239,7 @@ module RLayout
     # it behaves differently, depending on fit_mode,
     # in fit_mode == fit_to_box mode
     #    text_size is reduced to fit into text_container
-    #    proposed_height = @text_container[3]
+    #    proposed_height = @text_container[HEIGHT_VAL]
     # in fit_mode == fit_font_size
     # there are two cases 
     # 1. when it's width has changed, before inserted into column, no parent_graphic
@@ -259,9 +259,9 @@ module RLayout
           @text_container = @owner_graphic.text_rect
           @text_storage = NSTextStorage.alloc.init
           @text_storage.setAttributedString @att_string
-          proposed_height = @text_container[3]
+          proposed_height = @text_container[HEIGHT_VAL]
           proposed_height = options[:proposed_height] if options[:proposed_height]
-          @ns_text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@text_container[2],proposed_height)) #[@width,1000]
+          @ns_text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@text_container[WIDTH_VAL],proposed_height)) #[@width,1000]
           @ns_layout_manager = NSLayoutManager.alloc.init        
           @ns_layout_manager.addTextContainer(ns_text_container)
           @text_storage.addLayoutManager(@ns_layout_manager)
@@ -275,7 +275,7 @@ module RLayout
           # owner_graphic.set_text_rect(used_size.height + @text_line_spacing)
           used_size.height += @text_line_spacing
           owner_graphic.adjust_height_with_text_height_change(used_size.height)
-          @text_container[3] = used_size.height 
+          @text_container[HEIGHT_VAL] = used_size.height 
           if @text_markup && (@text_markup == 'h5' || @text_markup == 'h6') #&& options[:aling_to_grid]
             puts "we have running head ...."
             # Make the head paragraph height as body text multiples"
@@ -286,7 +286,7 @@ module RLayout
             # @top_margin = (body_multiple_height - @height)/2
             # @bottom_margin = @top_margin
             # puts "body_multiple_height:#{body_multiple_height}"
-            # @text_container[3] = body_multiple_height
+            # @text_container[HEIGHT_VAL] = body_multiple_height
             # @height = body_multiple_height
           end
           
@@ -360,9 +360,9 @@ module RLayout
     def layout_lines_custom
       current_token_index = 0
       y = 0
-      height = @token_list[current_token_index].rect[3]
+      height = @token_list[current_token_index].rect[HEIGHT_VAL]
       # def initialize(token_list, starting_token_index,  proposed_rect, text_direction)
-      proposed_rect = [0, y, @text_container[2], height]
+      proposed_rect = [0, y, @text_container[WIDTH_VAL], height]
       line = TextLine.new(@token_list, current_token_index, proposed_rect, @text_direction)
       puts "line:#{line}"
       current_token_index += line.length
@@ -370,7 +370,7 @@ module RLayout
       unless line.last_token_index == @token_list.length
         line = TextLine.new(current_token_index, current_token_index, proposed_rect, @text_direction)
         current_token_index += line.length
-        y+= line[3]
+        y+= line[HEIGHT_VAL]
       end
     end
     
@@ -394,7 +394,7 @@ module RLayout
     # but new text_layout_manager with new ns_text_container for overflowing text
     def split_overflowing_paragraph
       if @text_overflow
-        linked_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@text_container[2],500))
+        linked_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@text_container[WIDTH_VAL],500))
         @ns_layout_manager.addTextContainer(linked_container)
         range = @ns_layout_manager.glyphRangeForTextContainer(linked_container)
         used_size=@ns_layout_manager.usedRectForTextContainer(linked_container).size
@@ -430,7 +430,7 @@ module RLayout
       if @text_direction == 'left_to_right'
         @text_storage = NSTextStorage.alloc.init
         @text_storage.setAttributedString @att_string
-        @ns_text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@text_container[2],@text_container[3])) #[@width,1000]
+        @ns_text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@text_container[WIDTH_VAL],@text_container[HEIGHT_VAL])) #[@width,1000]
         @ns_layout_manager = NSLayoutManager.alloc.init        
         @ns_layout_manager.addTextContainer(ns_text_container)
         @text_storage.addLayoutManager(@ns_layout_manager)
@@ -536,7 +536,7 @@ module RLayout
     def layout_line
       if @text_direction == 'left_to_right'
         current_x = 0
-        unless (current_x + @token_list[starting_token_index + @length].width) >= line_rect[2]
+        unless (current_x + @token_list[starting_token_index + @length].width) >= line_rect[WIDTH_VAL]
           @length +=1
         end
       elsif @text_direction == 'top_to_bottom'

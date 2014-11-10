@@ -89,7 +89,7 @@ module RLayout
       heading_options           = {} unless heading_options   
       
       if @grid_frame      
-        heading_options[:width] = HEADING_WIDTH_LOOKUP_TABLE[@grid_frame[2]-1] * @grid_size[0]
+        heading_options[:width] = HEADING_WIDTH_LOOKUP_TABLE[@grid_frame[WIDTH_IDX]-1] * @grid_size[X_IDX]
       else
         heading_options[:width] = @width
       end

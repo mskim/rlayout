@@ -12,7 +12,7 @@ class GraphicViewMac < NSView
   attr_accessor :graphic
   
   def self.from_graphic(graphic)      
-    frame = NSMakeRect(graphic.text_rect[0], graphic.text_rect[1], graphic.text_rect[2], graphic.text_rect[3])
+    frame = NSMakeRect(graphic.text_rect[X_POS], graphic.text_rect[Y_POS], graphic.text_rect[WIDTH_VAL], graphic.text_rect[HEIGHT_VAL])
     view = GraphicViewMac.alloc.initWithFrame(frame)
     view.init_with_graphic(graphic)
     view

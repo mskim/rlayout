@@ -10,7 +10,7 @@ describe 'create db_chapter' do
   
   it 'should create DBChapter' do
     @db_ch.must_be_kind_of DBChapter
-    @db_ch.pages.length.must_equal 10
+    @db_ch.pages.length.must_equal 15
   end
   
   it 'should save pdf' do

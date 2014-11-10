@@ -9,7 +9,6 @@ IMAGE_FIT_TYPE_REPEAT_MUTIPLE = 5
 
 module RLayout
   
-  
   class Graphic
     def init_image(options)
       return unless options[:image_path]
@@ -103,6 +102,7 @@ module RLayout
 
     def fit_virtical
       return unless @image_object
+      @image_frame      = NSZeroRect
       @image_frame.size = @image_object.size
       if @image_frame
         @source_frame = @image_frame.dup

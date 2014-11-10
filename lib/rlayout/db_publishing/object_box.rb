@@ -190,10 +190,6 @@ module RLayout
       else
         new_frame[3] = original_height/original_width*new_frame[2]
       end
-      puts "original_width:#{original_height}"
-      puts "new_frame[2]:#{new_frame[2]}"
-      puts "original_height:#{original_height}"
-      puts "new_frame[3]:#{new_frame[3]}"
       item.set_frame(new_frame)
       item.relayout! if item.kind_of?(Container)
       if item.height > room
