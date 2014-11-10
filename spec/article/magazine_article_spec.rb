@@ -21,7 +21,9 @@ require File.dirname(__FILE__) + '/../../lib/rlayout/article/magazine_article'
 #   end
 # end
 
+
 describe 'create Chapter page with StoryBox' do
+  
   before do
     @story_path = "/Users/mskim/chapter/2012-12-18-making-rlayout-for-variable-publishing.markdown"
     @m = MagazineArticle.new(:title =>"Chapter Title", :starts_left=>false, :story_path=>@story_path)    
@@ -41,4 +43,3 @@ describe 'create Chapter page with StoryBox' do
     File.exists?(@yml_path).must_equal true
   end
 end
-

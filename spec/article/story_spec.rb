@@ -2,7 +2,6 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 # require File.dirname(__FILE__) + "/../../article"
 
-
 describe 'create Story' do
   before do
     @s = Story.new
@@ -49,5 +48,4 @@ describe 'read meta_markdown' do
       para[:string] if para[:markup] == "img"
     end
   end
-
 end

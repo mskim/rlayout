@@ -3,17 +3,17 @@ TODO List
 	- add ShoulderColumn, add footnote_area
 	- apply StyleSheet at runtime with default fall back
 	- ePub generation
-	- fix left_page header location bug
 	- find hosting middleman build static book 
 	- Merge Grid and Float
-	- Dropbox business for sharing
-		- instead of user giving permission to rlayout server
-			give user permission from the Dropbox server
+	- image smart fit, best_fit, best_fill
+	- auto_layout align center, bottom, 
+	- fix chapter_spec heading and book_spec heading difference
 
 2014 11 10
 	- image drawing, 
 	- update image with frame changes
-	- smart image fit, best_fit, best_fill
+	- fix left_page header location bug
+	
 2014 11 7
 	- variable page, variable document
 	- DB_Chapter 

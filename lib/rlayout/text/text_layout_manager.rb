@@ -46,6 +46,7 @@ module RLayout
     attr_accessor :text_markup, :text_overflow, :text_underflow, :text_storage, :ns_layout_manager, :ns_text_container
     def initialize(owner_graphic, options={})
       @owner_graphic = owner_graphic
+      return if @owner_graphic.nil?
       @att_string     = make_att_string_from_option(options)  
       if RUBY_ENGINE =='macruby'        
         @text_container = @owner_graphic.text_rect

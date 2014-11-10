@@ -2,10 +2,11 @@ require File.dirname(__FILE__) + "/../spec_helper"
 require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 require File.dirname(__FILE__) + '/../../lib/rlayout/publication/book'
 
+
 describe 'generate pdf' do
   before do
-    # @path = "/Users/mskim/book/sample_book"
-    @path = "/Users/mskim/Dropbox/RLayout/pastor"
+    @path = "/Users/mskim/book/sample_book"
+    # @path = "/Users/mskim/Dropbox/RLayout/pastor"
     @book = Book.new(@path)
   end
   

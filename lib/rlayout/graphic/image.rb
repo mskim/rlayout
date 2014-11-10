@@ -14,7 +14,7 @@ module RLayout
     def init_image(options)
       return unless options[:image_path]
       @image_path       = options[:image_path]
-      @image_frame      = options.fetch(:image_frame, image_defaults[:image_frame])
+      # @image_frame      = options.fetch(:image_frame, image_defaults[:image_frame])
       @image_caption    = options[:image_caption]      
       @image_fit_type   = options.fetch(:image_fit_type, image_defaults[:image_fit_type])
       if @image_path
@@ -27,7 +27,6 @@ module RLayout
       {
         image_path: nil,
         local_image: nil,
-        image_frame: NSZeroRect,
         image_fit_type: IMAGE_FIT_TYPE_VIRTICAL, 
         source_frame: NSZeroRect,
         clip_path: nil,

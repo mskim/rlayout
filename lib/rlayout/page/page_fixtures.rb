@@ -18,9 +18,8 @@ module RLayout
       options[:width]   = 300
       options[:height]  = 20
       if parent_graphic.left_page?
-        options[:x]      = parent_graphic.left_inset
+        options[:x]      = parent_graphic.left_margin
         options[:text_alignment] = 'left'
-        
       else
         options[:x] = parent_graphic.width - options[:width] - parent_graphic.left_margin - parent_graphic.left_inset
         options[:text_alignment] = 'right'

@@ -43,9 +43,7 @@ module RLayout
     end
     
     def draw_text(r)
-      puts "draw_text of graphic"
       @text_layout_manager.draw_text(r) 
-      
     end
         
     # 

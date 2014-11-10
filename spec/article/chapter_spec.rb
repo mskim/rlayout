@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 
+
+
 # describe 'create Chapter' do
 #   before do
 #     @m = Chapter.new(:title =>"Chapter Title", :starts_left=>false)
@@ -21,11 +23,13 @@ require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 # end
 
 describe 'create Chapter page with StoryBox' do
+  
   before do
     @story_path = "/Users/mskim/chapter/2012-12-18-making-rlayout-for-variable-publishing.markdown"
-    @m = Chapter.new(:title =>"Chapter Title", :starts_left=>false, :story_path=>@story_path)    
+    @m = Chapter.new(:title =>"Chapter Title", :starts_left=>true, :story_path=>@story_path)    
     @first_page = @m.pages.first
-    @heading = @m.pages.first.main_box.heading
+    # @heading = @m.pages.first.graphics.first
+    # @heading.puts_frame
   end
   
   # it 'should create Chapter' do
@@ -43,7 +47,6 @@ describe 'create Chapter page with StoryBox' do
   #   end
   # end
   
-  
   it 'should save' do    
     @pdf_path = File.dirname(__FILE__) + "/../output/chapter_test.pdf"
     @m.save_pdf(@pdf_path)
@@ -56,4 +59,3 @@ describe 'create Chapter page with StoryBox' do
     File.exists?(@yml_path).must_equal true
   end
 end
-

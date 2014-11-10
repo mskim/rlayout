@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + "/../spec_helper"
-
 describe 'should create StoryBox' do
   before do
     @story_path = "/Users/mskim/magazine_article/2012-12-18-making-rlayout-for-variable-publishing.markdown"
@@ -27,5 +26,4 @@ describe 'should create StoryBox' do
   #   @sb.save_svg(@svg_path)
   #   File.exists?(@svg_path).must_equal true
   # end
-  
 end

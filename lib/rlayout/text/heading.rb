@@ -61,7 +61,7 @@ module RLayout
       @layout_expand = [:width, :height]
       
       width = @width - @left_inset - @right_inset
-      
+      puts "options:#{options}"
       if options[:title]
         @title_object = title(options[:title], options)
       end
