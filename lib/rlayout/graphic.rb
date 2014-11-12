@@ -299,7 +299,6 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     end
     
     def drawRect(r)
-      puts "drawRec of Graphic @klass:#{@klass}"
       draw_fill(r)
       draw_line(r)
       draw_text(r)

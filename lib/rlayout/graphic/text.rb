@@ -29,7 +29,11 @@ module RLayout
     
     def init_text(options)
       if options[:text_string] || options[:text_atts_array]
-        @text_layout_manager = TextLayoutManager.new(self, options)
+        if RUBY_ENGINE == 'macruby'
+          @text_layout_manager = TextLayoutManager.new(self, options)
+        else
+          #TODO
+        end
       end
     end
     

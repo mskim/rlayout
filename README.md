@@ -6,9 +6,12 @@ TODO List
 	- find hosting middleman build static book 
 	- Merge Grid and Float
 	- image smart fit, best_fit, best_fill
-	- auto_layout align center, bottom, 
-	- fix chapter_spec heading and book_spec heading difference
 
+2014 11 12
+	- auto_layout align center, bottom, 
+	- layout non-expanding children column
+	- fix set_frame, should reset text_layout_area
+	
 2014 11 10
 	- image drawing, 
 	- update image with frame changes

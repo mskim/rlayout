@@ -1,11 +1,9 @@
 
-require File.dirname(__FILE__) + "/container/pgscript"
-
 module RLayout
   
   class Container < Graphic
     attr_accessor :layout_mode     # layout_mode: "auto_layout" "grid"
-    attr_accessor :layout_direction, :layout_space, :layout_align, :layout_strarting
+    attr_accessor :layout_direction, :layout_space, :layout_align
     attr_accessor :grid_column_count, :grid_row_count, :grid_cells, :grid_v_lines, :grid_h_lines, :grid_color, :grid_show
     attr_accessor :grid_rect, :grid_inset, :grid_top_inset, :grid_bottom_inset, :grid_letf_inset, :grid_right_inset
     attr_accessor :grid_unit_width, :grid_unit_height, :grid_frame
@@ -20,7 +18,6 @@ module RLayout
       @layout_direction = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
       @layout_space     = options.fetch(:layout_space, layout_defaults_hash[:layout_space])       
       @layout_align     = options.fetch(:layout_align, layout_defaults_hash[:layout_align])       
-      @layout_strarting = options.fetch(:layout_strarting, layout_defaults_hash[:layout_strarting])       
       @grid_cells       = options.fetch(:grid_cells, layout_defaults_hash[:grid_cells])       
       @grid_column_count= options.fetch(:grid_column_count, layout_defaults_hash[:grid_column_count])       
       @grid_row_count   = options.fetch(:grid_row_count, layout_defaults_hash[:grid_row_count])       
@@ -59,7 +56,6 @@ module RLayout
       h[:layout_direction]  = "vertical"
       h[:layout_space]      = 0
       h[:layout_align]      = "top"
-      h[:layout_strarting]  = "top"
       h[:grid_cells]        = Array.new
       h[:grid_column_count] = 6
       h[:grid_row_count]    = 6

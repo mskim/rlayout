@@ -133,7 +133,7 @@ module RLayout
     def relayout_floats!
       @floats.each do |float|
         #TODO adjust size with grid values
-        float.width = text_rect[WIDTH_IDX]
+        float.width = text_rect[WIDTH_VAL]
         float.relayout!
       end
       
@@ -160,14 +160,14 @@ module RLayout
     # set @current_pasotion as start of non-overlapping y
     def set_starting_position_at_non_overlapping_area
       rect = non_overlapping_frame
-      @current_position = rect[Y_IDX] + @top_margin + @top_inset 
+      @current_position = rect[Y_POS] + @top_margin + @top_inset 
     end
     
     def insert_item(item, options={})
       item.parent_graphic = self
       item.y = @current_position
       item.x = @left_margin + @left_inset
-      item.width = layout_area[X_IDX]
+      item.width = layout_area[X_POS]
       if item.is_linked?   
         # puts " linked item was successfully inserted to column"     
         @current_position += item.height + @layout_space
