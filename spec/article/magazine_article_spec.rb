@@ -25,20 +25,20 @@ require File.dirname(__FILE__) + '/../../lib/rlayout/article/magazine_article'
 describe 'create Chapter page with StoryBox' do
   
   before do
-    @story_path = "/Users/mskim/chapter/2012-12-18-making-rlayout-for-variable-publishing.markdown"
-    @m = MagazineArticle.new(:title =>"Chapter Title", :starts_left=>false, :story_path=>@story_path)    
+    @story_path = "/Users/mskim/magazine/how-to-creaete-soochup.markdown"
+    @m = MagazineArticle.new(:starts_left=>false, :story_path=>@story_path)    
     @first_page = @m.pages.first
     @heading = @m.pages.first.main_box.heading
   end
   
   it 'should save' do    
-    @pdf_path = File.dirname(__FILE__) + "/../output/magazine_article_test.pdf"
+    @pdf_path = File.dirname(__FILE__) + "/../output/magazine_article2.pdf"
     @m.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true
   end
   
   it 'should save yml' do    
-    @yml_path = File.dirname(__FILE__) + "/../output/magazine_article_test.yml"
+    @yml_path = File.dirname(__FILE__) + "/../output/magazine_article2.yml"
     @m.save_yml(@yml_path)
     File.exists?(@yml_path).must_equal true
   end

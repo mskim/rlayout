@@ -22,7 +22,6 @@
 # 1. set set layout_length as height, so that their height is proportional to height
 # 1. set Heading expand =>:width
 
-
 module RLayout
   
   # heading width is set to parents's layout_area[width]. 
@@ -30,11 +29,9 @@ module RLayout
   # And the height is re-adjusted by the parent.
   # Each heading element layout_length is set to it's height
   # This way, parent can shrink or expand heading and maintain each elements's height propotion. 
-
   class Heading < Container
     attr_accessor :title_object, :subtitle_object, :leading_object, :author_object
     attr_accessor :style_service
-    
     def initialize(parent_graphic, options={}, &block)
       if options[:style_service] 
         @style_service = options[:style_service]
@@ -57,7 +54,8 @@ module RLayout
       @right_inset    = 0
       @top_margin     = 10
       @bottom_margin  = 10
-      @layout_expand = [:width, :height]
+      @layout_align   = 'center'
+      @layout_expand  = [:width, :height]
       width = @width - @left_inset - @right_inset
       if options[:title]
         @title_object = title(options[:title], options)

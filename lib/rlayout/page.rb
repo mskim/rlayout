@@ -235,7 +235,6 @@ module RLayout
     def save_yml(path)
       h = to_hash
       File.open(path, 'w'){|f| f.write h.to_yaml}
-      
     end
     
     def save_json(path)

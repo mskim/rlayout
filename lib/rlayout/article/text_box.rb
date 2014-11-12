@@ -167,7 +167,7 @@ module RLayout
       item.parent_graphic = self
       item.y = @current_position
       item.x = @left_margin + @left_inset
-      item.width = layout_area[X_POS]
+      item.width = layout_area[0]
       if item.is_linked?   
         # puts " linked item was successfully inserted to column"     
         @current_position += item.height + @layout_space
@@ -180,10 +180,8 @@ module RLayout
       if item.text_layout_manager.text_overflow == false
         @graphics << item
         @current_position += item.height + @layout_space
-        # puts " item was successfully inserted to column"
         return true
       else
-        # we have overflow
         #check if text_underflow, any lines were created in the text_container
         if item.text_layout_manager.text_underflow
           # puts " item was not inserted to column at all, no lines"

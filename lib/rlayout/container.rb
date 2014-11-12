@@ -103,6 +103,11 @@ module RLayout
       return @sum 
     end
     
+    def save_yml(path)
+      h = to_hash
+      File.open(path, 'w'){|f| f.write h.to_yaml}
+    end
+    
     def to_hash      
       h=super
       if @graphics.length > 0

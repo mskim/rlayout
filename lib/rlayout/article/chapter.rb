@@ -76,8 +76,6 @@ module RLayout
         para_options[:text_string]    = para[:string]
         para_options[:layout_expand]  = [:width]
         para_options[:text_fit]       = FIT_FONT_SIZE
-        # para_options[:line_width]       = 1
-        # para_options[:line_color]       = 'black'
         @paragraphs << Paragraph.new(nil, para_options)
       end
     end
@@ -86,6 +84,8 @@ module RLayout
       page_index                = 0
       @first_page               = @pages[page_index]
       @heading[:layout_expand]  = [:width, :height]
+      # @heading[:line_width]     = 2
+      # @heading[:line_color]     = 'green'
       # this is where we make heading as graphics or float
       if @chapter_kind == "magazine_article" || @chapter_kind == "news_article"
         #make it a flost for magazine, news_article
@@ -101,6 +101,7 @@ module RLayout
       end
       
       @first_page.main_box.layout_items(@paragraphs)
+      
       while @paragraphs.length > 0
         page_index += 1
         if page_index >= @pages.length

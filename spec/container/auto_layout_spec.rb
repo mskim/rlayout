@@ -19,12 +19,13 @@ describe 'has_expanding_child no' do
     # @con = Container.new(nil, width: 400, height:600, fill_color: 'yellow', layout_align:'top') do
     # @con = Container.new(nil, width: 400, height:600, fill_color: 'yellow', layout_align:'bottom') do
     # @con = Container.new(nil, width: 400, height:600, fill_color: 'yellow', layout_align:'center') do
-    @con = Container.new(nil, width: 400, height:600, fill_color: 'yellow', layout_align:'justified') do
-      # rect(:fill_color=>"orange", :width=>30, :layout_expand=>[:width])
-      # text(:fill_color=>"green", :text_string =>"This is a string", :layout_expand=>[:width])
+    @con = Container.new(nil, width: 400, height:600, layout_align:'center') do
+      # rect(:fill_color=>"orange")
+      # rect(:fill_color=>"red")
+      # text(:fill_color=>"green", :text_string =>"This is a string")
       circle(:fill_color=>"gray", :layout_expand=>[:width], :layout_expand=>[:width])
-      rect(:fill_color=>"orange", :width=>30, :layout_expand=>[:width])
-      text(:fill_color=>"green", :text_string =>"This is a string", :layout_expand=>[:width])
+      rect(:fill_color=>"orange", :layout_expand=>[:width])
+      # text(:fill_color=>"red", :text_string =>"This is a string", :layout_expand=>[:width])
       circle(:fill_color=>"gray", :layout_expand=>[:width])
     end    
     @con.relayout!
@@ -34,6 +35,12 @@ describe 'has_expanding_child no' do
     @pdf_path = File.dirname(__FILE__) + "/../output/auto_layout_relayout_test.pdf"
     @con.save_pdf(@pdf_path)
     system("open #{@pdf_path}")
+  end
+  
+  it 'should save pdf' do
+    @yml_path = File.dirname(__FILE__) + "/../output/auto_layout_relayout_test.yml"
+    @con.save_yml(@yml_path)
+    system("open #{@yml_path}")
   end
 end
 

@@ -32,7 +32,7 @@ module RLayout
       expandable_graphics = 0
       layout_length_sum   = 0
       non_expanding_length_sum   = 0
-       # This is the first pass
+      # This is the first pass
       @graphics.each_with_index do |graphic, index|
         next if !graphic.layout_member || graphic.layout_expand.nil?                  
         if (vertical ? graphic.expand_height? : graphic.expand_width?)
@@ -56,6 +56,8 @@ module RLayout
         else
           unit_size    = expandable_length/layout_length_sum
         end
+      else
+        unit_size
       end
       # we set starting current_position for none expanding case
       unless have_expanding_child    
@@ -74,80 +76,81 @@ module RLayout
       end
       # This is the second pass
       @graphics.each do |graphic|
-       next if !graphic.layout_member || graphic.layout_expand.nil?                  
-       graphic_frame  = graphic.frame_rect
-       graphic_x      = graphic_frame[X_POS]
-       graphic_y      = graphic_frame[Y_POS]
-       graphic_width  = graphic_frame[WIDTH_VAL]
-       graphic_height = graphic_frame[HEIGHT_VAL]
-       graphic_dimension = vertical ? graphic_height : graphic_width
-       # set current_position and update current_position
-       if have_expanding_child
-         if vertical
-           graphic_frame[Y_POS] = current_position             
-           current_position += graphic_dimension + @layout_space
-           current_position += graphic.bottom_margin + graphic.top_margin #if graphic.bottom_margin && graphic.top_margin
-         else
-           graphic_frame[X_POS] = current_position
-           current_position += graphic_dimension + @layout_space
-           current_position += graphic.left_margin + graphic.right_margin #if graphic.left_margin && graphic.right_margin
-         end
-       else
-         # for non-expanding 
-         if vertical
-             graphic_frame[Y_POS] = current_position
-             current_position += graphic.height + @layout_space
-         else
-             graphic_frame[X_POS] = current_position
-             current_position += graphic.width + @layout_space
-         end           
-       end
-       # adjust size
-       if (vertical ? graphic.expand_height? : graphic.expand_width?)
-         graphic_dimension = unit_size*graphic.layout_length
-         if vertical
-           graphic_frame[HEIGHT_VAL]  = graphic_dimension
-         else
-           graphic_frame[WIDTH_VAL]   = graphic_dimension
-         end
-       end
-       # perpedicular alignment
-       if (vertical ? graphic.expand_width? : graphic.expand_height?)
-         if vertical
-           graphic_frame[WIDTH_VAL] = column_size[X_POS] - (@left_margin + @right_margin + @right_inset + @left_inset) - graphic.right_margin - graphic.left_margin
-         else
-           graphic_frame[HEIGHT_VAL] = column_size[Y_POS] - (@top_margin + @bottom_margin + @top_inset + @bottom_inset) - graphic.top_margin - graphic.bottom_margin
-         end
-       else
-         if graphic.layout_align.nil?
-           graphic.layout_align = 'left' # set default as left, if it is not set
-         end
-         #perpedicular alignment for non perpedicular expanding child 
-         case graphic.layout_align
-         when "left", "top" #{}"bottom"
-           # Nothing to do
-         when "center", "middle"
-           if vertical
-             graphic_frame[X_POS] = (column_size[0] / 2.0) - (graphic_x / 2.0)
-           else
-             graphic_frame[Y_POS] = (column_size[1] / 2.0) - (graphic_y / 2.0)
-           end
-         when "right", "bottom"
-           if vertical
-             graphic_frame[X_POS] = column_size[X_POS] - graphic_x - @bottom_margin
-           else
-             graphic_frame[Y_POS] = column_size[Y_POS] - graphic_y - @top_margin
-           end
-         end
-       end
-       # graphic_frame[X_POS] += graphic.left_margin
-       # graphic_frame[Y_POS] += graphic.top_margin
-       graphic.set_frame(graphic_frame)
-       # recursive layout_member for child graphics
-       if graphic.layout_expand.nil?
-       else
+        next if !graphic.layout_member || graphic.layout_expand.nil?                  
+        graphic_frame  = graphic.frame_rect      
+        # adjust size
+        if (vertical ? graphic.expand_height? : graphic.expand_width?)
+          if spacing_number == 0
+            graphic_dimension = expandable_length
+          else
+            graphic_dimension = unit_size*graphic.layout_length
+          end
+          if vertical
+            graphic_frame[HEIGHT_VAL]  = graphic_dimension
+          else
+            graphic_frame[WIDTH_VAL]   = graphic_dimension
+          end
+        end
+        graphic_dimension = vertical ? graphic_frame[HEIGHT_VAL] : graphic_frame[WIDTH_VAL]
+        # set current_position and update current_position
+        if have_expanding_child
+          if vertical
+            graphic_frame[Y_POS] = current_position             
+            current_position += graphic_dimension + @layout_space
+            current_position += graphic.bottom_margin + graphic.top_margin #if graphic.bottom_margin && graphic.top_margin 
+          else
+            graphic_frame[X_POS] = current_position
+            current_position += graphic_dimension + @layout_space
+            current_position += graphic.left_margin + graphic.right_margin #if graphic.left_margin && graphic.right_margin
+          end
+        else
+          # for non-expanding 
+          if vertical
+            graphic_frame[Y_POS] = current_position
+            current_position += graphic.height + @layout_space
+          else
+            graphic_frame[X_POS] = current_position
+            current_position += graphic.width + @layout_space
+          end           
+        end
+       
+        # perpedicular alignment
+        if (vertical ? graphic.expand_width? : graphic.expand_height?)
+          if vertical
+            graphic_frame[WIDTH_VAL]  = column_size[X_POS] - (@left_margin + @right_margin + @right_inset + @left_inset) - graphic.right_margin - graphic.left_margin
+            graphic_frame[X_POS]      = (@left_margin  + @left_inset)
+          else
+            graphic_frame[HEIGHT_VAL] = column_size[Y_POS] - (@top_margin + @bottom_margin + @top_inset + @bottom_inset) - graphic.top_margin - graphic.bottom_margin
+            graphic_frame[Y_POS]      = (@top_margin + @top_inset)
+          end  
+        end
+        #perpedicular alignment for non perpedicular expanding child 
+        # if !graphic.layout_align.nil?  
+        #   case graphic.layout_align
+        #   when "left", "top" #{}"bottom"
+        #     # Nothing to do
+        #   when "center", "middle"
+        #     if vertical
+        #       graphic_frame[X_POS] = (column_size[0] / 2.0) - (graphic_frame[X_POS] / 2.0)
+        #     else
+        #       graphic_frame[Y_POS] = (column_size[1] / 2.0) - (graphic_frame[Y_POS] / 2.0)
+        #     end
+        #   when "right", "bottom"
+        #     if vertical
+        #       graphic_frame[X_POS] = column_size[X_POS] - graphic_frame[X_POS] - @bottom_margin
+        #     else
+        #       graphic_frame[Y_POS] = column_size[Y_POS] - graphic_frame[Y_POS] - @top_margin
+        #     end
+        #   end
+        # end
+        graphic.set_frame(graphic_frame)
+
+        
+        # recursive layout_member for child graphics
+        if graphic.layout_expand.nil?
+        else
          graphic.relayout! if graphic.kind_of?(Container)
-       end
+        end
       end 
       # relayout @owner_graphic's text with new geometry
       @text_record.update_text_fit if @text_record && @text_record.class == GTextRecord
@@ -155,5 +158,5 @@ module RLayout
       @image_record.apply_fit_type if @image_record
     end
   end  
-    
+
 end

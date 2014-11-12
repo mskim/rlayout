@@ -8,7 +8,7 @@ TODO List
 	- image smart fit, best_fit, best_fill
 
 2014 11 12
-	- auto_layout align center, bottom, 
+	- auto_layout align top, center, bottom, justified 
 	- layout non-expanding children column
 	- fix set_frame, should reset text_layout_area
 	
