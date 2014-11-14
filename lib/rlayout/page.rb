@@ -85,9 +85,7 @@ module RLayout
       else
         options[:bottom_inset]  = defaults[:inset]
       end
-            
       super
-            
       @parent_graphic.pages << self if  @parent_graphic && @parent_graphic.pages && !@parent_graphic.pages.include?(self)       
       @klass = "Page"
       @page_number = options.fetch(:page_number, '1')
@@ -109,7 +107,7 @@ module RLayout
       main_box_options[:column_count] = options.fetch(:column_count, 1)
       main_box_options[:layout_space] = options.fetch(:column_layout_space, 10)
       main_box_options[:item_space]   = options.fetch(:item_space, 3)
-                  
+      main_box_options[:heading_columns]= options.fetch(:heading_columns, main_box_options[:column_count])          
       if options[:text_box]
         @main_box = text_box(main_box_options)
       elsif options[:object_box]

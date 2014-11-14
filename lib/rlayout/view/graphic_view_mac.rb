@@ -46,9 +46,10 @@ class GraphicViewMac < NSView
   
   def drawRect(r)
     @graphic.draw_fill(r)
-    @graphic.draw_line(r)
     @graphic.draw_image(r)
     @graphic.text_layout_manager.draw_text(r)  if @graphic.text_layout_manager
+    @graphic.draw_line(r)
+    
   end
   
   # make it flopped view

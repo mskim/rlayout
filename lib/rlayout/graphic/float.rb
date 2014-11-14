@@ -60,10 +60,7 @@ module RLayout
     # If there is a hole in the middle, return Array of two rects if upper and lower area is big enough
     #
     def non_overlapping_area(column_rect, float_rect, min_gap =10)
-      if !intersects_rect(column_rect, float_rect)
-        # puts "they don't intersect"
-        return column_rect
-      elsif contains_rect(float_rect, column_rect)
+      if contains_rect(float_rect, column_rect)
         # puts "float_rect covers the entire column_rect"
         return [0,0,0,0]
       elsif min_y(float_rect) <= min_y(column_rect) && max_y(float_rect) >= max_y(column_rect)
@@ -126,9 +123,21 @@ module RLayout
       (rect_1[X_POS]<=rect_2[X_POS] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) >= max_y(rect_2))
     end
     
-    def intersects_rect(rect_1, rect_2)
-      (rect_1[X_POS]>=rect_2[X_POS] && rect_1[X_POS] <= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && rect_1[X_POS] <= max_x(rect_2))
+    def intersects_x(rect1, rect2)
+      (max_x(rect1) > rect2[0] && max_x(rect2) > rect1[0]) || (max_x(rect2) > rect1[0] && max_x(rect1) > rect2[0])
     end
+
+    def intersects_y(rect1, rect2)
+      (max_y(rect1) > rect2[1] || max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] || max_y(rect1) > rect2[1])
+    end
+    
+    def intersects_rect(rect_1, rect_2)
+      intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
+    end
+    
+    # def intersects_rect(rect_1, rect_2)
+    #   (rect_1[X_POS]>=rect_2[X_POS] && rect_1[X_POS] <= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && rect_1[X_POS] <= max_x(rect_2))
+    # end
     
     # it sets the children graphic's non_overlapping_frame value
     # this method is called after float is added and relayout!
@@ -138,6 +147,7 @@ module RLayout
           if intersects_rect(float.frame_rect, graphic.frame_rect)
             graphic.non_overlapping_rect = non_overlapping_area(graphic.frame_rect, float.frame_rect) 
           end
+          # puts "graphic.non_overlapping_rect:#{graphic.non_overlapping_rect}"
         end
       end
     end
@@ -196,10 +206,10 @@ module RLayout
     
     # Todo ????
     def relayout!
-      return unless @floats.length <= 0
-      @floats.each do |float|
-        set_origin_and_size(float)
-      end
+      # return unless @floats.length <= 0
+      # @floats.each do |float|
+      #   set_origin_and_size(float)
+      # end
     end
     
     def self.include_relavant_key?(options)

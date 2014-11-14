@@ -277,7 +277,6 @@ module RLayout
           owner_graphic.adjust_height_with_text_height_change(used_size.height)
           @text_container[HEIGHT_VAL] = used_size.height 
           if @text_markup && (@text_markup == 'h5' || @text_markup == 'h6') #&& options[:aling_to_grid]
-            puts "we have running head ...."
             # Make the head paragraph height as body text multiples"
             # by adjusting @top_margin and @bottom_margin around it
             # body_multiple_height = body_line_height_multiple(@height)

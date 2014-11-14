@@ -39,25 +39,23 @@ module RLayout
     
     def initialize(options={})
       super
-      @bottom_margin = 100
-      @double_side  = true
-      @page_count   = options.fetch(:page_count, 2)
-      @toc_on       = options.fetch(:toc_on, false)
-      @chapter_kind = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
+      @bottom_margin      = 100
+      @double_side        = true
+      @page_count         = options.fetch(:page_count, 2)
+      @toc_on             = options.fetch(:toc_on, false)
+      @chapter_kind       = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
       options[:footer]    = true 
       options[:header]    = true 
-      options[:text_box] = true
+      options[:text_box]  = true
       @page_count.times do |i|
         options[:page_number] = @starting_page_number + i
         Page.new(self, options)
       end
-      
       if options[:story_path]
         @story_path = options[:story_path]
         read_story
         layout_story
       end
-        
       self
     end
     
@@ -80,18 +78,28 @@ module RLayout
       end
     end
     
+    
     def layout_story
       page_index                = 0
       @first_page               = @pages[page_index]
       @heading[:layout_expand]  = [:width, :height]
       # @heading[:line_width]     = 2
-      # @heading[:line_color]     = 'green'
+      # @heading[:line_color]     = 'red'
       # this is where we make heading as graphics or float
       if @chapter_kind == "magazine_article" || @chapter_kind == "news_article"
         #make it a flost for magazine, news_article
+        @heading[:width]        = @first_page.main_box.heading_width
+        @heading[:layout_expand]= nil
+        @heading[:top_margin]   = 10
+        @heading[:top_inset]    = 50
+        @heading[:bottom_margin]= 10
+        @heading[:tottom_inset] = 50
+        @heading[:left_inset]   = 0
+        @heading[:right_inset]  = 0
         @first_page.main_box.floats << Heading.new(nil, @heading)
         @first_page.relayout!
-        @first_page.main_box.relayout_floats!
+        # @first_page.main_box.relayout_floats!
+        @first_page.main_box.set_non_overlapping_frame_for_chidren_graphics
       else 
         # make head a as one of graphics
         heading_object = Heading.new(nil, @heading)

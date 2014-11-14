@@ -20,7 +20,7 @@ module RLayout
   # Typocal floats are Heading, Image, Quates, SideBox
    
   class TextBox < Container
-    attr_accessor :heading, :image, :side_box, :quote_box, :shoulder_column, :grid_size
+    attr_accessor :heading, :heading_columns, :image, :side_box, :quote_box, :shoulder_column, :grid_size
     attr_accessor :starting_item_index, :ending_item_index
     attr_accessor :column_count, :next_link, :previous_link
     attr_accessor :floats
@@ -31,17 +31,30 @@ module RLayout
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)
       @column_count     = options.fetch(:column_count, 3)
+      @heading_columns  = options.fetch(:heading_columns, @column_count)
       create_columns
       @floats           = options.fetch(:floats, [])
-      if block
-        instance_eval(&block)
-      end
       
       @floats.each do |float|
         float.init_float
       end
-      
+      if block
+        instance_eval(&block)
+      end
       self
+    end
+    
+    def heading_width
+      unless @heading_columns
+        return text_rect[WIDTH_VAL]
+      end
+      if @graphics.length <= 1
+        text_rect[WIDTH_VAL]
+      elsif @heading_columns >= @graphics.length
+        text_rect[WIDTH_VAL]
+      else
+        max_x(@graphics[@heading_columns-1].frame_rect) #- text_rect[X_POS]
+      end
     end
     
     def create_columns
@@ -80,9 +93,12 @@ module RLayout
     # 1. if teh next column is available , repeat colum insert with partial item.
     
     def layout_items(flowing_items)
+      @graphics.each do |col|
+        col.set_starting_position_at_non_overlapping_area
+      end
+      
       column_index = 0
       current_column = @graphics[column_index]
-      current_column.set_starting_position_at_non_overlapping_area
       while front_most_item = flowing_items.shift do
         result = current_column.insert_item(front_most_item)
         if result == true
@@ -90,7 +106,6 @@ module RLayout
           #TODO
           add_to_toc_list(front_most_item) if toc_on?
         elsif result == false
-          # item did not fit at all nothing fit
           column_index += 1
           if column_index == @column_count
             # we are finished for this TextBox
@@ -99,8 +114,7 @@ module RLayout
             flowing_items.unshift(front_most_item)
             return false
           else
-            current_column = @graphics[column_index]
-            current_column.set_starting_position_at_non_overlapping_area if current_column
+            current_column = @graphics[column_index]            
             # This is the case where the item does not fit, even if this is the new empty column
             # For this case, force fit it into this column, since it is not going to fit anywhere.
             current_column.insert_item(front_most_item, :force_fit=>true)

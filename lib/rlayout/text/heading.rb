@@ -48,14 +48,14 @@ module RLayout
       else
         @width = 600
       end
-      @top_inset      = 5
-      @bottom_inset   = 5
-      @left_inset     = 0
-      @right_inset    = 0
-      @top_margin     = 10
-      @bottom_margin  = 10
+      @top_inset      = options.fetch(:top_inset,5)
+      @bottom_inset   = options.fetch(:top_inset,5)
+      @left_inset     = options.fetch(:left_inset,5)
+      @right_inset    = options.fetch(:right_inset,5)
+      @top_margin     = options.fetch(:top_margin,10)
+      @bottom_margin  = options.fetch(:bottom_margin,10)
       @layout_align   = 'center'
-      @layout_expand  = [:width, :height]
+      @layout_expand  = options.fetch(:layout_expand,[:width, :height])
       width = @width - @left_inset - @right_inset
       if options[:title]
         @title_object = title(options[:title], options)
@@ -70,7 +70,10 @@ module RLayout
         @author_object = author(options[:author], options)
       end
       @line_type=0
-      @line_color="lightGray"
+      @line_color="red"
+      @line_width= 2      
+      @line_width= 2      
+      @fill_color="lightGray"
       height_sum = 0      
       height_sum +=@title_object.height    unless @title_object.nil?
       height_sum +=@subtitle_object.height unless @subtitle_object.nil?
