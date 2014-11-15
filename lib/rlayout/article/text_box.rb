@@ -94,9 +94,9 @@ module RLayout
     
     def layout_items(flowing_items)
       @graphics.each do |col|
+        # adjust columns to avoid overlapping with floats
         col.set_starting_position_at_non_overlapping_area
       end
-      
       column_index = 0
       current_column = @graphics[column_index]
       while front_most_item = flowing_items.shift do
@@ -182,14 +182,32 @@ module RLayout
       item.y = @current_position
       item.x = @left_margin + @left_inset
       item.width = layout_area[0]
+      room = @height - @current_position - @bottom_margin - @bottom_inset - @layout_space
+      if item.class == RLayout::Image
+        if item.image_object
+          # if item is image, height should be proportional to image_object ratio, not frame width height ratio
+          item.height = item.image_object_height_to_width_ratio*item.width
+          item.apply_fit_type
+        else
+          item.height = item.width
+        end
+        if room >= item.height
+          @graphics << item
+          @current_position += item.height + @layout_space
+          return true
+        else
+          #TODO might have to stick it back to paragraphi array? 
+          return false
+        end
+      end
+      
       if item.is_linked?   
         # puts " linked item was successfully inserted to column"     
         @current_position += item.height + @layout_space
         return true
       end      
-      room = @height - @current_position - @bottom_margin - @bottom_inset - @layout_space
       item.height = room      
-      item.layout_text(room)
+      item.layout_text(room) # layout_text
       # @current_position = max_y(item.frame_rect) + @layout_space
       if item.text_layout_manager.text_overflow == false
         @graphics << item

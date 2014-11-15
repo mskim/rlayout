@@ -65,12 +65,23 @@ module RLayout
       @title      = @heading[:title]
       #TODO read it form book_config.rb?
       @book_title = @heading[:book_title]
-      
       @style_service ||= StyleService.new()
       @paragraphs =[]
       story.paragraphs.each do |para| 
         para_options = {}
         para_options[:markup]         = para[:markup]
+        if para[:markup] == 'img'
+          source = para[:image_path]
+          para_options[:caption] = para[:caption]
+          puts "para_options[:caption]:#{para_options[:caption]}"
+          para_options[:layout_expand] = [:width]
+          para_options[:bottom_margin] = 10
+          para_options[:bottom_inset] = 10
+          full_image_path = File.dirname(@story_path) + "/#{source}"
+          para_options[:image_path] = full_image_path
+          @paragraphs << Image.new(nil, para_options)
+          next 
+        end
         para_options[:text_string]    = para[:string]
         para_options[:layout_expand]  = [:width]
         para_options[:text_fit]       = FIT_FONT_SIZE

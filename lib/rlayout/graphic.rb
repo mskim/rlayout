@@ -236,7 +236,7 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       puts "@width:#{@width}"
       puts "@height:#{@height}"
     end
-    
+        
     def set_frame(frame)
       @x = frame[X_POS]
       @y = frame[1]

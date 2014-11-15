@@ -88,15 +88,16 @@ module RLayout
           para={}
           # puts "child.type:#{child.inspect}"
           case child.type
-            
           when :p
             # puts "child.child.class:#{child.child.class}" 
             para[:markup] = "p" 
             para[:string] = child.children[0].value # inner text
             if child.children[0].type == :img
               para[:markup] = "img" 
+              puts "+++++ child.inspect:#{child.inspect}"
               # puts "child.children[0].attr:#{child.children[0].attr}"
-              para[:string] = child.children[0].attr['src']
+              para[:image_path] = child.children[0].attr['src']
+              para[:caption] = child.children[0].attr['alt']
               @para_data << para
             else
               @para_data << para

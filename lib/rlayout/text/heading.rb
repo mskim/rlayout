@@ -70,10 +70,9 @@ module RLayout
         @author_object = author(options[:author], options)
       end
       @line_type=0
-      @line_color="red"
-      @line_width= 2      
-      @line_width= 2      
-      @fill_color="lightGray"
+      # @line_color="red"
+      # @line_width= 2      
+      @fill_color="green"
       height_sum = 0      
       height_sum +=@title_object.height    unless @title_object.nil?
       height_sum +=@subtitle_object.height unless @subtitle_object.nil?

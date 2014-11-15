@@ -45,12 +45,8 @@ module RLayout
       ad.relayout!
       ad
     end
-    
-    def layout_text
-      
-    end
-    
-    def layout_text(room)
+        
+    def layout_content(room)
       
     end
     

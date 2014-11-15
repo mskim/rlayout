@@ -1,12 +1,20 @@
 TODO List
- 	- include Image to Markdown 
 	- add ShoulderColumn, add footnote_area
 	- apply StyleSheet at runtime with default fall back
 	- ePub generation
-	- find hosting middleman build static book 
 	- Merge Grid and Float
 	- image smart fit, best_fit, best_fill
 
+2014 11 15
+	- include Image to Markdown 
+	- include Image Caption to Markdown 
+		- caption position bottom, right, left, top, float
+	- adjust space before and after Image to body grid 
+	- adjust Image inset 
+	
+	- find hosting middleman build static book, 
+	- BitBalloon, CodeShip, Netlify
+	
 2014 11 12
 	- auto_layout align top, center, bottom, justified 
 	- layout non-expanding children column
