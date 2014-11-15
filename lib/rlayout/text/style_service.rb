@@ -1,10 +1,11 @@
 
 
-STYLES={
-  "Title"   =>{:text_font => 'Times',     :text_size=>52.0, :text_color => 'red', :text_alignment=>'center'},
-  "title"   =>{:text_font => 'Times',     :text_size=>52.0, :text_color => 'red', :text_alignment=>'center'},
-  "SubTitle"=>{:text_font => 'Times',     :text_size=>36.0, :text_color => 'black'},
-  "subtitle"=>{:text_font => 'Times',     :text_size=>36.0, :text_color => 'black'},
+DEFAULT_STYLES={
+  "style_kind" => "DEFAULT_STYLES",
+  "Title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
+  "title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
+  "SubTitle"=>{:text_font => 'Times',     :text_size=>20.0, :text_color => 'black'},
+  "subtitle"=>{:text_font => 'Times',     :text_size=>20.0, :text_color => 'black'},
   "Author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
   "author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
   "Lead"    =>{:text_font => 'Helvetica', :text_size=>24.0, :text_color => 'black'},
@@ -19,7 +20,7 @@ STYLES={
   "Head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
-  "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
+  "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>20},
   "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
@@ -27,7 +28,35 @@ STYLES={
   "page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
 }
 
+MAGAZINE_STYLES={
+  "style_kind" => "MAGAZINE_STYLES",
+  "Title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
+  "title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
+  "SubTitle"=>{:text_font => 'Times',     :text_size=>20.0, :text_color => 'black'},
+  "subtitle"=>{:text_font => 'Times',     :text_size=>20.0, :text_color => 'black'},
+  "Author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
+  "author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
+  "Lead"    =>{:text_font => 'Helvetica', :text_size=>24.0, :text_color => 'black'},
+  "lead"    =>{:text_font => 'Helvetica', :text_size=>24.0, :text_color => 'black'},
+  "Leading" =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black'},
+  "leading" =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black'},
+  "h1"      =>{:text_font => 'Helvetica', :text_size=>70.0, :text_color => 'black'},
+  "h2"      =>{:text_font => 'Helvetica', :text_size=>36.0, :text_color => 'black'},
+  "h3"      =>{:text_font => 'Helvetica', :text_size=>24.0, :text_color => 'black'},
+  "h4"      =>{:text_font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
+  "h5"      =>{:text_font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
+  "Head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
+  "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
+  "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
+  "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>20},
+  "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
+  "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+  "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
+  "footer"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
+  "page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
+}
 CHAPTER_STYLES={
+  "style_kind" => "CHAPTER_STYLES",
   "title"   =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
   "subtitle"=>{:text_font => 'Times',     :text_size=>16.0, :text_color => 'black'},
   "author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
@@ -51,9 +80,10 @@ CHAPTER_STYLES={
 }
 
 NEWS_STYLES={
-  "title"   =>{:text_font => 'Times',     :text_size=>36.0, :text_color => 'black', :text_alignment=>'center'},
-  "subtitle"=>{:text_font => 'Times',     :text_size=>20.0, :text_color => 'black'},
-  "author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_alignment=>'right'},
+  "style_kind" => "NEWS_STYLES",
+  "title"   =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'black', :text_alignment=>'center'},
+  "subtitle"=>{:text_font => 'Times',     :text_size=>16.0, :text_color => 'black'},
+  "author"  =>{:text_font => 'Helvetica', :text_size=>10.0, :text_color => 'black', :text_alignment=>'right'},
   "lead"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "Leading" =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'black'},
   "leading" =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'black'},
@@ -64,8 +94,8 @@ NEWS_STYLES={
   "h5"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
-  "p"       =>{:text_font => 'Times',     :text_size=>12.0, :text_color => 'black', :text_alignment=>'justified'},
-  "body"    =>{:text_font => 'Times',     :text_size=>12.0, :text_color => 'black', :text_alignment=>'justified'},
+  "p"       =>{:text_font => 'Times',     :text_size=>9.0, :text_line_spacing=>5, :text_color => 'black', :text_alignment=>'justified'},
+  "body"    =>{:text_font => 'Times',     :text_size=>9.0, :text_color => 'black', :text_alignment=>'justified'},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
@@ -82,8 +112,8 @@ module RLayout
     attr_accessor :paragraph_styles, :char_styles
     attr_accessor :current_style
     @@style_service = nil
-    def self.shared_style_service
-      @@style_service ||= StyleService.new
+    def self.shared_style_service(options={})
+      @@style_service ||= StyleService.new(options)
     end
     
     def initialize(options={})
@@ -92,7 +122,20 @@ module RLayout
       end
       @paragraph_styles = options[:paragraph_styles]
       @char_styles      = options[:char_styles]
-      @current_style    = CHAPTER_STYLES
+      if options[:chapter_kind]
+        case options[:chapter_kind]
+        when "chapter"
+          @current_style    = CHAPTER_STYLES
+        when "magazine_article"
+          @current_style    = MAGAZINE_STYLES
+        when 'news_article'
+          @current_style    = NEWS_STYLES
+        else
+          @current_style    = DEFAULT_STYLES
+        end
+      else
+        @current_style    = DEFAULT_STYLES
+      end
       self
     end
     

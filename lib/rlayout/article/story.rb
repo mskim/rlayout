@@ -94,7 +94,6 @@ module RLayout
             para[:string] = child.children[0].value # inner text
             if child.children[0].type == :img
               para[:markup] = "img" 
-              puts "+++++ child.inspect:#{child.inspect}"
               # puts "child.children[0].attr:#{child.children[0].attr}"
               para[:image_path] = child.children[0].attr['src']
               para[:caption] = child.children[0].attr['alt']

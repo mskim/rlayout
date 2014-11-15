@@ -185,7 +185,6 @@ module RLayout
         next if a==@footer_object
         next if a==@side_bar_object
         next if a==@main_box
-        next if a==@style_service
         v = instance_variable_get a
         s = a.to_s.sub("@","")                        
         h[s.to_sym] = v if !v.nil?

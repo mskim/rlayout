@@ -115,7 +115,6 @@ module RLayout
       instance_variables.each do |a|
         next if a == @parent_graphic
         next if a == @floats
-        next if a == @style_service
         next if a == @graphics  
         v = instance_variable_get a
         s = a.to_s.sub("@","")

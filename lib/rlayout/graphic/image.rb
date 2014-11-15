@@ -1,4 +1,38 @@
 
+# Inserting Images in Markdown
+# Image can be inserted in couple of ways,
+# For magazine_article and news_article, common way is to have images data hash defined in the meda-data area above markdown.
+# images = [
+#     {
+#         image_path: "/path/to image.jpg",
+#         caption: image caption,
+#         size: 3x4/3x6
+#         location: [0,0]
+#      },
+#     {
+#         image_path: "/path/to image.jpg",
+#         caption: image caption,
+#         size: middle,
+#         location: top_left
+#      }
+#]
+#    
+#
+# One way is to put image_path in the meta_data as hash, along with title
+# For book_chaper_article, place image tag along paragraph text
+# as ![alt_text](path/to/image/file)
+# image will flows along with other paragraphs in column.
+# Where as if images were place in metadata is place as flost, usually occupying on top of mutiple columns.
+
+# crating Image Only Page
+# we might have some pages with images only.
+# This can be done using page_script to describe it
+# page.new do
+#   container do
+#
+#   end
+# end
+
 IMAGE_FIT_TYPE_ORIGINAL       = 0
 IMAGE_FIT_TYPE_VIRTICAL       = 1
 IMAGE_FIT_TYPE_HORIZONTAL     = 2
@@ -6,9 +40,7 @@ IMAGE_FIT_TYPE_KEEP_RATIO     = 3
 IMAGE_FIT_TYPE_IGNORE_RATIO   = 4
 IMAGE_FIT_TYPE_REPEAT_MUTIPLE = 5
 
-
 module RLayout
-  
   class Graphic
     def init_image(options)
       return unless options[:image_path]
@@ -46,22 +78,6 @@ module RLayout
       else
         @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
       end
-      
-      # case @image_fit_type
-      # when  IMAGE_FIT_TYPE_ORIGINAL
-      #   @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      # when  IMAGE_FIT_TYPE_VIRTICAL
-      #   @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      # when  IMAGE_FIT_TYPE_HORIZONTAL
-      #   @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      # when  IMAGE_FIT_TYPE_KEEP_RATIO 
-      #   @image_object.drawInRect(rect, fromRect:NSZeroRect, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      # when   IMAGE_FIT_TYPE_IGNORE_RATIO
-      #   @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      # else
-      #   @image_object.drawInRect(rect, fromRect:NSZeroRect, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      # end
-
     end
 
     def image_object_height_to_width_ratio

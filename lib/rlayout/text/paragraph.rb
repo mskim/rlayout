@@ -27,7 +27,7 @@ FIT_STYLE_RUN   = 3
     def initialize(parent_graphic, options={})
       text_options = nil
       if options[:markup]
-        @style_service ||= StyleService.new
+        @style_service ||= StyleService.new(options)
         text_options = @style_service.style_for_markup(options[:markup])
         options.merge! text_options if text_options
       end

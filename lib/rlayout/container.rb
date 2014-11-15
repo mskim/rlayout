@@ -139,7 +139,6 @@ module RLayout
         next if a==@graphics
         next if a==@floats
         next if a==@fixtures
-        next if a==@style_service
         v = instance_variable_get a
         s = a.to_s.sub("@","")                        
         h[s.to_sym] = v if !v.nil?

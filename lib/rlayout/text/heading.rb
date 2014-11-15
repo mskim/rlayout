@@ -31,13 +31,9 @@ module RLayout
   # This way, parent can shrink or expand heading and maintain each elements's height propotion. 
   class Heading < Container
     attr_accessor :title_object, :subtitle_object, :leading_object, :author_object
-    attr_accessor :style_service
+    # attr_accessor :style_service
     def initialize(parent_graphic, options={}, &block)
-      if options[:style_service] 
-        @style_service = options[:style_service]
-      else
-        @style_service ||= StyleService.new(options)
-      end
+      @style_service = StyleService.new(options)
       super         
       @klass = "Heading"   
       @layout_space = 2
