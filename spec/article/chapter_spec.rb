@@ -50,6 +50,7 @@ describe 'create Chapter page with StoryBox' do
      @pdf_path = File.dirname(__FILE__) + "/../output/chapter_test.pdf"
      @m.save_pdf(@pdf_path)
      File.exists?(@pdf_path).must_equal true
+     system("open #{@pdf_path}")
    end
    
    it 'should save hash' do
