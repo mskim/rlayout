@@ -22,7 +22,7 @@ FIT_STYLE_RUN   = 3
   class Paragraph < Text
     # attr_accessor :paragraph_data
     attr_accessor :drop_cap, :style_service
-    attr_accessor :drop_cap_lines, :drop_cap_char_count
+    attr_accessor :drop_cap_lines, :drop_cap_char_count, :linked_text_container
     
     def initialize(parent_graphic, options={})
       text_options = nil
@@ -31,9 +31,14 @@ FIT_STYLE_RUN   = 3
         text_options = @style_service.style_for_markup(options[:markup])
         options.merge! text_options if text_options
       end
+      # options[:line_width] = 2
+      # options[:line_color] = 'red'
       super
       if options[:linked_text_layout_manager]
-        @text_layout_manager = TextLayoutManager.new(self, options)
+        @text_layout_manager                = options[:linked_text_layout_manager]
+        @linked_text_container              = options[:linked_text_container]
+        @text_layout_manager.owner_graphic  = self
+        @text_layout_manager.is_linked      = true
       end
       @klass = "Paragraph"
       self
@@ -46,7 +51,7 @@ FIT_STYLE_RUN   = 3
     end
     
     def is_linked?
-      @text_layout_manager && !@text_layout_manager.previous_link.nil?
+      @text_layout_manager &&  @text_layout_manager.is_linked
     end
     
 

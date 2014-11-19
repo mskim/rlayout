@@ -28,7 +28,7 @@ module RLayout
     # Make it much easier to edit them.
     
     def init_text(options)
-      if options[:text_string] || options[:text_atts_array]
+      if options[:text_string] || options[:text_atts_array] 
         if RUBY_ENGINE == 'macruby'
           @text_layout_manager = TextLayoutManager.new(self, options)
         else

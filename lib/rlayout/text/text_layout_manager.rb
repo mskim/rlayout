@@ -41,31 +41,27 @@
 
 module RLayout
   class TextLayoutManager
-    attr_accessor :owner_graphic, :att_string, :text_container, :line_fragments, :token_list
-    attr_accessor :current_token_index, :text_direction, :previous_link
-    attr_accessor :text_markup, :text_overflow, :text_underflow, :text_storage, :ns_layout_manager, :ns_text_container
+    attr_accessor :owner_graphic, :att_string, :line_fragments, :token_list
+    attr_accessor :current_token_index, :text_direction, :text_container, :is_linked
+    attr_accessor :text_markup, :text_overflow, :text_underflow, :text_storage, :ns_layout_manager
     def initialize(owner_graphic, options={})
       @owner_graphic = owner_graphic
       return if @owner_graphic.nil?
+      @is_linked = false
       @att_string     = make_att_string_from_option(options)  
       if RUBY_ENGINE =='macruby'        
-        @text_container = @owner_graphic.text_rect
-        if options[:linked_text_layout_manager]
-          @previous_link  = options[:linked_text_layout_manager]
-          # linked TextLayoutManager
-          # @ns_text_layout     = options[:ns_text_container]
-          # @ns_text_container  = options[:ns_text_container]
-          @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
-        else
-          @att_string     = make_att_string_from_option(options)  
-          @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
-          @width          = @text_container[WIDTH_VAL]
-          @height         = @text_container[HEIGHT_VAL]
-          # line_fragments  = []
-          # make_tokens
-          # layout_lines_custom
-          layout_lines(options) unless options[:layout_lines=>false]
-        end
+        @att_string     = make_att_string_from_option(options)  
+        @text_storage   = NSTextStorage.alloc.init
+        @text_storage.setAttributedString @att_string
+        @text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@owner_graphic.width,@owner_graphic.height))
+        @ns_layout_manager = NSLayoutManager.alloc.init     
+        @ns_layout_manager.addTextContainer(@text_container)
+        @text_storage.addLayoutManager(@ns_layout_manager)
+        
+        @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
+        @width          = @owner_graphic.width
+        @height         = @owner_graphic.height
+        layout_lines(options) unless options[:layout_lines=>false]
       else
         
       end
@@ -73,7 +69,7 @@ module RLayout
     end
     
     def set_frame
-      @text_container = @owner_graphic.text_rect
+      # @text_container = @owner_graphic.text_rect
       layout_lines
     end
     
@@ -84,7 +80,6 @@ module RLayout
     
     def to_hash
       h = {}
-      h[:previous_link] = @previous_link
       h[:text_markup]   = @text_markup
       h[:text_string]   = @att_string.string
       #TODO
@@ -94,11 +89,7 @@ module RLayout
     end
     
     def change_width_and_adjust_height(new_width, options={})
-      if @text_container.nil?
-        @text_container=[0,0,new_width,1000]
-      else
-        @text_container[WIDTH_VAL] = new_width
-      end
+      @text_container=setContainerSize(NSMakeSize(new_width,1000))
       layout_lines
       # TODO change owner_graphic height
     end
@@ -153,7 +144,6 @@ module RLayout
       att_string
     end
     
-    
     def make_att_string(options={})
       #TODO
       # implement text_fit_type
@@ -184,7 +174,6 @@ module RLayout
       att_string        =NSMutableAttributedString.alloc.initWithString(@text_string, attributes:make_atts)
       att_string
     end
-    
     
     def make_tokens
       starting = 0
@@ -252,21 +241,24 @@ module RLayout
     def layout_lines(options={})
       # this is a link, so no need to layout lines
       # is is done by the head link
-      return if !@previous_link.nil?
+      return if !@previous_link.nil? # This is not true we still have to layout line 
+      
       if RUBY_ENGINE =='macruby' 
         # if @text_direction == 'left_to_right'
           @text_overflow = false
-          @text_container = @owner_graphic.text_rect
-          @text_storage = NSTextStorage.alloc.init
-          @text_storage.setAttributedString @att_string
-          proposed_height = @text_container[HEIGHT_VAL]
+          proposed_height = @owner_graphic.height
           proposed_height = options[:proposed_height] if options[:proposed_height]
-          @ns_text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@text_container[WIDTH_VAL],proposed_height)) #[@width,1000]
-          @ns_layout_manager = NSLayoutManager.alloc.init        
-          @ns_layout_manager.addTextContainer(ns_text_container)
-          @text_storage.addLayoutManager(@ns_layout_manager)
-          range = @ns_layout_manager.glyphRangeForTextContainer(@ns_text_container)
-          used_size=@ns_layout_manager.usedRectForTextContainer(@ns_text_container).size
+          unless @text_container
+            @text_storage   = NSTextStorage.alloc.init
+            @text_storage.setAttributedString @att_string
+            @text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@owner_graphic.width,@owner_graphic.height))
+            @ns_layout_manager = NSLayoutManager.alloc.init     
+            @ns_layout_manager.addTextContainer(@text_container)
+            @text_storage.addLayoutManager(@ns_layout_manager)
+          end
+          @text_container.setContainerSize(NSMakeSize(@owner_graphic.width,proposed_height))
+          range = @ns_layout_manager.glyphRangeForTextContainer(@text_container)
+          used_size=@ns_layout_manager.usedRectForTextContainer(@text_container).size
           # adjust owner_graphics size
           # TODO if fit_mode is fit_box, reduce text_size to fit the text
           # split ns_text_container into two at given hight
@@ -275,7 +267,7 @@ module RLayout
           # owner_graphic.set_text_rect(used_size.height + @text_line_spacing)
           used_size.height += @text_line_spacing
           owner_graphic.adjust_height_with_text_height_change(used_size.height)
-          @text_container[HEIGHT_VAL] = used_size.height 
+          @text_container.setContainerSize(used_size) 
           if @text_markup && (@text_markup == 'h5' || @text_markup == 'h6') #&& options[:aling_to_grid]
             # Make the head paragraph height as body text multiples"
             # by adjusting @top_margin and @bottom_margin around it
@@ -293,9 +285,8 @@ module RLayout
           # returns true, if the text overflows the text box
           # and also check if the overflow is text_undeflow
           # text_undeflow is when overflowing container doen's have any lines, no line fit into container area.
-          firstContainer=@ns_layout_manager.textContainers.first
           @textStorage_length=@text_storage.string.length
-          range=@ns_layout_manager.glyphRangeForTextContainer(firstContainer)
+          range=@ns_layout_manager.glyphRangeForTextContainer(@text_container)
           last_char_index=range.location+range.length
           if @textStorage_length > last_char_index 
             @text_overflow = true
@@ -385,60 +376,42 @@ module RLayout
       @owner_graphic.text_rect
     end
     
-    # This is used for laying out paragraphs into column
-    # and we have to split the paragraph into two to fit,
+    # This is used for laying out paragraphs into columns
+    # and when we have to split the paragraph into two,
     # but needing to keep text_storage linked as one.
     # create new paragraph with overflowing text to go to the next column.
     # They share same text_storage, ns_layout_manager, 
     # but new text_layout_manager with new ns_text_container for overflowing text
     def split_overflowing_paragraph
       if @text_overflow
-        linked_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@text_container[WIDTH_VAL],500))
+        linked_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(text_rect[WIDTH_VAL],1000))
         @ns_layout_manager.addTextContainer(linked_container)
         range = @ns_layout_manager.glyphRangeForTextContainer(linked_container)
         used_size=@ns_layout_manager.usedRectForTextContainer(linked_container).size
         used_size.height += @text_line_spacing
         linked_container.setContainerSize(used_size)
-        p = Paragraph.new(nil, linked_text_layout_manager: self)
+        layout_manager_copy = self.dup # make a copy
+        p = Paragraph.new(nil, linked_text_layout_manager: layout_manager_copy, linked_text_container: linked_container)
         p.adjust_height_with_text_height_change(used_size.height)
         return p
       end
       nil
     end
-    
-    # called from linked paragraph to draw lineked container lines
-    def draw_last_container(r)
-      last_text_container = @ns_layout_manager.textContainers.last
-      glyphRange=@ns_layout_manager.glyphRangeForTextContainer(last_text_container) 
-      origin = r.origin
-      origin.y = origin.y + @text_paragraph_spacing_before if @text_paragraph_spacing_before
-      if @text_markup == 'h6'
-        range=NSMakeRange(0,0)
-        # puts atts = text_storage.attributesAtIndex(0, effectiveRange:range) 
-      end
-      @ns_layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:origin)
-    end
-    
+        
     def draw_text(r) 
-      # is is done by the head link
-      if @previous_link
-        @previous_link.draw_last_container(r)
-        return
-      end
+      return unless  @att_string
+      return unless  @text_container
       
       if @text_direction == 'left_to_right'
-        @text_storage = NSTextStorage.alloc.init
-        @text_storage.setAttributedString @att_string
-        @ns_text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@text_container[WIDTH_VAL],@text_container[HEIGHT_VAL])) #[@width,1000]
-        @ns_layout_manager = NSLayoutManager.alloc.init        
-        @ns_layout_manager.addTextContainer(ns_text_container)
-        @text_storage.addLayoutManager(@ns_layout_manager)
-        glyphRange=@ns_layout_manager.glyphRangeForTextContainer(@ns_text_container) 
+        if @owner_graphic.klass == 'Paragraph' && @owner_graphic.linked_text_container
+          # this is when we have linked paragraph with multiple textContainers
+          @text_container = @owner_graphic.linked_text_container
+        end
+        glyphRange=@ns_layout_manager.glyphRangeForTextContainer(@text_container) 
         origin = r.origin
         origin.y = origin.y + @text_paragraph_spacing_before if @text_paragraph_spacing_before
         if @text_markup == 'h6'
           range=NSMakeRange(0,0)
-          # puts atts = text_storage.attributesAtIndex(0, effectiveRange:range) 
         end
         @ns_layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:origin)
         

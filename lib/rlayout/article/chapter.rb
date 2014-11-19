@@ -35,13 +35,14 @@ module RLayout
   
   class Chapter < Document
     attr_accessor :story_path, :heading, :paragraphs
-    attr_accessor :toc_on, :chapter_kind
+    attr_accessor :toc_on, :chapter_kind, :column_count
     
     def initialize(options={})
       super
       @bottom_margin      = 100
       @double_side        = true
       @page_count         = options.fetch(:page_count, 2)
+      @column_count       = options.fetch(:column_count, 1)
       @toc_on             = options.fetch(:toc_on, false)
       @chapter_kind       = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
       @@style_service     = StyleService.shared_style_service(:chapter_kind=>"news_article")
@@ -74,7 +75,6 @@ module RLayout
         if para[:markup] == 'img'
           source = para[:image_path]
           para_options[:caption] = para[:caption]
-          puts "para_options[:caption]:#{para_options[:caption]}"
           para_options[:layout_expand] = [:width]
           para_options[:bottom_margin] = 10
           para_options[:bottom_inset] = 10
@@ -112,20 +112,20 @@ module RLayout
         @first_page.relayout!
         # @first_page.main_box.relayout_floats!
         @first_page.main_box.set_non_overlapping_frame_for_chidren_graphics
-      elsif  @chapter_kind == "news_article"
-        #make it a flost for news_article
-        @heading[:width]        = @first_page.main_box.heading_width
-        @heading[:layout_expand]= nil
-        @heading[:top_margin]   = 0
-        @heading[:top_inset]    = 0
-        @heading[:bottom_margin]= 0
-        @heading[:tottom_inset] = 0
-        @heading[:left_inset]   = 0
-        @heading[:right_inset]  = 0
-        @first_page.main_box.floats << Heading.new(nil, @heading)
-        @first_page.relayout!
-        # @first_page.main_box.relayout_floats!
-        @first_page.main_box.set_non_overlapping_frame_for_chidren_graphics        
+      # elsif  @chapter_kind == "news_article"
+      #   #make it a flost for news_article
+      #   @heading[:width]        = @first_page.main_box.heading_width
+      #   @heading[:layout_expand]= nil
+      #   @heading[:top_margin]   = 0
+      #   @heading[:top_inset]    = 0
+      #   @heading[:bottom_margin]= 0
+      #   @heading[:tottom_inset] = 0
+      #   @heading[:left_inset]   = 0
+      #   @heading[:right_inset]  = 0
+      #   @first_page.main_box.floats << Heading.new(nil, @heading)
+      #   @first_page.relayout!
+      #   # @first_page.main_box.relayout_floats!
+      #   @first_page.main_box.set_non_overlapping_frame_for_chidren_graphics        
       else 
         # make head a as one of graphics
         heading_object = Heading.new(nil, @heading)
@@ -140,10 +140,11 @@ module RLayout
         page_index += 1
         if page_index >= @pages.length
           options ={}
-          options[:footer]     = true 
-          options[:header]     = true 
-          options[:text_box]  = true
-          options[:page_number]= @starting_page_number + page_index
+          options[:footer]      = true 
+          options[:header]      = true 
+          options[:text_box]    = true
+          options[:page_number] = @starting_page_number + page_index
+          options[:column_count]= @column_count
           Page.new(self, options)
         end
         @pages[page_index].main_box.layout_items(@paragraphs)

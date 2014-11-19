@@ -20,7 +20,7 @@ DEFAULT_STYLES={
   "Head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
-  "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>20},
+  "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
@@ -48,7 +48,7 @@ MAGAZINE_STYLES={
   "Head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
-  "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>20},
+  "p"       =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
@@ -72,7 +72,7 @@ CHAPTER_STYLES={
   "h6"      =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray", :text_head_indent=>0, :text_tail_indent=>0},
   # "p"       =>{:text_font => 'SDMyoungjo',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "p"       =>{:text_font => 'smSSMyungjoP-W30',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>20},
+  "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black'},
@@ -130,7 +130,7 @@ module RLayout
           @current_style    = MAGAZINE_STYLES
         when 'news_article'
           @current_style    = NEWS_STYLES
-        else
+        else          
           @current_style    = DEFAULT_STYLES
         end
       else

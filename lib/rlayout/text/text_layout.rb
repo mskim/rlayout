@@ -3,11 +3,10 @@ module RLayout
 
   # kCTFrameProgressionTopToBottom = 0,
   # Lines are stacked top to bottom for horizontal text.
-	
   # kCTFrameProgressionRightToLeft = 1
 	# Lines are stacked right to left for vertical text.
-
   # TextLayout: CTFrame Ruby clone
+  
   class TextLayout
   	attr_accessor :att_string, :lines, :runs, :uni_attribure
     attr_accessor :container_paths

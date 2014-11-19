@@ -20,17 +20,10 @@ describe ' TextBox creation' do
     # system("open #{@svg_path}") if File.exists?(@svg_path)
   end
   
-  # it 'should layout_items' do
-  #    result = @tb.layout_items(@flowomg_graphics)
-  #    @flowing_path = File.dirname(__FILE__) + "/output/text_box_flowing_test.svg"
-  #    @tb.save_svg(@flowing_path)
-  #    File.exists?(@flowing_path).must_equal true
-  # end
-   
-  # it 'should save pdf' do
-  #   puts result = @tb.layout_items(@flowomg_graphics, 0)
-  #   @flowing_path = File.dirname(__FILE__) + "/output/text_box_flowingtest.pdf"
-  #   @tb.save_pdf(@flowing_path)
-  #   File.exists?(@flowing_path).must_equal true
-  # end
+  it 'should layout_items' do
+     result = @tb.layout_items(@flowomg_graphics)
+     @flowing_path = File.dirname(__FILE__) + "/output/text_box_flowing_test.svg"
+     @tb.save_svg(@flowing_path)
+     File.exists?(@flowing_path).must_equal true
+  end
 end

@@ -13,8 +13,10 @@ TODO List
 	- Header
 		- bleeding page number box
 	- fix text_layout bug
-	- AdBox DSL
-	
+	- AdBox DSL with profile, method_missing
+
+2014 11 18
+	- text_layout
 2014 11 15
 	- include Image to Markdown 
 	- include Image Caption to Markdown 

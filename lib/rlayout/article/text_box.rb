@@ -1,6 +1,16 @@
 #TODO
 # 1.force fit first column first item, when it doesn't fit 
 
+# The challenge is to have text box with overlapping floats on top
+# And flowing image alone the text, and Dropcap suppoert
+# I have tried this with TextLayoutManager with paragraph base on each paragraph
+# I am have difficulty with irregular shaped float on top.
+
+# I guess another way I should try is to have TexBox Based text system, as I had with TextRecord
+# 1. Yet keep the paragraph datat as paragraph, and merge them into text_box attr string after calumating the height fot the column
+# 1. OR I can try attached cell as flowing image and float on top?
+
+
 module RLayout
   
   # TextBox is container of flowing paragraphs.
@@ -202,13 +212,14 @@ module RLayout
       end
       
       if item.is_linked?   
-        # puts " linked item was successfully inserted to column"     
+        @graphics << item
         @current_position += item.height + @layout_space
+        # still have to test if the lined fits?
         return true
       end      
-      item.height = room      
+      item.height = room
       item.layout_text(room) # layout_text
-      # @current_position = max_y(item.frame_rect) + @layout_space
+      
       if item.text_layout_manager.text_overflow == false
         @graphics << item
         @current_position += item.height + @layout_space
@@ -216,7 +227,6 @@ module RLayout
       else
         #check if text_underflow, any lines were created in the text_container
         if item.text_layout_manager.text_underflow
-          # puts " item was not inserted to column at all, no lines"
           return item
         # check if some was partialLy_inserted?
         elsif item.text_layout_manager.partialLy_inserted?
