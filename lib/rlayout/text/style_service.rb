@@ -84,7 +84,7 @@ NEWS_STYLES={
   "title"   =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'black', :text_alignment=>'center'},
   "subtitle"=>{:text_font => 'Times',     :text_size=>16.0, :text_color => 'black'},
   "author"  =>{:text_font => 'Helvetica', :text_size=>10.0, :text_color => 'black', :text_alignment=>'right'},
-  "lead"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black'},
+  "lead"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black', :text_alignment=>'right'},
   "Leading" =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'black'},
   "leading" =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'black'},
   "h1"      =>{:text_font => 'Helvetica', :text_size=>36.0, :text_color => 'black'},
@@ -125,12 +125,16 @@ module RLayout
       if options[:chapter_kind]
         case options[:chapter_kind]
         when "chapter"
+          # puts "using chapter"
           @current_style    = CHAPTER_STYLES
         when "magazine_article"
+          # puts "using magazine_article"
           @current_style    = MAGAZINE_STYLES
         when 'news_article'
+          # puts "using news_article"
           @current_style    = NEWS_STYLES
         else          
+          # puts "using DEFAULT_STYLES"
           @current_style    = DEFAULT_STYLES
         end
       else

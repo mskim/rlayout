@@ -68,7 +68,7 @@ module RLayout
       @line_type=0
       # @line_color="red"
       # @line_width= 2      
-      @fill_color="green"
+      # @fill_color="green"
       height_sum = 0      
       height_sum +=@title_object.height    unless @title_object.nil?
       height_sum +=@subtitle_object.height unless @subtitle_object.nil?
@@ -208,6 +208,7 @@ module RLayout
       atts[:width] = @width
       @author_object = Text.new(self, atts)
       @author_object.layout_expand  = [:width]
+      @author_object.right_inset  = 10
       @author_object.layout_length  = atts[:text_size]
       @author_object.height  = atts[:text_size]*1.2      
       @author_object
