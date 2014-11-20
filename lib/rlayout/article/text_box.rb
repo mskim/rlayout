@@ -36,8 +36,10 @@ module RLayout
     attr_accessor :floats
     
     def initialize(parent_graphic, options={}, &block)
+      options[:line_width] = 5
+      options[:line_color] = 'black'
       super
-      @klass = "TextBox"   
+      @klass = "TextBox"         
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)
       @column_count     = options.fetch(:column_count, 3)

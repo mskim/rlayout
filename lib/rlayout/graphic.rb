@@ -514,6 +514,8 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
   
   class Text < Graphic
     def initialize(parent_graphic, options={})
+      # options[:line_width] = 2
+      # options[:line_color] = 'red'
       super
       @klass = "Text"
       self

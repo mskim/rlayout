@@ -174,7 +174,7 @@ module RLayout
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:layout_expand]          = [:width]
-      @title_object                 = Text.new(self, atts)
+      @title_object                 = Paragraph.new(self, atts)
       @title_object.layout_length   = atts[:text_size]
       @title_object.height          = atts[:text_size]*1.2
       @title_object

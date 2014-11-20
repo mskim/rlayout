@@ -30,7 +30,7 @@ DEFAULT_STYLES={
 
 MAGAZINE_STYLES={
   "style_kind" => "MAGAZINE_STYLES",
-  "Title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
+  "Title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'yellow', :text_alignment=>'center'},
   "title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
   "SubTitle"=>{:text_font => 'Times',     :text_size=>20.0, :text_color => 'black'},
   "subtitle"=>{:text_font => 'Times',     :text_size=>20.0, :text_color => 'black'},
@@ -55,6 +55,7 @@ MAGAZINE_STYLES={
   "footer"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
 }
+
 CHAPTER_STYLES={
   "style_kind" => "CHAPTER_STYLES",
   "title"   =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
@@ -81,7 +82,7 @@ CHAPTER_STYLES={
 
 NEWS_STYLES={
   "style_kind" => "NEWS_STYLES",
-  "title"   =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'black', :text_alignment=>'center'},
+  "title"   =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'gray', :text_alignment=>'center'},
   "subtitle"=>{:text_font => 'Times',     :text_size=>16.0, :text_color => 'black'},
   "author"  =>{:text_font => 'Helvetica', :text_size=>10.0, :text_color => 'black', :text_alignment=>'right'},
   "lead"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black', :text_alignment=>'right'},
@@ -122,22 +123,18 @@ module RLayout
       end
       @paragraph_styles = options[:paragraph_styles]
       @char_styles      = options[:char_styles]
-      if options[:chapter_kind]
-        case options[:chapter_kind]
-        when "chapter"
-          # puts "using chapter"
-          @current_style    = CHAPTER_STYLES
-        when "magazine_article"
-          # puts "using magazine_article"
-          @current_style    = MAGAZINE_STYLES
-        when 'news_article'
-          # puts "using news_article"
-          @current_style    = NEWS_STYLES
-        else          
-          # puts "using DEFAULT_STYLES"
-          @current_style    = DEFAULT_STYLES
-        end
-      else
+      case options[:chapter_kind]
+      when "chapter"
+        # puts "using chapter"
+        @current_style    = CHAPTER_STYLES
+      when "magazine_article"
+        # puts "using magazine_article"
+        @current_style    = MAGAZINE_STYLES
+      when 'news_article'
+        # puts "using news_article"
+        @current_style    = NEWS_STYLES
+      else          
+        # puts "using DEFAULT_STYLES"
         @current_style    = DEFAULT_STYLES
       end
       self

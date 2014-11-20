@@ -3,7 +3,7 @@
 # Each paragraph has own storage, lanyout_manager, and text_container,
 # only when Paragraph are linked, multiple text_container are utilized.
 # This is done to gain more drawing control over each Paragraph, to containing text in separate views, 
-# for tasks, such as drawing line frames around paragraps, 
+# for tasks, such as inserting image paragraphs, and drawing line frames around paragraps, 
 # widow/orphan rule last character sqeese options 
 # foot note and indexing support 
 # paragraph based editing support, where text needs to be prosented per paragraph base, and so on...
@@ -44,13 +44,13 @@ module RLayout
     attr_accessor :owner_graphic, :att_string, :line_fragments, :token_list
     attr_accessor :current_token_index, :text_direction, :text_container, :is_linked
     attr_accessor :text_markup, :text_overflow, :text_underflow, :text_storage, :ns_layout_manager
+    attr_accessor :ct_frames
     def initialize(owner_graphic, options={})
       @owner_graphic = owner_graphic
       return if @owner_graphic.nil?
       @is_linked = false
       @att_string     = make_att_string_from_option(options)  
       if RUBY_ENGINE =='macruby'        
-        @att_string     = make_att_string_from_option(options)  
         @text_storage   = NSTextStorage.alloc.init
         @text_storage.setAttributedString @att_string
         @text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@owner_graphic.width,@owner_graphic.height))
@@ -108,15 +108,24 @@ module RLayout
         atts[NSKernAttributeName] = @text_tracking
       end
       
-      right_align   = NSMutableParagraphStyle.alloc.init.setAlignment(NSRightTextAlignment)          
-      center_align  = NSMutableParagraphStyle.alloc.init.setAlignment(NSCenterTextAlignment)          
-      justified_align  = NSMutableParagraphStyle.alloc.init.setAlignment(NSJustifiedTextAlignment)          
-      newParagraphStyle  = NSMutableParagraphStyle.alloc.init
+      right_align       = NSMutableParagraphStyle.alloc.init.setAlignment(NSRightTextAlignment)          
+      center_align      = NSMutableParagraphStyle.alloc.init.setAlignment(NSCenterTextAlignment)          
+      justified_align   = NSMutableParagraphStyle.alloc.init.setAlignment(NSJustifiedTextAlignment)          
+      newParagraphStyle = NSMutableParagraphStyle.alloc.init # default is left align
+      # right_align       = NSMutableParagraphStyle.defaultParagraphStyle.setAlignment(NSRightTextAlignment)          
+      # center_align      = NSMutableParagraphStyle.defaultParagraphStyle.setAlignment(NSCenterTextAlignment)          
+      # justified_align   = NSMutableParagraphStyle.defaultParagraphStyle.setAlignment(NSJustifiedTextAlignment)          
+      # newParagraphStyle = NSMutableParagraphStyle.defaultParagraphStyle # default is left align
+      
+      if @text_markup == 'title'
+        puts "@text_alignment:#{@text_alignment}"
+      end
       case @text_alignment
       when "right"
         newParagraphStyle = right_align
       when "center"
         newParagraphStyle = center_align
+        # puts "newParagraphStyle.inspect:#{newParagraphStyle.inspect}"
       when 'justified'
         newParagraphStyle = justified_align
       end
@@ -175,18 +184,6 @@ module RLayout
       att_string
     end
     
-    def make_tokens
-      starting = 0
-      # def initialize(att_string, start, length, text_direction)
-      @token_list = []
-      @text_storage.string.split(" ").collect do |token_string|
-        @token_list << TextToken.new(@text_storage, starting, token_string.length, @text_direction, 'text_kind')
-        starting += token_string.length
-        @token_list << TextToken.new(@text_storage, starting, 1, @text_direction, 'space_kind')
-        starting += 1
-      end
-      @token_list.last.token_type = 'end_of_para'
-    end
     
     def body_line_height_multiple(head_para_height)
       # TODO
@@ -200,9 +197,6 @@ module RLayout
       body_multiple
     end
     
-    def self.generate(owner_graphic, options={})
-      RLayput::TextLayoutManager.new(owner_graphic, options)
-    end
     
     # text_overflow and any line was created 
     def partialLy_inserted?
@@ -222,6 +216,11 @@ module RLayout
       line_count >= 4
     end
     
+    # this is line layout using CoreText
+    # This will allow me to do illefular shaped container layout
+    def layout_ct_lines(options={})
+      
+    end
     # text_layout_manager layout_lines
     # layout_lines lays out lines att_string into text_container
     #

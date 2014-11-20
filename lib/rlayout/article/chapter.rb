@@ -34,7 +34,7 @@ module RLayout
   #  keep going until we have no more leftover paragraphs.
   
   class Chapter < Document
-    attr_accessor :story_path, :heading, :paragraphs
+    attr_accessor :story_path, :heading, :paragraphs, :style_service
     attr_accessor :toc_on, :chapter_kind, :column_count
     
     def initialize(options={})
@@ -45,7 +45,7 @@ module RLayout
       @column_count       = options.fetch(:column_count, 1)
       @toc_on             = options.fetch(:toc_on, false)
       @chapter_kind       = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
-      @@style_service     = StyleService.shared_style_service(:chapter_kind=>"news_article")
+      @style_service     = StyleService.shared_style_service(:chapter_kind=>@chapter_kind)
       options[:footer]    = true 
       options[:header]    = true 
       options[:text_box]  = true
@@ -67,7 +67,7 @@ module RLayout
       @title      = @heading[:title]
       #TODO read it form book_config.rb?
       @book_title = @heading[:book_title]
-      @style_service ||= StyleService.new(:chapter_kind=>@chapter_kind)
+      # @style_service ||= StyleService.new(:chapter_kind=>@chapter_kind)
       @paragraphs =[]
       story.paragraphs.each do |para| 
         para_options = {}
@@ -84,6 +84,7 @@ module RLayout
           next 
         end
         para_options[:text_string]    = para[:string]
+        para_options[:chapter_kind]   = @chapter_kind
         para_options[:layout_expand]  = [:width]
         para_options[:text_fit]       = FIT_FONT_SIZE
         @paragraphs << Paragraph.new(nil, para_options)
@@ -108,6 +109,7 @@ module RLayout
         @heading[:tottom_inset] = 50
         @heading[:left_inset]   = 0
         @heading[:right_inset]  = 0
+        @heading[:chapter_kind]  = "magazine_article"
         @first_page.main_box.floats << Heading.new(nil, @heading)
         @first_page.relayout!
         # @first_page.main_box.relayout_floats!
@@ -127,6 +129,8 @@ module RLayout
       #   # @first_page.main_box.relayout_floats!
       #   @first_page.main_box.set_non_overlapping_frame_for_chidren_graphics        
       else 
+        @heading[:chapter_kind]  = "chapter"
+        
         # make head a as one of graphics
         heading_object = Heading.new(nil, @heading)
         @first_page.graphics.unshift(heading_object)
