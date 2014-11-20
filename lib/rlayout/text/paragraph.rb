@@ -31,8 +31,8 @@ FIT_STYLE_RUN   = 3
         text_options = @style_service.style_for_markup(options[:markup])
         options.merge! text_options if text_options
       end
-      # options[:line_width] = 2
-      # options[:line_color] = 'red'
+      options[:line_width] = 2
+      options[:line_color] = 'red'
       super
       if options[:linked_text_layout_manager]
         @text_layout_manager                = options[:linked_text_layout_manager]

@@ -91,7 +91,6 @@ module RLayout
       end
     end
     
-    
     def layout_story
       page_index                = 0
       @first_page               = @pages[page_index]
@@ -130,7 +129,6 @@ module RLayout
       #   @first_page.main_box.set_non_overlapping_frame_for_chidren_graphics        
       else 
         @heading[:chapter_kind]  = "chapter"
-        
         # make head a as one of graphics
         heading_object = Heading.new(nil, @heading)
         @first_page.graphics.unshift(heading_object)

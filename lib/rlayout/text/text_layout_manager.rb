@@ -2,15 +2,26 @@
 # Unlike NSText System, I am using text_storage per Paragraph bases. 
 # Each paragraph has own storage, lanyout_manager, and text_container,
 # only when Paragraph are linked, multiple text_container are utilized.
-# This is done to gain more drawing control over each Paragraph, to containing text in separate views, 
-# for tasks, such as inserting image paragraphs, and drawing line frames around paragraps, 
-# widow/orphan rule last character sqeese options 
-# foot note and indexing support 
-# paragraph based editing support, where text needs to be prosented per paragraph base, and so on...
+# This is done to gain more drawing control over each Paragraph, 
+# to containing text in separate views, 
+# for tasks, such as 
+#   1. Dropcap, 
+#   2. overlapping area with float, illegular shaped but continuous lines. 
+#   3. inserting image paragraphs that flows along other paragraphs, 
+#   4. drawing frames around paragraps, 
+#   5. widow/orphan rule and last character sqeese options 
+#   6. foot note and indexing support, I need to know colum position of the paragraph 
+#   7. paragraph based editing support, where text needs to be prosented per paragraph base, and so on...
 
 # linking and spliting TextLayoutManager
 # TextLayoutManager can be splitted and linked, in order to layout text continuously 
 # in separated column 
+
+# for using CoreText
+# linked TextLayoutManager share CTFrameSetter, but have separate CTFrame
+# And they reside in different Paragraph view
+
+# when using NSTextSystem
 # linked TextLayoutManager share text_storage, layout_manager, but have separate text_container
 # And they reside in different Paragraph view
 
@@ -245,6 +256,7 @@ module RLayout
       if RUBY_ENGINE =='macruby' 
         # if @text_direction == 'left_to_right'
           @text_overflow = false
+          @text_underflow = false
           proposed_height = @owner_graphic.height
           proposed_height = options[:proposed_height] if options[:proposed_height]
           unless @text_container
@@ -288,8 +300,8 @@ module RLayout
           range=@ns_layout_manager.glyphRangeForTextContainer(@text_container)
           last_char_index=range.location+range.length
           if @textStorage_length > last_char_index 
-            @text_overflow = true
-            if proposed_height < used_size.height
+            @text_overflow = true            
+            if range.length == 0 # no line was created
               @text_underflow = true
             end
             
@@ -399,7 +411,6 @@ module RLayout
         
     def draw_text(r) 
       return unless  @att_string
-      return unless  @text_container
       
       if @text_direction == 'left_to_right'
         if @owner_graphic.klass == 'Paragraph' && @owner_graphic.linked_text_container

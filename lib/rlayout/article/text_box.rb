@@ -119,16 +119,18 @@ module RLayout
           add_to_toc_list(front_most_item) if toc_on?
         elsif result == false
           column_index += 1
-          if column_index == @column_count
+          if column_index >= @column_count
             # we are finished for this TextBox
             # place back un-inserted item  in the front of the array
             #TODO
+            puts "finished with text_box, put it back and return false for this text_box"
             flowing_items.unshift(front_most_item)
             return false
           else
             current_column = @graphics[column_index]            
             # This is the case where the item does not fit, even if this is the new empty column
             # For this case, force fit it into this column, since it is not going to fit anywhere.
+            puts "insert it into next column"
             current_column.insert_item(front_most_item, :force_fit=>true)
           end
         else
@@ -190,6 +192,8 @@ module RLayout
     end
     
     def insert_item(item, options={})
+      # puts "item.class:#{item.class}"
+      # puts "item.text_layout_manager.att_string.string:#{item.text_layout_manager.att_string.string}" if item.klass == "Paragraph"
       item.parent_graphic = self
       item.y = @current_position
       item.x = @left_margin + @left_inset
@@ -206,9 +210,11 @@ module RLayout
         if room >= item.height
           @graphics << item
           @current_position += item.height + @layout_space
+          # puts "image was success"
           return true
         else
           #TODO might have to stick it back to paragraphi array? 
+          # puts "image nothing"
           return false
         end
       end
@@ -216,7 +222,8 @@ module RLayout
       if item.is_linked?   
         @graphics << item
         @current_position += item.height + @layout_space
-        # still have to test if the lined fits?
+        # puts "item.is_linked and inserted "
+        # still have to test if the linked fits?
         return true
       end      
       item.height = room
@@ -225,16 +232,19 @@ module RLayout
       if item.text_layout_manager.text_overflow == false
         @graphics << item
         @current_position += item.height + @layout_space
+        # puts "inserted successfully"
         return true
       else
         #check if text_underflow, any lines were created in the text_container
         if item.text_layout_manager.text_underflow
-          return item
+          # puts "text_underflow, return false"
+          return false
         # check if some was partialLy_inserted?
         elsif item.text_layout_manager.partialLy_inserted?
           # puts " item was partially inserted to column"
           @graphics << item
           @current_position += item.height + @layout_space
+          # puts "return splited linked item "
           return item.text_layout_manager.split_overflowing_paragraph
         end
       end
