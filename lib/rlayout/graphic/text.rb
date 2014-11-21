@@ -37,6 +37,14 @@ module RLayout
       end
     end
     
+    def minimun_text_height
+      if @text_layout_manager && @text_layout_manager.text_size
+        @text_layout_manager.text_size
+      else
+        9 
+      end
+    end
+    
     def text_to_hash
       unless @text_layout_manager.nil?
         @text_layout_manager.to_hash if @text_layout_manager

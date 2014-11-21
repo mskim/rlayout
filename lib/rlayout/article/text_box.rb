@@ -36,8 +36,8 @@ module RLayout
     attr_accessor :floats
     
     def initialize(parent_graphic, options={}, &block)
-      options[:line_width] = 5
-      options[:line_color] = 'black'
+      # options[:line_width] = 5
+      # options[:line_color] = 'black'
       super
       @klass = "TextBox"         
       @layout_direction = options.fetch(:layout_direction, "horizontal")
@@ -111,52 +111,47 @@ module RLayout
       end
       column_index = 0
       current_column = @graphics[column_index]
-      while front_most_item = flowing_items.shift do
-        result = current_column.insert_item(front_most_item)
-        if result == true
-          # item fit into column successfully!
-          #TODO
-          add_to_toc_list(front_most_item) if toc_on?
-        elsif result == false
-          column_index += 1
-          if column_index >= @column_count
-            # we are finished for this TextBox
-            # place back un-inserted item  in the front of the array
-            #TODO
-            puts "finished with text_box, put it back and return false for this text_box"
-            flowing_items.unshift(front_most_item)
-            return false
-          else
-            current_column = @graphics[column_index]            
-            # This is the case where the item does not fit, even if this is the new empty column
-            # For this case, force fit it into this column, since it is not going to fit anywhere.
-            puts "insert it into next column"
-            current_column.insert_item(front_most_item, :force_fit=>true)
-          end
-        else
-            # second half of partial fit
-            # relayout current column before going to the next
-            current_column.relayout! 
-            # go to next column
-            column_index += 1
-            if column_index == @column_count
-              # place back un-inserted part  in the front of the array
-              flowing_items.unshift(result)
-              return false
-            end
+      while item = flowing_items.shift do
+        height = item.height
+        if item.respond_to?(:layout_text)
+          height = item.layout_text(current_column.text_width) # item.width:
+        end
+        
+        if current_column.can_fit?(height)
+          current_column.place_item(item)
+        elsif item.can_split_at?(current_column.room)
+          second = item.split_at(current_column.room)
+          current_column.place_item(item)
+          current_column.relayout!
+          column_index +=1
+          if column_index < @column_count
             current_column = @graphics[column_index]
-            current_column.set_starting_position_at_non_overlapping_area
-            if current_column.insert_item(result)
-            else
-              # force fit
-              current_column.insert_item(result, :force_fit=>true)
-            end
+            current_column.place_item(second)
+          else
+            # we are done with this text_box
+            # insert second half back to the item list
+            current_column.relayout!
+            flowing_items.unshift(second)
+            return false
+          end
+        else  # was not able to split the item
+          column_index +=1
+          if column_index < @column_count
+            current_column = @graphics[column_index]
+            #insert item to next column
+            #TODO this is forcing insert, to the new column
+            # I might have to refine this.
+            current_column.place_item(item)
+          else
+            current_column.relayout!
+            flowing_items.unshift(item)
+            return false
+          end
         end
       end
-      # all item is placed!!! return true
       true
     end
-    
+          
     # adjust float sizes with object_box size change
     def relayout_floats!
       @floats.each do |float|
@@ -167,7 +162,6 @@ module RLayout
       
     end
   end
-  
   
   
   class TextColumn < Container
@@ -185,71 +179,29 @@ module RLayout
       self
     end
     
+    def text_width
+      text_rect[WIDTH_VAL]
+    end
+    
     # set @current_pasotion as start of non-overlapping y
     def set_starting_position_at_non_overlapping_area
       rect = non_overlapping_frame
       @current_position = rect[Y_POS] + @top_margin + @top_inset 
     end
     
-    def insert_item(item, options={})
-      # puts "item.class:#{item.class}"
-      # puts "item.text_layout_manager.att_string.string:#{item.text_layout_manager.att_string.string}" if item.klass == "Paragraph"
-      item.parent_graphic = self
-      item.y = @current_position
-      item.x = @left_margin + @left_inset
-      item.width = layout_area[0]
-      room = @height - @current_position - @bottom_margin - @bottom_inset - @layout_space
-      if item.class == RLayout::Image
-        if item.image_object
-          # if item is image, height should be proportional to image_object ratio, not frame width height ratio
-          item.height = item.image_object_height_to_width_ratio*item.width
-          item.apply_fit_type
-        else
-          item.height = item.width
-        end
-        if room >= item.height
-          @graphics << item
-          @current_position += item.height + @layout_space
-          # puts "image was success"
-          return true
-        else
-          #TODO might have to stick it back to paragraphi array? 
-          # puts "image nothing"
-          return false
-        end
-      end
-      
-      if item.is_linked?   
-        @graphics << item
-        @current_position += item.height + @layout_space
-        # puts "item.is_linked and inserted "
-        # still have to test if the linked fits?
-        return true
-      end      
-      item.height = room
-      item.layout_text(room) # layout_text
-      
-      if item.text_layout_manager.text_overflow == false
-        @graphics << item
-        @current_position += item.height + @layout_space
-        # puts "inserted successfully"
-        return true
-      else
-        #check if text_underflow, any lines were created in the text_container
-        if item.text_layout_manager.text_underflow
-          # puts "text_underflow, return false"
-          return false
-        # check if some was partialLy_inserted?
-        elsif item.text_layout_manager.partialLy_inserted?
-          # puts " item was partially inserted to column"
-          @graphics << item
-          @current_position += item.height + @layout_space
-          # puts "return splited linked item "
-          return item.text_layout_manager.split_overflowing_paragraph
-        end
-      end
+    def can_fit?(height)
+      height <= room
     end
     
+    def room
+      room = @height - @current_position - @bottom_margin - @bottom_inset - @layout_space
+    end
+    
+    def place_item(item)
+      @graphics << item
+      item.parent_graphic = self
+      @current_position += item.height + @layout_space
+    end
   end
   
 end

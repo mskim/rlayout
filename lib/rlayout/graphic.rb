@@ -149,6 +149,12 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       TEXT_STRING_SAMPLES.sample
     end
     
+    # Graphic item may need to be split into two, for layout
+    # subclasses such as paragraph should be able to split
+    # but the default is no
+    def can_split_at?(some_position)
+      false
+    end
     
     def self.random_graphic_atts
       atts = {}
@@ -208,8 +214,14 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       [@x + @left_inset , @y + @top_inset, @width - @left_inset - @right_inset, @height - @top_inset - @bottom_inset]
     end
     
-    # when text_rect is changed, update frame size considering insets
+    # when text_rect is changed, update frame height considering insets
     def adjust_height_with_text_height_change(text_height)
+      @height = text_height + @top_inset + @bottom_inset      
+    end
+    
+    # when text_rect is changed, update frame size considering insets
+    def adjust_size_with_text_height_change(text_width, text_height)
+      @width = text_width + @left_inset + @right_inset      
       @height = text_height + @top_inset + @bottom_inset      
     end
     

@@ -17,7 +17,7 @@ FIT_EACH_LINE   = 2   # adjust font size for each line to fit text into lines.
                       # And reduce the size of the lines propotionally to fit the entire lines in text box.
                       
 FIT_STYLE_RUN   = 3
-
+MININUM_LINES_FOR_SPLIT = 2
 
   class Paragraph < Text
     # attr_accessor :paragraph_data
@@ -31,23 +31,42 @@ FIT_STYLE_RUN   = 3
         text_options = @style_service.style_for_markup(options[:markup])
         options.merge! text_options if text_options
       end
-      options[:line_width] = 2
-      options[:line_color] = 'red'
+      # options[:line_width] = 2
+      # options[:line_color] = 'red'
       super
       if options[:linked_text_layout_manager]
         @text_layout_manager                = options[:linked_text_layout_manager]
-        @linked_text_container              = options[:linked_text_container]
         @text_layout_manager.owner_graphic  = self
-        @text_layout_manager.is_linked      = true
       end
       @klass = "Paragraph"
       self
     end
     
-    def layout_text(room)
+    def isFlipped
+      true
+    end
+    
+    def can_split_at?(some_position)
+      if some_position >= @height
+        return false
+      elsif !@text_layout_manager
+        return false
+      elsif @text_layout_manager.line_count < MININUM_LINES_FOR_SPLIT
+        return false
+      else
+        @text_layout_manager.can_split_at?(some_position)
+      end
+    end
+    
+    # split item at given posiotion
+    def split_at(position)
+      return @text_layout_manager.split_at(position)
+    end
+    
+    def layout_text(width)
       return unless @text_layout_manager
-      options={:proposed_height=>room}
-      @text_layout_manager.layout_lines(options)
+      options={:proposed_width=>width}
+      @text_layout_manager.layout_ct_lines(options)
     end
     
     def is_linked?

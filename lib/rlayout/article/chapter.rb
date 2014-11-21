@@ -45,7 +45,7 @@ module RLayout
       @column_count       = options.fetch(:column_count, 1)
       @toc_on             = options.fetch(:toc_on, false)
       @chapter_kind       = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
-      @style_service     = StyleService.shared_style_service(:chapter_kind=>@chapter_kind)
+      @style_service      = StyleService.shared_style_service(:chapter_kind=>@chapter_kind)
       options[:footer]    = true 
       options[:header]    = true 
       options[:text_box]  = true
@@ -87,6 +87,8 @@ module RLayout
         para_options[:chapter_kind]   = @chapter_kind
         para_options[:layout_expand]  = [:width]
         para_options[:text_fit]       = FIT_FONT_SIZE
+        para_options[:layout_lines]   = false
+        
         @paragraphs << Paragraph.new(nil, para_options)
       end
     end
@@ -110,9 +112,7 @@ module RLayout
         @heading[:right_inset]  = 0
         @heading[:chapter_kind]  = "magazine_article"
         @first_page.main_box.floats << Heading.new(nil, @heading)
-        @first_page.relayout!
         # @first_page.main_box.relayout_floats!
-        @first_page.main_box.set_non_overlapping_frame_for_chidren_graphics
       # elsif  @chapter_kind == "news_article"
       #   #make it a flost for news_article
       #   @heading[:width]        = @first_page.main_box.heading_width
@@ -133,11 +133,10 @@ module RLayout
         heading_object = Heading.new(nil, @heading)
         @first_page.graphics.unshift(heading_object)
         heading_object.parent_graphic = @first_page
-        @first_page.relayout!
       end
-      
+      @first_page.relayout!
+      @first_page.main_box.set_non_overlapping_frame_for_chidren_graphics
       @first_page.main_box.layout_items(@paragraphs)
-      
       while @paragraphs.length > 0
         page_index += 1
         if page_index >= @pages.length
