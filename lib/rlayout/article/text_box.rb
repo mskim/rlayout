@@ -116,6 +116,7 @@ module RLayout
           height = item.layout_text(current_column.text_width) # item.width:
         elsif item.class == RLayout::Image
           item.width  = current_column.text_width
+          item.layout_expand  = [:width]
           if item.image_object
             # if item is image, height should be proportional to image_object ratio, not frame width height ratio
             item.height = item.image_object_height_to_width_ratio*item.width
@@ -132,7 +133,7 @@ module RLayout
         elsif item.can_split_at?(current_column.room)
           second = item.split_at(current_column.room)
           current_column.place_item(item)
-          current_column.relayout!
+          # current_column.relayout!
           column_index +=1
           if column_index < @column_count
             current_column = @graphics[column_index]            
@@ -140,7 +141,7 @@ module RLayout
           else
             # we are done with this text_box
             # insert second half back to the item list
-            current_column.relayout!
+            # current_column.relayout!
             flowing_items.unshift(second)
             return false
           end
@@ -157,13 +158,13 @@ module RLayout
             puts "column_index:#{column_index}"
             current_column.place_item(item)
           else
-            current_column.relayout!
+            # current_column.relayout!
             flowing_items.unshift(item)
             return false
           end
         end
       end
-      current_column.relayout!
+      # current_column.relayout!
       
       true
     end
@@ -217,6 +218,8 @@ module RLayout
     def place_item(item)
       @graphics << item
       item.parent_graphic = self
+      item.x              = @left_inset
+      item.y              = @current_position
       @current_position += item.height + @layout_space
     end
   end

@@ -24,7 +24,7 @@ module RLayout
       vertical            = @layout_direction == "vertical"
       have_expanding_child = false # Do we have layout direction expending child?
       column_size         = [non_overlapping_frame[WIDTH_VAL], non_overlapping_frame[HEIGHT_VAL]]
-      starting_y         = non_overlapping_frame[Y_POS] # i need non_overlapping_bounds, not non_overlapping_frame
+      starting_y          = non_overlapping_frame[Y_POS] # i need non_overlapping_bounds, not non_overlapping_frame
       current_position    = vertical ? (starting_y + @top_margin +  @top_inset) : (@left_margin + @left_inset)
       ending_position     = vertical ? (column_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (column_size[X_POS] - @left_margin - @right_margin - @left_inset - @right_inset)
       column_room         = ending_position

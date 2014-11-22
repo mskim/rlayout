@@ -72,12 +72,12 @@ module RLayout
       story.paragraphs.each do |para| 
         para_options = {}
         para_options[:markup]         = para[:markup]
+        para_options[:layout_expand]  = [:width]
         if para[:markup] == 'img'
           source = para[:image_path]
-          para_options[:caption] = para[:caption]
-          para_options[:layout_expand] = [:width]
-          para_options[:bottom_margin] = 10
-          para_options[:bottom_inset] = 10
+          para_options[:caption]        = para[:caption]
+          para_options[:bottom_margin]  = 10
+          para_options[:bottom_inset]   = 10
           full_image_path = File.dirname(@story_path) + "/#{source}"
           para_options[:image_path] = full_image_path
           @paragraphs << Image.new(nil, para_options)
@@ -85,7 +85,6 @@ module RLayout
         end
         para_options[:text_string]    = para[:string]
         para_options[:chapter_kind]   = @chapter_kind
-        para_options[:layout_expand]  = [:width]
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
         
