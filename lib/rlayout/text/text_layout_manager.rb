@@ -223,10 +223,10 @@ module RLayout
       proposed_width  = @owner_graphic.width
       proposed_width  = options[:proposed_width] if options[:proposed_width]
       proposed_path   = CGPathCreateMutable()
-      bounds          = CGRectMake(0, 0, proposed_width, proposed_height)
+      bounds          = CGRectMake(0, 0, proposed_width, 1000)
       CGPathAddRect(proposed_path, nil, bounds)
-      proposed_frame  = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), proposed_path, nil)
-      lines           = CTFrameGetLines(proposed_frame)
+      @frame  = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), proposed_path, nil)
+      lines           = CTFrameGetLines(@frame)
       @line_count     = lines.count
       if @line_count == 0
         puts "options:#{options}"
@@ -235,12 +235,14 @@ module RLayout
         puts ""
       end
       used_size_height = @line_count*(@text_size + @text_line_spacing)
+      puts "@line_count:#{@line_count}"
+      puts "used_size_height:#{used_size_height}"
       
       # regeneate frame with actual height, maybe no need for this
-      path = CGPathCreateMutable()
-      bounds = CGRectMake(0, 0, proposed_width, used_size_height)
-      CGPathAddRect(path, nil, bounds)
-      @frame = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), path, nil)
+      # path = CGPathCreateMutable()
+      # bounds = CGRectMake(0, 0, proposed_width, used_size_height)
+      # CGPathAddRect(path, nil, bounds)
+      # @frame = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), path, nil)
       if @text_markup && (@text_markup == 'h5' || @text_markup == 'h6') #&& options[:aling_to_grid]
         # Make the head paragraphs height as body text multiples"
       end

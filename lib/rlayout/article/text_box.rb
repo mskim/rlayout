@@ -117,6 +117,10 @@ module RLayout
           height = item.layout_text(current_column.text_width) # item.width:
         end
         
+        if item.kind_of(Image)
+          
+        end
+        
         if current_column.can_fit?(height)
           current_column.place_item(item)
         elsif item.can_split_at?(current_column.room)

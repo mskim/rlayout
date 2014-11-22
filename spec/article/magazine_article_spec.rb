@@ -5,7 +5,7 @@ require File.dirname(__FILE__) + '/../../lib/rlayout/article/magazine_article'
 describe 'create MagazineChapter with Image' do
   before do
     @story_path = "/Users/mskim/magazine/how-to-creaete-soochup.markdown"
-    @m = MagazineArticle.new(:starts_left=>false, :story_path=>@story_path, :column_count =>3, :heading_columns=>2)    
+    @m = MagazineArticle.new(:starts_left=>false, :story_path=>@story_path, :column_count =>2, :heading_columns=>2)    
   end
   
   it 'should save' do    
