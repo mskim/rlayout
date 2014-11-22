@@ -1,10 +1,18 @@
 
-# Unlike NSText System, I am using text_storage per Paragraph bases. 
-# Each paragraph has own storage, lanyout_manager, and text_container,
-# only when Paragraph are linked, multiple text_container are utilized.
-# This is done to gain more drawing control over each Paragraph, 
-# to containing text in separate views, 
-# for tasks, such as 
+# Using CoreText
+# 1. layout_ct_lines: 
+#       this lays out out lines with att_string and given width
+#       it returns height for the layed out pargaph
+# 2. Split:
+#       using lines, and lines_range
+#       lines keep: line_fragments that were layed out
+#       lines_range: indicated the range of lines that belongs to the paragaph
+#                     when paragraph is splitted, this will indicated where lines belong
+# 3. Drawing:      
+#       draw lines in lines_range
+#
+#
+#   things I should implement
 #   1. Dropcap, 
 #   2. overlapping area with float, illegular shaped but continuous lines. 
 #   3. inserting image paragraphs that flows along other paragraphs, 
@@ -13,18 +21,6 @@
 #   6. foot note and indexing support, I need to know colum position of the paragraph 
 #   7. paragraph based editing support, where text needs to be prosented per paragraph base, and so on...
 
-# linking and spliting TextLayoutManager
-# TextLayoutManager can be splitted and linked, in order to layout text continuously 
-# in separated column 
-
-# for using CoreText
-# linked TextLayoutManager share CTFrameSetter, but have separate CTFrame
-# And they reside in different Paragraph view
-
-# when using NSTextSystem
-# linked TextLayoutManager share text_storage, layout_manager, but have separate text_container
-# And they reside in different Paragraph view
-
 # Text Fit Mode
 # Three are two text fitting mode
 # one is fiiting text inside of the box, changing font size to fit
@@ -32,34 +28,15 @@
 # for Pargaraph class, default fit mode is fit_font_size
 # for Text class, default fit mode is fit_to_box_size
 
-# Paragaph layout_lines
-# TextLayoutManager is designed to make it easy for column layout of Paragraphs.
-# I usually set text_container height to inserting column room. 
-# after layout_lines, it will adjust Paragaph height to the used_rect + text_line_spaceing, if used rect is less than the given rect height
-# but for the case when used rect height is larger, it sets text_overflow and I can retrive linked paragaph. 
-# It will take care of Paragraph height setting and creating overflowing link.
-
-# Thre are two main operation for TextLayoutManager
-# first is layout_lines
-#   it construct attributedSting and text_storage, ns_layouit_manager, and ns_text_storage
-#   it creates ns_text_storage with owner_graphic height, it lays out lines.
-#   if overflow occurs, text_overflow flag is set to true
-#   if paragraph is linked, no line layout process is needed since it was done by the previous head link
-#   it only need to draw lines
-# and second is draw_text
-#   it draws for corresponding text_container
-#   for linked , draw_last_container(r) is called
 
 module RLayout
   class TextLayoutManager
-    attr_accessor :owner_graphic, :att_string, :line_fragments, :token_list
-    attr_accessor :current_token_index, :text_direction, :text_container, :is_linked
-    attr_accessor :text_markup, :text_overflow, :text_underflow, :text_storage
-    attr_accessor :frame_setter, :frame, :line_count, :text_size
+    attr_accessor :owner_graphic, :att_string
+    attr_accessor :text_direction, :text_markup, :first_half_line_count, :second_half_lines_location
+    attr_accessor :frame_setter, :frame, :line_count, :text_size, :lines_array, :lines_location, :lines_length
     def initialize(owner_graphic, options={})
       @owner_graphic = owner_graphic
       return if @owner_graphic.nil?
-      @is_linked = false
       @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
       if RUBY_ENGINE =='macruby' 
         @att_string     = make_att_string_from_option(options)  
@@ -72,8 +49,7 @@ module RLayout
     end
     
     def set_frame
-      # @text_container = @owner_graphic.text_rect
-      layout_ct_lines
+      # layout_ct_lines
     end
     
     #TODO
@@ -90,13 +66,7 @@ module RLayout
       h[:line_direction] = @line_direction if @line_direction == "vertical"
       h
     end
-    
-    def change_width_and_adjust_height(new_width, options={})
-      @text_container=setContainerSize(NSMakeSize(new_width,1000))
-      layout_lines
-      # TODO change owner_graphic height
-    end
-    
+        
     def make_atts
       @text_color = Graphic.convert_to_nscolor(@text_color)    unless @text_color.class == NSColor  
       atts={}
@@ -190,28 +160,12 @@ module RLayout
       body_multiple
     end
     
-    
-    # text_overflow and any line was created 
-    def partialLy_inserted?
-      @text_overflow && @line_count > 0
-    end
-        
     # do not break paragraph that is less than 4 lines
     # apply widow/orphan rule and last_line_small_char_set rule.
     def is_breakable?
       @line_count >= 4
     end
     
-    # layout text with given width
-    def create_ct_lines(frame_setter, text_width)
-      proposed_path = CGPathCreateMutable()
-      bounds = CGRectMake(0, 0, @owner_graphic.width, proposed_height)
-      CGPathAddRect(proposed_path, nil, bounds)
-      proposed_frame = CTFramesetterCreateFrame(frame_setter,CFRangeMake(0, 0), proposed_path, nil)
-      lines = CTFrameGetLines(proposed_frame)
-      line_count = lines.count
-      used_size_height = @line_count*(@text_size + @text_line_spacing)
-    end
     
     # this is line layout using CoreText
     # This will allow me to do illefular shaped container layout
@@ -225,24 +179,13 @@ module RLayout
       proposed_path   = CGPathCreateMutable()
       bounds          = CGRectMake(0, 0, proposed_width, 1000)
       CGPathAddRect(proposed_path, nil, bounds)
-      @frame  = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), proposed_path, nil)
-      lines           = CTFrameGetLines(@frame)
-      @line_count     = lines.count
+      @frame          = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), proposed_path, nil)
+      @lines_array    = CTFrameGetLines(@frame)
+      @line_count     = @lines_array.count
       if @line_count == 0
-        puts "options:#{options}"
         puts "++++++++++ @line_count is 0 ++++++++ "
-        puts "@att_string.string:#{@att_string.string}"
-        puts ""
       end
       used_size_height = @line_count*(@text_size + @text_line_spacing)
-      puts "@line_count:#{@line_count}"
-      puts "used_size_height:#{used_size_height}"
-      
-      # regeneate frame with actual height, maybe no need for this
-      # path = CGPathCreateMutable()
-      # bounds = CGRectMake(0, 0, proposed_width, used_size_height)
-      # CGPathAddRect(path, nil, bounds)
-      # @frame = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), path, nil)
       if @text_markup && (@text_markup == 'h5' || @text_markup == 'h6') #&& options[:aling_to_grid]
         # Make the head paragraphs height as body text multiples"
       end
@@ -254,10 +197,12 @@ module RLayout
         @text_overflow = true            
         @text_underflow = true if @line_count == 0 # no line was created
       end
+      # return height 
       @line_count*(@text_size + @text_line_spacing)
     end
     
     def text_height
+      
       @line_count*(@text_size + @text_line_spacing)
     end
     # 
@@ -272,26 +217,28 @@ module RLayout
     
     # split text_layout_manager into two at position
     def split_at(position)
-      first_frame_path = CGPathCreateMutable()
-      bounds      = CGRectMake(0, 0, text_rect[WIDTH_VAL], position)
-      CGPathAddRect(first_frame_path, nil, bounds)
-      @frame        = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), first_frame_path, nil)
-      lines         = CTFrameGetLines(@frame)
-      @line_count   = lines.count
-      used_size_height = @line_count*(@text_size + @text_line_spacing)
-      owner_graphic.adjust_height_with_text_height_change(used_size_height)
-      range         = CTFrameGetVisibleStringRange(@frame)      
-      last_char_position=range.location + range.length
-      second_size_height = text_rect[HEIGHT_VAL] - used_size_height
-      second_frame_path = CGPathCreateMutable()
-      bounds = CGRectMake(0, 0, @owner_graphic.width, text_rect[WIDTH_VAL],second_size_height)
-      second_frame = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(last_char_position, 0), second_frame_path, nil)
-      layout_manager_copy = self.dup # make a copy
-      layout_manager_copy.frame_setter = @frame_setter
-      layout_manager_copy.frame = second_frame
-      layout_manager_copy.is_linked = true
-      second_paragraph = Paragraph.new(nil, linked_text_layout_manager: layout_manager_copy)
-      second_paragraph.adjust_height_with_text_height_change(used_size_height)
+      @owner_graphic.tag = "front_half"
+      # get the line ending before the position
+      @line_count   = @lines_array.count
+      line_height = @text_size + @text_line_spacing
+      @first_half_line_count = (position/line_height).to_i
+      #TODO i should add each line heights, I am assuming all line have same height
+      truncation_position = @first_half_line_count*line_height
+      owner_graphic.adjust_height_with_text_height_change(truncation_position)
+      # range         = CTFrameGetVisibleStringRange(@frame)      
+      # last_char_position = range.location + range.length
+      # puts "last_char_position:#{last_char_position}"
+      # second_half_lines = @line_count - first_half_lines
+      @second_half_lines_location = @first_half_line_count
+      second_half_lines_length = @line_count - @first_half_line_count
+      second_half_height = second_half_lines_length*line_height
+      layout_manager_copy                 = self.dup # make a copy
+      layout_manager_copy.first_half_line_count = nil
+      layout_manager_copy.lines_location  = @second_half_lines_location
+      @second_half_lines_location = nil
+      layout_manager_copy.lines_length    = second_half_lines_length
+      second_paragraph = Paragraph.new(nil, layout_expand: [:width], linked_text_layout_manager: layout_manager_copy, tag:"second_half")
+      second_paragraph.adjust_height_with_text_height_change(second_half_height)
       return second_paragraph
     end
     
@@ -302,15 +249,32 @@ module RLayout
     def draw_text(r) 
       return unless  @att_string
       if @text_direction == 'left_to_right'
+        if @owner_graphic.tag == "front_half"
+        end
+        if @owner_graphic.tag == "split_second_half"
+        end
         context = NSGraphicsContext.currentContext.graphicsPort
         CGContextSetTextMatrix(context, CGAffineTransformIdentity)
         CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1))
         # CTFrameDraw(@frame, context)
-        lines = CTFrameGetLines(@frame)
+        # lines = CTFrameGetLines(@frame)
         y = @text_size
         line_height = @text_size + @text_line_spacing
-        line_width  = text_rect[WIDTH_VAL]
-        lines.each_with_index do |line, i|
+        line_width  = @owner_graphic.text_rect[2]
+        # line_width  = 245
+        # lines.each_with_index do |line, i|
+        # :lines_array, :lines_location, :lines_length
+        lines_location = 0            unless @lines_location
+        lines_length   = @line_count  unless @lines_length
+        # @lines_array[lines_location..lines_length].each_with_index do |line, i|
+        @lines_array.each_with_index do |line, i|
+          if @first_half_line_count
+            next if i >= @first_half_line_count
+          end
+          if @second_half_lines_location 
+            next if  i< @second_half_lines_location
+           end
+        # @lines.each_with_index do |line, i|
           x = 0
           # get text width
           text_width =  CTLineGetTypographicBounds(line, nil, nil,nil)
@@ -336,77 +300,6 @@ module RLayout
     end
 
   end
-  # 
-  # class TextLine
-  #   attr_accessor :text_container, :token_list, :starting_token_index, :length
-  #   attr_accessor :text_direction, :line_rect
-  #   
-  #   def initialize(token_list, starting_token_index,  proposed_rect, text_direction)
-  #     @token_list           = token_list
-  #     @starting_token_index = starting_token_index
-  #     @line_rect            = proposed_rect
-  #     @length               = 0
-  #     layout_line
-  #     self
-  #   end
-  #   
-  #   def last_token_index
-  #     puts "@starting_token_index:#{@starting_token_index}"
-  #     puts "@length:#{@length}"
-  #     @starting_token_index + @length
-  #   end
-  #   
-  #   def layout_line
-  #     if @text_direction == 'left_to_right'
-  #       current_x = 0
-  #       unless (current_x + @token_list[starting_token_index + @length].width) >= line_rect[WIDTH_VAL]
-  #         @length +=1
-  #       end
-  #     elsif @text_direction == 'top_to_bottom'
-  #     
-  #     end
-  #     # do alignment of line
-  #     
-  #   end
-  #   
-  #   def draw_line(att_string)
-  #     # @token_line[starting_token..length].each do |token|
-  #     #   token.draw_token(att_string)
-  #     # end
-  #   end
-  #   
-  # end
-  # 
-  # class TextToken
-  #   attr_accessor :start, :length, :rect
-  #   attr_accessor :text_direction
-  #   attr_accessor :token_type, :language, :token_type
-  # 
-  #   def initialize(att_string, start, length, text_direction, token_type)
-  #     @text_direction = text_direction
-  #     @start          = start
-  #     @length         = length
-  #     @token_type     = token_type
-  #     layout_token(att_string)
-  #     self
-  #   end
-  # 
-  #   def layout_token(att_string)
-  #     if @text_direction == 'left_to_right'
-  #       token_att_string = att_string
-  #       if @token_type == 'text_kind'
-  #         @rect= [0,0,length*12, 12]
-  #       else
-  #         @rect= [0,0,6,12]
-  #       end
-  #     elsif @text_direction == 'top_to_bottom'
-  #        puts "vertical case"
-  #     end
-  #     
-  #   end
-  #   
-  #   def draw_token(att_string)
-  # end
-  
+
 end
 

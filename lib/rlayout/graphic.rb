@@ -34,7 +34,7 @@ module RLayout
     attr_accessor :text_fit_type, :text_alignment, :text_tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
     attr_accessor :text_layout_manager
     attr_accessor :image_object, :image_path, :image_frame, :image_fit_type, :image_caption
-    attr_accessor :non_overlapping_rect, :overlapping_rects
+    attr_accessor :non_overlapping_rect
     
     # TODO
     # attr_accessor :fill_record, :line_record, :shape_record, :text_record, :image_record, :grid_record, :layout_record    

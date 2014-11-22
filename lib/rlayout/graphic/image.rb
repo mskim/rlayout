@@ -65,6 +65,10 @@ module RLayout
       }
     end
     
+    def can_split_at?(position)
+      false
+    end
+    
     def image_to_hash
       h = {}
     end

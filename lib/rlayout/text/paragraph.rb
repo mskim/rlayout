@@ -31,11 +31,12 @@ MININUM_LINES_FOR_SPLIT = 2
         text_options = @style_service.style_for_markup(options[:markup])
         options.merge! text_options if text_options
       end
-      options[:line_width] = 2
-      options[:line_color] = 'red'
+      # options[:line_width] = 2
+      # options[:line_color] = 'red'
       super
       if options[:linked_text_layout_manager]
         @text_layout_manager                = options[:linked_text_layout_manager]
+        @tag                                = "split_second_half"
         @text_layout_manager.owner_graphic  = self
       end
       @klass = "Paragraph"
@@ -69,11 +70,6 @@ MININUM_LINES_FOR_SPLIT = 2
       @text_layout_manager.layout_ct_lines(options)
     end
     
-    def is_linked?
-      @text_layout_manager &&  @text_layout_manager.is_linked
-    end
-    
-
     def overlapping_graphics
       []
     end
@@ -81,27 +77,6 @@ MININUM_LINES_FOR_SPLIT = 2
     def adjust_height
       @graphics.first.adjust_height
     end
-    
-    # def change_width_and_adjust_height(new_width, options={})
-    #   # puts "+++++++++ change_width_and_adjust_height of Paragraph"
-    #   # for heading paragrph, should set height as multiples of grid_line_height
-    #   @width = new_width
-    #   if options[:line_grid_height] 
-    #     #TODO
-    #     # if @line_height != options[:line_grid_height]
-    #     # @line_height = options[:line_grid_height]
-    #     # update token size
-    #   end
-    #   layout_lines
-    # end
-    #     
-    
-    # def adjust_height
-    #   text_size           = NSSize.new(@frame.size.width, 300)
-    #   bounding_rect       = @text_storage.boundingRectWithSize(text_size, options:NSStringDrawingUsesLineFragmentOrigin)
-    #   @frame.size.height = bounding_rect.size.height      
-    # end
-        
     
     def self.generate(number)
       para_array = []

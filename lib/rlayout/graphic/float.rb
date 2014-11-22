@@ -146,6 +146,7 @@ module RLayout
         @graphics.each_with_index do |graphic, i|
           if intersects_rect(float.frame_rect, graphic.frame_rect)
             graphic.non_overlapping_rect = non_overlapping_area(graphic.frame_rect, float.frame_rect) 
+          else
           end
           # puts "graphic.non_overlapping_rect:#{graphic.non_overlapping_rect}"
         end
