@@ -6,7 +6,6 @@ module RLayout
   # kCTFrameProgressionRightToLeft = 1
 	# Lines are stacked right to left for vertical text.
   # TextLayout: CTFrame Ruby clone
-  
   class TextLayout
   	attr_accessor :att_string, :lines, :runs, :uni_attribure
     attr_accessor :container_paths
@@ -27,9 +26,7 @@ module RLayout
       make_runs
       make_lines
     end
-    
-    
-    
+        
     # returns the range of characters that actually fit in the frame
     def fitting_string_range
       

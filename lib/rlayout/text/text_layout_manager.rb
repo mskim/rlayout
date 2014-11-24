@@ -32,8 +32,8 @@
 module RLayout
   class TextLayoutManager
     attr_accessor :owner_graphic, :att_string
-    attr_accessor :text_direction, :text_markup, :first_half_line_count, :second_half_lines_location
-    attr_accessor :frame_setter, :frame, :line_count, :text_size, :lines_array, :lines_location, :lines_length
+    attr_accessor :text_direction, :text_markup
+    attr_accessor :frame_setter, :frame, :line_count, :text_size
     def initialize(owner_graphic, options={})
       @owner_graphic = owner_graphic
       return if @owner_graphic.nil?
@@ -166,7 +166,6 @@ module RLayout
       @line_count >= 4
     end
     
-    
     # this is line layout using CoreText
     # This will allow me to do illefular shaped container layout
     def layout_ct_lines(options={})
@@ -180,11 +179,10 @@ module RLayout
       bounds          = CGRectMake(0, 0, proposed_width, 1000)
       CGPathAddRect(proposed_path, nil, bounds)
       @frame          = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), proposed_path, nil)
-      @lines_array    = CTFrameGetLines(@frame)
-      @line_count     = @lines_array.count
       if @line_count == 0
         puts "++++++++++ @line_count is 0 ++++++++ "
       end
+      @line_count = CTFrameGetLines(@frame).count      
       used_size_height = @line_count*(@text_size + @text_line_spacing)
       if @text_markup && (@text_markup == 'h5' || @text_markup == 'h6') #&& options[:aling_to_grid]
         # Make the head paragraphs height as body text multiples"
@@ -202,7 +200,6 @@ module RLayout
     end
     
     def text_height
-      
       @line_count*(@text_size + @text_line_spacing)
     end
     # 
@@ -217,28 +214,44 @@ module RLayout
     
     # split text_layout_manager into two at position
     def split_at(position)
-      @owner_graphic.tag = "front_half"
+      puts __method__
+      puts "position:#{position}"
+      @lines_array    = CTFrameGetLines(@frame)
       # get the line ending before the position
-      @line_count   = @lines_array.count
-      line_height = @text_size + @text_line_spacing
-      @first_half_line_count = (position/line_height).to_i
+      # @line_count             = @lines_array.count
+      line_height             = @text_size + @text_line_spacing
+      first_half_line_count   = (position/line_height).to_i
+      puts "@lines_array.count:#{@lines_array.count}"
+      puts "first_half_line_count:#{first_half_line_count}"
       #TODO i should add each line heights, I am assuming all line have same height
-      truncation_position = @first_half_line_count*line_height
+      truncation_position     = first_half_line_count*line_height
+      last_line_of_first_half = @lines_array[first_half_line_count-1]
+      last_line_range         = CTLineGetStringRange(last_line_of_first_half)    
+      second_half_position    = last_line_range.location + last_line_range.length
+      first_half_range = NSMakeRange(0, second_half_position)
+      # puts "@att_string.attributedSubstringFromRange(first_half_range).string:#{@att_string.attributedSubstringFromRange(first_half_range).string}"
+      current_rect            = @owner_graphic.text_rect
+      proposed_path           = CGPathCreateMutable()
+      bounds                  = CGRectMake(0, 0, current_rect[2], current_rect[3])
+      CGPathAddRect(proposed_path, nil, bounds)
+      # puts "second_half_position:#{second_half_position}"
+      # re-generate first half with first half string only 
+      @frame                  = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0,second_half_position), proposed_path, nil)
+      @lines_array            = CTFrameGetLines(@frame)
+      @owner_graphic.tag = "first half"
+      # puts " first half @lines_array.length:#{@lines_array.length}"
       owner_graphic.adjust_height_with_text_height_change(truncation_position)
-      # range         = CTFrameGetVisibleStringRange(@frame)      
-      # last_char_position = range.location + range.length
-      # puts "last_char_position:#{last_char_position}"
-      # second_half_lines = @line_count - first_half_lines
-      @second_half_lines_location = @first_half_line_count
-      second_half_lines_length = @line_count - @first_half_line_count
-      second_half_height = second_half_lines_length*line_height
-      layout_manager_copy                 = self.dup # make a copy
-      layout_manager_copy.first_half_line_count = nil
-      layout_manager_copy.lines_location  = @second_half_lines_location
-      @second_half_lines_location = nil
-      layout_manager_copy.lines_length    = second_half_lines_length
-      second_paragraph = Paragraph.new(nil, layout_expand: [:width], linked_text_layout_manager: layout_manager_copy, tag:"second_half")
-      second_paragraph.adjust_height_with_text_height_change(second_half_height)
+      # create second half frame
+      proposed_path           = CGPathCreateMutable()
+      bounds                  = CGRectMake(0, 0, current_rect[2], 1000)
+      CGPathAddRect(proposed_path, nil, bounds)
+      second_half_frame       = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(second_half_position, 0), proposed_path, nil)
+      second_half_lines_length= CTFrameGetLines(second_half_frame).count
+      second_half_height      = second_half_lines_length*line_height
+      layout_manager_copy     = self.dup # make a copy
+      layout_manager_copy.frame =second_half_frame
+      second_paragraph        = Paragraph.new(nil, layout_expand: [:width], linked_text_layout_manager: layout_manager_copy)
+      second_paragraph.adjust_size_with_text_height_change(current_rect[2], second_half_height)
       return second_paragraph
     end
     
@@ -247,50 +260,33 @@ module RLayout
     end
         
     def draw_text(r) 
-      return unless  @att_string
+      @lines_array    = CTFrameGetLines(@frame)
+      @line_count     = @lines_array.count      
       if @text_direction == 'left_to_right'
-        if @owner_graphic.tag == "front_half"
-        end
-        if @owner_graphic.tag == "split_second_half"
-        end
         context = NSGraphicsContext.currentContext.graphicsPort
         CGContextSetTextMatrix(context, CGAffineTransformIdentity)
         CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1))
-        # CTFrameDraw(@frame, context)
-        # lines = CTFrameGetLines(@frame)
         y = @text_size
         line_height = @text_size + @text_line_spacing
+        #TODO I shuld get the width from @frame
         line_width  = @owner_graphic.text_rect[2]
-        # line_width  = 245
-        # lines.each_with_index do |line, i|
-        # :lines_array, :lines_location, :lines_length
-        lines_location = 0            unless @lines_location
-        lines_length   = @line_count  unless @lines_length
-        # @lines_array[lines_location..lines_length].each_with_index do |line, i|
         @lines_array.each_with_index do |line, i|
-          if @first_half_line_count
-            next if i >= @first_half_line_count
-          end
-          if @second_half_lines_location 
-            next if  i< @second_half_lines_location
-           end
-        # @lines.each_with_index do |line, i|
-          x = 0
-          # get text width
+          x_offset = 0
           text_width =  CTLineGetTypographicBounds(line, nil, nil,nil)
           room = line_width - text_width
-          # do alignment and first line indent here
-          # do center, right alignment here
+          # alignment and first line indent done here
+          # center, right alignment done here
           case @text_alignment
           when 'left'
           when 'center'
-            x += room/2
+            x_offset += room/2
           when 'right'
-            x += room
+            x_offset += room
           when 'justified'
-            x += @text_first_line_head_indent if i == 0
+            x_offset += @text_first_line_head_indent if i == 0
           end
-          CGContextSetTextPosition(context, x, y)
+          
+          CGContextSetTextPosition(context, x_offset, y)
           CTLineDraw(line, context)
           y += line_height
         end        

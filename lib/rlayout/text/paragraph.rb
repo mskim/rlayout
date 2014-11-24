@@ -36,7 +36,6 @@ MININUM_LINES_FOR_SPLIT = 2
       super
       if options[:linked_text_layout_manager]
         @text_layout_manager                = options[:linked_text_layout_manager]
-        @tag                                = "split_second_half"
         @text_layout_manager.owner_graphic  = self
       end
       @klass = "Paragraph"
