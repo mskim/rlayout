@@ -29,13 +29,16 @@ module RLayout
   # And the height is re-adjusted by the parent.
   # Each heading element layout_length is set to it's height
   # This way, parent can shrink or expand heading and maintain each elements's height propotion. 
+  # heading height should be multiles of body text height
   class Heading < Container
     attr_accessor :title_object, :subtitle_object, :leading_object, :author_object
+    attr_accessor :align_to_body_text
     # attr_accessor :style_service
     def initialize(parent_graphic, options={}, &block)
       @style_service = StyleService.new(options)
       super         
       @klass = "Heading"   
+      @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
       @layout_space = 2
       if options[:width]
         @width = options[:width]
@@ -75,6 +78,15 @@ module RLayout
       height_sum +=@leading_object.height  unless @leading_object.nil?
       height_sum +=@author_object.height   unless @author_object.nil?
       @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
+      if @align_to_body_text
+        body_text_height  = @style_service.body_height
+        mutiple           = (@height/body_text_height).to_i
+        mutiple_height    = mutiple*body_text_height
+        room              = mutiple_height - @height
+        @top_inset        +=  room/2
+        @bottom_inset     +=  room/2
+        @height           = mutiple_height
+      end
       relayout!
       self
     end
@@ -162,12 +174,7 @@ module RLayout
         headline.save_pdf(options[:output_path])
       end
     end
-    
-    #TODO
-    # def change_width_and_adjust_height(new_width, options={})
-    # 
-    # end
-    
+        
     ######## PageScript verbes
     def title(string, options={})
       atts  = @style_service.style_for_markup("title", options)
@@ -175,8 +182,7 @@ module RLayout
       atts[:width]                  = @width
       atts[:layout_expand]          = [:width]
       @title_object                 = Text.new(self, atts)
-      @title_object.layout_length   = atts[:text_size]
-      @title_object.height          = atts[:text_size]*1.5
+      @title_object.layout_length   = @title_object.height
       @title_object
     end
     
@@ -186,31 +192,28 @@ module RLayout
       atts[:width] = @width
       @subtitle_object = Text.new(self, atts)
       @subtitle_object.layout_expand  = [:width]
-      @subtitle_object.layout_length  = atts[:text_size]
-      @subtitle_object.height  = atts[:text_size]*1.2      
+      @subtitle_object.layout_length   = @subtitle_object.height
       @subtitle_object
     end
     
     def leading(string, options={})
-      atts  = @style_service.style_for_markup("leading", options)
-      atts[:text_string] = string
-      atts[:width] = @width
-      @leading_object = Text.new(self, atts)
-      @leading_object.layout_expand  = [:width]
-      @leading_object.layout_length  = atts[:text_size]
-      @leading_object.height  = atts[:text_size]*1.2      
+      atts                          = @style_service.style_for_markup("leading", options)
+      atts[:text_string]            = string
+      atts[:width]                  = @width
+      @leading_object               = Text.new(self, atts)
+      @leading_object.layout_expand = [:width]
+      @leading_object.layout_length = @leading_object.height
       @leading_object
     end
     
     def author(string, options={})
-      atts  = @style_service.style_for_markup("author", options)
-      atts[:text_string] = string
-      atts[:width] = @width
-      @author_object = Text.new(self, atts)
+      atts                          = @style_service.style_for_markup("author", options)
+      atts[:text_string]            = string
+      atts[:width]                  = @width
+      atts[:right_indent]           = 10
+      @author_object                = Text.new(self, atts)
       @author_object.layout_expand  = [:width]
-      @author_object.right_inset  = 10
-      @author_object.layout_length  = atts[:text_size]
-      @author_object.height  = atts[:text_size]*1.2      
+      @author_object.layout_length  = @author_object.height
       @author_object
     end
   end

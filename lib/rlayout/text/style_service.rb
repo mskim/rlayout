@@ -82,7 +82,7 @@ CHAPTER_STYLES={
 
 NEWS_STYLES={
   "style_kind" => "NEWS_STYLES",
-  "title"   =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'gray', :text_alignment=>'center'},
+  "title"   =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'gray', :text_alignment=>'center',:text_line_spacing=>10 },
   "subtitle"=>{:text_font => 'Times',     :text_size=>16.0, :text_color => 'black'},
   "author"  =>{:text_font => 'Helvetica', :text_size=>10.0, :text_color => 'black', :text_alignment=>'right'},
   "lead"    =>{:text_font => 'Helvetica', :text_size=>18.0, :text_color => 'black', :text_alignment=>'right'},

@@ -33,7 +33,7 @@ module RLayout
   class TextLayoutManager
     attr_accessor :owner_graphic, :att_string
     attr_accessor :text_direction, :text_markup
-    attr_accessor :frame_setter, :frame, :line_count, :text_size
+    attr_accessor :frame_setter, :frame, :line_count, :text_size, :linked
     def initialize(owner_graphic, options={})
       @owner_graphic = owner_graphic
       return if @owner_graphic.nil?
@@ -134,7 +134,7 @@ module RLayout
       @text_color       = options.fetch(:text_color, "black")
       @text_font        = options.fetch(:text_font, "Times")
       @text_size        = options.fetch(:text_size, 16)
-      @text_line_spacing= options.fetch(:text_line_spacing, @text_size*1.5)
+      @text_line_spacing= options.fetch(:text_line_spacing, @text_size*1.2)
       @text_fit_type    = options.fetch(:text_fit_type, 0)
       @text_alignment   = options.fetch(:text_alignment, "center")
       @text_tracking    = options.fetch(:text_tracking, 0)  if options[:text_tracking ]      
@@ -214,15 +214,11 @@ module RLayout
     
     # split text_layout_manager into two at position
     def split_at(position)
-      puts __method__
-      puts "position:#{position}"
       @lines_array    = CTFrameGetLines(@frame)
       # get the line ending before the position
       # @line_count             = @lines_array.count
       line_height             = @text_size + @text_line_spacing
       first_half_line_count   = (position/line_height).to_i
-      puts "@lines_array.count:#{@lines_array.count}"
-      puts "first_half_line_count:#{first_half_line_count}"
       #TODO i should add each line heights, I am assuming all line have same height
       truncation_position     = first_half_line_count*line_height
       last_line_of_first_half = @lines_array[first_half_line_count-1]
@@ -250,6 +246,7 @@ module RLayout
       second_half_height      = second_half_lines_length*line_height
       layout_manager_copy     = self.dup # make a copy
       layout_manager_copy.frame =second_half_frame
+      layout_manager_copy.linked= true
       second_paragraph        = Paragraph.new(nil, layout_expand: [:width], linked_text_layout_manager: layout_manager_copy)
       second_paragraph.adjust_size_with_text_height_change(current_rect[2], second_half_height)
       return second_paragraph
@@ -283,7 +280,8 @@ module RLayout
           when 'right'
             x_offset += room
           when 'justified'
-            x_offset += @text_first_line_head_indent if i == 0
+            #first line head indent, but not for linked part first line
+            x_offset += @text_first_line_head_indent if i == 0 && @linked != true
           end
           
           CGContextSetTextPosition(context, x_offset, y)

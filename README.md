@@ -7,21 +7,21 @@ TODO List
 	- replace StyleService with CONSTANTS
 	- support for default and custom Styles
 	- Add heading_columns table in Style
-	- Heading
-		- multiple line text
-		- author right_inset
-		- make height multiples of body text   
 	- Header
 		- bleeding page number box
-	- fix text_layout bug
 	- AdBox DSL with profile, method_missing
-	- should parse markdown file 
+	- should filter markdown file 
 		- for control characters
 		- should break lines for first_line_head_indent to take effect
 	
 2013 11 24
-	- fix slit
+	- fix split
 	- use CoreText instead of NSTextSystem
+	- Heading
+		- multiple line text support
+		- make height align to body text   
+		- author right_inset
+	
 2014 11 18
 	- text_layout
 2014 11 15
@@ -286,4 +286,3 @@ This will generate high resolution PDF
 auto_save of/off: This will make it work as REPL
 I can save index.html in server folder and broadcast the progress.
 
- 

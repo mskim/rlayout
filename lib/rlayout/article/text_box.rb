@@ -127,8 +127,6 @@ module RLayout
         end
         
         if current_column.can_fit?(height)
-          # puts "it can_fit"
-          # puts "item.text_layout_manager.att_string.string:#{item.text_layout_manager.att_string.string}"
           current_column.place_item(item)
         elsif item.can_split_at?(current_column.room)
           second = item.split_at(current_column.room)
@@ -145,17 +143,13 @@ module RLayout
             flowing_items.unshift(second)
             return false
           end
-        else  # was not able to split the item
-          puts "no split"
-          puts "item.text_layout_manager.att_string.string:#{item.text_layout_manager.att_string.string}"
-          
+        else  # was not able to split the item          
           column_index +=1
           if column_index < @column_count
             current_column = @graphics[column_index]            
             #insert item to next column
             #TODO this is forcing insert, to the new column
-            # I might have to refine this.
-            puts "column_index:#{column_index}"
+            # I should refine this for long item that might extent beyond next column.
             current_column.place_item(item)
           else
             # current_column.relayout!
@@ -165,7 +159,6 @@ module RLayout
         end
       end
       # current_column.relayout!
-      
       true
     end
           

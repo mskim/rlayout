@@ -102,6 +102,7 @@ module RLayout
       if @chapter_kind == "magazine_article"
         #make it a flost for magazine
         @heading[:width]        = @first_page.main_box.heading_width
+        @heading[:align_to_body_text]= true
         @heading[:layout_expand]= nil
         @heading[:top_margin]   = 10
         @heading[:top_inset]    = 50

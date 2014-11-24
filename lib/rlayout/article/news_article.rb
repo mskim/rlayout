@@ -64,6 +64,7 @@ module RLayout
       # @heading[:line_width]     = 2
       # @heading[:line_color]     = 'red'
       @heading[:width]        = @main_box.heading_width
+      @heading[:align_to_body_text]= true
       @heading[:layout_expand]= nil
       @heading[:top_margin]   = 0
       @heading[:top_inset]    = 10
