@@ -46,9 +46,11 @@ module RLayout
       @toc_on             = options.fetch(:toc_on, false)
       @chapter_kind       = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
       @style_service      = StyleService.shared_style_service(:chapter_kind=>@chapter_kind)
+      @heading_columns    = @style_service.heading_columns_for(@column_count)
       options[:footer]    = true 
       options[:header]    = true 
       options[:text_box]  = true
+      options[:heading_columns] = @heading_columns unless options[:heading_columns]
       @page_count.times do |i|
         options[:page_number] = @starting_page_number + i
         Page.new(self, options)
@@ -66,8 +68,6 @@ module RLayout
       @heading    = story.heading
       @title      = @heading[:title]
       #TODO read it form book_config.rb?
-      @book_title = @heading[:book_title]
-      # @style_service ||= StyleService.new(:chapter_kind=>@chapter_kind)
       @paragraphs =[]
       story.paragraphs.each do |para| 
         para_options = {}

@@ -2,6 +2,7 @@
 
 DEFAULT_STYLES={
   "style_kind" => "DEFAULT_STYLES",
+  "heading_columns" => [1,2,3,4,5,6,7],
   "Title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
   "title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
   "SubTitle"=>{:text_font => 'Times',     :text_size=>20.0, :text_color => 'black'},
@@ -30,6 +31,7 @@ DEFAULT_STYLES={
 
 MAGAZINE_STYLES={
   "style_kind" => "MAGAZINE_STYLES",
+  "heading_columns" => [1,2,2,2,3,4,4],
   "Title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'yellow', :text_alignment=>'center'},
   "title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
   "SubTitle"=>{:text_font => 'Times',     :text_size=>20.0, :text_color => 'black'},
@@ -58,6 +60,7 @@ MAGAZINE_STYLES={
 
 CHAPTER_STYLES={
   "style_kind" => "CHAPTER_STYLES",
+  "heading_columns" => [1,2,3,4,4,4,4],
   "title"   =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
   "subtitle"=>{:text_font => 'Times',     :text_size=>16.0, :text_color => 'black'},
   "author"  =>{:text_font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
@@ -82,6 +85,7 @@ CHAPTER_STYLES={
 
 NEWS_STYLES={
   "style_kind" => "NEWS_STYLES",
+  "heading_columns" => [1,2,2,2,3,4,4],
   "title"   =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'gray', :text_alignment=>'center',:text_line_spacing=>10 },
   "subtitle"=>{:text_font => 'Times',     :text_size=>16.0, :text_color => 'black'},
   "author"  =>{:text_font => 'Helvetica', :text_size=>10.0, :text_color => 'black', :text_alignment=>'right'},
@@ -138,6 +142,10 @@ module RLayout
         @current_style    = DEFAULT_STYLES
       end
       self
+    end
+    
+    def heading_columns_for(column_number)
+      @current_style["heading_columns"][column_number-1]
     end
     
     def body_height

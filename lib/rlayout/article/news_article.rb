@@ -6,8 +6,7 @@ module RLayout
     attr_accessor :grid_rect, :grid_size, :heading_width
     
     def initialize(parent_graphic, options={})
-      @@style_service = StyleService.shared_style_service(:chapter_kind=>"news_article")
-      
+      @style_service = StyleService.new(:chapter_kind=>"news_article")
       if options[:story_path]
         @story_path = options[:story_path]
         read_story

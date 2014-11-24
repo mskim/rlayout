@@ -6,7 +6,6 @@ TODO List
 	- image smart fit, best_fit, best_fill
 	- replace StyleService with CONSTANTS
 	- support for default and custom Styles
-	- Add heading_columns table in Style
 	- Header
 		- bleeding page number box
 	- AdBox DSL with profile, method_missing
@@ -21,6 +20,7 @@ TODO List
 		- multiple line text support
 		- make height align to body text   
 		- author right_inset
+	- Add heading_columns table in Style
 	
 2014 11 18
 	- text_layout
