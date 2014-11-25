@@ -33,10 +33,9 @@ module RLayout
   class Heading < Container
     attr_accessor :title_object, :subtitle_object, :leading_object, :author_object
     attr_accessor :align_to_body_text
-    # attr_accessor :style_service
     def initialize(parent_graphic, options={}, &block)
-      @style_service = StyleService.new(options)
-      super         
+      super   
+      @current_style =  options[:current_style]     
       @klass = "Heading"   
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
       @layout_space = 2
@@ -79,9 +78,8 @@ module RLayout
       height_sum +=@author_object.height   unless @author_object.nil?
       @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
       if @align_to_body_text
-        body_text_height  = @style_service.body_height
-        mutiple           = (@height/body_text_height).to_i
-        mutiple_height    = mutiple*body_text_height
+        mutiple           = (@height/body_height).to_i
+        mutiple_height    = mutiple*body_height
         room              = mutiple_height - @height
         @top_inset        +=  room/2
         @bottom_inset     +=  room/2
@@ -92,7 +90,7 @@ module RLayout
     end
 
     def self.news_article_heading(options={})
-      atts          = @style_service.style_for_markup("title", options)
+      atts          = NEWS_STYLES["title"]
       atts[:string] = options[:title]
       height        = GTextRecord.text_height_with_atts(width, atts)
       height_sum    += height
@@ -177,7 +175,7 @@ module RLayout
         
     ######## PageScript verbes
     def title(string, options={})
-      atts  = @style_service.style_for_markup("title", options)
+      atts  = @current_style["title"]
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:layout_expand]          = [:width]
@@ -187,17 +185,18 @@ module RLayout
     end
     
     def subtitle(string, options={})
-      atts  = @style_service.style_for_markup("subtitle", options)
-      atts[:text_string] = string
-      atts[:width] = @width
-      @subtitle_object = Text.new(self, atts)
+      atts                = @current_style["subtitle"]
+      atts[:text_string]  = string
+      atts[:width]        = @width
+      @subtitle_object    = Text.new(self, atts)
       @subtitle_object.layout_expand  = [:width]
-      @subtitle_object.layout_length   = @subtitle_object.height
+      @subtitle_object.layout_length  = @subtitle_object.height
       @subtitle_object
     end
     
     def leading(string, options={})
-      atts                          = @style_service.style_for_markup("leading", options)
+      atts                          = @current_style["leading"]
+      atts                          = current.style_for_markup("leading", options)
       atts[:text_string]            = string
       atts[:width]                  = @width
       @leading_object               = Text.new(self, atts)
@@ -207,7 +206,7 @@ module RLayout
     end
     
     def author(string, options={})
-      atts                          = @style_service.style_for_markup("author", options)
+      atts                          = @current_style["author"]
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:right_indent]           = 10

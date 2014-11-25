@@ -67,9 +67,10 @@ module RLayout
     
   class Document
     attr_accessor :title, :path, :paper_size, :portrait, :margin, :width, :height, :starts_left, :double_side
+    attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_accessor :pages, :document_view, :starting_page_number
     attr_accessor :page_view_count, :toc_elements
-    
+    attr_accessor :current_style
     def initialize(options={}, &block)
       @pages      = []
       @title      = options.fetch(:title, "untitled")
@@ -95,6 +96,7 @@ module RLayout
       if options[:pages]
         @pages = options[:pages]
       end
+      @current_style = options.fetch(:current_style, DEFAULT_STYLES)
       
       if @toc_on
         # save_toc elements for this document
@@ -114,7 +116,7 @@ module RLayout
         starts_left: true,
         width: 600,
         height: 800,
-        margin: 50,
+        margin: 100,
       }
     end
     

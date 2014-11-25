@@ -26,7 +26,7 @@ describe 'create Chapter page with StoryBox' do
   before do
     @story_path = "/Users/mskim/chapter/2012-12-18-making-rlayout-for-variable-publishing.markdown"
     @story_path = "/Users/mskim/book/pastor/013.chapter.markdown"
-    @m = Chapter.new(:title =>"Chapter Title", :starts_left=>true, :story_path=>@story_path)    
+    @m = Chapter.new(:title =>"Chapter Title", :paper_size=>'A5', :starts_left=>true, :story_path=>@story_path)    
     @first_page = @m.pages.first
     # @heading = @m.pages.first.graphics.first
     # @heading.puts_frame

@@ -11,7 +11,7 @@ describe 'generate pdf' do
   end
   
   it 'shoul convert markdown files to pdf' do
-    @book.markdown2pdf        
+    @book.markdown2pdf(:paper_size=>"A5")        
     @book.body_matter.must_be_kind_of Array
   end
   

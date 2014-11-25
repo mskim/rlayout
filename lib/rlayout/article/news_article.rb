@@ -6,11 +6,11 @@ module RLayout
     attr_accessor :grid_rect, :grid_size, :heading_width
     
     def initialize(parent_graphic, options={})
-      @style_service = StyleService.new(:chapter_kind=>"news_article")
       if options[:story_path]
         @story_path = options[:story_path]
         read_story
       end
+      options[:chapter_kind]  = "news_article"
       options[:width]         = @grid_rect[2]*@grid_size[0]
       options[:height]        = @grid_rect[3]*@grid_size[1]
       options[:column_count]  = @grid_rect[2]
@@ -20,6 +20,10 @@ module RLayout
       super
       layout_story
       self
+    end
+    
+    def current_style
+      NEWS_STYLES
     end
     
     def read_story
@@ -33,8 +37,6 @@ module RLayout
         @heading_columns = @grid_size[0]
       end
       @grid_rect    = @heading[:grid_rect]
-      # puts "@heading_width:#{@heading_width}"
-      # @@style_service      ||= StyleService.new(:chapter_kind=>"news_article")
       @paragraphs         =[]
       story.paragraphs.each do |para| 
         para_options      = {}
@@ -72,6 +74,9 @@ module RLayout
       @heading[:left_inset]   = 0
       @heading[:right_inset]  = 0
       @heading[:chapter_kind]  = "news_article"
+      @heading[:current_style] = NEWS_STYLES
+      
+      
       @main_box.floats << Heading.new(nil, @heading)
       relayout!
       @main_box.set_non_overlapping_frame_for_chidren_graphics        

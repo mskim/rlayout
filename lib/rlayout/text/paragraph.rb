@@ -20,20 +20,21 @@ FIT_STYLE_RUN   = 3
 MININUM_LINES_FOR_SPLIT = 2
 
   class Paragraph < Text
-    # attr_accessor :paragraph_data
-    attr_accessor :style_service
     
     def initialize(parent_graphic, options={})
       text_options = nil
       if options[:markup]
-        @style_service ||= StyleService.new(options)
-        text_options = @style_service.style_for_markup(options[:markup])
+        @current_style = DEFAULT_STYLES
+        if options[:current_style]
+          @current_style = options[:current_style] 
+        end
+        text_options = @current_style[options[:markup]]
+        text_options[:text_markup] = options[:markup]        
         options.merge! text_options if text_options
       end
       # options[:line_width] = 2
       # options[:line_color] = 'red'
       if options[:drop_cap]
-        
       end
       
       super

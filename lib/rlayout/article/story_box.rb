@@ -188,7 +188,6 @@ module RLayout
       h = {}
       instance_variables.each{|a|
         next if a == @parent_graphic
-        next if a == @style_service
         next if a == @floats
         next if a == @fixtures        
         next if a == @graphics        

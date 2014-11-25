@@ -83,6 +83,30 @@ module RLayout
       }
     end
     
+    def current_style
+      puts __method__
+      puts "@klass:#{@klass}"
+      puts "@parent_graphic:#{@parent_graphic}"
+      if @parent_graphic && @parent_graphic.current_style
+        return @parent_graphic.current_style
+      end
+      DEFAULT_STYLES
+    end
+    
+    def heading_columns_for(column_number)
+      @current_style["heading_columns"][column_number-1]
+    end
+    
+    def body_height
+      h = current_style['p']
+      h[:text_size] + h[:text_line_spacing]      
+    end
+            
+    def style_for_markup(markup, options={})
+      h = @current_style[markup]
+      h[:text_markup] = markup
+      h
+    end
     
     def to_hash
       defaults_hash = defaults

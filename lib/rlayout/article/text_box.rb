@@ -218,15 +218,18 @@ module RLayout
     end
   end
   
-  # ColumnSegment is used when half column sized flowing image  has to be placed along with text.
-  # I am creating two vertical columns within the ColumnSegment. One for image and other one for text.
-  class ColumnSegment < Container
-    attr_accessor :image_rect, :text_column
-    
+  # ColumnWithImage has two columns within Column. 
+  # One for image and other one for text.
+  # This is used when flowing image with half size has to flow along the text.
+  # ColumnWithImage chops or pushes columns  when it is created depending on where is is placed.
+  class ColumnWithImage < Container
+    attr_accessor :image, :text_column
     def initialize(paranet_graphic, options={})
       options[:layout_direction] = 'horizontal'      
       super
-      
+      Image.new(self)
+      TextColumn.new(self)
+      relayout!
       self
     end
   end

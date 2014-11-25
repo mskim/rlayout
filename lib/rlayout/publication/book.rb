@@ -47,7 +47,7 @@ module RLayout
     #   pdfdoc.writeToFile(path)
     # end
     
-    def markdown2pdf
+    def markdown2pdf(options)
       options = {:starting_page_number=>1}
       Dir.glob("#{@folder_path}/*.markdown") do |m|
         result = convert_markdown2pdf(m, options)
@@ -99,10 +99,13 @@ module RLayout
       # puts "generating #{pdf_path}..."
       title = File.basename(markdown_path, ".markdown")
       if options[:starting_page_number]
-        chapter = Chapter.new(:title =>title, :starts_left=>false, :chapter_kind=>"chapter", :story_path=>markdown_path, :starting_page_number=>options[:starting_page_number])
+        chapter = Chapter.new(:title =>title, :paper_size=>'A5', :starts_left=>false, :chapter_kind=>"chapter", :story_path=>markdown_path, :starting_page_number=>options[:starting_page_number])
       else
-        chapter = Chapter.new(:title =>title, :starts_left=>false, :chapter_kind=>"chapter", :story_path=>markdown_path)
+        chapter = Chapter.new(:title =>title, :paper_size=>'A5', :starts_left=>false, :chapter_kind=>"chapter", :story_path=>markdown_path)
       end
+      puts "chapter.paper_size:#{chapter.paper_size}"
+      puts "chapter.width:#{chapter.width}"
+      puts "chapter.height:#{chapter.height}"
       chapter.save_pdf(pdf_path)
       chapter
     end

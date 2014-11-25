@@ -166,15 +166,8 @@ module RLayout
     
     
     def body_line_height_multiple(head_para_height)
-      # TODO
-      # @style_service = @style_service ||= StyleService.new
-      # body_height = @style_service.body_height
-      body_height = 12
-      body_multiple = body_height
-      while body_multiple <= head_para_height
-        body_multiple += body_height
-      end
-      body_multiple
+      body_height = @owner_graphic.body_height
+      body_multiple = (head_para_height/body_height).to_i
     end
     
     # do not break paragraph that is less than 4 lines
@@ -203,6 +196,7 @@ module RLayout
       used_size_height = @line_count*(@text_size + @text_line_spacing)
       if @text_markup && (@text_markup == 'h5' || @text_markup == 'h6') #&& options[:aling_to_grid]
         # Make the head paragraphs height as body text multiples"
+        used_size_height = body_line_height_multiple(used_size_height)
       end
       # set text_overflow and under flow
       owner_graphic.adjust_size_with_text_height_change(proposed_width, used_size_height)
