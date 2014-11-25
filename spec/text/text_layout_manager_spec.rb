@@ -1,5 +1,35 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'dropcap' do
+  before do
+    drop_cap_options = {
+      text_size: 12,
+      text_font: 'Times',
+      text_line_spacing: 10,
+      text_alignment: 'justified',
+      text_string: '끓여 내오신 라면은 정말 꿀맛이었다. 감사한 마음에 온갖 애교와 아양을 떨었다.
+      “전국노래자랑 좋아하시는 걸보니 할머니께서도 예전엔 한가락 하셨을 것 같아요.” “그러믄. 왕년에 내가 노래 좀 했지.”
+      어르신들은 누구나 자랑하고 싶은 ‘왕년에’가 있으신가보다.
+       '*5,
+      drop_lines:  2,
+      drop_text_font: 'Helvetica',
+      drop_text_color: 'gray',
+      width: 250
+    }
+    @t = Text.new(nil, drop_cap_options)
+    @tl = TextLayoutManager.new(@t, drop_cap_options)
+  end
+  it 'shluld create TextLayoutManager' do
+    @tl.must_be_kind_of TextLayoutManager
+  end
+  
+  it 'should save pdf' do
+    @pdf_path = File.dirname(__FILE__) + "/../output/text_layout_manager_dropcap.pdf"
+    @t.save_pdf(@pdf_path)
+    File.exist?(@pdf_path).must_equal true
+    system("open #{@pdf_path}")
+  end
+end
 
 # describe 'create TextLayoutManager' do
 #   before do
@@ -18,20 +48,16 @@ require File.dirname(__FILE__) + "/../spec_helper"
 #   end
 # end
 
-describe 'split TextLayoutManager' do
-  before do
-    # @att_string = {:fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>200, :text_alignment=>'justified', :text_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
-    @g = Graphic.new(nil, proposed_height: 100, text_string: "This is some sample string. And some more overflowing text.")
-  end
-  
-  it 'should be text_overflow' do
-    @g.text_layout_manager.text_overflow.must_equal true
-  end
-  
-
-  # 
-  # it 'should save TextLayoutManager' do
-  #   @g.save_pdf(@pdf_path)
-  #   File.exists?(@pdf_path).must_equal true
-  # end
-end
+# describe 'split TextLayoutManager' do
+#   before do
+#     # @att_string = {:fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>200, :text_alignment=>'justified', :text_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
+#     @g = Graphic.new(nil, proposed_height: 100, text_string: "This is some sample string. And some more overflowing text.")
+#   end
+#     
+# 
+#   # 
+#   # it 'should save TextLayoutManager' do
+#   #   @g.save_pdf(@pdf_path)
+#   #   File.exists?(@pdf_path).must_equal true
+#   # end
+# end

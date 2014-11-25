@@ -174,6 +174,7 @@ module RLayout
   end
   
   
+  
   class TextColumn < Container
     attr_accessor :current_position
     attr_accessor :floats
@@ -214,6 +215,19 @@ module RLayout
       item.x              = @left_inset
       item.y              = @current_position
       @current_position += item.height + @layout_space
+    end
+  end
+  
+  # ColumnSegment is used when half column sized flowing image  has to be placed along with text.
+  # I am creating two vertical columns within the ColumnSegment. One for image and other one for text.
+  class ColumnSegment < Container
+    attr_accessor :image_rect, :text_column
+    
+    def initialize(paranet_graphic, options={})
+      options[:layout_direction] = 'horizontal'      
+      super
+      
+      self
     end
   end
   

@@ -21,8 +21,7 @@ MININUM_LINES_FOR_SPLIT = 2
 
   class Paragraph < Text
     # attr_accessor :paragraph_data
-    attr_accessor :drop_cap, :style_service
-    attr_accessor :drop_cap_lines, :drop_cap_char_count, :linked_text_container
+    attr_accessor :style_service
     
     def initialize(parent_graphic, options={})
       text_options = nil
@@ -33,6 +32,10 @@ MININUM_LINES_FOR_SPLIT = 2
       end
       # options[:line_width] = 2
       # options[:line_color] = 'red'
+      if options[:drop_cap]
+        
+      end
+      
       super
       if options[:linked_text_layout_manager]
         @text_layout_manager                = options[:linked_text_layout_manager]
