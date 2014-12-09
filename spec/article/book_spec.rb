@@ -2,7 +2,23 @@ require File.dirname(__FILE__) + "/../spec_helper"
 require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 require File.dirname(__FILE__) + '/../../lib/rlayout/publication/book'
 
+describe 'create new book' do
+  before do
+    @path = "/Users/mskim/book/sample_book"
+    # @path = "/Users/mskim/Dropbox/RLayout/pastor"
+    @book = Book.new(@path)
+  end
+  
+  it 'should create Book' do
+    @book.must_be_kind_of Book
+  end
+  
+  it 'should create a folder ' do
+    File.exists?(@path).must_equal true        
+  end
+end
 
+__END__
 describe 'generate pdf' do
   before do
     @path = "/Users/mskim/book/pastor"
@@ -11,7 +27,7 @@ describe 'generate pdf' do
   end
   
   it 'shoul convert markdown files to pdf' do
-    @book.markdown2pdf(:paper_size=>"A5")        
+    @book.process_markdown_files(:check_time=>true)        
     @book.body_matter.must_be_kind_of Array
   end
   

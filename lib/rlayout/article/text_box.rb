@@ -218,11 +218,12 @@ module RLayout
     end
   end
   
-  # ColumnWithImage has two columns within Column. 
+  # ImageColumn has two columns within Column. 
   # One for image and other one for text.
-  # This is used when flowing image with half size has to flow along the text.
-  # ColumnWithImage chops or pushes columns  when it is created depending on where is is placed.
-  class ColumnWithImage < Container
+  # This is used when flowing image with half size flows along the text.
+  # ImageColumn divide or pushes main colum  when it is created depending on where is is placed.
+  # it 
+  class ImageColumn < Container
     attr_accessor :image, :text_column
     def initialize(paranet_graphic, options={})
       options[:layout_direction] = 'horizontal'      

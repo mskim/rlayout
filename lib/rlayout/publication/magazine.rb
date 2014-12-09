@@ -10,15 +10,7 @@ module RLayout
       super
       self
     end
-    
-    def markdown2pdf
-      options = {:starting_page_number=>1}
-      Dir.glob("#{@folder_path}/*.markdown") do |m|
-        result = convert_markdown2pdf(m, options)
-        options[:starting_page_number] = result.next_chapter_starting_page_number if result
-      end
-    end
-    
+        
     def convert_markdown2pdf(markdown_path, options={})
       pdf_path = markdown_path.gsub(".markdown", ".pdf")
       title = File.basename(markdown_path, ".markdown")

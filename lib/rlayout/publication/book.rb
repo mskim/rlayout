@@ -6,13 +6,19 @@ require 'yaml'
 module RLayout
   
   class Book
-    attr_accessor :folder_path, :front_matter, :body_matter, :rear_matter
+    attr_accessor :folder_path
     def initialize(folder_path)
-      @front_matter = []
-      @body_matter  = []
-      @rear_matter  = []
       @folder_path  = folder_path
+      unless File.exists?(@folder_path)
+        system("mkdir -p #{@folder_path}") 
+        copy_template
+      end
       self
+    end
+    
+    def copy_template
+      source = "/Users/Shared/SoftwareLab/book"
+      system("cp -r #{source}/ #{@folder_path}/")
     end
     
     def merge_pdf_chpaters
@@ -35,20 +41,9 @@ module RLayout
       book_pdf.writeToFile("#{@folder_path}/book.pdf")
     end
     
-    # def save_pdf_doc(path, options={})
-    #   return if @pages.length == 0
-    #   pdf_data=pages[0].page_view.pdf_data
-    #   pdfdoc = PDFDocument.alloc.initWithData pdf_data
-    #   (pages.length-1).times do |i|
-    #     pdf_data=pages[i+1].page_view.pdf_data
-    #     page=PDFDocument.alloc.initWithData(pdf_data).pageAtIndex(0)
-    #     pdfdoc.insertPage(page, atIndex:i+1)
-    #   end
-    #   pdfdoc.writeToFile(path)
-    # end
     
-    def markdown2pdf(options)
-      options = {:starting_page_number=>1}
+    def process_markdown_files(options={})
+      options[:starting_page_number]=1
       Dir.glob("#{@folder_path}/*.markdown") do |m|
         result = convert_markdown2pdf(m, options)
         options[:starting_page_number] = result.next_chapter_starting_page_number if result
@@ -72,40 +67,41 @@ module RLayout
       
     end
     
-    # def delete_markdown_files
-    #   Dir.glob("#{@folder_path}/*.markdown") do |m|
-    #     puts "deleting #{m}..."
-    #     system("rm #{m}")
-    #   end
-    #   
-    # end
+    def delete_pdf_files
+      Dir.glob("#{@folder_path}/*.pdf") do |m|
+        puts "deleting #{m}..."
+        system("rm #{m}")
+      end
+      
+    end
+
+    def delete_markdown_files
+      Dir.glob("#{@folder_path}/*.markdown") do |m|
+        puts "deleting #{m}..."
+        system("rm #{m}")
+      end
+    end
     
     #TODO
     # Use markdown file as working temp file? or shuld I create filename.yml
     # it should have book layout informations, 
     # such as starting page, page_count, toc_elements index_elements in metadata hash
     # add starting_page, page_count, toc into markdown file after pdf generation
-    
     def convert_markdown2pdf(markdown_path, options={})
-      #TODO
-      # starting_page = options[:starting_page] if options[:starting_page]
       pdf_path = markdown_path.gsub(".markdown", ".pdf")
-      # if File.exists?(pdf_path)
-      #   if File.ctime(pdf_path) > File.ctime(markdown_path)
-      #     puts "#{pdf_path} is upto date...."
-      #     return nil
-      #   end
-      # end
-      # puts "generating #{pdf_path}..."
+      if options[:check_time]
+        if File.ctime(pdf_path) > File.ctime(markdown_path)
+          puts "#{pdf_path} is upto date...."
+          return nil
+        end
+      end
+      puts "generating #{pdf_path}..."
       title = File.basename(markdown_path, ".markdown")
       if options[:starting_page_number]
         chapter = Chapter.new(:title =>title, :paper_size=>'A5', :starts_left=>false, :chapter_kind=>"chapter", :story_path=>markdown_path, :starting_page_number=>options[:starting_page_number])
       else
         chapter = Chapter.new(:title =>title, :paper_size=>'A5', :starts_left=>false, :chapter_kind=>"chapter", :story_path=>markdown_path)
       end
-      puts "chapter.paper_size:#{chapter.paper_size}"
-      puts "chapter.width:#{chapter.width}"
-      puts "chapter.height:#{chapter.height}"
       chapter.save_pdf(pdf_path)
       chapter
     end
@@ -120,6 +116,9 @@ module RLayout
       
     end
     
+    # convert .txt file to markdown file by
+    # inserting yml header in front 
+    # filename becomes yml header title
     def convert_txt2markdown(txt_path)
       txt_content = File.open(txt_path, 'r'){|f| f.read}
       title = File.basename(txt_path, ".txt")
@@ -145,8 +144,8 @@ EOF
     
     
     #TODO
-    # breaks for digit that are already 3 digits or more
-    # breaks for filenames with space 
+    # skip files that are already 3 digits or more
+    # fix filenames with space 
     def normalize_filenames
       new_names = []
       Dir.glob("#{@folder_path}/*") do |m|

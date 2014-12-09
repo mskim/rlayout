@@ -12,6 +12,24 @@ TODO List
 	- should filter markdown file 
 		- for control characters
 		- should break lines for first_line_head_indent to take effect
+	- Style 
+		- merge with base
+		- make it yml
+	- when generating books
+		- open pdf files and update page number for the next chapter
+		  when not re-generating pdf files
+		
+2013 11 28
+    - image handling
+	- bleeding
+	- caption
+	- composite_page
+	
+2013 11 25
+	- ImageColumn
+
+2013 11 25
+	- Dropcap
 	
 2013 11 24
 	- fix split
@@ -121,7 +139,7 @@ TODO List
 		- cd into_users_folder && rake 
 			- rake pulls
 			- triggers DRb
-			- DRb generate pdf markdown2pdf
+			- DRb generate pdf process_markdown_files
 			- after successful pdf generation, push it back to repo
 	- once it is in the repo, waits for user to pull
 	- users pulls the updated pdf version

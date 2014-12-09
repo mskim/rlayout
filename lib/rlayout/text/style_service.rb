@@ -2,6 +2,17 @@
 
 DEFAULT_STYLES={
   "style_kind" => "DEFAULT_STYLES",
+  "doc_info" => {
+    paper_size: "A4", 
+    portrait: true,
+    double_side: false,
+    starts_left: true,
+    width: 600,
+    height: 800,
+    left_margin: 50,
+    top_margin: 50,
+    right_margin: 50,
+    bottom_margin: 50,},
   "heading_columns" => [1,2,3,4,5,6,7],
   "Title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
   "title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
@@ -54,12 +65,24 @@ MAGAZINE_STYLES={
   "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
-  "footer"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black'},
+  "footer"  =>{:text_font => 'Times', :text_size=>8.0, :text_color => 'black', :footer_margin=>30},
   "page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
 }
 
 CHAPTER_STYLES={
   "style_kind" => "CHAPTER_STYLES",
+  "doc_info" => {
+    paper_size: "A5", 
+    portrait: true,
+    double_side: false,
+    starts_left: true,
+    width: 600,
+    height: 800,
+    left_margin: 50,
+    top_margin: 50,
+    right_margin: 50,
+    bottom_margin: 100,},
+  
   "heading_columns" => [1,2,3,4,4,4,4],
   "title"   =>{:text_font => 'Times',     :text_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
   "subtitle"=>{:text_font => 'Times',     :text_size=>16.0, :text_color => 'black'},
@@ -79,7 +102,7 @@ CHAPTER_STYLES={
   "body"    =>{:text_font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "caption" =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black'},
-  "footer"  =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black'},
+  "footer"  =>{:text_font => 'Times',     :text_size=>8.0, :text_color => 'black', :footer_margin=>30},
   "page_number" =>{:text_font => 'Times', :text_size=>10.0, :text_color => 'black'},
 }
 
@@ -109,84 +132,3 @@ NEWS_STYLES={
 
 HEADING_KIND= %w[h1 h2 h3 h4 title subtitle author lead]
 BODY_KIND= %w[h5 h6 p heading1 heading2 heading3 body]
-# 
-# module RLayout 
-#   # read Styles Data
-#   # when asked, returns NSAttributedString for paragraph
-#   class StyleService
-#     attr_accessor :paragraph_styles, :char_styles
-#     attr_accessor :current_style
-#     @@style_service = nil
-#     def self.shared_style_service(options={})
-#       @@style_service ||= StyleService.new(options)
-#     end
-#     
-#     def initialize(options={})
-#       if options[:style_file]
-#         # load style from disk
-#       end
-#       @paragraph_styles = options[:paragraph_styles]
-#       @char_styles      = options[:char_styles]
-#       case options[:chapter_kind]
-#       when "chapter"
-#         # puts "using chapter"
-#         @current_style    = CHAPTER_STYLES
-#       when "magazine_article"
-#         # puts "using magazine_article"
-#         @current_style    = MAGAZINE_STYLES
-#       when 'news_article'
-#         # puts "using news_article"
-#         @current_style    = NEWS_STYLES
-#       else          
-#         # puts "using DEFAULT_STYLES"
-#         @current_style    = DEFAULT_STYLES
-#       end
-#       self
-#     end
-#     
-#     def heading_columns_for(column_number)
-#       @current_style["heading_columns"][column_number-1]
-#     end
-#     
-#     def body_height
-#       h = @current_style['p']
-#       h[:text_size] + h[:text_line_spacing]      
-#     end
-#     
-#     def style_for(paragraph, options={})
-#       h=@current_style[paragraph[:markup]]
-#       h[:text_markup] = paragraph[:markup]
-#       h
-#     end
-#         
-#     def style_for_markup(markup, options={})
-#       h = @current_style[markup]
-#       h[:text_markup] = markup
-#       h
-#     end
-#     
-#     def self.cation_style
-#       StyleService.shared_style_service.style_for_markup('caption')
-#     end
-#     
-#     def self.image_caption(string, options={})
-#       style = StyleService.cation_style
-#       NSAttributedString.alloc.initWithString(string, attributes:style)
-#     end
-#     
-#     def self.product_caption(string, options={})
-#       caption_format_array = []
-#       caption_style = Container.cation_style
-#       format_type = options.fetch(:type, 'csv') # json or csv
-#     end
-#     
-#     def self.figure_caption(string, options={})
-#       caption_format_array = []
-#       caption_style = Container.cation_style
-#       format_type = options.fetch(:type, 'csv') # json or csv
-#     end
-#     
-#   end
-#   
-# end
-# 

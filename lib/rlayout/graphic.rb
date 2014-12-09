@@ -84,9 +84,6 @@ module RLayout
     end
     
     def current_style
-      puts __method__
-      puts "@klass:#{@klass}"
-      puts "@parent_graphic:#{@parent_graphic}"
       if @parent_graphic && @parent_graphic.current_style
         return @parent_graphic.current_style
       end

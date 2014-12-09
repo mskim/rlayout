@@ -12,7 +12,7 @@ class RLayoutServer
   
   def generate_book(path, options={})
     @book = RLayout::Book.new(path)
-    @book.markdown2pdf        
+    @book.process_markdown_files        
     if options[:merge_chapters]
       @book.merge_pdf_chpaters
     end

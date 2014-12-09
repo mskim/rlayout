@@ -40,6 +40,7 @@ end
 #     @m.chapter_kind.must_equal "magazine_article"
 #   end
 # end
+
 # describe 'create MagazineChapter page with TextBox' do
 #   before do
 #     @story_path = "/Users/mskim/magazine/how-to-creaete-soochup.markdown"

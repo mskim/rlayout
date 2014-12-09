@@ -23,8 +23,11 @@ module RLayout
       template = options[:template_hash].dup
       replace_tagged_hash(template[:graphics])
       replace_image_hash(template[:graphics], project_path)
+      if template[:pages]
+        # TODO  
+        # also handle when tempage is Document
+      end
       page=Page.new(nil, template)      
-      
       if options[:output_path]
         page.save_pdf(options[:output_path])
       end

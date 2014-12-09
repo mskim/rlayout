@@ -1,26 +1,27 @@
 # encoding: utf-8
 
+# There are three types of articles, chapter, magazine_article, and news article/
+# chapter: 
+#     1. page numbers can grow into arbitrary pages
+#     1. Usually heading is not floating elelment, just graphics layer
+
+# magazine_article: 
+#     1. page number is usually fixed to 1, 2, 3, or 4
+#     1. flats are used for heading, image, side_box, quotes, leading
+#     1. non-uniform heading width and height is used
+#         example: three column layout can have two column heading
+# 
+# news_article: 
+#     1. single page based
+#     1. floats are used for heading
+#     1. width and height of layout is based on parent's grid 
+#     1. non-uniform heading width and height is used
 
 module RLayout
-  # There are three types of articles, chapter, magazine_article, and news article/
-  # chapter: 
-  #     1. page numbers can grow into arbitrary pages
-  #     1. Usually no floating elelment, just graphics layer
-
-  # magazine_article: 
-  #     1. page number is usually fixed to 1, 2, 3, or 4
-  #     1. flats are used for heading, image, side_box, quotes, leading
-  # 
-  # news_article: 
-  #     1. single page based
-  #     1. floats are used for heading
-  #     1. width and height of layout is based on parent's grid 
-  #     1. non-uniform heading width and height is used
-  
   
   # Chapter
-  # create two initial pages with TextBox, header, footer, side_bar(optional)
   # given Story path
+  # create two initial pages with TextBox, header, footer, side_bar(optional)
   #  read the story
   #  set @heading and @paragraphs
   #  call @pages.first.main_box.layout_story(:heading=>@heading, :paragraphs=> @paragraphs)
@@ -28,8 +29,8 @@ module RLayout
   #    main_box take @paragraphs data out of Array and inserts it into text_box.
   #  if the changed paragraphs length is 0, which means all the paragraphs have been layed out
   #    we are done.
-  #  else means we have some left over paragraphs, go to next page, if no page, create one with TextBox
-  #    after first page :heading is nil, and the paragraphs are the rest of the left overs
+  #  else means we have leftover paragraphs, go to next page, if no page, create one with TextBox
+  #    after first page :heading is nil, and the paragraphs are the rest of the leftover paragraphs form the initial page
   #    call main_box.layout_story agoin with (:heading=>nil, :paragraphs=> @paragraphs)
   #  keep going until we have no more leftover paragraphs.
   
@@ -163,11 +164,7 @@ module RLayout
       end
       update_header_and_footer
     end
-    
-    def book_node
-      BookNode.new("chapter", @title, @starting_page_number, @page_view_count)
-    end
-    
+        
     def next_chapter_starting_page_number
       @starting_page_number=1 if @starting_page_number.nil?
       @page_view_count = 0   if @page_view_count.nil?
@@ -210,7 +207,7 @@ module RLayout
     end
         
     def header_rule
-      h={
+      {
         :first_page_only  => true,
         :left_page        => false,
         :right_page       => false,
