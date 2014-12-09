@@ -48,7 +48,7 @@ module RLayout
     # end
     
     def markdown2pdf
-      options = {:starting_page_number=>1}
+      options = {:starting_page_number=>1, :paper_size=>"A5"}
       Dir.glob("#{@folder_path}/*.markdown") do |m|
         result = convert_markdown2pdf(m, options)
         options[:starting_page_number] = result.next_chapter_starting_page_number if result
@@ -97,12 +97,19 @@ module RLayout
       #   end
       # end
       # puts "generating #{pdf_path}..."
-      title = File.basename(markdown_path, ".markdown")
-      if options[:starting_page_number]
-        chapter = Chapter.new(:title =>title, :starts_left=>false, :chapter_kind=>"chapter", :story_path=>markdown_path, :starting_page_number=>options[:starting_page_number])
-      else
-        chapter = Chapter.new(:title =>title, :starts_left=>false, :chapter_kind=>"chapter", :story_path=>markdown_path)
-      end
+      options[:title]             = File.basename(markdown_path, ".markdown") unless options[:title]
+      options[:starts_left]       = false unless options[:starts_left]
+      options[:chapter_kind]      = "chapter" unless options[:chapter_kind]
+      options[:story_path]        = markdown_path unless options[:story_path]
+      options[:starting_page_number]= options[:starting_page_number] if options[:starting_page_number]
+      chapter = Chapter.new(options)
+      
+      # title = File.basename(markdown_path, ".markdown")
+      # if options[:starting_page_number]
+      #   chapter = Chapter.new(:title =>title, :starts_left=>false, :chapter_kind=>"chapter", :story_path=>markdown_path, :starting_page_number=>options[:starting_page_number])
+      # else
+      #   chapter = Chapter.new(:title =>title, :starts_left=>false, :chapter_kind=>"chapter", :story_path=>markdown_path)
+      # end
       chapter.save_pdf(pdf_path)
       chapter
     end
