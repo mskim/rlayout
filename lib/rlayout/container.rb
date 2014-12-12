@@ -242,10 +242,6 @@ module RLayout
         ObjectBox.new(self, options)
       when "ObjectColumn"
         ObjectColumn.new(self, options)
-      when "StoryBox"
-        StoryBox.new(self, options)
-      when "StoryColumn"
-        StoryColumn.new(self, options)
       else 
         puts "Creating Rectangle instead of graphic class named #{klass}!"
         Rectangle.new(self,options)

@@ -71,6 +71,7 @@ module RLayout
     attr_accessor :pages, :document_view, :starting_page_number
     attr_accessor :page_view_count, :toc_elements
     attr_accessor :current_style
+    attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     def initialize(options={}, &block)
       @pages      = []
       @title      = options.fetch(:title, "untitled")
@@ -82,6 +83,10 @@ module RLayout
       @width      = options.fetch(:width, defaults[:width])
       @height     = options.fetch(:width, defaults[:height])
       @margin     = options.fetch(:margin, defaults[:margin])
+      @left_margin= options.fetch(:left_margin, defaults[:left_margin])
+      @top_margin = options.fetch(:top_margin, defaults[:top_margin])
+      @right_margin = options.fetch(:right_margin, defaults[:right_margin])
+      @bottom_margin= options.fetch(:bottom_margin, defaults[:bottom_margin])
       if options[:starting_page_number]
         @starting_page_number = options[:starting_page_number]
         if @starting_page_number.odd?
@@ -117,6 +122,10 @@ module RLayout
         width: 600,
         height: 800,
         margin: 100,
+        left_margin: 100,
+        top_margin: 100,
+        right_margin: 100,
+        bottom_margin: 100,
       }
     end
     

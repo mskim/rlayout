@@ -8,9 +8,10 @@ module RLayout
     attr_accessor :fixtures
      
     def initialize(parent_graphic, options={}, &block)
-      #TODO refactore this
+      @parent_graphic = parent_graphic
       if options[:width]
       elsif @parent_graphic && @parent_graphic.width
+        puts 
         options[:width]  = @parent_graphic.width 
       else
         options[:width]  = defaults[:width]
@@ -58,33 +59,33 @@ module RLayout
         options[:bottom_margin]  = defaults[:margin]
       end
       
-      if options[:left_inset]
-      elsif @parent_graphic && @parent_graphic.left_inset
-        options[:left_inset]  = @parent_graphic.left_inset        
-      else
-        options[:left_inset]  = defaults[:inset]
-      end
-      
-      if options[:right_inset]
-      elsif @parent_graphic && @parent_graphic.right_inset
-        options[:right_inset]  = @parent_graphic.right_inset        
-      else
-        options[:right_inset]  = defaults[:inset]
-      end
-      
-      if options[:top_inset]
-      elsif @parent_graphic && @parent_graphic.top_inset
-        options[:top_inset]  = @parent_graphic.top_inset        
-      else
-        options[:top_inset]  = defaults[:inset]
-      end
-      
-      if options[:bottom_inset]
-      elsif @parent_graphic && @parent_graphic.bottom_inset
-        options[:bottom_inset]  = @parent_graphic.bottom_inset        
-      else
-        options[:bottom_inset]  = defaults[:inset]
-      end
+      # if options[:left_inset]
+      # elsif @parent_graphic && @parent_graphic.left_inset
+      #   options[:left_inset]  = @parent_graphic.left_inset        
+      # else
+      #   options[:left_inset]  = defaults[:inset]
+      # end
+      # 
+      # if options[:right_inset]
+      # elsif @parent_graphic && @parent_graphic.right_inset
+      #   options[:right_inset]  = @parent_graphic.right_inset        
+      # else
+      #   options[:right_inset]  = defaults[:inset]
+      # end
+      # 
+      # if options[:top_inset]
+      # elsif @parent_graphic && @parent_graphic.top_inset
+      #   options[:top_inset]  = @parent_graphic.top_inset        
+      # else
+      #   options[:top_inset]  = defaults[:inset]
+      # end
+      # 
+      # if options[:bottom_inset]
+      # elsif @parent_graphic && @parent_graphic.bottom_inset
+      #   options[:bottom_inset]  = @parent_graphic.bottom_inset        
+      # else
+      #   options[:bottom_inset]  = defaults[:inset]
+      # end
       super
       @parent_graphic.pages << self if  @parent_graphic && @parent_graphic.pages && !@parent_graphic.pages.include?(self)       
       @klass = "Page"

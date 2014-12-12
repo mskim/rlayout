@@ -39,7 +39,7 @@ module RLayout
     attr_accessor :toc_on, :chapter_kind, :column_count
     
     def initialize(options={})
-      super
+      super            
       @bottom_margin      = 100
       @double_side        = true
       @page_count         = options.fetch(:page_count, 2)
