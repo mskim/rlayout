@@ -22,7 +22,7 @@ require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 #   end
 # end
 
-describe 'create Chapter page with StoryBox' do
+describe 'create Chapter page with TextBox' do
   before do
     @story_path = "/Users/mskim/chapter/2012-12-18-making-rlayout-for-variable-publishing.markdown"
     @story_path = "/Users/mskim/book/pastor/013.chapter.markdown"

@@ -7,11 +7,10 @@ module RLayout
     attr_accessor :main_box, :header_object, :footer_object, :side_bar_object
     attr_accessor :fixtures
      
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(parent_graphic, options={}, &block)      
       @parent_graphic = parent_graphic
       if options[:width]
       elsif @parent_graphic && @parent_graphic.width
-        puts 
         options[:width]  = @parent_graphic.width 
       else
         options[:width]  = defaults[:width]
@@ -33,7 +32,8 @@ module RLayout
       
       if options[:left_margin]
       elsif @parent_graphic && @parent_graphic.left_margin
-        options[:left_margin]  = @parent_graphic.left_margin        
+        options[:left_margin]  = @parent_graphic.left_margin  
+        puts "options[:left_margin]:#{options[:left_margin]}"      
       else
         options[:left_margin]  = defaults[:margin]
       end
@@ -87,6 +87,7 @@ module RLayout
       #   options[:bottom_inset]  = defaults[:inset]
       # end
       super
+      
       @parent_graphic.pages << self if  @parent_graphic && @parent_graphic.pages && !@parent_graphic.pages.include?(self)       
       @klass = "Page"
       @page_number = options.fetch(:page_number, '1')
@@ -137,6 +138,22 @@ module RLayout
       }
     end
     
+    def layout_default
+      {
+        left_margin:  50,
+        top_margin:   50,
+        right_margin: 50,
+        bottom_margin: 50,
+        left_inset:   0,
+        top_inset:    0,
+        right_inset:  0,
+        bottom_inset: 0,
+        layout_direction: "vertical",
+        layout_member: true,
+        layout_expand: [:width, :height], # auto_layout expand 
+        layout_length:  1,
+      }
+    end
     def update_header_and_footer(options={})
       return if @no_fixture_page # for pictures page 
       options[:header][:font] = 8

@@ -18,7 +18,10 @@ TODO List
 	- when generating books
 		- open pdf files and update page number for the next chapter
 		  when not re-generating pdf files
-		
+	- modifiy kramdown into r_kramdown
+	- convert cm, mm to pt
+		:width=> "16.5cm", :height=>"24.5cm"
+	
 2013 11 28
     - image handling
 	- bleeding

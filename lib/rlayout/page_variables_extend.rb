@@ -21,12 +21,14 @@ module RLayout
       project_path = File.dirname(File.dirname(options[:output_path]))
       project_path = options[:project_path] if options[:project_path]      
       template = options[:template_hash].dup
-      replace_tagged_hash(template[:graphics])
-      replace_image_hash(template[:graphics], project_path)
-      if template[:pages]
-        # TODO  
-        # also handle when tempage is Document
+      Page.replace_tagged_hash(@keys, @data, template[:graphics])
+      Page.replace_image_hash(template[:graphics], project_path)
+
+      # return hash of replaces page for variable document
+      if options[:for_variable_document]
+        return template
       end
+      
       page=Page.new(nil, template)      
       if options[:output_path]
         page.save_pdf(options[:output_path])
@@ -72,12 +74,11 @@ module RLayout
         
     ##################  variable data replacing  ##################
     
-    def self.replace_tagged_hash(graphics_hash_array)
-      return unless @keys
-      @keys.each_with_index do |key,index|
+    def self.replace_tagged_hash(keys, data, graphics_hash_array)
+      keys.each_with_index do |key,index|
         graphics_hash_array.each do |target_graphic|
           if target_graphic[:tag] && target_graphic[:tag] == key.to_s
-            target_graphic[:text_string] = @data[index]
+            target_graphic[:text_string] = data[index]
           end
         end
       end
