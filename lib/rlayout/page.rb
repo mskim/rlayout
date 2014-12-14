@@ -22,70 +22,36 @@ module RLayout
       else
         options[:height]  = defaults[:height]
       end
-      
-      if options[:margin]
-      elsif @parent_graphic && @parent_graphic.margin
-        options[:margin]  = @parent_graphic.margin        
-      else
-        options[:margin]  = defaults[:margin]
-      end
-      
+            
       if options[:left_margin]
       elsif @parent_graphic && @parent_graphic.left_margin
         options[:left_margin]  = @parent_graphic.left_margin  
-        puts "options[:left_margin]:#{options[:left_margin]}"      
       else
-        options[:left_margin]  = defaults[:margin]
+        options[:left_margin]  = layout_default[:left_margin]
       end
       
       if options[:right_margin]
       elsif @parent_graphic && @parent_graphic.right_margin
         options[:right_margin]  = @parent_graphic.right_margin        
       else
-        options[:right_margin]  = defaults[:margin]
+        options[:right_margin]  = layout_default[:right_margin]
       end
       
       if options[:top_margin]
       elsif @parent_graphic && @parent_graphic.top_margin
         options[:top_margin]  = @parent_graphic.top_margin        
       else
-        options[:top_margin]  = defaults[:margin]
+        options[:top_margin]  = layout_default[:top_margin]
       end
       
       if options[:bottom_margin]
       elsif @parent_graphic && @parent_graphic.bottom_margin
         options[:bottom_margin]  = @parent_graphic.bottom_margin        
       else
-        options[:bottom_margin]  = defaults[:margin]
+        options[:bottom_margin]  = layout_default[:bottom_margin]
       end
       
-      # if options[:left_inset]
-      # elsif @parent_graphic && @parent_graphic.left_inset
-      #   options[:left_inset]  = @parent_graphic.left_inset        
-      # else
-      #   options[:left_inset]  = defaults[:inset]
-      # end
-      # 
-      # if options[:right_inset]
-      # elsif @parent_graphic && @parent_graphic.right_inset
-      #   options[:right_inset]  = @parent_graphic.right_inset        
-      # else
-      #   options[:right_inset]  = defaults[:inset]
-      # end
-      # 
-      # if options[:top_inset]
-      # elsif @parent_graphic && @parent_graphic.top_inset
-      #   options[:top_inset]  = @parent_graphic.top_inset        
-      # else
-      #   options[:top_inset]  = defaults[:inset]
-      # end
-      # 
-      # if options[:bottom_inset]
-      # elsif @parent_graphic && @parent_graphic.bottom_inset
-      #   options[:bottom_inset]  = @parent_graphic.bottom_inset        
-      # else
-      #   options[:bottom_inset]  = defaults[:inset]
-      # end
+
       super
       
       @parent_graphic.pages << self if  @parent_graphic && @parent_graphic.pages && !@parent_graphic.pages.include?(self)       
@@ -133,8 +99,6 @@ module RLayout
         y: 0,
         width: 600,
         height: 800,
-        margin: 50,
-        inset: 0,
       }
     end
     

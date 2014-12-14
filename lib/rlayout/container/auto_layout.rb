@@ -2,7 +2,7 @@
 #
 
 module RLayout
-  class Container
+  class Container < Graphic
     #  relayout! is done in two passes
     #    in the first pass, we gather information about children graphics
     #    and in the second pass, we lay them out 

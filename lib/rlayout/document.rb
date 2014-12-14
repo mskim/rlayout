@@ -66,7 +66,7 @@ module RLayout
   TocNode = Struct.new(:markup, :text_string, :page_number)
     
   class Document
-    attr_accessor :title, :path, :paper_size, :portrait, :margin, :width, :height, :starts_left, :double_side
+    attr_accessor :title, :path, :paper_size, :portrait, :width, :height, :starts_left, :double_side
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_accessor :pages, :document_view, :starting_page_number
     attr_accessor :page_view_count, :toc_elements
@@ -82,10 +82,6 @@ module RLayout
       @starts_left= options.fetch(:starts_left, defaults[:starts_left])
       @width      = options.fetch(:width, defaults[:width])
       @height     = options.fetch(:height, defaults[:height])
-      @left_margin= options.fetch(:left_margin, defaults[:margin])
-      @top_margin = options.fetch(:top_margin, defaults[:margin])
-      @right_margin = options.fetch(:right_margin, defaults[:margin])
-      @bottom_margin= options.fetch(:bottom_margin, defaults[:margin])
       @left_margin= options.fetch(:left_margin, defaults[:left_margin])
       @top_margin = options.fetch(:top_margin, defaults[:top_margin])
       @right_margin = options.fetch(:right_margin, defaults[:right_margin])

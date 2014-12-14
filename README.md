@@ -21,6 +21,18 @@ TODO List
 	- modifiy kramdown into r_kramdown
 	- convert cm, mm to pt
 		:width=> "16.5cm", :height=>"24.5cm"
+	- text_layout_manger layout_lines when relayout is called 
+	- text_layout_manger implement text_fit to box
+	- center_it with width and height
+	
+2014 12 14
+	- remove margin from attr_accessor
+
+2013 12 13
+	- idcard
+	- text_form
+	- text_field
+	- variable_document
 	
 2013 11 28
     - image handling

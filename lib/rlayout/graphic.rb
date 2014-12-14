@@ -553,7 +553,12 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       @klass = "Text"
       self
     end
-        
+    
+    def text_string
+      return nil unless @text_layout_manager
+      @text_layout_manager.att_string.string
+    end
+    
     def self.sample(options={})
       if options[:number] > 0
         Text.new(nil, text_string: "This is a sample text string"*options[:number])

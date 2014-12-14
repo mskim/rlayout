@@ -22,6 +22,7 @@ class Paragraph
 
 end
 
+__END__
 require 'minitest/autorun'
 describe 'create ParagraphView' do
   before do
