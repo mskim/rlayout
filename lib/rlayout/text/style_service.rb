@@ -1,4 +1,13 @@
 
+# Style should be defined as constants
+# DEFAULT_STYLES
+# custom styles should be defined in CUSTOM_STYLE and merged with DEFAULT_STYLES of its kind
+# Style are defined in following keys 
+#  doc_info
+#  heading
+#  main
+#  fixtures
+#  text_styles
 
 DEFAULT_STYLES={
   "style_kind" => "DEFAULT_STYLES",
@@ -13,7 +22,13 @@ DEFAULT_STYLES={
     top_margin: 50,
     right_margin: 50,
     bottom_margin: 50,},
-  "heading_columns" => [1,2,3,4,5,6,7],
+  "heading" => {
+    "heading_columns" => [1,2,3,4,5,6,7],
+    "heading_layout_length" => 1,
+  },
+  "main"=> {
+    :column_count=>2,
+  },
   "Title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
   "title"   =>{:text_font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
   "SubTitle"=>{:text_font => 'Times',     :text_size=>20.0, :text_color => 'black'},

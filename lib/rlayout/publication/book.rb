@@ -44,7 +44,6 @@ module RLayout
     
     def process_markdown_files(options={})
       options[:starting_page_number]=1
-
       Dir.glob("#{@folder_path}/*.markdown") do |m|
         result = convert_markdown2pdf(m, options)
         options[:starting_page_number] = result.next_chapter_starting_page_number if result
@@ -100,7 +99,7 @@ module RLayout
       options[:title]             = File.basename(markdown_path, ".markdown") unless options[:title]
       options[:starts_left]       = false unless options[:starts_left]
       options[:chapter_kind]      = "chapter" unless options[:chapter_kind]
-      options[:story_path]        = markdown_path unless options[:story_path]
+      options[:story_path]        = markdown_path
       options[:starting_page_number]= options[:starting_page_number] if options[:starting_page_number]
       chapter = Chapter.new(options)
       chapter.save_pdf(pdf_path)

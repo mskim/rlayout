@@ -80,8 +80,13 @@ module RLayout
       @portrait   = options.fetch(:portrait, defaults[:portrait])
       @double_side= options.fetch(:double_side, defaults[:double_side])
       @starts_left= options.fetch(:starts_left, defaults[:starts_left])
-      @width      = options.fetch(:width, defaults[:width])
-      @height     = options.fetch(:height, defaults[:height])
+      if @paper_size && @paper_size != "custom"
+        @width = SIZES[@paper_size][0]
+        @height = SIZES[@paper_size][1]
+      else
+        @width      = options.fetch(:width, defaults[:width])
+        @height     = options.fetch(:height, defaults[:height])
+      end
       @left_margin= options.fetch(:left_margin, defaults[:left_margin])
       @top_margin = options.fetch(:top_margin, defaults[:top_margin])
       @right_margin = options.fetch(:right_margin, defaults[:right_margin])
