@@ -231,6 +231,10 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       [@x,@y,@width,@height]
     end 
     
+    def bounds_rect
+      [0,0,@width,@height]
+    end
+    
     def text_rect
       [@x + @left_inset , @y + @top_inset, @width - @left_inset - @right_inset, @height - @top_inset - @bottom_inset]
     end
@@ -251,7 +255,7 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       if @non_overlapping_rect
         return @non_overlapping_rect 
       end
-      frame_rect
+      bounds_rect
     end
     
     def non_overlapping_bounds
@@ -268,7 +272,19 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       puts "@width:#{@width}"
       puts "@height:#{@height}"
     end
-        
+    
+    def puts_margin
+      puts "@left_margin:#{@left_margin}"
+      puts "@top_margin:#{@top_margin}"
+      puts "@right_margin:#{@right_margin}"
+      puts "@bottom_margin:#{@bottom_margin}"
+      puts "@left_inset:#{@left_inset}"
+      puts "@top_inset:#{@top_inset}"
+      puts "@right_inset:#{@right_inset}"
+      puts "@bottom_inset:#{@bottom_inset}"
+      
+    end
+    
     def set_frame(frame)
       @x = frame[X_POS]
       @y = frame[1]
@@ -542,13 +558,17 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       end
       @color
     end
-
+    
+    def fit_text_to_box
+      @text_layout_manager.fit_text_to_box  if @text_layout_manager
+    end
   end
   
   class Text < Graphic
     def initialize(parent_graphic, options={})
       # options[:line_width] = 2
       # options[:line_color] = 'red'
+      # options[:text_fit_type] = 1 unless options[:text_fit_type]
       super
       @klass = "Text"
       self

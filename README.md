@@ -1,10 +1,14 @@
 TODO List
+	- convert cm, mm to pt
+		:width=> "16.5cm", :height=>"24.5cm"
+	- center graphic with width and height
+	- draw lines in superview, so the lines don't get cut off
+
 	- add ShoulderColumn, add footnote_area
 	- apply StyleSheet at runtime with default fall back
 	- ePub generation
 	- Merge Grid and Float
 	- image smart fit, best_fit, best_fill
-	- replace StyleService with CONSTANTS
 	- support for default and custom Styles
 	- Header
 		- bleeding page number box
@@ -15,15 +19,21 @@ TODO List
 	- Style 
 		- merge with base
 		- make it yml
-	- when generating books
-		- open pdf files and update page number for the next chapter
-		  when not re-generating pdf files
 	- modifiy kramdown into r_kramdown
-	- convert cm, mm to pt
-		:width=> "16.5cm", :height=>"24.5cm"
+
+2014 12 20
+    - fix auto_layout bug starting_y as bounds_rect, instead of frame_rect
+
+2014 12 19
+	- text_fit_to_box
+		- set initial font size as 80% of box
+	
+2014 12 16
+	- text_fit_to_box
 	- text_layout_manger layout_lines when relayout is called 
-	- text_layout_manger implement text_fit to box
-	- center_it with width and height
+
+2014 12 15
+	- add paper_size
 	
 2014 12 14
 	- remove margin from attr_accessor

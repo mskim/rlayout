@@ -1,5 +1,38 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'text overflow' do
+  before do
+    options = {
+      width: 100,
+      height: 50,
+      text_size: 12,
+      text_font: 'Times',
+      text_line_spacing: 10,
+      text_alignment: 'justified',
+      text_string: "This is test. And this is the second paragraph. And some more sentence."*2,
+      width: 250,
+      text_fit_type:  1
+    }
+    @t = Text.new(nil, options)
+    @tl = @t.text_layout_manager
+  end
+  
+  it 'should overflow' do
+    @tl.must_be_kind_of TextLayoutManager
+    @tl.text_overflow.must_equal true
+  end
+  
+  it 'should save pdf' do
+    @pdf_path = File.dirname(__FILE__) + "/../output/text_layout_fit_to_box.pdf"
+    @tl.fit_text_to_box
+    @t.save_pdf(@pdf_path)
+    File.exist?(@pdf_path).must_equal true
+    system("open #{@pdf_path}")
+  end
+end
+
+
+__END__
 describe 'dropcap' do
   before do
     drop_cap_options = {

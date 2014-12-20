@@ -7,14 +7,20 @@ module RLayout
     attr_accessor :label, :data_field, :data_layout_length
 	  def initialize(parent_graphic,options={})
 	    super
-	    @layout_space         = 2
-	    @line_width         = 2
-	    @line_color         = 'red'
+	    @layout_space       = 2
+      # @line_width         = 2
+      # @line_color         = 'red'
 	    @layout_direction   ='horizontal'
 	    @data_layout_length = options.fetch(:data_layout_length, 2)
 	    @label              = Text.new(self, :text_string=>options[:key])
 	    @data_field         = Text.new(self, :text_string=>options[:data], :layout_length=>@data_layout_length)
 	    self
+	  end
+	  
+	  def fit_text_to_box
+	    @graphics.each do |graphic|
+	      graphic.fit_text_to_box if graphic.text_layout_manager
+      end
 	  end
   end
   
@@ -27,8 +33,13 @@ module RLayout
 	    @keys.each_with_index do |key, i|
 	      TextField.new(self, :key=>key, :data=>@data[i])
 	    end
-	    relayout!
-	  end	
+	  end
+	  
+	  def fit_text_to_box
+	    @graphics.each do |graphic|
+	      graphic.fit_text_to_box
+      end
+	  end
 	end
 
 end

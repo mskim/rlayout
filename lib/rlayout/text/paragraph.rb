@@ -10,11 +10,11 @@ module RLayout
 #  overlapping graphics that are "jsut floating" do not affect the text flow.
 #  after collecting overlapping graphics, change the textContainer to flow text avoiding othose graphics.
 
-FIT_FONT_SIZE   = 0   # keep given font size
-FIT_TO_BOX      = 1   # change font size to fit text into box 
-FIT_EACH_LINE   = 2   # adjust font size for each line to fit text into lines.
-                      # So, fewer the text, larger the font size becomes in for each line
-                      # And reduce the size of the lines propotionally to fit the entire lines in text box.
+# FIT_FONT_SIZE   = 0   # keep given font size
+# FIT_TO_BOX      = 1   # change font size to fit text into box 
+# FIT_EACH_LINE   = 2   # adjust font size for each line to fit text into lines.
+#                       # So, fewer the text, larger the font size becomes in for each line
+#                       # And reduce the size of the lines propotionally to fit the entire lines in text box.
                       
 FIT_STYLE_RUN   = 3
 MININUM_LINES_FOR_SPLIT = 2
@@ -36,7 +36,7 @@ MININUM_LINES_FOR_SPLIT = 2
       # options[:line_color] = 'red'
       if options[:drop_cap]
       end
-      
+      options[:text_fit_type] = 0
       super
       if options[:linked_text_layout_manager]
         @text_layout_manager                = options[:linked_text_layout_manager]

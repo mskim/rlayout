@@ -171,7 +171,6 @@ module RLayout
         puts "#{csv_path} doesn't exist ..."
         return nil
       end
-      
       rows=[]
       result = nil
       if csv_path =~/_mac.csv$/

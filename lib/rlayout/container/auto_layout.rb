@@ -32,6 +32,7 @@ module RLayout
       expandable_graphics = 0
       layout_length_sum   = 0
       non_expanding_length_sum   = 0
+      
       # This is the first pass
       @graphics.each_with_index do |graphic, index|
         next if !graphic.layout_member || graphic.layout_expand.nil?                  
@@ -59,6 +60,7 @@ module RLayout
       else
         unit_size
       end
+      
       # we set starting current_position for none expanding case
       unless have_expanding_child    
        room = column_room - non_expanding_length_sum  
@@ -74,10 +76,11 @@ module RLayout
          @layout_space = room/spacing_number if spacing_number !=0
        end
       end
+      
       # This is the second pass
       @graphics.each do |graphic|
         next if !graphic.layout_member || graphic.layout_expand.nil?                  
-        graphic_frame  = graphic.frame_rect      
+        graphic_frame  = graphic.frame_rect              
         # adjust size
         if (vertical ? graphic.expand_height? : graphic.expand_width?)
           if spacing_number == 0
@@ -94,7 +97,7 @@ module RLayout
         graphic_dimension = vertical ? graphic_frame[HEIGHT_VAL] : graphic_frame[WIDTH_VAL]
         # set current_position and update current_position
         if have_expanding_child
-          if vertical
+          if vertical            
             graphic_frame[Y_POS] = current_position             
             current_position += graphic_dimension + @layout_space
             current_position += graphic.bottom_margin + graphic.top_margin #if graphic.bottom_margin && graphic.top_margin 
@@ -144,8 +147,6 @@ module RLayout
         #   end
         # end
         graphic.set_frame(graphic_frame)
-
-        
         # recursive layout_member for child graphics
         if graphic.layout_expand.nil?
         else

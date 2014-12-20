@@ -1,5 +1,41 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+
+describe 'testing container with graphics' do
+  before do
+    @container = Container.new(nil)
+    @g1 = Container.new(@container, fill_color: 'red')
+      @g3= Graphic.new(@g1, fill_color: 'yellow')
+      @g4= Graphic.new(@g1, fill_color: 'black')
+    @g2 = Container.new(@container, fill_color: 'blue', tag: 'g2')
+      @g5= Graphic.new(@g2, fill_color: 'yellow', tag: 'g5')
+      @g6= Graphic.new(@g2, fill_color: 'blue', tag: 'g6')
+    @container.relayout!
+    # puts "g5"
+    # @g5.puts_frame
+    # puts "g6"
+    # @g6.puts_frame
+     
+  end
+  
+  # it 'should add graphics' do
+  #   @container.graphics.length.must_equal 2
+  #   @container.graphics.length.must_equal 2
+  # end
+  # 
+  # it 'added graphics should have self as parent' do
+  #   @container.graphics[0].parent_graphic.must_equal @container
+  #   @container.graphics[1].parent_graphic.must_equal @container
+  # end
+  
+  it 'should save pdf' do
+    @pdf_path = File.dirname(__FILE__) + "/output/container_test.pdf"
+    @container.save_pdf(@pdf_path)
+    system("open #{@pdf_path}")
+  end
+end
+
+__END__
 describe 'testing container creation' do
   before do
     @container = Container.new(nil)
@@ -14,30 +50,6 @@ describe 'testing container creation' do
     # @container.y.must_equal 0   # I think there is MacRuby Bug for setting @y as nil
     @container.width.must_equal 100
     @container.height.must_equal 100
-  end
-end
-
-describe 'testing container with graphics' do
-  before do
-    @container = Container.new(nil)
-    @g1 = Graphic.new(@container, fill_color: 'red')
-    @g2 = Graphic.new(@container, fill_color: 'gray')
-    @container.relayout!
-  end
-  
-  it 'should add graphics' do
-    @container.graphics.length.must_equal 2
-    @container.graphics.length.must_equal 2
-  end
-  
-  it 'added graphics should have self as parent' do
-    @container.graphics[0].parent_graphic.must_equal @container
-    @container.graphics[1].parent_graphic.must_equal @container
-  end
-  
-  it 'should save pdf' do
-    @pdf_path = File.dirname(__FILE__) + "/output/container_test.pdf"
-    @container.save_pdf(@pdf_path)
   end
 end
 
