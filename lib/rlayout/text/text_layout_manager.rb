@@ -246,9 +246,9 @@ module RLayout
       @proposed_line_count = (proposed_height/line_height).to_i
       proposed_line_height = @proposed_line_count*line_height
       # set text_overflow and under flow
-      puts "@att_string.string:#{@att_string.string}"
-      puts "used_size_height:#{used_size_height}"
-      puts "proposed_line_height:#{proposed_line_height}"
+      # puts "@att_string.string:#{@att_string.string}"
+      # puts "used_size_height:#{used_size_height}"
+      # puts "proposed_line_height:#{proposed_line_height}"
       if used_size_height > proposed_line_height
         @text_overflow = true            
         @text_underflow = true if @proposed_line_count == 0 # no line was created
@@ -273,20 +273,20 @@ module RLayout
     def new_font_size_for_fit
       text_size             = @att_string.size   
       proposed_total_width  = @proposed_line_count*@owner_graphic.text_rect[2]
-      puts "proposed_total_width:#{proposed_total_width}"
-      puts "text_size.width:#{text_size.width}"
+      # puts "proposed_total_width:#{proposed_total_width}"
+      # puts "text_size.width:#{text_size.width}"
       height                = @owner_graphic.text_rect[3]
       w                     = proposed_total_width/text_size.width
       h                     = height/text_size.height 
       # if heightis less than the full font height
-      puts "@proposed_line_count:#{@proposed_line_count}"
+      # puts "@proposed_line_count:#{@proposed_line_count}"
       if  @proposed_line_count <= 1
         h= 0.8
       end    
       scale                 = [w,h].min
-      puts "w:#{w}"
-      puts "h:#{h}"
-      puts "scale:#{scale}"
+      # puts "w:#{w}"
+      # puts "h:#{h}"
+      # puts "scale:#{scale}"
       @text_size*scale
     end
     

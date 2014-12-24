@@ -11,7 +11,7 @@ CIRCULAR    = 2
 class GraphicViewMac < NSView
   attr_accessor :graphic
   
-  def self.from_graphic(graphic)      
+  def self.from_graphic(graphic)  
     frame = NSMakeRect(graphic.text_rect[X_POS], graphic.text_rect[Y_POS], graphic.text_rect[WIDTH_VAL], graphic.text_rect[HEIGHT_VAL])
     view = GraphicViewMac.alloc.initWithFrame(frame)
     view.init_with_graphic(graphic)
@@ -20,9 +20,10 @@ class GraphicViewMac < NSView
   
   def init_with_graphic(graphic)
     @graphic = graphic  
+    @graphic.ns_view = self
     if @graphic.fixtures
       @graphic.fixtures.each do |child|     
-        child_view = GraphicViewMac.from_graphic(child)
+        child_view = GraphicViewMac.from_graphic(child)        
         addSubview(child_view)
       end
     end

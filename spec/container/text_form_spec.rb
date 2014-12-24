@@ -42,7 +42,7 @@ describe 'TextForm' do
         width: 400,
         height: 50,
         # layout_expand: [],
-        fill_color: 'green'
+        # fill_color: 'green'
     }
     @t_form   = TextForm.new(@page, options)
     @t_form.relayout!

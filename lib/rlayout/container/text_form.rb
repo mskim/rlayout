@@ -3,6 +3,8 @@
 # TextField consists of labels and data
 
 module RLayout
+  
+  
   class TextField < Container
     attr_accessor :label, :data_field, :data_layout_length
 	  def initialize(parent_graphic,options={})

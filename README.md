@@ -1,6 +1,7 @@
 TODO List
 	- convert cm, mm to pt
 		:width=> "16.5cm", :height=>"24.5cm"
+	- local_image, project_folder, tag, variable_image_name
 	- center graphic with width and height
 	- draw lines in superview, so the lines don't get cut off
 

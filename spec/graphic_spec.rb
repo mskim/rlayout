@@ -1,6 +1,27 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
-
+describe ' Graphic from Hash ' do
+  before do
+    h = {
+      :klass => "Container",
+      :fill_color=> 'red',
+      :graphics => [
+        {:klass => "Rectangle", :fill_color=> 'blue'},
+        {:klass => "Rectangle", :fill_color=> 'green'},
+        ]
+    }
+    @t = Container.new(nil, h)
+  end
+    
+  it 'should save Rectangle from hash' do
+    @pdf_path = File.dirname(__FILE__) + "/output/graphic_from_hash.pdf"
+    @t.save_pdf(@pdf_path)
+    File.exists?(@pdf_path).must_equal true
+    system("open #{@pdf_path}")
+  end
+  
+end
+__END__
 describe 'testing Text ' do
   before do
     @t = Text.new(nil, width: 400,  text_string: "This is text string and I like it very much. Wouldn't you? "*4, text_size: 24, text_alignment: 'right')

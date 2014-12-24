@@ -1,8 +1,25 @@
 require 'yaml'
 
+# How do I process variable Images?
+# Normally we use image_path, a full image path, for image.
+# But when we handle variable document and design templates, this is not a good idea. 
+# Since we do not know the full image path until the run time. We want relative path relative to 
+# the project folder. 
+# "project_folder" is the path to the project
+# "tag" is the images folder, and "variable_name" is the name of the image file.  
+# We use "tag" because we might have several image groups that are used in same project, 
+# For example: we might have "pictures" folder for peoples picture and "barcode" for barcode images
+# And in each folder, image files could be named with the person's name.
+# If put them in one folder, we will have name conflict between pictire and barcode file name.
+# So we we shoud use convention for image path in the form of "/project_path/tag/variable_name.jpg"
+
+# What is local_image?
+# local_image are used for images that are not variable, but relative to the project
+# ,such as logos and background images.
+
 module RLayout
   class Document
-    attr_accessor :keys, :data     
+    attr_accessor :keys, :data, :project_path     
     def self.variable_document(options)
       if options[:keys] && options[:data]
         @keys = options.fetch(:keys, {})
@@ -12,9 +29,9 @@ module RLayout
         @data = options[:varaiables_hash].values
       end
       if options[:project_path]
-        project_path = options[:project_path] 
+        @project_path = options[:project_path] 
       else
-        project_path = File.dirname(File.dirname(options[:output_path]))
+        @project_path = File.dirname(File.dirname(options[:output_path]))
       end
       
       template = options[:template_hash].dup

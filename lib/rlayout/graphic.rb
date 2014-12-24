@@ -46,8 +46,8 @@ module RLayout
       elsif options[:is_fixture]
         #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics
         @parent_graphic.fixtures << self if @parent_graphic.fixtures && !@parent_graphic.fixtures.include?(self)        
-      elsif  @parent_graphic && @parent_graphic.kind_of?(Document) && !@parent_graphic.pages.include?(self)
-        @parent_graphic.pages << self  
+      elsif  @parent_graphic && @parent_graphic.kind_of?(RLayout::Document)
+        @parent_graphic.pages << self  if !@parent_graphic.pages.include?(self)
       elsif  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
         @parent_graphic.graphics << self  
       end
@@ -68,6 +68,7 @@ module RLayout
       init_line(options)
       init_text(options)
       init_image(options)
+      
       self
     end
 
@@ -346,12 +347,14 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       j += "\n"
     end
     
-    def drawRect(r)
-      draw_fill(r)
-      draw_line(r)
-      draw_text(r)
-      draw_image(r)
-    end
+    # def drawRect(r)
+    #   puts "drawRect"
+    #   puts "@klass"
+    #   draw_fill(r)
+    #   draw_line(r)
+    #   draw_text(r)
+    #   draw_image(r)
+    # end
     
     def save_pdf(path)
       if RUBY_ENGINE == 'macruby'        
@@ -527,7 +530,7 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     end 
     
 
-    def color_from_string(color_string)    
+    def color_from_string(color_string)
       if color_string == nil
         return NSColor.whiteColor
       end

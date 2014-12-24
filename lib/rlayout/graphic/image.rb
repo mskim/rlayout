@@ -51,6 +51,9 @@ module RLayout
       if @image_path
         @image_object=NSImage.alloc.initByReferencingFile(@image_path)
         apply_fit_type
+      elsif @local_image
+        #TODO
+        puts "handle local image"
       end
     end
     

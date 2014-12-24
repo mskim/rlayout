@@ -1,5 +1,3 @@
-require File.dirname(__FILE__) + "/spec_helper"
-
 
 
 describe 'save multiple page document' do
@@ -21,7 +19,6 @@ describe 'save multiple page document' do
   end
 end
 
-__END__
 describe "document" do
   before do
     @doc = Document.new(:tite=>"my_test") do

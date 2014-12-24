@@ -7,7 +7,7 @@ module RLayout
     attr_accessor :main_box, :header_object, :footer_object, :side_bar_object
     attr_accessor :fixtures
      
-    def initialize(parent_graphic, options={}, &block)      
+    def initialize(parent_graphic, options={}, &block)  
       @parent_graphic = parent_graphic
       if options[:width]
       elsif @parent_graphic && @parent_graphic.width
@@ -15,7 +15,6 @@ module RLayout
       else
         options[:width]  = defaults[:width]
       end
-
       if options[:height]
       elsif @parent_graphic && @parent_graphic.height
         options[:height]  = @parent_graphic.height 
@@ -29,34 +28,29 @@ module RLayout
       else
         options[:left_margin]  = layout_default[:left_margin]
       end
-      
       if options[:right_margin]
       elsif @parent_graphic && @parent_graphic.right_margin
-        options[:right_margin]  = @parent_graphic.right_margin        
+        options[:right_margin] = @parent_graphic.right_margin        
       else
-        options[:right_margin]  = layout_default[:right_margin]
+        options[:right_margin] = layout_default[:right_margin]
       end
       
       if options[:top_margin]
       elsif @parent_graphic && @parent_graphic.top_margin
-        options[:top_margin]  = @parent_graphic.top_margin        
+        options[:top_margin] = @parent_graphic.top_margin        
       else
-        options[:top_margin]  = layout_default[:top_margin]
+        options[:top_margin] = layout_default[:top_margin]
       end
-      
       if options[:bottom_margin]
       elsif @parent_graphic && @parent_graphic.bottom_margin
-        options[:bottom_margin]  = @parent_graphic.bottom_margin        
+        options[:bottom_margin] = @parent_graphic.bottom_margin        
       else
-        options[:bottom_margin]  = layout_default[:bottom_margin]
+        options[:bottom_margin] = layout_default[:bottom_margin]
       end
-      
-
+      @parent_graphic.pages << self if  @parent_graphic && !@parent_graphic.pages.include?(self)       
       super
-      
-      @parent_graphic.pages << self if  @parent_graphic && @parent_graphic.pages && !@parent_graphic.pages.include?(self)       
       @klass = "Page"
-      @page_number = options.fetch(:page_number, '1')
+      @page_number = options.fetch(:page_number, 1)
       if @parent_graphic && @parent_graphic.double_side
         @left_page  = @page_number.even?
       else
@@ -81,7 +75,8 @@ module RLayout
       elsif options[:object_box]
         @main_box = object_box(main_box_options)
       end
-            
+      
+      
       if block
         instance_eval(&block)
       end

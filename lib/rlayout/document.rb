@@ -53,6 +53,7 @@ SIZES = { "4A0" => [4767.87, 6740.79],
        "LETTER" => [612.00, 792.00],
        "TABLOID" => [792.00, 1224.00],
        "NAMECARD"=> [260.79, 147.40],
+       "IDCARD"=> [147.40, 260.79],
        "PRODUCT"=> [300, 300]}
 
 
@@ -76,10 +77,17 @@ module RLayout
       @pages      = []
       @title      = options.fetch(:title, "untitled")
       @path       = options.fetch(:path, nil)
-      @paper_size = options.fetch(:paper_size, "A4")
-      @portrait   = options.fetch(:portrait, defaults[:portrait])
-      @double_side= options.fetch(:double_side, defaults[:double_side])
-      @starts_left= options.fetch(:starts_left, defaults[:starts_left])
+      if options[:doc_info]
+        @paper_size = options[:doc_info].fetch(:paper_size, "A4")
+        @portrait   = options[:doc_info].fetch(:portrait, defaults[:portrait])
+        @double_side= options[:doc_info].fetch(:double_side, defaults[:double_side])
+        @starts_left= options[:doc_info].fetch(:starts_left, defaults[:starts_left])
+      else
+        @paper_size = options.fetch(:paper_size, "A4")
+        @portrait   = options.fetch(:portrait, defaults[:portrait])
+        @double_side= options.fetch(:double_side, defaults[:double_side])
+        @starts_left= options.fetch(:starts_left, defaults[:starts_left])
+      end
       if @paper_size && @paper_size != "custom"
         @width = SIZES[@paper_size][0]
         @height = SIZES[@paper_size][1]
@@ -87,6 +95,7 @@ module RLayout
         @width      = options.fetch(:width, defaults[:width])
         @height     = options.fetch(:height, defaults[:height])
       end
+      
       @left_margin= options.fetch(:left_margin, defaults[:left_margin])
       @top_margin = options.fetch(:top_margin, defaults[:top_margin])
       @right_margin = options.fetch(:right_margin, defaults[:right_margin])
@@ -103,8 +112,14 @@ module RLayout
       end
       
       if options[:pages]
+        options[:pages].each do |page_hash|
+          Page.new(self, page_hash)
+        end
+        
+      elsif options[:page_objects]
         @pages = options[:pages]
       end
+      
       @current_style = options.fetch(:current_style, DEFAULT_STYLES)
       
       if @toc_on
