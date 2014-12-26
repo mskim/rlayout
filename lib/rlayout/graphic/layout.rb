@@ -15,7 +15,20 @@ module RLayout
       @layout_member    = options.fetch(:layout_member, layout_default[:layout_member])
       @layout_expand    = options.fetch(:layout_expand, layout_default[:layout_expand])
       @layout_length    = options.fetch(:layout_length, layout_default[:layout_length])
-          
+
+      # convert unit to point if they are in cm or mm
+      @x              = convert_to_pt(@x)           if @x.class == String
+      @y              = convert_to_pt(@y)           if @y.class == String
+      @width          = convert_to_pt(@width)       if @width.class == String
+      @height         = convert_to_pt(@height)      if @height.class == String
+      @left_margin    = convert_to_pt(@left_margin) if @left_margin.class == String
+      @top_margin     = convert_to_pt(@top_margin)  if @top_margin.class == String
+      @right_margin   = convert_to_pt(@right_margin)if @right_margin.class == String
+      @bottom_margin  = convert_to_pt(@bottom_margin)if @bottom_margin.class == String
+      @left_inset     = convert_to_pt(@left_inset)  if @left_inset.class == String
+      @top_inset      = convert_to_pt(@top_inset)   if @top_inset.class == String
+      @right_inset    = convert_to_pt(@right_inset) if @right_inset.class == String
+      @bottom_inset   = convert_to_pt(@bottom_inset)if @bottom_inset.class == String
     end
     
     def layout_default

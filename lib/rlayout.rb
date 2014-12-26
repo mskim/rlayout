@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + "/rlayout/version"
+require File.dirname(__FILE__) + "/rlayout/utility"
 require File.dirname(__FILE__) + "/rlayout/graphic"
 require File.dirname(__FILE__) + "/rlayout/container"
 require File.dirname(__FILE__) + "/rlayout/object_box"

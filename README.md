@@ -1,10 +1,7 @@
 TODO List
-	- convert cm, mm to pt
-		:width=> "16.5cm", :height=>"24.5cm"
 	- local_image, project_folder, tag, variable_image_name
 	- center graphic with width and height
 	- draw lines in superview, so the lines don't get cut off
-
 	- add ShoulderColumn, add footnote_area
 	- apply StyleSheet at runtime with default fall back
 	- ePub generation
@@ -22,6 +19,15 @@ TODO List
 		- make it yml
 	- modifiy kramdown into r_kramdown
 
+2014 12 26
+	- convert cm, mm to pt
+		:width=> "16.5cm", :height=>"24.5mm"
+	- rlayout news_article project/folder
+		- rlayout idcard project/folder
+		- rlayout book idcard project/folder
+		- rlayout chapter project/folder
+		- rlayout magazine_article project/folder
+		
 2014 12 20
     - fix auto_layout bug starting_y as bounds_rect, instead of frame_rect
 

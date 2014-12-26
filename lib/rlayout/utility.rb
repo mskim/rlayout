@@ -1,5 +1,16 @@
 
 module  RLayout
+
+  def convert_to_pt(value)
+    if value=~/cm$/
+      return cm2pt(value.sub("cm","").to_i)
+    elsif value=~/mm$/
+      return mm2pt(value.sub("mm","").to_i)
+    # elsif value=~/inch$/
+    end
+    value
+  end
+  
   def pt2mm(pt)
     pt * 0.352778
   end

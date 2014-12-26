@@ -68,7 +68,6 @@ module RLayout
       init_line(options)
       init_text(options)
       init_image(options)
-      
       self
     end
 
@@ -111,9 +110,9 @@ module RLayout
       h = {}
       h[:klass]   = @klass
       h[:x]       = @x        if @x != defaults_hash[:x]
-      h[:y]       = @y        if @x != defaults_hash[:y]
-      h[:width]   = @width    if @x != defaults_hash[:width]
-      h[:height]  = @height   if @x != defaults_hash[:height]
+      h[:y]       = @y        if @y != defaults_hash[:y]
+      h[:width]   = @width    if @width != defaults_hash[:width]
+      h[:height]  = @height   if @height != defaults_hash[:height]
       h[:tag]     = @tag      if @tag 
       
       h.merge!(layout_to_hash)
