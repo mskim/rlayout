@@ -2,13 +2,33 @@
 
 require 'drb'
 require File.dirname(__FILE__) + '/../rlayout'
-require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 require File.dirname(__FILE__) + '/../../lib/rlayout/publication/book'
+require File.dirname(__FILE__) + '/../../lib/rlayout/publication/magazine'
+require File.dirname(__FILE__) + '/../../lib/rlayout/publication/newspaper'
 
 URI = "druby://127.0.0.1:8222"
 puts "runing drb at 127.0.0.1:8222..."
 
 class RLayoutServer
+  
+  # There are two cases
+  # 1. options contains story_path, a path to stroy
+  # 2. options contains story_path, a hash of story content
+  def process_news_article(options)
+    d = RLayout::NewsArticle.new(nil, options)    
+    if d
+      return "success"
+    end
+    'Failed'
+  end
+  
+  def merge_news_section_pdf_articles(options)
+    d = RLayout::NewspaperSection.merge_pdf_articles(options) 
+    if d
+      return "success"
+    end
+    'Failed'   
+  end
   
   def generate_book(path, options={})
     @book = RLayout::Book.new(path)
@@ -16,7 +36,6 @@ class RLayoutServer
     if options[:merge_chapters]
       @book.merge_pdf_chpaters
     end
-    
   end
   
   def rip_data(data)

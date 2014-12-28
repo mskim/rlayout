@@ -11,6 +11,7 @@ require File.dirname(__FILE__) + "/rlayout/document_variables_extend"
 require File.dirname(__FILE__) + "/rlayout/view"
 require File.dirname(__FILE__) + "/rlayout/document"
 require File.dirname(__FILE__) + "/rlayout/article"
+require File.dirname(__FILE__) + "/rlayout/publication/newspaper"
 # require File.dirname(__FILE__) + "/rlayout/db_publishing"
 
 

@@ -22,14 +22,20 @@ module RLayout
       self
     end
   end
-  
+    
   class NewspaperSection
     attr_accessor :folder_path, :issue_numner, :date, :section_name
-    attr_accessor :articles, :section_template
+    attr_accessor :section_template
     def initialize(publication_folder_path, options={})
       # create_folder
-      copy_template
+      create_articles
+      
       self
+    end
+    
+    def create_articles
+      @articles = []
+      copy_template
     end
     
     def copy_template
@@ -40,29 +46,45 @@ module RLayout
       
     end
     
-    def merge_pdf_articles
-      return unless RUBY_ENGINE == 'macruby'
-      book_pdf = PDFDocument.new
-      Dir.glob("#{@folder_path}/*.pdf") do |path|
-        next if path =~ /book.pdf$/
-        puts path
-        url = NSURL.fileURLWithPath path
-        pdf_chapter = PDFDocument.alloc.initWithURL url
-        pdf_chapter.pageCount.times do |i|
-          page = pdf_chapter.pageAtIndex i
-          pdf_data = page.dataRepresentation
-          page=PDFDocument.alloc.initWithData(pdf_data).pageAtIndex(0)
-          book_pdf.insertPage(page, atIndex: book_pdf.pageCount)
-        end
-        puts "book_pdf.pageCount:#{book_pdf.pageCount}"
-      end
+    def base_pdf
       
-      book_pdf.writeToFile("#{@folder_path}/book.pdf")
+    end
+    
+    def articles_info
+      
+    end
+    
+    # options = {
+    #    options[:path]               : section_path
+    #    options[:page_info]          : page options hash
+    #    options[:heading_info]       : heading options hash
+    #    options[:articles_info]      : articles_info list
+    #    options[:output_path]
+    #  }
+    def self.merge_pdf_articles(options={})
+      puts __method__
+      puts "options:#{options}"
+      section_page = Page.new(nil, options[:page_info])
+      puts "section_page:#{section_page}"
+      # section_heading_pdf = options[:path] + "/section_heading.pdf"
+      # options[:image_path] = section_heading_pdf
+      # place heading image
+	    heading = Image.new(section_page, options[:heading_info]) 
+	    puts "heading:#{heading}"
+	    options[:articles_info].each_with_index do |article_info, i|
+  	    # place each aritcles as Image 
+	      Image.new(section_page, article_info)
+	    end
+	    if options[:output_path]
+        section_page.save_pdf(options[:output_path])
+      else
+        puts "No options[:output_path]!!!"
+      end
+      section_page
     end
         
-    def process_markdown_files(options)
-      options = {:starting_page_number=>1}
-      Dir.glob("#{@folder_path}/*.markdown") do |m|
+    def process_news_article_markdown_files(file_list)
+      file_list.each do |m|
         result = convert_markdown2pdf(m, options)
         options[:starting_page_number] = result.next_chapter_starting_page_number if result
       end
