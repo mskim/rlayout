@@ -28,12 +28,12 @@ module RLayout
     
     def draw_fill(r)      
       if @fill_type == 0   #clearColor
-        path=bezierPathWithRect(r)
+        path=NSBezierPath.bezierPathWithRect(r)
         NSColor.clearColor.set
         path.fill
 
       elsif @fill_type == 1 #normal fill
-        path=bezierPathWithRect(r)
+        path=NSBezierPath.bezierPathWithRect(r)
         @fill_color = convert_to_nscolor(@fill_color)    unless @fill_color.class == NSColor  
         @fill_color.set if @fill_color
         path.fill
@@ -41,7 +41,7 @@ module RLayout
       else       
         @fill_other_color = convert_to_nscolor(@fill_other_color)    unless @fill_other_color.class == NSColor  
         myGradient = NSGradient.alloc.initWithStartingColor(@fill_color, endingColor:@fill_other_color)
-        path=bezierPathWithRect(r)
+        path=NSBezierPath.bezierPathWithRect(r)
 
         if(@fill_type == 2) 
           myGradient.drawInBezierPath(path, angle:@fill_angle)

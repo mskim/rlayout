@@ -138,9 +138,6 @@ EOF
       
     end
     
-    def make_long_ditit(s,digits)
-      s.rjust(digits,"0")
-    end
     
     
     #TODO

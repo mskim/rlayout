@@ -6,7 +6,7 @@ module RLayout
   
   class NewsArticle < Page
     attr_accessor :story_path, :heading, :paragraphs
-    attr_accessor :grid_rect, :grid_size, :heading_width
+    attr_accessor :heading_width
     attr_accessor :output_path
     def initialize(parent_graphic, options={})
       @output_path = options[:output_path] if options[:output_path]
@@ -18,19 +18,24 @@ module RLayout
         load_story_hash(options[:story_hash])
       end
       options[:chapter_kind]  = "news_article"
-      options[:width]         = @grid_rect[2]*@grid_size[0]
-      options[:height]        = @grid_rect[3]*@grid_size[1]
-      options[:column_count]  = @grid_rect[2]
-      options[:heading_columns]=@heading_columns
+      if options[:grid_frame]
+        options[:grid_frame]  = [0,0,1,1] unless options[:grid_frame]
+        options[:grid_width]  = 200 unless options[:grid_width]
+        options[:grid_height] = 200 unless options[:grid_height]
+        options[:gutter]      = 5 unless options[:gutter]
+        options[:v_gutter]    = 0 unless options[:v_gutter]
+        options[:width]       = options[:grid_frame][2]*options[:grid_width] + (options[:grid_frame][2] - 1)*options[:gutter]
+        options[:height]      = options[:grid_frame][3]*options[:grid_height] + ((options[:grid_frame][3] - 1)*options[:v_gutter])
+        options[:column_count]= options[:grid_frame][2]
+      end
       options[:text_box]      = true
-      options[:left_margin]   = 5
-      options[:top_margin]    = 5
-      options[:right_margin]  = 5
-      options[:bottom_margin] = 5
+      options[:left_margin]   = 5 unless options[:left_margin]
+      options[:top_margin]    = 5 unless options[:top_margin]
+      options[:right_margin]  = 5 unless options[:right_margin]
+      options[:bottom_margin] = 5 unless options[:bottom_margin]
       super
       layout_story
       if @output_path
-        puts "saving to:#{@output_path}..."
         save_pdf(@output_path)
       end
       self
@@ -40,19 +45,16 @@ module RLayout
       NEWS_STYLES
     end
     
-
     # path to story is given  
     def read_story
       story         = Story.from_meta_markdown(@story_path)
       @heading      = story.heading
       @title        = @heading[:title]
-      @grid_size    = @heading[:grid_size]
       if @heading[:heading_columns]
         @heading_columns = @heading[:heading_columns]
       else
-        @heading_columns = @grid_size[0]
+        @heading_columns = @grid_frame[2]
       end
-      @grid_rect    = @heading[:grid_rect]
       @paragraphs         =[]
       make_paragraph(story.paragraphs)
     end
@@ -64,13 +66,11 @@ module RLayout
       puts "story_hash[:heading]:#{story_hash[:heading]}"
       @heading    = story_hash[:heading]
       @title      = @heading[:title]
-      @grid_size  = @heading[:grid_size]
       if @heading[:heading_columns]
         @heading_columns = @heading[:heading_columns]
       else
-        @heading_columns = @grid_size[0]
+        @heading_columns = @grid_frame[2]
       end
-      @grid_rect    = @heading[:grid_frame]
       @paragraphs = []
       para_data_array = Story.parse_markdown(story_hash[:body_markdown])
       make_paragraph(para_data_array)

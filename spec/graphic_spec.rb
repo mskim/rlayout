@@ -19,8 +19,8 @@ describe ' Graphic from Hash ' do
     File.exists?(@pdf_path).must_equal true
     system("open #{@pdf_path}")
   end
-  
 end
+
 __END__
 describe 'testing Text ' do
   before do

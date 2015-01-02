@@ -102,6 +102,12 @@ module  RLayout
     chunks
   end
 
+  # make 1 into 001
+  # s= "1", digits = 3
+  def make_long_ditit(s, digits)
+    s.rjust(digits,"0")
+  end
+
   ############ git related
 
   # return new or modified file in git repo

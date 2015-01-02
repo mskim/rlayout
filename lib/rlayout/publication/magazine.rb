@@ -51,12 +51,7 @@ EOF
     def self.rtf2md(path)
       
     end
-    
-    def make_long_ditit(s,digits)
-      s.rjust(digits,"0")
-    end
-    
-    
+        
     #TODO
     # breaks for digit that are already 3 digits or more
     # breaks for filenames with space 

@@ -6,7 +6,7 @@ require 'json'
 
 #  line_type=
 require File.dirname(__FILE__) + "/graphic/layout"
-require File.dirname(__FILE__) + "/graphic/grid"
+# require File.dirname(__FILE__) + "/graphic/grid"
 require File.dirname(__FILE__) + "/graphic/fill"
 require File.dirname(__FILE__) + "/graphic/line"
 require File.dirname(__FILE__) + "/graphic/image"
@@ -26,14 +26,16 @@ module RLayout
     attr_accessor :graphics, :fixtures, :floats
     attr_accessor :fill_type, :fill_color, :fill_other_color
     attr_accessor :line_type, :line_color, :line_width, :line_dash
-    attr_accessor :shape, :shape_bezier        
+    attr_accessor :shape, :shape_bezier     
+    attr_accessor :grid, :grid_frame, :gutter, :v_gutter, :grid_cells, :show_grid          
     attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
-    attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand, :grid_rect
+    attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand
     attr_accessor :text_markup, :text_direction, :text_string, :text_color, :text_size, :text_line_spacing, :text_font
     attr_accessor :text_fit_type, :text_alignment, :text_tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
     attr_accessor :text_layout_manager
     attr_accessor :image_object, :image_path, :image_frame, :image_fit_type, :image_caption
+    attr_accessor :grid_frame
     attr_accessor :non_overlapping_rect
     
     # TODO
@@ -57,20 +59,32 @@ module RLayout
       @y                = options.fetch(:y, defaults_hash[:y])
       @width            = options.fetch(:width, defaults_hash[:width])
       @height           = options.fetch(:height, defaults_hash[:height])
-      @grid_rect        = options.fetch(:grid_rect, defaults_hash[:grid_rect]) 
       @shape            = options.fetch(:shape, defaults_hash[:shape])
       @tag              = options[:tag]      
       @shape_bezier     = options[:shape_bezier]
       @auto_save        = options[:auto_save]
-      init_layout(options)      
-      init_grid(options)
+      init_layout(options)
+      # grid
+      if @parent_graphic && @parent_graphic.grid && options[:grid_frame] 
+        set_frame_in_parent_grid(options[:grid_frame]) if options[:grid_frame] && @parent_graphic.grid_base        
+      end
       init_fill(options)
       init_line(options)
       init_text(options)
       init_image(options)
       self
     end
-
+    
+    def set_frame_in_parent_grid(grid_frame)
+      set_frame(@parent_graphic.frame_for(grid_frame))
+    end
+    
+    def set_size_with_frame(options)
+      puts __method__
+      puts "options:#{options}"
+      
+    end
+    
     def defaults
       {
         klass: 'Rectangle',
@@ -78,7 +92,6 @@ module RLayout
         y: 0,
         width: 100,
         height: 100,
-        grid_rect: [0,0,1,1], 
         shape: 0,          
       }
     end
@@ -121,7 +134,6 @@ module RLayout
       h.merge!(line_to_hash)
       h.merge!(text_to_hash)
       h.merge!(image_to_hash)
-      # h[:grid_rect]  = @grid_rect   if @grid_rect != defaults_hash[:grid_rect]
       # h[:shape]  = @shape   if @shape != defaults_hash[:shape]
       h
     end

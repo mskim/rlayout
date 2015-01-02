@@ -19,6 +19,13 @@ TODO List
 		- make it yml
 	- modifiy kramdown into r_kramdown
 
+2014 12 31
+	- fix grid
+
+2014 12 26
+	- fix NewspaperSection
+		- heading, 6x12, 7x12
+		
 2014 12 26
 	- convert cm, mm to pt
 		:width=> "16.5cm", :height=>"24.5mm"

@@ -7,12 +7,16 @@ describe 'create NewsArticle with Image' do
     options={
       story_path: @story_path, 
       heading_columns: 2, 
-      left_margin: 10, 
-      right_margin: 10, 
-      top_margin: 10, 
-      bottom_margin: 10,
+      grid_frame:       [0,0,3,2],
+      grid_width:       200,
+      grid_height:      200,
+      gutter:           5,
+      v_gutter:         0,
+      left_margin:      10, 
+      right_margin:     10, 
+      top_margin:       10, 
+      bottom_margin:    10,
     }
-    
     @m = NewsArticle.new(nil, options)    
   end
   

@@ -8,9 +8,8 @@ module RLayout
   class Container < Graphic
     attr_accessor :layout_mode     # layout_mode: "auto_layout" "grid"
     attr_accessor :layout_direction, :layout_space, :layout_align
-    attr_accessor :grid_column_count, :grid_row_count, :grid_cells, :grid_v_lines, :grid_h_lines, :grid_color, :grid_show
-    attr_accessor :grid_rect, :grid_inset, :grid_top_inset, :grid_bottom_inset, :grid_letf_inset, :grid_right_inset
-    attr_accessor :grid_unit_width, :grid_unit_height, :grid_frame
+    attr_accessor :grid_base, :grid_frame, :grid_cells, :grid_color, :gutter, :v_gutter, :lines_in_grid         
+    attr_accessor :show_grid, :show_text_grid, :grid_width, :grid_height
     attr_accessor :gutter_line_type, :gutter_line_width, :gutter_line_color, :gutter_line_dash
     
     def initialize(parent_graphic, options={}, &block)
@@ -22,32 +21,15 @@ module RLayout
       @layout_direction = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
       @layout_space     = options.fetch(:layout_space, layout_defaults_hash[:layout_space])       
       @layout_align     = options.fetch(:layout_align, layout_defaults_hash[:layout_align])       
-      @grid_cells       = options.fetch(:grid_cells, layout_defaults_hash[:grid_cells])       
-      @grid_column_count= options.fetch(:grid_column_count, layout_defaults_hash[:grid_column_count])       
-      @grid_row_count   = options.fetch(:grid_row_count, layout_defaults_hash[:grid_row_count])       
-      @grid_v_lines     = options.fetch(:grid_v_lines, layout_defaults_hash[:grid_v_lines])       
-      @grid_h_lines     = options.fetch(:grid_h_lines, layout_defaults_hash[:grid_h_lines])       
-      @grid_color       = options.fetch(:grid_color, layout_defaults_hash[:grid_color])       
-      @grid_inset       = options.fetch(:grid_inset, layout_defaults_hash[:grid_inset])       
-      @grid_top_inset   = options.fetch(:grid_top_inset, layout_defaults_hash[:grid_top_inset])       
-      @grid_bottom_inset= options.fetch(:grid_bottom_inset, layout_defaults_hash[:grid_bottom_inset])       
-      @grid_letf_inset  = options.fetch(:grid_letf_inset, layout_defaults_hash[:grid_letf_inset])       
-      @grid_right_inset = options.fetch(:grid_right_inset, layout_defaults_hash[:grid_right_inset])       
-      @grid_unit_width  = options.fetch(:grid_unit_width, layout_defaults_hash[:grid_unit_width])       
-      @grid_unit_height = options.fetch(:grid_unit_height, layout_defaults_hash[:grid_unit_height])       
-      @grid_show        = options.fetch(:grid_show, layout_defaults_hash[:grid_show])
       @gutter_line_type = options[:gutter_line_type]     
       @gutter_line_width= options[:gutter_line_width]
       @gutter_line_color= options[:gutter_line_color]
       @gutter_line_dash = options[:gutter_line_dash]
       @floats           = options[:floats]
+      init_grid(options) if options[:grid]
       if options[:graphics]
         create_children(options[:graphics])
       end
-      
-      if @layout_mode == "grid"
-        update_grids
-      end      
       if block
         instance_eval(&block)
       end      
@@ -60,16 +42,16 @@ module RLayout
       h[:layout_direction]  = "vertical"
       h[:layout_space]      = 0
       h[:layout_align]      = "top"
+      h[:grid]              = [3,3]
       h[:grid_cells]        = Array.new
-      h[:grid_column_count] = 6
       h[:grid_row_count]    = 6
       h[:grid_v_lines]      = Array.new
       h[:grid_h_lines]      = Array.new
       h[:grid_color]        = "blue"
       h[:grid_rect]        = [0,0,1,1]
       h[:grid_inset]        = [0,0,0,0]
-      h[:grid_unit_width]   = 0
-      h[:grid_unit_height]  = 0
+      h[:grid_width]   = 0
+      h[:grid_height]  = 0
       h[:grid_show]         = true
       h
     end

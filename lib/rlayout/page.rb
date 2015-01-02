@@ -49,6 +49,7 @@ module RLayout
       end
       @parent_graphic.pages << self if  @parent_graphic && !@parent_graphic.pages.include?(self)       
       super
+
       @klass = "Page"
       @page_number = options.fetch(:page_number, 1)
       if @parent_graphic && @parent_graphic.double_side
@@ -113,6 +114,7 @@ module RLayout
         layout_length:  1,
       }
     end
+    
     def update_header_and_footer(options={})
       return if @no_fixture_page # for pictures page 
       options[:header][:font] = 8

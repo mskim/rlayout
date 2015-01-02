@@ -1,111 +1,134 @@
 #
-#  ggrid.rb
 # 
 #  Created by Min Soo Kim on 9/1/2013.
 #  Copyright 2013 SoftwareLab. All rights reserved.
 
-#  GGridRecord .
-#  GGridRecord replaces GMatrixRecord, GMatrixRecord is deprocated
-#  Matrix object should use GGridRecord.
-#  GGridRecord handles grid based layout.
-#  We have two layout modes, stack mode and grid mode.
-#  Container can have its own layout mode.
-#  A grid elements can have stack based layer . And it's childd can have grid based layer.
-#  Default layou is the stack mode.
-
+# Grid
+# In Container, we have two layout modes, "stack(auto_layout)" and grid.
 #  
 #  In stack mode, 
-#     1. have direction(mode) of vertical or horizontal, for adding and aligning children graphics. 
+#     1. have layout_direction of vertical or horizontal, for adding and aligning children graphics. 
 #     1. Graphic's size and positions are auto adjusted.
 
-#  In grid based mode, graphics adjust sizes based on the grid.
-#     1. graphic origin is snapped to upper left grid corner.
-#     1. size are set to unit grid block size.
-#     1. sizes are expanded or reduced at grid block width and height.
-#     1. they move by grid block width and height.
-#     1. Grid element can push_a_way overlaping elements to none overlapping spot. 
-#.
+#  In grid based mode, 
+#   grid[col,row]:  number of columns and rows in its own view
+#   grid_cells:     array of grid cells in following hash format
+#   cell =  {
+#       column: 3,
+#       row: 3,
+#       x: 50,
+#       y: 50,
+#       width: 234.12,
+#       height: 122.23,
+#     }
+#  grid_color:         color of the grid lines
+#  grid_frame:         [x,y, width, height] frame in grid unit of parent_graphic's grid
+#  grid_width:    unit grid with
+#  grid_height    unit grid height
+#  show_grid:          boolean whether to show or hide grid
+#  show_text_line:     boolean whether to show or hide body text lines
+#
 #  Usually grid mode is used at page level, and auto_layout mode are used in Containers.
-#  ex. Portait Page will have 12 x 6 grid system
+#  when options hash contains :grid, mode become grid mode.
+#  ex. Portait Page will have 3 x 3 grid system
 #      Newpaper at 7 x 12 and some article with auto_layout mode.
 #  And with each types of publication, we can set the grid system to fit the needs.
 
 
-# TODO
-#  When child graphic is created in grid mode, it looks for empty space where it does not overlap with other grapic
-#  So, the first child will be placed at the upper left corner with size of unit block.
-#  And the second child will be placed the right of the first one, if the first row is filled it will place the next child 
-#  If one of child's size are changed, it can causing the following cells to be pushed to a new position or it can cause overflow,
-#  needing following cells to change it's size.
-#  There can be several options for changes the other cells.
-
-#  grid_rect [x,y, width, height]
-#  cell_position x,y, position of cell
-
-#   grid_column_count:  number of columns
-#   grid_row_count:     number of rows
-#   grid_cells:         array of grid cells
-#   grid_v_lines:       array of vertical grid lines
-#   grid_h_lines:       array of horizontal grid lines
-#   grid_color:         color of the grid lines
-#   grid_show:          boolean whether to show or hide the lines
-#   grid_rect:         frame rect in grid unit
-
-#  Graphic frame is expressed in ralative value to grid
-#   grid_rect: cell origen qne width and height
-
-#  frame can be mutated from snapping to the grid by 
-#   grid_top_inset:
-#   grid_bottom_inset:
-#   grid_letf_inset:
-#   grid_right_inset:
-#   grid_x_shift:
-#   grid_y_shift:
-
-# For newspaper
-# given number of story
-# number of ads
-# It should create best fit for given resouces
-
-
-# Todo
-# combine grid_record with auto_layout in to one, since many of them are overlapping
-# They should be part of Container methods
 
 require 'yaml'
 
 module  RLayout
   
-  # this should go under as Container methods with AutoLayout
-  #, since both of them only apply when it has children
   class Container < Graphic
+    def init_grid(options)
+      @grid_base      = options.fetch(:grid_base, [3,3])
+      @grid_frame     = options.fetch(:grid_frame, [0,0,1,1])
+      @grid_color     = options.fetch(:grid_color, 'blue')       
+      @gutter         = options.fetch(:gutter, 0)
+      @v_gutter       = options.fetch(:v_gutter, 0)
+      @show_grid      = options.fetch(:show_grid, false)
+      update_grid_cells
+    end
+    
+    def update_grid_cells
+      @grid_cells     = []
+      @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
+      @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
+      x_position = @left_margin
+      y_position = @top_margin
+      @grid_base[1].times do |row|
+        @grid_base[0].times do |column|
+          grid_cell = {
+            column: column,
+            row: row,
+            x: x_position,
+            y: y_position,
+            width: @grid_width,
+            height: @grid_height,
+          }
+          @grid_cells << grid_cell
+          x_position += @grid_width + @gutter
+        end
+        x_position = @left_margin
+        y_position += @grid_height + @v_gutter
+      end
+    end
+    
+    def grid_to_hash
+      h = {}
+      h[:grid_base]     = @grid_base unless @grid_base != [1,1]
+      h[:grid_frame]    = @grid_frame unless @grid_frame != [0,0,1,1]
+      h[:gutter]        = @gutter unless @gutter != 0
+      h[:v_gutter]      = @v_gutter unless @v_gutter != 0
+    end
+    
+    def grid_defaults
+      h = {
+        
+      }
+    end
+    
+    def draw_grid(r)
+      NSColor.blueColor.set
+      @grid_cells.each do |cell|
+        rect = NSMakeRect(cell[:x], cell[:y], cell[:width], cell[:height])
+        path = NSBezierPath.bezierPathWithRect(rect)
+        path.setLineWidth(1)
+        path.stroke
+      end
+    end
+    
     
     def grid_size
-      [@grid_unit_width, @grid_unit_height]
+      [@grid_width, @grid_height]
     end
     
     def grid_area
-      @grid_unit_width*@grid_unit_height
+      @grid_width*@grid_height
     end
     
-    def frame_for(grid_rect)
-      puts __method__
-      puts "grid_rect:#{grid_rect}"
-      puts "@grid_unit_width:#{@grid_unit_width}"
-      [left_inset + grid_rect[X_POS]*@grid_unit_width, @left_inset + grid_rect[Y_POS]*@grid_unit_height, grid_rect[WIDTH_VAL]*@grid_unit_width, grid_rect[HEIGHT_VAL]*@grid_unit_height]
+    def frame_for(grid_frame)
+      x       = @left_margin + @left_inset + grid_frame[0]*@grid_width + grid_frame[0]*@gutter
+      y       = @top_margin + @top_inset + grid_frame[1]*@grid_height + grid_frame[1]*@v_gutter
+      width   = grid_frame[2]*@grid_width + (grid_frame[2] - 1)*@gutter
+      height  = grid_frame[3]*@grid_height+ (grid_frame[3] - 1)*@v_gutter
+      [x, y, width, height]
     end
     
     # size of single grid
     def single_grid_size
-      [@grid_unit_width, @grid_unit_height]      
+      [@grid_width, @grid_height]      
     end
     
     def move_cell_to_left_most(cell)
       
     end
+    
     def move_cell_to_right_most(cell)
       
     end
+    
     def move_cell_to_top_most(cell)
       
     end
@@ -114,16 +137,16 @@ module  RLayout
     end
     
     def flipp_cell_horizontally(cell)
-      frame    = cell.grid_record.grid_rect
-      right_space = @grid_column_count - (frame[X_POS] + frame[WIDTH_VAL])
+      frame    = cell.grid_record.grid_frame
+      right_space = @grid_base[0] - (frame[X_POS] + frame[WIDTH_VAL])
       frame[X_POS] = right_space
     end
     
     
     def flipp_cell_vertically(cell)
       puts __method__
-      frame    = cell.grid_record.grid_rect
-      bottom_space = @grid_row_count - (frame[Y_POS] + frame[HEIGHT_VAL])
+      frame    = cell.grid_record.grid_frame
+      bottom_space = @grid_base[1] - (frame[Y_POS] + frame[HEIGHT_VAL])
       frame[Y_POS] = bottom_space
     end
     
@@ -215,7 +238,7 @@ EOF
     end
 
     def grid_name
-      "#{@grid_column_count}x#{grid_row_count}"
+      "#{@grid_base[0]}x#{grid[1]}"
     end
     
     # return true if all grids are occupied
@@ -230,147 +253,15 @@ EOF
     def map
       list = []
       @graphics.each do |cell|
-        list << cell.grid_record.grid_rect
+        list << cell.grid_record.grid_frame
       end
       h = {}
       h[grid_name.to_sym]= list
     end
     
-    # update the size of grid with new frame, new grid_column_count or grid_row_count 
-    def update_grids
-      return unless @layout_mode=="grid"
-      @grid_v_lines      = []
-      
-      # Todo fix this
-      unless @left
-        @top    = 0
-        @bottom = 0
-        @left   = 0
-        @right  = 0
-        @left_inset     = 0
-        @right_inset    = 0
-        @top_inset      = 0
-        @bottom_inset   = 0
-      end
-      
-      x   = @left + @left_inset
-      x2  = x
-      y   = @top + @top_inset
-      y2  = @height - @bottom - @bottom_inset      
-      (@grid_column_count + 1).times do
-        @grid_v_lines << [x, y, x2, y2]
-        x   += @grid_unit_width
-        x2  += @grid_unit_width
-      end
-
-      x   = @left + @left_inset
-      x2  = @width - @right - @right_inset      
-      y   = @top + @top_inset
-      y2  = y
-      @grid_h_lines      = []      
-      
-      
-      (@grid_row_count + 1).times do |i|
-        line = [x, y, x2, y2]
-        @grid_h_lines << line
-        y   += @grid_unit_height
-        y2  += @grid_unit_height
-      end
-            
-      @grid_cells   = []
-      @grid_h_lines.each do |h_line|
-        @grid_v_lines.each do |v_line|
-          next if v_line == @grid_v_lines.last
-          @grid_cells << [v_line[X_POS], h_line[Y_POS], @grid_unit_width, @grid_unit_height]
-        end
-        next if h_line == @grid_h_lines.last
-      end      
-    end
-    
-    
-    # def self.include_relavant_key?(options)
-    #   keys=[:grid_column_count, :grid_row_count, :grid_color, :grid_rect, :grid_inset]
-    #   keys.each do |key|
-    #     return true if options.has_key?(key)
-    #   end
-    #   false
-    # end
-    
-    # def defaults
-    #   hash={}
-    #   hash[:grid_rect] = [0,0,1,1]
-    #   hash[:grid_column_count]  = 3
-    #   hash[:grid_row_count]     = 3
-    #   hash[:grid_color]         = "blue"
-    #   hash[:grid_inset]         = 0
-    #   hash
-    # end
-    #     
-    # def to_hash
-    #   hash={}
-    #   hash[:grid_rect] = @grid_rect
-    #   hash[:grid_column_count]  = @grid_column_count  if @grid_column_count  != defaults[:grid_column_count]
-    #   hash[:grid_row_count]     = @grid_row_count     if @grid_row_count     != defaults[:grid_row_count]
-    #   hash[:grid_color]         = GraphicRecord.string_from_color(@grid_color)  if @grid_color!= defaults[:grid_color] && GraphicRecord.string_from_color(@grid_color) != ""
-    #   hash[:grid_inset]         = @grid_inset         if @grid_inset         != defaults[:grid_inset]
-    #   hash   
-    # end
-    # 
-    # def self.awake_from_rlib(rlib_path)
-    #   unless File.exists?(rlib_path)
-    #     puts "file #{rlib_path} not found!!!"
-    #     return 
-    #   end      
-    #   GGridRecord.new(nil, YAML::load_file(rlib_path + "/layout.yml"))
-    # end
-    # 
-    # # un-archive object from hash
-    # def self.from_hash(owner_graphic, grid_hash)
-    #   GGridRecord.new(owner_graphic, grid_hash)      
-    # end
-    
-              
-    # for macruby
-    # def draw_lines(r)
-    #   return unless @grid_show
-    #   if RUBY_ENGINE == 'macruby'
-    #     @grid_color  = GraphicRecord.convert_to_nscolor(@grid_color)    unless @grid_color.class == NSColor  
-    #     @grid_color.set
-    #   end
-    #   x_offset = r.origin.x
-    #   y_offset = r.origin.y
-    #   @grid_v_lines.each do |line|
-    #     path = NSBezierPath.new
-    #     path.lineWidth = 0.5                
-    #     path.moveToPoint NSMakePoint(line[X_POS] + x_offset, line[Y_POS] + y_offset)
-    #     path.lineToPoint NSMakePoint(line[WIDTH] + x_offset, line[HEIGHT_VAL] + y_offset)
-    #     path.stroke
-    #   end
-    # 
-    #   @grid_h_lines.each do |line|
-    #     path = NSBezierPath.new
-    #     path.lineWidth = 0.2        
-    #     path.moveToPoint NSMakePoint(line[X_POS] + x_offset, line[Y_POS] + y_offset)
-    #     path.lineToPoint NSMakePoint(line[WIDTH_VAL] + x_offset, line[HEIGHT_VAL] + y_offset)
-    #     path.stroke
-    #   end      
-    # 
-    # end
-    # 
-    # def drawRecord(r) 
-    #   # NSColor.lightGrayColor.set
-    #   # NSBezierPath.bezierPathWithRect(r).fill
-    #   draw_lines(r) if @grid_show
-    # end
-    
-    # Push other cell away from the selected cell
-    # by reorder and re-positioning cells
-    def push_away_cells
-      
-    end
     
     # given cell index, get x, y position in grid unit
-    def grid_rect_of(grid_index)
+    def grid_frame_of(grid_index)
       origin_array = origin_of_cell(grid_index)
       origin_array << 1
       origin_array << 1
@@ -380,11 +271,11 @@ EOF
     def origin_of_cell(cell_index)
       if cell_index < 0
         return [0,0]
-      elsif cell_index > @grid_column_count*@grid_row_count
-        return [@grid_column_count - 1, @grid_row_count - 1]
+      elsif cell_index > @grid_base[0]*@grid_base[1]
+        return [@grid_base[0] - 1, @grid_base[1] - 1]
       end
-      row = cell_index / @grid_column_count
-      column = cell_index % @grid_column_count
+      row = cell_index / @grid_base[0]
+      column = cell_index % @grid_base[0]
       [column, row]
     end
     
@@ -394,15 +285,15 @@ EOF
       
       if Math.sqrt(number) > Math.sqrt(number).to_i
         if (int_value+1)*(int_value) >=  number
-          @grid_column_count  = int_value+1
-          @grid_row_count     = int_value
+          @grid_base[0]  = int_value+1
+          @grid_base[1]     = int_value
         else
-          @grid_column_count  = int_value+1
-          @grid_row_count     = int_value+1
+          @grid_base[0]  = int_value+1
+          @grid_base[1]     = int_value+1
         end
       elsif Math.sqrt(number) == Math.sqrt(number).to_i
-        @grid_column_count  = int_value
-        @grid_row_count     = int_value
+        @grid_base[0]  = int_value
+        @grid_base[1]     = int_value
       end
     end
     
@@ -416,7 +307,7 @@ EOF
     #   return unless cells
     #   
     #   cell_count = cells.length
-    #   if cells.length < @grid_row_count
+    #   if cells.length < @grid_base[1]
     #     
     #   else
     #     
@@ -429,9 +320,9 @@ EOF
       row     = 0
       column  = 0
       @graphics.each_with_index do |graphic, i|
-        graphic.grid_record.grid_rect=[column,row,1,1]
+        graphic.grid_record.grid_frame=[column,row,1,1]
         column +=1
-        if column >= @grid_column_count 
+        if column >= @grid_base[0] 
           row += 1 
           column = 0
         end
@@ -439,15 +330,15 @@ EOF
     end
     
     def grid_unit_size
-      [@grid_unit_width, @grid_unit_height]
+      [@grid_width, @grid_height]
     end
     
     # set grid_cell index
-    # adjust grid cells with grid_unit_width, grid_unit_height
+    # adjust grid cells with grid_width, grid_height
     def relayout_grid! 
       return unless @grid_cells
-      @grid_unit_width  = (@width - @left - @left_inset - @right - @right_inset)/@grid_column_count 
-      @grid_unit_height = (@height - @top - @top_inset - @bottom - @bottom_inset)/@grid_row_count 
+      @grid_width  = (@width - @left - @left_inset - @right - @right_inset)/@grid_base[0] 
+      @grid_height = (@height - @top - @top_inset - @bottom - @bottom_inset)/@grid_base[1] 
       
       update_grids
       x   = @left + @left_inset
@@ -456,13 +347,13 @@ EOF
       row = 0
       
       @graphics.each_with_index do |graphic, i|
-        unless graphic.grid_rect
-          graphic.grid_rect   = [0,0,1,1]
+        unless graphic.grid_frame
+          graphic.grid_frame   = [0,0,1,1]
         end
-        graphic.x    = x + graphic.grid_rect[X_POS]*@grid_unit_width
+        graphic.x    = x + graphic.grid_frame[X_POS]*@grid_width
         graphic.y    = y
-        graphic.width  = graphic.grid_rect[WIDTH_VAL]*@grid_unit_width
-        graphic.height = graphic.grid_rect[HEIGHT_VAL]*@grid_unit_height
+        graphic.width  = graphic.grid_frame[WIDTH_VAL]*@grid_width
+        graphic.height = graphic.grid_frame[HEIGHT_VAL]*@grid_height
                 
         if graphic.klass == "Image"
           graphic.image_record.apply_fit_type if graphic.image_record
@@ -476,7 +367,7 @@ EOF
         
         x+= graphic.width
         col +=1
-        if col >= @grid_column_count
+        if col >= @grid_base[0]
           col = 0
           x   = @left + @left_inset
           y+= graphic.height
@@ -510,12 +401,12 @@ EOF
         
     def occupying_grids(graphic)
       occupied_grid = []
-      starting_grid_index = graphic.grid_record.grid_rect[X_POS]  + graphic.grid_record.grid_rect[Y_POS] * @grid_row_count
-      @grid_rect[HEIGHT_VAL].times do 
-        @grid_rect[WIDTH_VAL].times do |i|
+      starting_grid_index = graphic.grid_record.grid_frame[X_POS]  + graphic.grid_record.grid_frame[Y_POS] * @grid_base[1]
+      @grid_frame[HEIGHT_VAL].times do 
+        @grid_frame[WIDTH_VAL].times do |i|
           occupied_grid << starting_grid_index + i
         end
-        starting_grid_index = starting_grid_index + @grid_row_count
+        starting_grid_index = starting_grid_index + @grid_base[1]
       end
       occupied_grid
     end
@@ -528,16 +419,16 @@ EOF
       
       occupied = []
       @graphics.each do |graphic|
-        starting_grid_index = graphic.grid_record.grid_rect[X_POS]  + graphic.grid_record.grid_rect[Y_POS] * @grid_row_count
-        graphic.grid_record.grid_rect[HEIGHT_VAL].times do 
-          graphic.grid_record.grid_rect[WIDTH_VAL].times do |i|
+        starting_grid_index = graphic.grid_record.grid_frame[X_POS]  + graphic.grid_record.grid_frame[Y_POS] * @grid_base[1]
+        graphic.grid_record.grid_frame[HEIGHT_VAL].times do 
+          graphic.grid_record.grid_frame[WIDTH_VAL].times do |i|
             occupied << starting_grid_index + i
           end
-          starting_grid_index = starting_grid_index + @grid_row_count
+          starting_grid_index = starting_grid_index + @grid_base[1]
         end
       end
        
-      empty_grids = Array(0..(@grid_column_count*@grid_row_count-1))
+      empty_grids = Array(0..(@grid_base[0]*@grid_base[1]-1))
       occupied.each do |occupaying_grid|
         empty_grids.delete(occupaying_grid)
       end
@@ -546,25 +437,9 @@ EOF
     
     # place the graphic at given grid index of parent grid with width of 1 and height of 1
     def place_graphic_at(grid_index)
-      @grid_rect = grid_rect_of(grid_index)
+      @grid_frame = grid_frame_of(grid_index)
     end
-    
-    def place_child_at(child, grid_index)
-      if child.grid_record.nil?
-        child.grid_record   = RLayout::GGridRecord.new(graphic)
-      end
-      child.grid_record.grid_rect = grid_rect_of(grid_index)
-    end
-    
-    # This assums that all childern are unit side,
-    # Todo 
-    # implement for children of variable size
-    def relayout_children_grid
-      @graphics.each_with_index do |child,i|
-        place_child_at(child,i)
-      end 
-    end
-    
+        
     # ++++++++++++++ getting the  grid at point
     def grid_cell_at_point(point)
       @graphics.each_with_index do |cell, i|
