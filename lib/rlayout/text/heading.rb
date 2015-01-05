@@ -196,7 +196,6 @@ module RLayout
     
     def leading(string, options={})
       atts                          = @current_style["leading"]
-      atts                          = current.style_for_markup("leading", options)
       atts[:text_string]            = string
       atts[:width]                  = @width
       @leading_object               = Text.new(self, atts)

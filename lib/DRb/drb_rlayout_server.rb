@@ -23,7 +23,7 @@ class RLayoutServer
   end
   
   def merge_news_section_pdf_articles(options)
-    d = RLayout::NewspaperSection.merge_pdf_articles(options) 
+    d = RLayout::NewspaperSection.new(nil,options).merge_pdf_articles() 
     if d
       return "success"
     end

@@ -61,7 +61,6 @@ module RLayout
       @floats = []
       @x = 0
       @y = 0
-      
       main_box_options = {}
       main_box_options[:x]            = @left_margin
       main_box_options[:y]            = @top_margin

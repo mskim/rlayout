@@ -112,6 +112,8 @@ module RLayout
       @parent_graphic = parent_graphic
       @section_path   = options[:section_path] if options[:section_path]
       @heading_info   = options.fetch(:heading_info, {:layout_expand=>1}) 
+      # @heading_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
+      # @heading_info[:layout_expand] = [:width,:height]
       @main_info      = options.fetch(:main_info, {:layout_expand=>11})
       @articles_info  = options[:articles_info] if options[:articles_info]
       @output_path    = options[:output_path]   if options[:output_path]

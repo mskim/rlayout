@@ -148,16 +148,17 @@ module RLayout
 
     def fit_horizontal
       return unless @image_object
+      @image_frame      = NSZeroRect
       @image_frame.size = @image_object.size
-      if frame
-        @source_frame = frame.dup
+      if @image_frame
+        @source_frame = @image_frame.dup
       else
         @source_frame = NSZeroRect
         return
       end
       # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
       # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
-      source_height = frame.size.height / (frame.size.width/@image_frame.size.width)
+      source_height = @image_frame.size.height / (@image_frame.size.width/@image_frame.size.width)
       @source_frame.origin.x = 0
       @source_frame.origin.y = (@image_frame.size.height - source_height)/2.0
       @source_frame.size.height = source_height
@@ -167,6 +168,7 @@ module RLayout
     def fit_keep_ratio
       return unless @owner_graphic
       return unless @image_object
+      @image_frame      = NSZeroRect
       @image_frame.size = @image_object.size
       grapaphic_rect_width_to_height_ratio  = frame.size.width/frame.size.height
       image_frame_width_to_height_ratio     = @image_frame.size.width/@image_frame.size.height
