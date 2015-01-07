@@ -88,6 +88,7 @@ module RLayout
         @double_side= options.fetch(:double_side, document_defaults[:double_side])
         @starts_left= options.fetch(:starts_left, document_defaults[:starts_left])
       end
+      
       if @paper_size && @paper_size != "custom"
         @width = SIZES[@paper_size][0]
         @height = SIZES[@paper_size][1]
@@ -141,10 +142,10 @@ module RLayout
         width: 600,
         height: 800,
         margin: 100,
-        left_margin: 100,
-        top_margin: 100,
-        right_margin: 100,
-        bottom_margin: 100,
+        left_margin: 50,
+        top_margin: 50,
+        right_margin: 50,
+        bottom_margin: 50,
       }
     end
     

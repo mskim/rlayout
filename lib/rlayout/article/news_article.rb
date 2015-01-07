@@ -15,7 +15,7 @@ module RLayout
         options[:column_count]= options[:grid_frame][2]
         @grid_width  = options.fetch(:grid_width, 200)
         @grid_height  = options.fetch(:grid_height, 200)
-        options[:gutter]      = 5 unless options[:gutter]
+        options[:gutter]      = 10 unless options[:gutter]
         options[:v_gutter]    = 0 unless options[:v_gutter]
         options[:width]       = options[:grid_frame][2]*options[:grid_width] + (options[:grid_frame][2] - 1)*options[:gutter]
         options[:height]      = options[:grid_frame][3]*options[:grid_height] + ((options[:grid_frame][3] - 1)*options[:v_gutter])
@@ -94,7 +94,6 @@ module RLayout
       @heading[:layout_expand]  = [:height]
       # @heading[:line_width]     = 2
       # @heading[:line_color]     = 'red'
-      # puts "@heading_columns:#{@heading_columns}"
       heading_width = @main_box.width_of_column(@heading_columns)
       @heading[:width]          = heading_width
       @heading[:align_to_body_text]= true

@@ -6,7 +6,6 @@ require 'json'
 
 #  line_type=
 require File.dirname(__FILE__) + "/graphic/layout"
-# require File.dirname(__FILE__) + "/graphic/grid"
 require File.dirname(__FILE__) + "/graphic/fill"
 require File.dirname(__FILE__) + "/graphic/line"
 require File.dirname(__FILE__) + "/graphic/image"
@@ -63,7 +62,7 @@ module RLayout
       @auto_save        = options[:auto_save]
       init_layout(options)
       # grid
-      if @parent_graphic && @parent_graphic.grid && options[:grid_frame] 
+      if @parent_graphic && @parent_graphic.respond_to?(:grid_base) && @parent_graphic.grid_base && options[:grid_frame] 
         set_frame_in_parent_grid(options[:grid_frame]) if options[:grid_frame] && @parent_graphic.grid_base        
       end
       init_fill(options)

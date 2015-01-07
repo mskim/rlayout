@@ -50,7 +50,7 @@ class GraphicViewMac < NSView
     @graphic.draw_image(r)
     @graphic.text_layout_manager.draw_text(r)  if @graphic.text_layout_manager
     @graphic.draw_line(r)
-    @graphic.draw_grid(r)  if @graphic.grid && @graphic.show_grid
+    @graphic.draw_grid(r)  if @graphic.respond_to?(:grid_base) && @graphic.show_grid
   end
   
   # make it flopped view

@@ -19,6 +19,10 @@ TODO List
 		- make it yml
 	- modifiy kramdown into r_kramdown
 
+2014 1 7
+	- fix Paragraph, head
+	- fix NewsArticle, TextBox
+
 2014 12 31
 	- fix grid
 

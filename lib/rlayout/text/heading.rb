@@ -88,23 +88,6 @@ module RLayout
       relayout!
       self
     end
-
-    def self.news_article_heading(options={})
-      atts          = NEWS_STYLES["title"]
-      atts[:string] = options[:title]
-      height        = GTextRecord.text_height_with_atts(width, atts)
-      height_sum    += height
-      @title        = Text.new(self, :ns_atts_array=>[atts], :line_with=>5, :text_fit=>FIT_FONT_SIZE)         
-      @title.layout_expand=[:width, :height]
-      @title.layout_length  = height
-      news_setting = {
-        :title => "Newspaper sample title",
-        :author => "Min Soo Kim",
-        :category => "news"
-      }
-      
-      Heading.new(nil, news_setting)
-    end
     
     # create container with template and replace variavle data to get our heaing
     def self.variable_heading(options)
@@ -150,22 +133,7 @@ module RLayout
       heading.replace_variables(options)
       heading
     end
-    
-    # title, subtile, author, quote
-    def self.chapter_heading(options={})
-      
-    end
-    
-    # titel, subtile, author, quote
-    def self.magazine_heading(options={})
-      
-    end
-    
-    # title, phone, 
-    def self.mart_flier_heading(options={})
-      
-    end
-    
+        
     def self.make_headline(options={})
       headline= Heading.new(nil, options)
       if options[:output_path]
