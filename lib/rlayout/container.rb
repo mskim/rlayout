@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + "/container/auto_layout"
 require File.dirname(__FILE__) + "/container/grid"
+require File.dirname(__FILE__) + "/container/float"
 require File.dirname(__FILE__) + "/container/pgscript"
 require File.dirname(__FILE__) + "/container/text_form"
 
@@ -26,7 +27,7 @@ module RLayout
       @gutter_line_color= options[:gutter_line_color]
       @gutter_line_dash = options[:gutter_line_dash]
       @floats           = options[:floats]
-      init_grid(options) if options[:grid]
+      init_grid(options) if options[:grid_base]
       if options[:graphics]
         create_children(options[:graphics])
       end
@@ -42,16 +43,12 @@ module RLayout
       h[:layout_direction]  = "vertical"
       h[:layout_space]      = 0
       h[:layout_align]      = "top"
-      h[:grid]              = [3,3]
+      h[:grid_base]         = [3,3]
       h[:grid_cells]        = Array.new
-      h[:grid_row_count]    = 6
-      h[:grid_v_lines]      = Array.new
-      h[:grid_h_lines]      = Array.new
       h[:grid_color]        = "blue"
-      h[:grid_rect]        = [0,0,1,1]
-      h[:grid_inset]        = [0,0,0,0]
-      h[:grid_width]   = 0
-      h[:grid_height]  = 0
+      h[:grid_frame]        = [0,0,1,1]
+      h[:grid_width]        = 0
+      h[:grid_height]       = 0
       h[:grid_show]         = true
       h
     end

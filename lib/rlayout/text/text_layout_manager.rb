@@ -227,7 +227,7 @@ module RLayout
       @text_underflow = false
       proposed_height = @owner_graphic.height
       proposed_height = options[:proposed_height] if options[:proposed_height]
-      proposed_width  = @owner_graphic.width
+      proposed_width  = @owner_graphic.width      
       proposed_width  = options[:proposed_width] if options[:proposed_width]
       @proposed_path   = CGPathCreateMutable()
       bounds          = CGRectMake(0, 0, proposed_width, 1000)

@@ -18,7 +18,7 @@ module RLayout
     attr_accessor :current_item_index
     
     def initialize(options={})
-      @heading     = options.fetch(:heading, defaults)
+      @heading     = options.fetch(:heading, story_defaults)
       @published  = heading.fetch(:published, false)
       @paragraphs = options.fetch(:paragraphs,[])
       @current_item_index = 0
@@ -32,7 +32,7 @@ module RLayout
       self
     end
     
-    def defaults
+    def story_defaults
       h={}
       h[:title]     = 'Untitled Story '
       h[:subtitle]  = 'This is a sample subtitle '
@@ -79,10 +79,11 @@ module RLayout
     end
     
     def self.parse_markdown(source, options={})
+      @para_data=[]
+      return @para_data if source == " " || source == ""
       demotion_level = options.fetch(:demotion_level, 0)
       demotion_level = demotion_level.to_i
        
-      @para_data=[]
       Kramdown::Document.new(source).root.children.each do |child|
         unless child.type == :blank
           para={}

@@ -50,6 +50,10 @@ module RLayout
       @image_fit_type   = options.fetch(:image_fit_type, image_defaults[:image_fit_type])
       if @image_path
         @image_object=NSImage.alloc.initByReferencingFile(@image_path)
+        if options[:adjust_height_to_keep_ratio]
+          # change height 
+          @height *= image_object_height_to_width_ratio
+        end
         apply_fit_type
       elsif @local_image
         #TODO

@@ -11,7 +11,6 @@ require File.dirname(__FILE__) + "/graphic/fill"
 require File.dirname(__FILE__) + "/graphic/line"
 require File.dirname(__FILE__) + "/graphic/image"
 require File.dirname(__FILE__) + "/graphic/text"
-require File.dirname(__FILE__) + "/graphic/float"
 
 X_POS       = 0
 Y_POS       = 1
@@ -53,13 +52,12 @@ module RLayout
       elsif  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
         @parent_graphic.graphics << self  
       end
-      defaults_hash     = defaults
-      @klass            = options.fetch(:klass, defaults_hash[:klass]) 
-      @x                = options.fetch(:x, defaults_hash[:x])
-      @y                = options.fetch(:y, defaults_hash[:y])
-      @width            = options.fetch(:width, defaults_hash[:width])
-      @height           = options.fetch(:height, defaults_hash[:height])
-      @shape            = options.fetch(:shape, defaults_hash[:shape])
+      @klass            = options.fetch(:klass, graphic_defaults[:klass]) 
+      @x                = options.fetch(:x, graphic_defaults[:x])
+      @y                = options.fetch(:y, graphic_defaults[:y])
+      @width            = options.fetch(:width, graphic_defaults[:width])
+      @height           = options.fetch(:height, graphic_defaults[:height])
+      @shape            = options.fetch(:shape, graphic_defaults[:shape])
       @tag              = options[:tag]      
       @shape_bezier     = options[:shape_bezier]
       @auto_save        = options[:auto_save]
@@ -85,7 +83,7 @@ module RLayout
       
     end
     
-    def defaults
+    def graphic_defaults
       {
         klass: 'Rectangle',
         x: 0,
@@ -119,13 +117,12 @@ module RLayout
     end
     
     def to_hash
-      defaults_hash = defaults
       h = {}
       h[:klass]   = @klass
-      h[:x]       = @x        if @x != defaults_hash[:x]
-      h[:y]       = @y        if @y != defaults_hash[:y]
-      h[:width]   = @width    if @width != defaults_hash[:width]
-      h[:height]  = @height   if @height != defaults_hash[:height]
+      h[:x]       = @x        if @x != graphic_defaults[:x]
+      h[:y]       = @y        if @y != graphic_defaults[:y]
+      h[:width]   = @width    if @width != graphic_defaults[:width]
+      h[:height]  = @height   if @height != graphic_defaults[:height]
       h[:tag]     = @tag      if @tag 
       
       h.merge!(layout_to_hash)
@@ -134,7 +131,7 @@ module RLayout
       h.merge!(line_to_hash)
       h.merge!(text_to_hash)
       h.merge!(image_to_hash)
-      # h[:shape]  = @shape   if @shape != defaults_hash[:shape]
+      # h[:shape]  = @shape   if @shape != graphic_defaults[:shape]
       h
     end
     
@@ -189,6 +186,45 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       false
     end
     
+    def min_x(rect)
+      rect[0]
+    end
+
+    def min_y(rect)
+      rect[1]
+    end
+
+    def mid_x(rect)
+      rect[0] + rect[2]/2
+    end
+
+    def mid_y(rect)
+      rect[1] + rect[3]/2
+    end
+
+    def max_x(rect)
+      rect[0] + rect[2]
+    end
+
+    def max_y(rect)
+      rect[1] + rect[3]
+    end
+
+    def contains_rect(rect_1,rect_2)
+      (rect_1[0]<=rect_2[0] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) >= max_y(rect_2))
+    end
+
+    def intersects_x(rect1, rect2)
+      (max_x(rect1) > rect2[0] && max_x(rect2) > rect1[0]) || (max_x(rect2) > rect1[0] && max_x(rect1) > rect2[0])
+    end
+
+    def intersects_y(rect1, rect2)
+      (max_y(rect1) > rect2[1] || max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] || max_y(rect1) > rect2[1])
+    end
+
+    def intersects_rect(rect_1, rect_2)
+      intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
+    end
     def self.random_graphic_atts
       atts = {}
       atts[:fill_color] = COLOR_NAMES.sample
@@ -600,7 +636,6 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
         Text.new(nil, text_string: "This is a sample text string")
       end
     end
-    
   end
   
   class Rectangle < Graphic

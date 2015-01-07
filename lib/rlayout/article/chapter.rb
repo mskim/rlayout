@@ -174,21 +174,7 @@ module RLayout
     def save_toc(path)
       
     end
-    
-    def defaults
-      {
-        portrait: true,
-        double_side: false,
-        starts_left: true,
-        width: 419.53,
-        height: 595.28,
-        left_margin: 50,
-        top_margin: 50,
-        right_margin: 50,
-        bottom_margin: 100,
-      }
-    end
-    
+        
     def update_header_and_footer
       header= {}
       header[:first_page_text]  = "| #{@book_title} |" if @book_title

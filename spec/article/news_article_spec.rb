@@ -8,19 +8,18 @@ describe 'load stoy' do
         :grid_height => 158.67,
          :story_hash => {
                 :heading => {
-                 :title => "Ebola outbreak is getting serious",
-                :author => "some author",
-              :subtitle => "Some subtitle is here",
-               :leading => "This is leading",
-            :image_path => "/Users/mskim/Development/rails4/newsman/public/issues/1/2/image/",
-              :category => "news"
+                   :category => "news",
+                      :title => "Mr. Kim Welcome!",
+                     :author => "some author",
+                   :subtitle => "This is some interesting article",
+            :heading_columns => 2
           },
-          :body_markdown => "#### This is sub head\r\n\r\nAnd this is body.  And this is body. And this is body. And this is body.  And this is body.  And this is body. \r\n\r\n#### This is sub head\r\n\r\nAnd this is body.  And this is body. And this is body. And this is body.  And this is body.  And this is body. \r\n\r\n#### This is sub head\r\n\r\nAnd this is body.  And this is body. And this is body. And this is body.  And this is body.  And this is body. \r\n\r\n#### This is sub head\r\n\r\nAnd this is body.  And this is body. And this is body. And this is body.  And this is body.  And this is body. \r\n\r\n#### This is sub head\r\n\r\nAnd this is body.  And this is body. And this is body. And this is body.  And this is body.  And this is body. \r\n\r\n#### This is sub head\r\n\r\nAnd this is body.  And this is body. And this is body. And this is body.  And this is body.  And this is body. \r\n\r\n#### This is sub head\r\n\r\nAnd this is body.  And this is body. And this is body. And this is body.  And this is body.  And this is body. \r\n\r\n#### This is sub head\r\n\r\nAnd this is body.  And this is body. And this is body. And this is body.  And this is body.  And this is body. "
+          :body_markdown => "#### One is a first part of body. \r\n\r\n#### And some more text and some more\r\nof the text.\r\n\r\nThis is the body text for the story. And some more lines of text is here.\r\n\r\n#### And some more text and some more\r\nof the text.\r\n\r\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\r\n\r\n#### And some more text and some more\r\nof the text.\r\n\r\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\r\n\r\n#### And some more text and some more\r\nof the text.\r\n\r\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\r\n\r\n#### And some more text and some more\r\nof the text.\r\n\r\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\r\n\r\n\r\n\r\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here."
         },
-        :output_path => "/Users/mskim/Development/rails4/newsman/public/issues/1/2/6.pdf"
+        :output_path => "/Users/mskim/Development/rails4/newsman/public/issues/1/1/1.pdf"
       }
-    @m = NewsArticle.new(nil, options) 
-    @pdf_path ="/Users/mskim/Development/rails4/newsman/public/issues/1/2/6.pdf"
+    @m = NewsArticle.new(nil, options)
+    @pdf_path ="/Users/mskim/Development/rails4/newsman/public/issues/1/1/1.pdf"
   end
 
   it 'should save loaded story' do
@@ -36,12 +35,12 @@ describe 'load stoy' do
        :grid_frame => [4,3,3,4],
        :grid_width => 188.18,
        :grid_height => 158.67,
+       :image_path => "/Users/mskim/Development/rails4/newsman/public/issues/1/1/image//uploads/story/image/1/IMG_0347.jpg",
        :story_hash => {
        :heading => {
                :title => "Mr. Kim Welcome!",
               :author => "some author",
             :subtitle => "This is some interesting article",
-          :image_path => "/Users/mskim/Development/rails4/newsman/public/issues/1/1/image//uploads/story/image/1/IMG_0347.jpg",
             :category => "news"
         },
         :body_markdown => "#### One is a first part of body. \r\n\r\n#### And some more text and some more\r\nof the text.\r\n\r\nThis is the body text for the story. And some more lines of text is here.\r\n\r\n#### And some more text and some more\r\nof the text.\r\n\r\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\r\n\r\n#### And some more text and some more\r\nof the text.\r\n\r\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\r\n\r\n#### And some more text and some more\r\nof the text.\r\n\r\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\r\n\r\n#### And some more text and some more\r\nof the text.\r\n\r\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\r\n\r\n\r\n\r\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here."

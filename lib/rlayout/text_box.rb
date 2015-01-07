@@ -46,7 +46,6 @@ module RLayout
       @heading_columns  = options.fetch(:heading_columns, @column_count)
       create_columns
       @floats           = options.fetch(:floats, [])
-      
       @floats.each do |float|
         float.init_float
       end
@@ -55,20 +54,7 @@ module RLayout
       end
       self
     end
-    
-    def heading_width
-      unless @heading_columns
-        return text_rect[WIDTH_VAL]
-      end
-      if @graphics.length <= 1
-        text_rect[WIDTH_VAL]
-      elsif @heading_columns >= @graphics.length
-        text_rect[WIDTH_VAL]
-      else
-        max_x(@graphics[@heading_columns-1].frame_rect) #- text_rect[X_POS]
-      end
-    end
-    
+                  
     def create_columns
       @column_count.times do
         TextColumn.new(self)
@@ -93,6 +79,30 @@ module RLayout
         document.add_to_toc_list(item)
       end
     end
+        
+    def width_of_column(columns)
+      return 0 if columns==0
+      if columns <= @graphics.length
+        return max_x(@graphics[columns-1].frame_rect) - min_x(@graphics.first.frame_rect)
+      end
+      max_x(@graphics.last.frame_rect) - min_x(@graphics.first.frame_rect)
+    end
+    
+    # place imaegs that are in the head of the story as floats
+    def place_float_images(options={})
+      #TODO
+      # options[:image_frame]
+      @heading = @floats.first
+      starting_y = 0
+      starting_y += @heading.height if @heading
+      options[:is_float]       = true
+      starting_y               += options[:y] if options[:y]
+      options[:y]              = starting_y  
+      options[:adjust_height_to_keep_ratio]     = true
+      #TODO make height as multiles of body text
+      @image  = Image.new(self, options) 
+    end
+
     
     # steps
     # 1. take out front_most_item from the array
@@ -103,7 +113,6 @@ module RLayout
     #    if partilly_fit? go to next column and insert the left over to the next column
     # 1. if the last column is reached with un-placed item, place item back at the fornt of the array and return no
     # 1. if teh next column is available , repeat colum insert with partial item.
-    
     def layout_items(flowing_items)
       @graphics.each do |g|
         g.set_starting_position_at_non_overlapping_area

@@ -23,7 +23,7 @@ module RLayout
     attr_accessor :host, :user, :password, :db_name, :connected
     
     def initialize(options={})
-      @heading      = options.fetch(:heading, defaults)
+      @heading      = options.fetch(:heading, nil)
       @published    = heading.fetch(:published, false)
       @connection_type = options(:connection_type, "rest")
       @db_items     = []

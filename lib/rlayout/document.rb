@@ -79,27 +79,27 @@ module RLayout
       @path       = options.fetch(:path, nil)
       if options[:doc_info]
         @paper_size = options[:doc_info].fetch(:paper_size, "A4")
-        @portrait   = options[:doc_info].fetch(:portrait, defaults[:portrait])
-        @double_side= options[:doc_info].fetch(:double_side, defaults[:double_side])
-        @starts_left= options[:doc_info].fetch(:starts_left, defaults[:starts_left])
+        @portrait   = options[:doc_info].fetch(:portrait, document_defaults[:portrait])
+        @double_side= options[:doc_info].fetch(:double_side, document_defaults[:double_side])
+        @starts_left= options[:doc_info].fetch(:starts_left, document_defaults[:starts_left])
       else
         @paper_size = options.fetch(:paper_size, "A4")
-        @portrait   = options.fetch(:portrait, defaults[:portrait])
-        @double_side= options.fetch(:double_side, defaults[:double_side])
-        @starts_left= options.fetch(:starts_left, defaults[:starts_left])
+        @portrait   = options.fetch(:portrait, document_defaults[:portrait])
+        @double_side= options.fetch(:double_side, document_defaults[:double_side])
+        @starts_left= options.fetch(:starts_left, document_defaults[:starts_left])
       end
       if @paper_size && @paper_size != "custom"
         @width = SIZES[@paper_size][0]
         @height = SIZES[@paper_size][1]
       else
-        @width      = options.fetch(:width, defaults[:width])
-        @height     = options.fetch(:height, defaults[:height])
+        @width      = options.fetch(:width, document_defaults[:width])
+        @height     = options.fetch(:height, document_defaults[:height])
       end
       
-      @left_margin= options.fetch(:left_margin, defaults[:left_margin])
-      @top_margin = options.fetch(:top_margin, defaults[:top_margin])
-      @right_margin = options.fetch(:right_margin, defaults[:right_margin])
-      @bottom_margin= options.fetch(:bottom_margin, defaults[:bottom_margin])
+      @left_margin= options.fetch(:left_margin, document_defaults[:left_margin])
+      @top_margin = options.fetch(:top_margin, document_defaults[:top_margin])
+      @right_margin = options.fetch(:right_margin, document_defaults[:right_margin])
+      @bottom_margin= options.fetch(:bottom_margin, document_defaults[:bottom_margin])
       if options[:starting_page_number]
         @starting_page_number = options[:starting_page_number]
         if @starting_page_number.odd?
@@ -133,7 +133,7 @@ module RLayout
       self
     end
     
-    def defaults
+    def document_defaults
       {
         portrait: true,
         double_side: false,

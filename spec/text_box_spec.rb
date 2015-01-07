@@ -1,10 +1,36 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+describe 'TextBox creation' do
+  before do
+    @tb = TextBox.new(nil, column_count: 2, width:400, height: 700)
+    @heading ={}
+    @heading[:top_margin] = 0
+    @heading[:top_inset]  = 0
+    @heading[:left_inset] = 0
+    @heading[:right_inset] = 0
+    @heading[:layout_expand] = [:width]
+    @tb.floats << Heading.new(nil, @heading)
+    @tb.relayout!
+    @tb.set_non_overlapping_frame_for_chidren_graphics
+  end
+  
+  it 'should create TextBox' do
+    @tb.must_be_kind_of TextBox
+  end
+  
+  it 'should return width_of_column' do
+    @tb.width_of_column(0).must_equal 0
+    @tb.width_of_column(1).must_equal 195
+    @tb.width_of_column(2).must_equal 400
+  end
+end
+
+__END__
 describe ' TextBox creation' do
   before do
     @tb = TextBox.new(nil, x:50, y:50, :width=>600, :height=>800, :column_count=>4)
     @flowomg_graphics =Graphic.random_graphics(30)
-    @svg_path = File.dirname(__FILE__) + "/../output/text_box_test.svg"
+    @svg_path = File.dirname(__FILE__) + "/output/text_box_test.svg"
   end
   
   it 'should create container' do

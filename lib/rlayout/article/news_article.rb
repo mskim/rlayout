@@ -7,10 +7,14 @@ module RLayout
     attr_accessor :output_path
     def initialize(parent_graphic, options={})
       @output_path = options[:output_path] if options[:output_path]
+      options[:chapter_kind]  = "news_article"
+      options[:x]             = options.fetch(:x, 0)
+      options[:y]             = options.fetch(:y, 0)
       if options[:grid_frame]
+        @heading_columns = options[:grid_frame][2]
         options[:column_count]= options[:grid_frame][2]
-        options[:grid_width]  = 200 unless options[:grid_width]
-        options[:grid_height] = 200 unless options[:grid_height]
+        @grid_width  = options.fetch(:grid_width, 200)
+        @grid_height  = options.fetch(:grid_height, 200)
         options[:gutter]      = 5 unless options[:gutter]
         options[:v_gutter]    = 0 unless options[:v_gutter]
         options[:width]       = options[:grid_frame][2]*options[:grid_width] + (options[:grid_frame][2] - 1)*options[:gutter]
@@ -35,11 +39,8 @@ module RLayout
         para_data_array = Story.parse_markdown(options[:story_hash][:body_markdown])
         make_paragraph(para_data_array)
       end
-      options[:chapter_kind]  = "news_article"
-      options[:x]             = options.fetch(:x, 0)
-      options[:y]             = options.fetch(:y, 0)
       super
-      layout_story
+      layout_story(options)
       if @output_path
         save_pdf(@output_path)
       end
@@ -84,15 +85,18 @@ module RLayout
         para_options[:layout_expand]  = [:width]
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:chapter_kind]   = "news_article"
+        para_options[:layout_lines]   = false
         @paragraphs << Paragraph.new(nil, para_options)    
       end
     end
     
-    def layout_story
+    def layout_story(options)
       @heading[:layout_expand]  = [:height]
       # @heading[:line_width]     = 2
       # @heading[:line_color]     = 'red'
-      @heading[:width]          = @main_box.heading_width
+      # puts "@heading_columns:#{@heading_columns}"
+      heading_width = @main_box.width_of_column(@heading_columns)
+      @heading[:width]          = heading_width
       @heading[:align_to_body_text]= true
       @heading[:layout_expand]  = nil
       @heading[:top_margin]     = 0
@@ -105,9 +109,19 @@ module RLayout
       @heading[:current_style]  = NEWS_STYLES
       @main_box.floats << Heading.new(nil, @heading)
       relayout!
+      
+      if options[:image_path] && File.exists?(options[:image_path])
+        # options[:is_float]       = true
+        image_options               = {}
+        image_options[:image_path]  = options[:image_path]
+        image_frame                 = options.fetch(:image_frame, [0,0,1,1])
+        image_options[:width]       = @grid_width*image_frame[2]
+        image_options[:height]      = @grid_height*image_frame[3]
+        image_options[:layout_expand]  = nil
+        @main_box.place_float_images(image_options)
+      end
       @main_box.set_non_overlapping_frame_for_chidren_graphics        
       @main_box.layout_items(@paragraphs)
-      
     end
   end
   

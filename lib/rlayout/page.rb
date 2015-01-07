@@ -13,13 +13,13 @@ module RLayout
       elsif @parent_graphic && @parent_graphic.width
         options[:width]  = @parent_graphic.width 
       else
-        options[:width]  = defaults[:width]
+        options[:width]  = page_defaults[:width]
       end
       if options[:height]
       elsif @parent_graphic && @parent_graphic.height
         options[:height]  = @parent_graphic.height 
       else
-        options[:height]  = defaults[:height]
+        options[:height]  = page_defaults[:height]
       end
             
       if options[:left_margin]
@@ -67,7 +67,8 @@ module RLayout
       main_box_options[:width]        = @width - @left_margin - @right_margin
       main_box_options[:height]       = @height - @top_margin - @bottom_margin
       main_box_options[:column_count] = options.fetch(:column_count, 1)
-      main_box_options[:layout_space] = options.fetch(:column_layout_space, 10)
+      main_box_options[:layout_space] = options.fetch(:layout_space, 10)
+      main_box_options[:layout_space] = options.fetch(:gutter, main_box_options[:layout_space])
       main_box_options[:item_space]   = options.fetch(:item_space, 3)
       main_box_options[:heading_columns]= options.fetch(:heading_columns, main_box_options[:column_count])          
       if options[:text_box]
@@ -88,7 +89,7 @@ module RLayout
       @parent_graphic
     end
     
-    def defaults
+    def page_defaults
       {
         x: 0,
         y: 0,

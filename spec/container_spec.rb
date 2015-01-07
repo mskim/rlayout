@@ -11,10 +11,6 @@ describe 'testing container with graphics' do
       @g5= Graphic.new(@g2, fill_color: 'yellow', tag: 'g5')
       @g6= Graphic.new(@g2, fill_color: 'blue', tag: 'g6')
     @container.relayout!
-    # puts "g5"
-    # @g5.puts_frame
-    # puts "g6"
-    # @g6.puts_frame
      
   end
   
