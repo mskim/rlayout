@@ -81,8 +81,7 @@ module RLayout
     def self.parse_markdown(source, options={})
       @para_data=[]
       return @para_data if source == " " || source == ""
-      demotion_level = options.fetch(:demotion_level, 0)
-      demotion_level = demotion_level.to_i
+      demotion_level = options.fetch(:demotion_level, 0).to_i
        
       Kramdown::Document.new(source).root.children.each do |child|
         unless child.type == :blank
@@ -104,11 +103,14 @@ module RLayout
             end
           when :header
             # puts "child.options[:level].class:#{child.options[:level].class}"
-            demotion_level = child.options[:level] + demotion_level
-            if demotion_level  > 6
-              demotion_level = 6
-            end
-            para[:markup] = "h#{demotion_level}"
+            # demotion_level = child.options[:level] + demotion_level
+            # puts "demotion_level:#{demotion_level}"
+            # if demotion_level  > 6
+            #   demotion_level = 6
+            # end
+            level = child.options[:level] + demotion_level
+            level = 6 if level > 6
+            para[:markup] = "h#{level}"
             para[:string] = child.options[:raw_text] # inner text
             @para_data << para
             
@@ -146,8 +148,7 @@ module RLayout
       end  
       # convert all keys to symbol
       @metadata=Hash[@metadata.map{ |k, v| [k.to_sym, v] }]
-      demotion_level = @metadata.fetch(:demote, 0)
-      demotion_level = demotion_level.to_i
+      demotion_level = @metadata.fetch(:demote, 0).to_i
       Story.new(:heading=>@metadata, :paragraphs=>Story.parse_markdown(@contents, :demotion_level=>demotion_level))
     end
     
