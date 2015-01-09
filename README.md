@@ -19,6 +19,12 @@ TODO List
 		- make it yml
 	- modifiy kramdown into r_kramdown
 
+2014 1 9
+	- news_article, text_box, 
+	- float images
+	- current_style, merge with custom style
+	- fix Kramdown parsing error
+	
 2014 1 7
 	- fix Paragraph, head
 	- fix NewsArticle, TextBox

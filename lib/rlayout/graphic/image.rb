@@ -48,9 +48,9 @@ module RLayout
       # @image_frame      = options.fetch(:image_frame, image_defaults[:image_frame])
       @image_caption    = options[:image_caption]      
       @image_fit_type   = options.fetch(:image_fit_type, image_defaults[:image_fit_type])
-      if @image_path
+      if @image_path && File.exists?(@image_path)
         @image_object=NSImage.alloc.initByReferencingFile(@image_path)
-        if options[:adjust_height_to_keep_ratio]
+        if @image_object && options[:adjust_height_to_keep_ratio]
           # change height 
           @height *= image_object_height_to_width_ratio
         end

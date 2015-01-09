@@ -211,7 +211,8 @@ module RLayout
     
     def body_line_height_multiple(head_para_height)
       body_height = @owner_graphic.body_height
-      body_multiple = (head_para_height/body_height).to_i
+      # puts "body_height:#{body_height}"
+      body_multiple = ((head_para_height/body_height).to_i + 1)*body_height
     end
     
     # do not break paragraph that is less than 4 lines
@@ -239,24 +240,23 @@ module RLayout
       end
       line_height = @text_size + @text_line_spacing
       used_size_height = @line_count*line_height
-      if @text_markup && (@text_markup == 'h5' || @text_markup == 'h6') #&& options[:aling_to_grid]
+      # if @text_markup && (@text_markup == 'h5' || @text_markup == 'h6') #&& options[:aling_to_grid]
+      if @text_markup && (@text_markup != 'p') #&& options[:aling_to_grid]
+        # puts "markup is :#{@text_markup}"
         # Make the head paragraphs height as body text multiples"
         used_size_height = body_line_height_multiple(used_size_height)
+        # puts  "used_size_height:#{used_size_height}"
       end
       @proposed_line_count = (proposed_height/line_height).to_i
       proposed_line_height = @proposed_line_count*line_height
       # set text_overflow and under flow
-      # puts "@att_string.string:#{@att_string.string}"
-      # puts "used_size_height:#{used_size_height}"
-      # puts "proposed_line_height:#{proposed_line_height}"
       if used_size_height > proposed_line_height
         @text_overflow = true            
         @text_underflow = true if @proposed_line_count == 0 # no line was created
-      
       end
       # return height 
       if @text_fit_type != FIT_TO_BOX 
-        owner_graphic.adjust_size_with_text_height_change(proposed_width, used_size_height)
+        @owner_graphic.adjust_size_with_text_height_change(proposed_width, used_size_height)
         @proposed_line_count = @line_count
       end
       @line_count*(@text_size + @text_line_spacing)
@@ -349,9 +349,9 @@ module RLayout
         @line_count       = CTFrameGetLines(@frame).count      
         used_size_height  = @line_count*(@text_size + @text_line_spacing) + @drop_char_height
         # set text_overflow and under flow
-        owner_graphic.adjust_size_with_text_height_change(proposed_width, used_size_height)
+        @owner_graphic.adjust_size_with_text_height_change(proposed_width, used_size_height)
       else
-        owner_graphic.adjust_size_with_text_height_change(proposed_width, @drop_char_height)
+        @owner_graphic.adjust_size_with_text_height_change(proposed_width, @drop_char_height)
       end
      end
     

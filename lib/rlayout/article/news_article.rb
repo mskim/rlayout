@@ -2,8 +2,7 @@
 module RLayout
  
   class NewsArticle < Page
-    attr_accessor :story_path, :heading, :paragraphs
-    attr_accessor :heading_width
+    attr_accessor :story_path, :paragraphs #:heading, :images
     attr_accessor :output_path
     def initialize(parent_graphic, options={})
       @output_path = options[:output_path] if options[:output_path]
@@ -31,16 +30,17 @@ module RLayout
         @story_path = options[:story_path]
         read_story
       elsif options[:story_hash] 
-        @heading    = options[:story_hash][:heading]        
-        if @heading[:heading_columns]
-          @heading_columns = @heading[:heading_columns]
+        @heading_options    = options[:story_hash][:heading] 
+        @images     = options[:images]       
+        if @heading_options[:heading_columns]
+          @heading_columns = @heading_options[:heading_columns]
         end
         @paragraphs = []
         para_data_array = Story.parse_markdown(options[:story_hash][:body_markdown])
         make_paragraph(para_data_array)
       end
       super
-      layout_story(options)
+      layout_story
       if @output_path
         save_pdf(@output_path)
       end
@@ -54,10 +54,10 @@ module RLayout
     # path to story is given  
     def read_story
       story         = Story.from_meta_markdown(@story_path)
-      @heading      = story.heading
-      # @title        = @heading[:title]
-      if @heading[:heading_columns]
-        @heading_columns = @heading[:heading_columns]
+      @heading_options      = story.heading
+      @images       = story.images #TODO
+      if @heading_options[:heading_columns]
+        @heading_columns = @heading_options[:heading_columns]
       else
         @heading_columns = @grid_frame[2]
       end
@@ -90,37 +90,32 @@ module RLayout
       end
     end
     
-    def layout_story(options)
-      @heading[:layout_expand]  = [:height]
-      # @heading[:line_width]     = 2
-      # @heading[:line_color]     = 'red'
-      heading_width = @main_box.width_of_column(@heading_columns)
-      @heading[:width]          = heading_width
-      @heading[:align_to_body_text]= true
-      @heading[:layout_expand]  = nil
-      @heading[:top_margin]     = 0
-      @heading[:top_inset]      = 10
-      @heading[:bottom_margin]  = 0
-      @heading[:tottom_inset]   = 10
-      @heading[:left_inset]     = 0
-      @heading[:right_inset]    = 0
-      @heading[:chapter_kind]   = "news_article"
-      @heading[:current_style]  = NEWS_STYLES
-      @main_box.floats << Heading.new(nil, @heading)
+    def layout_story
+      @heading_options[:layout_expand]  = [:height]
+      # @heading_options[:line_width]     = 2
+      # @heading_options[:line_color]     = 'red'
+      @heading_options[:width]          = @main_box.width_of_column(@heading_columns)
+      @heading_options[:align_to_body_text]= true
+      @heading_options[:layout_expand]  = nil
+      @heading_options[:top_margin]     = 0
+      @heading_options[:top_inset]      = 10
+      @heading_options[:bottom_margin]  = 0
+      @heading_options[:tottom_inset]   = 10
+      @heading_options[:left_inset]     = 0
+      @heading_options[:right_inset]    = 0
+      @heading_options[:chapter_kind]   = "news_article"
+      @heading_options[:current_style]  = NEWS_STYLES
+      @main_box.floats << Heading.new(nil, @heading_options)
       relayout!
-      
-      if options[:image_path] && File.exists?(options[:image_path])
-        # options[:is_float]       = true
-        image_options               = {}
-        image_options[:image_path]  = options[:image_path]
-        image_frame                 = options.fetch(:image_frame, [0,0,1,1])
-        image_options[:width]       = @grid_width*image_frame[2]
-        image_options[:height]      = @grid_height*image_frame[3]
-        image_options[:layout_expand]  = nil
-        @main_box.place_float_images(image_options)
-      end
+      place_float_images 
       @main_box.set_non_overlapping_frame_for_chidren_graphics        
       @main_box.layout_items(@paragraphs)
+    end
+    
+    def place_float_images
+      return unless @images
+      #TODO rearrange @images frames
+      @main_box.place_float_images(@grid_width, @grid_height, @images)  
     end
   end
   

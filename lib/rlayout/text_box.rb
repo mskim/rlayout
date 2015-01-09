@@ -36,19 +36,14 @@ module RLayout
     attr_accessor :floats
     
     def initialize(parent_graphic, options={}, &block)
-      # options[:line_width] = 5
-      # options[:line_color] = 'black'
       super
-      @klass = "TextBox"         
+      @klass = "TextBox"               
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)
       @column_count     = options.fetch(:column_count, 3)
       @heading_columns  = options.fetch(:heading_columns, @column_count)
       create_columns
       @floats           = options.fetch(:floats, [])
-      @floats.each do |float|
-        float.init_float
-      end
       if block
         instance_eval(&block)
       end
@@ -79,7 +74,20 @@ module RLayout
         document.add_to_toc_list(item)
       end
     end
-        
+    
+    
+    def frame_from_grid(grid_frame)
+      
+    end 
+    
+    def orgin_from_grid(grid_frame)
+      
+    end
+    
+    def height_from_grid(grid_frame)
+      
+    end
+    
     def width_of_column(columns)
       return 0 if columns==0
       if columns <= @graphics.length
@@ -88,10 +96,7 @@ module RLayout
       max_x(@graphics.last.frame_rect) - min_x(@graphics.first.frame_rect)
     end
     
-    # place imaegs that are in the head of the story as floats
-    def place_float_images(options={})
-      #TODO
-      # options[:image_frame]
+    def place_float_image(options={})
       @heading = @floats.first
       starting_y = 0
       starting_y += @heading.height if @heading
@@ -99,8 +104,19 @@ module RLayout
       starting_y               += options[:y] if options[:y]
       options[:y]              = starting_y  
       options[:adjust_height_to_keep_ratio]     = true
-      #TODO make height as multiles of body text
       @image  = Image.new(self, options) 
+      # @image.puts_frame
+    end
+    
+    # place imaegs that are in the head of the story as floats
+    def place_float_images(grid_width, grid_height, images)
+        images.each do |image_options|
+          image_frame = image_options[:image_frame]
+          image_options[:width]       = grid_width*image_frame[2]
+          image_options[:height]      = grid_height*image_frame[3]
+          image_options[:layout_expand]  = nil
+          place_float_image(image_options)
+        end      
     end
 
     

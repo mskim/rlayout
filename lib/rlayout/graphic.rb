@@ -79,7 +79,6 @@ module RLayout
     def set_size_with_frame(options)
       puts __method__
       puts "options:#{options}"
-      
     end
     
     def graphic_defaults

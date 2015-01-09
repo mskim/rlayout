@@ -1,7 +1,7 @@
 
 # float
 # float is floating graphic on top of the body of container.
-# Usual floats are heading, images, and quotation box, 
+# floats are heading, images, side_box, and quotation box, 
 # There should be a rule to manage floats if there are multiples of them and gets crowded.
 # 
 
@@ -17,6 +17,9 @@
 #                 6. bottom_left, 7 bottom_middle, 8. bottom_right
 ##    size:       1. small, 2 midium, 3. large 4.x_large
 #     float_grid_frame float frame in grid
+
+# One way to layout floats is using patters and profile, a pre-designed template
+# 1. Define set of patters per grid_base with grid_frame
 # float_patters_profile
 # float_patters
 # 3x3.rb
@@ -24,11 +27,11 @@
 #    {[0,0,1,1]}
 #    {[0,0,2,2]}
 #    {[0,0,2,1]}
-#
 # }
+#
 # '2' = {
-#    {[0,0,1,1], []}
-#    {[0,0,2,2]}
+#    {[0,0,3,1], [0,1,1,1]}
+#    {[0,0,3,1], [0,1,2,2]}
 #
 # }
 
@@ -47,8 +50,6 @@ MIDDLE_RIGHT  = 5
 BOTTOM_LEFT   = 6
 BOTTOM_CENTER = 7
 BOTTOM_RIGHT  = 8
-
-
 
 SIZE_SMALL    = 0
 SIZE_MEDIUM   = 1
@@ -174,7 +175,6 @@ module RLayout
       float.size    = float_size_for(float.float_size)
     end
     
-    
     # Todo ????
     def relayout!
       # return unless @floats.length <= 0
@@ -182,35 +182,15 @@ module RLayout
       #   set_origin_and_size(float)
       # end
     end
-    
-    def self.include_relavant_key?(options)
-      keys=[:float_weight, :float_position, :float_size]
-      keys.each do |key|
-        return true if options.has_key?(key)
+                
+    def to_hash
+      floats=[]
+      @floats.each do |float|
+        floats << float.to_hash
       end
-      false
-    end
-    
-    def float_defaults
-      hash={}
-      hash[:float_weight]   = 0
-      hash[:float_position] = 0
-      hash[:float_size]     = 0
-      hash
+      floats
     end
         
-    def to_hash
-      hash={}
-      hash[:float_weight]   = @float_weight   if @float_weight    != float_defaults[:float_weight]
-      hash[:float_position] = @float_position if @float_position  != float_defaults[:float_position]
-      hash[:float_size]     = @float_size     if @float_size      != float_defaults[:float_size]
-       hash
-    end
-    
-    def self.from_hash(owner_graphic, hash)
-      GFloatRecord.new(owner_graphic,hash)
-    end
-    
   end
   
 
