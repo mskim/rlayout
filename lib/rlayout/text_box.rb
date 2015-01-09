@@ -75,18 +75,17 @@ module RLayout
       end
     end
     
-    
-    def frame_from_grid(grid_frame)
-      
-    end 
-    
-    def orgin_from_grid(grid_frame)
-      
-    end
-    
-    def height_from_grid(grid_frame)
-      
-    end
+    # def frame_from_grid(grid_frame)
+    #   
+    # end 
+    # 
+    # def orgin_from_grid(grid_frame)
+    #   
+    # end
+    # 
+    # def height_from_grid(grid_frame)
+    #   
+    # end
     
     def width_of_column(columns)
       return 0 if columns==0
@@ -105,7 +104,6 @@ module RLayout
       options[:y]              = starting_y  
       options[:adjust_height_to_keep_ratio]     = true
       @image  = Image.new(self, options) 
-      # @image.puts_frame
     end
     
     # place imaegs that are in the head of the story as floats
