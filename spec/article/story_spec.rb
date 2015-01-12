@@ -17,14 +17,12 @@ describe 'load stoy' do
   
   it 'should have demotion level 5' do
     @para_list = Story.parse_markdown(@body_markdown, :demotion_level=>2) 
-    puts @para_list
     @para_list[0][:markup].must_equal "h6"
     @para_list[1][:markup].must_equal "h6"
     @para_list[2][:markup].must_equal "p"
   end
 end
 
-__END__
 describe 'create Story' do
   before do
     @s = Story.new

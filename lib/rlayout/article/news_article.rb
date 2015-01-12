@@ -108,8 +108,20 @@ module RLayout
       @main_box.floats << Heading.new(nil, @heading_options)
       relayout!
       place_float_images 
-      @main_box.set_non_overlapping_frame_for_chidren_graphics        
+      # @main_box.set_non_overlapping_frame_for_chidren_graphics 
+      @main_box.set_non_overlapping_line_grid 
+      @main_box.graphics.each do |col|
+        puts "++++++ current positions ++++++ "
+        puts col.current_position
+      end
       @main_box.layout_items(@paragraphs)
+      # @main_box.graphics.each_with_index do |col, i|
+      #   puts "++++++++ column index:#{ i}"
+      #   col.grid_rects.each do |grid|
+      #     puts grid.rect.to_s
+      #     puts "grid.fully_covered:#{grid.fully_covered}"
+      #   end
+      # end
     end
     
     def place_float_images

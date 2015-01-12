@@ -34,7 +34,7 @@ module RLayout
     attr_accessor :text_layout_manager
     attr_accessor :image_object, :image_path, :image_frame, :image_fit_type, :image_caption
     attr_accessor :grid_frame
-    attr_accessor :non_overlapping_rect
+    attr_accessor :non_overlapping_rect, :usable_rects
     
     # TODO
     # attr_accessor :fill_record, :line_record, :shape_record, :text_record, :image_record, :grid_record, :layout_record    
@@ -217,12 +217,13 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     end
 
     def intersects_y(rect1, rect2)
-      (max_y(rect1) > rect2[1] || max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] || max_y(rect1) > rect2[1])
+      (max_y(rect1) > rect2[1] && max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] && max_y(rect1) > rect2[1])
     end
 
     def intersects_rect(rect_1, rect_2)
       intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
     end
+    
     def self.random_graphic_atts
       atts = {}
       atts[:fill_color] = COLOR_NAMES.sample
@@ -296,8 +297,14 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       @height = text_height + @top_inset + @bottom_inset      
     end
     
+    #TODO
+    def usable_rects
+      
+    end
+    
     # non_overlapping_rect is a actual layout frame that is not overlapping with flaots
     def non_overlapping_frame
+      # 
       if @non_overlapping_rect
         return @non_overlapping_rect 
       end

@@ -74,19 +74,7 @@ module RLayout
         document.add_to_toc_list(item)
       end
     end
-    
-    # def frame_from_grid(grid_frame)
-    #   
-    # end 
-    # 
-    # def orgin_from_grid(grid_frame)
-    #   
-    # end
-    # 
-    # def height_from_grid(grid_frame)
-    #   
-    # end
-    
+        
     def width_of_column(columns)
       return 0 if columns==0
       if columns <= @graphics.length
@@ -105,7 +93,6 @@ module RLayout
       options[:adjust_height_to_keep_ratio]     = true
       @image  = Image.new(self, options) 
     end
-    
     # place imaegs that are in the head of the story as floats
     def place_float_images(grid_width, grid_height, images)
         images.each do |image_options|
@@ -128,15 +115,24 @@ module RLayout
     # 1. if the last column is reached with un-placed item, place item back at the fornt of the array and return no
     # 1. if teh next column is available , repeat colum insert with partial item.
     def layout_items(flowing_items)
-      @graphics.each do |g|
-        g.set_starting_position_at_non_overlapping_area
-      end
+      # @graphics.each do |g|
+      #   # g.set_starting_position_at_non_overlapping_area
+      #   g.set_text_layout_starting_position if g
+      # end
       column_index = 0
       current_column = @graphics[column_index]
+      puts "current_column.current_position:#{current_column.current_position}"
+      puts "current_column.grid_rects.length:#{current_column.grid_rects.length}"
       while item = flowing_items.shift do
         height = item.height
         if item.respond_to?(:layout_text)
-          height = item.layout_text(current_column.text_width) # item.width:
+          #TODO pass line_recrs ot text_layout_manager
+          item.width  = current_column.text_width
+          puts "+++++ current_column.text_width:#{current_column.text_width}"
+          layout_option ={proposed_width: current_column.text_width}
+          proposed_path = current_column.path_from_current_position
+          layout_option = {proposed_path: current_column.path_from_current_position}
+          height = item.layout_text(layout_option) # item.width:
         elsif item.class == RLayout::Image
           item.width  = current_column.text_width
           item.layout_expand  = [:width]
@@ -170,7 +166,6 @@ module RLayout
           column_index +=1
           if column_index < @column_count
             current_column = @graphics[column_index]            
-            #insert item to next column
             #TODO this is forcing insert, to the new column
             # I should refine this for long item that might extent beyond next column.
             current_column.place_item(item)
@@ -196,50 +191,7 @@ module RLayout
     end
   end
   
-  
-  
-  class TextColumn < Container
-    attr_accessor :current_position
-    attr_accessor :floats
-    
-    def initialize(parent_graphic, options={}, &block)
-      super
-      @klass = "TextColumn"
-      @layout_space = 0
-      @current_position = @top_margin + @top_inset
-      if block
-        instance_eval(&block)
-      end
-      self
-    end
-    
-    def text_width
-      text_rect[WIDTH_VAL]
-    end
-    
-    # set @current_pasotion as start of non-overlapping y
-    def set_starting_position_at_non_overlapping_area
-      rect = non_overlapping_frame
-      @current_position = rect[Y_POS] + @top_margin + @top_inset
-    end
-    
-    def can_fit?(height)
-      height <= room
-    end
-    
-    def room
-      room = @height - @current_position - @bottom_margin - @bottom_inset - @layout_space
-    
-    end
-    
-    def place_item(item)
-      @graphics << item
-      item.parent_graphic = self
-      item.x              = @left_inset
-      item.y              = @current_position
-      @current_position += item.height + @layout_space
-    end
-  end
+
   
   # ImageColumn has two columns within Column. 
   # One for image and other one for text.

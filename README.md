@@ -20,24 +20,30 @@ TODO List
 	- modifiy kramdown into r_kramdown
 
 2014 1 9
+	- fix Kramdown parsing error(done)
 	- news_article, text_box, 
-	- float images
 	- current_style, merge with custom style
-	- fix Kramdown parsing error
+	- floats 
+		when overlapping floats, 
+		modidify or divide columns into pieces
+		body_text unit
+	- floats images
+		have floats template
 	
 2014 1 7
-	- fix Paragraph, head
 	- fix NewsArticle, TextBox
 
 2014 12 31
-	- fix grid
+	- fix grid, 
+		- grid co-exists with auto_layout
+		- use it with float
 
 2014 12 26
-	- fix NewspaperSection
+	- fix NewspaperSection(done)
 		- heading, 6x12, 7x12
 		
 2014 12 26
-	- convert cm, mm to pt
+	- convert cm, mm to pt(done)
 		:width=> "16.5cm", :height=>"24.5mm"
 	- rlayout news_article project/folder
 		- rlayout idcard project/folder

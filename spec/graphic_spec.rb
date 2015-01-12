@@ -1,5 +1,19 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+describe 'rect intersect' do
+  it 'should not intersect' do
+    r1 = [0, 0, 379.693333333333, 105.0]
+    r2 = [0, 120, 184.846666666666, 8]
+    puts "y intersect:#{intersects_y(r1,r2)}"
+    puts "x intersect:#{intersects_x(r1,r2)}"
+    puts "all intersects:#{intersects_rect(r1,r2)}"
+    intersects_rect(r1,r2).must_equal false
+  end
+  
+end
+
+__END__
+
 describe ' Graphic from Hash ' do
   before do
     h = {
@@ -21,7 +35,6 @@ describe ' Graphic from Hash ' do
   end
 end
 
-__END__
 describe 'testing Text ' do
   before do
     @t = Text.new(nil, width: 400,  text_string: "This is text string and I like it very much. Wouldn't you? "*4, text_size: 24, text_alignment: 'right')

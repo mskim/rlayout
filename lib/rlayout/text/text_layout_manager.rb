@@ -222,7 +222,8 @@ module RLayout
     end
     
     # this is line layout using CoreText
-    # This allows me to do illefular shaped container layout easier than using NSTextContainer
+    # CoreText allows me to do irregular shaped container layout,
+    # with more controlls than using NSTextContainer
     def layout_ct_lines(options={})
       @text_overflow  = false
       @text_underflow = false
@@ -230,10 +231,15 @@ module RLayout
       proposed_height = options[:proposed_height] if options[:proposed_height]
       proposed_width  = @owner_graphic.width      
       proposed_width  = options[:proposed_width] if options[:proposed_width]
-      @proposed_path   = CGPathCreateMutable()
-      bounds          = CGRectMake(0, 0, proposed_width, 1000)
-      CGPathAddRect(@proposed_path, nil, bounds)
-      @frame          = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), @proposed_path, nil)
+      @proposed_path  = CGPathCreateMutable()
+      #TODO pass path from text_box
+      if options[:proposed_path]
+        @proposed_path = options[:proposed_path]
+      else
+        bounds = CGRectMake(0, 0, proposed_width, 1000)
+        CGPathAddRect(@proposed_path, nil, bounds)
+      end
+      @frame      = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), @proposed_path, nil)
       @line_count = CTFrameGetLines(@frame).count  
       if @line_count == 0
         puts "++++++++++ @line_count is 0 ++++++++ "
@@ -475,6 +481,15 @@ module RLayout
           when 'justified'
             #first line head indent, but not for linked part first line
             x_offset += @text_first_line_head_indent if i == 0 && @linked != true
+          end
+          
+          if @text_markup && (@text_markup != 'p') #&& options[:aling_to_grid]
+            puts "markup is :#{@text_markup}"
+            puts "text_width:#{text_width}"
+            puts "line_width:#{line_width}"
+            puts "room:#{room}"
+            puts "@text_alignment:#{@text_alignment}"
+            puts  "x_offset:#{x_offset}"
           end
           
           CGContextSetTextPosition(context, x_offset, y)

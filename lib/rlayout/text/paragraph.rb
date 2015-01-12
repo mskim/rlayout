@@ -67,10 +67,10 @@ MININUM_LINES_FOR_SPLIT = 2
       return @text_layout_manager.split_at(position)
     end
     
-    def layout_text(width)
+    def layout_text(layout_options)
       return unless @text_layout_manager
-      options={:proposed_width=>width}
-      @text_layout_manager.layout_ct_lines(options)
+      # options={:proposed_width=>width}
+      @text_layout_manager.layout_ct_lines(layout_options)
     end
     
     def overlapping_graphics

@@ -110,6 +110,21 @@ module RLayout
       end
     end
     
+    # set text_column's non_overlapping grid_line area
+    # this method is called after float is added and relayout!
+    def set_non_overlapping_line_grid
+      @floats.each do |float|
+        float_rect = float.frame_rect
+        @graphics.each_with_index do |text_column, i|
+          next if text_column.class != RLayout::TextColumn
+          text_column.create_grid_rects
+          if intersects_rect(float_rect, text_column.frame_rect)
+            text_column.set_over_lapping_grid_lines(float_rect,float.klass)
+          end
+        end
+      end
+    end
+    
     # it sets the children graphic's non_overlapping_frame value
     # this method is called after float is added and relayout!
     def set_non_overlapping_frame_for_chidren_graphics

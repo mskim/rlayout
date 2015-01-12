@@ -34,7 +34,7 @@ module  RLayout
   end
 
   def intersects_y(rect1, rect2)
-    (max_y(rect1) > rect2[1] || max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] || max_y(rect1) > rect2[1])
+    (max_y(rect1) > rect2[1] && max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] && max_y(rect1) > rect2[1])
   end
 
   def intersects_rect(rect_1, rect_2)
