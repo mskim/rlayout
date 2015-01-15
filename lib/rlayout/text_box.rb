@@ -82,12 +82,37 @@ module RLayout
       end
       max_x(@graphics.last.frame_rect) - min_x(@graphics.first.frame_rect)
     end
+        
+    def create_column_grid_rects
+      @graphics.each do |col|
+        if col.class == "TextColumn"
+          col.create_grid_rects
+        end
+      end
+    end
+    
+    # set text_column's overlapping grid_rect area
+    # this method is called after float is added and relayout!
+    def set_overlapping_grid_rect
+      @floats.each do |float|
+        float_rect = float.frame_rect
+        @graphics.each_with_index do |text_column, i|
+          next if text_column.class != RLayout::TextColumn
+          text_column.create_grid_rects unless text_column.grid_rects
+          if intersects_rect(float_rect, text_column.frame_rect)
+            text_column.set_overlapping_grid_lines(float_rect,float.klass)
+          end
+        end
+      end
+    end
     
     def place_float_image(options={})
       @heading = @floats.first
       starting_y = 0
       starting_y += @heading.height if @heading
       options[:is_float]       = true
+      first_column = @graphics.first
+      starting_y = first_column.grid_line_position_at(starting_y)
       starting_y               += options[:y] if options[:y]
       options[:y]              = starting_y  
       options[:adjust_height_to_keep_ratio]     = true
@@ -105,33 +130,64 @@ module RLayout
     end
 
     
-    # steps
-    # 1. take out front_most_item from the array
-    # 1. changes flowing objects width and height.
-    # 1. proposed height is the available room
-    # 1. place them in the column if it fits, 
-    #    if it doen't fit, ask if we any part was inserted.
-    #    if partilly_fit? go to next column and insert the left over to the next column
-    # 1. if the last column is reached with un-placed item, place item back at the fornt of the array and return no
-    # 1. if teh next column is available , repeat colum insert with partial item.
+    #  layout_items steps
+    # 1. take out(shift) front_most_item from flowing_items array,
+    #    and processed in the loop untill all items are consumed.
+    # 2. call item.layout_text, which calles @text_layout_manager.layout_ct_lines for line layout.
+    #   I pass two key/values as options, path and proposed_height.
+    #   "proposed_height" is the height of path, and also the room(avilable space) of current column.
+    #   @text_layout_manager.layout_ct_lines returns actual item height after line layout.
+    #   Text overflow is detected by comparing "proposed_height" and returned actual height.
+    #   if the result is greater than the prososed_height, text is overflowing.
+    # 3. path is contructed by " def path_from_current_position"
+    #   if column is simple with no overlapping floats, path is rectange.
+    #   But if column is complex with overlapping floats, path is constructed from grid_rects, with non-overlapping shapes.
+    #   This is how I hanlde overlappings float on top of the text.
+    #   Rather than using bezier cureve, I am using series of rects to simulate irregular shape.
+    # 4. path is constructed from current position to the bottom of the column.     
+    #   If we have a hole in the middle, fully_covered lines, we can still construct a single path including the coverd lines.
+    #   My trick for solving this is to treat fully_covered lines as tall thin 5 point width rect on the right side.
+    #   Those thin rectangles will not be able to containe any text, but able to form continuos path from currnet position to the bottom.
+    # 5. place item in the column, if it fits(does not overflow). 
+    #   placing item sets the y value of item and updates @current_position, and room
+    #   if item has text_overflow, paragraph are splited the into two, at overflowing location.
+    #   Insert first_half to current column and put the second_half of splited paragraph back to the flowing_items array, 
+    #   and return true.
+    #   I tred to insert overflowing second half to the next column, 
+    #   but becase I don't know about next column, whether it is complex colimn.
+    #   leave it to the next iteration to take care of it.
+    #  
     def layout_items(flowing_items)
-      # @graphics.each do |g|
-      #   # g.set_starting_position_at_non_overlapping_area
-      #   g.set_text_layout_starting_position if g
-      # end
       column_index = 0
       current_column = @graphics[column_index]
-      puts "current_column.current_position:#{current_column.current_position}"
-      puts "current_column.grid_rects.length:#{current_column.grid_rects.length}"
+      current_column.set_column_starting_position
+      # puts "current_column.text_rect:#{current_column.text_rect}"
+      # puts "current_column.frame_rect:#{current_column.frame_rect}"
+      # puts "flowing_items.length:#{flowing_items.length}"
+      # puts "frame_rect:#{frame_rect}"
       while item = flowing_items.shift do
-        height = item.height
+        # height = item.height
         if item.respond_to?(:layout_text)
-          #TODO pass line_recrs ot text_layout_manager
           item.width  = current_column.text_width
-          puts "+++++ current_column.text_width:#{current_column.text_width}"
-          layout_option ={proposed_width: current_column.text_width}
-          proposed_path = current_column.path_from_current_position
-          layout_option = {proposed_path: current_column.path_from_current_position}
+          # puts "current_column.text_rect:#{current_column.text_rect}"
+          # puts "current_column.room:#{current_column.room}"
+          # puts "@current_column.current_position:#{current_column.current_position}"
+          layout_option ={proposed_height: current_column.room}
+          # "item underflow" case where there is no room at the bottom enven for a single line
+          if current_column.room < current_column.body_line_height || current_column.room < item.text_line_height 
+            puts "item underflow"
+            column_index +=1
+            if column_index < @column_count
+              current_column = @graphics[column_index]
+              current_column.set_column_starting_position
+              flowing_items.unshift(item)
+              next
+            else
+              flowing_items.unshift(item)
+              return false
+            end
+          end
+          layout_option[:proposed_path] = current_column.path_from_current_position
           height = item.layout_text(layout_option) # item.width:
         elsif item.class == RLayout::Image
           item.width  = current_column.text_width
@@ -145,38 +201,41 @@ module RLayout
           end
         end
         
-        if current_column.can_fit?(height)
+        # puts "item.overflow?:#{item.overflow?}"
+        if height <= current_column.room 
           current_column.place_item(item)
-        elsif item.can_split_at?(current_column.room)
-          second = item.split_at(current_column.room)
+        elsif height > current_column.room
+          second_half = item.split_overflowing_lines
           current_column.place_item(item)
-          # current_column.relayout!
           column_index +=1
           if column_index < @column_count
-            current_column = @graphics[column_index]            
-            current_column.place_item(second)
+            current_column = @graphics[column_index]   
+            current_column.set_column_starting_position         
+            flowing_items.unshift(second_half)
           else
             # we are done with this text_box
-            # insert second half back to the item list
+            # insert second_half  back to the item list
             # current_column.relayout!
-            flowing_items.unshift(second)
-            return false
-          end
-        else  # was not able to split the item          
-          column_index +=1
-          if column_index < @column_count
-            current_column = @graphics[column_index]            
-            #TODO this is forcing insert, to the new column
-            # I should refine this for long item that might extent beyond next column.
-            current_column.place_item(item)
-          else
-            # current_column.relayout!
-            flowing_items.unshift(item)
+            flowing_items.unshift(second_half)
             return false
           end
         end
+          # #TODO this can happen for head text that is taller than the body
+          #      puts "item underflow"
+          #      # underflow is when no line was created, because there is no room for even a single line.
+          #      column_index +=1
+          #      if column_index < @column_count
+          #        current_column = @graphics[column_index]
+          #        current_column.set_column_starting_position
+          #        flowing_items.unshift(item)
+          #        next            
+          #        # current_column.place_item(second_half)
+          #      else
+          #        flowing_items.unshift(second_half)
+          #        return false
+          #      end
+          #    end
       end
-      # current_column.relayout!
       true
     end
           

@@ -398,16 +398,7 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       j = h.to_json
       j += "\n"
     end
-    
-    # def drawRect(r)
-    #   puts "drawRect"
-    #   puts "@klass"
-    #   draw_fill(r)
-    #   draw_line(r)
-    #   draw_text(r)
-    #   draw_image(r)
-    # end
-    
+        
     def save_pdf(path)
       if RUBY_ENGINE == 'macruby'        
         @ns_view ||= GraphicViewMac.from_graphic(self)

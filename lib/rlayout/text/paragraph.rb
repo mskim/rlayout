@@ -20,7 +20,7 @@ FIT_STYLE_RUN   = 3
 MININUM_LINES_FOR_SPLIT = 2
 
   class Paragraph < Text
-    
+    attr_accessor  :linked
     def initialize(parent_graphic, options={})
       text_options = nil
       if options[:markup]
@@ -38,10 +38,6 @@ MININUM_LINES_FOR_SPLIT = 2
       end
       options[:text_fit_type] = 0
       super
-      if options[:linked_text_layout_manager]
-        @text_layout_manager                = options[:linked_text_layout_manager]
-        @text_layout_manager.owner_graphic  = self
-      end
       @klass = "Paragraph"
       self
     end
@@ -50,23 +46,33 @@ MININUM_LINES_FOR_SPLIT = 2
       true
     end
     
-    def can_split_at?(some_position)
-      if some_position >= @height
-        return false
-      elsif !@text_layout_manager
-        return false
-      elsif @text_layout_manager.line_count < MININUM_LINES_FOR_SPLIT
-        return false
-      else
-        @text_layout_manager.can_split_at?(some_position)
-      end
+    def text_line_height
+      @text_layout_manager.text_line_height 
+    end
+    
+    def text_string
+      @text_layout_manager.att_string.string
+    end
+        
+    def overflow?
+      @text_layout_manager.text_overflow
+    end
+        
+    def underflow?
+      @text_layout_manager.text_underflow
+    end
+    
+    # split paragraph into two, second paragraph with overflowing lines
+    # return second paragraph
+    def split_overflowing_lines
+      return @text_layout_manager.split_overflowing_lines
     end
     
     # split item at given posiotion
     def split_at(position)
       return @text_layout_manager.split_at(position)
     end
-    
+        
     def layout_text(layout_options)
       return unless @text_layout_manager
       # options={:proposed_width=>width}

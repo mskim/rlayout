@@ -19,6 +19,20 @@ TODO List
 		- make it yml
 	- modifiy kramdown into r_kramdown
 
+2014 1 15
+	- fix layout_items in TextBox
+	- fix split paragraph
+	
+2014 1 14
+	- fix TextColumn room, based on grid_lines
+	- fix case when we have hole in the middle of TextColumn
+	
+2014 1 13
+	- fix float overlapping mechanism with grid_rects in TextColumn
+	- fix non-rectangular shaped column
+	  	- spliting
+		- layout paragraph
+
 2014 1 9
 	- fix Kramdown parsing error(done)
 	- news_article, text_box, 

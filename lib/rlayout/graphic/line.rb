@@ -75,8 +75,6 @@ module RLayout
       unless trap
         trap = 0
       end
-      
-      puts "in drawLine @klass: #{@klass}"
       # clipLine = false
       rect = getLineRect(rect)    
       @line_color  = convert_to_nscolor(@line_color)    unless @line_color.class == NSColor  
@@ -121,11 +119,7 @@ module RLayout
       end
     end
 
-
-
-
     def draw_line(r)
-      
       drawLine(r, withTrap:0)
       drawArrow if @start_arrow && @owner_graphic
     end

@@ -137,7 +137,6 @@ module RLayout
       #   @first_page.main_box.floats << Heading.new(nil, @heading)
       #   @first_page.relayout!
       #   # @first_page.main_box.relayout_floats!
-      #   @first_page.main_box.set_non_overlapping_frame_for_chidren_graphics        
       else 
         @heading[:chapter_kind]  = "chapter"
         @heading[:current_style] = CHAPTER_STYLES
@@ -146,8 +145,9 @@ module RLayout
         @first_page.graphics.unshift(heading_object)
         heading_object.parent_graphic = @first_page
       end
-      @first_page.relayout!
-      @first_page.main_box.set_non_overlapping_frame_for_chidren_graphics
+      @first_page.relayout!      
+      @first_page.main_box.create_column_grid_rects
+      @first_page.main_box.set_overlapping_grid_rect
       @first_page.main_box.layout_items(@paragraphs)
       while @paragraphs.length > 0
         page_index += 1
@@ -158,8 +158,11 @@ module RLayout
           options[:text_box]    = true
           options[:page_number] = @starting_page_number + page_index
           options[:column_count]= @column_count
-          Page.new(self, options)
+          p=Page.new(self, options)
+          p.relayout!
+          p.main_box.create_column_grid_rects
         end
+        
         @pages[page_index].main_box.layout_items(@paragraphs)
       end
       update_header_and_footer

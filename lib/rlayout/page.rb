@@ -77,7 +77,6 @@ module RLayout
         @main_box = object_box(main_box_options)
       end
       
-      
       if block
         instance_eval(&block)
       end
