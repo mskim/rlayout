@@ -134,7 +134,7 @@ module RLayout
     end
 
     def text_width
-      text_rect[WIDTH_VAL]
+      text_rect[2]
     end
     
     def mark_overlapping_grid_rects(float_rect, float_klass)

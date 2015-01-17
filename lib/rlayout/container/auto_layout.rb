@@ -23,10 +23,10 @@ module RLayout
       return if @graphics.length <= 0
       vertical            = @layout_direction == "vertical"
       have_expanding_child = false # Do we have layout direction expending child?
-      column_size         = [non_overlapping_frame[WIDTH_VAL], non_overlapping_frame[HEIGHT_VAL]]
-      starting_y          = non_overlapping_frame[Y_POS] # i need non_overlapping_bounds, not non_overlapping_frame
+      column_size         = [non_overlapping_frame[2], non_overlapping_frame[3]]
+      starting_y          = non_overlapping_frame[1] # i need non_overlapping_bounds, not non_overlapping_frame
       current_position    = vertical ? (starting_y + @top_margin +  @top_inset) : (@left_margin + @left_inset)
-      ending_position     = vertical ? (column_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (column_size[X_POS] - @left_margin - @right_margin - @left_inset - @right_inset)
+      ending_position     = vertical ? (column_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (column_size[0] - @left_margin - @right_margin - @left_inset - @right_inset)
       column_room         = ending_position
       expandable_length   = ending_position
       expandable_graphics = 0
@@ -89,30 +89,30 @@ module RLayout
             graphic_dimension = unit_size*graphic.layout_length
           end
           if vertical
-            graphic_frame[HEIGHT_VAL]  = graphic_dimension
+            graphic_frame[3]  = graphic_dimension
           else
-            graphic_frame[WIDTH_VAL]   = graphic_dimension
+            graphic_frame[2]   = graphic_dimension
           end
         end
-        graphic_dimension = vertical ? graphic_frame[HEIGHT_VAL] : graphic_frame[WIDTH_VAL]
+        graphic_dimension = vertical ? graphic_frame[3] : graphic_frame[2]
         # set current_position and update current_position
         if have_expanding_child
           if vertical            
-            graphic_frame[Y_POS] = current_position             
+            graphic_frame[1] = current_position             
             current_position += graphic_dimension + @layout_space
             current_position += graphic.bottom_margin + graphic.top_margin #if graphic.bottom_margin && graphic.top_margin 
           else
-            graphic_frame[X_POS] = current_position
+            graphic_frame[0] = current_position
             current_position += graphic_dimension + @layout_space
             current_position += graphic.left_margin + graphic.right_margin #if graphic.left_margin && graphic.right_margin
           end
         else
           # for non-expanding 
           if vertical
-            graphic_frame[Y_POS] = current_position
+            graphic_frame[1] = current_position
             current_position += graphic.height + @layout_space
           else
-            graphic_frame[X_POS] = current_position
+            graphic_frame[0] = current_position
             current_position += graphic.width + @layout_space
           end           
         end
@@ -120,11 +120,11 @@ module RLayout
         # perpedicular alignment
         if (vertical ? graphic.expand_width? : graphic.expand_height?)
           if vertical
-            graphic_frame[WIDTH_VAL]  = column_size[X_POS] - (@left_margin + @right_margin + @right_inset + @left_inset) - graphic.right_margin - graphic.left_margin
-            graphic_frame[X_POS]      = (@left_margin  + @left_inset)
+            graphic_frame[2]  = column_size[0] - (@left_margin + @right_margin + @right_inset + @left_inset) - graphic.right_margin - graphic.left_margin
+            graphic_frame[0]      = (@left_margin  + @left_inset)
           else
-            graphic_frame[HEIGHT_VAL] = column_size[Y_POS] - (@top_margin + @bottom_margin + @top_inset + @bottom_inset) - graphic.top_margin - graphic.bottom_margin
-            graphic_frame[Y_POS]      = (@top_margin + @top_inset)
+            graphic_frame[3] = column_size[1] - (@top_margin + @bottom_margin + @top_inset + @bottom_inset) - graphic.top_margin - graphic.bottom_margin
+            graphic_frame[1]      = (@top_margin + @top_inset)
           end  
         end
         #perpedicular alignment for non perpedicular expanding child 
@@ -134,15 +134,15 @@ module RLayout
         #     # Nothing to do
         #   when "center", "middle"
         #     if vertical
-        #       graphic_frame[X_POS] = (column_size[0] / 2.0) - (graphic_frame[X_POS] / 2.0)
+        #       graphic_frame[0] = (column_size[0] / 2.0) - (graphic_frame[0] / 2.0)
         #     else
-        #       graphic_frame[Y_POS] = (column_size[1] / 2.0) - (graphic_frame[Y_POS] / 2.0)
+        #       graphic_frame[1] = (column_size[1] / 2.0) - (graphic_frame[1] / 2.0)
         #     end
         #   when "right", "bottom"
         #     if vertical
-        #       graphic_frame[X_POS] = column_size[X_POS] - graphic_frame[X_POS] - @bottom_margin
+        #       graphic_frame[0] = column_size[0] - graphic_frame[0] - @bottom_margin
         #     else
-        #       graphic_frame[Y_POS] = column_size[Y_POS] - graphic_frame[Y_POS] - @top_margin
+        #       graphic_frame[1] = column_size[1] - graphic_frame[1] - @top_margin
         #     end
         #   end
         # end
