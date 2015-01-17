@@ -100,7 +100,7 @@ module RLayout
           next if text_column.class != RLayout::TextColumn
           text_column.create_grid_rects unless text_column.grid_rects
           if intersects_rect(float_rect, text_column.frame_rect)
-            text_column.set_overlapping_grid_lines(float_rect,float.klass)
+            text_column.mark_overlapping_grid_rects(float_rect,float.klass)
           end
         end
       end
@@ -112,7 +112,7 @@ module RLayout
       starting_y += @heading.height if @heading
       options[:is_float]       = true
       first_column = @graphics.first
-      starting_y = first_column.grid_line_position_at(starting_y)
+      starting_y = first_column.grid_rect_at_position(starting_y)
       starting_y               += options[:y] if options[:y]
       options[:y]              = starting_y  
       options[:adjust_height_to_keep_ratio]     = true

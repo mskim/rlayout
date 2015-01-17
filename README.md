@@ -19,12 +19,19 @@ TODO List
 		- make it yml
 	- modifiy kramdown into r_kramdown
 
+2014 1 16
+	- use path for layout_ct_lines
+	- path_from_current_position
+	- I may not need to set starting_position for complex column, 
+		it could be the top, if I implement the path
+	- TextBox should call overlapping can creating at the laout_item
+	
 2014 1 15
 	- fix layout_items in TextBox
 	- fix split paragraph
 	
 2014 1 14
-	- fix TextColumn room, based on grid_lines
+	- fix TextColumn room, based on grid_rects
 	- fix case when we have hole in the middle of TextColumn
 	
 2014 1 13

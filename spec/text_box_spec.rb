@@ -11,7 +11,7 @@ describe 'TextBox creation' do
     @heading[:layout_expand] = [:width]
     @tb.floats << Heading.new(nil, @heading)
     @tb.relayout!
-    @tb.set_non_overlapping_line_grid
+    @tb.set_overlapping_grid_rect
   end
   
   it 'should create TextBox' do
