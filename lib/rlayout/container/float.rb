@@ -1,9 +1,9 @@
 
 # float
-# float is floating graphic on top of the body of container.
+# floats are floating graphic on top of the body of TextBox.
 # floats are heading, images, side_box, and quotation box, 
 # There should be a rule to manage floats if there are multiples of them and gets crowded.
-# 
+# see layout_floats!
 
 # float weight
 # FLOAT_NO_PUSH:      do not push out contents underneath
@@ -160,15 +160,7 @@ module RLayout
       float.origin  = float_origin_for(float.float_position)
       float.size    = float_size_for(float.float_size)
     end
-    
-    # Todo ????
-    def relayout!
-      # return unless @floats.length <= 0
-      # @floats.each do |float|
-      #   set_origin_and_size(float)
-      # end
-    end
-                
+                    
     def to_hash
       floats=[]
       @floats.each do |float|
@@ -176,7 +168,62 @@ module RLayout
       end
       floats
     end
+    
+    # layout_floats!
+    # floats are Heading, Image, Quotes, SideBox
+    # Float should have frame_rect, 
+    #   x value in frame_rect, represents the column starting location  [x,y,width,height]
+    #   y value are in unit of grid_rects, but this could get pushed if previous float occupied the space. 
+    #   width value in columns
+    #   height value are in grid_rect units, but this could vary with content.
+    # default frame_rect for float is [0,0,1,1], grid_rect in cordinates
+    # For Images, default height is natural height proportional to image width/height ratio.
+    # For Text, default height is natural height proportional to thw content of text, unless specified otherwise.
+
+    # float are layed out in oder of @floats array
+    # if a starting location is occupies, following float is placed below.
+    # if I want to put float at the bottom of the TextBox, should pass 
+    #     float_bottom:true 
+    # if more than one bottm stacking float in the same location, it moves up as we do with top down.
+    # if float_bleed:true, it bleeds at the location, top, bottom and side
+    
+    def layout_floats!
+      return unless @floats
+      @occupied_rects =[]
+      @floats.each_with_index do |float, i|
+        puts float.fill_color
+        if i==0
+          @occupied_rects << float.frame_rect
+        elsif intersects_with_occupied_rects?(@occupied_rects, float.frame_rect)
+              # move to some place  
+              push_float_to_no_mens_land(@occupied_rects,float)
+              @occupied_rects << float.frame_rect
+        else
+          @occupied_rects << float.frame_rect
+        end
+        float.puts_frame
+        puts "++++ "
         
+      end
+      # test for overflow of floats
+      @floats.each do |float|
+        return "oveflow" if contains_rect(frame_rect, float.frame_rect)
+      end
+      true
+    end
+    
+    def intersects_with_occupied_rects?(occupied_arry, new_rect)
+      occupied_arry.each do |occupied_rect|
+        return true if intersects_rect(occupied_rect, new_rect)
+      end
+      false
+    end
+    
+    def push_float_to_no_mens_land(occupied_arry, float)
+      occupied_arry.each do |occupied_rect|
+        float.y = max_y(occupied_rect) if intersects_rect(occupied_rect, float.frame_rect)
+      end
+    end
   end
   
 

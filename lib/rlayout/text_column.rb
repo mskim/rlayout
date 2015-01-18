@@ -61,8 +61,6 @@ module RLayout
         return
       end
       @grid_rects.each do |grid_rect|
-        # puts "grid_rect.rect:#{grid_rect.rect}"
-        # puts "!grid_rect.fully_covered_grid?:#{!grid_rect.fully_covered_grid?}"
         if !grid_rect.fully_covered
           @current_position = grid_rect.rect[1]
           break 
@@ -92,7 +90,6 @@ module RLayout
     end
     
     def can_fit?(height)
-      puts "room:#{room}"
       return false if @room < 16
       height <= @room
     end
@@ -239,6 +236,7 @@ module RLayout
 
     # 1. painful poth by path construction of irregular shape    
     def path_from_current_position
+      puts "@complex_rect:#{@complex_rect}"
       if @complex_rect
         starting_index  = current_grid_rect_index_at_position
         ending_index    = @grid_rects.length - 1

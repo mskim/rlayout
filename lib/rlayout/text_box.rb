@@ -130,7 +130,7 @@ module RLayout
     end
 
     
-    #  layout_items steps
+    # layout_items steps
     # 1. take out(shift) front_most_item from flowing_items array,
     #    and processed in the loop untill all items are consumed.
     # 2. call item.layout_text, which calles @text_layout_manager.layout_ct_lines for line layout.
@@ -166,7 +166,6 @@ module RLayout
       # puts "flowing_items.length:#{flowing_items.length}"
       # puts "frame_rect:#{frame_rect}"
       while item = flowing_items.shift do
-        # height = item.height
         if item.respond_to?(:layout_text)
           item.width  = current_column.text_width
           # puts "current_column.text_rect:#{current_column.text_rect}"
@@ -187,8 +186,16 @@ module RLayout
               return false
             end
           end
-          layout_option[:proposed_path] = current_column.path_from_current_position
+          path = current_column.path_from_current_position
+          puts "++++column_index:#{column_index}"
+          puts "path.class:#{path.class}"
+          bounding_rect = CGPathGetPathBoundingBox(path)
+          puts "bounding_rect,.class:#{bounding_rect.class}"
+          puts "bounding_rect.size.height:#{bounding_rect.size.height}"
+          layout_option[:proposed_path] = path
+          puts "current_column:#{current_column}"
           height = item.layout_text(layout_option) # item.width:
+          puts "height:#{height}"
         elsif item.class == RLayout::Image
           item.width  = current_column.text_width
           item.layout_expand  = [:width]
@@ -201,16 +208,18 @@ module RLayout
           end
         end
         
-        # puts "item.overflow?:#{item.overflow?}"
         if height <= current_column.room 
           current_column.place_item(item)
-        elsif height > current_column.room
+        elsif item.overflow? #height > current_column.room
+          puts "item.overflow"
           second_half = item.split_overflowing_lines
           current_column.place_item(item)
           column_index +=1
           if column_index < @column_count
             current_column = @graphics[column_index]   
-            current_column.set_column_starting_position         
+            current_column.set_column_starting_position
+            puts "column_index:#{column_index}"
+            puts "current_column.current_position:#{current_column.current_position}"        
             flowing_items.unshift(second_half)
           else
             # we are done with this text_box
