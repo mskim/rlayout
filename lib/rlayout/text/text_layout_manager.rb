@@ -69,8 +69,6 @@
 # dropcap_area
 
 # overflow is we have overflowing text, because we have more lines than available spave,
-# make sure that it is not because of underflow
-# underflow is when no line was created, because there is no room for even a single line.
 
 FIT_FONT_SIZE   = 0   # keep given font size
 FIT_TO_BOX      = 1   # change font size to fit text into box 
@@ -86,7 +84,7 @@ module RLayout
     attr_accessor :text_direction, :text_markup
     attr_accessor :frame_setter, :frame, :line_count, :text_size, :linked
     attr_accessor :drop_lines, :drop_char, :drop_char_width, :drop_char_height
-    attr_accessor :text_fit_type, :text_overflow, :overflow_line_count, :text_underflow
+    attr_accessor :text_fit_type, :text_overflow, :overflow_line_count
     attr_accessor :proposed_path, :proposed_line_count
     def initialize(owner_graphic, options={})
       @owner_graphic = owner_graphic
@@ -238,15 +236,14 @@ module RLayout
     def layout_ct_lines(options={})
       @text_overflow  = false
       @overflow_line_count = 0
-      @text_underflow = false
       proposed_height = @owner_graphic.height
       proposed_height = options[:proposed_height] if options[:proposed_height]
       proposed_width  = @owner_graphic.width      
       proposed_width  = options[:proposed_width] if options[:proposed_width]
       @proposed_path  = CGPathCreateMutable()
-      #TODO pass path from text_box
       if options[:proposed_path]
         @proposed_path = options[:proposed_path]
+        proposed_height = CGPathGetBoundingBox(@proposed_path).size.height
       else
         bounds = CGRectMake(0, 0, proposed_width, 1000)
         CGPathAddRect(@proposed_path, nil, bounds)
@@ -258,7 +255,6 @@ module RLayout
       end
       line_height = @text_size + @text_line_spacing
       used_size_height = @line_count*line_height
-      # if @text_markup && (@text_markup == 'h5' || @text_markup == 'h6') #&& options[:aling_to_grid]
       if @text_markup && (@text_markup != 'p') #&& options[:aling_to_grid]
         # puts "markup is :#{@text_markup}"
         # Make the head paragraphs height as body text multiples"
@@ -266,20 +262,16 @@ module RLayout
         # puts  "used_size_height:#{used_size_height}"
       end
       @proposed_line_count = (proposed_height/line_height).to_i
-      proposed_line_height = @proposed_line_count*line_height
-      # set text_overflow and under flow
-      if @line_count > @proposed_line_count
+      @lines_array      = CTFrameGetLines(@frame)
+      glyphCount        = CTLineGetGlyphCount(@lines_array.last)
+      last_line_range   = CTLineGetStringRange(@lines_array.last)
+      if @att_string.length > last_line_range.location + glyphCount
         @text_overflow = true 
         @overflow_line_count =  @line_count - @proposed_line_count
       end
-           
-      if @proposed_line_count == 0 # no line was created    
-        @text_underflow = true 
-      end
-      # return height 
+
       if @text_fit_type != FIT_TO_BOX 
         @owner_graphic.adjust_size_with_text_height_change(proposed_width, used_size_height)
-        # @proposed_line_count = @line_count
       end
       @line_count*(@text_size + @text_line_spacing)
       
@@ -312,23 +304,17 @@ module RLayout
       @text_size*scale
     end
     
-    def fit_text_to_box
-      puts "@att_string.string:#{@att_string.string}"
-      puts "@text_overflow :#{@text_overflow }"
-      # return unless @text_fit_type == FIT_TO_BOX      
+    def fit_text_to_box    
       return unless @text_overflow    
       new_size = new_font_size_for_fit
       @text_size = new_size
-      # change @att_string with new font size
       range=NSMakeRange(0,0)
       atts=@att_string.attributesAtIndex(0, effectiveRange:range)
       current_font = atts[NSFontAttributeName].fontName
       new_font_atts = {}
       new_font_atts[NSFontAttributeName] = NSFont.fontWithName(current_font, size:new_size)
       range=NSMakeRange(0,@att_string.length)
-      # add new attribute to @att_string
       @att_string.addAttributes(new_font_atts, range:range)
-      # relayout lines 
       @frame_setter = CTFramesetterCreateWithAttributedString(@att_string)
       @frame        = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), @proposed_path, nil)
       @line_count   = CTFrameGetLines(@frame).count  
@@ -384,42 +370,18 @@ module RLayout
     def text_line_height
       @text_size + @text_line_spacing
     end
-    
-    def fits?
-      @text_overflow == false && @text_underflow == false
-    end
-    
-    # overflow is we have overflowing text, because we have more lines than available spave,
-    # make sure that it is not because of underflow
-    # underflow is when no line was created, because there is no room for even a single line.
-    def overflow?
-      @text_overflow == true && @text_underflow == false
-    end
-        
+            
     # split att_string into two at overflowing position
     def split_overflowing_lines
       @lines_array            = CTFrameGetLines(@frame)
-      line_height             = @text_size + @text_line_spacing
-      first_half_line_count   = @proposed_line_count
-      # puts "@proposed_line_count:#{@proposed_line_count}"
-      # puts "@lines_array.length:#{@lines_array.length}"
-      #TODO i should add each line heights, I am assuming all line have same height
-      last_line_of_first_half = @lines_array[@proposed_line_count-1]
-      glyphCount =  CTLineGetGlyphCount(last_line_of_first_half)
-      last_line_range         = CTLineGetStringRange(last_line_of_first_half)
-      # cut the att_string into two
+      glyphCount =  CTLineGetGlyphCount(@lines_array.last)
+      last_line_range         = CTLineGetStringRange(@lines_array.last)
       second_half_position    = last_line_range.location + glyphCount
       first_half_range        = NSMakeRange(0, second_half_position)
       second_half_range       = NSMakeRange(second_half_position, @att_string.length - second_half_position)
       first_half_string       = @att_string.attributedSubstringFromRange(first_half_range).copy
       second_half_stirng      = @att_string.attributedSubstringFromRange(second_half_range).copy
       @att_string             = first_half_string
-      # puts "first_half_range.location:#{first_half_range.location}"
-      # puts "first_half_range.length:#{first_half_range.length}"
-      # puts "second_half_range.location:#{second_half_range.location}"
-      # puts "second_half_range.length:#{second_half_range.length}"
-      # puts "first_half_string.string:#{first_half_string.string}"
-      # puts "second_half_stirng.string:#{second_half_stirng.string}"
       second_half_options     = to_hash
       second_half_options[:att_string]  = second_half_stirng
       second_half_options[:linked]      = true
@@ -434,25 +396,26 @@ module RLayout
     # draw only proposed_line
     def draw_text(r) 
       if @text_direction == 'left_to_right'
-        context = NSGraphicsContext.currentContext.graphicsPort
+        context         = NSGraphicsContext.currentContext.graphicsPort
         CGContextSetTextMatrix(context, CGAffineTransformIdentity)
         CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1))
-        y = @text_size
+        @lines_array    = CTFrameGetLines(@frame)
+
+        y               = @text_size
         if @drop_lines
           # draw drop char
           CGContextSetTextPosition(context, 1, @drop_char_text_size - 10)
           CTLineDraw(@drop_ct_line, context)
           # draw right_size_frame
-          @lines_array    = CTFrameGetLines(@right_size_frame)
           @line_count     = @lines_array.count      
-          line_height = @text_size + @text_line_spacing
+          line_height     = @text_size + @text_line_spacing
           #TODO I shuld get the width from @frame
-          line_width  = @right_side_width
-          
+          line_width      = @right_side_width
+          @lines_array    = CTFrameGetLines(@right_size_frame)          
           @lines_array.each_with_index do |line, i|
-            x_offset = @drop_char_width + 2
-            text_width =  CTLineGetTypographicBounds(line, nil, nil,nil)
-            line_room = line_width - text_width
+            x_offset      = @drop_char_width + 2
+            text_width    =  CTLineGetTypographicBounds(line, nil, nil,nil)
+            line_room     = line_width - text_width
             # alignment and first line indent done here
             # center, right alignment done here
             case @text_alignment
@@ -475,13 +438,7 @@ module RLayout
         # @line_count     = @lines_array.count      
         line_height     = @text_size + @text_line_spacing
         line_width      = @owner_graphic.text_rect[2]
-        # @lines_array.each_with_index do |line, i|
-        # draw only the lines that fit in proposed area, proposed_line_count
-        # if @text_overflow
-        #   puts "+++++++ in draw_text if @text_overflow"
-        #   puts "@proposed_line_count:#{@proposed_line_count}"
-        #   puts "@att_string.string:#{@att_string.string}"
-        # end
+
         @lines_array[0..(@proposed_line_count - 1)].each_with_index do |line, i|
           x_offset = 0
           text_width =  CTLineGetTypographicBounds(line, nil, nil,nil)

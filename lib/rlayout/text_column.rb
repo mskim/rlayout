@@ -14,8 +14,9 @@ module RLayout
   # I want to align all body text to even numbered grids, this will keep vertical text alignment across the columns
   
   class TextColumn < Container
-    attr_accessor :current_position, :current_line, :room
-    attr_accessor :complex_rect, :grid_rects, :grid_rects_frame, :body_line_height
+    attr_accessor :current_position, :current_line
+    attr_accessor :grid_rects, :grid_rects_frame, :body_line_height
+    attr_accessor :complex_rect, :text_area_path_collection, :text_area_range_collection
     def initialize(parent_graphic, options={}, &block)
       super
       @klass = "TextColumn"
@@ -50,29 +51,6 @@ module RLayout
       end
     end
     
-    #TODO it should not start at the half height starting position using options[:align_to_body_text}
-    # set @current_pasotion as start of non-overlapping y
-    # this happens when Heading or Image is covering the top part of column
-    # make sure we 
-    def set_column_starting_position(options={})
-      @current_position = text_rect[1] unless @current_position #@top_margin + @top_inset
-      unless @grid_rects
-        update_room
-        return
-      end
-      @grid_rects.each do |grid_rect|
-        if !grid_rect.fully_covered
-          @current_position = grid_rect.rect[1]
-          break 
-        end
-      end
-      update_room
-    end
-    
-    def update_room
-      @room = max_y(text_rect) - @current_position
-    end
-    
     def overlapping_rects
       overlapping_rects = []
       @grid_rects.each do |rect|
@@ -87,6 +65,10 @@ module RLayout
         overlapping_rects << rect if rect.fully_covered
       end
       overlapping_rects
+    end
+    
+    def room 
+      max_y(text_rect) - @current_position
     end
     
     def can_fit?(height)
@@ -139,7 +121,6 @@ module RLayout
       @grid_rects.each do |grid_rect|
         grid_rect.update_text_area(float_rect)
       end
-      set_column_starting_position
     end
     
     # non_overlapping_rect is a actual layout frame that is not overlapping with flaots
@@ -162,22 +143,22 @@ module RLayout
     def draw_grid_rects
       NSColor.yellowColor.set
       @grid_rects.each {|line| line.draw_grid_rect}
-      draw_path_from_current_position
+      draw_collection_for_column if @klass == "TextColumn"
     end
     
-    # def draw_text_area_path
-    #   ns_path = NSBezierPath.bezierPath
-    #   ns_path = ns_path_from_current_position
-    #   # cg_path = ns_path.CGPath
-    #   cg_path = path_from_current_position
-    #   ns_path.CGPath = cg_path
-    #   NSColor.redColor.set
-    #   ns_path.setLineWidth(1)
-    #   ns_path.stroke
-    # end
-    # 
+    # They are not use in the production, it is test only.
+    def draw_collection_for_column 
+      # from the top scan untile first text_area_gird, 
+      starting_index = scan_covered_grid_from(0, true)
+      while starting_index < @grid_rects.length
+        ending_index = scan_covered_grid_from(starting_index, false)
+        draw_from_range(starting_index, ending_index)
+        starting_index = scan_covered_grid_from(ending_index, true)
+      end      
+    end
     
-    def draw_path_from_current_position
+    # for testing 
+    def draw_from_range(starting_index, ending_index) 
       if @complex_rect
       	context = NSGraphicsContext.currentContext.graphicsPort
         CGContextBeginPath(context)
@@ -233,13 +214,52 @@ module RLayout
       end
     end
     
-
-    # 1. painful poth by path construction of irregular shape    
+    # skip fully_covered_rect and update current_position
+    def update_current_position
+      current_index = current_grid_rect_index_at_position(@current_position)
+      while current_index < @grid_rects.length do
+        if !@grid_rects[current_index].fully_covered
+          @current_position = max_y(@grid_rects[current_index].rect)
+          return
+        else
+          current_index += 1
+        end
+      end
+    end
+    
+    # scan grids until, fully covered run or text_area run depending on covered option
+    # from given index
+    def scan_covered_grid_from(index, covered)
+      new_index = index
+      while new_index < @grid_rects.length do
+        return new_index if @grid_rects[new_index].fully_covered != covered
+        new_index += 1
+      end
+      new_index
+    end
+    
+    # path_from_current_position is the work horse of complex layout.
+    # it constructs a path from given point to the bottom or the top of the next hole.
+    # created path is passed to text_layout_manager as proposed path.
+    # This handles all three cases
+    #   1. simple rect
+    #   2. complex shape with partial overlappings
+    #   3. Chunked column with multiple path.(fully covered areas in the middle of column)
+    # painful poth by path construction of irregular shape, using rectangles.    
+    #   1. start the path at the top left
+    #   2. path from origin to the top right
+    #   2. go down the right side, gird by grid, 
+    #        if the differet size is encounterd move horizotally to new edge.
+    #        repeat this until bottom is reached
+    #   3. path at the bottom right to bottom left
+    #   4. come up at the left side, similar to going down to right side.
+    #   5. Close path
     def path_from_current_position
-      puts "@complex_rect:#{@complex_rect}"
+      path_groups = []
       if @complex_rect
         starting_index  = current_grid_rect_index_at_position
-        ending_index    = @grid_rects.length - 1
+        # look for fully covered areas, otherwise go to bottom.
+        ending_index    = scan_covered_grid_from(starting_index, false)
         path            = CGPathCreateMutable()
         starting_grid   = @grid_rects[starting_index]
         #move to top_left_position
@@ -285,13 +305,14 @@ module RLayout
         CGPathCloseSubpath(path)
         return path
       end
-      # simple column
+      # case for simple column
       path    = CGPathCreateMutable()
       bounds  = CGRectMake(frame_rect[0], @current_position, frame_rect[2], @height - @bottom_margin - @bottom_inset - @current_position)
       bounds  = CGRectMake(frame_rect[0], @current_position, frame_rect[2], 1000)
       CGPathAddRect(path, nil, bounds)
       return path
     end
+
   end
   
   # GridRect has two rectangle, 

@@ -1,7 +1,5 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
-
-
 describe 'path_from_current_position' do
   before do
     @tb = TextBox.new(nil, column_count: 2, width: 400, height:500)

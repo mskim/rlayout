@@ -1,14 +1,3 @@
-#TODO
-# 1.force fit first column first item, when it doesn't fit 
-
-# The challenge is to have text box with overlapping floats on top
-# And flowing image alone the text, and Dropcap suppoert
-# I have tried this with TextLayoutManager with paragraph base on each paragraph
-# I am have difficulty with irregular shaped float on top.
-
-# I guess another way I should try is to have TexBox Based text system, as I had with TextRecord
-# 1. Yet keep the paragraph datat as paragraph, and merge them into text_box attr string after calumating the height fot the column
-# 1. OR I can try attached cell as flowing image and float on top?
 
 
 module RLayout
@@ -16,18 +5,24 @@ module RLayout
   # TextBox is container of flowing paragraphs.
   # TextBox has Columns. Paragraphs flow along Columns. 
   # TextBox can be linek to other TextBox, "next_link" and "previous_link" points to them.
-  # When Text paragraphs flow, it acts as traditional TextBox.
-  # TextBox handls other types of objects as well, such as 
+  # ObjectBox, a sister class. It handls other types of objects, such as 
   # product items, BoxAds, Directory elements, quiz items or any other graphic objects, 
   # that support flowing item protocol, namely "set_width_and_adjust_height"
   # one other flowing item protocol is :breakable?, whick tells whether the flowing item can be broken into parts.
-
-  # Breakable item should split itself into two parts, if it can with no orphan or widow. 
-  # TODO Currently I have parts as children graphics, but I should break it up into two.
+  # Breakable item should split itself into two or more parts, if it can with no orphan or widow consideration. 
+  # Currently, I break paragraph up into two at the oveflowing point in att_string.
 
   # TextBox adds another layer called "floats"
-  # floats sit on top layer and pushes out text content underneath
+  # Floats sit on top layer and pushes out text content underneath it.
   # Typocal floats are Heading, Image, Quates, SideBox
+  # Each float has its weight(float on top or push down), starting_posion, starting_column, width_in_column
+  # Floats can be layed out with rules, or pre-design templates with profile.
+  
+  #TODO
+  # 1. text box with overlapping floats on top, sometimes fully covered with hole in the middle of the column.
+  # 1. flowing image alone the text. attached Math block, inline math
+  # 1. Image that are floating and bleeding at the edge.
+  # 1. Dropcap suppoert. Dropcap Image
    
   class TextBox < Container
     attr_accessor :heading, :heading_columns, :image, :side_box, :quote_box, :shoulder_column, :grid_size
@@ -140,8 +135,10 @@ module RLayout
     #   Text overflow is detected by comparing "proposed_height" and returned actual height.
     #   if the result is greater than the prososed_height, text is overflowing.
     # 3. path is contructed by " def path_from_current_position"
-    #   if column is simple with no overlapping floats, path is rectange.
-    #   But if column is complex with overlapping floats, path is constructed from grid_rects, with non-overlapping shapes.
+    #   a. if column is simple with no overlapping floats, path is rectange.
+    #   b. if column is complex with overlapping floats, path is constructed from grid_rects, with non-overlapping shapes.
+    #   c. if column is complex and is discontinuous, I need to have multiple path for each of them.
+    #   "path_from_current_position" handles all three cases. It return array of path.
     #   This is how I hanlde overlappings float on top of the text.
     #   Rather than using bezier cureve, I am using series of rects to simulate irregular shape.
     # 4. path is constructed from current position to the bottom of the column.     
@@ -160,25 +157,23 @@ module RLayout
     def layout_items(flowing_items)
       column_index = 0
       current_column = @graphics[column_index]
-      current_column.set_column_starting_position
       # puts "current_column.text_rect:#{current_column.text_rect}"
       # puts "current_column.frame_rect:#{current_column.frame_rect}"
       # puts "flowing_items.length:#{flowing_items.length}"
       # puts "frame_rect:#{frame_rect}"
-      while item = flowing_items.shift do
+      while item      = flowing_items.shift do
         if item.respond_to?(:layout_text)
           item.width  = current_column.text_width
+          
           # puts "current_column.text_rect:#{current_column.text_rect}"
           # puts "current_column.room:#{current_column.room}"
           # puts "@current_column.current_position:#{current_column.current_position}"
-          layout_option ={proposed_height: current_column.room}
           # "item underflow" case where there is no room at the bottom enven for a single line
           if current_column.room < current_column.body_line_height || current_column.room < item.text_line_height 
             puts "item underflow"
             column_index +=1
             if column_index < @column_count
               current_column = @graphics[column_index]
-              current_column.set_column_starting_position
               flowing_items.unshift(item)
               next
             else
@@ -186,16 +181,16 @@ module RLayout
               return false
             end
           end
-          path = current_column.path_from_current_position
-          puts "++++column_index:#{column_index}"
-          puts "path.class:#{path.class}"
-          bounding_rect = CGPathGetPathBoundingBox(path)
-          puts "bounding_rect,.class:#{bounding_rect.class}"
-          puts "bounding_rect.size.height:#{bounding_rect.size.height}"
-          layout_option[:proposed_path] = path
-          puts "current_column:#{current_column}"
-          height = item.layout_text(layout_option) # item.width:
-          puts "height:#{height}"
+          current_column.update_current_position
+          text_area_path  = current_column.path_from_current_position
+          # puts "++++column_index:#{column_index}"
+          bounding_rect = CGPathGetPathBoundingBox(text_area_path)
+          current_column.current_position = bounding_rect.origin.y
+          # puts "bounding_rect.size.height:#{bounding_rect.size.height}"
+          # puts "bounding_rect.origin.y:#{bounding_rect.origin.y}"
+          # puts "current_column:#{current_column}"
+          height = item.layout_text(:proposed_path=>text_area_path) # item.width:
+          # puts "height:#{height}"
         elsif item.class == RLayout::Image
           item.width  = current_column.text_width
           item.layout_expand  = [:width]
@@ -208,18 +203,14 @@ module RLayout
           end
         end
         
-        if height <= current_column.room 
+        if !item.overflow?
           current_column.place_item(item)
-        elsif item.overflow? #height > current_column.room
-          puts "item.overflow"
+        else 
           second_half = item.split_overflowing_lines
           current_column.place_item(item)
           column_index +=1
           if column_index < @column_count
             current_column = @graphics[column_index]   
-            current_column.set_column_starting_position
-            puts "column_index:#{column_index}"
-            puts "current_column.current_position:#{current_column.current_position}"        
             flowing_items.unshift(second_half)
           else
             # we are done with this text_box
@@ -229,21 +220,7 @@ module RLayout
             return false
           end
         end
-          # #TODO this can happen for head text that is taller than the body
-          #      puts "item underflow"
-          #      # underflow is when no line was created, because there is no room for even a single line.
-          #      column_index +=1
-          #      if column_index < @column_count
-          #        current_column = @graphics[column_index]
-          #        current_column.set_column_starting_position
-          #        flowing_items.unshift(item)
-          #        next            
-          #        # current_column.place_item(second_half)
-          #      else
-          #        flowing_items.unshift(second_half)
-          #        return false
-          #      end
-          #    end
+
       end
       true
     end

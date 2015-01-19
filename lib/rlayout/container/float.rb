@@ -60,10 +60,17 @@ module RLayout
   
   class Graphic
     attr_accessor :float_weight, :float_position, :float_size
+    attr_accessor :float_starting_column, :float_width_in_column, :flaot_bleeding
+    
     def init_float(options={})
       @float_weight   = options.fetch(:float_weight, FLOAT_PUSH_RECT)
       @float_position = options.fetch(:float_position, TOP_LEFT)
       @float_size     = options.fetch(:float_size, SIZE_MEDIUM)
+      # actual
+      @float_starting_column = options.fetch(:float_starting_column, 0)
+      @flaot_widht_in_column = options.fetch(:float_width_in_column, 1)
+      @flaot_bleeding = options.fetch(:flaot_bleeding, false)
+      
       self
     end
     
