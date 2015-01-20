@@ -102,6 +102,7 @@ module RLayout
     
     #TODO it should not start at the half height starting position using options[:align_to_body_text}
     def current_grid_rect_index_at_position(options={})
+      return 0 unless @grid_rects
       @current_position = @top_margin + @top_inset unless @current_position #@top_margin + @top_inset
       @grid_rects.each_with_index do |grid_rect, i|
         if @current_position >= min_y(grid_rect.rect) && @current_position <= max_y(grid_rect.rect)
@@ -216,6 +217,7 @@ module RLayout
     
     # skip fully_covered_rect and update current_position
     def update_current_position
+      return unless @grid_rects
       current_index = current_grid_rect_index_at_position(@current_position)
       while current_index < @grid_rects.length do
         if !@grid_rects[current_index].fully_covered
