@@ -53,7 +53,11 @@ MININUM_LINES_FOR_SPLIT = 2
     def text_string
       @text_layout_manager.att_string.string
     end
-        
+    
+    def text_markup
+      @text_layout_manager.text_markup      
+    end
+    
     def overflow?
       @text_layout_manager.text_overflow
     end

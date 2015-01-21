@@ -140,7 +140,8 @@ module RLayout
       while item      = flowing_items.shift do
         if item.respond_to?(:layout_text)
           item.width  = current_column.text_width
-          
+          puts "item.text_markup:#{item.text_markup}"
+          puts "item.text_string:#{item.text_string}"
           # puts "current_column.text_rect:#{current_column.text_rect}"
           # puts "current_column.room:#{current_column.room}"
           # puts "@current_column.current_position:#{current_column.current_position}"

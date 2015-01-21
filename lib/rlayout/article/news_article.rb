@@ -111,6 +111,7 @@ module RLayout
       @main_box.create_column_grid_rects 
       place_floats_to_text_box 
       @main_box.set_overlapping_grid_rect 
+      puts "@paragraphs.length:#{@paragraphs.length}"
       @main_box.layout_items(@paragraphs)
 
     end
