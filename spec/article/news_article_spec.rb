@@ -42,34 +42,6 @@ end
 
 __END__
 
-describe 'load stoy' do
-  before do
-      options = {
-         :grid_frame => [4,3,3,4],
-         :grid_width => 188.18,
-         :grid_height => 158.67,
-         :story => {
-                :heading => {
-                   :category => "news",
-                      :title => "Mr. Kim Welcome!",
-                     :author => "some author",
-                   :subtitle => "This is some interesting article",
-            :heading_columns => 2
-          },
-          :body_markdown => "#### One is a first part of body. \n\n#### And some more text and some more\r\nof the text.\n\nThis is the body text for the story. And some more lines of text is here.\n\n#### And some more text and some more\r\nof the text.\n\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\n\n#### And some more text and some more\r\nof the text.\n\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\n\n#### And some more text and some more\r\nof the text.\n\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\n\n#### And some more text and some more\r\nof the text.\n\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\n\n\n\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here."
-        },
-        :output_path => "/Users/mskim/Development/rails4/newsman/public/issues/1/1/1.pdf"
-      }
-    @m = NewsArticle.new(nil, options)
-    @pdf_path ="/Users/mskim/Development/rails4/newsman/public/issues/1/1/1.pdf"
-  end
-
-  it 'should save loaded story' do
-    File.exists?(@pdf_path).must_equal true
-    system("open #{@pdf_path}")
-  end
-end
-
 
 describe 'create NewsArticle with Image' do
   before do

@@ -117,7 +117,7 @@ module RLayout
     
     def place_floats_to_text_box
       #TODO place other floats besides images
-      @main_box.place_float_images(@images, @grid_width, @grid_height)  
+      @main_box.place_float_images(@images, @grid_width, @grid_height) if @images
       @main_box.layout_floats!
     end
   end

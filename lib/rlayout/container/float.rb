@@ -108,6 +108,7 @@ module RLayout
     # place imaegs that are in the head of the story as floats
     def place_float_images(images, grid_width, grid_height)
       gutter = @layout_space
+      return unless images
       images.each do |image_options|
         if image_options[:grid_frame]
           frame_rect = grid_frame_to_frame_rect(image_options[:grid_frame])
