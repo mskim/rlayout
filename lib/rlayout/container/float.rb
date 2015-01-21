@@ -11,12 +11,8 @@
 # FLOAT_PUSH_SHAPE:   push out contents underneath the shape, cicle or bezier path
 
 #     weight:     0. float, 1 push_out_rect, 2. push_out_shape
-# graphic float_record
-#     position:   0. top_left, 1 top_middle, 2. top_right
-#                 3. middle_left, 4 middle_middle, 5. middle_right
-#                 6. bottom_left, 7 bottom_middle, 8. bottom_right
-##    size:       1. small, 2 midium, 3. large 4.x_large
-#     float_grid_frame float frame in grid
+#     position:   top, middle, bottom
+#     grid_frame float frame in grid
 
 # One way to layout floats is using patters and profile, a pre-designed template
 # 1. Define set of patters per grid_base with grid_frame
@@ -40,42 +36,26 @@ FLOAT_NO_PUSH       = 0
 FLOAT_PUSH_RECT     = 1
 FLOAT_PUSH_SHAPE    = 2
 
-# positions
-TOP_LEFT      = 0
-TOP_CENTER    = 1
-TOP_RIGHT     = 2
-MIDDLE_LEFT   = 3
-MIDDLE_CENTER = 4
-MIDDLE_RIGHT  = 5
-BOTTOM_LEFT   = 6
-BOTTOM_CENTER = 7
-BOTTOM_RIGHT  = 8
-
-SIZE_SMALL    = 0
-SIZE_MEDIUM   = 1
-SIZE_LARGE    = 2
-SIZE_X_LARGE  = 3
 
 module RLayout
   
   class Graphic
-    attr_accessor :float_weight, :float_position, :float_size
-    attr_accessor :float_starting_column, :float_width_in_column, :flaot_bleeding
+    attr_accessor :float_weight
+    attr_accessor :float_position, :flaot_bleeding
     
     def init_float(options={})
       @float_weight   = options.fetch(:float_weight, FLOAT_PUSH_RECT)
-      @float_position = options.fetch(:float_position, TOP_LEFT)
-      @float_size     = options.fetch(:float_size, SIZE_MEDIUM)
-      # actual
-      @float_starting_column = options.fetch(:float_starting_column, 0)
-      @flaot_widht_in_column = options.fetch(:float_width_in_column, 1)
+      @float_position = options.fetch(:float_position, "top")
       @flaot_bleeding = options.fetch(:flaot_bleeding, false)
-      
       self
     end
     
     def float_to_hash
       h = {}
+      h[:float_weight] = @float_weight if @float_weight != FLOAT_PUSH_RECT
+      h[:float_position] = @float_position if @float_position != "top"
+      h[:flaot_bleeding] = @flaot_bleeding if @flaot_bleeding != false
+      h
     end
     
     # givein column rect and float_rect return non_ovelapping new rect for column
@@ -116,57 +96,6 @@ module RLayout
         return new_rect
       end
     end
-    
-
-    # 
-    # given float position option, calculate the orgin value of float
-    def float_origin_for(position_option)
-      case position_option
-      when  TOP_LEFT 
-        [0,0]
-      # when  TOP_CENTER
-      # when  TOP_RIGHT
-      # when  MIDDLE_LEFT
-      # when  MIDDLE_CENTER
-      # when  MIDDLE_RIGHT
-      # when  BOTTOM_LEFT
-      # when  BOTTOM_CENTER 
-      # when  BOTTOM_RIGHT
-      else
-        [0,0]
-      end
-    end
-    
-    # given float size option, calculate the size value of float
-    def float_size_for(size_option)
-      size = @single_grid_size
-      case size_option
-      when  SIZE_SMALL
-        size.width  *= 3
-        size.height *= 3
-      when  SIZE_MEDIUM
-        size.width  *= 4
-        size.height *= 4
-      when  SIZE_LARGE
-        [300,300]
-        size.width  *= 6
-        size.height *= 6
-        
-      when  SIZE_X_LARGE
-        size.width  *= 12
-        size.height *= 6
-      else
-      end
-      
-      size
-  
-    end
-    
-    
-    def set_origin_and_size(float)
-      float.origin  = float_origin_for(float.float_position)
-      float.size    = float_size_for(float.float_size)
-    end
                     
     def to_hash
       floats=[]
@@ -175,14 +104,39 @@ module RLayout
       end
       floats
     end
+        
+    # place imaegs that are in the head of the story as floats
+    def place_float_images(images, grid_width, grid_height)
+      gutter = @layout_space
+      images.each do |image_options|
+        if image_options[:grid_frame]
+          frame_rect = grid_frame_to_frame_rect(image_options[:grid_frame])
+          image_options[:x]       = frame_rect[0]
+          image_options[:y]       = frame_rect[1]
+          image_options[:width]   = frame_rect[2]
+          image_options[:height]  = frame_rect[3]
+          # grid_frame = image_options[:grid_frame]
+          # image_options[:x]           = grid_width*grid_frame[0] + gutter*grid_frame[0]
+          # image_options[:y]           = grid_width*grid_frame[1]
+          # image_options[:width]       = grid_width*grid_frame[2] + gutter*grid_frame[2]
+          # image_options[:height]      = grid_height*grid_frame[3]
+        end
+        image_options[:layout_expand]   = nil
+        place_float_image(image_options)
+      end
+    end
     
+    def place_float_image(options={})
+      options[:is_float]  = true
+      options[:adjust_height_to_keep_ratio]     = true
+      @image  = Image.new(self, options)      
+    end
+    
+
     # layout_floats!
     # floats are Heading, Image, Quotes, SideBox
-    # Float should have frame_rect, 
-    #   x value in frame_rect, represents the column starting location  [x,y,width,height]
-    #   y value are in unit of grid_rects, but this could get pushed if previous float occupied the space. 
-    #   width value in columns
-    #   height value are in grid_rect units, but this could vary with content.
+    # Float should have frame_rect, float_position, and flaot_bleeding
+    # height value are in grid_rect units, but this could vary with content.
     # default frame_rect for float is [0,0,1,1], grid_rect in cordinates
     # For Images, default height is natural height proportional to image width/height ratio.
     # For Text, default height is natural height proportional to thw content of text, unless specified otherwise.
@@ -194,11 +148,18 @@ module RLayout
     # if more than one bottm stacking float in the same location, it moves up as we do with top down.
     # if float_bleed:true, it bleeds at the location, top, bottom and side
     
+    # if floats are croweded and overlap, I should layout floats in tree groups
+    # top, middle, bottom and lay them in auto_layout mode, but relative to thier frame_rect
+    # or I should have
     def layout_floats!
       return unless @floats
       @occupied_rects =[]
+      #TODO position bottom bottom_occupied_rects
+      # middle occupied rect shoul
+      @middle_occupied_rects = []
+      @bottom_occupied_rects = []
       @floats.each_with_index do |float, i|
-        puts float.fill_color
+        next unless float.kind_of?(Image) || float.kind_of?(Heading)
         if i==0
           @occupied_rects << float.frame_rect
         elsif intersects_with_occupied_rects?(@occupied_rects, float.frame_rect)
@@ -208,13 +169,9 @@ module RLayout
         else
           @occupied_rects << float.frame_rect
         end
-        float.puts_frame
-        puts "++++ "
-        
       end
-      # test for overflow of floats
       @floats.each do |float|
-        return "oveflow" if contains_rect(frame_rect, float.frame_rect)
+        return "floats oveflow!!" if contains_rect(frame_rect, float.frame_rect)
       end
       true
     end

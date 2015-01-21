@@ -23,6 +23,5 @@ describe 'test float layout' do
     @tb.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true
     system("open #{@pdf_path}")
-    
   end
 end

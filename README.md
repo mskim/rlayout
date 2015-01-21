@@ -19,18 +19,22 @@ TODO List
 		- make it yml
 	- modify kramdown into r_kramdown
 
+2014 1 21
+	- include Utility
+	- refine float image layout
+	- fix starting line offset bug  
+	
+2014 1 20
+	- float_location: top, middle, bottom
+	- float_bleed: false, trure
+
 2014 1 19
 	- text_box layout_item
 		1. make TextColumn starting_point at creation
-		1. create path with fully_covered_line
+		1. create path with path_from_current_position
+			should handle simple rect, complex rect, and multiple chunked path
 		1. layout_ct_make 
-			return height from bottom of the last line + text_line_spacing.
-
-	- 
-		float_strating_position: top, middle, bottom
-		float_starting_column: 0,1,2 
-		float_width_in_column: 1,2,3
-		float_bleed: false, trure
+			for overflow compare the att_strring with last line range
 		
 2014 1 16
 	- use path for layout_ct_lines

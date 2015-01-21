@@ -10,14 +10,14 @@ describe 'load stoy' do
        :images => [
          {
            :image_path => "/Users/mskim/Development/rails4/newsman/public/issues/1/1/image/minsookim.jpg",
-           :image_frame=> [0,0,1,1],
+           :grid_frame=> [0,0,1,1],
          },
-         # {
-         #   :image_path => "/Users/mskim/Development/rails4/newsman/public/issues/1/1/image/1.jpg",
-         #   :image_frame=> [2,0,1,1],
-         # } 
+         {
+           :image_path => "/Users/mskim/Development/rails4/newsman/public/issues/1/1/image/1.jpg",
+           :grid_frame=> [2,0,1,1],
+         } 
          ],
-       :story_hash => {
+       :story => {
          :heading => {
                  :title => "Mr. Kim Welcome!",
                 :author => "some author",
@@ -47,8 +47,8 @@ describe 'load stoy' do
       options = {
          :grid_frame => [4,3,3,4],
          :grid_width => 188.18,
-        :grid_height => 158.67,
-         :story_hash => {
+         :grid_height => 158.67,
+         :story => {
                 :heading => {
                    :category => "news",
                       :title => "Mr. Kim Welcome!",

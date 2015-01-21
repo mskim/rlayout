@@ -101,30 +101,6 @@ module RLayout
       end
     end
     
-    def place_float_image(options={})
-      @heading = @floats.first
-      starting_y = 0
-      starting_y += @heading.height if @heading
-      options[:is_float]       = true
-      first_column = @graphics.first
-      starting_y = first_column.grid_rect_at_position(starting_y)
-      starting_y               += options[:y] if options[:y]
-      options[:y]              = starting_y  
-      options[:adjust_height_to_keep_ratio]     = true
-      @image  = Image.new(self, options) 
-    end
-    # place imaegs that are in the head of the story as floats
-    def place_float_images(grid_width, grid_height, images)
-        images.each do |image_options|
-          image_frame = image_options[:image_frame]
-          image_options[:width]       = grid_width*image_frame[2]
-          image_options[:height]      = grid_height*image_frame[3]
-          image_options[:layout_expand]  = nil
-          place_float_image(image_options)
-        end      
-    end
-
-    
     # layout_items steps
     # 1. take out(shift) front_most_item from flowing_items array,
     #    and processed in the loop untill all items are consumed.
@@ -224,7 +200,22 @@ module RLayout
       end
       true
     end
-          
+    
+    def grid_frame_to_frame_rect(grid_frame)
+      return [0,0,100,100] unless @graphics
+      x_val = grid_frame[0]
+      y_val = grid_frame[1]
+      width_val = grid_frame[2]
+      height_val = grid_frame[3]
+      column_frame = @graphics.first.frame_rect
+      column_width = column_frame[2]
+      x= @graphics[x_val].x
+      y = column_frame[1]
+      width = column_width*width_val + (width_val - 1)*@layout_space
+      height = width # TODO ?
+      [x,y,width, height]
+    end
+    
     # adjust float sizes with object_box size change
     def relayout_floats!
       @floats.each do |float|
@@ -232,7 +223,6 @@ module RLayout
         float.width = text_rect[WIDTH_VAL]
         float.relayout!
       end
-      
     end
   end
   

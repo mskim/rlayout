@@ -1,5 +1,5 @@
 
-module  RLayout
+module  Utility
     
   def min_x(rect)
     rect[0]

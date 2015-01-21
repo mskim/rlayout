@@ -13,6 +13,7 @@ module RLayout
         @heading_columns = options[:grid_frame][2]
         options[:column_count]= options[:grid_frame][2]
         @grid_width  = options.fetch(:grid_width, 200)
+        
         @grid_height  = options.fetch(:grid_height, 200)
         options[:gutter]      = 10 unless options[:gutter]
         options[:v_gutter]    = 0 unless options[:v_gutter]
@@ -29,14 +30,14 @@ module RLayout
       if options[:story_path]
         @story_path = options[:story_path]
         read_story
-      elsif options[:story_hash] 
-        @heading_options    = options[:story_hash][:heading] 
-        @images     = options[:images]       
+      elsif options[:story] 
+        @heading_options    = options[:story][:heading]
+        @images     = options[:images] 
         if @heading_options[:heading_columns]
           @heading_columns = @heading_options[:heading_columns]
         end
         @paragraphs = []
-        para_data_array = Story.parse_markdown(options[:story_hash][:body_markdown])
+        para_data_array = Story.parse_markdown(options[:story][:body_markdown])
         make_paragraph(para_data_array)
       end
       super
@@ -107,23 +108,17 @@ module RLayout
       @heading_options[:current_style]  = NEWS_STYLES
       @main_box.floats << Heading.new(nil, @heading_options)
       relayout!
-      place_float_images 
       @main_box.create_column_grid_rects 
+      place_floats_to_text_box 
       @main_box.set_overlapping_grid_rect 
       @main_box.layout_items(@paragraphs)
-      # @main_box.graphics.each_with_index do |col, i|
-      #   puts "++++++++ column index:#{ i}"
-      #   col.grid_rects.each do |grid|
-      #     puts grid.rect.to_s
-      #     puts "grid.fully_covered:#{grid.fully_covered}"
-      #   end
-      # end
+
     end
     
-    def place_float_images
-      return unless @images
-      #TODO rearrange @images frames
-      @main_box.place_float_images(@grid_width, @grid_height, @images)  
+    def place_floats_to_text_box
+      #TODO place other floats besides images
+      @main_box.place_float_images(@images, @grid_width, @grid_height)  
+      @main_box.layout_floats!
     end
   end
   
