@@ -203,7 +203,11 @@ module RLayout
     end
     
     def grid_frame_to_frame_rect(grid_frame)
-      return [0,0,100,100] unless @graphics
+      return [0,0,100,100]          unless @graphics
+      return [0,0,100,100]          if grid_frame.nil?
+      return [0,0,100,100]          if grid_frame == ""
+      grid_frame = eval(grid_frame) if grid_frame.class == String
+      
       x_val = grid_frame[0]
       y_val = grid_frame[1]
       width_val = grid_frame[2]

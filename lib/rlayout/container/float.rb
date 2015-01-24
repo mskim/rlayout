@@ -110,6 +110,7 @@ module RLayout
       gutter = @layout_space
       return unless images
       images.each do |image_options|
+        
         if image_options[:grid_frame]
           frame_rect = grid_frame_to_frame_rect(image_options[:grid_frame])
           image_options[:x]       = frame_rect[0]

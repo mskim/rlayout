@@ -19,16 +19,20 @@ TODO List
 		- make it yml
 	- modify kramdown into r_kramdown
 
-2014 1 21
+
+2015 1 24
+	- set default image grid_frame_as [0,0,1,1,] for text_box
+2015 1 21
 	- include Utility
 	- refine float image layout
-	- fix starting line offset bug  
+	- fix starting line offset bug
+	- fix markdown parsing bug . with no text_markup  
 	
-2014 1 20
+2015 1 20
 	- float_location: top, middle, bottom
 	- float_bleed: false, trure
 
-2014 1 19
+2015 1 19
 	- text_box layout_item
 		1. make TextColumn starting_point at creation
 		1. create path with path_from_current_position
@@ -36,28 +40,28 @@ TODO List
 		1. layout_ct_make 
 			for overflow compare the att_strring with last line range
 		
-2014 1 16
+2015 1 16
 	- use path for layout_ct_lines
 	- path_from_current_position
 	- I may not need to set starting_position for complex column, 
 		it could be the top, if I implement the path
 	- TextBox should call overlapping can creating at the laout_item
 	
-2014 1 15
+2015 1 15
 	- fix layout_items in TextBox
 	- fix split paragraph
 	
-2014 1 14
+2015 1 14
 	- fix TextColumn room, based on grid_rects
 	- fix case when we have hole in the middle of TextColumn
 	
-2014 1 13
+2015 1 13
 	- fix float overlapping mechanism with grid_rects in TextColumn
 	- fix non-rectangular shaped column
 	  	- spliting
 		- layout paragraph
 
-2014 1 9
+2015 1 9
 	- fix Kramdown parsing error(done)
 	- news_article, text_box, 
 	- current_style, merge with custom style
@@ -68,7 +72,7 @@ TODO List
 	- floats images
 		have floats template
 	
-2014 1 7
+2015 1 7
 	- fix NewsArticle, TextBox
 
 2014 12 31
