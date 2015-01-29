@@ -131,28 +131,34 @@ module RLayout
     def place_float_image(options={})
       options[:is_float]  = true
       options[:adjust_height_to_keep_ratio]     = true
+      # puts "options:#{options}"
+      # puts File.exists?(options[:image_path])
       @image  = Image.new(self, options)      
     end
     
 
     # layout_floats!
-    # floats are Heading, Image, Quotes, SideBox
-    # Float should have frame_rect, float_position, and flaot_bleeding
-    # height value are in grid_rect units, but this could vary with content.
-    # default frame_rect for float is [0,0,1,1], grid_rect in cordinates
+    # Floats are Heading, Image, Quotes, SideBox ...
+    # Floats should have frame_rect, float_position, and flaot_bleeding.
+    # Height value is in grid_rect units, but this could vary with content.
+    # Default frame_rect for float is [0,0,1,1], grid_rect in cordinates
     # For Images, default height is natural height proportional to image width/height ratio.
     # For Text, default height is natural height proportional to thw content of text, unless specified otherwise.
 
-    # float are layed out in oder of @floats array
-    # if a starting location is occupies, following float is placed below.
-    # if I want to put float at the bottom of the TextBox, should pass 
-    #     float_bottom:true 
-    # if more than one bottm stacking float in the same location, it moves up as we do with top down.
-    # if float_bleed:true, it bleeds at the location, top, bottom and side
+    # Floats are grouped in three categories
+    # 1. top to bottom:         default image layout
+    # 2. middle moving across:  used for leading, Quotes, and Image
+    # 3. bottom to up:          sidebox, bleeding image
+    # Floats are layed out in order of @floats array from top to bottom.
+    # If starting location is occupies, following float is placed below the position of pre-occupied one.
+    # Floats can also move up from the bottom, it moves up with top down.
+    # Floats string at the bottom of the TextBox, should pass float_bottom:true 
+    # If float_bleed:true, it bleeds at the location, top, bottom and side
     
-    # if floats are croweded and overlap, I should layout floats in tree groups
-    # top, middle, bottom and lay them in auto_layout mode, but relative to thier frame_rect
-    # or I should have
+    # TODO centered floats
+    # For Leading, Quotes or Image, should implement cented float
+    # It is common for Centered floats to have width slightly larger than column width on each side.
+    # float_paistion: "center" 
     def layout_floats!
       return unless @floats
       @occupied_rects =[]

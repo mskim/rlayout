@@ -1,6 +1,46 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 require File.dirname(__FILE__) + '/../../lib/rlayout/article/news_article'
 
+describe 'read stoy' do
+  before do
+    options = {:grid_frame=>[4, 3, 3, 4],
+     :grid_width=>188.18,
+     :grid_height=>158.67,
+     :story=>
+      {:heading=>
+        {:category=>"news",
+         :title=>"제목은 여기에 입력 합니다",
+         :author=>"Min Soo Kim",
+         :subtitle=>"소제목은 여기에 입력합니다.",
+         :heading_columns=>2},
+       :body_markdown=>
+        "\r\n##### One is a first part of body. \n\nAnd some more text and some more of the text.\n\n#### Here is four text and some more of the text.\\n\\nThis is the body text for the story. \n\nAnd some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\n\n#### In the year of 39, There are people singing. \n\nThere were singing about the hardship. And the lylics touched many of us. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\n\n#### And in the year of 59, I was born in Yanggu.\n\nThis is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here. This is the body text for the story. And some more lines of text is here.\\n\\n#### And some more text and some more of the text. \n\nNow a days it seem like a trivial task, and we often forget that once it was called a revolutionaly. Before the days of D.T.P, there was a technology called typesetting. It was driven with command line based typesetting language. It would produce galley of texts. We had to cut those and paste them on the mechnical board.\\n\\nThat was really a tidious task. story. But, now the D.T.P seams like a tidious tasks. We did not consider about multiple platform. There was no other flatform other, only the paper existed. Now, we have to publish to Web and Mobile Devices. And current tools are badly equipt to address those issues. \\n\\nThis is the last paragraph\r\n       "},
+     :images=>
+      [{:image_path=>#<Pathname:/uploads/image/image/3/IMG_0347.jpg>,
+        :caption=>"",
+        :grid_frame=>[0, 0, 1, 1],
+        :position=>nil},
+       {:image_path=>#<Pathname:/uploads/image/image/4/IMG_0351_Fotor.jpg>,
+        :caption=>"",
+        :grid_frame=>[0, 0, 1, 1],
+        :position=>nil},
+       {:image_path=>#<Pathname:/uploads/image/image/5/IMG_0351.jpg>,
+        :caption=>"",
+        :grid_frame=>[0, 0, 1, 1],
+        :position=>nil}],
+     :output_path=>
+      "/Users/mskim/Development/rails4/newsman/public/issues/1/1/1.pdf"}
+    @m = NewsArticle.new(nil, options) 
+    @pdf_path = "/Users/mskim/Development/rails4/newsman/public/issues/1/1/1.pdf"
+  end
+
+  it 'should save loaded story' do
+    File.exists?(@pdf_path).must_equal true
+    system("open #{@pdf_path}")
+  end
+end
+
+__END__
 
 describe 'load stoy' do
   before do
@@ -41,7 +81,6 @@ describe 'load stoy' do
   end
 end
 
-__END__
 describe 'load stoy' do
   before do
     options={:grid_frame=>[4, 3, 3, 4], 

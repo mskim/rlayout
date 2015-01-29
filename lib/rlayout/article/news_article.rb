@@ -11,9 +11,9 @@ module RLayout
       options[:y]             = options.fetch(:y, 0)
       if options[:grid_frame]
         @heading_columns = options[:grid_frame][2]
+        options[:grid_frame] = eval(options[:grid_frame]) if options[:grid_frame].class == String
         options[:column_count]= options[:grid_frame][2]
         @grid_width  = options.fetch(:grid_width, 200)
-        
         @grid_height  = options.fetch(:grid_height, 200)
         options[:gutter]      = 10 unless options[:gutter]
         options[:v_gutter]    = 0 unless options[:v_gutter]
@@ -111,7 +111,6 @@ module RLayout
       @main_box.create_column_grid_rects 
       place_floats_to_text_box 
       @main_box.set_overlapping_grid_rect 
-      puts "@paragraphs.length:#{@paragraphs.length}"
       @main_box.layout_items(@paragraphs)
 
     end

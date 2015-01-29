@@ -105,7 +105,7 @@ module RLayout
       return 0 unless @grid_rects
       @current_position = @top_margin + @top_inset unless @current_position #@top_margin + @top_inset
       @grid_rects.each_with_index do |grid_rect, i|
-        if @current_position >= min_y(grid_rect.rect) && @current_position <= max_y(grid_rect.rect)
+        if @current_position >= min_y(grid_rect.rect) && @current_position <= (max_y(grid_rect.rect) + 1) #make sure for flaot rounding 
           # return grid_rect 
           return i
         end

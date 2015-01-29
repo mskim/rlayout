@@ -19,9 +19,12 @@ TODO List
 		- make it yml
 	- modify kramdown into r_kramdown
 
-
+2015 1 27
+	- fix paragraph height bug
+	
 2015 1 24
 	- set default image grid_frame_as [0,0,1,1,] for text_box
+	
 2015 1 21
 	- include Utility
 	- refine float image layout
