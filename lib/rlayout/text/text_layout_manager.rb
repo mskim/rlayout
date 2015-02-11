@@ -255,12 +255,12 @@ module RLayout
       end
       line_height = @text_size + @text_line_spacing
       used_size_height = @line_count*line_height
-      if @text_markup && (@text_markup != 'p') #&& options[:aling_to_grid]
-        # puts "markup is :#{@text_markup}"
-        # Make the head paragraphs height as body text multiples"
-        used_size_height = body_line_height_multiple(used_size_height)
-        # puts  "used_size_height:#{used_size_height}"
-      end
+      # if @text_markup && (@text_markup != 'p') #&& options[:aling_to_grid]
+      #   # puts "markup is :#{@text_markup}"
+      #   # Make the head paragraphs height as body text multiples"
+      #   used_size_height = body_line_height_multiple(used_size_height)
+      #   # puts  "used_size_height:#{used_size_height}"
+      # end
       @proposed_line_count = (proposed_height/line_height).to_i
       @lines_array      = CTFrameGetLines(@frame)
       glyphCount        = CTLineGetGlyphCount(@lines_array.last)
@@ -274,7 +274,6 @@ module RLayout
         @owner_graphic.adjust_size_with_text_height_change(proposed_width, used_size_height)
       end
       @line_count*(@text_size + @text_line_spacing)
-      
     end
     
     ############ text fitting #######

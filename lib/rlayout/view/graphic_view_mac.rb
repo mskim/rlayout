@@ -51,6 +51,7 @@ class GraphicViewMac < NSView
     @graphic.draw_image(r)
     @graphic.text_layout_manager.draw_text(r)  if @graphic.text_layout_manager
     @graphic.draw_line(r)
+    @graphic.draw_shade(r)    if @graphic.respond_to?(:draw_shade)
     @graphic.draw_grid(r)     if @graphic.respond_to?(:grid_base) && @graphic.show_grid
     @graphic.draw_grid_rects  if @graphic.respond_to?(:grid_rects) && @graphic.grid_rects
   end
@@ -61,15 +62,26 @@ class GraphicViewMac < NSView
   end  
 
   def save_pdf(path, options={})
-    pdf_data.writeToFile(path, atomically:false)
+    pdf = pdf_data
+    pdf.writeToFile(path, atomically:false)
     if options[:jpg]
-      #TODO
+      image = NSImage.alloc.initWithData pdf
+      tiffdata = image.TIFFRepresentation
+      jpg_path = path.sub(".pdf", ".jpg")
+      tiffdata.writeToFile jpg_path, atomically:false
     end
+    
     if options[:thumb]
       #TODO
     end
   end
-
+  
+  def save_jpg(path)
+    image = NSImage.alloc.initWithData pdf_data
+    tiffdata = image.TIFFRepresentation
+    tiffdata.writeToFile path, atomically:false
+  end
+  
   def pdf_data
       dataWithPDFInsideRect(bounds)
   end

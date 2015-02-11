@@ -99,24 +99,28 @@ module RLayout
     def create_sections
       
     end
-  
-    
   end
-  
+    
   class NewspaperSection < Page
     attr_accessor :section_path, :issue_numner, :date, :section_name
     attr_accessor :section_template
     attr_accessor :heading_info, :output_path
-    attr_accessor :heading_type #top, side_box, none, 
+    attr_accessor :heading_type, :is_template #top, side_box, none, 
     def initialize(parent_graphic, options={})
       @parent_graphic = parent_graphic
       @section_path   = options[:section_path] if options[:section_path]
-      @heading_info   = options.fetch(:heading_info, {:layout_expand=>1}) 
+      @output_path    = options[:output_path]   if options[:output_path]
+      if options[:is_template]
+        super
+        @is_template = true
+        return self
+      end
+      #TODO
+      @heading_info   = options.fetch(:heading_info, {:layout_length=>1}) 
       # @heading_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
       # @heading_info[:layout_expand] = [:width,:height]
       @main_info      = options.fetch(:main_info, {:layout_expand=>11})
       @articles_info  = options[:articles_info] if options[:articles_info]
-      @output_path    = options[:output_path]   if options[:output_path]
       options         = options[:page_info]     if options[:page_info]
       super
       # create_folder
@@ -147,20 +151,17 @@ module RLayout
       section_page
     end
     
-    # options = {
-    #    options[:path]               : section_path
-    #    options[:page_info]          : page options hash
-    #    options[:heading_info]       : heading options hash
-    #    options[:main_info]          : main options hash
-    #    options[:articles_info]      : articles_info list
-    #    options[:output_path]
-    #  }
     def merge_pdf_articles(options={})
-	    heading = Image.new(self, @heading_info) 
+      puts __method__
+      # heading = Image.new(self, @heading_info) if @heading_info
+      # puts "heading:#{heading}"
+      # puts "@main_info:#{@main_info}"
 	    main = Container.new(self, @main_info) 
 	    relayout!
 	    @articles_info.each_with_index do |article_info, i|
-	      Image.new(main, article_info)
+	      puts "article_info:#{article_info}"
+	      img = Image.new(main, article_info)
+	      puts "img.layout_expand:#{img.layout_expand}"
 	    end
 	    if @output_path
         save_pdf(@output_path)
@@ -169,7 +170,34 @@ module RLayout
       end
       self
     end
-        
+    
+    def self.process_news_story_template(options={})
+      puts __method__
+      puts "options:#{options}"
+      graphic = Graphic.new(nil, options)
+      if options[:output_path]
+        graphic.save_pdf(options[:output_path])
+      else
+        puts "No @output_path!!!"
+        return false
+      end
+      true
+    end
+    
+    def self.merge_news_section_story_templates(options={})
+	    page = Page.new(nil, width: options[:width], height: options[:height]) 
+	    options[:articles_info].each_with_index do |article_info, i|
+	      img = Image.new(page, article_info)
+	    end
+	    if options[:output_path]
+        page.save_pdf(options[:output_path])
+      else
+        puts "No @output_path!!!"
+        return false
+      end
+      true
+    end
+    
     def process_news_article_markdown_files(file_list)
       file_list.each do |m|
         result = convert_markdown2pdf(m, options)

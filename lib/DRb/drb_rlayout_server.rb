@@ -22,6 +22,23 @@ class RLayoutServer
     'Failed'
   end
   
+  def process_news_story_template(options)
+    d = RLayout::NewspaperSection.process_news_story_template(options) 
+    if d
+      return "success"
+    end
+    'Failed'
+  end
+  
+  def merge_news_section_story_templates(options)
+    puts __method__
+    d = RLayout::NewspaperSection.merge_news_section_story_templates(options) 
+    if d
+      return "success"
+    end
+    'Failed'   
+  end
+  
   def merge_news_section_pdf_articles(options)
     d = RLayout::NewspaperSection.new(nil,options).merge_pdf_articles() 
     if d

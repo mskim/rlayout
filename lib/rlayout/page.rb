@@ -152,6 +152,8 @@ module RLayout
       
     end
     
+
+    
     def to_data      
       h = {}
       instance_variables.each{|a|

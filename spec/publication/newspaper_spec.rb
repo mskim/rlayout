@@ -38,6 +38,30 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 
 describe 'merge section pdf' do
+ before do
+   options = {
+      :section_path=>"/Users/mskim/Development/rails_tiny_apps/news_section/public/sections/1",
+       :page_info=>{:x=>0, :y=>0, :width=>600, :height=>600, :left_margin=>50, :top_margin=>50, :right_margin=>50, :bottom_margin=>50},
+       :main_info=>{:layout_length=>12},
+       :articles_info=>
+        [{:x=>0, :y=>0, :width=>3, :height=>1, :image_path=>"/Users/mskim/Development/rails_tiny_apps/news_section/public/sections/1/1.pdf"},
+         {:x=>0, :y=>1, :width=>3, :height=>1, :image_path=>"/Users/mskim/Development/rails_tiny_apps/news_section/public/sections/1/2.pdf"},
+         {:x=>0, :y=>2, :width=>1, :height=>1, :image_path=>"/Users/mskim/Development/rails_tiny_apps/news_section/public/sections/1/3.pdf"},
+         {:x=>1, :y=>2, :width=>1, :height=>1, :image_path=>"/Users/mskim/Development/rails_tiny_apps/news_section/public/sections/1/4.pdf"},
+         {:x=>2, :y=>2, :width=>1, :height=>1, :image_path=>"/Users/mskim/Development/rails_tiny_apps/news_section/public/sections/1/5.pdf"}],
+       :output_path=>"/Users/mskim/Development/rails_tiny_apps/news_section/public/sections/1/section.pdf"}
+   @section_page = NewspaperSection.new(nil,options).merge_pdf_articles
+   @output_path= options[:output_path]
+ end
+
+ it 'should create pdf section' do
+   File.exists?(@output_path).must_equal true
+   system("open #{@output_path}")
+ end
+end
+
+__END__
+describe 'merge section pdf' do
   before do
     options = {
        :section_path => "/Users/mskim/Development/rails4/newsman/public/issues/1/1",

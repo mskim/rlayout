@@ -13,6 +13,7 @@ require File.dirname(__FILE__) + "/rlayout/view"
 require File.dirname(__FILE__) + "/rlayout/document"
 require File.dirname(__FILE__) + "/rlayout/article"
 require File.dirname(__FILE__) + "/rlayout/publication/newspaper"
+require File.dirname(__FILE__) + "/rlayout/publication/photo_book"
 
 module RLayout
   # Your code goes here...

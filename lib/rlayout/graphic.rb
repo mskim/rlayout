@@ -10,6 +10,7 @@ require File.dirname(__FILE__) + "/graphic/fill"
 require File.dirname(__FILE__) + "/graphic/line"
 require File.dirname(__FILE__) + "/graphic/image"
 require File.dirname(__FILE__) + "/graphic/text"
+require File.dirname(__FILE__) + "/graphic/node_tree"
 
 module RLayout
   
@@ -127,6 +128,7 @@ module RLayout
       # h[:shape]  = @shape   if @shape != graphic_defaults[:shape]
       h
     end
+    
     
     # difference between to_hash and to_data:
     # to_hash does not save values, if they are equal to default
@@ -360,10 +362,13 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     end
     
     def expand_width?
+      return false unless @layout_expand && @layout_expand.class == Array
       @layout_expand.include?(:width)
     end
     
     def expand_height?
+      puts "@layout_expand:#{@layout_expand}"
+      return false unless @layout_expand && @layout_expand.class == Array
       @layout_expand.include?(:height)
     end
     
@@ -394,10 +399,19 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       j += "\n"
     end
         
-    def save_pdf(path)
+    def save_pdf(path, options={})
       if RUBY_ENGINE == 'macruby'        
         @ns_view ||= GraphicViewMac.from_graphic(self)
-        @ns_view.save_pdf(path)
+        @ns_view.save_pdf(path, options)
+        #TODO
+        # puts "DRb not found!!!!"
+      end
+    end
+    
+    def save_jpg(path)
+      if RUBY_ENGINE == 'macruby'        
+        @ns_view ||= GraphicViewMac.from_graphic(self)
+        @ns_view.save_jpg(path)
         #TODO
         # puts "DRb not found!!!!"
       end

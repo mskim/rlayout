@@ -1,22 +1,21 @@
 module RLayout
   
-
   # TextColumn 
-  # TextColumn is covered with series of grid_rects.
+  # TextColumn is covered with series of "grid_rects".
   # "grid_rects" are used to determine the shapes of text layout area, to avoid overlapping floats.
-  # complex_rect means column has overlapping graphic and it has non-rectanle shaped region.
-  # We non-rectanglar shaped bezier path to flow text.
-  # But rather than using bezeier curve, I simulate it using this grid_rects.
+  # Complex_rect means column has overlapping graphic and it has non-rectanle shaped region.
+  # We need non-rectanglar shaped bezier path to flow text.
+  # But rather than using bezeier curve, I simulate it using "grid_rects".
   # I am using seris of GridRect class rects to determin the shape of text flowing region. 
-  # finer the GridRect, closer it gets to bezier curve. I am using half body_text_height sized rect.
+  # Finer the GridRect, closer it gets to bezier curve. I am using half body_text_height sized rect.
   # Half of body text size should be suffient for text layout.
-  # I do not want body text to align at odd numbered grid.
-  # I want to align all body text to even numbered grids, this will keep vertical text alignment across the columns
-  
+  # If align_body_text is set to "true", body text are aligned by starting the body paragraph at odd numbered grid.
+  # If all body text to even numbered grids, this will horozontally alignment body text across the columns.
   class TextColumn < Container
-    attr_accessor :current_position, :current_line
-    attr_accessor :grid_rects, :grid_rects_frame, :body_line_height
-    attr_accessor :complex_rect, :text_area_path_collection, :text_area_range_collection
+    attr_accessor :current_position, :current_index
+    attr_accessor :grid_rects, :body_line_height
+    attr_accessor :complex_rect, :align_body_text
+
     def initialize(parent_graphic, options={}, &block)
       super
       @klass = "TextColumn"
@@ -38,7 +37,6 @@ module RLayout
     def create_grid_rects
       @grid_rects = []
       column_rect = text_rect
-      @grid_rects_frame = column_rect
       x     = column_rect[0] # text_box cordinate
       y     = column_rect[1] # text_box cordinate
       width = column_rect[2]
@@ -99,20 +97,6 @@ module RLayout
       max_y(@grid_rects.last.rect) 
     end
     
-    
-    #TODO it should not start at the half height starting position using options[:align_to_body_text}
-    def current_grid_rect_index_at_position(options={})
-      return 0 unless @grid_rects
-      @current_position = @top_margin + @top_inset unless @current_position #@top_margin + @top_inset
-      @grid_rects.each_with_index do |grid_rect, i|
-        if @current_position >= min_y(grid_rect.rect) && @current_position <= (max_y(grid_rect.rect) + 1) #make sure for flaot rounding 
-          # return grid_rect 
-          return i
-        end
-      end
-      @grid_rects.length # index is beyond the array range
-    end
-
     def text_width
       text_rect[2]
     end
@@ -131,13 +115,48 @@ module RLayout
       end
       bounds_rect
     end
-
+    
+    #TODO it should not start at the half height starting position using options[:align_to_body_text}
+    def current_grid_rect_index_at_position(options={})
+      return 0 unless @grid_rects
+      @current_position = @top_margin + @top_inset unless @current_position #@top_margin + @top_inset
+      @grid_rects.each_with_index do |grid_rect, i|
+        if @current_position >= min_y(grid_rect.rect) && @current_position <= (max_y(grid_rect.rect) + 1) #make sure for flaot rounding 
+          # return grid_rect 
+          return i
+        end
+      end
+      @grid_rects.length # index is beyond the array range
+    end
+    
+    # snap to grid_rect if the position is very near top snap to top
+    # otherwise return bottom position of grid_rect
+    def snap_to_grid_rect(position)
+      return position unless @grid_rects
+      if position < @grid_rects.first.rect[1]
+        return @grid_rects.first.rect.y
+      end
+      @grid_rects.each_with_index do |grid_rect, i|
+        if position >= min_y(grid_rect.rect) && position <= (max_y(grid_rect.rect) + 0.1) #make sure for flaot rounding 
+          # grid_rect height is half of body text rect
+          # we wont to snap to even numbered lines
+          if i.odd?
+            return max_y(@grid_rects[i+1].rect) unless i >= (@grid_rects.length - 1) 
+          else
+            return max_y(@grid_rects[i].rect)
+          end
+        end
+      end
+      max_y(@grid_rects.last.rect)
+    end
+    
     def place_item(item)
       @graphics << item
       item.parent_graphic = self
       item.x              = @left_margin + @left_inset
       item.y              = @current_position
       @current_position   += item.height + @layout_space
+      @current_position   = snap_to_grid_rect(@current_position)
       @room               = text_rect[3] - @current_position
     end
 
@@ -218,13 +237,18 @@ module RLayout
     # skip fully_covered_rect and update current_position
     def update_current_position
       return unless @grid_rects
-      current_index = current_grid_rect_index_at_position(@current_position)
-      while current_index < @grid_rects.length do
-        if !@grid_rects[current_index].fully_covered
-          @current_position = max_y(@grid_rects[current_index].rect)
+      @current_index = current_grid_rect_index_at_position(@current_position)
+      while @current_index < @grid_rects.length do
+        if !@grid_rects[@current_index].fully_covered
+          if @current_index.odd? && @current_index < (@grid_rects.length - 1)
+            # return even numbered grid
+            @current_position = max_y(@grid_rects[@current_index + 1].rect)
+            return
+          end
+          @current_position = max_y(@grid_rects[@current_index].rect)
           return
         else
-          current_index += 1
+          @current_index += 1
         end
       end
     end

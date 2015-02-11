@@ -19,8 +19,25 @@ TODO List
 		- make it yml
 	- modify kramdown into r_kramdown
 
-2015 1 27
+2015 2 11
+	- rlayout cli using RubyMotion as App
+	- setup github and bitbucket
+	- rlayout, photo_layout, restaurant
+	
+2015 2 9
+	- node_tree
+	- PhotoBook
+	
+2015 2 2
+	- add save_jpg
+	- save_pdf(path, options={})
+2015 1 29
 	- fix paragraph height bug
+	- align_body_text: true
+	- refactor
+		update_current_position
+		snap_to_grid_rect
+		scan_covered_grid_from
 	
 2015 1 24
 	- set default image grid_frame_as [0,0,1,1,] for text_box

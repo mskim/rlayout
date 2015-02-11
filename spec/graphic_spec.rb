@@ -1,5 +1,32 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+describe 'save jpg' do
+  before do
+    @g        = Graphic.new(nil, fill_color: 'red')
+    @jpg_path = File.dirname(__FILE__) + "/output/graphic_jpg_test.jpg"
+  end
+  
+  it 'should save jpg' do
+    @g.save_jpg(@jpg_path)
+    File.exists?(@jpg_path).must_equal true
+    system("open #{@jpg_path}")
+  end
+  
+  it 'should save pdf with jpg options' do
+    @g        = Graphic.new(nil, fill_color: 'blue')
+    
+    @pdf_path = File.dirname(__FILE__) + "/output/graphic_pdf_n_jpg_test.pdf"
+    @jpg_path = File.dirname(__FILE__) + "/output/graphic_pdf_n_jpg_test.jpg"
+    @g.save_pdf(@pdf_path, jpg: true)
+    File.exists?(@pdf_path).must_equal true
+    File.exists?(@jpg_path).must_equal true
+    system("open #{@pdf_path}")
+    system("open #{@jpg_path}")
+  end
+  
+end
+__END__
+
 describe 'rect intersect' do
   it 'should not intersect' do
     r1 = [0, 0, 379.693333333333, 105.0]
@@ -12,7 +39,6 @@ describe 'rect intersect' do
   
 end
 
-__END__
 
 describe ' Graphic from Hash ' do
   before do

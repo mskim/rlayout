@@ -41,7 +41,7 @@ module RLayout
         make_paragraph(para_data_array)
       end
       super
-      layout_story
+      layout_story unless options[:is_template]
       if @output_path
         save_pdf(@output_path)
       end

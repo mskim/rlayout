@@ -24,11 +24,15 @@ module RLayout
   # 1. Image that are floating and bleeding at the edge.
   # 1. Dropcap suppoert. Dropcap Image
    
+  # align_body_text
+  # If align_body_text is on, start body paragraphs on even numbered grid_rects only. 
+  # so that body texts are horozontally aligned, across the columns
+  #
   class TextBox < Container
     attr_accessor :heading, :heading_columns, :image, :side_box, :quote_box, :shoulder_column, :grid_size
     attr_accessor :starting_item_index, :ending_item_index
     attr_accessor :column_count, :next_link, :previous_link
-    attr_accessor :floats
+    attr_accessor :floats, :align_body_text
     
     def initialize(parent_graphic, options={}, &block)
       super
