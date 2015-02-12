@@ -1,6 +1,4 @@
 
-if RUBY_ENGINE == "macruby"
-framework 'cocoa'
 COLOR_NAMES = %w[black blue brown clear cyan darkGray gray green lightGray magenta orange red white yellow white]
 
 #shape
@@ -86,5 +84,4 @@ class GraphicViewMac < NSView
       dataWithPDFInsideRect(bounds)
   end
 
-end
 end
