@@ -1,4 +1,3 @@
-require 'yaml'
 
 # How do I process variable Images?
 # Normally we use image_path, a full image path, for image.

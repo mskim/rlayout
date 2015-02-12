@@ -1,4 +1,3 @@
-require 'yaml'
 
 module RLayout
   class Page
@@ -166,7 +165,6 @@ module RLayout
     end
     
     def self.parse_csv(csv_path)
-      require 'csv'
       unless File.exists?(csv_path)
         puts "#{csv_path} doesn't exist ..."
         return nil

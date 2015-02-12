@@ -1,4 +1,3 @@
-require File.dirname(__FILE__) + '/page/page_fixtures'
 
 module RLayout
   
@@ -215,7 +214,6 @@ module RLayout
     end
     
     def save_json(path)
-      require 'json'
       # my_json = { :array => [1, 2, 3, { :sample => "hash"} ], :foo => "bar" }
       
       h = to_hash

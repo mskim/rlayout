@@ -101,13 +101,6 @@ MININUM_LINES_FOR_SPLIT = 2
     end
   end
     
-
-#  Created by Min Soo Kim on 12/9/13.
-#  Copyright 2013 SoftwareLab. All rights reserved.
-
-require 'rubygems'
-require 'lorem'
-
   
   class ParagraphModel
     attr_accessor :markup, :string 

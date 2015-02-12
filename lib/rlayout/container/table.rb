@@ -1,16 +1,4 @@
 
-DEFAULT_TABLE_STYLE = {
-  'heading' => {
-    
-  },
-  
-  'body_row'=> {
-    'layout_length' =>[1,2,2],
-    'bg_color' =>%w[black black black],
-  }
-}
-
-require 'rlayout'
 
 module RLayout
   
@@ -91,40 +79,4 @@ module RLayout
       @graphics.delete(index)
     end
   end
-end
-
-__END__
-require 'minitest/autorun'
-include RLayout
-
-describe '.table' do
-  before do
-    @doc=Document.new
-    @pdf_path= File.dirname(__FILE__) +'/test/pdf/table_test.pdf'
-    data = [
-      ["first cell","second cell", "third cell"], 
-      ["first cell","second cell", "third cell"],
-      ["first cell","second cell", "third cell"],
-      ["first cell","second cell", "third cell"],
-      ["first cell","second cell", "third cell"],
-      ["first cell","second cell", "third cell"],
-      ["first cell","second cell", "third cell"],
-      ["first cell","second cell", "third cell"],
-      ["first cell","second cell", "third cell"],
-      ["first cell","second cell", "third cell"]
-    ]
-    @table = Table.new(@doc.pages.first, :data=>data)
-    @doc.pages.first.graphics << @table
-  end
-  
-  it 'should create table' do
-    @table.must_be_kind_of Table
-  end
-  
-  it 'should save table' do
-    @doc.save_pdf_doc(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
-    system "open #{@pdf_path}"
-  end
-  
 end

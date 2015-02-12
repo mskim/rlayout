@@ -1,4 +1,3 @@
-require 'csv'
 # CategoryTree
 # I am using CategoryTree to convert flat csv address data into nested tree form for layout
 # @category_tree is a combination of Hash and Array in nested tree form
@@ -65,34 +64,4 @@ module RLayout
       end
     end
   end
-end
-
-require 'minitest/autorun'
-include RLayout
-
-CSV_DATA = [
-  ["category", "Area", "Name", "Spouse"],
-  ["category1", "Jookjun", "Min Soo kim", "Jeeyoon Kim"],
-  ["category1", "Jookjun", "Tae Soo kim", "Yunhee Kim"],
-  ["category1", "Jookjun", "Dongmyung Lee", "Someone Kim"],
-  ["category1", "Jookjun", "Duke kim", "Someone Park"],
-  ["category1", "Jookjun", "Young Kwan Yoon", "Some Choi"],
-  ["category2", "Jookjun", "Min Soo kim", "Jeeyoon Kim"],
-  ["category2", "Jookjun", "Tae Soo kim", "Yunhee Kim"],
-  ["category2", "Jookjun", "Dongmyung Lee", "Someone Kim"],
-  ["category3", "Jookjun", "Duke kim", "Someone Park"],
-  ["category3", "Jookjun", "Young Kwan Yoon", "Some Choi"],
-]
-  
-
-describe 'create CategoryTree' do
-  before do
-    @ct = CategoryTree.new(:rows => CSV_DATA)
-    puts @ct.category_tree
-  end
-  
-  it 'should create CategoryTree' do
-    @ct.must_be_kind_of CategoryTree
-  end
-  
 end

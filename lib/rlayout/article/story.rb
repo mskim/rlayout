@@ -7,9 +7,7 @@
 # example: when I try to do doesn't  
 
 
-require 'yaml'
-require 'rubygems'
-require 'kramdown'
+# require 'kramdown'
 
 module RLayout
   class Story

@@ -2,8 +2,6 @@
 #  Created by Min Soo Kim on 2014/11/4
 #  Copyright 2014 SoftwareLab. All rights reserved.
 
-# require 'active_record'
-# require 'rest_client'
 
 # This is base class for connecting to database
 # There are two ways of fatching data, 

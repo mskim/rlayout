@@ -1,6 +1,4 @@
 
-require "rexml/document"  # used for pretty xml printing
-
 module RLayout  
   class Graphic
     def leading

@@ -1,16 +1,3 @@
-require 'json'
-# PageScript Verbs
-#  rect
-#  circle
-#  round_rect
-
-#  line_type=
-require File.dirname(__FILE__) + "/graphic/layout"
-require File.dirname(__FILE__) + "/graphic/fill"
-require File.dirname(__FILE__) + "/graphic/line"
-require File.dirname(__FILE__) + "/graphic/image"
-require File.dirname(__FILE__) + "/graphic/text"
-require File.dirname(__FILE__) + "/graphic/node_tree"
 
 module RLayout
   
@@ -372,13 +359,6 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       @layout_expand.include?(:height)
     end
     
-    def pretty_json
-      require 'json'
-      # my_json = { :array => [1, 2, 3, { :sample => "hash"} ], :foo => "bar" }
-      JSON.pretty_generate(to_hash)
-    end
-    
-
     
     #/0/0/1/2/0
     def ancestry

@@ -1,8 +1,3 @@
-require File.dirname(__FILE__) + "/container/auto_layout"
-require File.dirname(__FILE__) + "/container/grid"
-require File.dirname(__FILE__) + "/container/float"
-require File.dirname(__FILE__) + "/container/pgscript"
-require File.dirname(__FILE__) + "/container/text_form"
 
 module RLayout
   

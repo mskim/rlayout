@@ -36,8 +36,6 @@
 
 
 
-require 'yaml'
-
 module  RLayout
   
   class Container < Graphic

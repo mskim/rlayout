@@ -1,8 +1,5 @@
 # encoding: utf-8
-if RUBY_ENGINE == 'macruby'
-  framework 'Quartz'
-end
-require 'yaml'
+
 module RLayout
   
   class Book

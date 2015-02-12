@@ -1,8 +1,4 @@
 # encoding: utf-8
-if RUBY_ENGINE == 'macruby'
-  framework 'Quartz'
-end
-require 'yaml'
 
 NEWS_PAPER_INFO = {
   name: "Ourtown News", 
