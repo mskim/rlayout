@@ -63,7 +63,7 @@ module RLayout
 	    @template = options[:template]
 	    parse_folder
 	    layout_photos
-	    save_pdf(@path + "/photobook.pdf")
+      # save_pdf(@path + "/photobook.pdf")
 	    self
 	  end
 	  
@@ -76,10 +76,13 @@ module RLayout
 	  	  
 	  def layout_photos
 	    @spreads = []
+	    page_number = 1
 	    while @image_files.length > 0 do
 	      left_image = @image_files.shift
 	      right_image = @image_files.shift 
-	      @pages << PhotoSpread.new(self, left: left_image, right: right_image, width: 1500, height: 600)
+	      sp = PhotoSpread.new(self, left: left_image, right: right_image, width: 1500, height: 600)
+        sp.save_pdf(@path + "/page_#{page_number}.pdf")
+        page_number += 1
       end
 	  end
 	      

@@ -13,6 +13,8 @@
 ## Extended Module for OSX
 	- TextBox
 	- Document
+	- Publication
+	
 ## Extended Module for iOS
 
 ## Extended Module for Android

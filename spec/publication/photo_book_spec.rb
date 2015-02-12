@@ -1,25 +1,5 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
-describe 'PhotoSpread' do
-  before do
-    @left = "/Users/mskim/Development/photo_layout/photos/1881.jpg"
-    @right = "/Users/mskim/Development/photo_layout/photos/1916.jpg"
-    options = {
-      width: 1500,
-      height: 600,
-      left: @left, 
-      right: @right,
-    }    
-    @ps = PhotoSpread.new(nil, options)
-    @pdf_path = "/Users/mskim/Development/photo_layout/photos/spread.pdf"
-  end
-  
-  it 'should save PhotoSpread' do
-    @ps.save_pdf(@pdf_path)
-  end
-end
-
-__END__
 describe 'create PhotoSpread' do
   before do
     @path = "/Users/mskim/Development/photo_layout/photos"
@@ -45,3 +25,23 @@ describe 'create PhotoSpread' do
   end
 end
 
+__END__
+
+describe 'PhotoSpread' do
+  before do
+    @left = "/Users/mskim/Development/photo_layout/photos/1881.jpg"
+    @right = "/Users/mskim/Development/photo_layout/photos/1916.jpg"
+    options = {
+      width: 1500,
+      height: 600,
+      left: @left, 
+      right: @right,
+    }    
+    @ps = PhotoSpread.new(nil, options)
+    @pdf_path = "/Users/mskim/Development/photo_layout/photos/spread.pdf"
+  end
+  
+  it 'should save PhotoSpread' do
+    @ps.save_pdf(@pdf_path)
+  end
+end
