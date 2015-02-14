@@ -1,6 +1,6 @@
 
 module RLayout
-  class Page
+  class Page < Container
     attr_accessor :keys, :data     
     # process variable page with template hash and variavle data
     # replace variables of hash, and then create the object

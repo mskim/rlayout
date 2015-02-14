@@ -75,15 +75,17 @@ module RLayout
 	  end
 	  	  
 	  def layout_photos
-	    @spreads = []
+	    @spreads    = []
 	    page_number = 1
-	    while @image_files.length > 0 do
-	      left_image = @image_files.shift
-	      right_image = @image_files.shift 
-	      sp = PhotoSpread.new(self, left: left_image, right: right_image, width: 1500, height: 600)
+	    
+      while @image_files.length > 0 do
+        left_image  = @image_files.shift
+        right_image = @image_files.shift 
+        sp          = PhotoSpread.new(self, left: left_image, right: right_image, width: 1500, height: 600)
         sp.save_pdf(@path + "/page_#{page_number}.pdf")
         page_number += 1
       end
+	  
 	  end
 	      
   end
@@ -109,16 +111,12 @@ module RLayout
     
   end
   
-  class PhotoPage < Page
-    
-  end
   
 	class PhotoSpread < Page
 	  attr_accessor :parent_graphic, :middle_gutter, :template
 	  def initialize(parent_graphic, options={})
 	    super
 	    @klass = "PhotoSpread"
-	    middle_image_path = "Users/mskim/Development/photo_layout/middle.psd"
 	    @middle_x = @width/2
 	    puts "options[:left]:#{options[:left]}"
 	    puts "options[:right]:#{options[:right]}"
