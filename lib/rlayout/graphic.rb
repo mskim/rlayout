@@ -380,21 +380,15 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     end
         
     def save_pdf(path, options={})
-      if RUBY_ENGINE == 'macruby'        
-        @ns_view ||= GraphicViewMac.from_graphic(self)
-        @ns_view.save_pdf(path, options)
-        #TODO
-        # puts "DRb not found!!!!"
-      end
+      @ns_view ||= GraphicViewMac.from_graphic(self)
+      @ns_view.save_pdf(path, options)
+      #TODO
+      # puts "DRb not found!!!!"
     end
     
     def save_jpg(path)
-      if RUBY_ENGINE == 'macruby'        
-        @ns_view ||= GraphicViewMac.from_graphic(self)
-        @ns_view.save_jpg(path)
-        #TODO
-        # puts "DRb not found!!!!"
-      end
+      @ns_view ||= GraphicViewMac.from_graphic(self)
+      @ns_view.save_jpg(path)
     end
     
     

@@ -5,11 +5,7 @@ module RLayout
     def init_text(options)
       @text_fit_type = options.fetch(:text_fit_type,1)
       if options[:text_string] || options[:text_atts_array] 
-        if RUBY_ENGINE == 'macruby'
-          @text_layout_manager = TextLayoutManager.new(self, options)          
-        else
-          #TODO
-        end
+        @text_layout_manager = TextLayoutManager.new(self, options)          
       end
     end
     

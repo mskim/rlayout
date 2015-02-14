@@ -19,7 +19,6 @@ module RLayout
     end
     
     def merge_pdf_chpaters
-      return unless RUBY_ENGINE == 'macruby'
       book_pdf = PDFDocument.new
       Dir.glob("#{@folder_path}/*.pdf") do |path|
         next if path =~ /book.pdf$/

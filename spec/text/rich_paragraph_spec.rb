@@ -17,7 +17,6 @@
 #     @para.text_color.must_equal "black"
 #   end
 #   
-#   if RUBY_ENGINE == 'macruby'
 #     it 'should save pdf' do
 #       @para.change_width_and_adjust_height(300)
 #       # puts "@para.inspect:#{@para.inspect}"
@@ -26,7 +25,6 @@
 #       File.exists?(@pdf_path).must_equal true
 #       system "open #{@pdf_path}"
 #     end
-#   end
 # end
 # 
 # describe 'RichParagraph line creation test' do
