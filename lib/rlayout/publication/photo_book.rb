@@ -82,7 +82,9 @@ module RLayout
         left_image  = @image_files.shift
         right_image = @image_files.shift 
         sp          = PhotoSpread.new(self, left: left_image, right: right_image, width: 1500, height: 600)
-        sp.save_pdf(@path + "/page_#{page_number}.pdf")
+        pdf_path    = @path + "/page_#{page_number}.pdf"
+        puts "pdf_path:#{pdf_path}"
+        sp.save_pdf(pdf_path)
         page_number += 1
       end
 	  
