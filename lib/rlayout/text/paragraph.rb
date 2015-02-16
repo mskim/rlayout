@@ -1,7 +1,5 @@
 module RLayout
 
-
-
 #  illegular shaped text flow
 #  each Container Object implements "overlapping_graphics"
 #  "overlapping_graphics" finds "Graphic/Container objects" that are sitting on top of current textContainer
@@ -129,31 +127,31 @@ MININUM_LINES_FOR_SPLIT = 2
     end
     
     def self.title
-      h={:string=>ParagraphModel.sample_text(6), :markup=>"title" }
+      {:string=>ParagraphModel.sample_text(6), :markup=>"title" }
     end
     
     def self.subtitle
-      h={:string=>ParagraphModel.sample_text(10), :markup=>"subtitle" }
+      {:string=>ParagraphModel.sample_text(10), :markup=>"subtitle" }
     end
     
     def self.author
-      h={:string=>ParagraphModel.sample_text(2), :markup=>"author" }
+      {:string=>ParagraphModel.sample_text(2), :markup=>"author" }
     end
     
     def self.leading
-      h={:string=>ParagraphModel.sample_text(20), :markup=>"leading" }
+      {:string=>ParagraphModel.sample_text(20), :markup=>"leading" }
     end
     
     def self.head(count = 20)
-      h={:string=>ParagraphModel.sample_text(count), :markup=>"head" }
+      {:string=>ParagraphModel.sample_text(count), :markup=>"head" }
     end
     
     def self.subhead(count = 20)
-      h={:string=>ParagraphModel.sample_text(count), :markup=>"subhead" }
+      {:string=>ParagraphModel.sample_text(count), :markup=>"subhead" }
     end
     
     def self.body(count = 20)
-      h={:string=>ParagraphModel.sample_text(count), :markup=>"p" }
+      {:string=>ParagraphModel.sample_text(count), :markup=>"p" }
     end
     
     def self.heading

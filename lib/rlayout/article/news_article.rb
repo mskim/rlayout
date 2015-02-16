@@ -5,6 +5,9 @@ module RLayout
     attr_accessor :story_path, :paragraphs #:heading, :images
     attr_accessor :output_path
     def initialize(parent_graphic, options={})
+      if options[:project_path]
+      
+      end
       @output_path = options[:output_path] if options[:output_path]
       options[:chapter_kind]  = "news_article"
       options[:x]             = options.fetch(:x, 0)
