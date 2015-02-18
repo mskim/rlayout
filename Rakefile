@@ -1,18 +1,21 @@
-# require "bundler/gem_tasks"
-require 'rake/testtask'
 
-# @spec_foler = File.dirname(__FILE__) + "/spec"
+$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project/template/osx'
 
-# task :test_all do
-#   Dir.glob("#{@spec_foler}/*_spec.rb") do |test|
-#     system("ruby #{test}")
-#   end
-# end
- 
-Rake::TestTask.new do |task|
-  task.libs << %w(spec lib)
-  task.pattern = 'spec/**/*_spec.rb'
+begin
+  require 'bundler'
+  Bundler.require
+rescue LoadError
+end
+
+Motion::Project::App.setup do |app|
+  app.name = 'rlayout'
+  app.frameworks << 'AppKit'
+  Dir.glob(File.join(File.dirname(__FILE__), 'lib/**/*.rb')).each do |file|
+    app.files.unshift(file)
+  end
 end
  
-desc "Run tests"
-task :default => :test
+task :random_task do
+  puts "Hello Random Task!"
+end

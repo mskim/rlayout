@@ -33,7 +33,7 @@ module RLayout
     end
     
     def publication_info
-      publication_info = {
+      {
         width:          @width,
         height:         @height,
         left_margin:    @left_margin,
@@ -54,7 +54,7 @@ module RLayout
     end
     
     def self.default_publication_info
-      info = {
+      {
         :width        => 1190.55,
         :height       => 1683.78,
         :grid         => [7, 12],
@@ -103,6 +103,7 @@ module RLayout
     attr_accessor :heading_info, :output_path
     attr_accessor :heading_type, :is_template #top, side_box, none, 
     def initialize(parent_graphic, options={})
+      puts "options:#{options}"
       @parent_graphic = parent_graphic
       @section_path   = options[:section_path] if options[:section_path]
       @output_path    = options[:output_path]   if options[:output_path]
@@ -159,7 +160,8 @@ module RLayout
 	      img = Image.new(main, article_info)
 	      puts "img.layout_expand:#{img.layout_expand}"
 	    end
-	    if @output_path
+	    
+      if @output_path
         save_pdf(@output_path)
       else
         puts "No @output_path!!!"
@@ -183,9 +185,10 @@ module RLayout
     def self.merge_news_section_story_templates(options={})
 	    page = Page.new(nil, width: options[:width], height: options[:height]) 
 	    options[:articles_info].each_with_index do |article_info, i|
-	      img = Image.new(page, article_info)
+	      Image.new(page, article_info)
 	    end
-	    if options[:output_path]
+	    
+      if options[:output_path]
         page.save_pdf(options[:output_path])
       else
         puts "No @output_path!!!"

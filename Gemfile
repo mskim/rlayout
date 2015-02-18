@@ -1,5 +1,2 @@
-source 'https://rubygems.org'
-
-# Specify your gem's dependencies in rlayout.gemspec
-gemspec
-thor
+gem 'rake'
+gem 'motion-osx-cli'
