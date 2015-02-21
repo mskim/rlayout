@@ -39,7 +39,13 @@ module RLayout
           @heading_columns = @heading_options[:heading_columns]
         end
         @paragraphs = []
-        para_data_array = Story.parse_markdown(options[:story][:body_markdown])
+        # if we have body in para_data_array format        
+        para_data_array = options[:story][:para_data_array] if options[:story][:para_data_array]
+        # if we have body in body_markdown format 
+        # I should use the para_data_array if possible 
+        # Markdown should be converted to para_data_array by fromt-end using Nokogiri or Kramdown
+        # I do not prefer using Cocoa xml parsing .    
+        para_data_array = Story.parse_markdown(options[:story][:body_markdown]) if options[:story][:body_markdown]
         make_paragraph(para_data_array)
       end
       super
