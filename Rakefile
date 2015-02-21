@@ -1,7 +1,8 @@
+unless defined?(Motion::Project::Config)
+  raise "This file must be required within a RubyMotion project Rakefile."
+end
 
 Motion::Project::App.setup do |app|
-  app.name = 'rlayout'
-  app.frameworks << 'AppKit'
   Dir.glob(File.join(File.dirname(__FILE__), 'lib/**/*.rb')).each do |file|
     app.files.unshift(file)
   end
