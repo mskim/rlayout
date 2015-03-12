@@ -59,11 +59,6 @@ module RLayout
       set_frame(@parent_graphic.frame_for(grid_frame))
     end
     
-    def set_size_with_frame(options)
-      puts __method__
-      puts "options:#{options}"
-    end
-    
     def graphic_defaults
       {
         klass: 'Rectangle',
@@ -354,7 +349,6 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     end
     
     def expand_height?
-      puts "@layout_expand:#{@layout_expand}"
       return false unless @layout_expand && @layout_expand.class == Array
       @layout_expand.include?(:height)
     end

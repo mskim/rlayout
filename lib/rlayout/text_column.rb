@@ -350,7 +350,6 @@ module RLayout
   # We also have a case where it is coverd in the middle, with room at each sides
   # for this case, I am taking the larger area, and ignoreing the smaller area. it is TODO. 
   class GridRect
-    include Utility
     attr_accessor :rect, :text_area, :overlap, :fully_covered
     def initialize(rect)
       @rect = rect

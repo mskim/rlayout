@@ -9,3 +9,18 @@
 # end
 
 # put above code in rlayout.rb
+
+desc 'run all test specs'
+task :test_all do
+  Dir.glob(File.join(File.dirname(__FILE__), 'spec/**/*_spec.rb')).each do |file|
+   puts  `macruby #{file}`
+  end
+end
+
+desc 'list all test specs'
+task :list_all do
+  Dir.glob(File.join(File.dirname(__FILE__), 'spec/**/*_spec.rb')).each do |file|
+   puts file
+  end
+end
+

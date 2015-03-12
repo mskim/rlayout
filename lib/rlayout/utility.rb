@@ -1,5 +1,5 @@
 
-module  Utility
+module  RLayout
     
   def min_x(rect)
     rect[0]
@@ -181,6 +181,11 @@ module  Utility
     def what_time?
       @expiration
     end
+  end
+  
+  class IWorksOpener
+    
+    
   end
 end
 

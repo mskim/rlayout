@@ -18,7 +18,6 @@ module RLayout
     #  have_expanding_child is set to false at first 
     #  and in the first pass, if we detect andy expanding graphic, it is set to true
     def relayout!
-      puts __method__
       return unless @graphics
       return if @graphics.length <= 0
       vertical            = @layout_direction == "vertical"
@@ -35,7 +34,6 @@ module RLayout
       
       # This is the first pass
       @graphics.each_with_index do |graphic, index|
-        puts "graphic.class:#{graphic.class}"
         next if !graphic.layout_member || graphic.layout_expand.nil?                  
         if (vertical ? graphic.expand_height? : graphic.expand_width?)
           expandable_graphics += 1

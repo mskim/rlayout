@@ -10,50 +10,64 @@ if defined?(Motion::Project::Config)
   # raise "This file must be required within a RubyMotion project Rakefile."
   
 else
+  framework 'cocoa'
+  framework 'Quartz'
+  
   # do usual require here.
-  require_relative 'graphic/fill'
-  require_relative 'graphic/image'
-  require_relative 'graphic/layout'
-  require_relative 'graphic/line'
-  require_relative 'graphic/node_tree'
-  require_relative 'graphic/text'
-  require_relative 'graphic'
   
-  require_relative 'container/auto_layout'
-  require_relative 'container/float'
-  require_relative 'container/grid'
-  require_relative 'container/pgscript'
-  require_relative 'container/photo_item'
-  require_relative 'container/place_item'
-  require_relative 'container/quiz_item'
-  require_relative 'container/table'
-  require_relative 'container/text_form'
-  require_relative 'container'
+  require File.dirname(__FILE__) + '/rlayout/utility'
   
-  require_relative 'text/heading'
-  require_relative 'text/paragraph'
-  require_relative 'text/style_service'
-  require_relative 'text/text_layout_manager'
+  require File.dirname(__FILE__) + '/rlayout/graphic/fill'
+  require File.dirname(__FILE__) + '/rlayout/graphic/image'
+  require File.dirname(__FILE__) + '/rlayout/graphic/layout'
+  require File.dirname(__FILE__) + '/rlayout/graphic/line'
+  require File.dirname(__FILE__) + '/rlayout/graphic/node_tree'
+  require File.dirname(__FILE__) + '/rlayout/graphic/text'
+  require File.dirname(__FILE__) + '/rlayout/graphic'
   
-  require_relative 'title_box'
-  require_relative 'text_column'
-  require_relative 'text_box'
+  require File.dirname(__FILE__) + '/rlayout/view/graphic_view_mac'
+  require File.dirname(__FILE__) + '/rlayout/view/graphic_view_svg'
+  require File.dirname(__FILE__) + '/rlayout/view/document_view_mac'
   
-  require_relative 'page/page_fixtures'
-  require_relative 'page/composite_page'
-  require_relative 'page'
-  require_relative 'page_variables_extend'
+  require File.dirname(__FILE__) + '/rlayout/container'
+  require File.dirname(__FILE__) + '/rlayout/container/auto_layout'
+  require File.dirname(__FILE__) + '/rlayout/container/float'
+  require File.dirname(__FILE__) + '/rlayout/container/grid'
+  require File.dirname(__FILE__) + '/rlayout/container/pgscript'
+  require File.dirname(__FILE__) + '/rlayout/container/table'
+  require File.dirname(__FILE__) + '/rlayout/container/text_form'
   
-  require_relative 'document'
-  require_relative 'document_variables_extend'
+  require File.dirname(__FILE__) + '/rlayout/text/heading'
+  require File.dirname(__FILE__) + '/rlayout/text/paragraph'
+  require File.dirname(__FILE__) + '/rlayout/text/style_service'
+  require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'
   
-  require_relative 'publication/book'
-  require_relative 'publication/catalog'
-  require_relative 'publication/composite'
-  require_relative 'publication/magazine'
-  require_relative 'publication/mart'
-  require_relative 'publication/newspaper'
-  require_relative 'publication/photo_book'
+  require File.dirname(__FILE__) + '/rlayout/container/photo_item'
+  require File.dirname(__FILE__) + '/rlayout/container/place_item'
+  require File.dirname(__FILE__) + '/rlayout/container/quiz_item'
+  
+  require File.dirname(__FILE__) + '/rlayout/title_box'
+  require File.dirname(__FILE__) + '/rlayout/text_column'
+  require File.dirname(__FILE__) + '/rlayout/text_box'
+  
+  require File.dirname(__FILE__) + '/rlayout/page'
+  require File.dirname(__FILE__) + '/rlayout/page/page_fixtures'
+  require File.dirname(__FILE__) + '/rlayout/page/composite_page'
+  require File.dirname(__FILE__) + '/rlayout/page_variables_extend'
+  
+  require File.dirname(__FILE__) + '/rlayout/document'
+  require File.dirname(__FILE__) + '/rlayout/document_variables_extend'
+  
+  require File.dirname(__FILE__) + '/rlayout/publication/book'
+  require File.dirname(__FILE__) + '/rlayout/publication/catalog'
+  require File.dirname(__FILE__) + '/rlayout/publication/composite'
+  require File.dirname(__FILE__) + '/rlayout/publication/magazine'
+  require File.dirname(__FILE__) + '/rlayout/publication/mart'
+  require File.dirname(__FILE__) + '/rlayout/publication/newspaper'
+  require File.dirname(__FILE__) + '/rlayout/publication/photo_book'
   
 end
 
+module RLayout
+  
+end

@@ -40,8 +40,6 @@ module  RLayout
   
   class Container < Graphic
     def init_grid(options)
-      puts __method__
-      puts "options:#{options}"
       @grid_base      = options.fetch(:grid_base, [7,12])
       @grid_frame     = options.fetch(:grid_frame, [0,0,1,1])
       @grid_color     = options.fetch(:grid_color, 'blue')       
@@ -49,7 +47,6 @@ module  RLayout
       @v_gutter       = options.fetch(:v_gutter, 0)
       @show_grid      = options.fetch(:show_grid, false)
       update_grid_cells
-      puts "@grid_cells.length:#{@grid_cells}"
     end
     
     def update_grid_cells
