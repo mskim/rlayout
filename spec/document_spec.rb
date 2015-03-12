@@ -1,3 +1,4 @@
+require File.dirname(__FILE__) + "/spec_helper"
 
 
 describe 'save multiple page document' do
@@ -23,22 +24,22 @@ describe "document" do
   before do
     @doc = Document.new(:tite=>"my_test") do
       page do
-        rect fill_color: "green"
-        rect fill_color: "red", x:200, y:200
-        rect fill_color: "black" , x:200, y:300
-        rect fill_color: "blue", x:200, y:500
+        rect :fill_color=> "green"
+        rect :fill_color=> "red", x:200, y:200
+        rect :fill_color=> "black" , x:200, y:300
+        rect :fill_color=> "blue", x:200, y:500
       end
       page do
-        rect fill_color: "green"
-        rect fill_color: "red", x:400, y:200
-        rect fill_color: "black" , x:400, y:300
-        rect fill_color: "blue", x:400, y:500
+        rect :fill_color=> "green"
+        rect :fill_color=> "red", x:400, y:200
+        rect :fill_color=> "black" , x:400, y:300
+        rect :fill_color=> "blue", x:400, y:500
       end
       page do
-        rect fill_color: "green"
-        rect fill_color: "red", x:200, y:200
-        rect fill_color: "black" , x:300, y:300
-        rect fill_color: "blue", x:500, y:500
+        rect :fill_color=> "green"
+        rect :fill_color=> "red", x:200, y:200
+        rect :fill_color=> "black" , x:300, y:300
+        rect :fill_color=> "blue", x:500, y:500
       end
       
     end

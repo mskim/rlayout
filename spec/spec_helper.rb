@@ -2,10 +2,10 @@
 # encoding: utf-8
 
 # puts "RLayout test: Running on Ruby Version: #{RUBY_VERSION}"
-unless RUBY_ENGINE == "macruby"
-  require 'minitest'
-  require 'pry-rescue/minitest'
-end
+# unless RUBY_ENGINE == "macruby"
+#   require 'minitest'
+#   require 'pry-rescue/minitest'
+# end
 
 require 'minitest/autorun'
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib') 

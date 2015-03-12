@@ -4,12 +4,12 @@ require File.dirname(__FILE__) + "/spec_helper"
 describe 'testing container with graphics' do
   before do
     @container = Container.new(nil)
-    @g1 = Container.new(@container, fill_color: 'red')
-      @g3= Graphic.new(@g1, fill_color: 'yellow')
-      @g4= Graphic.new(@g1, fill_color: 'black')
-    @g2 = Container.new(@container, fill_color: 'blue', tag: 'g2')
-      @g5= Graphic.new(@g2, fill_color: 'yellow', tag: 'g5')
-      @g6= Graphic.new(@g2, fill_color: 'blue', tag: 'g6')
+    @g1 = Container.new(@container, :fill_color=> 'red')
+      @g3= Graphic.new(@g1, :fill_color=> 'yellow')
+      @g4= Graphic.new(@g1, :fill_color=> 'black')
+    @g2 = Container.new(@container, :fill_color=> 'blue', :tag=> 'g2')
+      @g5= Graphic.new(@g2, :fill_color=> 'yellow', :tag=> 'g5')
+      @g6= Graphic.new(@g2, :fill_color=> 'blue', :tag=> 'g6')
     @container.relayout!
      
   end
