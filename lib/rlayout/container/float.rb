@@ -1,6 +1,6 @@
 
 # float
-# floats are floating graphic on top of the body of TextBox.
+# floats are floating graphic on top of the body of TextBox and Containers.
 # floats are heading, images, side_box, and quotation box, 
 # There should be a rule to manage floats if there are multiples of them and gets crowded.
 # see layout_floats!
@@ -107,7 +107,7 @@ module RLayout
         
     # place imaegs that are in the head of the story as floats
     def place_float_images(images, grid_width, grid_height)
-      gutter = @layout_space
+      @gutter = @layout_space
       return unless images
       images.each do |image_options|
         

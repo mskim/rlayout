@@ -4,9 +4,10 @@ module RLayout
   class Container < Graphic
     attr_accessor :layout_mode     # layout_mode: "auto_layout" "grid"
     attr_accessor :layout_direction, :layout_space, :layout_align
-    attr_accessor :grid_base, :grid_frame, :grid_cells, :grid_color, :gutter, :v_gutter, :lines_in_grid         
+    attr_accessor :grid_base, :grid_frame, :grid_cells, :grid_color, :grid_h_gutter, :grid_v_gutter, :lines_in_grid         
     attr_accessor :show_grid, :show_text_grid, :grid_width, :grid_height
     attr_accessor :gutter_line_type, :gutter_line_width, :gutter_line_color, :gutter_line_dash
+    attr_accessor :floats
     
     def initialize(parent_graphic, options={}, &block)
       super

@@ -12,7 +12,7 @@ module RLayout
   # Breakable item should split itself into two or more parts, if it can with no orphan or widow consideration. 
   # Currently, I break paragraph up into two at the oveflowing point in att_string.
 
-  # TextBox adds another layer called "floats"
+  # TextBox adds another layer called "floats", (now containers also have floats)
   # Floats sit on top layer and pushes out text content underneath it.
   # Typocal floats are Heading, Image, Quates, SideBox
   # Each float has its weight(float on top or push down), starting_posion, starting_column, width_in_column
@@ -31,8 +31,7 @@ module RLayout
   class TextBox < Container
     attr_accessor :heading, :heading_columns, :image, :side_box, :quote_box, :shoulder_column, :grid_size
     attr_accessor :starting_item_index, :ending_item_index
-    attr_accessor :column_count, :next_link, :previous_link
-    attr_accessor :floats, :align_body_text
+    attr_accessor :column_count, :next_link, :previous_link, :align_body_text
     
     def initialize(parent_graphic, options={}, &block)
       super
@@ -164,14 +163,9 @@ module RLayout
           end
           current_column.update_current_position
           text_area_path  = current_column.path_from_current_position
-          # puts "++++column_index:#{column_index}"
           bounding_rect = CGPathGetPathBoundingBox(text_area_path)
           current_column.current_position = bounding_rect.origin.y
-          # puts "bounding_rect.size.height:#{bounding_rect.size.height}"
-          # puts "bounding_rect.origin.y:#{bounding_rect.origin.y}"
-          # puts "current_column:#{current_column}"
-          height = item.layout_text(:proposed_path=>text_area_path) # item.width:
-          # puts "height:#{height}"
+          item.layout_text(:proposed_path=>text_area_path) # item.width:
         elsif item.class == RLayout::Image
           item.width  = current_column.text_width
           item.layout_expand  = [:width]
@@ -212,13 +206,13 @@ module RLayout
       return [0,0,100,100]          if grid_frame == ""
       grid_frame = eval(grid_frame) if grid_frame.class == String
       
-      x_val = grid_frame[0]
-      y_val = grid_frame[1]
+      # x_val = grid_frame[0]
+      # y_val = grid_frame[1]
       width_val = grid_frame[2]
-      height_val = grid_frame[3]
+      # height_val = grid_frame[3]
       column_frame = @graphics.first.frame_rect
       column_width = column_frame[2]
-      x= @graphics[x_val].x
+      x= @graphics[0].x
       y = column_frame[1]
       width = column_width*width_val + (width_val - 1)*@layout_space
       height = width # TODO ?
