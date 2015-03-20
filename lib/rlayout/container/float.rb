@@ -44,6 +44,7 @@ module RLayout
     attr_accessor :float_position, :flaot_bleeding
     
     def init_float(options={})
+      @grid_frame     = options.fetch(:grid_frame,[0,0,1,1])
       @float_weight   = options.fetch(:float_weight, FLOAT_PUSH_RECT)
       @float_position = options.fetch(:float_position, "top")
       @flaot_bleeding = options.fetch(:flaot_bleeding, false)
@@ -136,6 +137,16 @@ module RLayout
       @image  = Image.new(self, options)      
     end
     
+    
+    # change frame with grid frame values
+    def relayout_floats!
+      update_grid_cells
+      @floats.each do |float|
+        # TODO clean this up
+        float.set_frame frame_for(float.grid_frame)
+      end
+    end
+    
 
     # layout_floats!
     # Floats are Heading, Image, Quotes, SideBox ...
@@ -155,6 +166,7 @@ module RLayout
     # Floats string at the bottom of the TextBox, should pass float_bottom:true 
     # If float_bleed:true, it bleeds at the location, top, bottom and side
     
+        
     # TODO centered floats
     # For Leading, Quotes or Image, should implement cented float
     # It is common for Centered floats to have width slightly larger than column width on each side.

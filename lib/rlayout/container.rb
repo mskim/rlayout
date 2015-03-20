@@ -4,7 +4,6 @@ module RLayout
   class Container < Graphic
     attr_accessor :layout_mode     # layout_mode: "auto_layout" "grid"
     attr_accessor :layout_direction, :layout_space, :layout_align
-    attr_accessor :grid_base, :grid_frame, :grid_cells, :grid_color, :grid_h_gutter, :grid_v_gutter, :lines_in_grid         
     attr_accessor :show_grid, :show_text_grid, :grid_width, :grid_height
     attr_accessor :gutter_line_type, :gutter_line_width, :gutter_line_color, :gutter_line_dash
     attr_accessor :floats
@@ -22,11 +21,15 @@ module RLayout
       @gutter_line_width= options[:gutter_line_width]
       @gutter_line_color= options[:gutter_line_color]
       @gutter_line_dash = options[:gutter_line_dash]
-      @floats           = options[:floats]
+      @floats           = options.fetch(:floats, [])
       init_grid(options) if options[:grid_base]
       if options[:graphics]
         create_children(options[:graphics])
       end
+      if options[:floats]
+        create_floats(options[:floats])
+      end
+      
       if block
         instance_eval(&block)
       end      
@@ -166,6 +169,18 @@ module RLayout
       end
     end
     
+    def add_floats(float)
+      if float.is_a?(Array)
+        float.each do |item|
+          item.parent_graphic = self
+          @floats << item unless @floats.include?(float)
+        end
+      else
+        float.parent_graphic = self
+        @floats << float unless @floats.include?(float)
+      end
+    end
+    
     def self.samples_of(number)
       item = []
       number.times do
@@ -232,9 +247,20 @@ module RLayout
       return if graphics_hash_array.nil?
       graphics_hash_array.each do |graphic_hash|
         klass_name=graphic_hash[:klass] 
-        create_graphic_of_type(klass_name,graphic_hash)
+        create_graphic_of_type(klass_name, graphic_hash)
       end
       relayout!
+    end
+    
+    def create_floats(floats_hash_array)
+      return if floats_hash_array.nil?
+      @floats = [] if @floats.nil?
+      floats_hash_array.each do |float_hash|
+        klass_name=float_hash[:klass] 
+        float_hash[:is_float] = true
+        create_graphic_of_type(klass_name,float_hash)
+      end
+      relayout_floats!
     end
     
     ########### pgscript verbes

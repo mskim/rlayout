@@ -39,14 +39,16 @@
 module  RLayout
   
   class Container < Graphic
+    attr_accessor :grid_base, :grid_width, :grid_height, :grid_frame, :grid_cells, :grid_color, :grid_h_gutter, :grid_v_gutter, :lines_in_grid         
+    
     def init_grid(options)
       @grid_base      = options.fetch(:grid_base, [7,12])
-      @grid_frame     = options.fetch(:grid_frame, [0,0,1,1])
       @grid_color     = options.fetch(:grid_color, 'blue')       
       @gutter         = options.fetch(:gutter, 0)
       @v_gutter       = options.fetch(:v_gutter, 0)
       @show_grid      = options.fetch(:show_grid, false)
       update_grid_cells
+      
     end
     
     def update_grid_cells
@@ -106,7 +108,7 @@ module  RLayout
       @grid_width*@grid_height
     end
     
-    def frame_for(grid_frame)
+    def frame_for(grid_frame)  
       x       = @left_margin + @left_inset + grid_frame[0]*@grid_width + grid_frame[0]*@gutter
       y       = @top_margin + @top_inset + grid_frame[1]*@grid_height + grid_frame[1]*@v_gutter
       width   = grid_frame[2]*@grid_width + (grid_frame[2] - 1)*@gutter

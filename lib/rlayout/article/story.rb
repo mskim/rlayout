@@ -128,7 +128,6 @@ module RLayout
       @para_data
     end
     
-    
     def self.from_meta_markdown(filename)
       unless File.exists?(filename)
         puts "Can not find file #{filename}!!!!"

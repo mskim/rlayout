@@ -1,5 +1,38 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+describe 'testing container with graphics' do
+  before do
+    @container = Container.new(nil, :grid_base=>[3,3])
+    @g1 = Container.new(@container, :fill_color=> 'red', :is_float=> true, :grid_frame=>[0,0,1,1])
+    @g2 = Container.new(@container, :fill_color=> 'yellow', :is_float=> true, :grid_frame=>[1,1,1,1])
+      # @g3= Graphic.new(@g1, :fill_color=> 'yellow', :is_float=> true)
+      # @g4= Graphic.new(@g1, :fill_color=> 'black', :is_float=> true)
+    # @g2 = Container.new(@container, :fill_color=> 'blue', :tag=> 'g2')
+    #   @g5= Graphic.new(@g2, :fill_color=> 'yellow', :tag=> 'g5')
+    #   @g6= Graphic.new(@g2, :fill_color=> 'blue', :tag=> 'g6')
+    @container.relayout_floats!
+  end
+  
+  # it 'should add graphics' do
+  #   @container.graphics.length.must_equal 2
+  #   @container.graphics.length.must_equal 2
+  # end
+  # 
+  # it 'added graphics should have self as parent' do
+  #   @container.graphics[0].parent_graphic.must_equal @container
+  #   @container.graphics[1].parent_graphic.must_equal @container
+  # end
+  
+  it 'should save pdf' do
+    @pdf_path = File.dirname(__FILE__) + "/output/container_float_test.pdf"
+    @container.save_pdf(@pdf_path)
+    system("open #{@pdf_path}")
+  end
+
+
+end
+
+__END__
 
 describe 'testing container with graphics' do
   before do
@@ -31,7 +64,6 @@ describe 'testing container with graphics' do
   end
 end
 
-__END__
 describe 'testing container creation' do
   before do
     @container = Container.new(nil)

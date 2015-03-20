@@ -58,6 +58,11 @@ else
   require File.dirname(__FILE__) + '/rlayout/document'
   require File.dirname(__FILE__) + '/rlayout/document_variables_extend'
   
+  require File.dirname(__FILE__) + '/rlayout/article/story'
+  require File.dirname(__FILE__) + '/rlayout/article/chapter'
+  require File.dirname(__FILE__) + '/rlayout/article/news_article'
+  require File.dirname(__FILE__) + '/rlayout/article/magazine_article'
+  
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/catalog'
   require File.dirname(__FILE__) + '/rlayout/publication/composite'
