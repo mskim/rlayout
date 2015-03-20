@@ -1,19 +1,21 @@
 # PageScript Verbs
-#  h1
-#  h2
-#  h3
-#  h4
-#  h5
-#  p
+
+#  text
 #  image
 #  rect
 #  circle
 #  round_rect
 #  line
-#  set_layout_mode
-#  set_grid_base
-#  place(graphic, [grid_x,grid_y,grid_with,grid_height])
-#  place(graphic_arry, [grid_x,grid_y,grid_with,grid_height])
+
+#  
+#  float
+#  split
+#  split_v
+#  split_h
+
+#  container
+#  text_box
+#  heading
 
 
 module RLayout
@@ -39,6 +41,18 @@ module RLayout
       add_graphics(Graphic.random_graphics(number))
     end
     
+    # place graphis as float in using grid_frame
+    def float(klass, grid_frame, options={})
+      if klass.class == String
+        # single float
+        
+      elsif klass.class == Array
+        # multiple floats
+        
+      end
+    end
+    
+    
     def split(number=2, options={})
       @layout_direction = options.fetch(:layout_direction, "vertical")
       if options[:layout_space]
@@ -61,6 +75,17 @@ module RLayout
         end
       
       end
+      
+      # klasses are passed in Array
+      if options[:klass_array]
+        
+      end
+      # fill_colors is in Array
+      
+      if options[:fill_color_array]
+        
+      end
+      
       relayout!
       
     end
@@ -78,21 +103,6 @@ module RLayout
       
     end
     
-    # set layout_mode as grid"
-    # options[:base_grod] sets grid base
-    def place(grid_frame, options={})
-      # This layout_mode = grid_matrix
-      # if graphic.is_a?(Array)
-      #   graphic.each do |item|
-      #     item.parent_graphic = self
-      #     @graphics << item unless @graphics.include?(graphic)
-      #   end
-      # else
-      #   graphic.parent_graphic = self
-      #   @graphics << graphic unless @graphics.include?(graphic)
-      # end
-      
-    end
     
     # it should go to graphics
     # def page
