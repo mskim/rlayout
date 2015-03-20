@@ -63,6 +63,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/article/news_article'
   require File.dirname(__FILE__) + '/rlayout/article/magazine_article'
   
+  require File.dirname(__FILE__) + '/rlayout/publication/rjob'
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/catalog'
   require File.dirname(__FILE__) + '/rlayout/publication/composite'
