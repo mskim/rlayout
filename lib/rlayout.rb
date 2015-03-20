@@ -58,6 +58,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/document'
   require File.dirname(__FILE__) + '/rlayout/document_variables_extend'
   
+  require File.dirname(__FILE__) + '/rlayout/publication/rjob'
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/catalog'
   require File.dirname(__FILE__) + '/rlayout/publication/composite'
