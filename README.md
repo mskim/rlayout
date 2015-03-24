@@ -18,7 +18,14 @@ TODO List
 		- merge with base
 		- make it yml
 	- modify kramdown into r_kramdown
+	- use Asciidotor 
 
+2015 3 23
+	- parse adoc format, get the tree info, convert it to para_tree
+ 	- paragraph should container more information to accommodate node
+	- level, context, lines
+	- add admonition
+	
 2015 2 11
 	- rlayout cli using RubyMotion as App
 	- setup github and bitbucket
@@ -50,7 +57,7 @@ TODO List
 	
 2015 1 20
 	- float_location: top, middle, bottom
-	- float_bleed: false, trure
+	- float_bleed: false, true
 
 2015 1 19
 	- text_box layout_item

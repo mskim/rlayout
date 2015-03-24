@@ -11,7 +11,6 @@ module RLayout
     end
     
     def valid_job?
-      
       @valid_job = false
       return @valid_job unless File.exist?(@path)
       return @valid_job unless File.exist?(@pgscript_path)  

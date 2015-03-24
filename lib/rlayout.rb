@@ -8,15 +8,14 @@ if defined?(Motion::Project::Config)
   end
   #
   # raise "This file must be required within a RubyMotion project Rakefile."
-  
+
 else
-  framework 'cocoa'
-  framework 'Quartz'
-  
-  # do usual require here.
-  
+  if RUBY_ENGINE == "macruby"
+    framework 'cocoa'
+    framework 'Quartz'
+  end
+
   require File.dirname(__FILE__) + '/rlayout/utility'
-  
   require File.dirname(__FILE__) + '/rlayout/graphic/fill'
   require File.dirname(__FILE__) + '/rlayout/graphic/image'
   require File.dirname(__FILE__) + '/rlayout/graphic/layout'
@@ -25,9 +24,11 @@ else
   require File.dirname(__FILE__) + '/rlayout/graphic/text'
   require File.dirname(__FILE__) + '/rlayout/graphic'
   
-  require File.dirname(__FILE__) + '/rlayout/view/graphic_view_mac'
+  if RUBY_ENGINE == "macruby"
+    require File.dirname(__FILE__) + '/rlayout/view/graphic_view_mac'
+    require File.dirname(__FILE__) + '/rlayout/view/document_view_mac'
+  end
   require File.dirname(__FILE__) + '/rlayout/view/graphic_view_svg'
-  require File.dirname(__FILE__) + '/rlayout/view/document_view_mac'
   
   require File.dirname(__FILE__) + '/rlayout/container'
   require File.dirname(__FILE__) + '/rlayout/container/auto_layout'
