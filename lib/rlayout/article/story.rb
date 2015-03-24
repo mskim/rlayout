@@ -144,6 +144,7 @@ module RLayout
         puts "YAML Exception reading #filename: #{e.message}"
       end  
       # convert all keys to symbol
+      @metadata = @metadata[0] if @metadata.class == Array
       @metadata=Hash[@metadata.map{ |k, v| [k.to_sym, v] }]
       demotion_level = @metadata.fetch(:demote, 0).to_i
       Story.new(:heading=>@metadata, :paragraphs=>Story.parse_markdown(@contents, :demotion_level=>demotion_level))
