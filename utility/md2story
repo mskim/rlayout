@@ -1,0 +1,114 @@
+#! /usr/bin/env ruby
+
+require 'kramdown'
+require 'yaml'
+
+
+# first check for frontmatter 
+# starting with "---"
+# and ending with "---"
+def parse_meta_markdown(filename, optins={})
+  unless File.exists?(filename)
+    puts "Can not find file #{filename}!!!!"
+    return 
+  end
+  contents = File.read(filename)
+  begin
+    if (md = contents.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
+      @contents = md.post_match
+      @metadata = YAML.load(md.to_s)          
+    end
+  rescue => e
+    puts "YAML Exception reading #filename: #{e.message}"
+  end  
+  # convert all keys to symbol
+  @metadata = @metadata[0] if @metadata.class == Array
+  @metadata=Hash[@metadata.map{ |k, v| [k.to_sym, v] }]
+  demotion_level = @metadata.fetch(:demote, 0).to_i
+  paragraphs = parse_markdown(@contents, :demotion_level=>demotion_level)
+  puts @story_hash = {:heading=>@metadata, :paragraphs=>paragraphs}
+end
+
+# parse markdown part
+def parse_markdown(source, options={})
+  @para_data=[]
+  return @para_data if source == " " || source == ""
+  demotion_level = options.fetch(:demotion_level, 0).to_i
+  Kramdown::Document.new(source).root.children.each do |child|
+    unless child.type == :blank
+      para={}
+      case child.type
+      when :p
+        para[:markup] = "p" 
+        para[:string] = child.children[0].value # inner text
+        if child.children[0].type == :img
+          para[:markup] = "img" 
+          para[:image_path] = child.children[0].attr['src']
+          para[:caption] = child.children[0].attr['alt']
+          @para_data << para
+        else
+          @para_data << para
+        end
+      when :header
+        # demotion_level = child.options[:level] + demotion_level
+        # if demotion_level  > 6
+        #   demotion_level = 6
+        # end
+        level = child.options[:level] + demotion_level
+        level = 6 if level > 6
+        para[:markup] = "h#{level}"
+        para[:string] = child.options[:raw_text] # inner text
+        @para_data << para
+        
+      when "hr"
+        para[:markup] = "h#{child.attrubute.level}"
+        para << child.value
+        @para_data << para
+
+      else
+        # para[:markup] = child.value # markup
+        # para[:string] = child.value # inner text
+        # @para_data << para
+      end
+
+    end
+  end
+  @para_data
+end
+    
+def save
+  ext = File.extname(@markdown_path)
+  story_path = @markdown_path.gsub(ext,".para_data")
+  File.open(story_path, 'w'){|f| f.write @story_hash.to_yaml}
+end
+
+def save_to(output_path)
+  File.open(output_path, 'w'){|f| f.write @story_hash.to_yaml}
+end
+
+case ARGV.length
+when 0
+  puts "m2story converts markdown file to story format"
+  puts "it takes markdown path as an argument"
+when 1
+  puts parse_meta_markdown(ARGV[0])
+else
+  puts "m2story converts markdown file to story format"
+  puts "it takes markdown path as an argument"
+end
+
+__END__
+require 'minitest/autorun'
+include RLayout
+
+describe 'Create MarkdownToStory' do
+  before do
+    @md_path = "/Users/mskim/book/pastor/001.chapter.markdown"
+  end
+  
+  it 'should create MarkdownToStory' do
+    @mts = MarkdownToStory.new(@md_path, :save=>false)
+    @mts.must_be_kind_of MarkdownToStory
+    puts @mts.story_hash
+  end
+end
