@@ -70,16 +70,22 @@ module RLayout
         read_story
         layout_story
       end
+      if options[:save]
+        pdf_path = @story_path.gsub(".story", ".pdf")
+        save_pdf(pdf_path)
+      end
       self
     end
     
     def read_story
-      story       = Story.from_meta_markdown(@story_path)
-      @heading    = story.heading
-      @title      = @heading[:title]
+      story       = Story.from_story_file(@story_path)
+      puts "story:#{story}"
+      @heading    = story[":heading"]
+      puts "@heading:#{@heading}"
+      @title      = @heading[":title"]
       #TODO read it form book_config.rb?
       @paragraphs =[]
-      story.paragraphs.each do |para| 
+      story[":paragraphs"].each do |para| 
         para_options = {}
         para_options[:markup]         = para[:markup]
         para_options[:layout_expand]  = [:width]
@@ -100,6 +106,8 @@ module RLayout
         para_options[:current_style]  = @current_style
         @paragraphs << Paragraph.new(nil, para_options)
       end
+      puts "@paragraphs.length:#{@paragraphs.length}"
+      
     end
     
     def layout_story

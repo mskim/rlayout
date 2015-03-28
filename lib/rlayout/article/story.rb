@@ -7,25 +7,23 @@
 # example: when I try to do doesn't  
 
 
-# require 'kramdown'
 
 module RLayout
+  
   class Story
     attr_accessor :title, :author, :type, :date, :status, :categories, :published, :commnets
     attr_accessor :subtitle, :leading, :heading, :paragraphs
-    attr_accessor :current_item_index
     
     def initialize(options={})
       @heading     = options.fetch(:heading, story_defaults)
       @published  = heading.fetch(:published, false)
       @paragraphs = options.fetch(:paragraphs,[])
-      @current_item_index = 0
       
-      if options[:body_markdown]
-        # for when it was called from Rails though DRb server
-        # without saving body markdown to the file
-        @paragraphs = Story.parse_markdown(options[:body_markdown])
-      end
+      # if options[:body_markdown]
+      #   # for when it was called from Rails though DRb server
+      #   # without saving body markdown to the file
+      #   @paragraphs = Story.parse_markdown(options[:body_markdown])
+      # end
       
       self
     end
@@ -59,10 +57,6 @@ module RLayout
       text
     end
     
-    def done_layout?
-      @current_item_index >= @paragraphs.length
-    end
-    
     def self.open(path)
       story_hash = YAML::load_file(path)
       Story.new(story_hash)
@@ -75,14 +69,17 @@ module RLayout
         File.open(path, 'w'){|f| f.write to_hash.to_yaml}
       end
     end
-        
-    def self.from_meta_markdown(filename)
-      unless File.exists?(filename)
-        puts "Can not find file #{filename}!!!!"
-        return 
+    
+
+    
+    def self.from_story_file(story_path)
+      unless File.exists?(story_path)
+        puts "Can not find file #{story_path}!!!!"
+        return {}
       end
-      a = `md2story "#{target}"`
-      Story.new(eval(a))
+      # a = `md2story "#{filename}"`
+      story_file = File.open(story_path, 'r'){|f| f.read}
+      YAML::load(story_file)
     end
     
     def self.sample(options={})
@@ -123,6 +120,45 @@ module RLayout
         :paragraphs => ParagraphModel.body_part(5)
       }
       Story.new(h)
+    end
+    
+    def self.story_from_markdown(markdown_path)
+      unless File.exists?(story_path)
+        puts "Can not find file #{story_path}!!!!"
+        return {}
+      end
+      # a = `md2story "#{filename}"`
+      begin
+        if (md = contents.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
+          @contents = md.post_match
+          @metadata = YAML.load(md.to_s)          
+        end
+      rescue => e
+        puts "YAML Exception reading #filename: #{e.message}"
+      end  
+      # convert all keys to symbol
+      demotion_level = 0
+      if @metadata
+      	@metadata = @metadata[0] if @metadata.class == Array
+      	@metadata=Hash[@metadata.map{ |k, v| [k.to_sym, v] }]
+      	demotion_level = @metadata.fetch(:demote, 0).to_i
+      end	
+      paragraphs = markdown_to_para_data(@contents, :demotion_level=>demotion_level)
+      @story_hash = {:heading=>@metadata, :paragraphs=>paragraphs}      
+    end
+      
+    # para_element
+    # :context, :id, :attributes, :text, :kind, :level
+    # parse markdown in flat level first and assing levels later
+    def markdown_to_para_data(markdown, options={})
+      
+      
+      
+      
+      
+      
+      
+      
     end
   end
   

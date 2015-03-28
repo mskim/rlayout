@@ -1,4 +1,4 @@
-#! /usr/bin/env ruby
+#!/usr/bin/env ruby
 
 require 'kramdown'
 require 'yaml'
@@ -22,15 +22,19 @@ def parse_meta_markdown(filename, optins={})
     puts "YAML Exception reading #filename: #{e.message}"
   end  
   # convert all keys to symbol
-  @metadata = @metadata[0] if @metadata.class == Array
-  @metadata=Hash[@metadata.map{ |k, v| [k.to_sym, v] }]
-  demotion_level = @metadata.fetch(:demote, 0).to_i
+  demotion_level = 0
+  if @metadata
+  	@metadata = @metadata[0] if @metadata.class == Array
+  	@metadata=Hash[@metadata.map{ |k, v| [k.to_sym, v] }]
+  	demotion_level = @metadata.fetch(:demote, 0).to_i
+  end	
   paragraphs = parse_markdown(@contents, :demotion_level=>demotion_level)
-  puts @story_hash = {:heading=>@metadata, :paragraphs=>paragraphs}
+  @story_hash = {:heading=>@metadata, :paragraphs=>paragraphs}
 end
 
 # parse markdown part
 def parse_markdown(source, options={})
+  return [] unless source 
   @para_data=[]
   return @para_data if source == " " || source == ""
   demotion_level = options.fetch(:demotion_level, 0).to_i
@@ -75,15 +79,20 @@ def parse_markdown(source, options={})
   end
   @para_data
 end
-    
-def save
-  ext = File.extname(@markdown_path)
-  story_path = @markdown_path.gsub(ext,".para_data")
-  File.open(story_path, 'w'){|f| f.write @story_hash.to_yaml}
+
+def process_folder(path)
+  puts "processing folder #{path}"
+  Dir.glob("#{path}/*{.markdown,.md}") do |markdown_file|
+    process_markdown(markdown_file)
+  end
 end
 
-def save_to(output_path)
-  File.open(output_path, 'w'){|f| f.write @story_hash.to_yaml}
+def process_markdown(path)
+  puts "processing #{path}"
+  h= parse_meta_markdown(path)
+  ext = File.extname(path)
+  story_path = path.sub(ext, ".story")
+  File.open(story_path, 'w'){|f| f.write h.to_yaml}
 end
 
 case ARGV.length
@@ -91,7 +100,11 @@ when 0
   puts "m2story converts markdown file to story format"
   puts "it takes markdown path as an argument"
 when 1
-  puts parse_meta_markdown(ARGV[0])
+  if File.directory?(ARGV[0])
+    process_folder(ARGV[0])
+  else
+    process_markdown(ARGV[0])
+  end
 else
   puts "m2story converts markdown file to story format"
   puts "it takes markdown path as an argument"

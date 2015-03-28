@@ -217,13 +217,13 @@ module RLayout
       att_string
     end
     
-    
-    def body_line_height_multiple(head_para_height)
-      body_height = @owner_graphic.body_height
-      # puts "body_height:#{body_height}"
-      body_multiple = ((head_para_height/body_height).to_i + 1)*body_height
-    end
-    
+     #    
+     # def body_line_height_multiple(head_para_height)
+     #   body_height = @owner_graphic.body_height
+     #   # puts "body_height:#{body_height}"
+     #   # body_multiple = ((head_para_height/body_height).to_i + 1)*body_height
+     # end
+     
     # do not break paragraph that is less than 4 lines
     # apply widow/orphan rule and last_line_small_char_set rule.
     def is_breakable?
@@ -234,6 +234,7 @@ module RLayout
     # CoreText allows me to do irregular shaped container layout,
     # with more controlls than using NSTextContainer
     def layout_ct_lines(options={})
+      return 0 unless @att_string
       @text_overflow  = false
       @overflow_line_count = 0
       proposed_height = @owner_graphic.height
@@ -249,12 +250,13 @@ module RLayout
         CGPathAddRect(@proposed_path, nil, bounds)
       end
       @frame      = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), @proposed_path, nil)
-      @line_count = CTFrameGetLines(@frame).count  
+      @line_count = 0
+      @line_count = CTFrameGetLines(@frame).count  if CTFrameGetLines(@frame)
       if @line_count == 0
         puts "++++++++++ @line_count is 0 ++++++++ "
       end
-      line_height = @text_size + @text_line_spacing
-      used_size_height = @line_count*line_height
+      line_height         = @text_size + @text_line_spacing
+      used_size_height    = @line_count*line_height
       # if @text_markup && (@text_markup != 'p') #&& options[:aling_to_grid]
       #   # puts "markup is :#{@text_markup}"
       #   # Make the head paragraphs height as body text multiples"
@@ -360,7 +362,7 @@ module RLayout
       else
         @owner_graphic.adjust_size_with_text_height_change(proposed_width, @drop_char_height)
       end
-     end
+    end
     
     def text_height
       @line_count*(@text_size + @text_line_spacing)
@@ -396,8 +398,8 @@ module RLayout
     def draw_text(r) 
       if @text_direction == 'left_to_right'
         context         = NSGraphicsContext.currentContext.graphicsPort
-        CGContextSetTextMatrix(context, CGAffineTransformIdentity)
-        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1))
+        # CGContextSetTextMatrix(context, CGAffineTransformIdentity)
+        # CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1))
         @lines_array    = CTFrameGetLines(@frame)
 
         y               = @text_size

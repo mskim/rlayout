@@ -61,7 +61,7 @@ module RLayout
     
     # path to story is given  
     def read_story
-      story         = Story.from_meta_markdown(@story_path)
+      story         = Story.from_story_file(@story_path)
       @heading_options      = story.heading
       @images       = story.images #TODO
       if @heading_options[:heading_columns]
