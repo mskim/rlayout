@@ -1,14 +1,14 @@
 
 module RLayout
-  
+
   class Graphic
     attr_accessor :parent_graphic, :klass, :tag, :ns_view, :svg_view
     attr_accessor :x, :y, :width, :height
     attr_accessor :graphics, :fixtures, :floats
     attr_accessor :fill_type, :fill_color, :fill_other_color
     attr_accessor :line_type, :line_color, :line_width, :line_dash
-    attr_accessor :shape, :shape_bezier     
-    attr_accessor :grid, :grid_frame, :gutter, :v_gutter, :grid_cells, :show_grid          
+    attr_accessor :shape, :shape_bezier
+    attr_accessor :grid, :grid_frame, :gutter, :v_gutter, :grid_cells, :show_grid
     attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
     attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand
@@ -18,9 +18,9 @@ module RLayout
     attr_accessor :image_object, :image_path, :image_frame, :image_fit_type, :image_caption
     attr_accessor :grid_frame
     attr_accessor :non_overlapping_rect, :usable_rects
-    
+
     # TODO
-    # attr_accessor :fill_record, :line_record, :shape_record, :text_record, :image_record, :grid_record, :layout_record    
+    # attr_accessor :fill_record, :line_record, :shape_record, :text_record, :image_record, :grid_record, :layout_record
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
       if options[:is_float]
@@ -28,25 +28,25 @@ module RLayout
         init_float(options)
       elsif options[:is_fixture]
         #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics
-        @parent_graphic.fixtures << self if @parent_graphic.fixtures && !@parent_graphic.fixtures.include?(self)        
+        @parent_graphic.fixtures << self if @parent_graphic.fixtures && !@parent_graphic.fixtures.include?(self)
       elsif  @parent_graphic && @parent_graphic.kind_of?(RLayout::Document)
         @parent_graphic.pages << self  if !@parent_graphic.pages.include?(self)
       elsif  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
-        @parent_graphic.graphics << self  
+        @parent_graphic.graphics << self
       end
-      @klass            = options.fetch(:klass, graphic_defaults[:klass]) 
+      @klass            = options.fetch(:klass, graphic_defaults[:klass])
       @x                = options.fetch(:x, graphic_defaults[:x])
       @y                = options.fetch(:y, graphic_defaults[:y])
       @width            = options.fetch(:width, graphic_defaults[:width])
       @height           = options.fetch(:height, graphic_defaults[:height])
       @shape            = options.fetch(:shape, graphic_defaults[:shape])
-      @tag              = options[:tag]      
+      @tag              = options[:tag]
       @shape_bezier     = options[:shape_bezier]
       @auto_save        = options[:auto_save]
       init_layout(options)
       # grid
-      if @parent_graphic && @parent_graphic.respond_to?(:grid_base) && @parent_graphic.grid_base && options[:grid_frame] 
-        set_frame_in_parent_grid(options[:grid_frame]) if options[:grid_frame] && @parent_graphic.grid_base        
+      if @parent_graphic && @parent_graphic.respond_to?(:grid_base) && @parent_graphic.grid_base && options[:grid_frame]
+        set_frame_in_parent_grid(options[:grid_frame]) if options[:grid_frame] && @parent_graphic.grid_base
       end
       init_fill(options)
       init_line(options)
@@ -54,11 +54,11 @@ module RLayout
       init_image(options)
       self
     end
-    
+
     def set_frame_in_parent_grid(grid_frame)
       set_frame(@parent_graphic.frame_for(grid_frame))
     end
-    
+
     def graphic_defaults
       {
         klass: 'Rectangle',
@@ -66,32 +66,32 @@ module RLayout
         y: 0,
         width: 100,
         height: 100,
-        shape: 0,          
+        shape: 0,
       }
     end
-    
+
     def current_style
       if @parent_graphic && @parent_graphic.current_style
         return @parent_graphic.current_style
       end
       DEFAULT_STYLES
     end
-    
+
     def heading_columns_for(column_number)
       @current_style["heading_columns"][column_number-1]
     end
-    
+
     def body_height
       h = current_style['p']
-      h[:text_size] + h[:text_line_spacing]      
+      h[:text_size] + h[:text_line_spacing]
     end
-            
+
     def style_for_markup(markup, options={})
       h = @current_style[markup]
       h[:text_markup] = markup
       h
     end
-    
+
     def to_hash
       h = {}
       h[:klass]   = @klass
@@ -99,8 +99,8 @@ module RLayout
       h[:y]       = @y        if @y != graphic_defaults[:y]
       h[:width]   = @width    if @width != graphic_defaults[:width]
       h[:height]  = @height   if @height != graphic_defaults[:height]
-      h[:tag]     = @tag      if @tag 
-      
+      h[:tag]     = @tag      if @tag
+
       h.merge!(layout_to_hash)
       h.merge!(grid_to_hash)
       h.merge!(fill_to_hash)
@@ -110,19 +110,23 @@ module RLayout
       # h[:shape]  = @shape   if @shape != graphic_defaults[:shape]
       h
     end
-    
-    
+
+    def tag=(new_tag)
+      @tag = new_tag
+      self
+    end
+
     # difference between to_hash and to_data:
     # to_hash does not save values, if they are equal to default
     # to_data save values, even if they are equal to default
-    # to_data is uesed to send the data to view for drawing 
-    
-    def to_data  
+    # to_data is uesed to send the data to view for drawing
+
+    def to_data
       h = {}
       instance_variables.each do |a|
         next if a == @parent_graphic
         next if a == @floats
-        next if a == @graphics  
+        next if a == @graphics
         v = instance_variable_get a
         s = a.to_s.sub("@","")
         h[s.to_sym] = v  if !v.nil?
@@ -139,30 +143,30 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     def ramdom_text
       TEXT_STRING_SAMPLES.sample
     end
-    
+
     def self.random_color
       COLOR_NAMES.sample
     end
-    
+
     def random_color
       COLOR_NAMES.sample
     end
-    
+
     def random_klass
       KLASS_NAMES.sample
     end
-    
+
     def random_text
       TEXT_STRING_SAMPLES.sample
     end
-    
+
     # Graphic item may need to be split into two, for layout
     # subclasses such as paragraph should be able to split
     # but the default is no
     def can_split_at?(some_position)
       false
     end
-    
+
     def min_x(rect)
       rect[0]
     end
@@ -202,7 +206,7 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     def intersects_rect(rect_1, rect_2)
       intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
     end
-    
+
     def self.random_graphic_atts
       atts = {}
       atts[:fill_color] = COLOR_NAMES.sample
@@ -214,7 +218,7 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       atts[:line_color] = COLOR_NAMES.sample
       atts
     end
-    
+
     def self.random_graphics(number=1)
       #TODO
       samples = []
@@ -232,7 +236,7 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       end
       samples
     end
-    
+
     def self.klass_of(parent_graphic, klass, options={})
       case klass
       when "Rectanle"
@@ -247,49 +251,49 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
         Rectangle.new(parent_graphic, options)
       end
     end
-    
-    
+
+
     def self.with(parent_graphic, style_name, &block)
       Graphic.new(parent_graphic, Style.shared_style(style_name), &block)
     end
-    
+
     def frame_rect
       [@x,@y,@width,@height]
-    end 
-    
+    end
+
     def bounds_rect
       [0,0,@width,@height]
     end
-    
+
     def text_rect
       [@x + @left_inset , @y + @top_inset, @width - @left_inset - @right_inset, @height - @top_inset - @bottom_inset]
     end
-    
+
     # when text_rect is changed, update frame height considering insets
     def adjust_height_with_text_height_change(text_height)
-      @height = text_height + @top_inset + @bottom_inset      
+      @height = text_height + @top_inset + @bottom_inset
     end
-    
+
     # when text_rect is changed, update frame size considering insets
     def adjust_size_with_text_height_change(text_width, text_height)
-      @width = text_width + @left_inset + @right_inset      
-      @height = text_height + @top_inset + @bottom_inset      
+      @width = text_width + @left_inset + @right_inset
+      @height = text_height + @top_inset + @bottom_inset
     end
-    
+
     #TODO
     def usable_rects
-      
+
     end
-    
+
     # non_overlapping_rect is a actual layout frame that is not overlapping with flaots
     def non_overlapping_frame
-      # 
+      #
       if @non_overlapping_rect
-        return @non_overlapping_rect 
+        return @non_overlapping_rect
       end
       bounds_rect
     end
-    
+
     def non_overlapping_bounds
       if @non_overlapping_rect
         non_overlapping_rect = @non_overlapping_rect.dup
@@ -297,14 +301,14 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       end
       [0,0,@width,@height]
     end
-    
+
     def puts_frame
       puts "@x:#{@x}"
       puts "@y:#{@y}"
       puts "@width:#{@width}"
       puts "@height:#{@height}"
     end
-    
+
     def puts_margin
       puts "@left_margin:#{@left_margin}"
       puts "@top_margin:#{@top_margin}"
@@ -314,9 +318,9 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       puts "@top_inset:#{@top_inset}"
       puts "@right_inset:#{@right_inset}"
       puts "@bottom_inset:#{@bottom_inset}"
-      
+
     end
-    
+
     def set_frame(frame)
       @x = frame[0]
       @y = frame[1]
@@ -325,12 +329,12 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       if @text_layout_manager
         @text_layout_manager.set_frame
       end
-      
+
       if @image_object
         apply_fit_type
       end
     end
-    
+
     def change_width_and_adjust_height(new_width, options={})
       unless @text_layout_manager.nil?
         @text_layout_manager.change_width_and_adjust_height(new_width, options={})
@@ -342,50 +346,50 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
         @height = new_width/old_width*old_height
       end
     end
-    
+
     def expand_width?
       return false unless @layout_expand && @layout_expand.class == Array
       @layout_expand.include?(:width)
     end
-    
+
     def expand_height?
       return false unless @layout_expand && @layout_expand.class == Array
       @layout_expand.include?(:height)
     end
-    
-    
+
+
     #/0/0/1/2/0
     def ancestry
       s = ""
       if @parent_graphic
-        s += @parent_graphic.ancestry 
+        s += @parent_graphic.ancestry
         s += "," + @parent_graphic.graphics.index(self).to_s
       else
         s = ",0"
       end
       s
     end
-    
+
     def to_mongo
       h = to_hash
       h[:_id] = ancestry
       j = h.to_json
       j += "\n"
     end
-        
+
     def save_pdf(path, options={})
       @ns_view ||= GraphicViewMac.from_graphic(self)
       @ns_view.save_pdf(path, options)
       #TODO
       # puts "DRb not found!!!!"
     end
-    
+
     def save_jpg(path)
       @ns_view ||= GraphicViewMac.from_graphic(self)
       @ns_view.save_jpg(path)
     end
-    
-    
+
+
     def bezierPathWithRect(r)
       #TODO
 
@@ -395,19 +399,19 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       when 1    #{}"round_corner", '둥근사각형'
         path=NSBezierPath.bezierPath
         if r.size.width > r.size.height
-          smaller_side = r.size.height 
+          smaller_side = r.size.height
         else
-          smaller_side = r.size.width 
+          smaller_side = r.size.width
         end
 
         if @corner_size == 0 # "small" || @corner_size == '소'
-          radious = smaller_side*0.1 
+          radious = smaller_side*0.1
         elsif @corner_size == 1 # "medium" || @corner_size == '중'
           radious = smaller_side*0.2
         elsif @corner_size == 2 #{}"large" || @corner_size == '대'
           radious = smaller_side*0.3
         else
-          radious = smaller_side*0.1 
+          radious = smaller_side*0.1
         end
 
         if @inverted_corner
@@ -434,9 +438,9 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     def self.convert_to_nscolor(color)
       return self.color_from_string(color) if color.class == String
       color
-      
+
     end
-    
+
     def convert_to_nscolor(color)
       return color_from_string(color) if color.class == String
       color
@@ -473,13 +477,13 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       when "white"
         return NSColor.whiteColor
       when "yellow"
-        return NSColor.yellowColor      
+        return NSColor.yellowColor
       else
-        return NSColor.whiteColor      
+        return NSColor.whiteColor
       end
-    end  
-    
-    
+    end
+
+
     def color_from_name(name)
       case name
       when "black"
@@ -511,13 +515,13 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       when "white"
         return NSColor.whiteColor
       when "yellow"
-        return NSColor.yellowColor      
+        return NSColor.yellowColor
       else
-        return NSColor.whiteColor      
+        return NSColor.whiteColor
       end
-    end  
-    
-    def self.color_from_string(color_string) 
+    end
+
+    def self.color_from_string(color_string)
       if color_string == nil
         return NSColor.whiteColor
       end
@@ -542,13 +546,13 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       elsif color_kind=~/NSCalibratedWhiteColorSpace/
           @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
       elsif color_kind=~/NSCalibratedBlackColorSpace/
-          @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)      
-      else 
-          @color = GraphicRecord.color_from_name(color_string)    
+          @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)
+      else
+          @color = GraphicRecord.color_from_name(color_string)
       end
       @color
-    end 
-    
+    end
+
 
     def color_from_string(color_string)
       if color_string == nil
@@ -575,18 +579,18 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       elsif color_kind=~/NSCalibratedWhiteColorSpace/
           @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
       elsif color_kind=~/NSCalibratedBlackColorSpace/
-          @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)      
-      else 
-          @color = GraphicRecord.color_from_name(color_string)    
+          @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)
+      else
+          @color = GraphicRecord.color_from_name(color_string)
       end
       @color
     end
-    
+
     def fit_text_to_box
       @text_layout_manager.fit_text_to_box  if @text_layout_manager
     end
   end
-  
+
   class Text < Graphic
     def initialize(parent_graphic, options={})
       # options[:line_width] = 2
@@ -596,12 +600,12 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       @klass = "Text"
       self
     end
-    
+
     def text_string
       return nil unless @text_layout_manager
       @text_layout_manager.att_string.string
     end
-    
+
     def self.sample(options={})
       if options[:number] > 0
         Text.new(nil, text_string: "This is a sample text string"*options[:number])
@@ -610,7 +614,7 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       end
     end
   end
-  
+
   class Rectangle < Graphic
     def initialize(parent_graphic, options={})
       super
@@ -619,7 +623,7 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       self
     end
   end
-  
+
   class Image < Graphic
     def initialize(parent_graphic, options={})
       super
@@ -628,27 +632,26 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       self
     end
   end
-  
+
   class Circle < Graphic
     def initialize(parent_graphic, options={})
       super
       @klass = "Circle"
       @shape = 2
-      
+
       self
     end
-    
+
   end
-  
+
   class RoundRect < Graphic
     def initialize(parent_graphic, options={})
       super
       @klass = "RoundRect"
       @shape = 1
-      
+
       self
     end
-    
+
   end
 end
-

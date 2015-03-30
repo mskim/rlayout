@@ -11,30 +11,37 @@ TODO List
 	- Header
 		- bleeding page number box
 	- AdBox DSL with profile, method_missing
-	- should filter markdown file 
+	- should filter markdown file
 		- for control characters
 		- should break lines for first_line_head_indent to take effect
-	- Style 
+	- Style
 		- merge with base
 		- make it yml
 	- modify kramdown into r_kramdown
-	- use Asciidotor 
+	- use Asciidotor
+
+2015 3 30
+	I am getting invalid context error, And I can't find the reason why!.
+	I am going back to using NSText, from CoreText.
+	CTFrameSetter to NSLayoutManager
+	I will have to work on proposed lect stuff for illegular shaped containers.
+	I will also implement Pure Ruby version of Text so, I can used it with Opal on browser.
 
 2015 3 23
 	- parse adoc format, get the tree info, convert it to para_tree
  	- paragraph should container more information to accommodate node
 	- level, context, lines
 	- add admonition
-	
+
 2015 2 11
 	- rlayout cli using RubyMotion as App
 	- setup github and bitbucket
 	- rlayout, photo_layout, restaurant
-	
+
 2015 2 9
 	- node_tree
 	- PhotoBook
-	
+
 2015 2 2
 	- add save_jpg
 	- save_pdf(path, options={})
@@ -45,16 +52,16 @@ TODO List
 		update_current_position
 		snap_to_grid_rect
 		scan_covered_grid_from
-	
+
 2015 1 24
 	- set default image grid_frame_as [0,0,1,1,] for text_box
-	
+
 2015 1 21
 	- include Utility
 	- refine float image layout
 	- fix starting line offset bug
 	- fix markdown parsing bug . with no text_markup  
-	
+
 2015 1 20
 	- float_location: top, middle, bottom
 	- float_bleed: false, true
@@ -64,24 +71,24 @@ TODO List
 		1. make TextColumn starting_point at creation
 		1. create path with path_from_current_position
 			should handle simple rect, complex rect, and multiple chunked path
-		1. layout_ct_make 
+		1. layout_ct_make
 			for overflow compare the att_strring with last line range
-		
+
 2015 1 16
-	- use path for layout_ct_lines
+	- use path for layout_text_lines
 	- path_from_current_position
-	- I may not need to set starting_position for complex column, 
+	- I may not need to set starting_position for complex column,
 		it could be the top, if I implement the path
 	- TextBox should call overlapping can creating at the laout_item
-	
+
 2015 1 15
 	- fix layout_items in TextBox
 	- fix split paragraph
-	
+
 2015 1 14
 	- fix TextColumn room, based on grid_rects
 	- fix case when we have hole in the middle of TextColumn
-	
+
 2015 1 13
 	- fix float overlapping mechanism with grid_rects in TextColumn
 	- fix non-rectangular shaped column
@@ -90,27 +97,27 @@ TODO List
 
 2015 1 9
 	- fix Kramdown parsing error(done)
-	- news_article, text_box, 
+	- news_article, text_box,
 	- current_style, merge with custom style
-	- floats 
-		when overlapping floats, 
+	- floats
+		when overlapping floats,
 		modidify or divide columns into pieces
 		body_text unit
 	- floats images
 		have floats template
-	
+
 2015 1 7
 	- fix NewsArticle, TextBox
 
 2014 12 31
-	- fix grid, 
+	- fix grid,
 		- grid co-exists with auto_layout
 		- use it with float
 
 2014 12 26
 	- fix NewspaperSection(done)
 		- heading, 6x12, 7x12
-		
+
 2014 12 26
 	- convert cm, mm to pt(done)
 		:width=> "16.5cm", :height=>"24.5mm"
@@ -119,21 +126,21 @@ TODO List
 		- rlayout book idcard project/folder
 		- rlayout chapter project/folder
 		- rlayout magazine_article project/folder
-		
+
 2014 12 20
     - fix auto_layout bug starting_y as bounds_rect, instead of frame_rect
 
 2014 12 19
 	- text_fit_to_box
 		- set initial font size as 80% of box
-	
+
 2014 12 16
 	- text_fit_to_box
-	- text_layout_manger layout_lines when relayout is called 
+	- text_layout_manger layout_lines when relayout is called
 
 2014 12 15
 	- add paper_size
-	
+
 2014 12 14
 	- remove margin from attr_accessor
 
@@ -142,50 +149,50 @@ TODO List
 	- text_form
 	- text_field
 	- variable_document
-	
+
 2013 11 28
     - image handling
 	- bleeding
 	- caption
 	- composite_page
-	
+
 2013 11 25
 	- ImageColumn
 
 2013 11 25
 	- Dropcap
-	
+
 2013 11 24
 	- fix split
 	- use CoreText instead of NSTextSystem
 	- Heading
 		- multiple line text support
-		- make height align to body text   
+		- make height align to body text
 		- author right_inset
 	- Add heading_columns table in Style
-	
+
 2014 11 18
 	- text_layout
 2014 11 15
-	- include Image to Markdown 
-	- include Image Caption to Markdown 
+	- include Image to Markdown
+	- include Image Caption to Markdown
 		- caption position bottom, right, left, top, float
-	- adjust space before and after Image to body grid 
-	- adjust Image inset 
-	- find hosting middleman build static book, 
+	- adjust space before and after Image to body grid
+	- adjust Image inset
+	- find hosting middleman build static book,
 	- BitBalloon, CodeShip, Netlify
 2014 11 12
-	- auto_layout align top, center, bottom, justified 
+	- auto_layout align top, center, bottom, justified
 	- layout non-expanding children column
 	- fix set_frame, should reset text_layout_area
 2014 11 10
-	- image drawing, 
+	- image drawing,
 	- update image with frame changes
 	- fix left_page header location bug
-	
+
 2014 11 7
 	- variable page, variable document
-	- DB_Chapter 
+	- DB_Chapter
 		control column_count 	from options
 		column_gutter 			from options
 		item_space				from options
@@ -212,7 +219,7 @@ TODO List
 2014 10 30
 	- tracking support #TODO need to test this
 2014 10 23
- 1. html generation for chapter 
+ 1. html generation for chapter
 	- book navigation bar
 	- book cover page
 	- toc
@@ -223,13 +230,13 @@ TODO List
  1. dangling  last line character removable (less than 2 characters at last line is removed by tracking previous line text.)
  1. inserting images in markdown
 2014 10 23
- 1. modified columnObject insert item with text_layout_manager 
+ 1. modified columnObject insert item with text_layout_manager
 2014 10 22
  1. split paragraph among two different columns, using one layout_manager, one text_storage, two text_containers
  1. applying widow/orphan rule
 	{widow: 2, orphan: 2}
 2014 10 21
- 1. Vertical Text using NSTextView 
+ 1. Vertical Text using NSTextView
 2014 10 20
  1. text_starts_at anywhere, column, text_box, page, right_page, left_page
  1. text_drop_cap_line_count, text_drop_cap_char_count
@@ -240,8 +247,8 @@ TODO List
  1. implement to_hash
 2014 10 18
  1. changes from previous RLayout/working
-	- No GraphicRecord, make them part of graphics, flatten it, except TextLayoutManger for text, replacement of TextRecord 
-	- TextlayoutManager: vertical text, FatText(SuperRichText) support 
+	- No GraphicRecord, make them part of graphics, flatten it, except TextLayoutManger for text, replacement of TextRecord
+	- TextlayoutManager: vertical text, FatText(SuperRichText) support
 	- Use views and subviews instead of calculating translated coordinate, support graphic rotation
 2014 10 12
  1. vertical text for Japanese
@@ -251,23 +258,23 @@ TODO List
  		[0,{line_type: 2, line_color: "red"},0,1]
  1. make CustomStyle as subclass  of  BaseStyles
 	- title, subtitle, as methods that return hash values
-	- heading, 
+	- heading,
 
 2014 10 11
  1. Git based workflow
  1. User downloads the project folder from the site
  1. User makes changes to the content.md or image/
- 1. Web_hook for repos, 
+ 1. Web_hook for repos,
 	- user commits changes, and pushes
-	- on the repos, post_commit 
-		- cd into_users_folder && rake 
+	- on the repos, post_commit
+		- cd into_users_folder && rake
 			- rake pulls
 			- triggers DRb
 			- DRb generate pdf process_markdown_files
 			- after successful pdf generation, push it back to repo
 	- once it is in the repo, waits for user to pull
 	- users pulls the updated pdf version
-	
+
  1. rake file markdown2pdf
  1. toc.rb
  1. DRb server
@@ -296,7 +303,7 @@ TODO List
  TextBox linking
 2014 9 22
  - svg generation for Image
- - svg generation for Container 
+ - svg generation for Container
  - do not wrap into a svg <svg></svg>, do not make it multiple page svg
 use rect or graphic shape, fill, and line
 2014 9 19
@@ -306,16 +313,16 @@ use rect or graphic shape, fill, and line
 	setup account at bitbucket or github with user name rlayout
 	this account will serve all the clents for the site
 	I should setup own with gitlab, but for for time being use bitbucket
-	1, have client setup git on local machine 
+	1, have client setup git on local machine
 	user sign-in:  take user email and verify email
 	create user
 	when user download template:  
 		1. create a project with user_email, template_name, and add user's email as collaborator to the project
-		1. edit downloading templates's git setup, change remote origin to github template project   
-	rake pdf: 	
+		1. edit downloading templates's git setup, change remote origin to github template project
+	rake pdf:
 		git add -A, git commit -m'time.now', git push
 					at sever side, git hook will trigger and generate PDF
-	rake getit:	
+	rake getit:
 		git pull will update PDF
 	For the free users:
 		collaborators are only the user and rlayout
@@ -331,7 +338,7 @@ Container PageScript Verbs
 	split_v(number, options=>{})
 	split_h(number)						# makes the layout mode to horizontal
 	place([1,1,4,4], options=>{})		# makes the layout mode to grid_matrix
-	
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -417,9 +424,9 @@ $ ls
 		Preview.html
 
 User edits content in content.md
-Open Preview.html 
+Open Preview.html
 Ad user saves content.md, Preview.html gets updated
-Once all is done 
+Once all is done
 
 $ rlayout pdf
 
@@ -427,4 +434,3 @@ This will generate high resolution PDF
 
 auto_save of/off: This will make it work as REPL
 I can save index.html in server folder and broadcast the progress.
-

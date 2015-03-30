@@ -107,10 +107,10 @@ module RLayout
     # layout_items steps
     # 1. take out(shift) front_most_item from flowing_items array,
     #    and processed in the loop untill all items are consumed.
-    # 2. call item.layout_text, which calles @text_layout_manager.layout_ct_lines for line layout.
+    # 2. call item.layout_text, which calles @text_layout_manager.layout_text_lines for line layout.
     #   I pass two key/values as options, path and proposed_height.
     #   "proposed_height" is the height of path, and also the room(avilable space) of current column.
-    #   @text_layout_manager.layout_ct_lines returns actual item height after line layout.
+    #   @text_layout_manager.layout_text_lines returns actual item height after line layout.
     #   Text overflow is detected by comparing "proposed_height" and returned actual height.
     #   if the result is greater than the prososed_height, text is overflowing.
     # 3. path is contructed by " def path_from_current_position"

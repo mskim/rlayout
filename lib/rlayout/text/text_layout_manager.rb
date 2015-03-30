@@ -1,13 +1,13 @@
-# There two of ways to save Text data.
+# There two of ways of saving Text data.
 # 1. When entire Text has uniform attrbutes, use atts hash.
 # 2. When Text has mixed attrbutes, keep them in atts_array
 
 # atts_array
 # atts_array is Array of attribute Hash.
 # Each run is represented as hash of attributes and string
-# First hash has all the attribures and the follwing hashes have changing attributes from the previous one. 
+# First hash has all the attribures and the follwing hashes have changing attributes from the previous one.
 # for example:
-# [{font: 'Helvetical, size:16, style:plaine string:"this is "}, {style:italic string:"a string"}] 
+# [{font: 'Helvetical, size:16, style:plaine string:"this is "}, {style:italic string:"a string"}]
 
 # def markup2atts_array
 #  # convert markedup string to atts_array
@@ -19,17 +19,17 @@
 
 # Apple implemetation of  NSAttributtedString,
 # Apple Text implemetation keeps whole string in one chunk, and attributes points to range.
-# But, It makes it difficult to edit content, since you have to update the ranges of every following runs when you edit the text string, 
-# it forces you to use additional tool to reconstuct the string. Not ideal for editing with a text editor.
-# That is the reson why I am keeping attributes and string together in a single hash(atts).
-# Make it much easier to edit them by Paragraph level.
+# But, It makes it difficult to edit content manually, since you have to update the ranges of every following runs when you edit the text string,
+# it forces you to use additional tool to reconstuct the string, not ideal for editing with a text editor.
+# I want to keep attributes and string together in a single hash(atts).
+# Make it much easier to edit them by hand.
 
-# Using CoreText
-# I am using CoreText functions rather than NSText, 
+# Using CoreText (I went back to using NSTextSystem. I am getting strange errors, (context invalid error), that I can't figure out why!! Some blogs says it is bug, I don't want to pull my hair out anymore.)
+# I am using CoreText functions rather than NSText,
 # CTFrame, CTLine, CTRun, CTToken,
 # For vertical text, and finer controll
 #
-# 1. layout_ct_lines: 
+# 1. layout_text_lines:
 #       lays out out lines with att_string and given width
 #       it returns height for the layed out pargaph
 #
@@ -38,17 +38,17 @@
 #       lines keep: line_fragments that were layed out
 #       lines_range: indicated the range of lines that belongs to the paragaph
 #                     when paragraph is splitted, this will indicated where lines belong
-# 3. Drawing:      
+# 3. Drawing:
 #       draw lines in lines_range
 #       line cordinate are reversed in CoreText, so I have to draw from the top to bottom.
 #
 #   things I should implement
-#   1. Dropcap, 
-#   2. overlapping area with float, illegular shaped but continuous lines. 
-#   3. inserting image paragraphs that flows along other paragraphs, 
-#   4. drawing frames around paragraps, 
-#   5. widow/orphan rule and last character sqeese options 
-#   6. foot note and indexing support, I need to know colum position of the paragraph 
+#   1. Dropcap,
+#   2. overlapping area with float, illegular shaped but continuous lines.
+#   3. inserting image paragraphs that flows along other paragraphs,
+#   4. drawing frames around paragraps,
+#   5. widow/orphan rule and last character sqeese options
+#   6. foot note and indexing support, I need to know colum position of the paragraph
 #   7. paragraph based editing support, where text needs to be prosented per paragraph base, and so on...
 #   8. Squeeze text to fit
 
@@ -63,68 +63,60 @@
 # dropcap_char  = 1
 # for dropcap:
 # get first Droped Char rect
-# 1. create path with dropcap_area 
+# 1. create path with dropcap_area
 # 2. layout text with range 1, 0
-# 3. Draw Droped Char 
+# 3. Draw Droped Char
 # dropcap_area
 
 # overflow is we have overflowing text, because we have more lines than available spave,
 
 FIT_FONT_SIZE   = 0   # keep given font size
-FIT_TO_BOX      = 1   # change font size to fit text into box 
+FIT_TO_BOX      = 1   # change font size to fit text into box
 
 # TODO
 FIT_EACH_LINE   = 2   # adjust font size for each line to fit text into lines.
                       # So, fewer the text, larger the font size becomes in for each line
                       # And reduce the size of the lines propotionally to fit the entire lines in text box.
 
+#TODO
+# text_vertical_alignment
 module RLayout
   class TextLayoutManager
     attr_accessor :owner_graphic, :att_string
     attr_accessor :text_direction, :text_markup
-    attr_accessor :frame_setter, :frame, :line_count, :text_size, :linked
+    attr_accessor :line_count, :text_size, :linked, :text_line_spacing, :text_alignment, :text_vertical_alignment
     attr_accessor :drop_lines, :drop_char, :drop_char_width, :drop_char_height
     attr_accessor :text_fit_type, :text_overflow, :overflow_line_count
-    attr_accessor :proposed_path, :proposed_line_count
+    # attr_accessor :proposed_path, :proposed_line_count
+    attr_reader   :text_storage, :layout_manager, :text_container
     def initialize(owner_graphic, options={})
-      @owner_graphic = owner_graphic
-      @text_fit_type = @owner_graphic.text_fit_type if @owner_graphic
+      @owner_graphic  = owner_graphic
+      @text_fit_type  = @owner_graphic.text_fit_type if @owner_graphic
       @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
-      
-      if RUBY_ENGINE =='macruby'
-        if options[:linked]
-          @att_string     = options[:att_string]  
-          @text_size      = options[:text_size]  
-          @text_line_spacing = options[:text_line_spacing]  
-          @frame_setter   = CTFramesetterCreateWithAttributedString(@att_string)
-        elsif options[:drop_lines]
-          @drop_lines   = options[:drop_lines]
-          @drop_char     = options[:text_string][0]
-          options[:text_string] =  options[:text_string][1..-1]
-          @att_string   = make_att_string_from_option(options)  
-          @frame_setter = CTFramesetterCreateWithAttributedString(@att_string)
-          layout_drop_cap_lines(options) unless options[:layout_lines=>false]
-        else
-          @att_string     = make_att_string_from_option(options)  
-          @frame_setter   = CTFramesetterCreateWithAttributedString(@att_string)
-          layout_ct_lines(options) unless options[:layout_lines=>false]
-        end
-      else
-        
-      end
+      @text_vertical_alignment = options.fetch(:text_vertical_alignment, "center")
+
+      #TODO I should use only one, @text_storage or @att_string
+      @att_string     = make_att_string_from_option(options)
+      @text_storage   = NSTextStorage.alloc.initWithAttributedString(@att_string)
+
+      @layout_manager = NSLayoutManager.alloc.init
+      @text_storage.addLayoutManager @layout_manager
+      @text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@owner_graphic.width, @owner_graphic.height))
+      @layout_manager.addTextContainer @text_container
+      layout_text_lines unless options[:no_layout]
       self
     end
-    
+
     def set_frame
-      # layout_ct_lines
-      layout_ct_lines
+      # layout_text_lines
+      layout_text_lines
     end
-    
+
     #TODO
     def att_string_to_hash(att_string)
       Hash.new
     end
-        
+
     def to_hash
       h = {}
       h[:text_markup]   = @text_markup
@@ -137,25 +129,25 @@ module RLayout
       h[:line_direction] = @line_direction if @line_direction == "vertical"
       h
     end
-        
+
     def make_atts
-      @text_color = Graphic.convert_to_nscolor(@text_color)    unless @text_color.class == NSColor  
+      @text_color = Graphic.convert_to_nscolor(@text_color)    unless @text_color.class == NSColor
       atts={}
       atts[NSFontAttributeName]             = NSFont.fontWithName(@text_font, size:@text_size)
-      atts[NSForegroundColorAttributeName]  = @text_color      
+      atts[NSForegroundColorAttributeName]  = @text_color
       if @guguri_width && @guguri_width < 0
-        atts[NSStrokeWidthAttributeName] = atts_hash[:guguri_width] #0, -2,-5,-10 
+        atts[NSStrokeWidthAttributeName] = atts_hash[:guguri_width] #0, -2,-5,-10
         atts[NSStrokeColorAttributeName]=GraphicRecord.color_from_string(attributes[:guguri_color])
-      end 
-      
+      end
+
       if @text_tracking
         atts[NSKernAttributeName] = @text_tracking
       end
-      right_align       = NSMutableParagraphStyle.alloc.init.setAlignment(NSRightTextAlignment)          
-      center_align      = NSMutableParagraphStyle.alloc.init.setAlignment(NSCenterTextAlignment)          
-      justified_align   = NSMutableParagraphStyle.alloc.init.setAlignment(NSJustifiedTextAlignment)          
+      right_align       = NSMutableParagraphStyle.alloc.init.setAlignment(NSRightTextAlignment)
+      center_align      = NSMutableParagraphStyle.alloc.init.setAlignment(NSCenterTextAlignment)
+      justified_align   = NSMutableParagraphStyle.alloc.init.setAlignment(NSJustifiedTextAlignment)
       newParagraphStyle = NSMutableParagraphStyle.alloc.init # default is left align
-      
+
       case @text_alignment
       when "right"
         newParagraphStyle = right_align
@@ -169,10 +161,10 @@ module RLayout
       newParagraphStyle.setFirstLineHeadIndent(@text_first_line_head_indent) if @text_first_line_head_indent
       newParagraphStyle.setHeadIndent(@text_head_indent) if @text_head_indent
       newParagraphStyle.setTailIndent(@text_tail_indent) if @text_tail_indent
-      atts[NSParagraphStyleAttributeName] = newParagraphStyle         
+      atts[NSParagraphStyleAttributeName] = newParagraphStyle
       atts
     end
-    
+
     def make_att_string_from_option(options)
       if options[:atts_array]
         make_att_string_from_atts_array(options[:atts_array])
@@ -180,7 +172,7 @@ module RLayout
         make_att_string(options)
       end
     end
-    
+
     def make_att_string_from_atts_array(atts_array)
       att_string = NSMutableAttributedString.alloc.init
       atts_array.each do |atts|
@@ -188,11 +180,11 @@ module RLayout
       end
       att_string
     end
-    
+
     def make_att_string(options={})
       #TODO
       # atts[NSKernAttributeName] = @text_track           if @text_track
-      # implement inline element, italic, bold, underline, sub, super, emphasis(color)        
+      # implement inline element, italic, bold, underline, sub, super, emphasis(color)
       if options[:text_markup]
         @text_markup = options[:text_markup]
       elsif options[:markup]
@@ -207,7 +199,7 @@ module RLayout
       @text_line_spacing= options.fetch(:text_line_spacing, @text_size*1.2)
       @text_fit_type    = options.fetch(:text_fit_type, 0)
       @text_alignment   = options.fetch(:text_alignment, "center")
-      @text_tracking    = options.fetch(:text_tracking, 0)  if options[:text_tracking ]      
+      @text_tracking    = options.fetch(:text_tracking, 0)  if options[:text_tracking ]
       @text_first_line_head_indent    = options.fetch(:text_first_line_head_indent, 0)
       @text_head_indent               = options.fetch(:text_head_indent, 0)
       @text_tail_indent               = options.fetch(:text_tail_indent, 0)
@@ -216,68 +208,31 @@ module RLayout
       att_string        =NSMutableAttributedString.alloc.initWithString(@text_string, attributes:make_atts)
       att_string
     end
-    
-     #    
+
+     #
      # def body_line_height_multiple(head_para_height)
      #   body_height = @owner_graphic.body_height
      #   # puts "body_height:#{body_height}"
      #   # body_multiple = ((head_para_height/body_height).to_i + 1)*body_height
      # end
-     
+
     # do not break paragraph that is less than 4 lines
     # apply widow/orphan rule and last_line_small_char_set rule.
     def is_breakable?
       @line_count >= 4
     end
-    
-    # this is line layout using CoreText
-    # CoreText allows me to do irregular shaped container layout,
-    # with more controlls than using NSTextContainer
-    def layout_ct_lines(options={})
+
+    # this is line layout using NSText System
+    def layout_text_lines(options={})
       return 0 unless @att_string
       @text_overflow  = false
       @overflow_line_count = 0
-      proposed_height = @owner_graphic.height
-      proposed_height = options[:proposed_height] if options[:proposed_height]
-      proposed_width  = @owner_graphic.width      
-      proposed_width  = options[:proposed_width] if options[:proposed_width]
-      @proposed_path  = CGPathCreateMutable()
-      if options[:proposed_path]
-        @proposed_path = options[:proposed_path]
-        proposed_height = CGPathGetBoundingBox(@proposed_path).size.height
-      else
-        bounds = CGRectMake(0, 0, proposed_width, 1000)
-        CGPathAddRect(@proposed_path, nil, bounds)
-      end
-      @frame      = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), @proposed_path, nil)
-      @line_count = 0
-      @line_count = CTFrameGetLines(@frame).count  if CTFrameGetLines(@frame)
-      if @line_count == 0
-        puts "++++++++++ @line_count is 0 ++++++++ "
-      end
-      line_height         = @text_size + @text_line_spacing
-      used_size_height    = @line_count*line_height
-      # if @text_markup && (@text_markup != 'p') #&& options[:aling_to_grid]
-      #   # puts "markup is :#{@text_markup}"
-      #   # Make the head paragraphs height as body text multiples"
-      #   used_size_height = body_line_height_multiple(used_size_height)
-      #   # puts  "used_size_height:#{used_size_height}"
-      # end
-      @proposed_line_count = (proposed_height/line_height).to_i
-      @lines_array      = CTFrameGetLines(@frame)
-      glyphCount        = CTLineGetGlyphCount(@lines_array.last)
-      last_line_range   = CTLineGetStringRange(@lines_array.last)
-      if @att_string.length > last_line_range.location + glyphCount
-        @text_overflow = true 
-        @overflow_line_count =  @line_count - @proposed_line_count
-      end
-
-      if @text_fit_type != FIT_TO_BOX 
-        @owner_graphic.adjust_size_with_text_height_change(proposed_width, used_size_height)
-      end
-      @line_count*(@text_size + @text_line_spacing)
+      @text_container.setContainerSize(NSMakeSize(@owner_graphic.width, @owner_graphic.height))
+      @layout_manager.glyphRangeForTextContainer @text_container
+      r=@layout_manager.usedRectForTextContainer text_container
+      r.size.height
     end
-    
+
     ############ text fitting #######
     # fit text to box by reducing font size
     # 1. calculate box of current att_string
@@ -286,27 +241,27 @@ module RLayout
     # 3. reduce font by the ratio
     # 4. See if they fit, and adjust font size for best fit
     def new_font_size_for_fit
-      text_size             = @att_string.size   
+      text_size             = @att_string.size
       proposed_total_width  = @proposed_line_count*@owner_graphic.text_rect[2]
       # puts "proposed_total_width:#{proposed_total_width}"
       # puts "text_size.width:#{text_size.width}"
       height                = @owner_graphic.text_rect[3]
       w                     = proposed_total_width/text_size.width
-      h                     = height/text_size.height 
+      h                     = height/text_size.height
       # if heightis less than the full font height
       # puts "@proposed_line_count:#{@proposed_line_count}"
       if  @proposed_line_count <= 1
         h= 0.8
-      end    
+      end
       scale                 = [w,h].min
       # puts "w:#{w}"
       # puts "h:#{h}"
       # puts "scale:#{scale}"
       @text_size*scale
     end
-    
-    def fit_text_to_box    
-      return unless @text_overflow    
+
+    def fit_text_to_box
+      return unless @text_overflow
       new_size = new_font_size_for_fit
       @text_size = new_size
       range=NSMakeRange(0,0)
@@ -316,14 +271,12 @@ module RLayout
       new_font_atts[NSFontAttributeName] = NSFont.fontWithName(current_font, size:new_size)
       range=NSMakeRange(0,@att_string.length)
       @att_string.addAttributes(new_font_atts, range:range)
-      @frame_setter = CTFramesetterCreateWithAttributedString(@att_string)
-      @frame        = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), @proposed_path, nil)
-      @line_count   = CTFrameGetLines(@frame).count  
-      @proposed_line_count = @line_count
+      @text_storage.addAttributes(new_font_atts, range:range)
+      layout_text_lines
     end
-    
+
     # layout layout_drop_cap_lines
-    # @drop_ct_line: CTLine with drop char 
+    # @drop_ct_line: CTLine with drop char
     # @drop_frame:   CTFrame with side lines
     # @dropped_att_string
     # @att_string: att_string without dropped char
@@ -334,20 +287,20 @@ module RLayout
       proposed_width    = options[:proposed_width] if options[:proposed_width]
       drop_text_font    = options.fetch(:drop_text_font, 'Helvetica')
       drop_text_color   = options.fetch(:drop_text_color, @text_color)
-      drop_text_color   = Graphic.convert_to_nscolor(drop_text_color)    unless drop_text_color.class == NSColor  
+      drop_text_color   = Graphic.convert_to_nscolor(drop_text_color)    unless drop_text_color.class == NSColor
       atts={}
-      @drop_char_text_size                  = @drop_char_height    
+      @drop_char_text_size                  = @drop_char_height
       atts[NSFontAttributeName]             = NSFont.fontWithName(drop_text_font, size:@drop_char_text_size)
-      atts[NSForegroundColorAttributeName]  = drop_text_color  
+      atts[NSForegroundColorAttributeName]  = drop_text_color
       drop_char_att_string                  = NSMutableAttributedString.alloc.initWithString(@drop_char, attributes:atts)
       @drop_ct_line       = CTLineCreateWithAttributedString(drop_char_att_string)
       @drop_char_width    = CTLineGetTypographicBounds(@drop_ct_line, nil, nil,nil)
       @right_side_width   = proposed_width - @drop_char_width
-      @proposed_path       = CGPathCreateMutable()      
+      @proposed_path       = CGPathCreateMutable()
       bounds              = CGRectMake(@drop_char_width, 0, @right_side_width, @drop_char_height)
       CGPathAddRect(@proposed_path, nil, bounds)
       @right_size_frame   = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), @proposed_path, nil)
-      range               = CTFrameGetVisibleStringRange(@right_size_frame)      
+      range               = CTFrameGetVisibleStringRange(@right_size_frame)
       last_char_position=range.location + range.length
       if last_char_position < @att_string.length
         # still left over string after right_side_frame
@@ -355,7 +308,7 @@ module RLayout
         bounds            = CGRectMake(0, @drop_char_height, proposed_width, 1000)
         CGPathAddRect(@proposed_path, nil, bounds)
         @frame            = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), @proposed_path, nil)
-        @line_count       = CTFrameGetLines(@frame).count      
+        @line_count       = CTFrameGetLines(@frame).count
         used_size_height  = @line_count*(@text_size + @text_line_spacing) + @drop_char_height
         # set text_overflow and under flow
         @owner_graphic.adjust_size_with_text_height_change(proposed_width, used_size_height)
@@ -363,15 +316,15 @@ module RLayout
         @owner_graphic.adjust_size_with_text_height_change(proposed_width, @drop_char_height)
       end
     end
-    
+
     def text_height
       @line_count*(@text_size + @text_line_spacing)
     end
-    
+
     def text_line_height
       @text_size + @text_line_spacing
     end
-            
+
     # split att_string into two at overflowing position
     def split_overflowing_lines
       @lines_array            = CTFrameGetLines(@frame)
@@ -389,84 +342,11 @@ module RLayout
       second_paragraph        = Paragraph.new(nil, second_half_options)
       return second_paragraph
     end
-    
+
     def text_rect
       @owner_graphic.text_rect
-    end
-    
-    # draw only proposed_line
-    def draw_text(r) 
-      if @text_direction == 'left_to_right'
-        context         = NSGraphicsContext.currentContext.graphicsPort
-        # CGContextSetTextMatrix(context, CGAffineTransformIdentity)
-        # CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1))
-        @lines_array    = CTFrameGetLines(@frame)
-
-        y               = @text_size
-        if @drop_lines
-          # draw drop char
-          CGContextSetTextPosition(context, 1, @drop_char_text_size - 10)
-          CTLineDraw(@drop_ct_line, context)
-          # draw right_size_frame
-          @line_count     = @lines_array.count      
-          line_height     = @text_size + @text_line_spacing
-          #TODO I shuld get the width from @frame
-          line_width      = @right_side_width
-          @lines_array    = CTFrameGetLines(@right_size_frame)          
-          @lines_array.each_with_index do |line, i|
-            x_offset      = @drop_char_width + 2
-            text_width    =  CTLineGetTypographicBounds(line, nil, nil,nil)
-            line_room     = line_width - text_width
-            # alignment and first line indent done here
-            # center, right alignment done here
-            case @text_alignment
-            when 'left'
-            when 'center'
-              x_offset += line_room/2
-            when 'right'
-              x_offset += line_room
-            when 'justified'
-              #first line head indent, but not for linked part first line
-              x_offset += @text_first_line_head_indent if i == 0 && @linked != true
-            end
-            CGContextSetTextPosition(context, x_offset, y)
-            CTLineDraw(line, context)
-            y += line_height
-          end
-        end
-        return unless @frame
-        @lines_array    = CTFrameGetLines(@frame)
-        # @line_count     = @lines_array.count      
-        line_height     = @text_size + @text_line_spacing
-        line_width      = @owner_graphic.text_rect[2]
-
-        @lines_array[0..(@proposed_line_count - 1)].each_with_index do |line, i|
-          x_offset = 0
-          text_width =  CTLineGetTypographicBounds(line, nil, nil,nil)
-          line_room = line_width - text_width
-          # alignment and first line indent done here
-          # center, right alignment done here
-          case @text_alignment
-          when 'left'
-          when 'center'
-            x_offset += line_room/2
-          when 'right'
-            x_offset += line_room
-          when 'justified'
-            #first line head indent, but not for linked part first line
-            x_offset += @text_first_line_head_indent if i == 0 && @linked != true
-          end
-                    
-          CGContextSetTextPosition(context, x_offset, y)
-          CTLineDraw(line, context)
-          y += line_height
-        end        
-      else
-
-      end
     end
 
   end
 
 end
-

@@ -9,14 +9,14 @@ module RLayout
       process_job if valid_job?
       self
     end
-    
+
     def valid_job?
       @valid_job = false
       return @valid_job unless File.exist?(@path)
-      return @valid_job unless File.exist?(@pgscript_path)  
+      return @valid_job unless File.exist?(@pgscript_path)
       @valid_job = true
     end
-    
+
     def process_job
       pgscript = File.open(@pgscript_path, 'r'){|f| f.read}
       container = eval(pgscript)
@@ -24,4 +24,3 @@ module RLayout
     end
   end
 end
-  

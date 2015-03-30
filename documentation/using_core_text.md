@@ -1,7 +1,7 @@
 # Text Layout Using CoreText
 
 1. Use TextLayoutManager with CoreText
-	- layout_ct_lines
+	- layout_text_lines
 1. Create CTFrames with path(container with path)
 1. 
 
