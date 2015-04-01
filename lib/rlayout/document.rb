@@ -61,9 +61,9 @@ module RLayout
       @starting_page + @page_count
     end
   end
-  
+
   TocNode = Struct.new(:markup, :text_string, :page_number)
-    
+
   class Document
     attr_accessor :title, :path, :paper_size, :portrait, :width, :height, :starts_left, :double_side
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
@@ -86,7 +86,7 @@ module RLayout
         @double_side= options.fetch(:double_side, document_defaults[:double_side])
         @starts_left= options.fetch(:starts_left, document_defaults[:starts_left])
       end
-      
+
       if @paper_size && @paper_size != "custom"
         @width = SIZES[@paper_size][0]
         @height = SIZES[@paper_size][1]
@@ -94,7 +94,7 @@ module RLayout
         @width      = options.fetch(:width, document_defaults[:width])
         @height     = options.fetch(:height, document_defaults[:height])
       end
-      
+
       @left_margin= options.fetch(:left_margin, document_defaults[:left_margin])
       @top_margin = options.fetch(:top_margin, document_defaults[:top_margin])
       @right_margin = options.fetch(:right_margin, document_defaults[:right_margin])
@@ -109,29 +109,29 @@ module RLayout
       else
         @starting_page_number = 1
       end
-      
+
       if options[:pages]
         options[:pages].each do |page_hash|
           Page.new(self, page_hash)
         end
-        
+
       elsif options[:page_objects]
         @pages = options[:pages]
       end
-      
+
       @current_style = options.fetch(:current_style, DEFAULT_STYLES)
-      
+
       if @toc_on
         # save_toc elements for this document
         @toc_elements = []
       end
-      
+
       if block
         instance_eval(&block)
       end
       self
     end
-    
+
     def document_defaults
       {
         portrait: true,
@@ -146,25 +146,36 @@ module RLayout
         bottom_margin: 50,
       }
     end
-    
+
     def page(options={}, &block)
       Page.new(self, options, &block)
     end
-        
+
+    def add_page(page, options={})
+      if page.class == Page
+        page.document = self
+        @pages << page
+      elsif page.class == Array
+        page.each do |page|
+          add_page(page)
+        end
+      end
+    end
+
     def layout_page
       side_margin = 100
       top_margin = 50
       horizontal_gutter = 20
-      
+
       if @double_side
         @document_width   = @width * 2 + side_margin*2
         page_pairs = @pages.length / 2
         page_pairs += 1 if @pages.length % 2 !=0
         @document_height  = @height*page_pairs + top_margin*2 + horizontal_gutter*(page_pairs-1)
-        
+
         #TODO do it for double_side
         #TODO for starts_left
-      
+
       else
         puts "single side"
         puts "@pages.length:#{@pages.length}"
@@ -179,7 +190,7 @@ module RLayout
         end
       end
     end
-        
+
     def to_data
       h = {}
       h[:title] = @title
@@ -187,7 +198,7 @@ module RLayout
       h[:pages] = @pages.map{|page| page.to_data}
       h
     end
-    
+
     def to_hash
       h = {}
       h[:title]   = @title
@@ -201,25 +212,25 @@ module RLayout
       end
       h
     end
-    
+
     def to_svg
       # TODO
       # SVG 1.1 does not support multipe page svg, SVG 1.2 has <pageSet> for multiple page support
       # but it does not work in Safari
       # So, save each pages as separate files
       # layout_page
-      
+
       # s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0\" y=\"0\" width=\"#{@document_width}\" height=\"#{@document_height}\">\n"
       # @pages.each do |page|
       #   s += page.save_svg(page)
       # end
-      # s += "</svg>"      
+      # s += "</svg>"
     end
-    
+
     def save_yml(path)
       File.open(path, 'w'){|f| f.write to_hash.to_yaml}
     end
-    
+
     def save_svg(path)
       dir = File.dirname(path)
       ext = File.extname(path)
@@ -229,16 +240,17 @@ module RLayout
         page.save_svg(path)
       end
     end
-    
+
     def save_pdf(path)
+      puts __method__
+      puts "path:#{path}"
       @ns_view = DocumentViewMac.new(self)
       @page_view_count = @ns_view.save_pdf(path)
     end
-    
+
     def save_toc(path)
       File.open(path, 'w'){|f| f.write toc_element.to_yaml}
     end
   end
-  
-end
 
+end

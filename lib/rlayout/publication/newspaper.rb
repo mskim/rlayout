@@ -1,17 +1,17 @@
 # encoding: utf-8
 
 NEWS_PAPER_INFO = {
-  name: "Ourtown News", 
-  period: "daily", 
-  paper_size: "A2"  
+  name: "Ourtown News",
+  period: "daily",
+  paper_size: "A2"
 }
 
 module RLayout
-  
+
   class Newspaper
     attr_accessor :publication_path, :front_matter, :body_matter, :rear_matter
-    attr_accessor :publication_info, :grid, :lines_in_grid, :gutter 
-    def initialize(publication_path, options={})
+    attr_accessor :publication_info, :grid, :lines_in_grid, :gutter
+    def initialize(publication_path, options={}, &block)
       # system("mkdir -p #{publication_path}") unless File.exists?(publication_path)
       @publication_path = publication_path
       @paper_size   = options.fetch(:paper_size,"A2")
@@ -29,9 +29,12 @@ module RLayout
       @grid_height  = (@height - @top_margin - @bottom_margin)/@grid[1]
       # info_path = publication_path + "/publication_info.yml"
       # File.open(info_path, 'w'){|f| f.write(NEWS_PAPER_INFO.to_yaml)} unless File.exists?(info_path)
+      if block
+        instance_eval(&block)
+      end
       self
     end
-    
+
     def publication_info
       {
         width:          @width,
@@ -48,11 +51,11 @@ module RLayout
         lines_in_grid:  @lines_in_grid,
       }
     end
-    
+
     def default_publication_info
       Newspaper.default_publication_info
     end
-    
+
     def self.default_publication_info
       {
         :width        => 1190.55,
@@ -66,17 +69,17 @@ module RLayout
         :bottom_margin=> 50,
       }
     end
-    
+
     def page_lines
       @lines_in_grid * @grid[1]
     end
-    
+
     def line_height
       (@height - @top_margin - @bottom_margin)/page_lines
     end
-    
+
   end
-  
+
   class NewspaperIssue
     attr_accessor :publication
     attr_accessor :issue_path, :issue_number, :issue_date
@@ -86,81 +89,76 @@ module RLayout
       set_up
       self
     end
-    
+
     def set_up
       # system("mkdir -p #{issue_path}") unless File.exists?(issue_path)
       create_sections
     end
-    
+
     def create_sections
-      
+
     end
   end
-    
+
+  # NewspaperSection is a sinlge page of a Newspaper
+  # NewspaperSection can have many articles.
+  # NewspaperSection can have heading part or none, depending on the setion type
+  # Once the layout out of the section is set,
+  # each article is layouted independently by the reporter who is working on the article.
+  # each article is produced as PDF image and mergerd with rest of the articles.
+  # If section layout is changed, each reporteds will have to adjust their articles to fit new new layout.
+
   class NewspaperSection < Page
     attr_accessor :section_path, :issue_numner, :date, :section_name
     attr_accessor :section_template
     attr_accessor :heading_info, :output_path
-    attr_accessor :heading_type, :is_template #top, side_box, none, 
-    def initialize(parent_graphic, options={})
-      puts "options:#{options}"
+    attr_accessor :heading_type #none, top, left_top_box,
+    attr_accessor :articles_info
+
+    def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
       @section_path   = options[:section_path] if options[:section_path]
       @output_path    = options[:output_path]   if options[:output_path]
-      if options[:is_template]
-        super
-        @is_template = true
-        return self
-      end
-      #TODO
-      @heading_info   = options.fetch(:heading_info, {:layout_length=>1}) 
-      # @heading_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
-      # @heading_info[:layout_expand] = [:width,:height]
-      @main_info      = options.fetch(:main_info, {:layout_expand=>11})
+      @heading_info   = options.fetch(:heading_info, {:layout_length=>1})
       @articles_info  = options[:articles_info] if options[:articles_info]
       options         = options[:page_info]     if options[:page_info]
       super
-      # create_folder
-      # create_articles
+      create_articles
+
+      if block
+        instance_eval(&block)
+      end
       self
     end
-    
+
     def create_articles
       @articles = []
-      copy_template
+      @articles_info.each do |article_info|
+        create_article_template(article_info)
+      end
     end
-    
-    def copy_template
-      
+
+    # create .rlayout file for news_article
+    def create_article_template(article_info)
+
     end
-    
-    def set_up
-      
-    end
-    
-    def self.sample_page(options={})
-      options[:show_grid] = true
+
+    def self.generate(options={})
       options.merge!(Newspaper.default_publication_info)
       section_page = NewspaperSection.new(nil, options)
-      if options[:output_path]
-        section_page.save_pdf(options[:output_path])
-      end
       section_page
     end
-    
+
     def merge_pdf_articles(options={})
       puts __method__
       # heading = Image.new(self, @heading_info) if @heading_info
       # puts "heading:#{heading}"
-      # puts "@main_info:#{@main_info}"
-	    main = Container.new(self, @main_info) 
-	    relayout!
 	    @articles_info.each_with_index do |article_info, i|
 	      puts "article_info:#{article_info}"
-	      img = Image.new(main, article_info)
+	      img = Image.new(self, article_info)
 	      puts "img.layout_expand:#{img.layout_expand}"
 	    end
-	    
+
       if @output_path
         save_pdf(@output_path)
       else
@@ -168,7 +166,7 @@ module RLayout
       end
       self
     end
-    
+
     def self.process_news_story_template(options={})
       puts __method__
       puts "options:#{options}"
@@ -181,13 +179,13 @@ module RLayout
       end
       true
     end
-    
+
     def self.merge_news_section_story_templates(options={})
-	    page = Page.new(nil, width: options[:width], height: options[:height]) 
+	    page = Page.new(nil, width: options[:width], height: options[:height])
 	    options[:articles_info].each_with_index do |article_info, i|
 	      Image.new(page, article_info)
 	    end
-	    
+
       if options[:output_path]
         page.save_pdf(options[:output_path])
       else
@@ -196,14 +194,14 @@ module RLayout
       end
       true
     end
-    
+
     def process_news_article_markdown_files(file_list)
       file_list.each do |m|
         result = convert_markdown2pdf(m, options)
         options[:starting_page_number] = result.next_chapter_starting_page_number if result
       end
     end
-    
+
     def convert_markdown2pdf(markdown_path, options={})
       pdf_path = markdown_path.gsub(".markdown", ".pdf")
       title = File.basename(markdown_path, ".markdown")
@@ -211,17 +209,17 @@ module RLayout
       article.save_pdf(pdf_path)
       article
     end
-    
+
     def txt2markdown
       Dir.glob("#{@section_path}/*.txt") do |m|
         convert_txt2markdown(m)
       end
     end
-      
+
     def rtf2md(path)
-      
+
     end
-    
+
     def convert_txt2markdown(txt_path)
       txt_content = File.open(txt_path, 'r'){|f| f.read}
       title = File.basename(txt_path, ".txt")
@@ -234,16 +232,16 @@ title: #{title}
 EOF
       with_yaml_header = yaml_header + "\n" + txt_content
       File.open(markdown_path, "w"){|f| f.write with_yaml_header}
-      
+
     end
-    
+
     def self.rtf2md(path)
-      
+
     end
-        
+
     #TODO
     # breaks for digit that are already 3 digits or more
-    # breaks for filenames with space 
+    # breaks for filenames with space
     def normalize_filenames
       new_names = []
       Dir.glob("#{@section_path}/*") do |m|
@@ -261,6 +259,6 @@ EOF
       end
       new_names
     end
-  end  
+  end
 
 end

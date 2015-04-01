@@ -82,25 +82,23 @@ FIT_EACH_LINE   = 2   # adjust font size for each line to fit text into lines.
 # text_vertical_alignment
 module RLayout
   class TextLayoutManager
-    attr_accessor :owner_graphic, :att_string
+    attr_accessor :owner_graphic
     attr_accessor :text_direction, :text_markup
     attr_accessor :line_count, :text_size, :linked, :text_line_spacing, :text_alignment, :text_vertical_alignment
     attr_accessor :drop_lines, :drop_char, :drop_char_width, :drop_char_height
     attr_accessor :text_fit_type, :text_overflow, :overflow_line_count
     # attr_accessor :proposed_path, :proposed_line_count
-    attr_reader   :text_storage, :layout_manager, :text_container
+    attr_reader   :att_string, :layout_manager, :text_container
     def initialize(owner_graphic, options={})
       @owner_graphic  = owner_graphic
       @text_fit_type  = @owner_graphic.text_fit_type if @owner_graphic
       @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
       @text_vertical_alignment = options.fetch(:text_vertical_alignment, "center")
 
-      #TODO I should use only one, @text_storage or @att_string
-      @att_string     = make_att_string_from_option(options)
-      @text_storage   = NSTextStorage.alloc.initWithAttributedString(@att_string)
-
+      # I should use only one, @text_storage or @att_string, so @att_string is NSTextStorage class
+      @att_string     = NSTextStorage.alloc.initWithAttributedString(make_att_string_from_option(options))
       @layout_manager = NSLayoutManager.alloc.init
-      @text_storage.addLayoutManager @layout_manager
+      @att_string.addLayoutManager @layout_manager
       @text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@owner_graphic.width, @owner_graphic.height))
       @layout_manager.addTextContainer @text_container
       layout_text_lines unless options[:no_layout]
@@ -231,6 +229,7 @@ module RLayout
       @layout_manager.glyphRangeForTextContainer @text_container
       r=@layout_manager.usedRectForTextContainer text_container
       r.size.height
+      #TODO I should set the height to new??
     end
 
     ############ text fitting #######
@@ -271,7 +270,6 @@ module RLayout
       new_font_atts[NSFontAttributeName] = NSFont.fontWithName(current_font, size:new_size)
       range=NSMakeRange(0,@att_string.length)
       @att_string.addAttributes(new_font_atts, range:range)
-      @text_storage.addAttributes(new_font_atts, range:range)
       layout_text_lines
     end
 

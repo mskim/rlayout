@@ -1,24 +1,26 @@
 # encoding: utf-8
 
 # There are three types of articles, chapter, magazine_article, and news article/
-# chapter: 
-#     1. page numbers can grow into arbitrary pages
+# chapter:
+#     1. page numbers can grow to arbitrary pages
 #     1. Usually heading is not floating elelment, just graphics layer
 
-# magazine_article: 
-#     1. page number is usually fixed to 1, 2, 3, or 4
+# magazine_article:
+#     1. page number is usually fixed to 1, 2, 3, or 4 as specified
 #     1. flats are used for heading, image, side_box, quotes, leading
 #     1. non-uniform heading width and height is used
 #         example: three column layout can have two column heading
-# 
-# news_article: 
+#
+# news_article:
 #     1. single page based
 #     1. floats are used for heading
-#     1. width and height of layout is based on parent's grid 
+#     1. width and height of layout is based on parent's grid
+#     1. parent grid_width, and grid_height is used to calculate frame
+#     1. column number is same as the grid_width
 #     1. non-uniform heading width and height is used
 
 module RLayout
-  
+
   # Chapter
   # given Story path
   # create two initial pages with TextBox, header, footer, side_bar(optional)
@@ -33,61 +35,65 @@ module RLayout
   #    after first page :heading is nil, and the paragraphs are the rest of the leftover paragraphs form the initial page
   #    call main_box.layout_story agoin with (:heading=>nil, :paragraphs=> @paragraphs)
   #  keep going until we have no more leftover paragraphs.
-  
+
   class Chapter < Document
     attr_accessor :story_path, :heading, :paragraphs, :current_style
     attr_accessor :toc_on, :chapter_kind, :column_count
-    
-    def initialize(options={})
-      super            
+
+    def initialize(options={} ,&block)
+      super
       @bottom_margin      = 100
       @double_side        = true
       @page_count         = options.fetch(:page_count, 2)
       @column_count       = options.fetch(:column_count, 1)
       @toc_on             = options.fetch(:toc_on, false)
       @chapter_kind       = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
-      case @chapter_kind
-      when "chapter"
-        @current_style    = CHAPTER_STYLES
-      when "magazine_article"
-        @current_style    = MAGAZINE_STYLES
-      when "news_article"
-        @current_style    = NEWS_STYLES
-      else
-        @current_style    = DEFAULT_STYLES
-      end
+      @current_style      = CHAPTER_STYLES
       @heading_columns    = @current_style["heading_columns"][@column_count-1]
-      options[:footer]    = true 
-      options[:header]    = true 
+      options[:footer]    = true
+      options[:header]    = true
       options[:text_box]  = true
       options[:heading_columns] = @heading_columns unless options[:heading_columns]
       @page_count.times do |i|
         options[:page_number] = @starting_page_number + i
         Page.new(self, options)
       end
-      if options[:story_path]
-        @story_path = options[:story_path]
+      if @story_path = options[:story_path]
         read_story
         layout_story
       end
-      if options[:save]
-        pdf_path = @story_path.gsub(".story", ".pdf")
-        save_pdf(pdf_path)
+      if options[:save_path]
+        save_pdf(options[:save_path])
       end
       self
     end
-    
+
     def read_story
-      story       = Story.from_story_file(@story_path)
-      puts "story:#{story}"
+      puts __method__
+      puts "@story_path:#{@story_path}"
+      # story       = Story.from_story_file(@story_path)
+      unless File.exists?(story_path)
+        puts "Can not find file #{story_path}!!!!"
+        return {}
+      end
+      path_copy = story_path.dup
+      if File.directory?(story_path)
+        path_copy = story_path + "/content.yml"
+      end
+      # a = `md2story "#{filename}"`
+      story_file = File.open(path_copy, 'r'){|f| f.read}
+      story = YAML::load(story_file)
+
+      puts story
       @heading    = story[":heading"]
       puts "@heading:#{@heading}"
       @title      = @heading[":title"]
       #TODO read it form book_config.rb?
       @paragraphs =[]
-      story[":paragraphs"].each do |para| 
+      story[":paragraphs"].each do |para|
+        puts "para:#{para}"
         para_options = {}
-        para_options[:markup]         = para[:markup]
+        para_options[:markup]         = para[":markup"]
         para_options[:layout_expand]  = [:width]
         if para[:markup] == 'img'
           source = para[:image_path]
@@ -97,20 +103,22 @@ module RLayout
           full_image_path = File.dirname(@story_path) + "/#{source}"
           para_options[:image_path] = full_image_path
           @paragraphs << Image.new(nil, para_options)
-          next 
+          next
         end
-        para_options[:text_string]    = para[:string]
+        para_options[:text_string]    = para[":string"]
         para_options[:chapter_kind]   = @chapter_kind
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
         para_options[:current_style]  = @current_style
+        puts "para_options:#{para_options}"
         @paragraphs << Paragraph.new(nil, para_options)
       end
       puts "@paragraphs.length:#{@paragraphs.length}"
-      
+
     end
-    
+
     def layout_story
+      puts __method__
       page_index                = 0
       @first_page               = @pages[page_index]
       @heading[:layout_expand]  = [:width, :height]
@@ -145,7 +153,7 @@ module RLayout
       #   @first_page.main_box.floats << Heading.new(nil, @heading)
       #   @first_page.relayout!
       #   # @first_page.main_box.relayout_floats!
-      else 
+      else
         @heading[:chapter_kind]  = "chapter"
         @heading[:current_style] = CHAPTER_STYLES
         # make head a as one of graphics
@@ -153,7 +161,7 @@ module RLayout
         @first_page.graphics.unshift(heading_object)
         heading_object.parent_graphic = @first_page
       end
-      @first_page.relayout!      
+      @first_page.relayout!
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
       @first_page.main_box.layout_items(@paragraphs)
@@ -161,8 +169,8 @@ module RLayout
         page_index += 1
         if page_index >= @pages.length
           options ={}
-          options[:footer]      = true 
-          options[:header]      = true 
+          options[:footer]      = true
+          options[:header]      = true
           options[:text_box]    = true
           options[:page_number] = @starting_page_number + page_index
           options[:column_count]= @column_count
@@ -170,39 +178,39 @@ module RLayout
           p.relayout!
           p.main_box.create_column_grid_rects
         end
-        
+
         @pages[page_index].main_box.layout_items(@paragraphs)
       end
       update_header_and_footer
     end
-        
+
     def next_chapter_starting_page_number
       @starting_page_number=1 if @starting_page_number.nil?
       @page_view_count = 0   if @page_view_count.nil?
       @starting_page_number + @page_view_count
     end
-    
+
     def save_toc(path)
-      
+
     end
-        
+
     def update_header_and_footer
       header= {}
       header[:first_page_text]  = "| #{@book_title} |" if @book_title
       header[:left_page_text]   = "| #{@book_title} |" if @book_title
-      header[:right_page_text]  = @title if @title      
-      
+      header[:right_page_text]  = @title if @title
+
       footer= {}
       footer[:first_page_text]  = @book_title if @book_title
       footer[:left_page_text]   = @book_title if @book_title
-      footer[:right_page_text]  = @title if @title      
+      footer[:right_page_text]  = @title if @title
       options = {
         :header => header,
         :footer => footer,
       }
       @pages.each {|page| page.update_header_and_footer(options)}
     end
-        
+
     def header_rule
       {
         :first_page_only  => true,
@@ -210,7 +218,7 @@ module RLayout
         :right_page       => false,
       }
     end
-    
+
     def footer_rule
       h ={}
       h[:first_page]      = true
@@ -219,5 +227,5 @@ module RLayout
       h
     end
   end
-  
+
 end

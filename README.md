@@ -20,12 +20,21 @@ TODO List
 	- modify kramdown into r_kramdown
 	- use Asciidotor
 
+2015 3 31
+	1. Merge grid & float into major feature.
+			Update PGScript to make use of it.
+			Update PGScript for NewspaperSection
+
 2015 3 30
 	I am getting invalid context error, And I can't find the reason why!.
 	I am going back to using NSText, from CoreText.
 	CTFrameSetter to NSLayoutManager
 	I will have to work on proposed lect stuff for illegular shaped containers.
-	I will also implement Pure Ruby version of Text so, I can used it with Opal on browser.
+	I will also implement Pure Ruby version of Text so, I can use it on
+		1. non Mac EC servervice
+		1. Opal on the browser.
+
+	1. Update TextBox for NSText change, Dropcap, Splitted Paragra case
 
 2015 3 23
 	- parse adoc format, get the tree info, convert it to para_tree
