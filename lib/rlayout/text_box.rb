@@ -141,9 +141,7 @@ module RLayout
       # puts "flowing_items.length:#{flowing_items.length}"
       # puts "frame_rect:#{frame_rect}"
       while item      = flowing_items.shift do
-        puts "item.class:#{item.class}"
         if item.text_layout_manager
-          puts "item.text_string:#{item.text_string}"
           item.width  = current_column.text_width
           # puts "item.text_markup:#{item.text_markup}"
           # puts "item.text_string:#{item.text_string}"
@@ -152,7 +150,6 @@ module RLayout
           # puts "@current_column.current_position:#{current_column.current_position}"
           # "item underflow" case where there is no room at the bottom enven for a single line
           if current_column.room < current_column.body_line_height || current_column.room < item.text_line_height
-            puts "item underflow"
             column_index +=1
             if column_index < @column_count
               current_column = @graphics[column_index]

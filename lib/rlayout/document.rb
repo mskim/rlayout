@@ -232,9 +232,9 @@ module RLayout
     end
 
     def save_svg(path)
-      dir = File.dirname(path)
-      ext = File.extname(path)
-      base = File.basename(path, ".svg")
+      dir   = File.dirname(path)
+      ext   = File.extname(path)
+      base  = File.basename(path, ".svg")
       @pages.each_with_index do |page, i|
         path = dir + "/#{base}" + i.to_s + "#{ext}"
         page.save_svg(path)
@@ -242,8 +242,6 @@ module RLayout
     end
 
     def save_pdf(path)
-      puts __method__
-      puts "path:#{path}"
       @ns_view = DocumentViewMac.new(self)
       @page_view_count = @ns_view.save_pdf(path)
     end

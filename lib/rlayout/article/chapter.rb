@@ -69,8 +69,6 @@ module RLayout
     end
 
     def read_story
-      puts __method__
-      puts "@story_path:#{@story_path}"
       # story       = Story.from_story_file(@story_path)
       unless File.exists?(story_path)
         puts "Can not find file #{story_path}!!!!"
@@ -83,15 +81,11 @@ module RLayout
       # a = `md2story "#{filename}"`
       story_file = File.open(path_copy, 'r'){|f| f.read}
       story = YAML::load(story_file)
-
-      puts story
       @heading    = story[":heading"]
-      puts "@heading:#{@heading}"
       @title      = @heading[":title"]
       #TODO read it form book_config.rb?
       @paragraphs =[]
       story[":paragraphs"].each do |para|
-        puts "para:#{para}"
         para_options = {}
         para_options[:markup]         = para[":markup"]
         para_options[:layout_expand]  = [:width]
@@ -109,16 +103,14 @@ module RLayout
         para_options[:chapter_kind]   = @chapter_kind
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
+        #TODO should not pass the Hash, just name of it and make it look it up at paragraph level
         para_options[:current_style]  = @current_style
-        puts "para_options:#{para_options}"
         @paragraphs << Paragraph.new(nil, para_options)
       end
-      puts "@paragraphs.length:#{@paragraphs.length}"
 
     end
 
     def layout_story
-      puts __method__
       page_index                = 0
       @first_page               = @pages[page_index]
       @heading[:layout_expand]  = [:width, :height]
@@ -140,19 +132,19 @@ module RLayout
         @heading[:current_style] = MAGAZINE_STYLES
         @first_page.main_box.floats << Heading.new(nil, @heading)
         # @first_page.main_box.relayout_floats!
-      # elsif  @chapter_kind == "news_article"
-      #   #make it a flost for news_article
-      #   @heading[:width]        = @first_page.main_box.heading_width
-      #   @heading[:layout_expand]= nil
-      #   @heading[:top_margin]   = 0
-      #   @heading[:top_inset]    = 0
-      #   @heading[:bottom_margin]= 0
-      #   @heading[:tottom_inset] = 0
-      #   @heading[:left_inset]   = 0
-      #   @heading[:right_inset]  = 0
-      #   @first_page.main_box.floats << Heading.new(nil, @heading)
-      #   @first_page.relayout!
-      #   # @first_page.main_box.relayout_floats!
+      elsif  @chapter_kind == "news_article"
+        #make it a flost for news_article
+        @heading[:width]        = @first_page.main_box.heading_width
+        @heading[:layout_expand]= nil
+        @heading[:top_margin]   = 0
+        @heading[:top_inset]    = 0
+        @heading[:bottom_margin]= 0
+        @heading[:tottom_inset] = 0
+        @heading[:left_inset]   = 0
+        @heading[:right_inset]  = 0
+        @first_page.main_box.floats << Heading.new(nil, @heading)
+        @first_page.relayout!
+        # @first_page.main_box.relayout_floats!
       else
         @heading[:chapter_kind]  = "chapter"
         @heading[:current_style] = CHAPTER_STYLES

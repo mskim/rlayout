@@ -23,20 +23,20 @@
 # 1. set Heading expand =>:width
 
 module RLayout
-  
-  # heading width is set to parents's layout_area[width]. 
-  # heading height is set to content height sum initially. 
+
+  # heading width is set to parents's layout_area[width].
+  # heading height is set to content height sum initially.
   # And the height is re-adjusted by the parent.
   # Each heading element layout_length is set to it's height
-  # This way, parent can shrink or expand heading and maintain each elements's height propotion. 
+  # This way, parent can shrink or expand heading and maintain each elements's height propotion.
   # heading height should be multiles of body text height
   class Heading < Container
     attr_accessor :title_object, :subtitle_object, :leading_object, :author_object
     attr_accessor :align_to_body_text
     def initialize(parent_graphic, options={}, &block)
-      super   
-      @current_style =  options[:current_style]     
-      @klass = "Heading"   
+      super
+      @current_style =  options[:current_style]
+      @klass = "Heading"
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
       @layout_space = 2
       if options[:width]
@@ -57,21 +57,33 @@ module RLayout
       width = @width - @left_inset - @right_inset
       if options[:title]
         @title_object = title(options[:title], options)
+      elsif options[":title"]
+        @title_object = title(options[":title"], options)
       end
-      if options[:subtitle]        
+
+      if options[:subtitle]
         @subtitle_object = subtitle(options[:subtitle], options)
+      elsif options[":subtitle"]
+        @subtitle_object = subtitle(options[":subtitle"], options)
       end
+
       if options[:leading]
         @leading_object = leading(options[:leading], options)
+      elsif options[":leading"]
+        @leading_object = leading(options[":leading"], options)
       end
+
       if options[:author]
         @author_object = author(options[:author], options)
+      elsif options[":author"]
+        @author_object = author(options[":author"], options)
       end
+
       @line_type=0
       # @line_color="red"
-      # @line_width= 2      
+      # @line_width= 2
       # @fill_color="green"
-      height_sum = 0      
+      height_sum = 0
       height_sum +=@title_object.height    unless @title_object.nil?
       height_sum +=@subtitle_object.height unless @subtitle_object.nil?
       height_sum +=@leading_object.height  unless @leading_object.nil?
@@ -88,7 +100,7 @@ module RLayout
       relayout!
       self
     end
-    
+
     # create container with template and replace variavle data to get our heaing
     def self.variable_heading(options)
       unless options[:keys] && options[:data]
@@ -121,26 +133,26 @@ module RLayout
       heading.replace_variables(variables_hash)
       heading
     end
-        
+
     def self.news_page_heading(options={})
       publication = options.fetch(:publication, "B2")
       path    = "/Users/shared/SoftwareLab/heading/news_page/#{publication}.rlib"
       unless File.exists?(path)
         puts "Can't find #{path} !!!"
-        return 
+        return
       end
       heading = Container.open_library(path)
       heading.replace_variables(options)
       heading
     end
-        
+
     def self.make_headline(options={})
       headline= Heading.new(nil, options)
       if options[:output_path]
         headline.save_pdf(options[:output_path])
       end
     end
-        
+
     ######## PageScript verbes
     def title(string, options={})
       atts  = @current_style["title"]
@@ -151,7 +163,7 @@ module RLayout
       @title_object.layout_length   = @title_object.height
       @title_object
     end
-    
+
     def subtitle(string, options={})
       atts                = @current_style["subtitle"]
       atts[:text_string]  = string
@@ -161,7 +173,7 @@ module RLayout
       @subtitle_object.layout_length  = @subtitle_object.height
       @subtitle_object
     end
-    
+
     def leading(string, options={})
       atts                          = @current_style["leading"]
       atts[:text_string]            = string
@@ -171,7 +183,7 @@ module RLayout
       @leading_object.layout_length = @leading_object.height
       @leading_object
     end
-    
+
     def author(string, options={})
       atts                          = @current_style["author"]
       atts[:text_string]            = string
@@ -184,12 +196,12 @@ module RLayout
     end
   end
 
-    
-    
+
+
   class Banner < Heading
     attr_accessor :place, :when, :organization, :image
     attr_accessor :category, :width, :height, :direction
-    
+
   end
-  
+
 end
