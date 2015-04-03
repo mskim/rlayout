@@ -74,16 +74,11 @@ module RLayout
         puts "Can not find file #{story_path}!!!!"
         return {}
       end
-      path_copy = story_path.dup
-      if File.directory?(story_path)
-        path_copy = story_path + "/content.yml"
-      end
-      # a = `md2story "#{filename}"`
-      story_file = File.open(path_copy, 'r'){|f| f.read}
-      story = YAML::load(story_file)
-      @heading    = story[":heading"]
-      @title      = @heading[":title"]
-      #TODO read it form book_config.rb?
+
+      stroy = Story.markdown2para_data(story_path)
+      @heading    = story[:heading] || {}
+      @title      = @heading[:title] || "Untitled"
+
       @paragraphs =[]
       story[":paragraphs"].each do |para|
         para_options = {}

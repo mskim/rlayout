@@ -70,29 +70,6 @@ module RLayout
       end
     end
 
-    def self.markdown2para_data(story_path)
-      unless File.exists?(story_path)
-        puts "Can not find file #{story_path}!!!!"
-        return {}
-      end
-      story_file = File.open(story_path, 'r'){|f| f.read}
-      s=StringScanner.new(my_string)
-      text_blocks = []
-      while !s.eos?
-        # puts count
-        content = s.scan(/.*\n\n/)
-        text_blocks << content
-      end
-      text_blocks.map do |block|
-        blocks2para_data(text_blocks)
-      end
-    end
-
-    def blocks2para_data(text_block)
-      s=StringScanner.new(text_block)
-
-    end
-
     def self.from_story_file(story_path)
 
       unless File.exists?(story_path)
@@ -183,7 +160,7 @@ module RLayout
       @story_hash = {:heading=>@metadata, :paragraphs=>paragraphs}
     end
 
-  
+
   end
 
 end

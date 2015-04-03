@@ -1,8 +1,6 @@
 # encoding: UTF-8
 # Public: Methods for retrieving lines from AsciiDoc source files
 
-require 'strscan'
-require 'yaml'
 # This is from Asciidoctor::Reader
 
 EOL = "\n"
@@ -13,7 +11,7 @@ class Reader
     attr_accessor :dir
     attr_accessor :path
     attr_accessor :lineno
-  
+
     def initialize file, dir = nil, path = nil, lineno = nil
       @file = file
       @dir = dir
@@ -447,7 +445,7 @@ class Reader
     skip_line_comments = options[:skip_line_comments]
     line_read = false
     line_restored = false
-    
+
     complete = false
     while !complete && (line = read_line)
       complete = while true
@@ -551,21 +549,48 @@ end
 
 module RLayout
   class Story
-    def self.block2para_data(text_block)
+    def self.block2para_data(text_block, options={})
       s=StringScanner.new(text_block[0])
+      # starting_heading_level is 1, h1
+      # if starting_heading_level = 3, h1 => h3
+      #
+      starting_heading_level = options[:starting_heading_level] || 1
       markup_stirng = s.scan(/#*\s?/)
-      # TODO img, math, table, admonition, quote, code
+      #TODO img, math, table, admonition, quote, code
+      #TODO don't allow more than h6
+
       case markup_stirng
       when "\# ", "\#"
-        markup = "h1"
+        if starting_heading_level > 6
+          markup = "h6"
+        else
+          markup = "h#{starting_heading_level}"
+        end
       when "\#\# ", "\#\#"
-        markup = 'h2'
+        if starting_heading_level > 5
+          markup = "h6"
+        else
+          markup = "h#{starting_heading_level + 1}"
+        end
       when "\#\#\# ", "\#\#\#"
-        markup = 'h3'
+        if starting_heading_level > 4
+          markup = "h6"
+        else
+          markup = "h#{starting_heading_level + 2}"
+        end
+
       when "\#\#\#\# ", "\#\#\#\#"
-        markup = 'h4'
+        if starting_heading_level > 3
+          markup = "h6"
+        else
+          markup = "h#{starting_heading_level + 3}"
+        end
       when "\#\#\#\#\# ", "\#\#\#\#\#"
-        markup = 'h5'
+        if starting_heading_level > 2
+          markup = "h6"
+        else
+          markup = "h#{starting_heading_level + 4}"
+        end
       when "\#\#\#\#\#\# ", "\#\#\#\#\#\#"
         markup = 'h6'
       else
@@ -574,7 +599,7 @@ module RLayout
       string = s.scan(/.*/)
       {:markup =>markup, :string=>string}
     end
-        
+
     def self.markdown2para_data(path)
       source = File.open(path, 'r'){|f| f.read}
       #TODO
@@ -586,16 +611,16 @@ module RLayout
       rescue => e
         puts "YAML Exception reading #filename: #{e.message}"
       end
-      
+      starting_heading_level = 1 # h1
       if @metadata
-        puts @metadata
+        starting_heading_level += @metadata["demotion"].to_i if @metadata["demotion"]
       end
-      # if we have meta-data, then 
+      # if we have meta-data, then
       # take out the top meta-data part from source
-      # Set Document Options 
+      # Set Document Options
       # And Create Heading from this
-      
-      reader = RLayout::Reader.new @contents
+
+      reader = RLayout::Reader.new @contents, nil, :starting_heading_level=>starting_heading_level
       blocks_array = []
       block = []
       reader.lines.each do |line|
@@ -612,14 +637,15 @@ module RLayout
         blocks_array << block
       end
       paragraphs = blocks_array.map do |lines_block|
-        Story.block2para_data(lines_block)
+        Story.block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
       end
-      paragraphs
+      {:heading=>@metadata, :paragraphs =>paragraphs}
     end
   end
 end
 
 __END__
+require 'strscan'
+require 'yaml'
 path = "/Users/mskim/book/pastor/001.chapter.markdown"
 puts blocks_array = RLayout::Story.markdown2para_data(path)
-
