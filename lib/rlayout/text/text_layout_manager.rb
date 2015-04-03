@@ -18,11 +18,10 @@
 # end
 
 # Apple implemetation of  NSAttributtedString,
-# Apple Text implemetation keeps whole string in one chunk, and attributes points to range.
-# But, It makes it difficult to edit content manually, since you have to update the ranges of every following runs when you edit the text string,
+# Apple Text implemetation keeps whole string in one chunk, and each attribute has range.
+# But, It makes it difficult to edit content manually, since you have to update the ranges of every attribute runs when text string is chamged,
 # it forces you to use additional tool to reconstuct the string, not ideal for editing with a text editor.
-# I want to keep attributes and string together in a single hash(atts).
-# Make it much easier to edit them by hand.
+# I want to keep attributes and string together in a single hash(atts), making it much easier to edit string by hand.
 
 # Using CoreText (I went back to using NSTextSystem. I am getting strange errors, (context invalid error), that I can't figure out why!! Some blogs says it is bug, I don't want to pull my hair out anymore.)
 # I am using CoreText functions rather than NSText,
