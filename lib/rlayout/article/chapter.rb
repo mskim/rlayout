@@ -69,20 +69,19 @@ module RLayout
     end
 
     def read_story
-      # story       = Story.from_story_file(@story_path)
-      unless File.exists?(story_path)
-        puts "Can not find file #{story_path}!!!!"
+      unless File.exists?(@story_path)
+        puts "Can not find file #{@story_path}!!!!"
         return {}
       end
 
-      stroy = Story.markdown2para_data(story_path)
+      story = Story.markdown2para_data(@story_path)
       @heading    = story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
 
       @paragraphs =[]
-      story[":paragraphs"].each do |para|
+      story[:paragraphs].each do |para|
         para_options = {}
-        para_options[:markup]         = para[":markup"]
+        para_options[:markup]         = para[:markup]
         para_options[:layout_expand]  = [:width]
         if para[:markup] == 'img'
           source = para[:image_path]
@@ -94,7 +93,7 @@ module RLayout
           @paragraphs << Image.new(nil, para_options)
           next
         end
-        para_options[:text_string]    = para[":string"]
+        para_options[:text_string]    = para[:string]
         para_options[:chapter_kind]   = @chapter_kind
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false

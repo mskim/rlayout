@@ -613,7 +613,12 @@ module RLayout
       end
       starting_heading_level = 1 # h1
       if @metadata
-        starting_heading_level += @metadata["demotion"].to_i if @metadata["demotion"]
+        if @metadata.class == Array
+          #TODO it seem like a bug in motion-yaml
+          # YAML.load(md.to_s) returns Array
+          @metadata = @metadata[0]
+        end
+        starting_heading_level += @metadata['demotion'].to_i if @metadata['demotion']
       end
       # if we have meta-data, then
       # take out the top meta-data part from source
