@@ -96,6 +96,7 @@ module RLayout
 
       # I should use only one, @text_storage or @att_string, so @att_string is NSTextStorage class
       @att_string     = NSTextStorage.alloc.initWithAttributedString(make_att_string_from_option(options))
+      @text_line_spacing = options[:text_line_spacing] || options[:text_size]
       @layout_manager = NSLayoutManager.alloc.init
       @att_string.addLayoutManager @layout_manager
       @text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@owner_graphic.width, @owner_graphic.height))
@@ -119,10 +120,16 @@ module RLayout
       r=@layout_manager.usedRectForTextContainer text_container
 
       if r.size.height <= height
-        @owner_graphic.height = r.size.heigh
+        # text fits into given room, but do we have enough room for text_line_spacing
+        if r.size.height + @text_line_spacing <= height
+          @owner_graphic.height = r.size.height + @text_line_spacing
+        else
+          # not enough room for text_line_spacing
+          @owner_graphic.height = height
+        end
       else
         @owner_graphic.height = height
-        @overflow = true
+        @text_overflow = true
       end
     end
 

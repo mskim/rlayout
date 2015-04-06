@@ -41,6 +41,7 @@ module RLayout
     attr_accessor :toc_on, :chapter_kind, :column_count
 
     def initialize(options={} ,&block)
+      @paper_size         = options[:paper_size] if options[:paper_size]
       super
       @bottom_margin      = 100
       @double_side        = true
