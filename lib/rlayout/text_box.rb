@@ -167,7 +167,8 @@ module RLayout
           text_area_path  = current_column.path_from_current_position
           bounding_rect = CGPathGetPathBoundingBox(text_area_path)
           current_column.current_position = bounding_rect.origin.y
-          item.layout_text(:proposed_path=>text_area_path) # item.width:
+          # item.layout_text(:proposed_path=>text_area_path) # item.width:
+          item.layout_text(:proposed_height=>current_column.room) # item.width is set already
         elsif item.class == RLayout::Image
           item.width  = current_column.text_width
           item.layout_expand  = [:width]
