@@ -100,9 +100,32 @@ module RLayout
       @att_string.addLayoutManager @layout_manager
       @text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@owner_graphic.width, @owner_graphic.height))
       @layout_manager.addTextContainer @text_container
-      layout_text_lines unless options[:no_layout]
+      layout_text_lines(options) unless options[:no_layout]
       self
     end
+
+    # this is line layout using NSText System
+    def layout_text_lines(options={})
+      return 0 unless @att_string
+      @text_overflow  = false
+      @overflow_line_count = 0
+      width           = @owner_graphic.width
+      width           = options[:proposed_width] if options[:proposed_width]
+      height          = @owner_graphic.height
+      height          = options[:proposed_heigth] if options[:proposed_heigth]
+
+      @text_container.setContainerSize(NSMakeSize(width, height))
+      @layout_manager.glyphRangeForTextContainer @text_container
+      r=@layout_manager.usedRectForTextContainer text_container
+
+      if r.size.height <= height
+        @owner_graphic.height = r.size.heigh
+      else
+        @owner_graphic.height = height
+        @overflow = true
+      end
+    end
+
 
     def set_frame
       # layout_text_lines
@@ -219,17 +242,6 @@ module RLayout
       @line_count >= 4
     end
 
-    # this is line layout using NSText System
-    def layout_text_lines(options={})
-      return 0 unless @att_string
-      @text_overflow  = false
-      @overflow_line_count = 0
-      @text_container.setContainerSize(NSMakeSize(@owner_graphic.width, @owner_graphic.height))
-      @layout_manager.glyphRangeForTextContainer @text_container
-      r=@layout_manager.usedRectForTextContainer text_container
-      r.size.height
-      #TODO I should set the height to new??
-    end
 
     ############ text fitting #######
     # fit text to box by reducing font size
