@@ -20,7 +20,7 @@ module RLayout
         @pgscript = nil
       end
       options[:story_path] = @content_path
-      options[:save_path]  = @output_path
+      options[:output_path]  = @output_path
       process_job(options) if valid_job?
       self
     end
@@ -50,7 +50,7 @@ module RLayout
         # chapter.save_pdf(@output_path)
       else
         # Using default Chapter design
-        # chapter = Chapter.new(paper_size: "A3", story_path: @content_path, save_path: output_path)
+        # chapter = Chapter.new(paper_size: "A3", story_path: @content_path, output_path: output_path)
         chapter = Chapter.new(options)
 
       end

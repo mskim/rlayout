@@ -1,52 +1,52 @@
 
 module RLayout
-  
+
   class Page < Container
     attr_accessor :page_number, :left_page, :no_fixture_page
     attr_accessor :main_box, :header_object, :footer_object, :side_bar_object
     attr_accessor :fixtures
-     
-    def initialize(parent_graphic, options={}, &block)  
+
+    def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
       if options[:width]
-      elsif @parent_graphic && @parent_graphic.width
-        options[:width]  = @parent_graphic.width 
+      elsif !@parent_graphic.nil? && @parent_graphic.width
+          options[:width]  = @parent_graphic.width
       else
         options[:width]  = page_defaults[:width]
       end
       if options[:height]
       elsif @parent_graphic && @parent_graphic.height
-        options[:height]  = @parent_graphic.height 
+        options[:height]  = @parent_graphic.height
       else
         options[:height]  = page_defaults[:height]
       end
-            
+
       if options[:left_margin]
       elsif @parent_graphic && @parent_graphic.left_margin
-        options[:left_margin]  = @parent_graphic.left_margin  
+        options[:left_margin]  = @parent_graphic.left_margin
       else
         options[:left_margin]  = layout_default[:left_margin]
       end
       if options[:right_margin]
       elsif @parent_graphic && @parent_graphic.right_margin
-        options[:right_margin] = @parent_graphic.right_margin        
+        options[:right_margin] = @parent_graphic.right_margin
       else
         options[:right_margin] = layout_default[:right_margin]
       end
-      
+
       if options[:top_margin]
       elsif @parent_graphic && @parent_graphic.top_margin
-        options[:top_margin] = @parent_graphic.top_margin        
+        options[:top_margin] = @parent_graphic.top_margin
       else
         options[:top_margin] = layout_default[:top_margin]
       end
       if options[:bottom_margin]
       elsif @parent_graphic && @parent_graphic.bottom_margin
-        options[:bottom_margin] = @parent_graphic.bottom_margin        
+        options[:bottom_margin] = @parent_graphic.bottom_margin
       else
         options[:bottom_margin] = layout_default[:bottom_margin]
       end
-      @parent_graphic.pages << self if  @parent_graphic && !@parent_graphic.pages.include?(self)       
+      @parent_graphic.pages << self if  @parent_graphic && !@parent_graphic.pages.include?(self)
       super
 
       @klass = "Page"
@@ -69,24 +69,24 @@ module RLayout
       main_box_options[:layout_space] = options.fetch(:layout_space, 10)
       main_box_options[:layout_space] = options.fetch(:gutter, main_box_options[:layout_space])
       main_box_options[:item_space]   = options.fetch(:item_space, 3)
-      main_box_options[:heading_columns]= options.fetch(:heading_columns, main_box_options[:column_count])          
+      main_box_options[:heading_columns]= options.fetch(:heading_columns, main_box_options[:column_count])
       if options[:text_box]
         @main_box = text_box(main_box_options)
       elsif options[:object_box]
         @main_box = object_box(main_box_options)
       end
-      
+
       if block
         instance_eval(&block)
       end
-      
+
       self
     end
-    
+
     def document
       @parent_graphic
     end
-    
+
     def page_defaults
       {
         x: 0,
@@ -95,7 +95,7 @@ module RLayout
         height: 800,
       }
     end
-    
+
     def layout_default
       {
         left_margin:  50,
@@ -108,16 +108,16 @@ module RLayout
         bottom_inset: 0,
         layout_direction: "vertical",
         layout_member: true,
-        layout_expand: [:width, :height], # auto_layout expand 
+        layout_expand: [:width, :height], # auto_layout expand
         layout_length:  1,
       }
     end
-    
+
     def update_header_and_footer(options={})
-      return if @no_fixture_page # for pictures page 
+      return if @no_fixture_page # for pictures page
       options[:header][:font] = 8
       options[:footer][:font] = 8
-      
+
       if first_page?
         if options[:header] && (header_rule[:first_page_only] || header_rule[:first_page])
           options[:header][:text_string] = options[:header][:first_page_text]
@@ -127,7 +127,7 @@ module RLayout
           options[:footer][:text_string] = options[:footer][:first_page_text]
           @footer_object = footer(options[:footer])
         end
-        
+
       elsif left_page?
         if options[:header] && header_rule[:left_page] && !header_rule[:first_page_only]
           options[:header][:text_string] = options[:header][:left_page_text]
@@ -146,14 +146,14 @@ module RLayout
           options[:footer][:text_string] = options[:footer][:right_page_text]
           @footer_object = footer(options[:footer])
         end
-        
-      end
-      
-    end
-    
 
-    
-    def to_data      
+      end
+
+    end
+
+
+
+    def to_data
       h = {}
       instance_variables.each{|a|
         next if a==@parent_graphic
@@ -165,7 +165,7 @@ module RLayout
         next if a==@side_bar_object
         next if a==@main_box
         v = instance_variable_get a
-        s = a.to_s.sub("@","")                        
+        s = a.to_s.sub("@","")
         h[s.to_sym] = v if !v.nil?
       }
       if @graphics.length > 0
@@ -185,7 +185,7 @@ module RLayout
       end
       h
     end
-    
+
     def first_page?
       if @parent_graphic
         @parent_graphic.pages.index(self) == 0
@@ -193,75 +193,74 @@ module RLayout
         true
       end
     end
-    
+
     def left_page?
       @left_page == true
     end
-    
+
     def header_rule
       return Hash.new unless @parent_graphic
       @parent_graphic.header_rule.dup
     end
-    
+
     def footer_rule
       return Hash.new unless @parent_graphic
       @parent_graphic.footer_rule.dup
     end
-    
+
     def save_yml(path)
       h = to_hash
       File.open(path, 'w'){|f| f.write h.to_yaml}
     end
-    
+
     def save_json(path)
       # my_json = { :array => [1, 2, 3, { :sample => "hash"} ], :foo => "bar" }
-      
+
       h = to_hash
       File.open(path, 'w'){|f| f.write JSON.pretty_generate(h)}
     end
-    
-    
+
+
     ##########  sample ###########
     def self.sample_page
-      
+
     end
-    
-    ########### PageScritp Verbs #############    
+
+    ########### PageScritp Verbs #############
     def text_box(options={}, &block)
-      @main_box     = TextBox.new(self, options)      
+      @main_box     = TextBox.new(self, options)
     end
-    
+
     def object_box(options={}, &block)
-      @main_box     = ObjectBox.new(self, options)      
+      @main_box     = ObjectBox.new(self, options)
     end
-    
+
     def header(options={})
-      #TODO      
+      #TODO
       @header_object = Header.new(self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
     end
-    
+
     def footer(options={})
       #TODO
       @footer_object = Footer.new(self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
       # @footer_object = Footer.new(self, :text_string=>"This is header text", :is_fixture=>true)
     end
-    
+
     def side_bar(options={})
       # @side_bar_object = SideBar.new(self, :text_string=>"This is side_bar text", :is_fixture=>true)
       @side_bar_object = SideBar.new(self, :text_string=>options[:text_string], :is_fixture=>true)
     end
-    
-    # 
+
+    #
     # def image(options={})
-    #   
+    #
     # end
-    
-    
+
+
     def self.magazine_page(document)
       Page.new(document, :header=>true, :footer=>true, :text_box=>true)
     end
   end
-  
-  
-end
 
+
+end

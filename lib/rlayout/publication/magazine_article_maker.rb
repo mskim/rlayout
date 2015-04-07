@@ -38,7 +38,7 @@ module RLayout
         # magazine_article.save_pdf(@output_path)
       else
         # Using default magazine_article design
-        magazine_article = MagazineArtilce.new(story_path: @content_path, save_path: output_path)
+        magazine_article = MagazineArtilce.new(story_path: @content_path, output_path: output_path)
       end
     end
   end

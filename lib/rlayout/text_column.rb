@@ -1,12 +1,12 @@
 module RLayout
-  
-  # TextColumn 
+
+  # TextColumn
   # TextColumn is covered with series of "grid_rects".
   # "grid_rects" are used to determine the shapes of text layout area, to avoid overlapping floats.
   # Complex_rect means column has overlapping graphic and it has non-rectanle shaped region.
   # We need non-rectanglar shaped bezier path to flow text.
   # But rather than using bezeier curve, I simulate it using "grid_rects".
-  # I am using seris of GridRect class rects to determin the shape of text flowing region. 
+  # I am using seris of GridRect class rects to determin the shape of text flowing region.
   # Finer the GridRect, closer it gets to bezier curve. I am using half body_text_height sized rect.
   # Half of body text size should be suffient for text layout.
   # If align_body_text is set to "true", body text are aligned by starting the body paragraph at odd numbered grid.
@@ -31,7 +31,7 @@ module RLayout
       end
       self
     end
-    
+
     # create grid_rects after relayou!
     # make sure the grids are created after adjusting the column size for the final layout
     def create_grid_rects
@@ -48,7 +48,7 @@ module RLayout
         grid_height_sum += height
       end
     end
-    
+
     def overlapping_rects
       overlapping_rects = []
       @grid_rects.each do |rect|
@@ -56,7 +56,7 @@ module RLayout
       end
       overlapping_rects
     end
-    
+
     def fully_covered_rects
       overlapping_rects = []
       @grid_rects.each do |rect|
@@ -64,16 +64,16 @@ module RLayout
       end
       overlapping_rects
     end
-    
-    def room 
+
+    def room
       max_y(text_rect) - @current_position
     end
-    
+
     def can_fit?(height)
       return false if @room < 16
       height <= @room
     end
-        
+
     # find the grid_rect that conatines the y position
     # options[:align_to_body_text] for body text
     def grid_rect_at_position(position, options={})
@@ -87,48 +87,48 @@ module RLayout
             if i.even?
               return max_y(grid_rect.rect)
             elsif @grid_rects.length > i
-              even_rect = @grid_rects[i+1] 
+              even_rect = @grid_rects[i+1]
               return max_y(even_rect.rect)
             end
           end
           return max_y(grid_rect.rect)
         end
       end
-      max_y(@grid_rects.last.rect) 
+      max_y(@grid_rects.last.rect)
     end
-    
+
     def text_width
       text_rect[2]
     end
-    
+
     def mark_overlapping_grid_rects(float_rect, float_klass)
       @complex_rect = true
       @grid_rects.each do |grid_rect|
         grid_rect.update_text_area(float_rect)
       end
     end
-    
+
     # non_overlapping_rect is a actual layout frame that is not overlapping with flaots
     def non_overlapping_frame
       if @non_overlapping_rect
-        return @non_overlapping_rect 
+        return @non_overlapping_rect
       end
       bounds_rect
     end
-    
+
     #TODO it should not start at the half height starting position using options[:align_to_body_text}
     def current_grid_rect_index_at_position(options={})
       return 0 unless @grid_rects
       @current_position = @top_margin + @top_inset unless @current_position #@top_margin + @top_inset
       @grid_rects.each_with_index do |grid_rect, i|
-        if @current_position >= min_y(grid_rect.rect) && @current_position <= (max_y(grid_rect.rect) + 1) #make sure for flaot rounding 
-          # return grid_rect 
+        if @current_position >= min_y(grid_rect.rect) && @current_position <= (max_y(grid_rect.rect) + 1) #make sure for flaot rounding
+          # return grid_rect
           return i
         end
       end
       @grid_rects.length # index is beyond the array range
     end
-    
+
     # snap to grid_rect if the position is very near top snap to top
     # otherwise return bottom position of grid_rect
     def snap_to_grid_rect(position)
@@ -137,11 +137,11 @@ module RLayout
         return @grid_rects.first.rect.y
       end
       @grid_rects.each_with_index do |grid_rect, i|
-        if position >= min_y(grid_rect.rect) && position <= (max_y(grid_rect.rect) + 0.1) #make sure for flaot rounding 
+        if position >= min_y(grid_rect.rect) && position <= (max_y(grid_rect.rect) + 0.1) #make sure for flaot rounding
           # grid_rect height is half of body text rect
           # we wont to snap to even numbered lines
           if i.odd?
-            return max_y(@grid_rects[i+1].rect) unless i >= (@grid_rects.length - 1) 
+            return max_y(@grid_rects[i+1].rect) unless i >= (@grid_rects.length - 1)
           else
             return max_y(@grid_rects[i].rect)
           end
@@ -149,7 +149,7 @@ module RLayout
       end
       max_y(@grid_rects.last.rect)
     end
-    
+
     def place_item(item)
       @graphics << item
       item.parent_graphic = self
@@ -165,20 +165,20 @@ module RLayout
       @grid_rects.each {|line| line.draw_grid_rect}
       # draw_collection_for_column if @klass == "TextColumn"
     end
-    
+
     # They are not use in the production, it is test only.
-    def draw_collection_for_column 
-      # from the top scan untile first text_area_gird, 
+    def draw_collection_for_column
+      # from the top scan untile first text_area_gird,
       starting_index = scan_covered_grid_from(0, true)
       while starting_index < @grid_rects.length
         ending_index = scan_covered_grid_from(starting_index, false)
         draw_from_range(starting_index, ending_index)
         starting_index = scan_covered_grid_from(ending_index, true)
-      end      
+      end
     end
-    
-    # for testing 
-    def draw_from_range(starting_index, ending_index) 
+
+    # for testing
+    def draw_from_range(starting_index, ending_index)
       if @complex_rect
       	context = NSGraphicsContext.currentContext.graphicsPort
         CGContextBeginPath(context)
@@ -205,7 +205,7 @@ module RLayout
             CGContextAddLineToPoint(context, x,y)
             current_x = x
             grid.draw_right_down(context)
-          end 
+          end
         end
         # lineto left at the bottom
         last_grid     = @grid_rects.last
@@ -223,7 +223,7 @@ module RLayout
             CGContextAddLineToPoint(context, x,y)
             current_x = x
             grid.draw_left_up(context)
-          end 
+          end
         end
         # close path
         CGContextClosePath(context)
@@ -233,7 +233,7 @@ module RLayout
         CGContextStrokePath(context)
       end
     end
-    
+
     # skip fully_covered_rect and update current_position
     def update_current_position
       return unless @grid_rects
@@ -252,7 +252,7 @@ module RLayout
         end
       end
     end
-    
+
     # scan grids until, fully covered run or text_area run depending on covered option
     # from given index
     def scan_covered_grid_from(index, covered)
@@ -263,7 +263,7 @@ module RLayout
       end
       new_index
     end
-    
+
     # path_from_current_position is the work horse of complex layout.
     # it constructs a path from given point to the bottom or the top of the next hole.
     # created path is passed to text_layout_manager as proposed path.
@@ -271,10 +271,10 @@ module RLayout
     #   1. simple rect
     #   2. complex shape with partial overlappings
     #   3. Chunked column with multiple path.(fully covered areas in the middle of column)
-    # painful poth by path construction of irregular shape, using rectangles.    
+    # painful poth by path construction of irregular shape, using rectangles.
     #   1. start the path at the top left
     #   2. path from origin to the top right
-    #   2. go down the right side, gird by grid, 
+    #   2. go down the right side, gird by grid,
     #        if the differet size is encounterd move horizotally to new edge.
     #        repeat this until bottom is reached
     #   3. path at the bottom right to bottom left
@@ -307,7 +307,7 @@ module RLayout
             CGPathAddLineToPoint(path, nil, x,y)
             current_x = x
             grid.path_right_down(path)
-          end 
+          end
         end
         # lineto left at the bottom
         last_grid     = @grid_rects.last
@@ -320,12 +320,12 @@ module RLayout
             grid.path_left_up(path)
           else
             # left side is not aligned with the above grid
-            # lineto left edge of above line 
+            # lineto left edge of above line
             x,y = grid.bottom_left_position
             CGPathAddLineToPoint(path, nil, x,y)
             current_x = x
             grid.path_left_up(path)
-          end 
+          end
         end
         # close path
         CGPathCloseSubpath(path)
@@ -340,15 +340,15 @@ module RLayout
     end
 
   end
-  
-  # GridRect has two rectangle, 
+
+  # GridRect has two rectangle,
   # @rect represents the position of grid_rect in TexBox cordinate.
   # @rect is used to determine the overlappings with floats, which are in TexBox cordinate.
   # and @text_area represents non overlapping area for text layout in TextColumn cordinate(local cordinate)
   # We have a case where the grid_rect is fully_covered covered by the float.
   # We also have a case where the grid_rect is partially covered on the left or right side
   # We also have a case where it is coverd in the middle, with room at each sides
-  # for this case, I am taking the larger area, and ignoreing the smaller area. it is TODO. 
+  # for this case, I am taking the larger area, and ignoreing the smaller area. it is TODO.
   class GridRect
     attr_accessor :rect, :text_area, :overlap, :fully_covered
     def initialize(rect)
@@ -359,24 +359,66 @@ module RLayout
       @fully_covered = false
       self
     end
-        
+
+    #TODO refoctor this ############
+    def min_x(rect)
+      rect[0]
+    end
+
+    def min_y(rect)
+      rect[1]
+    end
+
+    def mid_x(rect)
+      rect[0] + rect[2]/2
+    end
+
+    def mid_y(rect)
+      rect[1] + rect[3]/2
+    end
+
+    def max_x(rect)
+      rect[0] + rect[2]
+    end
+
+    def max_y(rect)
+      rect[1] + rect[3]
+    end
+
+    def contains_rect(rect_1,rect_2)
+      (rect_1[0]<=rect_2[0] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) >= max_y(rect_2))
+    end
+
+    def intersects_x(rect1, rect2)
+      (max_x(rect1) > rect2[0] && max_x(rect2) > rect1[0]) || (max_x(rect2) > rect1[0] && max_x(rect1) > rect2[0])
+    end
+
+    def intersects_y(rect1, rect2)
+      (max_y(rect1) > rect2[1] && max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] && max_y(rect1) > rect2[1])
+    end
+
+    def intersects_rect(rect_1, rect_2)
+      intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
+    end
+    ############
+
     def set_fully_covered_grid
       @fully_covered = true
       @text_area = @rect.dup
       @text_area[0] = 0
       # for fully covered text_area, set width as very thin, for path construction porpose.
-      # I want continuos path for entire column. 
-      # by making fully covered text_area as very thin rect, I can similate the empty line effect, 
-      # yet have the entire column as continus text region. 
-      @text_area[2] = 3 
+      # I want continuos path for entire column.
+      # by making fully covered text_area as very thin rect, I can similate the empty line effect,
+      # yet have the entire column as continus text region.
+      @text_area[2] = 3
     end
-    
-    # when grid_rect overlaps with given float, 
-    # update available text area. 
+
+    # when grid_rect overlaps with given float,
+    # update available text area.
     def update_text_area(floating_rect)
       return unless intersects_rect(floating_rect, @rect)
       return if @fully_covered == true
-      
+
       if contains_rect(floating_rect, @rect)
         set_fully_covered_grid
         @overlap = true
@@ -413,77 +455,77 @@ module RLayout
         set_fully_covered_grid if left_side_room < 50 && right_side_room < 50
       end
     end
-    
+
     def overlap?
-      @overlap == true 
+      @overlap == true
     end
-        
+
     def draw_grid_rect
       grid_rect = NSMakeRect(@text_area[0], @text_area[1], @text_area[2], @text_area[3])
       path = NSBezierPath.bezierPathWithRect(grid_rect)
       path.setLineWidth(1)
       path.stroke
     end
-    
+
     ############ point construction #########
     # return x, y
     def top_left_position
       return text_area[0], text_area[1]
     end
-    
+
     def top_right_position
       return max_x(text_area), text_area[1]
     end
-    
+
     def bottom_right_position
       return max_x(text_area), max_y(text_area)
     end
-    
+
     def bottom_left_position
       return text_area[0], max_y(text_area)
     end
-    
+
     ############ CGContext drawing #########
     def draw_top_right(context)
       x,y = top_right_position
       CGContextAddLineToPoint(context, x,y)
     end
-        
+
     def draw_right_down(context)
       x,y = bottom_right_position
       CGContextAddLineToPoint(context, x,y)
     end
-    
+
     def draw_bottom_left(context)
       x,y = bottom_left_position
       CGContextAddLineToPoint(context, x,y)
     end
-    
+
     def draw_left_up(context)
       x,y=top_left_position
       CGContextAddLineToPoint(context, x,y)
     end
-    
+
     ############ path construction #########
     def path_top_right(path)
       x,y = top_right_position
       CGPathAddLineToPoint(path, nil, x,y)
     end
-        
+
     def path_right_down(path)
       x,y = bottom_right_position
       CGPathAddLineToPoint(path, nil, x,y)
     end
-    
+
     def path_bottom_left(path)
       x,y = bottom_left_position
       CGPathAddLineToPoint(path, nil, x,y)
     end
-    
+
     def path_left_up(path)
       x,y=top_left_position
       CGPathAddLineToPoint(path, nil, x,y)
     end
   end
-  
+
 end

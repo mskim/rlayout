@@ -1,6 +1,6 @@
 
 module RLayout
- 
+
   class NewsArticle < Page
     attr_accessor :story_path, :paragraphs #:heading, :images
     attr_accessor :output_path
@@ -11,6 +11,15 @@ module RLayout
       options[:x]             = options.fetch(:x, 0)
       options[:y]             = options.fetch(:y, 0)
       if options[:grid_frame]
+        if options[:grid_frame].class == String
+          options[:grid_frame] = eval(options[:grid_frame])
+        end
+        if options[:grid_width].class == String
+          options[:grid_width] = eval(options[:grid_width])
+        end
+        if options[:grid_height].class == String
+          options[:grid_height] = eval(options[:grid_height])
+        end
         @heading_columns = options[:grid_frame][2]
         options[:grid_frame] = eval(options[:grid_frame]) if options[:grid_frame].class == String
         options[:column_count]= options[:grid_frame][2]
@@ -27,24 +36,23 @@ module RLayout
       options[:top_margin]    = 5 unless options[:top_margin]
       options[:right_margin]  = 5 unless options[:right_margin]
       options[:bottom_margin] = 5 unless options[:bottom_margin]
-      
+
       if options[:story_path]
         @story_path = options[:story_path]
-        read_story
-      elsif options[:story] 
+        options.merge!(read_story)
+      elsif options[:story]
         @heading_options    = options[:story][:heading]
-        @images     = options[:images] 
+        @images     = options[:images]
         if @heading_options[:heading_columns]
-          @heading_columns = @heading_options[:heading_columns]
+          @heading_columns = @heading_options[:heading_columns].to_i
         end
         @paragraphs = []
-        # if we have body in para_data_array format        
+        # if we have body in para_data_array format
         para_data_array = options[:story][:para_data_array] if options[:story][:para_data_array]
-        # if we have body in body_markdown format 
-        # I should use the para_data_array if possible 
+        # if we have body in body_markdown format
+        # I should use the para_data_array if possible
         # Markdown should be converted to para_data_array by fromt-end using Nokogiri or Kramdown
-        # I do not prefer using Cocoa xml parsing .    
-        para_data_array = Story.parse_markdown(options[:story][:body_markdown]) if options[:story][:body_markdown]
+        # I do not prefer using Cocoa xml parsing .
         make_paragraph(para_data_array)
       end
       super
@@ -54,30 +62,50 @@ module RLayout
       end
       self
     end
-    
+
     def current_style
       NEWS_STYLES
     end
-    
-    # path to story is given  
+
+    # path to story is given
     def read_story
-      story         = Story.from_story_file(@story_path)
-      @heading_options      = story.heading
-      @images       = story.images #TODO
-      if @heading_options[:heading_columns]
-        @heading_columns = @heading_options[:heading_columns]
+      story               = Story.markdown2para_data(@story_path)
+      @heading_options    = story[:heading]
+      @images             = story['images']  if  story['images']
+      @grid_frame         = story[:heading]['grid_frame']
+      @gutter             = story[:heading]['gutter'] || 10
+      @v_gutter             = story[:heading]['gutter'] || 0
+      @grid_frame         = eval(@grid_frame) if @grid_frame.class == String
+      @column_count       = @grid_frame[2]
+      @grid_size          = story[:heading]['grid_size'] || [188.188571428571, 158.674166666667]
+      @grid_size          = eval(@grid_size) if @grid_size.class == String
+      @grid_width         = @grid_size[0]
+      @grid_height        = @grid_size[1]
+
+
+      if @heading_options['heading_columns']
+        @heading_columns  = @heading_options['heading_columns'].to_i
       else
-        @heading_columns = @grid_frame[2]
+        @heading_columns  = @grid_frame[2].to_i
       end
       @paragraphs         =[]
-      make_paragraph(story.paragraphs)
+      make_paragraph(story[:paragraphs])
+      options = {}
+      options[:grid_frame]  = @grid_frame
+      options[:grid_width]  = @grid_width
+      options[:gutter]      = @gutter
+      options[:v_gutter]    = @v_gutter
+      options[:width]       = @grid_frame[2]*@grid_width + (@grid_frame[2] - 1)*@gutter
+      options[:height]      = @grid_frame[3]*@grid_height + ((@grid_frame[3] - 1)*@v_gutter)
+      options[:column_count]= @column_count
+      options
     end
-        
+
     def make_paragraph(para_data_array)
-      @paragraphs         =[]
-      para_data_array.each do |para| 
-        para_options      = {}
-        para_options[:markup]         = para[:markup]
+      @paragraphs =[]
+      para_data_array.each do |para|
+        para_options  ={}
+        para_options[:markup]  = para[:markup]
         if para[:markup] == 'img'
           source                      = para[:image_path]
           para_options[:caption]      = para[:caption]
@@ -87,17 +115,17 @@ module RLayout
           full_image_path = File.dirname(@story_path) + "/#{source}"
           para_options[:image_path]   = full_image_path
           @paragraphs << Image.new(nil, para_options)
-          next 
+          next
         end
         para_options[:text_string]    = para[:string]
         para_options[:layout_expand]  = [:width]
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:chapter_kind]   = "news_article"
         para_options[:layout_lines]   = false
-        @paragraphs << Paragraph.new(nil, para_options)    
+        @paragraphs << Paragraph.new(nil, para_options)
       end
     end
-    
+
     def layout_story
       @heading_options[:layout_expand]  = [:height]
       # @heading_options[:line_width]     = 2
@@ -115,19 +143,18 @@ module RLayout
       @heading_options[:current_style]  = NEWS_STYLES
       @main_box.floats << Heading.new(nil, @heading_options)
       relayout!
-      @main_box.create_column_grid_rects 
-      place_floats_to_text_box 
-      @main_box.set_overlapping_grid_rect 
+      @main_box.create_column_grid_rects
+      place_floats_to_text_box
+      @main_box.set_overlapping_grid_rect
       @main_box.layout_items(@paragraphs)
 
     end
-    
+
     def place_floats_to_text_box
       #TODO place other floats besides images
       @main_box.place_float_images(@images, @grid_width, @grid_height) if @images
       @main_box.layout_floats!
     end
   end
-  
-end
 
+end
