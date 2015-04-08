@@ -38,7 +38,7 @@ module RLayout
       @klass = "TextBox"
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)
-      @column_count     = options.fetch(:column_count, 3)
+      @column_count     = options.fetch(:column_count, 3).to_i
       @heading_columns  = options.fetch(:heading_columns, @column_count)
       create_columns
       @floats           = options.fetch(:floats, [])

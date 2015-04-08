@@ -1,24 +1,22 @@
 require File.dirname(__FILE__) + "/../spec_helper"
-# require File.dirname(__FILE__) + '/../../rlayout/publication/book'
-# require File.dirname(__FILE__) + '/../../rlayout/publication/magazine'
-# require File.dirname(__FILE__) + '/../../rlayout/publication/newspaper'
 
+  
 # describe 'create Newspaper' do
 #   before do
 #     @newspaper = Newspaper.new(nil)
 #   end
-#   
+#
 #   it ' should create Newspaper' do
 #     @newspaper.must_be_kind_of Newspaper
 #   end
-#   
+#
 #   it 'should create publication_info' do
 #     @newspaper.publication_info.must_be_kind_of Hash
 #     @newspaper.publication_info[:width].must_equal 1190.55
 #     @newspaper.publication_info[:height].must_equal 1683.78
 #     puts @newspaper.publication_info
 #   end
-#   
+#
 # end
 
 # describe 'create sample news_page' do
@@ -26,13 +24,13 @@ require File.dirname(__FILE__) + "/../spec_helper"
 #     @pdf_path = File.dirname(__FILE__) + "/../output/news_grid_sample.pdf"
 #     @sample = NewspaperSection.sample_page(:output_path=>@pdf_path)
 #   end
-#   
+#
 #   it 'should save sample_page ' do
 #     @sample.must_be_kind_of NewspaperSection
 #     File.exists?(@pdf_path).must_equal true
 #     system("open #{@pdf_path}")
-#   end  
-#   
+#   end
+#
 # end
 
 
@@ -129,10 +127,9 @@ describe 'merge section pdf' do
     @section_page = NewspaperSection.new(nil,options).merge_pdf_articles
     @output_path= options[:output_path]
   end
-  
+
   it 'should create pdf section' do
     File.exists?(@output_path).must_equal true
     system("open #{@output_path}")
   end
 end
-

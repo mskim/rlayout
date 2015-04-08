@@ -80,6 +80,8 @@ module RLayout
 
   end
 
+
+
   class NewspaperIssue
     attr_accessor :publication
     attr_accessor :issue_path, :issue_number, :issue_date
@@ -122,8 +124,18 @@ module RLayout
       @heading_info   = options.fetch(:heading_info, {:layout_length=>1})
       @articles_info  = options[:articles_info] if options[:articles_info]
       options         = options[:page_info]     if options[:page_info]
+      news_default = {:width        => 1190.55,
+      :height       => 1683.78,
+      :grid         => [7, 12],
+      :lines_in_grid=> 10,
+      :gutter       => 10,
+      :left_margin  => 50,
+      :top_margin   => 50,
+      :right_margin => 50,
+      :bottom_margin=> 50,}
+      options.merge!(news_default)
       super
-      create_articles
+      # create_articles
 
       if block
         instance_eval(&block)
@@ -131,29 +143,45 @@ module RLayout
       self
     end
 
-    def create_articles
-      @articles = []
-      @articles_info.each do |article_info|
-        create_article_template(article_info)
-      end
-    end
+    # def create_articles
+    #   @articles = []
+    #   @articles_info.each do |article_info|
+    #     create_article_template(article_info)
+    #   end
+    # end
 
-    # create .rlayout file for news_article
-    def create_article_template(article_info)
-
-    end
-
-    def self.generate(options={})
-      options.merge!(Newspaper.default_publication_info)
-      section_page = NewspaperSection.new(nil, options)
-      section_page
-    end
+    # def self.generate(options={})
+    #   options.merge!(Newspaper.default_publication_info)
+    #   section_page = NewspaperSection.new(nil, options)
+    #   section_page
+    # end
 
     def merge_pdf_articles(options={})
       puts __method__
       # heading = Image.new(self, @heading_info) if @heading_info
       # puts "heading:#{heading}"
-	    @articles_info.each_with_index do |article_info, i|
+      @articles = Dir.glob("#{@section_path}/{*.md, *.markdown}")
+      @articles.each do |article|
+        @meta_data        = Story.read_metadata(article)
+        frame_grid_x      = @meta_data['grid_frame'][0].to_i
+        frame_grid_y      = @meta_data['grid_frame'][1].to_i
+        frame_grid_width  = @meta_data['grid_frame'][2].to_i
+        frame_grid_height = @meta_data['grid_frame'][3].to_i
+        grid_width        = @meta_data['grid_size'][0].to_f
+        grid_height       = @meta_data['grid_size'][1].to_f
+        gutter            = @meta_data['gutter'].to_f || 10
+        ext               = File.extname(article)
+        article_info              = {}
+        article_info[:image_path] = article.gsub("#{ext}", ".pdf")
+        article_info[:x]          = frame_grid_x*(grid_width + gutter)
+        article_info[:y]          = frame_grid_y*grid_height
+        article_info[:width]      = frame_grid_width*grid_width + gutter*(frame_grid_width - 1)
+        article_info[:height]     = frame_grid_height*grid_height
+        article_info[:layout_expand] = nil
+        # article_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
+
+
+	    # @articles_info.each_with_index do |article_info, i|
 	      puts "article_info:#{article_info}"
 	      img = Image.new(self, article_info)
 	      puts "img.layout_expand:#{img.layout_expand}"
@@ -167,81 +195,55 @@ module RLayout
       self
     end
 
-    def self.process_news_story_template(options={})
-      puts __method__
-      puts "options:#{options}"
-      graphic = Graphic.new(nil, options)
-      if options[:output_path]
-        graphic.save_pdf(options[:output_path])
-      else
-        puts "No @output_path!!!"
-        return false
-      end
-      true
-    end
+    # def self.process_news_story_template(options={})
+    #   puts __method__
+    #   puts "options:#{options}"
+    #   graphic = Graphic.new(nil, options)
+    #   if options[:output_path]
+    #     graphic.save_pdf(options[:output_path])
+    #   else
+    #     puts "No @output_path!!!"
+    #     return false
+    #   end
+    #   true
+    # end
 
-    def self.merge_news_section_story_templates(options={})
-	    page = Page.new(nil, width: options[:width], height: options[:height])
-	    options[:articles_info].each_with_index do |article_info, i|
-	      Image.new(page, article_info)
-	    end
+    # def self.merge_news_section_story_templates(options={})
+	  #   page = Page.new(nil, width: options[:width], height: options[:height])
+	  #   options[:articles_info].each_with_index do |article_info, i|
+	  #     Image.new(page, article_info)
+	  #   end
+    #
+    #   if options[:output_path]
+    #     page.save_pdf(options[:output_path])
+    #   else
+    #     puts "No @output_path!!!"
+    #     return false
+    #   end
+    #   true
+    # end
 
-      if options[:output_path]
-        page.save_pdf(options[:output_path])
-      else
-        puts "No @output_path!!!"
-        return false
-      end
-      true
-    end
+    # def process_news_article_markdown_files(file_list)
+    #   file_list.each do |m|
+    #     result = convert_markdown2pdf(m, options)
+    #     options[:starting_page_number] = result.next_chapter_starting_page_number if result
+    #   end
+    # end
 
-    def process_news_article_markdown_files(file_list)
-      file_list.each do |m|
-        result = convert_markdown2pdf(m, options)
-        options[:starting_page_number] = result.next_chapter_starting_page_number if result
-      end
-    end
+    # def convert_markdown2pdf(markdown_path, options={})
+    #   pdf_path = markdown_path.gsub(".markdown", ".pdf")
+    #   title = File.basename(markdown_path, ".markdown")
+    #   article = NewsArticle.new(:title =>title, :story_path=>markdown_path)
+    #   article.save_pdf(pdf_path)
+    #   article
+    # end
 
-    def convert_markdown2pdf(markdown_path, options={})
-      pdf_path = markdown_path.gsub(".markdown", ".pdf")
-      title = File.basename(markdown_path, ".markdown")
-      article = NewsArticle.new(:title =>title, :story_path=>markdown_path)
-      article.save_pdf(pdf_path)
-      article
-    end
+    # def txt2markdown
+    #   Dir.glob("#{@section_path}/*.txt") do |m|
+    #     convert_txt2markdown(m)
+    #   end
+    # end
 
-    def txt2markdown
-      Dir.glob("#{@section_path}/*.txt") do |m|
-        convert_txt2markdown(m)
-      end
-    end
-
-    def rtf2md(path)
-
-    end
-
-    def convert_txt2markdown(txt_path)
-      txt_content = File.open(txt_path, 'r'){|f| f.read}
-      title = File.basename(txt_path, ".txt")
-      markdown_path = txt_path.gsub(".txt", ".markdown")
-      yaml_header = <<EOF
----
-title: #{title}
----
-
-EOF
-      with_yaml_header = yaml_header + "\n" + txt_content
-      File.open(markdown_path, "w"){|f| f.write with_yaml_header}
-
-    end
-
-    def self.rtf2md(path)
-
-    end
-
-    #TODO
-    # breaks for digit that are already 3 digits or more
-    # breaks for filenames with space
     def normalize_filenames
       new_names = []
       Dir.glob("#{@section_path}/*") do |m|
@@ -260,5 +262,4 @@ EOF
       new_names
     end
   end
-
 end

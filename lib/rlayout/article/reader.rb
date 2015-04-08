@@ -549,6 +549,26 @@ end
 
 module RLayout
   class Story
+    def self.read_metadata(path)
+      source = File.open(path, 'r'){|f| f.read}
+      begin
+        if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
+          @metadata = YAML.load(md.to_s)
+        end
+      rescue => e
+        puts "YAML Exception reading #filename: #{e.message}"
+      end
+      if @metadata
+        if @metadata.class == Array
+          #TODO it seem like a bug in motion-yaml
+          # YAML.load(md.to_s) returns Array
+          @metadata = @metadata[0]
+        end
+        starting_heading_level += @metadata['demotion'].to_i if @metadata['demotion']
+      end
+      @metadata
+    end
+
     def self.block2para_data(text_block, options={})
       s=StringScanner.new(text_block[0])
       # starting_heading_level is 1, h1
@@ -648,9 +668,3 @@ module RLayout
     end
   end
 end
-
-__END__
-require 'strscan'
-require 'yaml'
-path = "/Users/mskim/book/pastor/001.chapter.markdown"
-puts blocks_array = RLayout::Story.markdown2para_data(path)

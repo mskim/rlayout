@@ -1,6 +1,4 @@
 require File.dirname(__FILE__) + "/../spec_helper"
-require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
-require File.dirname(__FILE__) + '/../../lib/rlayout/publication/book'
 
 # describe 'create new book' do
 #   before do
@@ -8,13 +6,13 @@ require File.dirname(__FILE__) + '/../../lib/rlayout/publication/book'
 #     # @path = "/Users/mskim/Dropbox/RLayout/pastor"
 #     @book = Book.new(@path)
 #   end
-#   
+#
 #   it 'should create Book' do
 #     @book.must_be_kind_of Book
 #   end
-#   
+#
 #   it 'should create a folder ' do
-#     File.exists?(@path).must_equal true        
+#     File.exists?(@path).must_equal true
 #   end
 # end
 
@@ -24,13 +22,13 @@ describe 'generate pdf' do
     @path = "/Users/mskim/book/pastor"
     @book = Book.new(@path)
   end
-  
+
   it 'shoul convert markdown files to pdf' do
-    # @book.process_markdown_files(:check_time=>true)        
-    @book.process_markdown_files(:paper_size=>'A5')        
+    # @book.process_markdown_files(:check_time=>true)
+    @book.process_markdown_files(:paper_size=>'A5')
     @book.body_matter.must_be_kind_of Array
   end
-  
+
   it 'should create Book' do
     @book.must_be_kind_of Book
   end
@@ -40,14 +38,14 @@ end
 #   before do
 #     @path = "/Users/mskim/book/sample_book"
 #     # @path = "/Users/mskim/Dropbox/RLayout/pastor"
-#     
+#
 #     @book = Book.new(@path)
 #   end
 #   it 'should merge pdf' do
 #     @book.merge_pdf_chpaters
 #   end
 # end
-# 
+#
 
 # describe 'should update update_book_tree' do
 #   before do
@@ -57,5 +55,5 @@ end
 #   it 'shuld update book_tree file' do
 #     @book.update_book_tree
 #   end
-#   
+#
 # end

@@ -39,7 +39,8 @@ module RLayout
 
       if options[:story_path]
         @story_path = options[:story_path]
-        options.merge!(read_story)
+        options_from_reading_story_file = read_story
+        options.merge!(options_from_reading_story_file)
       elsif options[:story]
         @heading_options    = options[:story][:heading]
         @images     = options[:images]
@@ -74,7 +75,7 @@ module RLayout
       @images             = story['images']  if  story['images']
       @grid_frame         = story[:heading]['grid_frame']
       @gutter             = story[:heading]['gutter'] || 10
-      @v_gutter             = story[:heading]['gutter'] || 0
+      @v_gutter           = story[:heading]['gutter'] || 0
       @grid_frame         = eval(@grid_frame) if @grid_frame.class == String
       @column_count       = @grid_frame[2]
       @grid_size          = story[:heading]['grid_size'] || [188.188571428571, 158.674166666667]
