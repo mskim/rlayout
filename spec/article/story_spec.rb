@@ -1,5 +1,18 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'Story.read_matadata' do
+  before do
+    @path = "/Users/mskim/news_article/sample/1.story.md"
+    @meta_data = Story.read_metadata(@path)
+  end
+
+  it 'should read_metadata from stroy' do
+    @meta_data.must_be_kind_of Hash
+    puts @meta_data
+  end
+end
+
+__END__
 describe 'save sample story yaml' do
   require 'lorem'
   require 'yaml'
@@ -13,7 +26,7 @@ describe 'save sample story yaml' do
 end
 
 
-__END__
+
 # require File.dirname(__FILE__) + "/../../article"
 describe 'load stoy' do
   before do
