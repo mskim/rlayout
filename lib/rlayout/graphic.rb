@@ -378,8 +378,10 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     end
 
     def save_pdf(path, options={})
-      @ns_view ||= GraphicViewMac.from_graphic(self)
-      @ns_view.save_pdf(path, options)
+      if RUBY_ENGINE == 'rubymotion'
+        @ns_view ||= GraphicViewMac.from_graphic(self)
+        @ns_view.save_pdf(path, options)
+      end
       #TODO
       # puts "DRb not found!!!!"
     end

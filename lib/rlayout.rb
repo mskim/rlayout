@@ -18,6 +18,7 @@ else
   require 'yaml'
 
   require File.dirname(__FILE__) + '/rlayout/utility'
+  require File.dirname(__FILE__) + '/rlayout/graphic/grid_pattern'
   require File.dirname(__FILE__) + '/rlayout/graphic/fill'
   require File.dirname(__FILE__) + '/rlayout/graphic/image'
   require File.dirname(__FILE__) + '/rlayout/graphic/layout'

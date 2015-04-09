@@ -1,38 +1,65 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+
+
+describe 'create sample news_page' do
+  before do
+    @section_path = "/Users/mskim/news_article/section1"
+    @section = NewspaperSection.new(nil, :section_path=>@section_path)
+  end
   
-# describe 'create Newspaper' do
-#   before do
-#     @newspaper = Newspaper.new(nil)
-#   end
-#
-#   it ' should create Newspaper' do
-#     @newspaper.must_be_kind_of Newspaper
-#   end
-#
-#   it 'should create publication_info' do
-#     @newspaper.publication_info.must_be_kind_of Hash
-#     @newspaper.publication_info[:width].must_equal 1190.55
-#     @newspaper.publication_info[:height].must_equal 1683.78
-#     puts @newspaper.publication_info
-#   end
-#
-# end
+  it 'should save sample_page ' do
+    @section.must_be_kind_of NewspaperSection
+  end
+  
+  it 'should set correct section_path' do
+    @section.section_path.must_equal @section_path
+  end
+  
+  it 'should set width ' do
+    @section.paper_size.must_equal "A2"
+  end
+  
+  it 'should create sample_articles' do
+    @section.make_sample_articles
+    File.exist?(@section_path + "/1.story.md")
+  end
+  
+  it 'should merge articles' do
+    @section.merge_article_pdf
+  end
+end
+__END__
 
-# describe 'create sample news_page' do
-#   before do
-#     @pdf_path = File.dirname(__FILE__) + "/../output/news_grid_sample.pdf"
-#     @sample = NewspaperSection.sample_page(:output_path=>@pdf_path)
-#   end
-#
-#   it 'should save sample_page ' do
-#     @sample.must_be_kind_of NewspaperSection
-#     File.exists?(@pdf_path).must_equal true
-#     system("open #{@pdf_path}")
-#   end
-#
-# end
 
+describe 'create Newspaper' do
+  before do
+    @newspaper = Newspaper.new(nil)
+  end
+
+  it ' should create Newspaper' do
+    @newspaper.must_be_kind_of Newspaper
+  end
+
+  it 'should create publication_info' do
+    @newspaper.publication_info.must_be_kind_of Hash
+    @newspaper.publication_info[:width].must_equal 1190.55
+    @newspaper.publication_info[:height].must_equal 1683.78
+    puts @newspaper.publication_info
+  end
+
+end
+describe 'create NewsArticle sample' do
+  before do
+    @news_section = NewsSection.new(nil, '/Users/mskim/news_article/sample')
+    @sample = RLayout::NewsSection.make_sample_articles(5)
+    @first_story_path = '/Users/mskim/news_article/sample/1.story.md'
+  end
+
+  it 'should create sample article' do
+    File.exist?(@first_story_path).must_equal true
+  end
+end
 
 
 describe 'merge section pdf' do
@@ -48,7 +75,7 @@ describe 'merge section pdf' do
          {:x=>1, :y=>2, :width=>1, :height=>1, :image_path=>"/Users/mskim/Development/rails_tiny_apps/news_section/public/sections/1/4.pdf"},
          {:x=>2, :y=>2, :width=>1, :height=>1, :image_path=>"/Users/mskim/Development/rails_tiny_apps/news_section/public/sections/1/5.pdf"}],
        :output_path=>"/Users/mskim/Development/rails_tiny_apps/news_section/public/sections/1/section.pdf"}
-   @section_page = NewspaperSection.new(nil,options).merge_pdf_articles
+   @section_page = NewspaperSection.new(nil,options).merge_article_pdf
    @output_path= options[:output_path]
  end
 
@@ -124,7 +151,7 @@ describe 'merge section pdf' do
       ],
         :output_path => "/Users/mskim/Development/rails4/newsman/public/issues/1/1/section.pdf"
     }
-    @section_page = NewspaperSection.new(nil,options).merge_pdf_articles
+    @section_page = NewspaperSection.new(nil,options).merge_article_pdf
     @output_path= options[:output_path]
   end
 

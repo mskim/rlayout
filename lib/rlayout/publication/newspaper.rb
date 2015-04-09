@@ -1,23 +1,51 @@
 # encoding: utf-8
+SAMPLE_RAKEFILR =<<EOF
+source_files = FileList["*.md", "*.markdown"]
+task :default => :pdf
+task :pdf => source_files.ext(".pdf")
 
-NEWS_PAPER_INFO = {
-  name: "Ourtown News",
-  period: "daily",
-  paper_size: "A2"
-}
+rule ".pdf" => ".md" do |t|
+  sh "/Users/mskim/Development/Rubymotion/rlayout/build/MacOSX-10.10-Development/rlayout.app/Contents/MacOS/rlayout news_article \#{pwd}/\#{t.source}"
+end
+
+rule ".pdf" => ".markdown" do |t|
+  sh "/Users/mskim/Development/Rubymotion/rlayout/build/MacOSX-10.10-Development/rlayout.app/Contents/MacOS/rlayout news_article \#{pwd}/\#{t.source}"
+end
+
+EOF
+
+SAMPLE_NEWS_ARTICLE =<<EOF
+---
+title: 'This is a title'
+grid_frame: <%= @grid_frame %>
+grid_size: [<%= @grid_width %>, <%= @grid_height %>]
+
+author: 'Min Soo Kim'
+---
+
+This is where sample stroy text goes. Fill in this area with your story. This is where sample stroy text goes.
+Fill in this area with your story.
+
+This is the second paragraph. You could keep on writting until it fills up the box.
+
+The box size is determined by grid_frame value at the top. It is usually looks somethink like grid_frame: [0,0,4,6]
+The first value is x, y, width, height. So this the box will have size of 4 grid wide and 6 grid tall.
+
+
+EOF
+
 
 module RLayout
 
   class Newspaper
     attr_accessor :publication_path, :front_matter, :body_matter, :rear_matter
-    attr_accessor :publication_info, :grid, :lines_in_grid, :gutter
+    attr_accessor :publication_info, :grid_base, :grid_width, :grid_height, :lines_in_grid, :gutter
     def initialize(publication_path, options={}, &block)
       # system("mkdir -p #{publication_path}") unless File.exists?(publication_path)
       @publication_path = publication_path
       @paper_size   = options.fetch(:paper_size,"A2")
       @width        = SIZES[@paper_size][0]
       @height       = SIZES[@paper_size][1]
-      @grid         = options.fetch(:grid, [7, 12])
       @lines_in_grid= options.fetch(:lines_in_grid, 10)
       @gutter       = options.fetch(:gutter, 10)
       @v_gutter     = options.fetch(:v_gutter, 0)
@@ -25,10 +53,9 @@ module RLayout
       @top_margin   = options.fetch(:top_margin, 50)
       @right_margin = options.fetch(:right_margin, 50)
       @bottom_margin= options.fetch(:bottom_margin, 50)
-      @grid_width   = (@width - @left_margin - @right_margin- (@grid[0]-1)*@gutter )/@grid[0]
-      @grid_height  = (@height - @top_margin - @bottom_margin)/@grid[1]
-      # info_path = publication_path + "/publication_info.yml"
-      # File.open(info_path, 'w'){|f| f.write(NEWS_PAPER_INFO.to_yaml)} unless File.exists?(info_path)
+      @grid_base    = options.fetch(:grid_base, [7, 12])
+      @grid_width   = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
+      @grid_height  = (@height - @top_margin - @bottom_margin)/@grid_base[1]
       if block
         instance_eval(&block)
       end
@@ -43,7 +70,7 @@ module RLayout
         top_margin:     @top_margin,
         right_margin:   @right_margin,
         botoom_margin:  @bottom_margin,
-        grid:           @grid,
+        grid_base:      @grid_base,
         grid_width:     @grid_width,
         grid_height:    @grid_height,
         gutter:         @gutter,
@@ -52,26 +79,8 @@ module RLayout
       }
     end
 
-    def default_publication_info
-      Newspaper.default_publication_info
-    end
-
-    def self.default_publication_info
-      {
-        :width        => 1190.55,
-        :height       => 1683.78,
-        :grid         => [7, 12],
-        :lines_in_grid=> 10,
-        :gutter       => 10,
-        :left_margin  => 50,
-        :top_margin   => 50,
-        :right_margin => 50,
-        :bottom_margin=> 50,
-      }
-    end
-
     def page_lines
-      @lines_in_grid * @grid[1]
+      @lines_in_grid * @grid_base[1]
     end
 
     def line_height
@@ -111,82 +120,117 @@ module RLayout
   # If section layout is changed, each reporteds will have to adjust their articles to fit new new layout.
 
   class NewspaperSection < Page
-    attr_accessor :section_path, :issue_numner, :date, :section_name
-    attr_accessor :section_template
-    attr_accessor :heading_info, :output_path
+    attr_accessor :section_path, :issue_numner, :date, :section_name, :output_path
+    attr_accessor :has_heading, :heading_info, :paper_size
     attr_accessor :heading_type #none, top, left_top_box,
-    attr_accessor :articles_info
+    attr_accessor :articles_info, :grid_map
 
     def initialize(parent_graphic, options={}, &block)
+      super
       @parent_graphic = parent_graphic
       @section_path   = options[:section_path] if options[:section_path]
+      @output_path    = @section_path + "/section.pdf"
       @output_path    = options[:output_path]   if options[:output_path]
-      @heading_info   = options.fetch(:heading_info, {:layout_length=>1})
-      @articles_info  = options[:articles_info] if options[:articles_info]
-      options         = options[:page_info]     if options[:page_info]
-      news_default = {:width        => 1190.55,
-      :height       => 1683.78,
-      :grid         => [7, 12],
-      :lines_in_grid=> 10,
-      :gutter       => 10,
-      :left_margin  => 50,
-      :top_margin   => 50,
-      :right_margin => 50,
-      :bottom_margin=> 50,}
-      options.merge!(news_default)
-      super
-      # create_articles
+      @paper_size   = options.fetch(:paper_size,"A2")
+      @width        = SIZES[@paper_size][0]
+      @height       = SIZES[@paper_size][1]
+      @lines_in_grid= options.fetch(:lines_in_grid, 10)
+      @gutter       = options.fetch(:gutter, 10)
+      @v_gutter     = options.fetch(:v_gutter, 0)
+      @left_margin  = options.fetch(:left_margin, 50)
+      @top_margin   = options.fetch(:top_margin, 50)
+      @right_margin = options.fetch(:right_margin, 50)
+      @bottom_margin= options.fetch(:bottom_margin, 50)
+      @grid_base    = options.fetch(:grid_base, [7, 12])
+      @has_heading  = options[:has_heading] || false
+      @heading_info = options.fetch(:heading_info, {:layout_length=>1})
+      @number_of_article = options.fetch(:number_of_article, 5)
+      @grid_base    = options.fetch(:grid_base, [7, 12])
+      @grid_width   = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
+      
+      @grid_height  = (@height - @top_margin - @bottom_margin)/@grid_base[1]
+      
+      # grid_key      = "#{@grid_base.join("x")}/#{@number_of_article}"
+      @grid_map     = GRID_PATTERNS["#{@grid_base.join("x")}/#{@number_of_article}"]
+      @articles_info= make_articles_info
+      @articles_info= options[:articles_info] if options[:articles_info]
+      if @has_heading
+        @top_margin += @grid_height
+      end
 
       if block
         instance_eval(&block)
       end
       self
     end
+    
+    def make_section_info
+      info ={}
+      info[:section_name] = @section_name
+      info[:has_heading]  = @has_heading
+      info[:width]        = @width
+      info[:height]       = @height
+      info[:left_margin]  = @left_margin
+      info[:right_margin] = @right_margin
+      info[:top_margin]   = @top_margin
+      info[:bottom_margin]= @bottom_margin
+      info[:gutter]       = @gutter
+      info
+    end
+    
+    def make_articles_info
+      
+      @article_info = []
+      @number_of_article.times do |i|
+        info = {}
+        info[:image_path] = @section_path + "/#{i + 1}.story.pdf"
+        info[:x]          = @grid_map[i][0]*(@grid_width + @gutter) + @left_margin
+        info[:y]          = @grid_map[i][1]*@grid_height  + @top_margin
+        info[:width]      = @grid_map[i][2]*@grid_width + @gutter*(@grid_map[i][2] - 1)
+        info[:height]     = @grid_map[i][3]*@grid_height
+        info[:layout_expand] = nil
+        # info[:image_fit_type] = IMAGE_FIT_TYPE_HORIZONTAL
+        info[:image_fit_type] = IMAGE_FIT_TYPE_VIRTICAL
+        @article_info << info.dup
+      end
+      @article_info
+    end
 
-    # def create_articles
-    #   @articles = []
-    #   @articles_info.each do |article_info|
-    #     create_article_template(article_info)
-    #   end
-    # end
+    def make_sample_articles
+      system("mkdir -p #{@section_path}") unless File.exist?(@section_path)
+      @number_of_article.times do |i|
+        path = @section_path + "/#{i + 1}.story.md"
+        @grid_frame = @grid_map[i]
+        sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @grid_frame %>", @grid_frame.to_s)
+        sample = sample.gsub("<%= @grid_width %>", @grid_width.to_s)
+        sample = sample.gsub("<%= @grid_height %>", @grid_height.to_s)
+        File.open(path, 'w'){|f| f.write sample}
+      end
+      section_path = @section_path + "/section_info.yml"
+      section_info = make_section_info
+      File.open(section_path, 'w'){|f| f.write section_info.to_yaml}
+      rake_path = @section_path + "/Rakefile"
+      File.open(rake_path, 'w'){|f| f.write SAMPLE_RAKEFILR} unless File.exist?(rake_path)
+    end
 
-    # def self.generate(options={})
-    #   options.merge!(Newspaper.default_publication_info)
-    #   section_page = NewspaperSection.new(nil, options)
-    #   section_page
-    # end
+    def make_html
 
-    def merge_pdf_articles(options={})
-      puts __method__
-      # heading = Image.new(self, @heading_info) if @heading_info
-      # puts "heading:#{heading}"
-      @articles = Dir.glob("#{@section_path}/{*.md, *.markdown}")
-      @articles.each do |article|
-        @meta_data        = Story.read_metadata(article)
-        frame_grid_x      = @meta_data['grid_frame'][0].to_i
-        frame_grid_y      = @meta_data['grid_frame'][1].to_i
-        frame_grid_width  = @meta_data['grid_frame'][2].to_i
-        frame_grid_height = @meta_data['grid_frame'][3].to_i
-        grid_width        = @meta_data['grid_size'][0].to_f
-        grid_height       = @meta_data['grid_size'][1].to_f
-        gutter            = @meta_data['gutter'].to_f || 10
-        ext               = File.extname(article)
-        article_info              = {}
-        article_info[:image_path] = article.gsub("#{ext}", ".pdf")
-        article_info[:x]          = frame_grid_x*(grid_width + gutter)
-        article_info[:y]          = frame_grid_y*grid_height
-        article_info[:width]      = frame_grid_width*grid_width + gutter*(frame_grid_width - 1)
-        article_info[:height]     = frame_grid_height*grid_height
-        article_info[:layout_expand] = nil
+    end
+    
+    def place_heading
+      
+    end
+    
+    def merge_article_pdf(options={})
+      @output_path = options[:output_path] if options[:output_path]
+      if @has_heading
+        place_heading
+      end
+      @articles_info.each do |info|
         # article_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
-
-
-	    # @articles_info.each_with_index do |article_info, i|
-	      puts "article_info:#{article_info}"
-	      img = Image.new(self, article_info)
-	      puts "img.layout_expand:#{img.layout_expand}"
+	      img =Image.new(self, info)
 	    end
-
+	          
       if @output_path
         save_pdf(@output_path)
       else
@@ -194,55 +238,6 @@ module RLayout
       end
       self
     end
-
-    # def self.process_news_story_template(options={})
-    #   puts __method__
-    #   puts "options:#{options}"
-    #   graphic = Graphic.new(nil, options)
-    #   if options[:output_path]
-    #     graphic.save_pdf(options[:output_path])
-    #   else
-    #     puts "No @output_path!!!"
-    #     return false
-    #   end
-    #   true
-    # end
-
-    # def self.merge_news_section_story_templates(options={})
-	  #   page = Page.new(nil, width: options[:width], height: options[:height])
-	  #   options[:articles_info].each_with_index do |article_info, i|
-	  #     Image.new(page, article_info)
-	  #   end
-    #
-    #   if options[:output_path]
-    #     page.save_pdf(options[:output_path])
-    #   else
-    #     puts "No @output_path!!!"
-    #     return false
-    #   end
-    #   true
-    # end
-
-    # def process_news_article_markdown_files(file_list)
-    #   file_list.each do |m|
-    #     result = convert_markdown2pdf(m, options)
-    #     options[:starting_page_number] = result.next_chapter_starting_page_number if result
-    #   end
-    # end
-
-    # def convert_markdown2pdf(markdown_path, options={})
-    #   pdf_path = markdown_path.gsub(".markdown", ".pdf")
-    #   title = File.basename(markdown_path, ".markdown")
-    #   article = NewsArticle.new(:title =>title, :story_path=>markdown_path)
-    #   article.save_pdf(pdf_path)
-    #   article
-    # end
-
-    # def txt2markdown
-    #   Dir.glob("#{@section_path}/*.txt") do |m|
-    #     convert_txt2markdown(m)
-    #   end
-    # end
 
     def normalize_filenames
       new_names = []

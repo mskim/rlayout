@@ -20,6 +20,14 @@ TODO List
 	- modify kramdown into r_kramdown
 	- use Asciidotor
 
+2015 4 8
+	1. Article, NewsArticle, NewsSection
+	1. Precise Placement
+	1. Rakefile
+	1. grid_size with margin, gutter paper_size
+	1. line number per grid
+	1. Page with and without Heading 7x12, 7x11, 6x12, 6x11
+
 2015 3 31
 	1. Merge grid & float into major feature.
 			Update PGScript to make use of it.

@@ -45,7 +45,7 @@ class GraphicViewMac < NSView
   end
 
   def drawRect(r)
-    context         = NSGraphicsContext.currentContext.graphicsPort
+    # context         = NSGraphicsContext.currentContext.graphicsPort
     @graphic.draw_fill(r)
     @graphic.draw_image(r)
     if @graphic.text_layout_manager

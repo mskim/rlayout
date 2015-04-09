@@ -74,6 +74,10 @@ module RLayout
         @main_box = text_box(main_box_options)
       elsif options[:object_box]
         @main_box = object_box(main_box_options)
+      elsif options[:composite_box]
+        @main_box = composite_box(main_box_options)
+      elsif options[:news_box]
+        @main_box = news_box(main_box_options)
       end
 
       if block

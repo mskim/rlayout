@@ -49,12 +49,14 @@ module RLayout
       @image_caption    = options[:image_caption]      
       @image_fit_type   = options.fetch(:image_fit_type, image_defaults[:image_fit_type])
       if @image_path && File.exists?(@image_path)
-        @image_object=NSImage.alloc.initByReferencingFile(@image_path)
-        if @image_object && options[:adjust_height_to_keep_ratio]
-          # change height 
-          @height *= image_object_height_to_width_ratio
+        if RUBY_ENGINE == 'rubymotion'
+          @image_object=NSImage.alloc.initByReferencingFile(@image_path)
+          if @image_object && options[:adjust_height_to_keep_ratio]
+            # change height 
+            @height *= image_object_height_to_width_ratio
+          end
+          apply_fit_type
         end
-        apply_fit_type
       elsif @local_image
         #TODO
         puts "handle local image"
@@ -66,7 +68,7 @@ module RLayout
         image_path: nil,
         local_image: nil,
         image_fit_type: IMAGE_FIT_TYPE_VIRTICAL, 
-        source_frame: NSZeroRect,
+        # source_frame: NSZeroRect,
         clip_path: nil,
         rotation: 0
       }

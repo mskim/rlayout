@@ -20,7 +20,8 @@ module RLayout
         if options[:grid_height].class == String
           options[:grid_height] = eval(options[:grid_height])
         end
-        @heading_columns = options[:grid_frame][2]
+        @heading_columns = HEADING_COLUMNS_TABLE[options[:grid_frame][2].to_i]
+        # @heading_columns = options[:grid_frame][2]
         options[:grid_frame] = eval(options[:grid_frame]) if options[:grid_frame].class == String
         options[:column_count]= options[:grid_frame][2]
         @grid_width  = options.fetch(:grid_width, 200)
@@ -45,7 +46,8 @@ module RLayout
         @heading_options    = options[:story][:heading]
         @images     = options[:images]
         if @heading_options[:heading_columns]
-          @heading_columns = @heading_options[:heading_columns].to_i
+          @heading_columns = HEADING_COLUMNS_TABLE[@heading_options[:heading_columns].to_i]
+          # @heading_columns = @heading_options[:heading_columns].to_i
         end
         @paragraphs = []
         # if we have body in para_data_array format
@@ -87,7 +89,7 @@ module RLayout
       if @heading_options['heading_columns']
         @heading_columns  = @heading_options['heading_columns'].to_i
       else
-        @heading_columns  = @grid_frame[2].to_i
+        @heading_columns  = HEADING_COLUMNS_TABLE[@grid_frame[2].to_i]
       end
       @paragraphs         =[]
       make_paragraph(story[:paragraphs])
