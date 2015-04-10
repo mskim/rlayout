@@ -120,7 +120,7 @@ module RLayout
   # If section layout is changed, each reporteds will have to adjust their articles to fit new new layout.
 
   class NewspaperSection < Page
-    attr_accessor :section_path, :issue_numner, :date, :section_name, :output_path
+    attr_accessor :section_path, :issue_numner, :date, :publication, :issue, :date, :section_name, :output_path
     attr_accessor :has_heading, :heading_info, :paper_size
     attr_accessor :heading_type #none, top, left_top_box,
     attr_accessor :articles_info, :grid_map, :grid_key
@@ -147,9 +147,7 @@ module RLayout
       @bottom_margin  = options.fetch(:bottom_margin, 50)
       @grid_base      = options.fetch(:grid_base, [7, 12])
       @has_heading    = options[:has_heading] || false
-      @grid_base      = [7, 11] if @has_heading
-      @heading_info   = options.fetch(:heading_info, {:layout_length=>1})
-      @number_of_article = options.fetch(:number_of_article, 5)
+      @number_of_article = options.fetch(:number_of_article, 5)      
       @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
       @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
       @grid_key       = "#{@grid_base.join("x")}/#{@number_of_article}"
@@ -164,10 +162,8 @@ module RLayout
       puts "@grid_map:#{@grid_map}"
       
       @articles_info= make_articles_info
-      @articles_info= options[:articles_info] if options[:articles_info]
-      if @has_heading
-        @top_margin += @grid_height
-      end
+      
+
       if block
         instance_eval(&block)
       end
@@ -187,15 +183,21 @@ module RLayout
       NewspaperSection.new(nil, options)
     end
     
-    def make_section_info
-      # Rubymotion YAML kit doesn't seem to work with symbols
-      # So, to make it consistant, I am using the key as strings instead of symbols
+    def make_section_config
+      # Rubymotion YAML kit doesn't seem to work with symbols it reads symbols as ':key' String.
+      # So, to make it work, I am using String as key instead of symbol
+      # It also distinguishes whether the options are coming from new or open
+      # for  NewSection new, options keys are passed as symbols,
+      # And for  NewSection open, options keys are stored as String, when read from section config file.
       info ={}
-      info['section_name'] = @section_name || "untitled"
-      info['has_heading']  = @has_heading
-      info['grid_key']     = @grid_key
-      info['width']        = @width
-      info['height']       = @height
+      info['publication'] = @publication || "OurTimes"
+      info['issue']       = @issue       || '100-100'
+      info['date']        = @date         || '2015-4-5'
+      info['section_name']= @section_name || "untitled"
+      info['has_heading'] = @has_heading
+      info['grid_key']    = @grid_key
+      info['width']       = @width
+      info['height']      = @height
       # info[:left_margin]  = @left_margin
       # info[:right_margin] = @right_margin
       # info[:top_margin]   = @top_margin
@@ -207,11 +209,15 @@ module RLayout
     def make_articles_info
       puts __method__
       @article_info = []
-      puts "@grid_map:#{@grid_map}"
       @number_of_article.times do |i|
-        puts "++++i#{i}:#{@grid_map[i]}"
         info = {}
-        info[:image_path] = @section_path + "/#{i + 1}.story.pdf"
+        if @has_heading && i == 0
+          info[:image_path] = @section_path + "/heading.pdf"
+        elsif @has_heading && i >= 0
+          info[:image_path] = @section_path + "/#{i}.story.pdf"
+        elsif !@has_heading
+          info[:image_path] = @section_path + "/#{i + 1}.story.pdf"
+        end
         info[:x]          = @grid_map[i][0]*(@grid_width + @gutter) + @left_margin
         info[:y]          = @grid_map[i][1]*@grid_height  + @top_margin
         info[:width]      = @grid_map[i][2]*@grid_width + @gutter*(@grid_map[i][2] - 1)
@@ -227,18 +233,34 @@ module RLayout
     def create
       system("mkdir -p #{@section_path}") unless File.exist?(@section_path)
       puts "creating story"
+      if @has_heading
+        #copy heading.pdf from library
+        @heading_sample = "/Users/Shared/SoftwareLab/news_heading/OurTimes/heading_#{@grid_key.split("x")[0]}.pdf"
+        puts "@heading_sample:#{@heading_sample}"
+        system("cp #{@heading_sample} #{@section_path}/heading.pdf") #unless File.exist?(@heading_sample)
+      end
       @number_of_article.times do |i|
-        path = @section_path + "/#{i + 1}.story.md"
+        if @has_heading && i == 0
+          next
+        elsif @has_heading && i >= 0
+          path = @section_path + "/#{i}.story.md"
+        elsif !@has_heading
+          path = @section_path + "/#{i + 1}.story.md"
+        end
         puts "++++i#{i}:#{@grid_map[i]}"
         @grid_frame = @grid_map[i]
         sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @grid_frame %>", @grid_frame.to_s)
-        sample = sample.gsub("<%= @story_index %>", (i+1).to_s)
+        if @has_heading
+          sample = sample.gsub("<%= @story_index %>", (i).to_s)
+        else
+          sample = sample.gsub("<%= @story_index %>", (i+1).to_s)
+        end
         sample = sample.gsub("<%= @grid_width %>", @grid_width.to_s)
         sample = sample.gsub("<%= @grid_height %>", @grid_height.to_s)
         File.open(path, 'w'){|f| f.write sample}
       end
       section_path = @section_path + "/config.yml"
-      section_info = make_section_info
+      section_info = make_section_config
       File.open(section_path, 'w'){|f| f.write section_info.to_yaml}
       rake_path = @section_path + "/Rakefile"
       File.open(rake_path, 'w'){|f| f.write SAMPLE_RAKEFILR} unless File.exist?(rake_path)
@@ -254,12 +276,10 @@ module RLayout
     
     def merge_article_pdf(options={})
       @output_path = options[:output_path] if options[:output_path]
-      if @has_heading
-        place_heading
-      end
-      @articles_info.each do |info|
-        puts "info:#{info}"
-        # article_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
+      @articles_info.each_with_index do |info, i|
+        if @has_heading && i == 0
+          place_heading
+        end
 	      Image.new(self, info)
 	    end
 	          

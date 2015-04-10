@@ -20,11 +20,15 @@ TODO List
 	- modify kramdown into r_kramdown
 	- use Asciidotor
 
-2015 4 9
+2015 4 11
 	1. Web
 	1. Dropbox integration
+	1. grid_key with head notation 7x12H/4, 7x12/5
+	
+2015 4 10
 	1. Rakefile for story.pdf, section.pdf, heading.pdf
-
+	1. has_heading
+	
 2015 4 8
 	1. Article, NewsArticle, NewsSection
 	1. grid_size with margin, gutter paper_size

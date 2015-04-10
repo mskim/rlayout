@@ -2,13 +2,26 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 
 
-describe 'create sample news_page' do
+describe 'create sample news_page with heading' do
   before do
-    @section_path = "/Users/mskim/news_article/section1"
-    @section = NewspaperSection.new(nil, :section_path=>@section_path)
+    @section_path = "/Users/mskim/news_article/section8"
+    @section = NewspaperSection.new(nil, :section_path=>@section_path, :has_heading=> true)
+    @section.create
   end
   
-  # it 'should save sample_page ' do
+  it 'should create heading.pdf' do
+    File.exist?(@section_path + "/heading.pdf").must_equal true
+  end
+end
+
+# describe 'create sample news_page' do
+#   before do
+#     @section_path = "/Users/mskim/news_article/section9"
+#     @section = NewspaperSection.new(nil, :section_path=>@section_path)
+#     @section.create
+#   end
+  
+  # it 'should save NewspaperSection ' do
   #   @section.must_be_kind_of NewspaperSection
   # end
   # 
@@ -21,16 +34,20 @@ describe 'create sample news_page' do
   # end
   # 
   # it 'should create sample_articles' do
-  #   @section.create
   #   File.exist?(@section_path + "/1.story.md")
   # end
+  # it 'should create heading.pdf' do
+  #   File.exist?(@section_path + "/heading.pdf")
+  # end
+  
+  
   # 
   
-  it 'should merge articles' do
-    puts @section.grid_map
-    @section.merge_article_pdf
-  end
-end
+  # it 'should merge articles' do
+  #   puts @section.grid_map
+  #   @section.merge_article_pdf
+  # end
+# end
 __END__
 
 
