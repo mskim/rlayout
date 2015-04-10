@@ -8,24 +8,26 @@ describe 'create sample news_page' do
     @section = NewspaperSection.new(nil, :section_path=>@section_path)
   end
   
-  it 'should save sample_page ' do
-    @section.must_be_kind_of NewspaperSection
-  end
-  
-  it 'should set correct section_path' do
-    @section.section_path.must_equal @section_path
-  end
-  
-  it 'should set width ' do
-    @section.paper_size.must_equal "A2"
-  end
-  
-  it 'should create sample_articles' do
-    @section.make_sample_articles
-    File.exist?(@section_path + "/1.story.md")
-  end
+  # it 'should save sample_page ' do
+  #   @section.must_be_kind_of NewspaperSection
+  # end
+  # 
+  # it 'should set correct section_path' do
+  #   @section.section_path.must_equal @section_path
+  # end
+  # 
+  # it 'should set width ' do
+  #   @section.paper_size.must_equal "A2"
+  # end
+  # 
+  # it 'should create sample_articles' do
+  #   @section.create
+  #   File.exist?(@section_path + "/1.story.md")
+  # end
+  # 
   
   it 'should merge articles' do
+    puts @section.grid_map
     @section.merge_article_pdf
   end
 end

@@ -20,14 +20,20 @@ TODO List
 	- modify kramdown into r_kramdown
 	- use Asciidotor
 
+2015 4 9
+	1. Web
+	1. Dropbox integration
+	1. Rakefile for story.pdf, section.pdf, heading.pdf
+
 2015 4 8
 	1. Article, NewsArticle, NewsSection
-	1. Precise Placement
-	1. Rakefile
 	1. grid_size with margin, gutter paper_size
-	1. line number per grid
-	1. Page with and without Heading 7x12, 7x11, 6x12, 6x11
-
+	1. put the grid_pattern_with source, no need to save it as file
+	1. heading_column for news_article story.
+	1. Page with and without Heading 
+	1. Save section_info.yml in section folder
+	1. Save CSV
+	
 2015 3 31
 	1. Merge grid & float into major feature.
 			Update PGScript to make use of it.

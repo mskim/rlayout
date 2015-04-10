@@ -16,7 +16,7 @@ EOF
 
 SAMPLE_NEWS_ARTICLE =<<EOF
 ---
-title: 'This is a title'
+title: 'This is a title for Story<%= @story_index %>'
 grid_frame: <%= @grid_frame %>
 grid_size: [<%= @grid_width %>, <%= @grid_height %>]
 
@@ -123,65 +123,93 @@ module RLayout
     attr_accessor :section_path, :issue_numner, :date, :section_name, :output_path
     attr_accessor :has_heading, :heading_info, :paper_size
     attr_accessor :heading_type #none, top, left_top_box,
-    attr_accessor :articles_info, :grid_map
+    attr_accessor :articles_info, :grid_map, :grid_key
 
     def initialize(parent_graphic, options={}, &block)
+      puts "init of NewspaperSection"
+      puts "options:#{options}"
       super
       @parent_graphic = parent_graphic
       @section_path   = options[:section_path] if options[:section_path]
       @output_path    = @section_path + "/section.pdf"
-      @output_path    = options[:output_path]   if options[:output_path]
-      @paper_size   = options.fetch(:paper_size,"A2")
-      @width        = SIZES[@paper_size][0]
-      @height       = SIZES[@paper_size][1]
-      @lines_in_grid= options.fetch(:lines_in_grid, 10)
-      @gutter       = options.fetch(:gutter, 10)
-      @v_gutter     = options.fetch(:v_gutter, 0)
-      @left_margin  = options.fetch(:left_margin, 50)
-      @top_margin   = options.fetch(:top_margin, 50)
-      @right_margin = options.fetch(:right_margin, 50)
-      @bottom_margin= options.fetch(:bottom_margin, 50)
-      @grid_base    = options.fetch(:grid_base, [7, 12])
-      @has_heading  = options[:has_heading] || false
-      @heading_info = options.fetch(:heading_info, {:layout_length=>1})
+      @output_path    = options[:output_path]   if options[:output_path]      
+      @paper_size     = options.fetch(:paper_size,"A2")
+      @width          = SIZES[@paper_size][0]
+      @height         = SIZES[@paper_size][1]
+      @width          = options['width'] if options['width']
+      @height         = options['height'] if options['height']
+      @lines_in_grid  = options.fetch(:lines_in_grid, 10)
+      @gutter         = options.fetch(:gutter, 10)
+      @v_gutter       = options.fetch(:v_gutter, 0)
+      @left_margin    = options.fetch(:left_margin, 50)
+      @top_margin     = options.fetch(:top_margin, 50)
+      @right_margin   = options.fetch(:right_margin, 50)
+      @bottom_margin  = options.fetch(:bottom_margin, 50)
+      @grid_base      = options.fetch(:grid_base, [7, 12])
+      @has_heading    = options[:has_heading] || false
+      @grid_base      = [7, 11] if @has_heading
+      @heading_info   = options.fetch(:heading_info, {:layout_length=>1})
       @number_of_article = options.fetch(:number_of_article, 5)
-      @grid_base    = options.fetch(:grid_base, [7, 12])
-      @grid_width   = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
+      @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
+      @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
+      @grid_key       = "#{@grid_base.join("x")}/#{@number_of_article}"
+      puts GRID_PATTERNS["#{@grid_key}/#{@number_of_article}"]
+      @grid_map       = GRID_PATTERNS["#{@grid_key}"]
+      if options['grid_key']
+        @grid_key     = options['grid_key'] 
+        @grid_map     = GRID_PATTERNS["#{@grid_key}"]
+      end
+      puts "@grid_base:#{@grid_base}"
+      puts "@grid_key:#{@grid_key}"
+      puts "@grid_map:#{@grid_map}"
       
-      @grid_height  = (@height - @top_margin - @bottom_margin)/@grid_base[1]
-      
-      # grid_key      = "#{@grid_base.join("x")}/#{@number_of_article}"
-      @grid_map     = GRID_PATTERNS["#{@grid_base.join("x")}/#{@number_of_article}"]
       @articles_info= make_articles_info
       @articles_info= options[:articles_info] if options[:articles_info]
       if @has_heading
         @top_margin += @grid_height
       end
-
       if block
         instance_eval(&block)
       end
       self
     end
     
+    def self.open(path)
+      config_path = path + "/config.yml"
+      config = File.open(config_path, 'r'){|f| f.read}
+      puts options = YAML::load(config)
+      #TODO one liner?
+      # options = options.keys.each do |key, value|
+      #   symbolized_options[key.to_sym] = value
+      # end
+      # puts symbolized_options
+      options[:section_path] = path
+      NewspaperSection.new(nil, options)
+    end
+    
     def make_section_info
+      # Rubymotion YAML kit doesn't seem to work with symbols
+      # So, to make it consistant, I am using the key as strings instead of symbols
       info ={}
-      info[:section_name] = @section_name
-      info[:has_heading]  = @has_heading
-      info[:width]        = @width
-      info[:height]       = @height
-      info[:left_margin]  = @left_margin
-      info[:right_margin] = @right_margin
-      info[:top_margin]   = @top_margin
-      info[:bottom_margin]= @bottom_margin
-      info[:gutter]       = @gutter
+      info['section_name'] = @section_name || "untitled"
+      info['has_heading']  = @has_heading
+      info['grid_key']     = @grid_key
+      info['width']        = @width
+      info['height']       = @height
+      # info[:left_margin]  = @left_margin
+      # info[:right_margin] = @right_margin
+      # info[:top_margin]   = @top_margin
+      # info[:bottom_margin]= @bottom_margin
+      # info[:gutter]       = @gutter
       info
     end
     
     def make_articles_info
-      
+      puts __method__
       @article_info = []
+      puts "@grid_map:#{@grid_map}"
       @number_of_article.times do |i|
+        puts "++++i#{i}:#{@grid_map[i]}"
         info = {}
         info[:image_path] = @section_path + "/#{i + 1}.story.pdf"
         info[:x]          = @grid_map[i][0]*(@grid_width + @gutter) + @left_margin
@@ -189,24 +217,27 @@ module RLayout
         info[:width]      = @grid_map[i][2]*@grid_width + @gutter*(@grid_map[i][2] - 1)
         info[:height]     = @grid_map[i][3]*@grid_height
         info[:layout_expand] = nil
-        # info[:image_fit_type] = IMAGE_FIT_TYPE_HORIZONTAL
-        info[:image_fit_type] = IMAGE_FIT_TYPE_VIRTICAL
+        info[:image_fit_type] = IMAGE_FIT_TYPE_HORIZONTAL
+        # info[:image_fit_type] = IMAGE_FIT_TYPE_VIRTICAL
         @article_info << info.dup
       end
       @article_info
     end
 
-    def make_sample_articles
+    def create
       system("mkdir -p #{@section_path}") unless File.exist?(@section_path)
+      puts "creating story"
       @number_of_article.times do |i|
         path = @section_path + "/#{i + 1}.story.md"
+        puts "++++i#{i}:#{@grid_map[i]}"
         @grid_frame = @grid_map[i]
         sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @grid_frame %>", @grid_frame.to_s)
+        sample = sample.gsub("<%= @story_index %>", (i+1).to_s)
         sample = sample.gsub("<%= @grid_width %>", @grid_width.to_s)
         sample = sample.gsub("<%= @grid_height %>", @grid_height.to_s)
         File.open(path, 'w'){|f| f.write sample}
       end
-      section_path = @section_path + "/section_info.yml"
+      section_path = @section_path + "/config.yml"
       section_info = make_section_info
       File.open(section_path, 'w'){|f| f.write section_info.to_yaml}
       rake_path = @section_path + "/Rakefile"
@@ -227,8 +258,9 @@ module RLayout
         place_heading
       end
       @articles_info.each do |info|
+        puts "info:#{info}"
         # article_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
-	      img =Image.new(self, info)
+	      Image.new(self, info)
 	    end
 	          
       if @output_path

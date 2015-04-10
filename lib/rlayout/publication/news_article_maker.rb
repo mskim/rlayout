@@ -3,14 +3,17 @@ module RLayout
   class NewsArticleMaker
     attr_accessor :path, :output_path, :output_folder
     def initialize(path, options={})
+      puts "path:#{path}"
+      puts "options:#{options}"
       @path          = path
       @content_path  = path
       ext            = File.extname(@path)
       @output_path   = @path.gsub(ext, ".pdf")
       @output_folder = File.dirname(@path)
-      options[:story_path]   = @content_path
-      options[:output_path]  = @output_path
-      process_job(options) if valid_job?
+      opts = {}
+      opts[:story_path]   = @content_path
+      opts[:output_path]  = @output_path
+      process_job(opts) if valid_job?
       self
     end
 

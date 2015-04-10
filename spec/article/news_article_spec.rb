@@ -1,7 +1,21 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 require File.dirname(__FILE__) + '/../../lib/rlayout/article/news_article'
 
+describe 'news_article reading stoy' do
+  before do
+    @path = "/Users/mskim/news_article/section5/1.story.md"
+    @article = NewsArticle.new(nil, :story_path=>@path)
+  end
+  
+  it 'shold create NewsArticle' do
+    @article.must_be_kind_of NewsArticle
+  end
+end
 
+
+
+
+__END__
 
 describe 'load stoy' do
   before do
@@ -42,7 +56,6 @@ describe 'load stoy' do
   end
 end
 
-__END__
 
 describe 'load stoy' do
   before do
