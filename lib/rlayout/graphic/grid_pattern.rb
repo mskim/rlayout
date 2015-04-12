@@ -106,9 +106,18 @@ NEW_SECTION_DEFAULTS = {
 }
 
 module RLayout
-	class GridPattern
+  
 
+	class GridLayout < Container
+	  attr_accessor :grid_key, 
+	  def initialize(grid_key)
+	    boxes = GRID_PATTERNS[grid_key]
+	    self
+	  end
 
+    def to_html
+      
+    end
 
 	end
 

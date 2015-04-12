@@ -1,6 +1,21 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
 
+describe 'create Newspaper' do
+  before do
+    @newspaper = Newspaper.new("OurTimes")
+  end
+
+  it ' should create Newspaper' do
+    @newspaper.must_be_kind_of Newspaper
+  end
+  
+  it 'should create new issue' do
+    @newspaper.create_new_issue(:issue_date =>"2015-4-16")
+  end
+end
+
+__END__
 
 describe 'create sample news_page with heading' do
   before do
@@ -48,26 +63,8 @@ end
   #   @section.merge_article_pdf
   # end
 # end
-__END__
 
 
-describe 'create Newspaper' do
-  before do
-    @newspaper = Newspaper.new(nil)
-  end
-
-  it ' should create Newspaper' do
-    @newspaper.must_be_kind_of Newspaper
-  end
-
-  it 'should create publication_info' do
-    @newspaper.publication_info.must_be_kind_of Hash
-    @newspaper.publication_info[:width].must_equal 1190.55
-    @newspaper.publication_info[:height].must_equal 1683.78
-    puts @newspaper.publication_info
-  end
-
-end
 describe 'create NewsArticle sample' do
   before do
     @news_section = NewsSection.new(nil, '/Users/mskim/news_article/sample')

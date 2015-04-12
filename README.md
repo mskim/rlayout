@@ -20,9 +20,12 @@ TODO List
 	- modify kramdown into r_kramdown
 	- use Asciidotor
 
-2015 4 11
-	1. Web
+2015 4 12
+
+	1. Newsman integration
 	1. Dropbox integration
+	1. change_section_layout
+2015 4 11
 	1. grid_key with head notation 7x12H/4, 7x12/5
 	
 2015 4 10

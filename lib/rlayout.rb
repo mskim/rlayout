@@ -18,7 +18,7 @@ else
   require 'yaml'
 
   require File.dirname(__FILE__) + '/rlayout/utility'
-  require File.dirname(__FILE__) + '/rlayout/graphic/grid_pattern'
+  require File.dirname(__FILE__) + '/rlayout/graphic/grid_layout'
   require File.dirname(__FILE__) + '/rlayout/graphic/fill'
   require File.dirname(__FILE__) + '/rlayout/graphic/image'
   require File.dirname(__FILE__) + '/rlayout/graphic/layout'
@@ -71,13 +71,11 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/rjob'
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/book'
-  require File.dirname(__FILE__) + '/rlayout/publication/chapter_maker'
   require File.dirname(__FILE__) + '/rlayout/publication/catalog'
   require File.dirname(__FILE__) + '/rlayout/publication/composite'
   require File.dirname(__FILE__) + '/rlayout/publication/magazine'
   require File.dirname(__FILE__) + '/rlayout/publication/mart'
   require File.dirname(__FILE__) + '/rlayout/publication/newspaper'
-  require File.dirname(__FILE__) + '/rlayout/publication/news_article_maker'
   require File.dirname(__FILE__) + '/rlayout/publication/photo_book'
 
 end

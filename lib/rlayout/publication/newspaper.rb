@@ -1,15 +1,20 @@
 # encoding: utf-8
-SAMPLE_RAKEFILR =<<EOF
-source_files = FileList["*.md", "*.markdown"]
-task :default => :pdf
-task :pdf => source_files.ext(".pdf")
 
+
+SECTION_RAKE_FILE =<<EOF
+task :default => 'section.pdf'
+
+source_files = FileList["*.md", "*.markdown"]
+task :pdf => source_files.ext(".pdf")
 rule ".pdf" => ".md" do |t|
   sh "/Users/mskim/Development/Rubymotion/rlayout/build/MacOSX-10.10-Development/rlayout.app/Contents/MacOS/rlayout news_article \#{pwd}/\#{t.source}"
 end
-
 rule ".pdf" => ".markdown" do |t|
   sh "/Users/mskim/Development/Rubymotion/rlayout/build/MacOSX-10.10-Development/rlayout.app/Contents/MacOS/rlayout news_article \#{pwd}/\#{t.source}"
+end
+
+file 'section.pdf' => source_files.ext(".pdf") do |t|
+  sh "/Users/mskim/Development/Rubymotion/rlayout/build/MacOSX-10.10-Development/rlayout.app/Contents/MacOS/rlayout news_section \#{pwd}"
 end
 
 EOF
@@ -34,18 +39,23 @@ The first value is x, y, width, height. So this the box will have size of 4 grid
 
 EOF
 
+DEFAULT_SECTIONS = %w{current sports culture technology}
+
+DEFAULT_SECTIONS2 = %w{Current Politics Economy Entertainment Sports Culture Technology }
 
 module RLayout
 
   class Newspaper
-    attr_accessor :publication_path, :front_matter, :body_matter, :rear_matter
-    attr_accessor :publication_info, :grid_base, :grid_width, :grid_height, :lines_in_grid, :gutter
-    def initialize(publication_path, options={}, &block)
+    attr_accessor :name, :publication_path, :sections
+    attr_accessor :grid_base, :grid_width, :grid_height, :lines_in_grid, :gutter
+    def initialize(name, options={}, &block)
       # system("mkdir -p #{publication_path}") unless File.exists?(publication_path)
-      @publication_path = publication_path
+      @name         = options.fetch(:name, "OurTimes")
+      @publication_path = options[:path] || "/Users/Shared/Newspaper/#{@name}"
       @paper_size   = options.fetch(:paper_size,"A2")
       @width        = SIZES[@paper_size][0]
       @height       = SIZES[@paper_size][1]
+      @sections     = options.fetch(:sections, DEFAULT_SECTIONS.dup)
       @lines_in_grid= options.fetch(:lines_in_grid, 10)
       @gutter       = options.fetch(:gutter, 10)
       @v_gutter     = options.fetch(:v_gutter, 0)
@@ -56,27 +66,45 @@ module RLayout
       @grid_base    = options.fetch(:grid_base, [7, 12])
       @grid_width   = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
       @grid_height  = (@height - @top_margin - @bottom_margin)/@grid_base[1]
+      setup
+      
       if block
         instance_eval(&block)
       end
       self
     end
-
+    
+    def setup
+      system "mkdir -p #{@publication_path}" unless File.exist?(@publication_path)
+      save_config_file
+    end
+    
+    def save_config_file
+      config_path = @publication_path + "/config.yml"
+      File.open(config_path, 'w'){|f| f.write publication_info.to_yaml}
+    end
+    
+    def create_new_issue(options={})
+      NewspaperIssue.new(@publication_path, options)
+    end
+    
     def publication_info
-      {
-        width:          @width,
-        height:         @height,
-        left_margin:    @left_margin,
-        top_margin:     @top_margin,
-        right_margin:   @right_margin,
-        botoom_margin:  @bottom_margin,
-        grid_base:      @grid_base,
-        grid_width:     @grid_width,
-        grid_height:    @grid_height,
-        gutter:         @gutter,
-        v_gutter:       @v_gutter,
-        lines_in_grid:  @lines_in_grid,
-      }
+      info = {}
+      info['name']        = @name
+      info['sections']    = @sections
+      info['width']       = @width
+      info['height']      = @height
+      info['left_margin'] = @left_margin
+      info['top_margin']  = @top_margin
+      info['right_margin']= @right_margin
+      info['botoom_margin']= @botoom_margin
+      info['grid_base']   = @grid_base
+      info['grid_width']  = @grid_width
+      info['grid_height'] = @grid_height
+      info['gutter']      = @gutter
+      info['v_gutter']    = @v_gutter
+      info['lines_in_grid']= @lines_in_grid
+      info
     end
 
     def page_lines
@@ -92,23 +120,32 @@ module RLayout
 
 
   class NewspaperIssue
-    attr_accessor :publication
+    attr_accessor :publication_path, :issue_date, :issue_path
     attr_accessor :issue_path, :issue_number, :issue_date
-    def initialize(publication, options={})
-      @publication = publication
-      @issue_date  = options.fetch(:issue_date, Time.now)
-      set_up
+    def initialize(publication_path, options={})
+      @publication_path = publication_path
+      @issue_date  = options.fetch(:issue_date, "2015-4-5")
+      @issue_path = @publication_path + "/" + @issue_date
+      create_sections
       self
     end
-
-    def set_up
-      # system("mkdir -p #{issue_path}") unless File.exists?(issue_path)
-      create_sections
-    end
-
+        
     def create_sections
-
+      publication_config = File.open(@publication_path + "/config.yml", 'r'){|f| f.read}
+      @publication_info = YAML::load(publication_config)
+      @publication_info['sections'].each_with_index do |section_name, i|
+        section_path = @issue_path + "/#{section_name}"
+        output_path = section_path + "/section.pdf"
+        if i== 0
+          news_section = NewspaperSection.new(nil, :section_path=>section_path, :output_path=> output_path, :has_heading=>true)
+        else
+          news_section = NewspaperSection.new(nil, :section_path=>section_path, :output_path=> output_path)
+        end
+        news_section.create
+        news_section.update_section
+      end
     end
+    
   end
 
   # NewspaperSection is a sinlge page of a Newspaper
@@ -126,8 +163,6 @@ module RLayout
     attr_accessor :articles_info, :grid_map, :grid_key
 
     def initialize(parent_graphic, options={}, &block)
-      puts "init of NewspaperSection"
-      puts "options:#{options}"
       super
       @parent_graphic = parent_graphic
       @section_path   = options[:section_path] if options[:section_path]
@@ -151,19 +186,13 @@ module RLayout
       @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
       @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
       @grid_key       = "#{@grid_base.join("x")}/#{@number_of_article}"
-      puts GRID_PATTERNS["#{@grid_key}/#{@number_of_article}"]
-      @grid_map       = GRID_PATTERNS["#{@grid_key}"]
+      # puts GRID_PATTERNS["#{@grid_key}/#{@number_of_article}"]
+      @grid_map       = GRID_PATTERNS[@grid_key]
       if options['grid_key']
         @grid_key     = options['grid_key'] 
         @grid_map     = GRID_PATTERNS["#{@grid_key}"]
-      end
-      puts "@grid_base:#{@grid_base}"
-      puts "@grid_key:#{@grid_key}"
-      puts "@grid_map:#{@grid_map}"
-      
+      end      
       @articles_info= make_articles_info
-      
-
       if block
         instance_eval(&block)
       end
@@ -173,20 +202,33 @@ module RLayout
     def self.open(path)
       config_path = path + "/config.yml"
       config = File.open(config_path, 'r'){|f| f.read}
-      puts options = YAML::load(config)
-      #TODO one liner?
-      # options = options.keys.each do |key, value|
-      #   symbolized_options[key.to_sym] = value
-      # end
-      # puts symbolized_options
+      options = YAML::load(config)
       options[:section_path] = path
       NewspaperSection.new(nil, options)
     end
     
+    def update_section
+      system ("cd #{@section_path} && rake")
+    end
+    #TODO
+    # Change section layout with given grid_key(grid_pattern)
+    # Create unused folder and put unused articles
+    def change_section_layout(grid_key, options={})
+      return if @grid_key == grid_key
+      return unless GRID_PATTERNS[grid_key]
+      @grid_key = grid_key
+      @grid_map = GRID_PATTERNS[@grid_key]      
+      update_story_layout
+    end
+    
+    def update_story_layout
+      
+    end
+  	
     def make_section_config
       # Rubymotion YAML kit doesn't seem to work with symbols it reads symbols as ':key' String.
-      # So, to make it work, I am using String as key instead of symbol
-      # It also distinguishes whether the options are coming from new or open
+      # So, to make it work, I am saving keys  as String instead of symbol
+      # It can play nicely since I could distinguish whether the options are coming from new or open
       # for  NewSection new, options keys are passed as symbols,
       # And for  NewSection open, options keys are stored as String, when read from section config file.
       info ={}
@@ -207,7 +249,6 @@ module RLayout
     end
     
     def make_articles_info
-      puts __method__
       @article_info = []
       @number_of_article.times do |i|
         info = {}
@@ -232,7 +273,6 @@ module RLayout
 
     def create
       system("mkdir -p #{@section_path}") unless File.exist?(@section_path)
-      puts "creating story"
       if @has_heading
         #copy heading.pdf from library
         @heading_sample = "/Users/Shared/SoftwareLab/news_heading/OurTimes/heading_#{@grid_key.split("x")[0]}.pdf"
@@ -247,7 +287,6 @@ module RLayout
         elsif !@has_heading
           path = @section_path + "/#{i + 1}.story.md"
         end
-        puts "++++i#{i}:#{@grid_map[i]}"
         @grid_frame = @grid_map[i]
         sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @grid_frame %>", @grid_frame.to_s)
         if @has_heading
@@ -263,7 +302,7 @@ module RLayout
       section_info = make_section_config
       File.open(section_path, 'w'){|f| f.write section_info.to_yaml}
       rake_path = @section_path + "/Rakefile"
-      File.open(rake_path, 'w'){|f| f.write SAMPLE_RAKEFILR} unless File.exist?(rake_path)
+      File.open(rake_path, 'w'){|f| f.write SECTION_RAKE_FILE} unless File.exist?(rake_path)
     end
 
     def make_html
