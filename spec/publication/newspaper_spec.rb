@@ -1,5 +1,20 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+# describe 'update NewsArticle metadata' do
+#   before do
+#     @path = 
+#   
+#   
+#   
+# end
+# 
+# describe 'change section layout' do
+#   
+#   
+#   
+#   
+#   
+# end
 
 describe 'create Newspaper' do
   before do

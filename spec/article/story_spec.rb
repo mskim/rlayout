@@ -81,19 +81,3 @@ describe 'create Story' do
   end
 end
 
-describe 'read meta_markdown' do
-  before do
-    @path = @story_path = "/Users/mskim//news_article/2012-12-05-automation-catalog-publication.markdown"
-  end
-
-  it 'story from_story_file file' do
-    m= Story.from_story_file(@path)
-    m.must_be_kind_of Story
-    m.heading[:title].must_be_kind_of String
-    m.paragraphs.must_be_kind_of Array
-    m.heading[:author].must_equal "Min Soo Kim"
-    m.paragraphs.each do |para|
-      para[:string] if para[:markup] == "img"
-    end
-  end
-end

@@ -185,12 +185,16 @@ module RLayout
       @number_of_article = options.fetch(:number_of_article, 5)      
       @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
       @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
-      @grid_key       = "#{@grid_base.join("x")}/#{@number_of_article}"
-      # puts GRID_PATTERNS["#{@grid_key}/#{@number_of_article}"]
+      @grid_key       = "#{@grid_base.join("x")}"
+      @grid_key      += "H" if @has_heading
+      @grid_key      += "/#{@number_of_article}"
       @grid_map       = GRID_PATTERNS[@grid_key]
       if options['grid_key']
         @grid_key     = options['grid_key'] 
         @grid_map     = GRID_PATTERNS["#{@grid_key}"]
+        @has_heading = grid_key.split("/")[0]=~/H$/ ? true : false
+        @grid_map = GRID_PATTERNS[@grid_key]
+        @number_of_article = @grid_map.length      
       end      
       @articles_info= make_articles_info
       if block
@@ -207,9 +211,18 @@ module RLayout
       NewspaperSection.new(nil, options)
     end
     
+    # Run rake to update pdf files in section folder
     def update_section
       system ("cd #{@section_path} && rake")
     end
+    
+    # Update each story with new grid_frame
+    # Create new story, if need to 
+    def update_story_layout
+      
+    end
+    
+    
     #TODO
     # Change section layout with given grid_key(grid_pattern)
     # Create unused folder and put unused articles
@@ -217,14 +230,56 @@ module RLayout
       return if @grid_key == grid_key
       return unless GRID_PATTERNS[grid_key]
       @grid_key = grid_key
-      @grid_map = GRID_PATTERNS[@grid_key]      
+      @has_heading = @grid_key.split("/")[0] =~/H$/ ? true : false
+      @grid_map = GRID_PATTERNS[@grid_key]
       update_story_layout
     end
     
-    def update_story_layout
-      
+    def self.change_section_layout(section_path, grid_key)
+      section_config = section_path + "/config.yml"
+      yml = YAML::load(File.open(section_config, 'r'){|f| f.read})
+      return if yml['grid_key'] == grid_key # no need to change, they are same
+
+      @has_heading = grid_key.split("/")[0]=~/H$/ ? true : false
+      old_grid_map = GRID_PATTERNS[yml['grid_key']]
+      old_number_of_storyies = old_grid_map.length      
+      yml['grid_key'] =grid_key
+      new_grid_map = GRID_PATTERNS[grid_key]      
+      new_number_of_storyies = new_grid_map.length      
+      if new_number_of_storyies == old_number_of_storyies
+      elsif new_number_of_storyies > old_number_of_storyies
+        # add more stories
+        new_grid_map.each_with_index do |grid_frame, i|
+          story_file = section_path + "/#{i + 1}.story.md"
+          if File.exist?(story_file)
+            # change metadata
+            Story.update_story_meta_data(story_file, grid_frame)
+          else
+            # create new story.md
+            if @has_heading && i == 0
+              next
+            elsif @has_heading && i >= 0
+              path = @section_path + "/#{i}.story.md"
+            elsif !@has_heading
+              path = @section_path + "/#{i + 1}.story.md"
+            end
+            sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @grid_frame %>", @grid_frame.to_s)
+            if @has_heading
+              sample = sample.gsub("<%= @story_index %>", (i).to_s)
+            else
+              sample = sample.gsub("<%= @story_index %>", (i+1).to_s)
+            end
+            sample = sample.gsub("<%= @grid_width %>", grid_width.to_s)
+            sample = sample.gsub("<%= @grid_height %>", grid_height.to_s)
+            File.open(path, 'w'){|f| f.write sample}
+          end  
+        end
+      else
+        # hide excess stories into draft folder
+        
+      end
     end
-  	
+          	
     def make_section_config
       # Rubymotion YAML kit doesn't seem to work with symbols it reads symbols as ':key' String.
       # So, to make it work, I am saving keys  as String instead of symbol
@@ -250,7 +305,7 @@ module RLayout
     
     def make_articles_info
       @article_info = []
-      @number_of_article.times do |i|
+      @grid_map.each_with_index do |grid_frame, i|
         info = {}
         if @has_heading && i == 0
           info[:image_path] = @section_path + "/heading.pdf"
@@ -259,10 +314,10 @@ module RLayout
         elsif !@has_heading
           info[:image_path] = @section_path + "/#{i + 1}.story.pdf"
         end
-        info[:x]          = @grid_map[i][0]*(@grid_width + @gutter) + @left_margin
-        info[:y]          = @grid_map[i][1]*@grid_height  + @top_margin
-        info[:width]      = @grid_map[i][2]*@grid_width + @gutter*(@grid_map[i][2] - 1)
-        info[:height]     = @grid_map[i][3]*@grid_height
+        info[:x]          = grid_frame[0]*(@grid_width + @gutter) + @left_margin
+        info[:y]          = grid_frame[1]*@grid_height  + @top_margin
+        info[:width]      = grid_frame[2]*@grid_width + @gutter*(grid_frame[2] - 1)
+        info[:height]     = grid_frame[3]*@grid_height
         info[:layout_expand] = nil
         info[:image_fit_type] = IMAGE_FIT_TYPE_HORIZONTAL
         # info[:image_fit_type] = IMAGE_FIT_TYPE_VIRTICAL
@@ -271,54 +326,43 @@ module RLayout
       @article_info
     end
 
+    def create_story(story_index)
+      story_path =  @section_path + "/#{story_index + 1}.story.md"
+      if @has_heading
+        @grid_frame = @grid_map[story_index+1]
+      else
+        @grid_frame = @grid_map[story_index]
+      end 
+      sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @grid_frame %>", @grid_frame.to_s)
+      sample = sample.gsub("<%= @grid_width %>", @grid_width.to_s)
+      sample = sample.gsub("<%= @grid_height %>", @grid_height.to_s)
+      sample = sample.gsub("<%= @story_index %>", (story_index + 1).to_s)
+      File.open(story_path, 'w'){|f| f.write sample}
+    end
+
     def create
       system("mkdir -p #{@section_path}") unless File.exist?(@section_path)
-      if @has_heading
-        #copy heading.pdf from library
-        @heading_sample = "/Users/Shared/SoftwareLab/news_heading/OurTimes/heading_#{@grid_key.split("x")[0]}.pdf"
-        puts "@heading_sample:#{@heading_sample}"
-        system("cp #{@heading_sample} #{@section_path}/heading.pdf") #unless File.exist?(@heading_sample)
-      end
+      copy_heading_pdf if @has_heading
       @number_of_article.times do |i|
-        if @has_heading && i == 0
-          next
-        elsif @has_heading && i >= 0
-          path = @section_path + "/#{i}.story.md"
-        elsif !@has_heading
-          path = @section_path + "/#{i + 1}.story.md"
-        end
-        @grid_frame = @grid_map[i]
-        sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @grid_frame %>", @grid_frame.to_s)
-        if @has_heading
-          sample = sample.gsub("<%= @story_index %>", (i).to_s)
-        else
-          sample = sample.gsub("<%= @story_index %>", (i+1).to_s)
-        end
-        sample = sample.gsub("<%= @grid_width %>", @grid_width.to_s)
-        sample = sample.gsub("<%= @grid_height %>", @grid_height.to_s)
-        File.open(path, 'w'){|f| f.write sample}
+        create_story(i)
       end
-      section_path = @section_path + "/config.yml"
-      section_info = make_section_config
-      File.open(section_path, 'w'){|f| f.write section_info.to_yaml}
-      rake_path = @section_path + "/Rakefile"
-      File.open(rake_path, 'w'){|f| f.write SECTION_RAKE_FILE} unless File.exist?(rake_path)
+      section_config_path = @section_path + "/config.yml"
+      section_config = make_section_config
+      File.open(section_config_path, 'w'){|f| f.write section_config.to_yaml}
+      section_rake_path = @section_path + "/Rakefile"
+      File.open(section_rake_path, 'w'){|f| f.write SECTION_RAKE_FILE} unless File.exist?(section_rake_path)
     end
 
-    def make_html
-
-    end
     
-    def place_heading
-      
+    def copy_heading_pdf
+      @heading_sample = "/Users/Shared/SoftwareLab/news_heading/OurTimes/heading_#{@grid_key.split("x")[0]}.pdf"
+      system("cp #{@heading_sample} #{@section_path}/heading.pdf") #unless File.exist?(@heading_sample)
     end
     
     def merge_article_pdf(options={})
       @output_path = options[:output_path] if options[:output_path]
+      #TODO update page fixtures
       @articles_info.each_with_index do |info, i|
-        if @has_heading && i == 0
-          place_heading
-        end
 	      Image.new(self, info)
 	    end
 	          

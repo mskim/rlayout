@@ -70,25 +70,10 @@ module RLayout
       end
     end
 
-    def self.from_story_file(story_path)
-
-      unless File.exists?(story_path)
-        puts "Can not find file #{story_path}!!!!"
-        return {}
-      end
-      path_copy = story_path.dup
-      if File.directory?(story_path)
-        path_copy = story_path + "/content.yml"
-      end
-      # a = `md2story "#{filename}"`
-      story_file = File.open(path_copy, 'r'){|f| f.read}
-      YAML::load(path_copy)
-    end
-
     def self.sample_story_yaml
       heading         = ParagraphModel.heading
       heading[:type]  = "article"
-      h={
+      {
         :heading     => heading,
         :paragraphs => ParagraphModel.body_part(5)
       }
@@ -103,7 +88,8 @@ module RLayout
       }
       Story.new(h)
     end
-
+    
+    
     def self.magazine_article_sample(options={})
       heading         = ParagraphModel.heading
       heading[:type]  = "magazine article"
@@ -133,18 +119,36 @@ module RLayout
       }
       Story.new(h)
     end
-
+    
+    def Story.update_meta_data(story_path, new_metadata_hash)
+      contents = File.open(story_path, 'r'){|f| f.read}
+      begin
+        if (md = contents.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
+          @story_markdown = md.post_match
+          @metadata = YAML.load(md.to_s)
+        end
+      rescue => e
+        puts "YAML Exception reading #filename: #{e.message}"
+      end
+      
+      @metadata.merge!(new_metadata_hash)
+      meta_data_yaml = @metadata.to_yaml
+      new_story = meta_data_yaml + "\n" + @story_markdown
+      File.open(story_path, 'w'){|f| f.write new_story}
+      
+    end
+    
     def self.story_from_markdown(markdown_path)
       unless File.exists?(story_path)
         puts "Can not find file #{story_path}!!!!"
         return {}
       end
       # a = `md2story "#{filename}"`
-      content = File.open(markdown_path, 'r'){|f| f.read}
+      contents = File.open(markdown_path, 'r'){|f| f.read}
       begin
         if (md = contents.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
-          @contents = md.post_match
           @metadata = YAML.load(md.to_s)
+          @story_markdown = md.post_match
         end
       rescue => e
         puts "YAML Exception reading #filename: #{e.message}"
@@ -156,7 +160,7 @@ module RLayout
       	@metadata=Hash[@metadata.map{ |k, v| [k.to_sym, v] }]
       	demotion_level = @metadata.fetch(:demote, 0).to_i
       end
-      paragraphs = markdown_to_para_data(@contents, :demotion_level=>demotion_level)
+      paragraphs = markdown_to_para_data(@story_markdown, :demotion_level=>demotion_level)
       @story_hash = {:heading=>@metadata, :paragraphs=>paragraphs}
     end
 
