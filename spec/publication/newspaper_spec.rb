@@ -1,20 +1,31 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
-# describe 'update NewsArticle metadata' do
-#   before do
-#     @path = 
-#   
-#   
-#   
-# end
-# 
-# describe 'change section layout' do
-#   
-#   
-#   
-#   
-#   
-# end
+
+
+describe 'change section layout' do
+  before do
+    @path = '/Users/Shared/Newspaper/OurTimes/2015-4-16/culture'
+    @section = RLayout::NewspaperSection.open(@path)
+  end
+  
+  it 'should change section' do
+    @section.change_section_layout("7x12/6")
+  end
+end
+
+__END__
+
+describe 'update NewsArticle metadata' do
+  before do
+    @path = '/Users/Shared/Newspaper/OurTimes/2015-4-16/culture/2.story.md'
+  end
+  
+  it 'should update metada of story' do
+    metadata = {'grid_frame' =>[0,0,1,1]}
+    Story.update_metadata(@path, metadata)
+  end
+  
+end
 
 describe 'create Newspaper' do
   before do
@@ -30,7 +41,6 @@ describe 'create Newspaper' do
   end
 end
 
-__END__
 
 describe 'create sample news_page with heading' do
   before do

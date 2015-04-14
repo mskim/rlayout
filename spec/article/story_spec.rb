@@ -6,7 +6,7 @@ describe 'Story.read_matadata' do
     @meta_data = Story.read_metadata(@path)
   end
 
-  it 'should read_metadata from stroy' do
+  it 'should read_metadata from story' do
     @meta_data.must_be_kind_of Hash
     puts @meta_data
   end

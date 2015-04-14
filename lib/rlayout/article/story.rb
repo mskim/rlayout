@@ -62,7 +62,7 @@ module RLayout
       Story.new(story_hash)
     end
 
-    def save_stroy(path)
+    def save_story(path)
       unless path =~/.yml$/
         path += ".yml"
         system("mkdir -p #{File.dirname(path)} ") unless File.exists?(File.dirname(path))
@@ -120,7 +120,7 @@ module RLayout
       Story.new(h)
     end
     
-    def Story.update_meta_data(story_path, new_metadata_hash)
+    def Story.update_metadata(story_path, new_metadata_hash)
       contents = File.open(story_path, 'r'){|f| f.read}
       begin
         if (md = contents.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
@@ -133,9 +133,8 @@ module RLayout
       
       @metadata.merge!(new_metadata_hash)
       meta_data_yaml = @metadata.to_yaml
-      new_story = meta_data_yaml + "\n" + @story_markdown
+      new_story = meta_data_yaml + "\n---\n" + @story_markdown
       File.open(story_path, 'w'){|f| f.write new_story}
-      
     end
     
     def self.story_from_markdown(markdown_path)

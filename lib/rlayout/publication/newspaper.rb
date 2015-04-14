@@ -28,7 +28,7 @@ grid_size: [<%= @grid_width %>, <%= @grid_height %>]
 author: 'Min Soo Kim'
 ---
 
-This is where sample stroy text goes. Fill in this area with your story. This is where sample stroy text goes.
+This is where sample story text goes. Fill in this area with your story. This is where sample story text goes.
 Fill in this area with your story.
 
 This is the second paragraph. You could keep on writting until it fills up the box.
@@ -215,68 +215,47 @@ module RLayout
     def update_section
       system ("cd #{@section_path} && rake")
     end
-    
-    # Update each story with new grid_frame
-    # Create new story, if need to 
-    def update_story_layout
-      
-    end
-    
-    
+        
     #TODO
     # Change section layout with given grid_key(grid_pattern)
-    # Create unused folder and put unused articles
     def change_section_layout(grid_key, options={})
-      return if @grid_key == grid_key
-      return unless GRID_PATTERNS[grid_key]
+      if @grid_key == grid_key
+        puts "new pattern is same as the old one!!!"
+        return
+      end 
+      unless GRID_PATTERNS[grid_key]
+        puts "There is no grid_key as #{grid_key}"
+        return
+      end
       @grid_key = grid_key
       @has_heading = @grid_key.split("/")[0] =~/H$/ ? true : false
       @grid_map = GRID_PATTERNS[@grid_key]
-      update_story_layout
-    end
-    
-    def self.change_section_layout(section_path, grid_key)
-      section_config = section_path + "/config.yml"
-      yml = YAML::load(File.open(section_config, 'r'){|f| f.read})
-      return if yml['grid_key'] == grid_key # no need to change, they are same
 
-      @has_heading = grid_key.split("/")[0]=~/H$/ ? true : false
-      old_grid_map = GRID_PATTERNS[yml['grid_key']]
-      old_number_of_storyies = old_grid_map.length      
-      yml['grid_key'] =grid_key
-      new_grid_map = GRID_PATTERNS[grid_key]      
-      new_number_of_storyies = new_grid_map.length      
-      if new_number_of_storyies == old_number_of_storyies
-      elsif new_number_of_storyies > old_number_of_storyies
-        # add more stories
-        new_grid_map.each_with_index do |grid_frame, i|
-          story_file = section_path + "/#{i + 1}.story.md"
-          if File.exist?(story_file)
-            # change metadata
-            Story.update_story_meta_data(story_file, grid_frame)
-          else
-            # create new story.md
-            if @has_heading && i == 0
-              next
-            elsif @has_heading && i >= 0
-              path = @section_path + "/#{i}.story.md"
-            elsif !@has_heading
-              path = @section_path + "/#{i + 1}.story.md"
-            end
-            sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @grid_frame %>", @grid_frame.to_s)
-            if @has_heading
-              sample = sample.gsub("<%= @story_index %>", (i).to_s)
-            else
-              sample = sample.gsub("<%= @story_index %>", (i+1).to_s)
-            end
-            sample = sample.gsub("<%= @grid_width %>", grid_width.to_s)
-            sample = sample.gsub("<%= @grid_height %>", grid_height.to_s)
-            File.open(path, 'w'){|f| f.write sample}
-          end  
+      # update config 
+      section_config_path = @section_path + "/config.yml"
+      section_config = make_section_config
+      File.open(section_config_path, 'w'){|f| f.write section_config.to_yaml}
+      
+      @number_of_article.times do |i|
+        new_metadata = {}
+        new_metadata['has_heading'] = @has_heading
+        if @has_heading
+          new_metadata['grid_frame'] = @grid_map[i + 1].to_s
+        else
+          new_metadata['grid_frame'] = @grid_map[i + 1].to_s
         end
-      else
-        # hide excess stories into draft folder
-        
+        new_metadata['grid_size'] = [@grid_width, @grid_height].to_s
+        story_path =  @section_path + "/#{i + 1}.story.md"
+        if File.exist?(story_path)
+          Story.update_metadata(story_path, new_metadata)
+        else
+          # Need to create more story for new pattern
+          sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @grid_frame %>", @grid_frame.to_s)
+          sample = sample.gsub("<%= @grid_width %>", @grid_width.to_s)
+          sample = sample.gsub("<%= @grid_height %>", @grid_height.to_s)
+          sample = sample.gsub("<%= @story_index %>", (story_index + 1).to_s)
+          File.open(story_path, 'w'){|f| f.write sample}
+        end
       end
     end
           	
@@ -339,7 +318,7 @@ module RLayout
       sample = sample.gsub("<%= @story_index %>", (story_index + 1).to_s)
       File.open(story_path, 'w'){|f| f.write sample}
     end
-
+        
     def create
       system("mkdir -p #{@section_path}") unless File.exist?(@section_path)
       copy_heading_pdf if @has_heading

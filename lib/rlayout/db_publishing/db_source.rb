@@ -74,7 +74,7 @@ module RLayout
       Story.new(story_hash)
     end
     
-    def save_stroy(path)
+    def save_story(path)
       unless path =~/.yml$/
         path += ".yml"
         system("mkdir -p #{File.dirname(path)} ") unless File.exists?(File.dirname(path))
