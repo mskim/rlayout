@@ -1,5 +1,20 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'create Newspaper' do
+  before do
+    @newspaper = Newspaper.new("OurTimes")
+  end
+
+  it ' should create Newspaper' do
+    @newspaper.must_be_kind_of Newspaper
+  end
+  
+  it 'should create new issue' do
+    @newspaper.create_new_issue(:issue_date =>"2015-4-18")
+  end
+end
+
+__END__
 
 
 describe 'change section layout' do
@@ -13,7 +28,6 @@ describe 'change section layout' do
   end
 end
 
-__END__
 
 describe 'update NewsArticle metadata' do
   before do
@@ -27,19 +41,7 @@ describe 'update NewsArticle metadata' do
   
 end
 
-describe 'create Newspaper' do
-  before do
-    @newspaper = Newspaper.new("OurTimes")
-  end
 
-  it ' should create Newspaper' do
-    @newspaper.must_be_kind_of Newspaper
-  end
-  
-  it 'should create new issue' do
-    @newspaper.create_new_issue(:issue_date =>"2015-4-16")
-  end
-end
 
 
 describe 'create sample news_page with heading' do

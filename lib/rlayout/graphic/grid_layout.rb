@@ -111,20 +111,126 @@ NEW_SECTION_DEFAULTS = {
   :bottom_margin=> 50,
 }
 
-__END__
 module RLayout
+  class Frame
+    attr_accessor :frame, :color, :tag, :kind
+    
+    def initialize(frame, options={})
+      @frame = frame
+      @color = options.fetch(:color, 'white')
+      @tag   = options[:tag] if options[:tag]
+      @kind  = options[:kind] if options[:kind]
+      self
+    end
+    
+    def x
+      @frame[0]
+    end
+    
+    def y
+      @frame[1]
+    end
+    
+    def width
+      @frame[2]
+    end
+    
+    def height
+      @frame[3]
+    end
+    
+    def to_svg
+      "<rect x=\"#{frame[0]*grid_width}\" y=\"#{frame[1]*grid_height}\" width=\"#{frame[2]*grid_width}\" height=\"#{frame[3]*grid_height}\" stroke=\"red\" stroke-width=\"2\" fill=\"#{color}\" />\n"
+    end
+    
+    def flip_vertically(row_number)
+      original = @frame.dup
+      @frame[1]= row_number - original[3]   
+    end
+    
+    def flip_horizontally(column_number)
+      original = @frame.dup
+      @frame[0]= column_number - original[2]
+    end
+    
+    def flip_both_way(width, height)
+      flip_horizontally(width)
+      flip_vertically(height)
+    end
+  end
   
-	class GridLayout < Container
-	  attr_accessor :grid_key, 
-	  def initialize(grid_key)
-	    boxes = GRID_PATTERNS[grid_key]
+	class GridLayout
+	  attr_accessor :grid_key, :frames, :column_number, :row_number
+	  def initialize(grid_key, options={})
+	    @grid_key       = grid_key
+	    @patterns       = options.fetch(:frames, GRID_PATTERNS[@grid_key])
+	    @frames         = @patterns.map {|p| Frame.new(p)}
+	    @column_number  = grid_key.split("/")[0].split("x")[0].to_i
+	    @row_number     = grid_key.split("/")[0].split("x")[1].gsub("H","").to_i
 	    self
 	  end
-
-    def to_html
+    
+    def has_heading?
+      grid_key.split("/")[0]=~/H$/ ? true : false
+    end
+    
+      def to_svg
+        svg_sting =""
+        frames.each do |frame|
+          svg_sting += frame.to_svg
+        end
+        s=<<EOF
+<svg width="#{width}" height="#{height}">
+  <rect x="10" y="10" width="80%" height="90%" stroke="black" stroke-width="1" fill="white" />
+  #{svg_sting}
+</svg>
+EOF
+        s
+      end    
+    def save_html(path)
       
     end
-
+    
+    # check if two arrays of frames are virtually equal,  
+    def self.has_equal_frames?(first, second)
+      first.each do |frame|
+        return false unless second.include?(frame)
+      end
+      true
+    end
+    
+    # tells whether it has hole 
+    def has_hole?
+      
+    end
+    
+    def sort_frames_by_y_and_x
+      
+    end
+    
+    def flip_vertically
+      height = @row_number
+      if has_heading?
+        heading     = copyed.shift 
+        height -= 1
+      end
+      @frames.map do |frame|
+        frame.flip_vertically(height)
+      end
+      heading = @frames.unshift(heading) if has_heading?
+    end
+    
+    def flip_horizontally 
+      @frames.map do |frame|
+        frame.flip_horizontally(@column_number)
+      end
+    end
+    
+    def flip_both_way
+      flip_hozinotally
+      flip_vertically
+    end
 	end
 
 end
+

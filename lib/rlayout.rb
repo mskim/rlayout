@@ -18,7 +18,6 @@ else
   require 'yaml'
 
   require File.dirname(__FILE__) + '/rlayout/utility'
-  require File.dirname(__FILE__) + '/rlayout/graphic/grid_layout'
   require File.dirname(__FILE__) + '/rlayout/graphic/fill'
   require File.dirname(__FILE__) + '/rlayout/graphic/image'
   require File.dirname(__FILE__) + '/rlayout/graphic/layout'
@@ -40,6 +39,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
   require File.dirname(__FILE__) + '/rlayout/container/table'
   require File.dirname(__FILE__) + '/rlayout/container/text_form'
+
+  require File.dirname(__FILE__) + '/rlayout/graphic/grid_layout'
 
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
