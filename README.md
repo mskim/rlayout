@@ -20,12 +20,20 @@ TODO List
 	- modify kramdown into r_kramdown
 	- use Asciidotor
 
+2015 4 16
+	1. Add Sojo layout script
+	1. remake grid_key pattern 7x12/5, 7x12/H/5, 7x12/HA/5
+	1. Add image to story, add auto fit with image resizing, min, max
+	1. add filtering to story \'
+	
 2015 4 13
 	1. Newsman integration
 	1. Dropbox integration
 	1. change_section_layout
 	1. change section grid_layout 
 	1. support custom grid_key file
+	1. synthesize grid_layouts
+	1. 7x11, 7x6, 6x11, 6x6
 	  
 2015 4 11
 	1. grid_key with head notation 7x12H/4, 7x12/5

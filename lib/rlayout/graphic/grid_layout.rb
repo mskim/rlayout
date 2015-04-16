@@ -76,15 +76,15 @@ GRID_PATTERNS = {"3x3/5"=>
    [4, 7, 3, 4],
    [0, 0, 4, 3],
    [4, 0, 3, 4]],
- "7x12H/4"=>
+ "7x12/H/4"=>
    [[0, 0, 7, 1], [0, 7, 7, 5], [4, 1, 3, 4], [0, 1, 4, 4], [0, 5, 7, 2]],
  "7x12/4"=>
    [[0, 7, 7, 5], [4, 1, 3, 4], [0, 1, 4, 4], [0, 5, 7, 2]],
- "7x12H/5"=>
+ "7x12/H/5"=>
    [[0, 0, 7, 1], [4, 1, 3, 4], [0, 1, 4, 3], [0, 4, 4, 5], [4, 5, 3, 4], [0, 9, 7, 3]],
  "7x12/5"=>
    [[4, 3, 3, 4], [0, 3, 4, 3], [0, 6, 4, 5], [4, 7, 3, 4], [0, 0, 7, 3]],
- "7x12H/6"=>
+ "7x12/H/6"=>
    [[0, 0, 7, 1], [0, 7, 7, 5], [4, 1, 3, 4], [0, 1, 4, 2], [0, 3, 4, 2], [0, 5, 4, 2],[4, 5, 3, 2]],
  "7x12/6"=>
    [[0, 7, 7, 5], [4, 1, 3, 4], [0, 1, 4, 2], [0, 3, 4, 2], [0, 5, 4, 2],[4, 5, 3, 2]],
@@ -166,12 +166,12 @@ module RLayout
 	    @patterns       = options.fetch(:frames, GRID_PATTERNS[@grid_key])
 	    @frames         = @patterns.map {|p| Frame.new(p)}
 	    @column_number  = grid_key.split("/")[0].split("x")[0].to_i
-	    @row_number     = grid_key.split("/")[0].split("x")[1].gsub("H","").to_i
+	    @row_number     = grid_key.split("/")[0].split("x")[1].to_i
 	    self
 	  end
     
     def has_heading?
-      grid_key.split("/")[0]=~/H$/ ? true : false
+      grid_key.split("/")[1]=~/^H/ ? true : false
     end
     
       def to_svg

@@ -186,13 +186,13 @@ module RLayout
       @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
       @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
       @grid_key       = "#{@grid_base.join("x")}"
-      @grid_key      += "H" if @has_heading
+      @grid_key      += "/H" if @has_heading
       @grid_key      += "/#{@number_of_article}"
       @grid_map       = GRID_PATTERNS[@grid_key]
       if options['grid_key']
         @grid_key     = options['grid_key'] 
         @grid_map     = GRID_PATTERNS["#{@grid_key}"]
-        @has_heading = grid_key.split("/")[0]=~/H$/ ? true : false
+        @has_heading = grid_key.split("/")[1]=~/^H/ ? true : false
         @grid_map = GRID_PATTERNS[@grid_key]
         @number_of_article = @grid_map.length      
       end      

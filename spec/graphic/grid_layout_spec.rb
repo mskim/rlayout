@@ -36,3 +36,12 @@ describe 'should detect for equl frames content' do
   end
   
 end
+
+describe 'should detect for has_heading? frames content' do
+  before do
+    @g = RLayout::GridLayout.new("7x11/H/5", :frames=>[[0,0,1,1], [1,0,1,1]])
+  end
+  it 'should detect has_heading?' do
+    @g.has_heading?.must_equal true
+  end
+end

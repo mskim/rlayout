@@ -17,8 +17,9 @@
 1. size
 1. grid_base
 1. grid_frame [grid_x, grid_y, grid_width, grid_height]
-1. grid_size[143, 120]
 1. frame [x,y, width, height]
+1. heading_column
+1. grid_size[143, 120]
 1. gutter
 
 ## Grid
