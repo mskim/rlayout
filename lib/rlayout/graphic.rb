@@ -6,8 +6,8 @@ module RLayout
     attr_accessor :x, :y, :width, :height
     attr_accessor :graphics, :fixtures, :floats
     attr_accessor :fill_type, :fill_color, :fill_other_color
-    attr_accessor :line_type, :line_color, :line_width, :line_dash
-    attr_accessor :shape, :shape_bezier
+    attr_accessor :line_type, :line_color, :line_width, :line_dash, :line_drawing_sides
+    attr_accessor :shape_type, :shape_bezier, :shape_corners, :shape_corne_type, :shape_sides, :shape_side_type
     attr_accessor :grid, :grid_frame, :gutter, :v_gutter, :grid_cells, :show_grid
     attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
@@ -17,7 +17,7 @@ module RLayout
     attr_accessor :text_layout_manager
     attr_accessor :image_object, :image_path, :image_frame, :image_fit_type, :image_caption
     attr_accessor :grid_frame
-    attr_accessor :non_overlapping_rect, :usable_rects
+    attr_accessor :non_overlapping_rect
 
     # TODO
     # attr_accessor :fill_record, :line_record, :shape_record, :text_record, :image_record, :grid_record, :layout_record
@@ -278,11 +278,6 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     def adjust_size_with_text_height_change(text_width, text_height)
       @width = text_width + @left_inset + @right_inset
       @height = text_height + @top_inset + @bottom_inset
-    end
-
-    #TODO
-    def usable_rects
-
     end
 
     # non_overlapping_rect is a actual layout frame that is not overlapping with flaots

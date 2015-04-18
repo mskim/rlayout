@@ -4,8 +4,8 @@ module RLayout
   class NewsArticle < Page
     attr_accessor :story_path, :paragraphs #:heading, :images
     attr_accessor :output_path
-    def initialize(parent_graphic, options={})
 
+    def initialize(parent_graphic, options={})
       @output_path = options[:output_path] if options[:output_path]
       options[:chapter_kind]  = "news_article"
       options[:x]             = options.fetch(:x, 0)
@@ -39,7 +39,7 @@ module RLayout
       options[:bottom_margin] = 5 unless options[:bottom_margin]
 
       if options[:story_path]
-        @story_path = options[:story_path]
+        @story_path   = options[:story_path]
         options_from_reading_story_file = read_story
         options.merge!(options_from_reading_story_file)
       elsif options[:story]

@@ -20,6 +20,12 @@ TODO List
 	- modify kramdown into r_kramdown
 	- use Asciidotor
 
+2015 4 17
+	1. Graphic drawing
+		1. fill_type, 
+		1. line_dash, line_type, line_drawing_sides
+		1. shape clipping path, shape corner
+		
 2015 4 16
 	1. Add Sojo layout script
 	1. remake grid_key pattern 7x12/5, 7x12/H/5, 7x12/HA/5

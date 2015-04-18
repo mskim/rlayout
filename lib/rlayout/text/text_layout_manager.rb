@@ -219,20 +219,19 @@ module RLayout
       else
         @text_markup = 'p'
       end
-      @text_string      = options.fetch(:text_string, "")
-      @text_color       = options.fetch(:text_color, "black")
-      @text_font        = options.fetch(:text_font, "Times")
-      @text_size        = options.fetch(:text_size, 16)
-      @text_line_spacing= options.fetch(:text_line_spacing, @text_size*1.2)
-      @text_fit_type    = options.fetch(:text_fit_type, 0)
-      @text_alignment   = options.fetch(:text_alignment, "center")
-      @text_tracking    = options.fetch(:text_tracking, 0)  if options[:text_tracking ]
-      @text_first_line_head_indent    = options.fetch(:text_first_line_head_indent, 0)
-      @text_head_indent               = options.fetch(:text_head_indent, 0)
-      @text_tail_indent               = options.fetch(:text_tail_indent, 0)
-      @text_paragraph_spacing_before  = options[:text_paragraph_spacing_before] if options[:text_paragraph_spacing_before]
-      @text_paragraph_spacing         = options[:text_paragraph_spacing]        if options[:text_paragraph_spacing]
-      att_string        =NSMutableAttributedString.alloc.initWithString(@text_string, attributes:make_atts)
+      @text_string                   = options.fetch(:text_color, "black")
+      @text_font                     = options.fetch(:text_font, "Times")
+      @text_size                     = options.fetch(:text_size, 16)
+      @text_line_spacing             = options.fetch(:text_line_spacing, @text_size*1.2)
+      @text_fit_type                 = options.fetch(:text_fit_type, 0)
+      @text_alignment                = options.fetch(:text_alignment, "center")
+      @text_tracking                 = options.fetch(:text_tracking, 0)  if options[:text_tracking ]
+      @text_first_line_head_indent   = options.fetch(:text_first_line_head_indent, 0)
+      @text_head_indent              = options.fetch(:text_head_indent, 0)
+      @text_tail_indent              = options.fetch(:text_tail_indent, 0)
+      @text_paragraph_spacing_before = options[:text_paragraph_spacing_before] if options[:text_paragraph_spacing_before]
+      @text_paragraph_spacing        = options[:text_paragraph_spacing]        if options[:text_paragraph_spacing]
+      att_string                     = NSMutableAttributedString.alloc.initWithString(@text_string, attributes:make_atts)
       att_string
     end
 
