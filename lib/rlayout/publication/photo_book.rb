@@ -1,7 +1,6 @@
 
 # PhotoBook
-# PhotoBook is create with a given path.
-# in the path, we have series of photos.
+# PhotoBook is create with a given project path, which contains series of photos and folders.
 # 001.jpg, 002.jpg, .... and so on.
 # 001 prefix indicates that this photo belongs to page_1
 # 002 prefix indicates that this photo belongs to page_2
@@ -10,19 +9,18 @@
 # PhotoBook has multiple PhotoSpreads
 
 # PhotoSpread
-# If we have single photo per page, photo is placed in Image
+# If we have single photo per page, photo is placed in Image, whick take up the whole page.
 # Image is created on each side of page, left and right
 # Image has bleeding and its fitting mode is set to virtical fit.
 
 # How do we put more than single image to a page?
-# We can place 001_1.jpg,  001_2.jog, 001_3.jpg.
+# We can put number folled by _1.jpg, like 001_1.jpg,  001_2.jog, 001_3.jpg.
 # This will place all three images in the page 001
-# Default 3 images pattern will be applied for this page.
+# And 3 images pattern will be applied for this page.
 
 # How do we apply specific layout design to PhotoSpread?
 # We can place 001_i3_1.template which will lookup tempate of category i3 and option 1 from template library.
-
-# or we can even place 001.layout along with images for custom design layout code.
+# or we can provide 001.layout along with images for custom design layout code.
 # layout file contains pgscript for that page layout as following example.
 
 # { klass: Container,
@@ -117,7 +115,7 @@ module RLayout
         # or image folder in case we have multipe page
 	      @image_files << File.basename(image_file)
       end
-	  end
+    end
 
 	  def layout_photos
 	    @spreads    = []

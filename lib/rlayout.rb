@@ -16,7 +16,7 @@ else
   end
   require 'strscan'
   require 'yaml'
-
+  require "rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
   require File.dirname(__FILE__) + '/rlayout/graphic/fill'
   require File.dirname(__FILE__) + '/rlayout/graphic/image'
@@ -24,6 +24,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/graphic/line'
   require File.dirname(__FILE__) + '/rlayout/graphic/node_tree'
   require File.dirname(__FILE__) + '/rlayout/graphic/text'
+  require File.dirname(__FILE__) + '/rlayout/graphic/grid_layout'
   require File.dirname(__FILE__) + '/rlayout/graphic'
 
   if RUBY_ENGINE == "macruby"
@@ -39,8 +40,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
   require File.dirname(__FILE__) + '/rlayout/container/table'
   require File.dirname(__FILE__) + '/rlayout/container/text_form'
-
-  require File.dirname(__FILE__) + '/rlayout/graphic/grid_layout'
 
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
