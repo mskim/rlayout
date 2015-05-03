@@ -62,9 +62,10 @@ module RLayout
     end
   end
   
-  LineStruct      = Struct.new(:x1, :y1, :x2, :y2) do
+  LineStruct      = Struct.new(:x1, :y1, :x2, :y2, :h_direction, :v_direction) do
     def to_svg
-      "<line x1=\"#{x1}\" y1=\"#{y1}\" x2=\"#{x2}\" y2=\"#{y2}\" replace_this_with_style />"
+      mid_y = y1 + (y2 - y1)/2
+      "<line x1=\"#{x1}\" y1=\"#{mid_y}\" x2=\"#{x2}\" y2=\"#{mid_y}\" replace_this_with_style />"
     end
   end
   

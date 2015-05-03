@@ -8,37 +8,35 @@ describe 'testing container with graphics' do
       Circle.new(@g5, :fill_color=> 'lightGray', :line_width=> 5)
       RoundRect.new(@g5, :fill_color=> 'blue', :line_width=> 5)
       Circle.new(@g5, :fill_color=> 'red', :line_width=> 5)
-    @g3 = RoundRect.new(@container, :fill_color=> 'lightGray', :line_color=>'green', :line_width=> 2)
     @g1 = Rectangle.new(@container, :fill_color=> 'red')
     @g2 = Circle.new(@container, :fill_color=> 'yellow', :line_width=> 20)
     @g3 = RoundRect.new(@container, :fill_color=> 'blue')
-      # @g3= Graphic.new(@g1, :fill_color=> 'yellow', :is_float=> true)
-      # @g4= Graphic.new(@g1, :fill_color=> 'black', :is_float=> true)
-      
     @container.relayout!
   end
-  
-  # it 'should add graphics' do
-  #   @container.graphics.length.must_equal 2
-  #   @container.graphics.length.must_equal 2
-  # end
-  # 
-  # it 'added graphics should have self as parent' do
-  #   @container.graphics[0].parent_graphic.must_equal @container
-  #   @container.graphics[1].parent_graphic.must_equal @container
-  # end
-  
+    
   it 'should save svg' do
-    @svg_path = File.dirname(__FILE__) + "/output/container_float_test.svg"
+    @svg_path = File.dirname(__FILE__) + "/output/container_test.svg"
     @container.save_svg(@svg_path)
     system("open #{@svg_path}")
   end
-  # it 'should save pdf' do
-  #   @pdf_path = File.dirname(__FILE__) + "/output/container_float_test.pdf"
-  #   @container.save_pdf(@pdf_path)
-  #   system("open #{@pdf_path}")
-  # end
 
+end
+
+describe 'testing container with line' do
+  before do
+    @container = Container.new(nil, :x=>200, :y=>50, :width=>300, :height=>500)
+    @g1 = Line.new(@container, :line_color=> 'red', :line_width=> 20)
+    @g2 = Line.new(@container, :line_color=> 'yellow', :line_width=> 10)
+    @g3 = Line.new(@container, :line_color=> 'black', :line_width=> 5)
+    @g4 = Line.new(@container, :line_color=> 'green', :line_width=> 1)
+    @container.relayout!
+  end
+    
+  it 'should save svg' do
+    @svg_path = File.dirname(__FILE__) + "/output/container_with_line_test.svg"
+    @container.save_svg(@svg_path)
+    system("open #{@svg_path}")
+  end
 
 end
 

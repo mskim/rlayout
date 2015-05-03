@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="Rectangle" x="0" y="0" width="600" height="800">
-<rect x="0" y="0" width="186" height="800" fill="red"></rect>
-<rect x="206" y="0" width="186" height="800" fill="blue"></rect>
-<circle cx="505" cy="400" r="93" fill="green"></circle>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500px" height="550px">
+<rect x="200" y="50" width="300" height="500" style="fill:white;stroke:black;"></rect>
+<g transform="translate(200,50)">
+<rect x="0" y="0" width="300" height="125" style="fill:white;stroke:black;"></rect>
+<g transform="translate(0,0)">
+<rect x="0" y="0" width="75" height="125" rx="7" ry="7" style="fill:yellow;stroke:black;stroke-width:5" /><circle cx="112" cy="62" r="37" style="fill:lightGray;stroke:black;stroke-width:5" /><rect x="150" y="0" width="75" height="125" rx="7" ry="7" style="fill:blue;stroke:black;stroke-width:5" /><circle cx="262" cy="62" r="37" style="fill:red;stroke:black;stroke-width:5" /></g>
+<rect x="0" y="125" width="300" height="125" style="fill:red;stroke:black;"></rect><circle cx="150" cy="312" r="62" style="fill:yellow;stroke:black;stroke-width:20" /><rect x="0" y="375" width="300" height="125" rx="12" ry="12" style="fill:blue;stroke:black;" /></g>
 </svg>

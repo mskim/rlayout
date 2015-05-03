@@ -690,7 +690,7 @@ module RLayout
       self
     end
     def update_shape
-      @shape = RoundRectStruct.new(@x, @y, @width, @height, @width/10, @height/10)
+      @shape = LineStruct.new(@x, @y, @x + @width, @y + @height)
     end
     
   end
