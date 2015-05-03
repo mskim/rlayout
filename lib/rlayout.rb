@@ -10,29 +10,20 @@ if defined?(Motion::Project::Config)
   # raise "This file must be required within a RubyMotion project Rakefile."
 
 else
-  if RUBY_ENGINE == "macruby"
-    framework 'cocoa'
-    framework 'Quartz'
-  end
   require 'strscan'
   require 'yaml'
   require "rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
+  require File.dirname(__FILE__) + '/rlayout/graphic/graphic_struct'
   require File.dirname(__FILE__) + '/rlayout/graphic/fill'
   require File.dirname(__FILE__) + '/rlayout/graphic/image'
   require File.dirname(__FILE__) + '/rlayout/graphic/layout'
-  require File.dirname(__FILE__) + '/rlayout/graphic/line'
+  require File.dirname(__FILE__) + '/rlayout/graphic/stroke'
   require File.dirname(__FILE__) + '/rlayout/graphic/node_tree'
   require File.dirname(__FILE__) + '/rlayout/graphic/text'
   require File.dirname(__FILE__) + '/rlayout/graphic/grid_layout'
   require File.dirname(__FILE__) + '/rlayout/graphic'
-
-  if RUBY_ENGINE == "macruby"
-    require File.dirname(__FILE__) + '/rlayout/view/graphic_view_mac'
-    require File.dirname(__FILE__) + '/rlayout/view/document_view_mac'
-  end
   require File.dirname(__FILE__) + '/rlayout/view/graphic_view_svg'
-
   require File.dirname(__FILE__) + '/rlayout/container'
   require File.dirname(__FILE__) + '/rlayout/container/auto_layout'
   require File.dirname(__FILE__) + '/rlayout/container/float'
@@ -40,7 +31,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
   require File.dirname(__FILE__) + '/rlayout/container/table'
   require File.dirname(__FILE__) + '/rlayout/container/text_form'
-
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
   require File.dirname(__FILE__) + '/rlayout/text/style_service'
@@ -77,6 +67,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/mart'
   require File.dirname(__FILE__) + '/rlayout/publication/newspaper'
   require File.dirname(__FILE__) + '/rlayout/publication/photo_book'
+  require File.dirname(__FILE__) + '/rlayout/publication/calendar'
 
 end
 

@@ -1,26 +1,35 @@
-# unless defined?(Motion::Project::Config)
-#   raise "This file must be required within a RubyMotion project Rakefile."
-# end
-# 
-# Motion::Project::App.setup do |app|
-#   Dir.glob(File.join(File.dirname(__FILE__), 'lib/**/*.rb')).each do |file|
-#     app.files.unshift(file)
-#   end
-# end
+
+
+require 'rake/testtask'
+Rake::TestTask.new do |t|
+    t.libs << "test"
+    t.test_files = FileList['spec/**/*_spec.rb']
+    t.verbose = true
+end
+
+# to run all test, 'rake test'
+# to run all one, rake test TEST=spec/graphic_spec
+
+# rake test                           # run tests normally
+# rake test TEST=just_one_file.rb     # run just one test file.
+# rake test TESTOPTS="-v"             # run in verbose mode
+# rake test TESTOPTS="--runner=fox"   # use the fox test runner
+
+
 
 # put above code in rlayout.rb
 
-desc 'run all test specs'
-task :test_all do
-  Dir.glob(File.join(File.dirname(__FILE__), 'spec/**/*_spec.rb')).each do |file|
-   puts  `macruby #{file}`
-  end
-end
-
-desc 'list all test specs'
-task :list_all do
-  Dir.glob(File.join(File.dirname(__FILE__), 'spec/**/*_spec.rb')).each do |file|
-   puts file
-  end
-end
-
+# desc 'run all test specs'
+# task :test_all do
+#   Dir.glob(File.join(File.dirname(__FILE__), 'spec/**/*_spec.rb')).each do |file|
+#    puts  `ruby #{file}`
+#   end
+# end
+# 
+# desc 'list all test specs'
+# task :list_all do
+#   Dir.glob(File.join(File.dirname(__FILE__), 'spec/**/*_spec.rb')).each do |file|
+#    puts file
+#   end
+# end
+# 

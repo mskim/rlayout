@@ -18,30 +18,32 @@ module RLayout
     attr_accessor :image_object, :image_path, :image_frame, :image_fit_type, :image_caption
     attr_accessor :grid_frame
     attr_accessor :non_overlapping_rect
+    attr_accessor :fill, :stroke, :shape, :text_record, :image_record
 
     # TODO
     # attr_accessor :fill_record, :line_record, :shape_record, :text_record, :image_record, :grid_record, :layout_record
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
-      if options[:is_float]
-        @parent_graphic.floats << self if @parent_graphic.floats && !@parent_graphic.floats.include?(self)
-        init_float(options)
-      elsif options[:is_fixture]
-        #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics
-        @parent_graphic.fixtures << self if @parent_graphic.fixtures && !@parent_graphic.fixtures.include?(self)
-      elsif  @parent_graphic && @parent_graphic.kind_of?(RLayout::Document)
-        @parent_graphic.pages << self  if !@parent_graphic.pages.include?(self)
-      elsif  @parent_graphic && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
-        @parent_graphic.graphics << self
+      if parent_graphic
+        if options[:is_float]
+          @parent_graphic.floats << self if !@parent_graphic.floats.include?(self)
+          init_float(options)
+        elsif options[:is_fixture]
+          #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics
+          @parent_graphic.fixtures << self if !@parent_graphic.fixtures.include?(self)
+        elsif  @parent_graphic && @parent_graphic.kind_of?(RLayout::Document)
+          @parent_graphic.pages << self  if !@parent_graphic.pages.include?(self)
+        elsif !@parent_graphic.graphics.include?(self)
+          @parent_graphic.graphics << self
+        end
       end
-      @klass            = options.fetch(:klass, graphic_defaults[:klass])
+      @klass = options.fetch(:klass, graphic_defaults[:klass])
       @x                = options.fetch(:x, graphic_defaults[:x])
       @y                = options.fetch(:y, graphic_defaults[:y])
       @width            = options.fetch(:width, graphic_defaults[:width])
       @height           = options.fetch(:height, graphic_defaults[:height])
-      @shape            = options.fetch(:shape, graphic_defaults[:shape])
+      @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))
       @tag              = options[:tag]
-      @shape_bezier     = options[:shape_bezier]
       @auto_save        = options[:auto_save]
       init_layout(options)
       # grid
@@ -49,7 +51,7 @@ module RLayout
         set_frame_in_parent_grid(options[:grid_frame]) if options[:grid_frame] && @parent_graphic.grid_base
       end
       init_fill(options)
-      init_line(options)
+      init_stroke(options)
       init_text(options)
       init_image(options)
       self
@@ -69,7 +71,11 @@ module RLayout
         shape: 0,
       }
     end
-
+    
+    def update_shape
+      @shape = RectStruct.new(@x,@y,@width,@height)
+    end
+    
     def current_style
       if @parent_graphic && @parent_graphic.current_style
         return @parent_graphic.current_style
@@ -133,14 +139,11 @@ module RLayout
       end
       h
     end
-COLOR_NAMES =%w[black blue brown clear cyan darkGray gray green lightGray magenta orange red white yellow white]
-KLASS_NAMES =%w[Rectangle Circle RoundRect Text Image]
-TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout", "PageScript"]
-IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
-    def self.ramdom_text
+    def self.random_text
       TEXT_STRING_SAMPLES.sample
     end
-    def ramdom_text
+    
+    def random_text
       TEXT_STRING_SAMPLES.sample
     end
 
@@ -243,6 +246,8 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
         Rectangle.new(parent_graphic, options)
       when "Circle"
         Circle.new(parent_graphic, options)
+      when "Ellipse"
+        Ellipse.new(parent_graphic, options)
       when "RoundRect"
         RoundRect.new(parent_graphic, options)
       when "Text"
@@ -402,20 +407,20 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
         end
 
         if @corner_size == 0 # "small" || @corner_size == '소'
-          radious = smaller_side*0.1
+          radius = smaller_side*0.1
         elsif @corner_size == 1 # "medium" || @corner_size == '중'
-          radious = smaller_side*0.2
+          radius = smaller_side*0.2
         elsif @corner_size == 2 #{}"large" || @corner_size == '대'
-          radious = smaller_side*0.3
+          radius = smaller_side*0.3
         else
-          radious = smaller_side*0.1
+          radius = smaller_side*0.1
         end
 
         if @inverted_corner
-          path = path.appendBezierPathWithRoundedRect(r, xRadius:radious ,yRadius:radious)
+          path = path.appendBezierPathWithRoundedRect(r, xRadius:radius ,yRadius:radius)
         else
           # do inverted corner
-          path = path.appendBezierPathWithRoundedRect(r, xRadius:radious ,yRadius:radious)
+          path = path.appendBezierPathWithRoundedRect(r, xRadius:radius ,yRadius:radius)
         end
       when 2 #{}"circle", '원'
         path = NSBezierPath.bezierPathWithOvalInRect(r)
@@ -597,7 +602,7 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
       @klass = "Text"
       self
     end
-
+    
     def text_string
       return nil unless @text_layout_manager
       @text_layout_manager.att_string.string
@@ -616,7 +621,6 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     def initialize(parent_graphic, options={})
       super
       @klass = "Rectangle"
-      @shape = 0
       self
     end
   end
@@ -625,18 +629,40 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     def initialize(parent_graphic, options={})
       super
       @klass        = "Image"
-      @image_path   = options.fetch(:image_path, "")
+      if options[:image_path]
+        @image_path   = options[:image_path]
+        @image_record = ImageStruct.new(options[:image_path])
+      elsif options[:image_record]
+        @image_record = ImageStruct.new(*options[:image_record])
+      end
       self
     end
+
   end
 
   class Circle < Graphic
     def initialize(parent_graphic, options={})
       super
       @klass = "Circle"
-      @shape = 2
-
+      update_shape
       self
+    end
+    
+    def update_shape
+      shorter = @width < @height ? @width : @height
+      @shape = CircleStruct.new(@x + @width/2, @y + @height/2, shorter/2)
+    end
+  end
+  
+  class Ellipse < Graphic
+    def initialize(parent_graphic, options={})
+      super
+      @klass = "Ellipse"
+      update_shape
+      self
+    end
+    def update_shape
+      @shape = EllipseStruct.new((@x+@width)/2, (@y + @height)/2, @width/2, @height/2)
     end
 
   end
@@ -645,10 +671,27 @@ IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
     def initialize(parent_graphic, options={})
       super
       @klass = "RoundRect"
-      @shape = 1
-
+      update_shape
       self
     end
+    def update_shape
+      shorter = @width < @height ? @width : @height
+      r= shorter/10
+      @shape = RoundRectStruct.new(@x, @y, @width, @height, r, r)
+    end
 
+  end
+  
+  class Line < Graphic
+    def initialize(parent_graphic, options={})
+      super
+      @klass = "Line"
+      update_shape
+      self
+    end
+    def update_shape
+      @shape = RoundRectStruct.new(@x, @y, @width, @height, @width/10, @height/10)
+    end
+    
   end
 end

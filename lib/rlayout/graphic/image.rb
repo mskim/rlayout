@@ -43,6 +43,8 @@ IMAGE_FIT_TYPE_REPEAT_MUTIPLE = 5
 module RLayout
   class Graphic
     def init_image(options)
+      @image_record  = options.fetch(:image_record,nil)
+      
       return unless options[:image_path]
       @image_path       = options[:image_path]
       # @image_frame      = options.fetch(:image_frame, image_defaults[:image_frame])
@@ -118,8 +120,8 @@ module RLayout
 
     def fit_original
       @image_frame.size = @image_object.size
-      mid_x = NSMidX(@image_frame)
-      mid_y = NSMidY(@image_frame)
+      # mid_x = NSMidX(@image_frame)
+      # mid_y = NSMidY(@image_frame)
       if frame
         @source_frame = graphic_rect.dup
       else

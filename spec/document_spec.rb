@@ -1,5 +1,22 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+describe 'shuld save rlayout docment' do
+  
+  
+end
+
+describe 'open document' do
+  before do
+    
+  end
+  
+  it 'should open hash' do
+    h = YAML::load_file(@path)
+    puts h.keys
+    first_page = h[:pages].first
+    puts first_page.keys
+  end
+end
 
 describe 'save multiple page document' do
   before do
@@ -11,9 +28,11 @@ describe 'save multiple page document' do
     @pdf_path = File.dirname(__FILE__) + "/output/document_long_page_test.pdf"
     
   end
+  
   it 'should have 50 pages' do
     @doc.pages.length.must_equal 20
   end
+  
   it 'should save 50 pages' do
     @doc.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true

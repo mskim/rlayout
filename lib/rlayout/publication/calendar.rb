@@ -1,12 +1,8 @@
-require File.dirname(__FILE__) + '/../rlayout_document.rb'
-
-require 'yaml'
 
 # 2014 1 2
-# There is a unix command called "cal", "ncal" that does lots of stuff that I was doing.
+# I should use "cal", "ncal" that does lots of stuff that I was doing.
 # Use cal, instaed of re-inventing the wheel.
 # 
-
 # There are parts that make up the calendar
 # Monthly Calendar
 #   monnth_title, month, month_in_english
@@ -14,8 +10,8 @@ require 'yaml'
 # Company Box 
 #   Compnay Name, Logo, tel, slogun
 # Picture of the month
-# Previou, current, and next month mini month
-# A Year calendar 
+# Previous, Current, and Next month as mini month
+# A Year calendar at the end with mini month
 
 # Desk Top Calenar with Paired page
 # 0-Cover
@@ -33,6 +29,9 @@ require 'yaml'
 
 # cwday → fixnum
 # Returns the day of calendar week (1-7, Monday is 1).
+
+# Custom Events
+# Nation Holidays
 
 KOREAN_HOLYDAYS = [
   {month: 1, day: 1, name: "New Years Day" },
@@ -129,7 +128,7 @@ module RLayout
     end
   end
   
-  class CalendarDocument < Document
+  class Calendar < Document
     attr_accessor :template, :type, :year, :starting_month, :number_of_months, :pages, :has_cover
     attr_accessor :template_doc, :path, :events_handler, :calendar_page_template
     attr_accessor :events
@@ -298,19 +297,7 @@ module RLayout
       @number_of_days_in_month = days_in_month(@year,@month) 
       @number_of_days_in_prev_month= days_in_month(@year,@month - 1) 
       create_month_calendar_days
-      update_month_container
-      
-      
-      
-      # 
-      # 
-      #   @starting_date_object = starting_date_object
-      #   @year               = @starting_date_object.year
-      #   @month              = @starting_date_object.month
-      #   @month_container    = parent_graphic.month_container      
-        # create_month_calendar_days
-      #   update_month_container
-      
+      update_month_container      
       self
     end
 
@@ -476,149 +463,5 @@ module RLayout
     def six_row?
       (@rows.length - 2) > 5
     end
-
   end
-
-
-end
-
-# __END__
-require 'minitest/autorun'
-
-include RLayout
-describe ".CaledarDocument" do
-  before do
-    @month = MonthCalendar.new(2013, 6)
-  end
-  # it 'should create .MonthCalendar' do
-  #   @month.must_be_kind_of MonthCalendar
-  # end
-  # 
-  # it 'should create 35 days' do
-  #   @month.days.length.must_equal 35
-  # end
-  
-  it 'should have prev month cells' do
-    @month.days[0].current_month.must_equal false
-    @month.days[1].current_month.must_equal false
-    @month.days[2].current_month.must_equal false
-    @month.days[3].current_month.must_equal false
-    @month.days[4].current_month.must_equal false
-    @month.days[5].current_month.must_equal false
-  end
-
-  it 'should respond to cell_at(row,col)' do
-    @month.cell_at(0,0).must_be_kind_of CalendarCell
-    @month.cell_at(0,0).current_month.must_equal false
-    @month.cell_at(1,0).current_month.must_equal true
-  end
-end
-
-describe ".CaledarDocument" do
-  before do
-    # @path = "/Users/mskim/Pictures/Photo_Booth"
-    @path = "/Users/mskim/calendar"
-  end
-  
-  it 'should create CalendarDocument' do
-    @calDoc = CalendarDocument.new(:path=>@path)
-    @calDoc.must_be_kind_of CalendarDocument
-  end
-  # 
-  # it 'should have path' do
-  #   @calDoc = Document.new_calendar(:path=>@path)
-  #   @calDoc.path.must_equal @path
-  # end
-  # 
-  # it 'should create 13 pages' do
-  #   @calDoc = Document.new_calendar(:path=>@path)
-  #   @calDoc.pages.length.must_equal 13
-  # end
-  # 
-  # it 'should save rlayout' do
-  #   @calDoc = Document.new_calendar(:path=>@path)
-  #   @rlayout_path= @path + "/sample_calendar"
-  #   @calDoc.rlayout(@rlayout_path)
-  #   system"open #{@path}"
-  #   
-  # end
-  
-  it 'should save pdf' do
-    @calDoc = CalendarDocument.new(:path=>@path)
-    @pdf_path="/Users/mskim/Development/MacRuby/rlayout/working/test/pdf/calendar.pdf"
-    @rlayout_path="/Users/mskim/Development/MacRuby/rlayout/working/test/pdf/calendar.rlayout"
-    @calDoc.rlayout(@rlayout_path)
-    system"open #{@rlayout_path}"
-  end
-end
-
-# describe ".CaledarPage" do
-#   before do
-#     @calDoc       = Document.new_calendar
-#     @calendar_page_template   = @calDoc.pages.first
-#     @first_date   = @calendar_page_template.date 
-#     @second_page  = @calDoc.pages[1]
-#     @second_date  = @second_page.date 
-#     @last_date    = @calDoc.pages.last.date
-#     
-#   end
-#   
-#   it 'should create CalendarPage' do
-#     @calendar_page_template.must_be_kind_of CalendarPage
-#   end
-# 
-#   it 'should create date object' do
-#     @first_date.must_be_kind_of Date
-#   end
-#   
-#   it 'should create first date object' do
-#     @first_date.mon.must_equal 5
-#   end
-#   
-#   it 'should create second date object' do
-#     @second_date.mon.must_equal 6
-#   end
-#   
-#   it 'should create last date object' do
-#     @last_date.mon.must_equal 4
-#   end
-# end
-# 
-# describe '.Calendar' do
-#   
-#   
-#   
-#   
-# end
-describe ".CalendarEvents" do
-  before do
-    @path = "/Users/mskim/Pictures/Photo_Booth"
-    @events = CalendarEvents.new(@path)
-  end
-  
-  it 'should create .CalendarEvents' do
-    @events.must_be_kind_of CalendarEvents
-  end
-  
-  it 'should save default events' do
-    @path = "/Users/Shared/SoftwareLab/calendar/events"
-    national_path = @path + "/national.yml"
-    @events.save_default_events(@path)
-    assert(File.exists?(national_path))
-  end
-  
-  it 'should return evets 1,1' do
-    e = @events.national_event_on(1,1)
-    e.first[:name].must_equal "New Years Day"
-  end
-  
-  it 'should return events 6,25' do
-    e = @events.national_event_on(6,25)
-    e.first[:name].must_equal "6 25"
-  end
-  
-  # it 'should return personal event 1,29' do
-  #   e = @events.personal_event_on(1,29)
-  #   e.first[:name].must_equal "MinSoo's Birthday"
-  # end
 end

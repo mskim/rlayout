@@ -1,43 +1,179 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
-describe 'save jpg' do
+describe 'create Graphic ' do
   before do
-    @g        = Graphic.new(nil, fill_color: 'red')
-    @jpg_path = File.dirname(__FILE__) + "/output/graphic_jpg_test.jpg"
+    @g = Graphic.new(nil)
   end
-  
-  it 'should save jpg' do
-    @g.save_jpg(@jpg_path)
-    File.exists?(@jpg_path).must_equal true
-    system("open #{@jpg_path}")
+  it 'should create Graphic' do
+    assert @g.klass == "Rectangle"
   end
-  
-  it 'should save pdf with jpg options' do
-    @g        = Graphic.new(nil, fill_color: 'blue')
-    
-    @pdf_path = File.dirname(__FILE__) + "/output/graphic_pdf_n_jpg_test.pdf"
-    @jpg_path = File.dirname(__FILE__) + "/output/graphic_pdf_n_jpg_test.jpg"
-    @g.save_pdf(@pdf_path, jpg: true)
-    File.exists?(@pdf_path).must_equal true
-    File.exists?(@jpg_path).must_equal true
-    system("open #{@pdf_path}")
-    system("open #{@jpg_path}")
+  it 'should create rect shape' do    
+    assert @g.shape.class == RectStruct
   end
-  
-end
-__END__
+  it 'should have fill' do    
+    assert @g.fill.class == FillStruct
+    assert @g.fill.color == 'white'
+  end
+  it 'should have stroke' do    
+    assert @g.stroke.class == StrokeStruct
+    assert @g.stroke.color == 'black'
+    assert @g.stroke.thickness == 0
+  end
+  it 'should not have image_record' do    
+    assert @g.image_record == nil
+  end
+  it 'should not have text_record' do    
+    assert @g.text_record == nil
+  end
 
-describe 'rect intersect' do
-  it 'should not intersect' do
-    r1 = [0, 0, 379.693333333333, 105.0]
-    r2 = [0, 120, 184.846666666666, 8]
-    puts "y intersect:#{intersects_y(r1,r2)}"
-    puts "x intersect:#{intersects_x(r1,r2)}"
-    puts "all intersects:#{intersects_rect(r1,r2)}"
-    intersects_rect(r1,r2).must_equal false
+end
+
+describe 'create Circle' do
+  before do
+    @c = Circle.new(nil, :width=>200, :height=>200)
+  end
+  it 'should create Circle' do
+    assert @c.klass == "Circle"
+  end
+  it 'should create CircleStruct shape' do
+    assert @c.shape.class   == CircleStruct
+    assert @c.shape.r       == 100
+    assert @c.shape.cx      == 100
+    assert @c.shape.cy      == 100
+  end
+  it 'should have fill' do    
+    assert @c.fill.class == FillStruct
+    assert @c.fill.color == 'white'
+  end
+  it 'should have stroke' do    
+    assert @c.stroke.class == StrokeStruct
+    assert @c.stroke.color == 'black'
+    assert @c.stroke.thickness == 0
   end
   
 end
+
+describe 'create Ellipse' do
+  before do
+    @c = Ellipse.new(nil, :width=>100, :height=>200)
+  end
+  it 'should create Ellipse' do
+    assert @c.klass == "Ellipse"
+  end
+  
+  it 'should create EllipseStruct shape' do
+    assert @c.shape.class   == EllipseStruct
+    assert @c.shape.rx      == 50
+    assert @c.shape.ry      == 100
+  end
+  it 'should have fill' do    
+    assert @c.fill.class == FillStruct
+    assert @c.fill.color == 'white'
+  end
+  it 'should have stroke' do    
+    assert @c.stroke.class == StrokeStruct
+    assert @c.stroke.color == 'black'
+    assert @c.stroke.thickness == 0
+  end
+  
+end
+
+describe 'create RoundRect' do
+  before do
+    @c = RoundRect.new(nil, :width=>100, :height=>200)
+  end
+  it 'should create RoundRect' do
+    assert @c.klass == "RoundRect"
+  end
+  
+  it 'should create RoundRectStruct shape' do
+    assert @c.shape.class   == RoundRectStruct
+    assert @c.shape.rx      == 10.0
+    assert @c.shape.ry      == 20.0
+  end
+  it 'should have fill' do    
+    assert @c.fill.class == FillStruct
+    assert @c.fill.color == 'white'
+  end
+  it 'should have stroke' do    
+    assert @c.stroke.class == StrokeStruct
+    assert @c.stroke.color == 'black'
+    assert @c.stroke.thickness == 0
+  end
+end
+
+describe 'create Image' do
+  before do
+    @c = Image.new(nil, :image_path=> "my_image_path.jpg", :width=>100, :height=>200)
+  end
+  it 'should create Image' do
+    assert @c.klass       == "Image"
+    assert @c.image_path  == "my_image_path.jpg"
+  end
+  
+  it 'should create Image shape' do
+    assert @c.shape.class     == RectStruct
+    assert @c.shape.width     == 100
+    assert @c.shape.height    == 200
+  end
+  it 'should have fill' do    
+    assert @c.fill.class == FillStruct
+    assert @c.fill.color == 'white'
+  end
+  it 'should have stroke' do    
+    assert @c.stroke.class == StrokeStruct
+    assert @c.stroke.color == 'black'
+    assert @c.stroke.thickness == 0
+  end
+end
+
+describe 'create Text' do
+  before do
+    @c = Text.new(nil, :text_string=> "This is my text string.", :width=>100, :height=>200)
+  end
+  it 'should create Text' do
+    assert @c.klass       == "Text"
+  end
+  it 'should create text_record' do
+  
+    assert @c.text_record.string  == "This is my text string."
+  end
+  
+  it 'should create Text shape' do
+    assert @c.shape.class     == RectStruct
+    assert @c.shape.width     == 100
+    assert @c.shape.height    == 200
+  end
+  it 'should have fill' do    
+    assert @c.fill.class == FillStruct
+    assert @c.fill.color == 'white'
+  end
+  it 'should have stroke' do    
+    assert @c.stroke.class == StrokeStruct
+    assert @c.stroke.color == 'black'
+    assert @c.stroke.thickness == 0
+  end
+end
+
+describe 'generate random graphics' do
+  before do
+    @g = Graphic.random_graphics(200)
+    @path = File.dirname(__FILE__) + "/output/graphic_random_test.svg"
+  end
+  
+  it 'should create Graphic' do
+    @g.must_be_kind_of Array
+  end
+  
+  it 'should save random grapics' do    
+    p = Page.new(nil)
+    p.add_graphics(@g)
+    p.save_svg(@path)
+    system "open #{@path}"
+  end
+end
+
+__END__
 
 
 describe ' Graphic from Hash ' do
@@ -82,137 +218,4 @@ describe 'testing Text ' do
   
 end
 
-# describe 'graphic text test' do
-#   before do
-#     @t = Text.new(nil, :text_string=>"this is text at last.", :width =>300)
-#     @pdf_path = File.dirname(__FILE__) + "/output/graphic_text_test.pdf"
-#     @svg_path = File.dirname(__FILE__) + "/output/graphic_text_test.svg"
-#   end
-#   
-#   it 'should save random grapics' do    
-#     @t.save_svg(@svg_path)
-#     @t.save_pdf(@pdf_path)
-#   end
-# end
 
-__END__
-describe 'graphic fill test' do
-  before do
-    @g = Graphic.new(nil, fill_color: 'red', line_width: 5, line_color: 'yellow')
-    @pdf_path = File.dirname(__FILE__) + "/output/graphic_fill_test.pdf"
-  end
-  
-  it 'shuold save graphic' do
-    @g.save_pdf(@pdf_path)
-  end
-  
-end
-
-describe 'save pdf random' do
-  before do
-    @g = Graphic.random_graphics(200)
-    @path = File.dirname(__FILE__) + "/output/graphic_random_test.pdf"
-  end
-  
-  it 'should create Graphic' do
-    @g.must_be_kind_of Array
-  end
-  
-  it 'should save random grapics' do    
-    p = Page.new(nil)
-    p.add_graphics(@g)
-    p.save_pdf(@path)
-  end
-end
-
-# describe 'save pdf' do
-#   before do
-#     @g = Graphic.new(nil, :fill_color=>"red", :line_width=>5, :line_color=>"black")
-#     @path = File.dirname(__FILE__) + "/output/graphic_pdf_test.pdf"
-#   end
-#   
-#   it 'should save pdf' do
-#     @g.save_pdf(@path)
-#     File.exists?(@path).must_equal true
-#   end
-# end
-# 
-# describe 'Graphic.random(number) ' do
-#   before do
-#     @g = Graphic.random_graphics(100)
-#     @path = File.dirname(__FILE__) + "/output/graphic_random_test.svg"
-#   end
-#   
-#   it 'should create Graphic' do
-#     @g.must_be_kind_of Array
-#   end
-#   
-#   it 'should save random grapics' do    
-#     p = Page.new(nil)
-#     p.add_graphics(@g)
-#     p.save_svg(@path)
-#   end
-# end
-# describe "graphic" do
-#   before do
-#     @graphic = Graphic.new(nil)
-#   end
-#   
-#   it 'should create graphic ' do
-#     @graphic.must_be_kind_of Graphic
-#   end
-#   
-#   it 'should have default values' do
-#     @graphic.x.must_equal 0
-#     @graphic.y.must_equal 0
-#     @graphic.width.must_equal 100
-#     @graphic.height.must_equal 100
-#     
-#     @graphic.fill_type.must_equal nil
-#     @graphic.fill_color.must_equal nil
-#     @graphic.fill_other_color.must_equal nil    
-#     @graphic.line_color.must_equal nil
-#     @graphic.line_width.must_equal nil
-#     @graphic.line_dash.must_equal nil
-#     
-#     @graphic.layout_length.must_equal 1
-#     @graphic.grid_rect[0].must_equal 0
-#     @graphic.grid_rect[1].must_equal 0
-#     @graphic.grid_rect[2].must_equal 1
-#     @graphic.grid_rect[3].must_equal 1
-#     @graphic.layout_expand.must_equal [:width,:height]
-#   end
-#   
-#   it 'init should match hash values' do
-#     @graphic.to_hash.must_equal Hash.new
-#   end
-# end
-# 
-# describe 'graphic svg' do
-#   before do
-#     @graphic = Graphic.new(nil, :line_width=>5)
-#   end
-#   
-#   it 'should create svg' do
-#     @graphic.to_svg.must_be_kind_of String
-# #     @graphic.to_svg.must_equal <<EOF
-# #     "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">
-# #     <rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" stroke=\"black\" stroke-width=\"5\"></rect>
-# #     </svg>"
-# # EOF
-#   end
-# end
-# 
-# describe 'ancestry test' do
-#   before do
-#     @page = Page.new(nil)
-#     @nested = Container.new(@page)
-#       
-#   end
-#   
-#   it 'should create tree' do
-#     @page.graphics.length.must_equal 1
-#     @nested.to_mongo
-#   end
-# end
-# 

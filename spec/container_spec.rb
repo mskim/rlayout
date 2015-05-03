@@ -2,15 +2,20 @@ require File.dirname(__FILE__) + "/spec_helper"
 
 describe 'testing container with graphics' do
   before do
-    @container = Container.new(nil, :grid_base=>[3,3])
-    @g1 = Container.new(@container, :fill_color=> 'red', :is_float=> true, :grid_frame=>[0,0,1,1])
-    @g2 = Container.new(@container, :fill_color=> 'yellow', :is_float=> true, :grid_frame=>[1,1,1,1])
+    @container = Container.new(nil, :x=>200, :y=>50, :width=>300, :height=>500)
+    @g5 = Container.new(@container, :tag=> 'g2', :layout_direction=>'horizontal')
+      RoundRect.new(@g5, :fill_color=> 'yellow', :line_width=> 5)
+      Circle.new(@g5, :fill_color=> 'lightGray', :line_width=> 5)
+      RoundRect.new(@g5, :fill_color=> 'blue', :line_width=> 5)
+      Circle.new(@g5, :fill_color=> 'red', :line_width=> 5)
+    @g3 = RoundRect.new(@container, :fill_color=> 'lightGray', :line_color=>'green', :line_width=> 2)
+    @g1 = Rectangle.new(@container, :fill_color=> 'red')
+    @g2 = Circle.new(@container, :fill_color=> 'yellow', :line_width=> 20)
+    @g3 = RoundRect.new(@container, :fill_color=> 'blue')
       # @g3= Graphic.new(@g1, :fill_color=> 'yellow', :is_float=> true)
       # @g4= Graphic.new(@g1, :fill_color=> 'black', :is_float=> true)
-    # @g2 = Container.new(@container, :fill_color=> 'blue', :tag=> 'g2')
-    #   @g5= Graphic.new(@g2, :fill_color=> 'yellow', :tag=> 'g5')
-    #   @g6= Graphic.new(@g2, :fill_color=> 'blue', :tag=> 'g6')
-    @container.relayout_floats!
+      
+    @container.relayout!
   end
   
   # it 'should add graphics' do
@@ -23,11 +28,16 @@ describe 'testing container with graphics' do
   #   @container.graphics[1].parent_graphic.must_equal @container
   # end
   
-  it 'should save pdf' do
-    @pdf_path = File.dirname(__FILE__) + "/output/container_float_test.pdf"
-    @container.save_pdf(@pdf_path)
-    system("open #{@pdf_path}")
+  it 'should save svg' do
+    @svg_path = File.dirname(__FILE__) + "/output/container_float_test.svg"
+    @container.save_svg(@svg_path)
+    system("open #{@svg_path}")
   end
+  # it 'should save pdf' do
+  #   @pdf_path = File.dirname(__FILE__) + "/output/container_float_test.pdf"
+  #   @container.save_pdf(@pdf_path)
+  #   system("open #{@pdf_path}")
+  # end
 
 
 end

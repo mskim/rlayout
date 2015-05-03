@@ -4,15 +4,29 @@ module RLayout
   class Graphic
     
     def init_fill(options)
-      @fill_type        = options.fetch(:fill_type, fill_defaults[:fill_type])
-      @fill_color       = options.fetch(:fill_color, fill_defaults[:fill_color])
-      @fill_other_color = options.fetch(:fill_other_color, fill_defaults[:fill_other_color])      
+      if options[:linear_grad]
+        @fill = options[:linear_grad] 
+        @fill[:starting_color]  = options[:fill_color]        if options[:fill_color]
+        @fill[:ending_color]    = options[:fill_other_color]  if options[:fill_other_color]    
+        
+      elsif options[:radial_grad]
+        @fill = options[:radial_grad]
+        @fill[:starting_color]  = options[:fill_color]        if options[:fill_color]
+        @fill[:ending_color]    = options[:fill_other_color]  if options[:fill_other_color]    
+        
+      elsif options[:fill]
+        @fill = options[:fill]
+        @fill[:color] = options[:fill_color] if options[:fill_color]
+      else
+        @fill = FillStruct.new('white')
+        @fill[:color] = options[:fill_color] if options[:fill_color]
+      end
+      # TODO to be removed
     end
     
     
     def fill_defaults
       h = {}
-      h[:fill_type]         = 1
       h[:fill_color]        = "white"
       h[:fill_other_color]  = "gray"
       h

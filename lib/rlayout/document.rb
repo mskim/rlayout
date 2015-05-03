@@ -156,8 +156,8 @@ module RLayout
         page.document = self
         @pages << page
       elsif page.class == Array
-        page.each do |page|
-          add_page(page)
+        page.each do |p|
+          add_page(p)
         end
       end
     end
@@ -213,6 +213,44 @@ module RLayout
       h
     end
 
+    def self.open(path, options={})
+      rlayout_yaml_path= path + "/layout.yml"
+      hash = {}
+      unless File.exists?(rlayout_yaml_path)
+        puts "template #{rlayout_yaml_path} not found ..."
+        hash = {}
+      else
+        hash=YAML::load_file(rlayout_yaml_path)
+      end
+      hash=hash.merge(options)
+      hash[:path] = path
+      doc=Document.new(hash)
+      doc
+    end
+
+    def self.rlayout(path, options={},&block)
+      options[:path]=path
+      doc=Document.new(options,&block)
+      doc.rlayout(path)      
+      doc
+    end
+    
+    # called from save_document(sender) of MyDocument
+    def save_document
+      system("mkdir -p #{@path}") unless File.exists?(@path)
+      layout_path= @path + "/layout.yml"
+      File.open(layout_path,'w'){|f| f.write to_hash.to_yaml}
+      pdf_path= @path + "/Preview.pdf"
+      save_pdf_doc(pdf_path) if self.respond_to?(save_pdf_doc)
+      save_variables(@path) # in cased, we have variables in the document
+    end
+    
+    # def self.open_rlayout(path)
+    #   layout_path = path + "/layout.yml"
+    #   hash        = YAML::load(File.open(layout_path, 'r'){|f| f.read})
+    #   hash
+    # end
+    
     def to_svg
       # TODO
       # SVG 1.1 does not support multipe page svg, SVG 1.2 has <pageSet> for multiple page support

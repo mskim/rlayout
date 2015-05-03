@@ -5,16 +5,21 @@ module RLayout
   class Graphic
 
     def init_shape(options)
-      @shape_type           = options.fetch(:shape_type, shape_defaults[:shape_type])
-      @shape_corners        = options.fetch(:shape_corners, shape_defaults[:shape_corners])
-      @shape_corner_type    = options.fetch(:shape_corner_type, shape_defaults[:shape_corner_type])
-      @shape_sides          = options.fetch(:shape_sides, shape_defaults[:shape_sides])
-      @shape_side_type      = options.fetch(:shape_side_type, shape_defaults[:shape_side_type])
-      @shape_bezier         = options.fetch(:shape_bezier, shape_defaults[:shape_bezier])
+      shorter = @width < @height ? @width : @height
+      r= shorter/10      
+      @shape              = options.fetch(:shape, RoundRectStruct.new(@x, @y, @width, @height, r, r))
+      @shape_corners      = options.fetch(:shape_corners, shape_defaults[:shape_corners])
+      @shape_corner_type  = options.fetch(:shape_corner_type, shape_defaults[:shape_corner_type])
+      @shape_sides        = options.fetch(:shape_sides, shape_defaults[:shape_sides])
+      @shape_side_type    = options.fetch(:shape_side_type, shape_defaults[:shape_side_type])
+      @shape_bezier       = options.fetch(:shape_bezier, shape_defaults[:shape_bezier])
 
     end
 
-
+    # def update_shape
+    #   @shape.update(self)
+    # end
+    
     def shape_defaults
       h = {}
       h[:shape_type]        = "rectangle" # rectangle, round_rect', circle, ellipse, bezier

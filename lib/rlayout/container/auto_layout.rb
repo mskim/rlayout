@@ -152,6 +152,9 @@ module RLayout
          graphic.relayout! if graphic.kind_of?(Container)
         end
       end 
+      @graphics.each do |graphic|
+        graphic.update_shape
+      end
       # relayout @owner_graphic's text with new geometry
       @text_record.update_text_fit if @text_record && @text_record.class == GTextRecord
       # adjust image with new geometry
