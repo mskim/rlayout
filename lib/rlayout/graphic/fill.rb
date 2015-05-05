@@ -4,42 +4,32 @@ module RLayout
   class Graphic
     
     def init_fill(options)
-      if options[:linear_grad]
-        @fill = options[:linear_grad] 
+      if options[:fill_type] == 'gradiation'
+        @fill = LinearGradient.new('white','black')
+        @fill.starting_color = options[:fill_color]         if options[:fill_color]
+        @fill.starting_color = options[:starting_color]     if options[:starting_color]
+        @fill.ending_color = options[:fill_other_color]     if options[:fill_other_color]
+        @fill.ending_color = options[:fill_ending_color]    if options[:fill_ending_color]
         @fill[:starting_color]  = options[:fill_color]        if options[:fill_color]
         @fill[:ending_color]    = options[:fill_other_color]  if options[:fill_other_color]    
         
-      elsif options[:radial_grad]
-        @fill = options[:radial_grad]
+      elsif options[:fill_type] == 'radial'
+        @fill = RadialGradient.new('white','black')
+        @fill.starting_color = options[:fill_color]         if options[:fill_color]
+        @fill.starting_color = options[:starting_color]     if options[:starting_color]
+        @fill.ending_color = options[:fill_other_color]     if options[:fill_other_color]
+        @fill.ending_color = options[:fill_ending_color]    if options[:fill_ending_color]
         @fill[:starting_color]  = options[:fill_color]        if options[:fill_color]
         @fill[:ending_color]    = options[:fill_other_color]  if options[:fill_other_color]    
         
-      elsif options[:fill]
-        @fill = options[:fill]
-        @fill[:color] = options[:fill_color] if options[:fill_color]
+      elsif options[:fill_color]
+        @fill = FillStruct.new(options[:fill_color])
       else
         @fill = FillStruct.new('white')
         @fill[:color] = options[:fill_color] if options[:fill_color]
       end
-      # TODO to be removed
     end
-    
-    
-    def fill_defaults
-      h = {}
-      h[:fill_color]        = "white"
-      h[:fill_other_color]  = "gray"
-      h
-    end
-    
-    def fill_to_hash
-      h = {}
-      h[:fill_type]         = @fill_type        if @fill_type && @fill_type != fill_defaults[:fill_type]
-      h[:fill_color]        = @fill_color       if @fill_color && @fill_color != fill_defaults[:fill_color]
-      h[:fill_other_color]  = @fill_other_color if @fill_other_color && @fill_other_color != fill_defaults[:fill_other_color]
-      h
-    end
-    
+        
     def draw_fill(r)      
       if @fill_type == 0   #clearColor
         path=NSBezierPath.bezierPathWithRect(r)

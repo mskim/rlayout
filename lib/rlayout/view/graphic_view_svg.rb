@@ -30,7 +30,34 @@ module RLayout
     end
     
     def svg_style
-      "style=\"fill:#{@fill.color};#{@stroke.to_svg}\""
+      if @fill.class == FillStruct
+        "style=\"fill:#{@fill.to_svg};#{@stroke.to_svg}\""
+      elsif @fill.class == LinearGradient
+s =<<E1
+      <defs>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
+          <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      "style=\"fill:\"url(#grad1)\";#{@stroke.to_svg}\""
+      
+E1
+        
+      else @fill.class == RadialGradient
+        
+s2 =<<EOF
+      <defs>
+      <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
+        <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+      </linearGradient>
+      </defs>
+      "style=\"fill:\"url(#grad1)\";#{@stroke.to_svg}\""
+      
+EOF
+
+      end
     end
     
     def svg_rect
@@ -45,13 +72,9 @@ module RLayout
     def save_svg(path)
       File.open(path, 'w'){|f| f.write to_svg}
     end
-    
   end
   
-
-
   class Container < Graphic
-    
     def to_svg
       if @parent_graphic
         s = svg + "\n"

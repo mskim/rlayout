@@ -109,9 +109,6 @@ module RLayout
       page_index                = 0
       @first_page               = @pages[page_index]
       @heading[:layout_expand]  = [:width, :height]
-      # @heading[:line_width]     = 2
-      # @heading[:line_color]     = 'red'
-      # this is where we make heading as graphics or float
       if @chapter_kind == "magazine_article"
         #make it a flost for magazine
         @heading[:width]        = @first_page.main_box.heading_width

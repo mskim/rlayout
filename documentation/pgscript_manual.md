@@ -6,8 +6,8 @@
 ### Graphic
 	fill
 		fill_color, fill_type, fill_other_color
-	line
-		line_color, line_width, line_dash, line_type, line_drawing_sides
+	stroke
+		stroke_color, stroke_width, stroke_dash, stroke_type, stroke_drawing_sides
 	shape
 	  :shape_type, :shape_bezier, :shape_corners, :shape_corner_type, :shape_sides, :shape_side_type
 

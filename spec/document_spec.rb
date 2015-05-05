@@ -1,13 +1,24 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
 describe 'shuld save rlayout docment' do
-  
-  
+  before do 
+    @rlayout_path = File.dirname(__FILE__) + "/output/document_test.rlayout"   
+    @doc = Document.new(path:@rlayout_path )
+  end
+  it 'should create Document' do
+    assert @doc.class == Document
+  end
+  it 'should save Document' do
+    @doc.save_document
+    assert File.exist?(@rlayout_path)
+  end
 end
+
+__END__
 
 describe 'open document' do
   before do
-    
+    @rlayout_path = File.dirname(__FILE__) + "/output/document_test.rlayout"
   end
   
   it 'should open hash' do

@@ -114,9 +114,10 @@ module RLayout
         options[:pages].each do |page_hash|
           Page.new(self, page_hash)
         end
-
       elsif options[:page_objects]
         @pages = options[:pages]
+      else
+        Page.new(self)
       end
 
       @current_style = options.fetch(:current_style, DEFAULT_STYLES)
@@ -201,15 +202,16 @@ module RLayout
 
     def to_hash
       h = {}
-      h[:title]   = @title
-      h[:width]   = @width
-      h[:height]  = @height
-      if @pages.length > 0
-        h[:pages]=[]
-        @pages.each do |page|
-          h[:pages] << page.to_hash
-        end
+      h[:title]       = @title
+      h[:paper_size]  = @paper_size
+      if @paper_size == 'custom'
+        h[:width]       = @width
+        h[:height]      = @height
       end
+      if @pages.length > 0
+        h[:pages] =@pages.map {|page| page.to_hash}
+      end
+      puts "h[:pages]:#{h[:pages]}"
       h
     end
 
@@ -237,12 +239,13 @@ module RLayout
     
     # called from save_document(sender) of MyDocument
     def save_document
+      puts __method__
       system("mkdir -p #{@path}") unless File.exists?(@path)
       layout_path= @path + "/layout.yml"
       File.open(layout_path,'w'){|f| f.write to_hash.to_yaml}
       pdf_path= @path + "/Preview.pdf"
-      save_pdf_doc(pdf_path) if self.respond_to?(save_pdf_doc)
-      save_variables(@path) # in cased, we have variables in the document
+      save_pdf_doc(pdf_path) if self.respond_to?(:save_pdf_doc)
+      # save_variables(@path) # in cased, we have variables in the document
     end
     
     # def self.open_rlayout(path)
@@ -275,7 +278,7 @@ module RLayout
       base  = File.basename(path, ".svg")
       @pages.each_with_index do |page, i|
         path = dir + "/#{base}" + i.to_s + "#{ext}"
-        page.save_svg(path)
+        page.to_svg(x,y)
       end
     end
 

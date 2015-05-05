@@ -99,7 +99,16 @@ module RLayout
         height: 800,
       }
     end
-
+    
+    def to_hash
+      h= super
+      if @fixtures && @fixtures.length > 0
+        h[:fixtures]=[]
+        h[:fixtures] = @fixtures.map{|fixture| fixture.to_hash}
+      end
+      h
+    end
+    
     def layout_default
       {
         left_margin:  50,

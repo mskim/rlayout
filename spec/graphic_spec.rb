@@ -2,18 +2,21 @@ require File.dirname(__FILE__) + "/spec_helper"
 
 describe 'create Graphic ' do
   before do
-    @g = Graphic.new(nil)
+    @g = Graphic.new(nil, :fill_color=>"blue")
   end
   it 'should create Graphic' do
     assert @g.klass == "Rectangle"
   end
+  
+  it 'should not have fill' do    
+    assert @g.fill.class == FillStruct
+    assert @g.fill.color == 'blue'
+  end
+  
   it 'should create rect shape' do    
     assert @g.shape.class == RectStruct
   end
-  it 'should have fill' do    
-    assert @g.fill.class == FillStruct
-    assert @g.fill.color == 'white'
-  end
+
   it 'should have stroke' do    
     assert @g.stroke.class == StrokeStruct
     assert @g.stroke.color == 'black'
@@ -25,8 +28,26 @@ describe 'create Graphic ' do
   it 'should not have text_record' do    
     assert @g.text_record == nil
   end
-
 end
+
+describe 'LinearFill ' do
+  before do
+    @g = Graphic.new(nil, :fill_type=>'gradiation', :fill_color=>"blue")
+  end
+  it 'should create LinearFill' do
+    assert @g.fill.class == LinearGradient
+  end
+end
+
+describe 'RadialFill ' do
+  before do
+    @g = Graphic.new(nil, :starting_color=>"blue", :ending_color=>'red', :fill_type=>"radial")
+  end
+  it 'should create LinearFill' do
+    assert @g.fill.class == RadialGradient
+  end
+end
+
 
 describe 'create Circle' do
   before do
@@ -55,7 +76,7 @@ end
 
 describe 'create Ellipse' do
   before do
-    @c = Ellipse.new(nil, :width=>100, :height=>200)
+    @c = Ellipse.new(nil, :width=>100, :height=>200, :fill_color=>"orange")
   end
   it 'should create Ellipse' do
     assert @c.klass == "Ellipse"
@@ -68,12 +89,23 @@ describe 'create Ellipse' do
   end
   it 'should have fill' do    
     assert @c.fill.class == FillStruct
-    assert @c.fill.color == 'white'
+    assert @c.fill.color == 'orange'
   end
   it 'should have stroke' do    
     assert @c.stroke.class == StrokeStruct
     assert @c.stroke.color == 'black'
     assert @c.stroke.thickness == 0
+  end
+  it 'should have stroke' do    
+    assert @c.stroke.class == StrokeStruct
+    assert @c.stroke.color == 'black'
+    assert @c.stroke.thickness == 0
+  end
+  
+  it 'should save' do
+    @path = File.dirname(__FILE__) + "/output/graphic_color_test.svg"
+    @c.save_svg(@path)
+    system "open #{@path}"
   end
   
 end
@@ -89,7 +121,7 @@ describe 'create RoundRect' do
   it 'should create RoundRectStruct shape' do
     assert @c.shape.class   == RoundRectStruct
     assert @c.shape.rx      == 10.0
-    assert @c.shape.ry      == 20.0
+    assert @c.shape.ry      == 10.0
   end
   it 'should have fill' do    
     assert @c.fill.class == FillStruct

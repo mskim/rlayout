@@ -40,38 +40,48 @@ describe 'rgb color struct' do
   end
 end
 
-describe 'LinearGradStruct struct' do
+describe 'fill struct' do
   before do
-    @lg = LinearGradStruct.new('black', 'white', 0, 10)
+    @fill = FillStruct.new('black')
   end
   
-  it 'should test LinearGradStruct starting_color' do
+  it 'should test LinearGradient starting_color' do
+    assert @fill[:color] == 'black'
+  end
+end
+
+describe 'LinearGradient struct' do
+  before do
+    @lg = LinearGradient.new('black', 'white', 0, 10)
+  end
+  
+  it 'should test LinearGradient starting_color' do
     assert @lg[:starting_color] == 'black'
   end
   
-  it 'test LinearGradStruct ending_color' do
+  it 'test LinearGradient ending_color' do
     assert @lg[:ending_color] == 'white'
   end
   
-  it 'test LinearGradStruct steps' do
+  it 'test LinearGradient steps' do
     assert @lg[:steps] == 10
   end
 end
 
-describe 'RadialGradStruct struct' do
+describe 'RadialGradient struct' do
   before do
-    @lg = RadialGradStruct.new('black', 'white', 'center', 5)
+    @lg = RadialGradient.new('black', 'white', 'center', 5)
   end
-  it 'should test RadialGradStruct starting_color' do
+  it 'should test RadialGradient starting_color' do
     assert @lg[:starting_color] == 'black'
   end
-  it 'test RadialGradStruct ending_color' do
+  it 'test RadialGradient ending_color' do
     assert @lg[:ending_color] == 'white'
   end
-  it 'test RadialGradStruct center' do
+  it 'test RadialGradient center' do
     assert @lg[:center] == 'center'
   end
-  it 'test RadialGradStruct center' do
+  it 'test RadialGradient center' do
     assert @lg[:steps] == 5
   end
 end

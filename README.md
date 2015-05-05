@@ -1,5 +1,4 @@
 TODO List
-	- local_image, project_folder, tag, variable_image_name
 	- center graphic with width and height
 	- draw lines in superview, so the lines don't get cut off
 	- add ShoulderColumn, add footnote_area
@@ -20,6 +19,12 @@ TODO List
 	- modify kramdown into r_kramdown
 	- use Asciidotor
 
+2015 5 2
+	1. change line records to stroke stroke[:color], stroke[:thickness], stroke[:dash]
+	1. SVG drawing, Container, Page, Document
+	1. Line, LineArrow, Ribbon, RomanDagger, SawTooth
+	1. Struct
+	
 2015 4 17
 	1. Graphic drawing
 		1. fill_type, 

@@ -4,12 +4,12 @@ describe 'testing container with graphics' do
   before do
     @container = Container.new(nil, :x=>200, :y=>50, :width=>300, :height=>500)
     @g5 = Container.new(@container, :tag=> 'g2', :layout_direction=>'horizontal')
-      RoundRect.new(@g5, :fill_color=> 'yellow', :line_width=> 5)
-      Circle.new(@g5, :fill_color=> 'lightGray', :line_width=> 5)
-      RoundRect.new(@g5, :fill_color=> 'blue', :line_width=> 5)
-      Circle.new(@g5, :fill_color=> 'red', :line_width=> 5)
+      RoundRect.new(@g5, :fill_color=> 'yellow', :thickness=> 5)
+      Circle.new(@g5, :fill_color=> 'lightGray', :thickness=> 5)
+      RoundRect.new(@g5, :fill_color=> 'blue', :thickness=> 5)
+      Circle.new(@g5, :fill_color=> 'red', :thickness=> 5)
     @g1 = Rectangle.new(@container, :fill_color=> 'red')
-    @g2 = Circle.new(@container, :fill_color=> 'yellow', :line_width=> 20)
+    @g2 = Circle.new(@container, :fill_color=> 'yellow', :thickness=> 20)
     @g3 = RoundRect.new(@container, :fill_color=> 'blue')
     @container.relayout!
   end

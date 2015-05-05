@@ -1,5 +1,4 @@
 
-COLOR_NAMES =%w[black blue brown clear cyan darkGray gray green lightGray magenta orange purple red white yellow]
 KLASS_NAMES =%w[Rectangle Circle RoundRect Ellipse Line Text Image]
 TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout", "PageScript"]
 IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
@@ -18,10 +17,15 @@ module RLayout
   end
   CMYKStruct      = Struct.new(:c, :m, :y, :k, :a)
   RGBStruct       = Struct.new(:r, :g, :b, :a)
-  FillStruct      = Struct.new(:color)
-  LinearGradStruct= Struct.new(:starting_color, :ending_color, :angle, :steps)
-  RadialGradStruct= Struct.new(:starting_color, :ending_color, :center, :steps)
-  StrokeStruct    = Struct.new(:color, :thickness, :dash, :line_cap, :type) do
+  FillStruct      = Struct.new(:color) do
+    def to_svg
+      color
+    end
+  end
+  
+  LinearGradient= Struct.new(:starting_color, :ending_color, :angle, :steps)
+  RadialGradient= Struct.new(:starting_color, :ending_color, :center, :steps)
+  StrokeStruct    = Struct.new(:color, :thickness, :dash, :line_cap, :line_join, :type) do
     def to_svg
       s = "stroke:#{color};"
       s += "stroke-width:#{thickness}" if thickness > 0

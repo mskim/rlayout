@@ -1,6 +1,7 @@
 
 module  RLayout
-    
+  module_function
+  
   def min_x(rect)
     rect[0]
   end
@@ -87,24 +88,6 @@ module  RLayout
     rows
   end
   
-  def in_groups_of(array, pieces)
-    return array if pieces < 2 
-    chunks = []
-    while array.length > 0
-      chunks << array.shift(pieces)
-    end
-    chunks
-  end
-  
-  # just chop the array into pieces, no tapering
-  def divide_array_into_uneven_chunks_of(array, pieces)
-    return array if pieces < 2 
-    chunks = []
-    while array.length > 0
-      chunks << array.shift(pieces)
-    end
-    chunks
-  end
   
   # divide given array into pieces, tapers the last chunks into even numbers 
   def divide_array_into(array, pieces)

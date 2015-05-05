@@ -14,6 +14,7 @@ else
   require 'yaml'
   require "rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
+  require File.dirname(__FILE__) + '/rlayout/graphic/color'
   require File.dirname(__FILE__) + '/rlayout/graphic/graphic_struct'
   require File.dirname(__FILE__) + '/rlayout/graphic/fill'
   require File.dirname(__FILE__) + '/rlayout/graphic/image'

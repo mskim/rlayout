@@ -5,7 +5,7 @@ module RLayout
     attr_accessor :layout_mode     # layout_mode: "auto_layout" "grid"
     attr_accessor :layout_direction, :layout_space, :layout_align
     attr_accessor :show_grid, :show_text_grid, :grid_width, :grid_height
-    attr_accessor :gutter_line_type, :gutter_line_width, :gutter_line_color, :gutter_line_dash
+    attr_accessor :gutter_stroke_type, :gutter_stroke_width, :gutter_stroke_color, :gutter_stroke_dash
     attr_accessor :floats
     
     def initialize(parent_graphic, options={}, &block)
@@ -17,10 +17,10 @@ module RLayout
       @layout_direction = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
       @layout_space     = options.fetch(:layout_space, layout_defaults_hash[:layout_space])       
       @layout_align     = options.fetch(:layout_align, layout_defaults_hash[:layout_align])       
-      @gutter_line_type = options[:gutter_line_type]     
-      @gutter_line_width= options[:gutter_line_width]
-      @gutter_line_color= options[:gutter_line_color]
-      @gutter_line_dash = options[:gutter_line_dash]
+      @gutter_stroke_type = options[:gutter_stroke_type]     
+      @gutter_stroke_width= options[:gutter_stroke_width]
+      @gutter_stroke_color= options[:gutter_stroke_color]
+      @gutter_stroke_dash = options[:gutter_stroke_dash]
       @floats           = options.fetch(:floats, [])
       init_grid(options) if options[:grid_base]
       if options[:graphics]
@@ -90,7 +90,7 @@ module RLayout
       File.open(path, 'w'){|f| f.write h.to_yaml}
     end
     
-    def to_hash      
+    def to_hash 
       h=super
       if @graphics.length > 0
         h[:graphics]=[]
@@ -104,13 +104,6 @@ module RLayout
           h[:floats] << float.to_hash
         end
       end
-      
-      # if @fixtures && @fixtures.length > 0
-      #   h[:fixtures]=[]
-      #   @fixtures.each do |fixture|
-      #     h[:fixtures] << fixture.to_hash
-      #   end
-      # end
       h
     end
         

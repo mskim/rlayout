@@ -151,8 +151,8 @@ module RLayout
     
     def initialize(parent_graphic, options={}, &block)
       super
-      @line_width = 1
-      @line_color = "black"
+      @stroke[:thickness] = 1
+      @stroke[:color] = "black"
       
       @klass = "ObjectColumn"
       @layout_space = options.fetch(:item_space, 0)

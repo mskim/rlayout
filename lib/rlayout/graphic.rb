@@ -5,8 +5,9 @@ module RLayout
     attr_accessor :parent_graphic, :klass, :tag, :ns_view, :svg_view
     attr_accessor :x, :y, :width, :height
     attr_accessor :graphics, :fixtures, :floats
-    attr_accessor :fill_type, :fill_color, :fill_other_color
-    attr_accessor :line_type, :line_color, :line_width, :line_dash, :line_drawing_sides
+    # attr_accessor :fill_type, :fill_color, :fill_other_color
+    # attr_accessor :line_type, :line_color, :line_width, :line_dash, :line_drawing_sides
+
     attr_accessor :shape_type, :shape_bezier, :shape_corners, :shape_corne_type, :shape_sides, :shape_side_type
     attr_accessor :grid, :grid_frame, :gutter, :v_gutter, :grid_cells, :show_grid
     attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
@@ -147,14 +148,6 @@ module RLayout
       TEXT_STRING_SAMPLES.sample
     end
 
-    def self.random_color
-      COLOR_NAMES.sample
-    end
-
-    def random_color
-      COLOR_NAMES.sample
-    end
-
     def random_klass
       KLASS_NAMES.sample
     end
@@ -170,55 +163,55 @@ module RLayout
       false
     end
 
-    def min_x(rect)
-      rect[0]
-    end
-
-    def min_y(rect)
-      rect[1]
-    end
-
-    def mid_x(rect)
-      rect[0] + rect[2]/2
-    end
-
-    def mid_y(rect)
-      rect[1] + rect[3]/2
-    end
-
-    def max_x(rect)
-      rect[0] + rect[2]
-    end
-
-    def max_y(rect)
-      rect[1] + rect[3]
-    end
-
-    def contains_rect(rect_1,rect_2)
-      (rect_1[0]<=rect_2[0] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) >= max_y(rect_2))
-    end
-
-    def intersects_x(rect1, rect2)
-      (max_x(rect1) > rect2[0] && max_x(rect2) > rect1[0]) || (max_x(rect2) > rect1[0] && max_x(rect1) > rect2[0])
-    end
-
-    def intersects_y(rect1, rect2)
-      (max_y(rect1) > rect2[1] && max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] && max_y(rect1) > rect2[1])
-    end
-
-    def intersects_rect(rect_1, rect_2)
-      intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
-    end
+    # def min_x(rect)
+    #   rect[0]
+    # end
+    # 
+    # def min_y(rect)
+    #   rect[1]
+    # end
+    # 
+    # def mid_x(rect)
+    #   rect[0] + rect[2]/2
+    # end
+    # 
+    # def mid_y(rect)
+    #   rect[1] + rect[3]/2
+    # end
+    # 
+    # def max_x(rect)
+    #   rect[0] + rect[2]
+    # end
+    # 
+    # def max_y(rect)
+    #   rect[1] + rect[3]
+    # end
+    # 
+    # def contains_rect(rect_1,rect_2)
+    #   (rect_1[0]<=rect_2[0] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) >= max_y(rect_2))
+    # end
+    # 
+    # def intersects_x(rect1, rect2)
+    #   (max_x(rect1) > rect2[0] && max_x(rect2) > rect1[0]) || (max_x(rect2) > rect1[0] && max_x(rect1) > rect2[0])
+    # end
+    # 
+    # def intersects_y(rect1, rect2)
+    #   (max_y(rect1) > rect2[1] && max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] && max_y(rect1) > rect2[1])
+    # end
+    # 
+    # def intersects_rect(rect_1, rect_2)
+    #   intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
+    # end
 
     def self.random_graphic_atts
       atts = {}
-      atts[:fill_color] = COLOR_NAMES.sample
+      atts[:fill_color] = random_color
       atts[:x]          = Random.new.rand(0..600)
       atts[:y]          = Random.new.rand(0..800)
       atts[:width]      = Random.new.rand(10..200)
       atts[:height]     = Random.new.rand(10..200)
       atts[:line_width] = Random.new.rand(0..10)
-      atts[:line_color] = COLOR_NAMES.sample
+      atts[:line_color] = random_color
       atts
     end
 

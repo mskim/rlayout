@@ -10,8 +10,6 @@ module RLayout
 	  def initialize(parent_graphic,options={})
 	    super
 	    @layout_space       = 2
-      # @line_width         = 2
-      # @line_color         = 'red'
 	    @layout_direction   ='horizontal'
 	    @data_layout_length = options.fetch(:data_layout_length, 2)
 	    @label              = Text.new(self, :text_string=>options[:key])

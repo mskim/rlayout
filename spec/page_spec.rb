@@ -4,16 +4,17 @@ describe 'create page' do
   before do
     @p = Page.new(nil)
     Container.new(@p, :fill_color=>'green')
-    Container.new(@p)
-    Container.new(@p)
-    Container.new(@p)
-    @page_pdf_test = File.dirname(__FILE__) + "/output/page_pdf_test.pdf"
+    Container.new(@p, :fill_color=>'yellow')
+    Container.new(@p,:fill_color=>'orange')
+    Container.new(@p, :fill_color=>'gray')
+    @p.relayout!
+    @page_svg_test = File.dirname(__FILE__) + "/output/page_svg_test.svg"
   end
   
   it 'should save svg' do
-     @p.save_pdf(@page_pdf_test)
-     File.exists?(@page_pdf_test).must_equal true
-     # system("open #{@page_pdf_test}") if File.exists?(@page_pdf_test)
+     @p.save_svg(@page_svg_test)
+     assert File.exists?(@page_svg_test) 
+     system("open #{@page_svg_test}") 
    end
 end
 
@@ -34,11 +35,12 @@ describe 'create page with fixtures' do
     @p.side_bar.must_be_kind_of SideBar
   end
   
-  it 'should save pdf' do
-    @pdf_path = File.dirname(__FILE__) + "/output/page_fixture_test.pdf"
-    @p.save_pdf(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
-    # system("open #{@page_svg_test}") if File.exists?(@page_svg_test)
+  it 'should save svg' do
+    @svg_path = File.dirname(__FILE__) + "/output/page_fixture_test.svg"
+    @p.save_svg(@svg_path)
+    File.exists?(@svg_path).must_equal true
+    system("open #{@svg_path}") 
+    
   end
   
 end
@@ -60,11 +62,11 @@ describe 'create right_side page  ' do
     @p.side_bar_object.must_equal nil
   end
   
-  it 'should save pdf' do
-    @pdf_path = File.dirname(__FILE__) + "/output/page_fixture_right_side.pdf"
-    @p.save_pdf(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
-    # system("open #{@page_svg_test}") if File.exists?(@page_svg_test)
+  it 'should save svg' do
+    @svg_path = File.dirname(__FILE__) + "/output/page_fixture_right_side.svg"
+    @p.save_svg(@svg_path)
+    File.exists?(@svg_path).must_equal true
+    system("open #{@svg_path}")
   end
 end
 
