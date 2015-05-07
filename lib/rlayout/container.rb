@@ -93,13 +93,13 @@ module RLayout
     def to_hash 
       h=super
       if @graphics.length > 0
-        h[:graphics]=[]
+        h[:graphics]= Array.new
         @graphics.each do |child|
           h[:graphics] << child.to_hash
         end
       end
       if @floats && @floats.length > 0
-        h[:floats]=[]
+        h[:floats]= Array.new
         @floats.each do |float|
           h[:floats] << float.to_hash
         end

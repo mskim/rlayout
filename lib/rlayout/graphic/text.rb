@@ -7,7 +7,8 @@ module RLayout
       @text_fit_type = options.fetch(:text_fit_type,1)
       if options[:text_string] #|| options[:text_atts_array]
         @text_record  = TextStruct.new(options[:text_string], nil, nil)
-        
+        @text_record[:color] = options[:text_color] if options[:text_color]
+        @text_record[:size] = options[:text_size] if options[:text_size]
         # @text_layout_manager = TextLayoutManager.new(self, options)
       end
     end
@@ -27,15 +28,6 @@ module RLayout
       #   @text_layout_manager.att_string.set_string(new_string)
       end
       self
-    end
-
-    def text_to_hash
-      unless @text_layout_manager.nil?
-        @text_layout_manager.to_hash if @text_layout_manager
-      else
-        Hash.new
-      end
-
     end
 
   end

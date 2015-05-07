@@ -79,14 +79,7 @@ module RLayout
     def can_split_at?(position)
       false
     end
-    
-    def image_to_hash
-      h = {}
-      h[:image_path] = @image_path if @image_path
-      h[:image_fit_type] = @image_fit_type if @image_fit_type != image_defaults[:image_defaults]
-      h
-    end
-    
+        
     def draw_image(rect)      
       return unless @image_object
       # This is confusing. 

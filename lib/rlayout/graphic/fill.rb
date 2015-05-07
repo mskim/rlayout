@@ -1,8 +1,5 @@
 module RLayout
-  
-  
   class Graphic
-    
     def init_fill(options)
       if options[:fill_type] == 'gradiation'
         @fill = LinearGradient.new('white','black')

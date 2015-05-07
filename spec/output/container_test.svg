@@ -3,6 +3,6 @@
 <g transform="translate(200,50)">
 <rect x="0" y="0" width="300" height="125" style="fill:white;stroke:black;"></rect>
 <g transform="translate(0,0)">
-<rect x="0" y="0" width="75" height="125" rx="7" ry="7" style="fill:yellow;stroke:black;" /><circle cx="112" cy="62" r="37" style="fill:lightGray;stroke:black;" /><rect x="150" y="0" width="75" height="125" rx="7" ry="7" style="fill:blue;stroke:black;" /><circle cx="262" cy="62" r="37" style="fill:red;stroke:black;" /></g>
-<rect x="0" y="125" width="300" height="125" style="fill:red;stroke:black;"></rect><circle cx="150" cy="312" r="62" style="fill:yellow;stroke:black;" /><rect x="0" y="375" width="300" height="125" rx="12" ry="12" style="fill:blue;stroke:black;" /></g>
+<rect x="0" y="0" width="75" height="125" rx="7" ry="7" style="fill:yellow;stroke:black;stroke-width:5" /><circle cx="112" cy="62" r="37" style="fill:lightGray;stroke:black;stroke-width:5" /><rect x="150" y="0" width="75" height="125" rx="7" ry="7" style="fill:blue;stroke:black;stroke-width:5" /><circle cx="262" cy="62" r="37" style="fill:red;stroke:black;stroke-width:5" /></g>
+<rect x="0" y="125" width="300" height="125" style="fill:red;stroke:black;"></rect><circle cx="150" cy="312" r="62" style="fill:yellow;stroke:black;stroke-width:20" /><rect x="0" y="375" width="300" height="125" rx="12" ry="12" style="fill:blue;stroke:black;" /></g>
 </svg>

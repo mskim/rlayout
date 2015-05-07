@@ -21,6 +21,9 @@ module RLayout
     def to_svg
       color
     end
+    def to_hash
+      to_h.delete_if{|k,v| v.nil?}
+    end
   end
   
   LinearGradient= Struct.new(:starting_color, :ending_color, :angle, :steps)
@@ -32,6 +35,9 @@ module RLayout
       s += "dash:#{dash}" if dash
       s
     end
+    def to_hash
+      to_h.delete_if{|k,v| v.nil?}
+    end
   end
   CornersStruct   = Struct.new(:top_left, :top_right, :bottom_right, :bottom_left, :type)
   SidesStruct     = Struct.new(:left, :top, :right, :bottom, :type)
@@ -39,18 +45,17 @@ module RLayout
     def to_svg
       "<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" replace_this_with_style></rect>"
     end
-    
-    # def update(graphic)
-    #     x = graphic.x
-    #     y = graphic.y
-    #     width = graphic.width
-    #     height = graphic.height
-    # end
+    def to_hash
+      to_h.delete_if{|k,v| v.nil?}
+    end
   end
   
   RoundRectStruct = Struct.new(:x, :y, :width, :height, :rx, :ry, :corners) do
     def to_svg
       "<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" rx=\"#{rx}\" ry=\"#{ry}\" replace_this_with_style />"
+    end
+    def to_hash
+      to_h.delete_if{|k,v| v.nil?}
     end
   end
   
@@ -58,12 +63,19 @@ module RLayout
     def to_svg
       "<circle cx=\"#{cx}\" cy=\"#{cy}\" r=\"#{r}\" replace_this_with_style />"
     end
+    def to_hash
+      to_h.delete_if{|k,v| v.nil?}
+    end
   end
   
   EllipseStruct   = Struct.new(:cx, :cy, :rx, :ry) do
     def to_svg
       "<ellipse cx=\"#{cx}\" cy=\"#{cy}\" rx=\"#{rx}\" ry=\"#{ry}\" replace_this_with_style />"
     end
+    def to_hash
+      to_h.delete_if{|k,v| v.nil?}
+    end
+    
   end
   
   LineStruct      = Struct.new(:x1, :y1, :x2, :y2, :h_direction, :v_direction) do
@@ -71,12 +83,20 @@ module RLayout
       mid_y = y1 + (y2 - y1)/2
       "<line x1=\"#{x1}\" y1=\"#{mid_y}\" x2=\"#{x2}\" y2=\"#{mid_y}\" replace_this_with_style />"
     end
+    def to_hash
+      to_h.delete_if{|k,v| v.nil?}
+    end
+    
   end
   
   PoligonStruct   = Struct.new(:points, :style) do
     def to_svg
       #TODO
     end
+    def to_hash
+      to_h.delete_if{|k,v| v.nil?}
+    end
+    
   end
   
   TextStruct= Struct.new(:string, :size, :color, :font, :style, :alignment) do

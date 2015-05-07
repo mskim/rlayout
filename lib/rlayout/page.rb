@@ -8,6 +8,7 @@ module RLayout
 
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
+      @document       = parent_graphic
       if options[:width]
       elsif !@parent_graphic.nil? && @parent_graphic.width
           options[:width]  = @parent_graphic.width

@@ -19,6 +19,9 @@ TODO List
 	- modify kramdown into r_kramdown
 	- use Asciidotor
 
+2015 5 7
+	1. Image fit_type, fit_best, fit_horizontal, fit_vertical
+	
 2015 5 2
 	1. change line records to stroke stroke[:color], stroke[:thickness], stroke[:dash]
 	1. SVG drawing, Container, Page, Document

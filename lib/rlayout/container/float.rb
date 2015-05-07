@@ -98,13 +98,6 @@ module RLayout
       end
     end
                     
-    def to_hash
-      floats=[]
-      @floats.each do |float|
-        floats << float.to_hash
-      end
-      floats
-    end
         
     # place imaegs that are in the head of the story as floats
     def place_float_images(images, grid_width, grid_height)

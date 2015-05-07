@@ -23,9 +23,7 @@ module RLayout
       @stroke[:line_join] = options[:line_join] if options[:line_join]
       @stroke[:type]      = options[:line_type] if options[:line_type]
     end
-    
-    
-    
+        
     def getStrokeRect(r)
 
       if @line_position == 1 #LINE_POSITION_MIDDLE 

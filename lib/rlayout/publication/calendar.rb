@@ -1,17 +1,26 @@
+CALENDAR_SYTYES = {
+  start_day: "Sunday",
+  start_day_color: "Sunday",
+  heading_font: "Sunday",
+  body_font: "Sunday",
+}
 
 # 2014 1 2
 # I should use "cal", "ncal" that does lots of stuff that I was doing.
 # Use cal, instaed of re-inventing the wheel.
 # 
 # There are parts that make up the calendar
-# Monthly Calendar
-#   monnth_title, month, month_in_english
-#   days_of_the_week, first_row, body_cells, last_row
-# Company Box 
+# 1. CalendarMonth 
+#   month_title, month, month_in_english
+#   days_of_the_week:  Sun Mon Tue Wed ...
+#   first_row:         29  30  1   2   3
+#   body_rows,          6  7   8   9   10
+#   last_row           25/30 26  27  it can have dobule dates cell
+# 2. Company Box 
 #   Compnay Name, Logo, tel, slogun
-# Picture of the month
-# Previous, Current, and Next month as mini month
-# A Year calendar at the end with mini month
+# 3. Picture of the month
+# 4. Previous, Current, and Next month as mini month
+# 5. A Year calendar at the end with mini month
 
 # Desk Top Calenar with Paired page
 # 0-Cover
@@ -26,9 +35,6 @@
 # month_color
 # mini_month
 # mini_year
-
-# cwday → fixnum
-# Returns the day of calendar week (1-7, Monday is 1).
 
 # Custom Events
 # Nation Holidays
@@ -114,7 +120,6 @@ module RLayout
       end
     
     end
-    
     # parse event file
     def read_events
       national_path = "/Users/Shared/SoftwareLab/calendar/events" + "/national.events"
@@ -124,7 +129,6 @@ module RLayout
         @national = KOREAN_HOLYDAYS
       end
       read_personal_events(@path)
-      
     end
   end
   
@@ -137,29 +141,29 @@ module RLayout
       @path             = options[:path]
       @events_path      = options.fetch(:path, default_events_path)
       @events           = CalendarEvents.new(@events_path)
-      @template_path    = options.fetch(:template, default_template)
-      @template         = YAML::load_file(@template_path + "/layout.yml")
-      info_path       = @path + "/info.yaml"
+      
+      info_path       = @path + "/info.yml"
       if File.exists?(info_path)
         @config           = YAML::load_file(info_path)
-        @type             = @config[:type]
-        @year             = @config[:starting_year]
-        @starting_month   = @config[:starting_month]
-        @number_of_months = @config[:number_of_months]
+        @type             = @config['type']
+        @year             = @config['year']
+        @starting_month   = @config['month']
+        @number_of_months = @config['number_of_months'] || 12
       else
         @type             = options.fetch(:type, "desk_top_calendar")
         @year             = options.fetch(:starting_year,Time.now.to_date ).year
         @starting_month   = options.fetch(:starting_month, Time.now.to_date)
-        @number_of_months = options.fetch(:number_of_number_of_months,12)
+        @number_of_months = options.fetch(:number_of_months,12)
       end
-      @ending_month     = Time.now.to_date.next_month(@number_of_months)
-      @template_doc     = Document.open(@template_path)
-      @calendar_page_template    = @template_doc.pages.first
+      personal_path       = @path + "/personal.yml"
+      @personal_evets     = YAML::load_file(personal_path)
+      @ending_month       = Time.now.to_date.next_month(@number_of_months)
+      create_images
+      create_monthly_calendar
       create_pages
-      # fill_in_the_pictures
       self
     end
-    
+                
     def save_info
       info_path     = @path + "/info.yaml"
       File.open(info_path, 'w'){|f| f.write to_hash.to_yaml}
@@ -177,42 +181,34 @@ module RLayout
     end
     
     def default_events_path
-      "/Users/Shared/SoftwareLab/calendar/events"
+      "/Users/Shared/SoftwareLab/calendar/national_events.yml"
     end
     
-    def default_template
-      "/Users/Shared/SoftwareLab/calendar/template/calendar1.rlayout"
+    def default_style
+      "/Users/Shared/SoftwareLab/calendar/template/calendar1.rb"
     end
     
-    def fill_in_the_pictures
+    
+    def create_images
       image_files = []
-      Dir.foreach(@path) do |file|
-        if file =~/\.jpg$/ || file =~/\.JPG$/
-          image_files << file
-        end
-      end
+      image_files =Dir.glob("#{@path}/*.jpg")
+      @month_images = []
       @number_of_months.times do |i|
-        page = @pages[i + 1]
-        image_box = page.graphics.first
-        full_image_path = @path + "/#{image_files[i]}"
-        if File.exists?(full_image_path)
-          image_box.graphics << Image.new(image_box, :image_path=>full_image_path, :image_fit_type=>1) # vetical fit
-        end
-        image_box.relayout!
+        @month_images << Image.new(nil, :image_path=>image_files[i], :image_fit_type=>1) # vetical fit
       end
-      
     end
-    
-    def create_image_pages
-      image_files = []
-      Dir.foreach(@path) do |file|
-        if file =~/\.jpg$/
-          image_files << file
-        end
-      end
-      @number_of_months.times do |i|
-        #crate image pages
         
+    def create_monthly_calendar
+      @calendar_months  = []
+      year              = @year.to_i
+      month             = @starting_month.to_i      
+      @number_of_months.times do        
+        @calendar_months << CalendarMonth.new(nil, documnet:self, year:year, month:month)
+        month += 1
+        if month == 13
+          month = 1
+          year  += 1
+        end
       end
     end
     
@@ -234,11 +230,15 @@ module RLayout
     end
     
     def add_calenard_page(index)
-      puts __method__
-      hash = @calendar_page_template.to_hash["Page"]
-      hash[:month] = index
+      hash = {}
+      hash[:year]  = @year
+      hash[:month] = @starting_month.to_i + index
       hash[:events] = @events
-      CalendarPage.new(self, hash)
+      p = CalendarPage.new(self, hash)
+      puts 
+      p.add_graphics(@month_images[index]) if @month_images[index]
+      p.add_graphics(@calendar_months[index]) if @calendar_months[index]
+      p.relayout!
     end
     
     def add_pair_page(index)
@@ -250,6 +250,7 @@ module RLayout
       add_calenard_page(index)
     end
     
+    # genearate mini-month to use as images
     def self.save_mini_month(template, year, month, output_path)
       template_doc = Document.open(template)
       starting_date_object = Date.new(year, month, 1)
@@ -269,35 +270,15 @@ module RLayout
   end
   
   class CalendarPage < Page
-    attr_accessor :calendar_month, :page, :date, :month, :calendar, :image, :organization
+    attr_accessor :page, :date, :month, :calendar, :image, :organization
     attr_accessor :picture, :month_title, :prev_month, :next_month, :company, :month_container
-    attr_accessor :events
-    attr_accessor :year
-    attr_accessor :rows, :starting_cwday, :starting_date_object, :number_of_days_in_month, :number_of_days_in_prev_month
-    attr_accessor :days
     
     def initialize(document, options={})
       super 
-      puts "++++++ @graphics.length:#{@graphics.length}"
-      @events     = options[:events]
-      @date       = @document.starting_month.next_month(options[:month])
-      @year       = @document.year
-      @month      = options[:month] 
-      @month_title      = graphic_with_tag("title")
-      @picture          = graphic_with_tag("picture")
-      @month_container  = @graphics[2]
-      puts  "@month_container:#{@month_container}"
-      @company          = graphic_with_tag("company")
-      @prev_month       = graphic_with_tag("prev_month")
-      @next_month       = graphic_with_tag("next_month")
-      update_title
-      @starting_date_object = Date.new(@year, @month, 1)
-      
-      @starting_cwday     = @starting_date_object.cwday
-      @number_of_days_in_month = days_in_month(@year,@month) 
-      @number_of_days_in_prev_month= days_in_month(@year,@month - 1) 
-      create_month_calendar_days
-      update_month_container      
+      @heading        = options[:heading]
+      @month_image    = options[:month_image]
+      @calendar_month = options[:calendar_month]
+      @company        = options[:company]
       self
     end
 
@@ -310,97 +291,109 @@ module RLayout
       year.set_new_text(@year.to_s) if year
     end
     
-    def events_for(date)
-      @document.events_for(date)
-      
-    end
-    
-  
 
-              
-    def update_month_container
-      @month_container.graphics.each_with_index do |row, row_index|
-        next if row_index == 0  # calendar head row
-        row.graphics.each_with_index do |date_container, cell_index|
-          calendar_cell = cell_at(row_index-1,cell_index)
-          date_field = date_container.graphic_with_tag("date")
-          if date_field && calendar_cell
-            if calendar_cell.current_month
-              date_field.set_new_text(calendar_cell.day.to_s) 
-            else
-              date_field.set_new_text(calendar_cell.day.to_s)
-              date_field.set_text_color(NSColor.lightGrayColor) 
-            end
-          end
-          lunar_field = date_container.graphic_with_tag("lunar")
-          lunar_field.set_new_text(calendar_cell.lunar.to_s) if lunar_field && calendar_cell
-          
-          national_event_field = date_container.graphic_with_tag("national")
-          national_event_field.set_new_text(calendar_cell.national.to_s) if national_event_field && calendar_cell
-          
-          personal_event_field = date_container.graphic_with_tag("personal")
-          personal_event_field.set_new_text(calendar_cell.personal.to_s) if personal_event_field && calendar_cell
-                    
-        end
-        
-      end
-    end    
-
-    def days_in_month(year, month)
-      puts "year:#{year}"
-      puts "month:#{month}"
-       return 29 if month == 2 && Date.gregorian_leap?(year)
-       COMMON_YEAR_DAYS_IN_MONTH[month]
-    end
-    
-    def create_month_calendar_days
-      puts __method__
-      puts "@month:#{@month}"
-      @days = []    
-      if @starting_cwday == 7 # if the month starts on Sunday
-        @number_of_days_in_month.times do |i|
-          @days << CalendarCell.new(@month, i+1, :events=>@events)
-        end
-        # fill in the next month dimmed cell
-        (35 - @number_of_days_in_month).times do |i|
-          @days << CalendarCell.new(@month, i+1, :current_month=>false)
-        end
-      else
-        # fill in the previous month dimmed cell
-        prev_row_starting = @number_of_days_in_prev_month - @starting_cwday + 1
-        @starting_cwday.times do |i|
-          @days << CalendarCell.new(@month, prev_row_starting + i, :current_month=>false)
-        end 
-        
-        # create current month cells
-        @number_of_days_in_month.times do |i|
-          @days << CalendarCell.new(@month, i+1, :events=>@events)
-        end
-        next_month_days = 35 - @number_of_days_in_month - @starting_cwday
-        # fill in the next month dimmed cell
-        next_month_days.times do |i|
-          @days << CalendarCell.new(@month, i+1, :current_month=>false)
-        end
-      end
-    end
-    
-    def cell_at(row, col)
-      return if row > 4 || row < 0
-      return if col > 6 || col < 0
-      @days[row*7 + col]
-    end
-    
   end
   
-  class CalendarCell
-    attr_accessor :events, :month, :day, :national, :personal, :luna, :current_month
-    attr_accessor :second_day, :slash_color, :slash_width
+	class CalendarMonth < Container
+    attr_accessor :year, :month, :company, :mini_month
+    attr_accessor :heading_row, :rows, :document
+    def initialize(parent_graphic, options={})
+      super
+      @document   = options[:document]
+      @year       = options[:year]
+      @month      = options[:month]
+      text        = `cal #{@month} #{@year}`
+      @rows       = text.split("\n")
+      @days_of_the_week = @rows[1].split(" ") 
+      
+      make_rows     
+      self
+    end
     
-    def initialize(month, day, options={})
-      @month        = month
-      @day          = day
+    def make_rows
+      make_heading_row
+      make_first_body_row
+      make_body_rows
+      adjust_last_row
+      relayout!
+    end
+    
+    def make_heading_row
+      row_graphic = Container.new(self, :layout_direction=>'horizontal', :layout_space=>5, :layout_length=>0.5)
+      @rows[1].split(" ").each do |heading_cell_text|
+        CalendarCell.new(row_graphic, :text_string=> heading_cell_text)
+      end
+      @graphics << row_graphic
+    end
+    
+    def make_first_body_row
+      row_graphic = Container.new(self, :layout_direction=>'horizontal', :layout_space=>5)
+      first_row_text_array = @rows[2].split(" ")
+      previous_month_last_row.split(" ").each do |prev_month_day| 
+        CalendarCell.new(row_graphic, :text_string=> prev_month_day, :text_color=>'lightGray')
+      end
+      first_row_text_array.each do |cell_text|
+        CalendarCell.new(row_graphic, :text_string=> cell_text, )
+      end
+    end
+    
+    def make_body_rows
+      @rows.each_with_index do |row, i|
+        next if i < 3
+        row_graphic = Container.new(self, :layout_direction=>'horizontal', :layout_space=>5)
+        row.split(" ").each do |cell_text|
+          CalendarCell.new(row_graphic, :text_string=> cell_text)
+        end
+      end
+    end
+    
+    def previous_month_last_row
+      prv_month = @month.to_i - 1
+      year  = @year
+      if prv_month == 0
+        prv_month = "12"
+        year  = (@year.to_i - 1).to_s
+      end
+      text        = `cal #{prv_month} #{year}`
+      text.split("\n").last
+    end
+    
+    def last_row_text_array
+      @rows.last.split(" ")
+    end
+    
+    def adjust_last_row
+      if has_six_rows?
+        #TODO make double numbered cell
+        
+      elsif last_row_text_array.length < 7
+        last_row = @graphics.last
+        (7 - last_row_text_array.length).times do |i|
+          CalendarCell.new(last_row, :text_string=> i + 1, :text_color=>'lightGray')
+        end
+      end
+    end
+
+    # is is month six row month?
+    def has_six_rows?
+      (@rows.length - 2) > 5
+    end
+	end
+	
+  class CalendarCell < Container
+    attr_accessor :events, :month, :day
+    attr_accessor :sharing_second_day, :slash_color, :slash_width
+    attr_accessor :national, :personal, :luna, :current_month
+    def initialize(parent_graphic, options={})
+      if options[:day]
+        options[:text_string] = options[:day] 
+      elsif options[:day_of_the_week]
+        options[:text_string] = options[:day_of_the_week]
+      end
+      super
+      @month        = options[:month] if options[:month]
       @events       = options[:events]
-      @second_day   = nil     # for double cell
+      @sharing_second_day   = nil     # for double cell
       if @events
         nationals       = @events.national_event_on(@month, @day)
         if nationals.length > 0
@@ -418,50 +411,10 @@ module RLayout
           end
         end
       end
-      @current_month  = options.fetch(:current_month, true) 
       self
     end
-    
-    def to_hash
-      
-    end
-    
 
   end
   
-  class CalendarMonthGenerator
-    attr_accessor :year, :month, :rows, :first_week, :last_week, :days_of_the_week
 
-    def initialize(year, month)
-      @year = year
-      @month = month
-      text = `cal #{@month} #{@year}`
-      @rows = text.split("\n")
-      @first_week = @rows[2].split(" ")
-      @last_week = @rows.last.split(" ")
-      @days_of_the_week = @rows[1].split(" ")
-      self
-    end
-
-    def starting_day
-      @first_week = @rows[2].split(" ").first
-    end
-
-    def starting_day_of_the_week
-      @days_of_the_week[7 - @first_week.length] 
-    end
-
-    def last_day
-      @last_week.last
-    end
-
-    def last_day_of_the_week
-      @days_of_the_week[@last_week.length - 1] 
-    end
-
-    # is is month six row month?
-    def six_row?
-      (@rows.length - 2) > 5
-    end
-  end
 end

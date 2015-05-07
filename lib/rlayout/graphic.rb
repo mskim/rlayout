@@ -98,7 +98,21 @@ module RLayout
       h[:text_markup] = markup
       h
     end
-
+    
+    def self.upgrade_format(old_hash)
+      key   = old_hash.keys.first
+      new_hash = old_hash.values.first.dup
+      new_hash[:klass]=key
+      if new_hash[:graphics]
+        new_graphics = []
+        new_hash[:graphics].each do |child|
+          new_graphics << self.upgrade_format(child)
+        end
+        new_hash[:graphics] = new_graphics
+      end
+      new_hash
+    end
+    
     def to_hash
       h = {}
       h[:klass]   = @klass
@@ -107,14 +121,12 @@ module RLayout
       h[:width]   = @width    if @width != graphic_defaults[:width]
       h[:height]  = @height   if @height != graphic_defaults[:height]
       h[:tag]     = @tag      if @tag
-
-      h.merge!(layout_to_hash)
-      h.merge!(grid_to_hash)
-      h.merge!(fill_to_hash)
-      h.merge!(line_to_hash)
-      h.merge!(text_to_hash)
-      h.merge!(image_to_hash)
-      # h[:shape]  = @shape   if @shape != graphic_defaults[:shape]
+      h.merge!(layout_to_hash) 
+      h.merge!(@fill.to_hash)   if @fill
+      h.merge!(@stroke.to_hash) if @stroke
+      h.merge!(@shape.to_hash)  if @shape
+      h.merge!(@text.to_hash)   if @text_record
+      h.merge!(@image.to_hash)  if @image_record
       h
     end
 
@@ -361,13 +373,6 @@ module RLayout
         s = ",0"
       end
       s
-    end
-
-    def to_mongo
-      h = to_hash
-      h[:_id] = ancestry
-      j = h.to_json
-      j += "\n"
     end
 
     def save_pdf(path, options={})

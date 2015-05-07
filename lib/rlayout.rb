@@ -10,6 +10,7 @@ if defined?(Motion::Project::Config)
   # raise "This file must be required within a RubyMotion project Rakefile."
 
 else
+  require 'pry'
   require 'strscan'
   require 'yaml'
   require "rlayout/version"
@@ -51,6 +52,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/page_variables_extend'
 
   require File.dirname(__FILE__) + '/rlayout/document'
+  require File.dirname(__FILE__) + '/rlayout/view/document_view_svg'
   require File.dirname(__FILE__) + '/rlayout/document_variables_extend'
 
   require File.dirname(__FILE__) + '/rlayout/article/story'

@@ -73,8 +73,9 @@ module RLayout
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     def initialize(options={}, &block)
       @pages      = []
-      @title      = options.fetch(:title, "untitled")
-      @path       = options.fetch(:path, nil)
+      @title      = "untitled"
+      @title      = options[:title] if options[:title]
+      @path       = options[:path]  if options[:path]
       if options[:doc_info]
         @paper_size = options[:doc_info].fetch(:paper_size, "A4")
         @portrait   = options[:doc_info].fetch(:portrait, document_defaults[:portrait])
@@ -164,6 +165,8 @@ module RLayout
     end
 
     def layout_page
+      puts __method__
+      puts "@double_side:#{@double_side}"
       side_margin = 100
       top_margin = 50
       horizontal_gutter = 20
@@ -173,13 +176,9 @@ module RLayout
         page_pairs = @pages.length / 2
         page_pairs += 1 if @pages.length % 2 !=0
         @document_height  = @height*page_pairs + top_margin*2 + horizontal_gutter*(page_pairs-1)
-
         #TODO do it for double_side
         #TODO for starts_left
-
       else
-        puts "single side"
-        puts "@pages.length:#{@pages.length}"
         @document_width   = @width + side_margin*2
         @document_height  = @height*@pages.length + top_margin*2 + horizontal_gutter*(@pages.length-1)
         x = side_margin
@@ -211,10 +210,23 @@ module RLayout
       if @pages.length > 0
         h[:pages] =@pages.map {|page| page.to_hash}
       end
-      puts "h[:pages]:#{h[:pages]}"
       h
     end
-
+    
+    def self.upgrade_format(old_hash)
+      new_hash = old_hash.dup
+      # puts "new_hash:#{new_hash}"
+      new_pages = []
+      new_hash[:pages].each do |page|
+        page = Graphic.upgrade_format(page)
+        page[:klass] = "Page"
+        new_pages << page
+      end
+      new_hash[:version]  = "1.1"
+      new_hash[:pages]    = new_pages
+      new_hash
+    end
+    
     def self.open(path, options={})
       rlayout_yaml_path= path + "/layout.yml"
       hash = {}
@@ -223,6 +235,10 @@ module RLayout
         hash = {}
       else
         hash=YAML::load_file(rlayout_yaml_path)
+        if hash[:version] == '1.0'
+          puts "hash:#{hash[:version]}"
+          hash = upgrade_format(hash)
+        end
       end
       hash=hash.merge(options)
       hash[:path] = path
@@ -248,39 +264,11 @@ module RLayout
       # save_variables(@path) # in cased, we have variables in the document
     end
     
-    # def self.open_rlayout(path)
-    #   layout_path = path + "/layout.yml"
-    #   hash        = YAML::load(File.open(layout_path, 'r'){|f| f.read})
-    #   hash
-    # end
-    
-    def to_svg
-      # TODO
-      # SVG 1.1 does not support multipe page svg, SVG 1.2 has <pageSet> for multiple page support
-      # but it does not work in Safari
-      # So, save each pages as separate files
-      # layout_page
-
-      # s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0\" y=\"0\" width=\"#{@document_width}\" height=\"#{@document_height}\">\n"
-      # @pages.each do |page|
-      #   s += page.save_svg(page)
-      # end
-      # s += "</svg>"
-    end
 
     def save_yml(path)
       File.open(path, 'w'){|f| f.write to_hash.to_yaml}
     end
 
-    def save_svg(path)
-      dir   = File.dirname(path)
-      ext   = File.extname(path)
-      base  = File.basename(path, ".svg")
-      @pages.each_with_index do |page, i|
-        path = dir + "/#{base}" + i.to_s + "#{ext}"
-        page.to_svg(x,y)
-      end
-    end
 
     def save_pdf(path)
       @ns_view = DocumentViewMac.new(self)
