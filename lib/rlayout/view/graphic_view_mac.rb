@@ -1,6 +1,4 @@
 
-COLOR_NAMES = %w[black blue brown clear cyan darkGray gray green lightGray magenta orange red white yellow white]
-
 #shape
 RECTANGLE   = 0
 ROUND_RECT  = 1
@@ -8,7 +6,6 @@ CIRCULAR    = 2
 
 class GraphicViewMac < NSView
   attr_accessor :graphic
-
   def self.from_graphic(graphic)
     frame_rect = graphic.frame_rect
     frame = NSMakeRect(frame_rect[0], frame_rect[1], frame_rect[2], frame_rect[3])
@@ -20,52 +17,89 @@ class GraphicViewMac < NSView
   def init_with_graphic(graphic)
     @graphic = graphic
     @graphic.ns_view = self
-    if @graphic.fixtures
-      @graphic.fixtures.each do |child|
-        child_view = GraphicViewMac.from_graphic(child)
-        addSubview(child_view)
-      end
-    end
-
-    # for Containers, add the children graphics
-    if @graphic.graphics
-      @graphic.graphics.each do |child|
-        child_view = GraphicViewMac.from_graphic(child)
-        addSubview(child_view)
-      end
-    end
-
-    if @graphic.floats
-      @graphic.floats.each do |child|
-        child_view = GraphicViewMac.from_graphic(child)
-        addSubview(child_view)
-      end
-    end
     self
   end
-
+  
   def drawRect(r)
-    # context         = NSGraphicsContext.currentContext.graphicsPort
-    @graphic.draw_fill(r)
-    @graphic.draw_image(r)
-    if @graphic.text_layout_manager
-      draw_text(@graphic.text_layout_manager)
+    draw_graphic_in_nsview(@graphic, 0)   # draw top level @graphic
+  end
+
+  def draw_graphic_in_nsview(graphic, view_depth)
+    puts "view_depth:#{view_depth}"
+    if view_depth > 0
+      @context = NSGraphicsContext.currentContext
+      transform = NSAffineTransform.transform            
+      @context.saveGraphicsState
+      transform.translateXBy(graphic.x, yBy:graphic.y)
+      transform.concat
     end
-    @graphic.draw_line(r)
-    @graphic.draw_shade(r)    if @graphic.respond_to?(:draw_shade)
-    @graphic.draw_grid(r)     if @graphic.respond_to?(:grid_base) && @graphic.show_grid
-    @graphic.draw_grid_rects  if @graphic.respond_to?(:grid_rects) && @graphic.grid_rects
+    # transform.transformPoint(ns_origin(graphic))
+    # transform.transformPoint(ns_origin(graphic))
+    
+    # transform.rotateByRadians(0)
+    #do rotation       if graphic.rotation?
+    if view_depth > 0
+      puts "graphic.klass:#{graphic.klass}"
+    end
+    
+    draw_fill(graphic)            if graphic.fill
+    draw_stroke(graphic)          if graphic.stroke
+    draw_text(graphic)            if graphic.text_record
+    draw_image(graphic)           if graphic.image_record
+      # draw children graphics
+      # @graphic.draw_grid(r)     if @graphic.respond_to?(:grid_base) && @graphic.show_grid
+      # @graphic.draw_grid_rects  if @graphic.respond_to?(:grid_rects) && @graphic.grid_rects
+    # context = NSGraphicsContext.currentContext.graphicsPort
+    draw_fixtures(graphic.fixtures, view_depth + 1)    if !graphic.fixtures.nil? && graphic.fixtures.length > 0
+    draw_graphics(graphic.graphics, view_depth + 1)    if !graphic.graphics.nil? && graphic.graphics.length > 0
+    draw_floats(graphic.floats, view_depth + 1)        if !graphic.floats.nil? && graphic.floats.length > 0
+    if view_depth > 1
+      puts "@context:#{@context}"
+      @context.restoreGraphicsState
+    end  
   end
-
-
-  # draw only proposed_line
-  def draw_text(text_layout_manager)
-    glyphRange=text_layout_manager.layout_manager.glyphRangeForTextContainer(text_layout_manager.text_container)
-    origin = NSMakePoint(@graphic.left_margin + @graphic.left_inset, @graphic.top_margin + @graphic.top_inset) #@graphic.y
-    text_layout_manager.layout_manager.drawGlyphsForGlyphRange(glyphRange, atPoint:origin)
+    
+  def draw_fixtures(fixtures, view_depth)
+      fixtures.each do |child|
+        #translate position
+        #translate rotation
+        draw_graphic_in_nsview(child, view_depth)
+      end
+      
   end
-
-
+  
+  def draw_graphics(graphics, view_depth)
+    graphics.each do |child|
+      #translate position
+      #translate rotation
+      draw_graphic_in_nsview(child, view_depth)
+    end
+  end
+  
+  def draw_floats(floats, view_depth)
+    floats.each do |child|
+      #translate position
+      #translate rotation
+      draw_graphic_in_nsview(child, view_depth)
+    end
+  end
+  
+  def ns_origin(graphic)
+    r = graphic.frame_rect
+    puts p = NSPoint.new(r[0], r[1])
+    p
+  end
+  
+  def ns_bounds_rect(graphic)
+    r = graphic.frame_rect
+    NSMakeRect(0, 0,r[2],r[3])
+  end
+  
+  def ns_frame_rect(graphic)
+    r = graphic.frame_rect
+    NSMakeRect(r[0], r[1],r[2],r[3])
+  end
+    
   # make it flopped view
   def isFlipped
     true
@@ -95,5 +129,82 @@ class GraphicViewMac < NSView
   def pdf_data
       dataWithPDFInsideRect(bounds)
   end
+  
+  def convert_to_nscolor(color)
+    return color_from_string(color) if color.class == String
+    color
+  end
+  
+  
+  def color_from_string(color_string)
+    if color_string == nil
+      return NSColor.whiteColor
+    end
+
+    if color_string==""
+      return NSColor.whiteColor
+    end
+
+    if COLOR_NAMES.include?(color_string)
+      return color_from_name(color_string)
+    end
+    # TODO
+    # elsif color_string=~/^#   for hex color
+
+    color_array=color_string.split("=")
+    color_kind=color_array[0]
+    color_values=color_array[1].split(",")
+    if color_kind=~/RGB/
+        @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
+    elsif color_kind=~/CMYK/
+        @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
+    elsif color_kind=~/NSCalibratedWhiteColorSpace/
+        @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
+    elsif color_kind=~/NSCalibratedBlackColorSpace/
+        @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)
+    else
+        @color = GraphicRecord.color_from_name(color_string)
+    end
+    @color
+  end
+
+
+  def color_from_name(name)
+    case name
+    when "black"
+      return NSColor.blackColor
+    when "blue"
+      return NSColor.blueColor
+    when "brown"
+      return NSColor.brownColor
+    when "clear"
+      return NSColor.clearColor
+    when "cyan"
+      return NSColor.cyanColor
+    when "dark_gray", "darkGray"
+      return NSColor.darkGrayColor
+    when "gray"
+      return NSColor.grayColor
+    when "green"
+      return NSColor.greenColor
+    when "light_gray", "lightGray"
+      return NSColor.lightGrayColor
+    when "magenta"
+      return NSColor.magentaColor
+    when "orange"
+      return NSColor.orangeColor
+    when "purple"
+      return NSColor.purpleColor
+    when "red"
+      return NSColor.redColor
+    when "white"
+      return NSColor.whiteColor
+    when "yellow"
+      return NSColor.yellowColor
+    else
+      return NSColor.whiteColor
+    end
+  end
+  
 
 end

@@ -20,7 +20,13 @@ TODO List
 	- use Asciidotor
 
 2015 5 7
+	1. motion rlayout_test app to test in rubymotion environment.
+	
+2015 5 7
 	1. Image fit_type, fit_best, fit_horizontal, fit_vertical
+	1. image size detection with mini_magick
+	1. image clipping area
+	1. NSViewDrawing
 	
 2015 5 2
 	1. change line records to stroke stroke[:color], stroke[:thickness], stroke[:dash]

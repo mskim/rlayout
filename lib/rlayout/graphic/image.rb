@@ -44,7 +44,6 @@ module RLayout
   class Graphic
     def init_image(options)
       @image_record  = options.fetch(:image_record,nil)
-      
       return unless options[:image_path]
       @image_path       = options[:image_path]
       # @image_frame      = options.fetch(:image_frame, image_defaults[:image_frame])
@@ -52,16 +51,22 @@ module RLayout
       @image_fit_type   = options.fetch(:image_fit_type, image_defaults[:image_fit_type])
       if @image_path && File.exists?(@image_path)
         if RUBY_ENGINE == 'rubymotion'
-          @image_object=NSImage.alloc.initByReferencingFile(@image_path)
+          @image_object     =NSImage.alloc.initByReferencingFile(@image_path)
+          @image_dimension  = [@image_object.size.width, @image_object.size.heigth] 
           if @image_object && options[:adjust_height_to_keep_ratio]
-            # change height 
             @height *= image_object_height_to_width_ratio
           end
           apply_fit_type
+        else
+          @image_object     = MiniMagick::Image.open(@image_path)
+          @image_dimension  = @image_object.dimensions
+          if @image_object && options[:adjust_height_to_keep_ratio]
+            @height *= image_object_height_to_width_ratio
+          end
+          apply_fit_type
+          
         end
       elsif @local_image
-        #TODO
-        puts "handle local image"
       end
     end
     
@@ -75,6 +80,7 @@ module RLayout
         rotation: 0
       }
     end
+    
     
     def can_split_at?(position)
       false
@@ -93,7 +99,7 @@ module RLayout
 
     def image_object_height_to_width_ratio
       return 1 unless @image_object
-      @image_object.size.height/@image_object.size.width
+      @image_dimensions[1]/@image_dimensions[0]
     end
 
     def apply_fit_type
@@ -123,28 +129,32 @@ module RLayout
       end
       @source_frame.origin.x = @image_frame.size.width/2.0 - graphic_rect.size.width/2.0
       @source_frame.origin.y = @image_frame.size.height/2.0 - graphic_rect.size.height/2.0
-
     end
 
-
+    
     def fit_virtical
       return unless @image_object
-      @image_frame      = NSZeroRect
-      @image_frame.size = @image_object.size
-      if @image_frame
-        @source_frame = @image_frame.dup
+      @image_frame      = [0,0,0,0]
+      if RUBY_ENGINE == 'rubymotion'
+        @image_frame      = NSZeroRect
+        @image_frame.size = @image_object.size
+        if @image_frame
+          @source_frame = @image_frame.dup
+        else
+          @source_frame = NSZeroRect
+          return
+        end
+        # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
+         # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
+         source_width = @width / (height/@image_frame.size.height)
+         @source_frame.origin.x = (@image_frame.size.width - source_width)/2.0
+         @source_frame.origin.y = 0
+         @source_frame.size.width = source_width
+         @source_frame.size.height = @image_frame.size.height
       else
-        @source_frame = NSZeroRect
-        return
+        
       end
-      # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
-      source_width = @width / (height/@image_frame.size.height)
-      @source_frame.origin.x = (@image_frame.size.width - source_width)/2.0
-      @source_frame.origin.y = 0
-      @source_frame.size.width = source_width
-      @source_frame.size.height = @image_frame.size.height
-
+ 
     end
 
     def fit_horizontal
@@ -182,7 +192,12 @@ module RLayout
       # Todo
       # I need to figure out best fit
     end
-
+    
+    def fit_cover_all
+      return unless @image_object
+      
+    end
+    
     def fit_ignore_ratio
       @source_frame = NSZeroRect
     end

@@ -165,8 +165,6 @@ module RLayout
     end
 
     def layout_page
-      puts __method__
-      puts "@double_side:#{@double_side}"
       side_margin = 100
       top_margin = 50
       horizontal_gutter = 20
@@ -215,7 +213,6 @@ module RLayout
     
     def self.upgrade_format(old_hash)
       new_hash = old_hash.dup
-      # puts "new_hash:#{new_hash}"
       new_pages = []
       new_hash[:pages].each do |page|
         page = Graphic.upgrade_format(page)
@@ -255,12 +252,11 @@ module RLayout
     
     # called from save_document(sender) of MyDocument
     def save_document
-      puts __method__
       system("mkdir -p #{@path}") unless File.exists?(@path)
       layout_path= @path + "/layout.yml"
       File.open(layout_path,'w'){|f| f.write to_hash.to_yaml}
       pdf_path= @path + "/Preview.pdf"
-      save_pdf_doc(pdf_path) if self.respond_to?(:save_pdf_doc)
+      # save_pdf_doc(pdf_path) if self.respond_to?(:save_pdf_doc)
       # save_variables(@path) # in cased, we have variables in the document
     end
     

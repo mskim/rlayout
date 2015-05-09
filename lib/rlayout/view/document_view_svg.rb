@@ -15,14 +15,11 @@ module RLayout
     end
 
     def save_svg(path, options={})
-      puts "+++++++++ save_svg of Document"
       if options[:each_page]
         dir = File.dirname(path)
         ext = File.extname(path)
         base = File.basename(path, ".svg")
         @pages.each_with_index do |page, i|
-          
-          puts "++++++++ page.y:#{page.y}"
           path = dir + "/#{base}" + i.to_s + "#{ext}"
           page.save_svg(path)
         end

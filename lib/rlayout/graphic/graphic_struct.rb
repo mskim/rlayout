@@ -86,7 +86,6 @@ module RLayout
     def to_hash
       to_h.delete_if{|k,v| v.nil?}
     end
-    
   end
   
   PoligonStruct   = Struct.new(:points, :style) do
@@ -96,7 +95,14 @@ module RLayout
     def to_hash
       to_h.delete_if{|k,v| v.nil?}
     end
-    
+  end
+  BezierStruct = Struct.new(:points, :style) do
+    def to_svg
+      #TODO
+    end
+    def to_hash
+      to_h.delete_if{|k,v| v.nil?}
+    end
   end
   
   TextStruct= Struct.new(:string, :size, :color, :font, :style, :alignment) do

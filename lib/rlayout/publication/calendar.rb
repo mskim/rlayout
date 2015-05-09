@@ -235,7 +235,6 @@ module RLayout
       hash[:month] = @starting_month.to_i + index
       hash[:events] = @events
       p = CalendarPage.new(self, hash)
-      puts 
       p.add_graphics(@month_images[index]) if @month_images[index]
       p.add_graphics(@calendar_months[index]) if @calendar_months[index]
       p.relayout!
