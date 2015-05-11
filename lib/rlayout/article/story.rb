@@ -89,7 +89,6 @@ module RLayout
       Story.new(h)
     end
     
-    
     def self.magazine_article_sample(options={})
       heading         = ParagraphModel.heading
       heading[:type]  = "magazine article"
@@ -142,7 +141,6 @@ module RLayout
         puts "Can not find file #{story_path}!!!!"
         return {}
       end
-      # a = `md2story "#{filename}"`
       contents = File.open(markdown_path, 'r'){|f| f.read}
       begin
         if (md = contents.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
@@ -162,7 +160,6 @@ module RLayout
       paragraphs = markdown_to_para_data(@story_markdown, :demotion_level=>demotion_level)
       @story_hash = {:heading=>@metadata, :paragraphs=>paragraphs}
     end
-
 
   end
 

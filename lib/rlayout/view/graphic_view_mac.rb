@@ -36,9 +36,9 @@ class GraphicViewMac < NSView
       #do rotation       if graphic.rotation?
       transform.concat
     end
-    
     draw_fill(graphic)            if graphic.fill
     draw_stroke(graphic)          if graphic.stroke
+    draw_grid_rects(graphic)      if graphic.class == RLayout::TextColumn
     draw_text(graphic)            if graphic.text_record
     draw_image(graphic)           if graphic.image_record
     draw_fixtures(graphic.fixtures, view_depth + 1)    if !graphic.fixtures.nil? && graphic.fixtures.length > 0
@@ -55,7 +55,6 @@ class GraphicViewMac < NSView
         #translate rotation
         draw_graphic_in_nsview(child, view_depth)
       end
-      
   end
   
   def draw_graphics(graphics, view_depth)
@@ -74,6 +73,12 @@ class GraphicViewMac < NSView
     end
   end
   
+  def draw_grid_rects(graphic)
+    return if graphic.show_grid_rects == false
+    NSColor.yellowColor.set
+    graphic.grid_rects.each {|line| line.draw_grid_rect}
+  end
+    
   def ns_origin(graphic)
     r = graphic.frame_rect
     puts p = NSPoint.new(r[0], r[1])

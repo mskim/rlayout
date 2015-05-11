@@ -175,45 +175,45 @@ module RLayout
       false
     end
 
-    # def min_x(rect)
-    #   rect[0]
-    # end
-    # 
-    # def min_y(rect)
-    #   rect[1]
-    # end
-    # 
-    # def mid_x(rect)
-    #   rect[0] + rect[2]/2
-    # end
-    # 
-    # def mid_y(rect)
-    #   rect[1] + rect[3]/2
-    # end
-    # 
-    # def max_x(rect)
-    #   rect[0] + rect[2]
-    # end
-    # 
-    # def max_y(rect)
-    #   rect[1] + rect[3]
-    # end
-    # 
-    # def contains_rect(rect_1,rect_2)
-    #   (rect_1[0]<=rect_2[0] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) >= max_y(rect_2))
-    # end
-    # 
-    # def intersects_x(rect1, rect2)
-    #   (max_x(rect1) > rect2[0] && max_x(rect2) > rect1[0]) || (max_x(rect2) > rect1[0] && max_x(rect1) > rect2[0])
-    # end
-    # 
-    # def intersects_y(rect1, rect2)
-    #   (max_y(rect1) > rect2[1] && max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] && max_y(rect1) > rect2[1])
-    # end
-    # 
-    # def intersects_rect(rect_1, rect_2)
-    #   intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
-    # end
+    def min_x(rect)
+      rect[0]
+    end
+    
+    def min_y(rect)
+      rect[1]
+    end
+    
+    def mid_x(rect)
+      rect[0] + rect[2]/2
+    end
+    
+    def mid_y(rect)
+      rect[1] + rect[3]/2
+    end
+    
+    def max_x(rect)
+      rect[0] + rect[2]
+    end
+    
+    def max_y(rect)
+      rect[1] + rect[3]
+    end
+    
+    def contains_rect(rect_1,rect_2)
+      (rect_1[0]<=rect_2[0] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) >= max_y(rect_2))
+    end
+    
+    def intersects_x(rect1, rect2)
+      (max_x(rect1) > rect2[0] && max_x(rect2) > rect1[0]) || (max_x(rect2) > rect1[0] && max_x(rect1) > rect2[0])
+    end
+    
+    def intersects_y(rect1, rect2)
+      (max_y(rect1) > rect2[1] && max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] && max_y(rect1) > rect2[1])
+    end
+    
+    def intersects_rect(rect_1, rect_2)
+      intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
+    end
 
     def self.random_graphic_atts
       atts = {}

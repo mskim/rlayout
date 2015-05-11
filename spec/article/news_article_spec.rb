@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + "/../spec_helper"
-require File.dirname(__FILE__) + '/../../lib/rlayout/article/news_article'
+# require File.dirname(__FILE__) + '/../../lib/rlayout/article/news_article'
 
 describe 'news_article reading stoy' do
   before do
@@ -8,7 +8,14 @@ describe 'news_article reading stoy' do
   end
   
   it 'shold create NewsArticle' do
-    @article.must_be_kind_of NewsArticle
+    assert @article.class == NewsArticle
+  end
+  
+  it 'should save svg' do
+    @svg_path = "/Users/mskim/news_article/section5/1.story.svg"
+    @article.save_svg(@svg_path)
+    assert File.exist?(@svg_path)
+    system "open #{@svg_path}"
   end
 end
 

@@ -18,10 +18,10 @@ describe 'TextBox creation' do
     @tb.must_be_kind_of TextBox
   end
   
-  it 'should return width_of_column' do
-    @tb.width_of_column(0).must_equal 0
-    @tb.width_of_column(1).must_equal 195
-    @tb.width_of_column(2).must_equal 400
+  it 'should return width_of_columns' do
+    @tb.width_of_columns(0).must_equal 0
+    @tb.width_of_columns(1).must_equal 195
+    @tb.width_of_columns(2).must_equal 400
   end
 end
 

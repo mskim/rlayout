@@ -105,18 +105,13 @@ module RLayout
     end
   end
   
-  TextStruct= Struct.new(:string, :size, :color, :font, :style, :alignment) do
+  TextStruct = Struct.new(:string, :size, :color, :font, :style, :alignment) do
     def to_hash
       to_h.delete_if {|key,value| value==nil}
     end
-    
     def to_svg
-      #TODO
-      # "<text string= #{string}></text>"
-      # "<text font-size=\"#{size}\" x=\"#{@x}\" y=\"#{@y + size*1.2}\" fill=\"#{color}\">#{string}</text>\n"
       "<text font-size=\"#{size}\" replace_this_with_text_origin fill=\"#{color}\">#{string}</text>\n"
     end
-    
   end
   
   ImageStruct = Struct.new(:image_path, :fit_type, :rotation) do
@@ -128,5 +123,12 @@ module RLayout
       "<image replace_this_with_rect xlink:href=\"#{image_path}\"></image>"
     end
   end
+  
+  ParagraphStruct = Struct.new(:string, :markup, :footnote, :index) do
+    def to_hash
+      to_h.delete_if {|key,value| value==nil}
+    end
+  end
+  
 end
 

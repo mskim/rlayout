@@ -50,6 +50,7 @@ module RLayout
 
     def create_columns
       @column_count.times do
+        #TODO body_line_height option
         TextColumn.new(self)
       end
       relayout!
@@ -72,13 +73,14 @@ module RLayout
         document.add_to_toc_list(item)
       end
     end
-
-    def width_of_column(columns)
+    
+    # sum of width columns width including gaps
+    def width_of_columns(columns)
       return 0 if columns==0
       if columns <= @graphics.length
-        return max_x(@graphics[columns-1].frame_rect) - min_x(@graphics.first.frame_rect)
+        return (@graphics.last.frame_rect)[2] + (@graphics.last.frame_rect)[0] - (@graphics.first.frame_rect)[0]
       end
-      max_x(@graphics.last.frame_rect) - min_x(@graphics.first.frame_rect)
+      (@graphics.last.frame_rect)[2] + (@graphics.last.frame_rect)[0] - (@graphics.first.frame_rect)[0]
     end
 
     def create_column_grid_rects
@@ -136,19 +138,9 @@ module RLayout
     def layout_items(flowing_items)
       column_index = 0
       current_column = @graphics[column_index]
-      # puts "current_column.text_rect:#{current_column.text_rect}"
-      # puts "current_column.frame_rect:#{current_column.frame_rect}"
-      # puts "flowing_items.length:#{flowing_items.length}"
-      # puts "frame_rect:#{frame_rect}"
       while item      = flowing_items.shift do
         if item.text_layout_manager
           item.width  = current_column.text_width
-          # puts "item.text_markup:#{item.text_markup}"
-          # puts "item.text_string:#{item.text_string}"
-          # puts "current_column.text_rect:#{current_column.text_rect}"
-          # puts "current_column.room:#{current_column.room}"
-          # puts "@current_column.current_position:#{current_column.current_position}"
-          # "item underflow" case where there is no room at the bottom enven for a single line
           if current_column.room < current_column.body_line_height || current_column.room < item.text_line_height
             column_index +=1
             if column_index < @column_count
@@ -164,9 +156,9 @@ module RLayout
           #TODO????
           # check if current column is simple
 
-          text_area_path  = current_column.path_from_current_position
-          bounding_rect = CGPathGetPathBoundingBox(text_area_path)
-          current_column.current_position = bounding_rect.origin.y
+          # text_area_path  = current_column.path_from_current_position
+          # bounding_rect = CGPathGetPathBoundingBox(text_area_path)
+          # current_column.current_position = bounding_rect.origin.y
           # item.layout_text(:proposed_path=>text_area_path) # item.width:
           item.layout_text(:proposed_height=>current_column.room) # item.width is set already
         elsif item.class == RLayout::Image

@@ -20,6 +20,19 @@ TODO List
 	- modify kramdown into r_kramdown
 	- support Asciidotor
 
+2015 5 11
+	1. draw grid lines
+	1. set body_line_height for textColumn
+		- support for default and custom Styles
+	1. change Paragraph  
+		- ParaStruct(:string, markup, :footnote, :index)
+		- parse_para_string2para_data
+		- para_data2atts_array
+		- atts_array with TextStruct
+	1. line type, line arrow,
+	1. Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
+	1. CorneredRect(rect,corners, shapes)
+	
 2015 5 10
 	1. GraphicViewMac Drawing
 		- I was using subviews to present chidren, but it has some problem.

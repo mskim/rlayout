@@ -131,7 +131,7 @@ module RLayout
 
     def layout_story
       @heading_options[:layout_expand]  = [:height]
-      @heading_options[:width]          = @main_box.width_of_column(@heading_columns)
+      @heading_options[:width]          = @main_box.width_of_columns(@heading_columns)
       @heading_options[:align_to_body_text]= true
       @heading_options[:layout_expand]  = nil
       @heading_options[:top_margin]     = 0

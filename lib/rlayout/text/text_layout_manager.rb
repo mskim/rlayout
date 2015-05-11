@@ -86,19 +86,15 @@ module RLayout
     attr_accessor :line_count, :text_size, :linked, :text_line_spacing, :text_alignment, :text_vertical_alignment
     attr_accessor :drop_lines, :drop_char, :drop_char_width, :drop_char_height
     attr_accessor :text_fit_type, :text_overflow, :overflow_line_count
-    # attr_accessor :proposed_path, :proposed_line_count
     attr_reader   :att_string, :layout_manager, :text_container
     def initialize(owner_graphic, options={})
-      puts "options:#{options}"
       @owner_graphic  = owner_graphic
       @text_fit_type  = @owner_graphic.text_fit_type if @owner_graphic
       @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
       @text_vertical_alignment = options.fetch(:text_vertical_alignment, "center")
       @text_size      = options[:text_size] || 16
       @text_line_spacing = options[:text_line_spacing] || @text_size*1.2
-      # I should use only one, @text_storage or @att_string, so @att_string is NSTextStorage class
       @att_string     = NSTextStorage.alloc.initWithAttributedString(make_att_string_from_option(options))
-      puts "@att_string.string:#{@att_string.string}"
       @layout_manager = NSLayoutManager.alloc.init
       @att_string.addLayoutManager @layout_manager
       @text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@owner_graphic.width, @owner_graphic.height))
@@ -107,41 +103,37 @@ module RLayout
       self
     end
 
-    # this is line layout using NSText System
+    # line layout using NSText System
     def layout_text_lines(options={})
-      puts __method__
-      puts "options:#{options}"
       return 0 unless @att_string
       @text_overflow  = false
       @overflow_line_count = 0
       width           = @owner_graphic.width
       width           = options[:proposed_width] if options[:proposed_width]
-      height          = @owner_graphic.height
-      height          = options[:proposed_heigth] if options[:proposed_heigth]
-      @text_container.setContainerSize(NSMakeSize(width, height))
+      proposed_height = @owner_graphic.height
+      if options[:proposed_height]
+        proposed_height = options[:proposed_height] 
+      end
+      @text_container.setContainerSize(NSMakeSize(width, proposed_height))
       @layout_manager.glyphRangeForTextContainer @text_container
-      puts "@text_container:#{@text_container}"
-      puts "@layout_manager:#{@layout_manager}"
-      r=@layout_manager.usedRectForTextContainer text_container
-      puts "+++++ r:#{r}"
-      puts "height:#{height}"
-      puts "@text_line_spacing:#{@text_line_spacing}"
-      if r.size.height <= height
+      used_rect=@layout_manager.usedRectForTextContainer text_container
+      if used_rect.size.height <= proposed_height
         # text fits into given room, but do we have enough room for text_line_spacing
-        if r.size.height + @text_line_spacing <= height
-          @owner_graphic.height = r.size.height + @text_line_spacing
+        if used_rect.size.height  <= proposed_height
+          # @owner_graphic.height = used_rect.size.height + @text_line_spacing
+          @owner_graphic.height = used_rect.size.height
         else
-          # not enough room for text_line_spacing
-          @owner_graphic.height = height
+          @owner_graphic.height = proposed_height
         end
+        @text_overflow = false
       else
-        @owner_graphic.height = height
+        @owner_graphic.height = used_rect.size.height + @text_line_spacing
         @text_overflow = true
       end
     end
 
-
     def set_frame
+      # ???
       # layout_text_lines
       layout_text_lines
     end
@@ -230,7 +222,7 @@ module RLayout
       @text_font                     = options.fetch(:text_font, "Times")
       @text_size                     = options.fetch(:text_size, 16)
       @text_color                    = options.fetch(:text_color, "black")
-      @text_line_spacing             = options.fetch(:text_line_spacing, @text_size*1.2)
+      @text_line_spacing             = options.fetch(:text_line_spacing, @text_size)
       @text_fit_type                 = options.fetch(:text_fit_type, 0)
       @text_alignment                = options.fetch(:text_alignment, "center")
       @text_tracking                 = options.fetch(:text_tracking, 0)  if options[:text_tracking ]

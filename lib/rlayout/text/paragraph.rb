@@ -1,5 +1,13 @@
 module RLayout
 
+# Paragraph
+# para_data is ParagraphStruct
+# para_string: this is a string with markdown 
+#    markup: string starting with #, ##, ###, =, ==, ===
+#    style:  inline style markup string
+#    footnote: <fn>jfdasfda </fn>
+#    index: <index>stuff for index</index>
+
 #  illegular shaped text flow
 #  each Container Object implements "overlapping_graphics"
 #  "overlapping_graphics" finds "Graphic/Container objects" that are sitting on top of current textContainer
@@ -18,26 +26,45 @@ FIT_STYLE_RUN   = 3
 MININUM_LINES_FOR_SPLIT = 2
 
   class Paragraph < Text
-    attr_accessor  :linked
+    attr_accessor  :para_data, :linked
     def initialize(parent_graphic, options={})
       text_options = nil
-      if options[:markup]
+      if options[:para_data]
+        # options[:atts_array] = para_data2atts_array(options[:para_data])
+      elsif options[:para_string]
+        # options[:atts_array] = para_data2atts_array(parse_string_into_para_data(options[:para_string]))
+        
+      else options[:markup]
         @current_style = DEFAULT_STYLES
         if options[:current_style]
           @current_style = options[:current_style] 
         end
-        text_options = @current_style[options[:markup]]
+        if options[:markup]
+          text_options = @current_style[options[:markup]] 
+        else
+          text_options = @current_style['p']
+        end
         text_options[:text_markup] = options[:markup]        
         options.merge! text_options if text_options
       end
-      # options[:line_width] = 2
-      # options[:line_color] = 'red'
       if options[:drop_cap]
       end
       options[:text_fit_type] = 0
+      # options[:line_width] = 2
+      # options[:line_color] = 'black'
+      # options[:fill_color] = 'yellow'
+      
       super
       @klass = "Paragraph"
       self
+    end
+    
+    def parse_para_string(para_string)
+      
+    end
+    
+    def para_data2atts_array(para_data)
+      
     end
     
     def isFlipped
@@ -57,7 +84,8 @@ MININUM_LINES_FOR_SPLIT = 2
     end
     
     def overflow?
-      @text_layout_manager.text_overflow
+      return @text_layout_manager.text_overflow if @text_layout_manager
+      false
     end
         
     def underflow?
@@ -101,8 +129,7 @@ MININUM_LINES_FOR_SPLIT = 2
     
   
   class ParagraphModel
-    attr_accessor :markup, :string 
-    # attr_accessor :x,:y,:width, :height
+    attr_accessor :string, :markup 
     attr_accessor :footnote, :index
     
     def initialize(options={})

@@ -14,18 +14,19 @@ module RLayout
   class TextColumn < Container
     attr_accessor :current_position, :current_index
     attr_accessor :grid_rects, :body_line_height
-    attr_accessor :complex_rect, :align_body_text
+    attr_accessor :complex_rect, :align_body_text, :show_grid_rects
 
     def initialize(parent_graphic, options={}, &block)
       super
       @klass = "TextColumn"
+      @show_grid_rects = options[:show_grid_rects] || true
       @layout_space = 0
       @complex_rect = false
       # @line_width   = 2
       # @line_color   = 'black'
       @current_position = @top_margin + @top_inset
       @room = text_rect[3] - @current_position
-      @body_line_height = options.fetch(:body_line_height, 16)
+      @body_line_height = options.fetch(:body_line_height, 10)
       if block
         instance_eval(&block)
       end
@@ -160,11 +161,6 @@ module RLayout
       @room               = text_rect[3] - @current_position
     end
 
-    def draw_grid_rects
-      NSColor.yellowColor.set
-      @grid_rects.each {|line| line.draw_grid_rect}
-      # draw_collection_for_column if @klass == "TextColumn"
-    end
 
     # They are not use in the production, it is test only.
     def draw_collection_for_column
@@ -360,6 +356,13 @@ module RLayout
       self
     end
 
+    def draw_grid_rect
+      grid_rect = NSMakeRect(@text_area[0], @text_area[1], @text_area[2], @text_area[3])
+      path = NSBezierPath.bezierPathWithRect(grid_rect)
+      path.setLineWidth(1)
+      path.stroke
+    end
+    
     #TODO refoctor this ############
     def min_x(rect)
       rect[0]
@@ -460,12 +463,6 @@ module RLayout
       @overlap == true
     end
 
-    def draw_grid_rect
-      grid_rect = NSMakeRect(@text_area[0], @text_area[1], @text_area[2], @text_area[3])
-      path = NSBezierPath.bezierPathWithRect(grid_rect)
-      path.setLineWidth(1)
-      path.stroke
-    end
 
     ############ point construction #########
     # return x, y

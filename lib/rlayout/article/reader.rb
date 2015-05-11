@@ -1,6 +1,5 @@
 # encoding: UTF-8
 # Public: Methods for retrieving lines from AsciiDoc source files
-
 # This is from Asciidoctor::Reader
 
 EOL = "\n"
