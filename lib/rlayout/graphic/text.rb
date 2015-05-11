@@ -3,13 +3,14 @@ module RLayout
   class Graphic
 
     def init_text(options)
-            
       @text_fit_type = options.fetch(:text_fit_type,1)
       if options[:text_string] #|| options[:text_atts_array]
         @text_record  = TextStruct.new(options[:text_string], nil, nil)
         @text_record[:color] = options[:text_color] if options[:text_color]
         @text_record[:size] = options[:text_size] if options[:text_size]
-        # @text_layout_manager = TextLayoutManager.new(self, options)
+        if RUBY_ENGINE == 'rubymotion'
+          @text_layout_manager = TextLayoutManager.new(self, options)
+        end
       end
     end
 

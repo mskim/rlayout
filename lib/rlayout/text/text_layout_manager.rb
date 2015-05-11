@@ -1,6 +1,8 @@
+# TextLayoutManager is for hanldling Text in Cocoa(Mac OS X)
+
 # There two of ways of saving Text data.
 # 1. When entire Text has uniform attrbutes, use atts hash.
-# 2. When Text has mixed attrbutes, keep them in atts_array
+# 2. When Text has mixed attrbutes, use atts_array
 
 # atts_array
 # atts_array is Array of attribute Hash.
@@ -24,14 +26,12 @@
 # I want to keep attributes and string together in a single hash(atts), making it much easier to edit string by hand.
 
 # Using CoreText (I went back to using NSTextSystem. I am getting strange errors, (context invalid error), that I can't figure out why!! Some blogs says it is bug, I don't want to pull my hair out anymore.)
-# I am using CoreText functions rather than NSText,
+# XXXXXX no more!!!!! I am using CoreText functions rather than NSText, XXXXXX no more!!!!!
 # CTFrame, CTLine, CTRun, CTToken,
 # For vertical text, and finer controll
-#
 # 1. layout_text_lines:
 #       lays out out lines with att_string and given width
 #       it returns height for the layed out pargaph
-#
 # 2. Split:
 #       using lines, and lines_range
 #       lines keep: line_fragments that were layed out
@@ -54,9 +54,9 @@
 # Text Fit Mode
 # Three are two text fitting mode
 # one is fiiting text inside of the box, changing font size to fit
-# and the other way is to layout text by give font size, expanding size or overflow
-# for Text class, default fit mode is TEXT_FIT_TO_BOX = 0
-# for Pargaraph class, default fit mode is TEXT_FIT_TO_FONT =1
+# and the other way is to layout text by keeping font size, expanding container size or overflow
+# for Text class, default fit mode is       TEXT_FIT_TO_BOX = 0  (chnage font size)
+# for Pargaraph class, default fit mode is  TEXT_FIT_TO_FONT =1  (chnage container size)
 
 # dropcap_lines = 2-3
 # dropcap_char  = 1
@@ -67,7 +67,6 @@
 # 3. Draw Droped Char
 # dropcap_area
 
-# overflow is we have overflowing text, because we have more lines than available spave,
 
 FIT_FONT_SIZE   = 0   # keep given font size
 FIT_TO_BOX      = 1   # change font size to fit text into box
@@ -79,6 +78,7 @@ FIT_EACH_LINE   = 2   # adjust font size for each line to fit text into lines.
 
 #TODO
 # text_vertical_alignment
+
 module RLayout
   class TextLayoutManager
     attr_accessor :owner_graphic
@@ -89,14 +89,16 @@ module RLayout
     # attr_accessor :proposed_path, :proposed_line_count
     attr_reader   :att_string, :layout_manager, :text_container
     def initialize(owner_graphic, options={})
+      puts "options:#{options}"
       @owner_graphic  = owner_graphic
       @text_fit_type  = @owner_graphic.text_fit_type if @owner_graphic
       @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
       @text_vertical_alignment = options.fetch(:text_vertical_alignment, "center")
-
+      @text_size      = options[:text_size] || 16
+      @text_line_spacing = options[:text_line_spacing] || @text_size*1.2
       # I should use only one, @text_storage or @att_string, so @att_string is NSTextStorage class
       @att_string     = NSTextStorage.alloc.initWithAttributedString(make_att_string_from_option(options))
-      @text_line_spacing = options[:text_line_spacing] || options[:text_size]
+      puts "@att_string.string:#{@att_string.string}"
       @layout_manager = NSLayoutManager.alloc.init
       @att_string.addLayoutManager @layout_manager
       @text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@owner_graphic.width, @owner_graphic.height))
@@ -107,6 +109,8 @@ module RLayout
 
     # this is line layout using NSText System
     def layout_text_lines(options={})
+      puts __method__
+      puts "options:#{options}"
       return 0 unless @att_string
       @text_overflow  = false
       @overflow_line_count = 0
@@ -114,11 +118,14 @@ module RLayout
       width           = options[:proposed_width] if options[:proposed_width]
       height          = @owner_graphic.height
       height          = options[:proposed_heigth] if options[:proposed_heigth]
-
       @text_container.setContainerSize(NSMakeSize(width, height))
       @layout_manager.glyphRangeForTextContainer @text_container
+      puts "@text_container:#{@text_container}"
+      puts "@layout_manager:#{@layout_manager}"
       r=@layout_manager.usedRectForTextContainer text_container
-
+      puts "+++++ r:#{r}"
+      puts "height:#{height}"
+      puts "@text_line_spacing:#{@text_line_spacing}"
       if r.size.height <= height
         # text fits into given room, but do we have enough room for text_line_spacing
         if r.size.height + @text_line_spacing <= height
@@ -158,7 +165,7 @@ module RLayout
     end
 
     def make_atts
-      @text_color = Graphic.convert_to_nscolor(@text_color)    unless @text_color.class == NSColor
+      @text_color = RLayout::convert_to_nscolor(@text_color)    unless @text_color.class == NSColor
       atts={}
       atts[NSFontAttributeName]             = NSFont.fontWithName(@text_font, size:@text_size)
       atts[NSForegroundColorAttributeName]  = @text_color
@@ -219,9 +226,10 @@ module RLayout
       else
         @text_markup = 'p'
       end
-      @text_string                   = options.fetch(:text_color, "black")
+      @text_string                   = options.fetch(:text_string, "")
       @text_font                     = options.fetch(:text_font, "Times")
       @text_size                     = options.fetch(:text_size, 16)
+      @text_color                    = options.fetch(:text_color, "black")
       @text_line_spacing             = options.fetch(:text_line_spacing, @text_size*1.2)
       @text_fit_type                 = options.fetch(:text_fit_type, 0)
       @text_alignment                = options.fetch(:text_alignment, "center")
@@ -302,7 +310,7 @@ module RLayout
       proposed_width    = options[:proposed_width] if options[:proposed_width]
       drop_text_font    = options.fetch(:drop_text_font, 'Helvetica')
       drop_text_color   = options.fetch(:drop_text_color, @text_color)
-      drop_text_color   = Graphic.convert_to_nscolor(drop_text_color)    unless drop_text_color.class == NSColor
+      drop_text_color   = RLayout::convert_to_nscolor(drop_text_color)    unless drop_text_color.class == NSColor
       atts={}
       @drop_char_text_size                  = @drop_char_height
       atts[NSFontAttributeName]             = NSFont.fontWithName(drop_text_font, size:@drop_char_text_size)

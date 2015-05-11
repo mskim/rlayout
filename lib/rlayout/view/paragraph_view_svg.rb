@@ -6,7 +6,6 @@ module RLayout
     def to_svg
       svg
     end
-
     def svg
         s = "<rect x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\""
         if @fill_color!=nil && @fill_color != ""
@@ -22,9 +21,6 @@ module RLayout
           s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"
         end
         s
-    end
-
-
-    
+    end    
   end
 end

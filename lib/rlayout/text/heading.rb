@@ -32,10 +32,10 @@ module RLayout
   # heading height should be multiles of body text height
   class Heading < Container
     attr_accessor :title_object, :subtitle_object, :leading_object, :author_object
-    attr_accessor :align_to_body_text
+    attr_accessor :align_to_body_text, :current_style
     def initialize(parent_graphic, options={}, &block)
       super
-      @current_style =  options[:current_style]
+      @current_style =  options.fetch(:current_style, DEFAULT_STYLES)
       @klass = "Heading"
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
       @layout_space = 2
@@ -54,7 +54,7 @@ module RLayout
       @bottom_margin  = options.fetch(:bottom_margin,10)
       @layout_align   = 'center'
       @layout_expand  = options.fetch(:layout_expand,[:width, :height])
-      width = @width - @left_inset - @right_inset
+      # width           = @width - @left_inset - @right_inset
       if options[:title]
         @title_object = title(options[:title], options)
       elsif options[":title"]
@@ -155,16 +155,18 @@ module RLayout
 
     ######## PageScript verbes
     def title(string, options={})
-      atts  = @current_style["title"]
-      atts[:text_string]            = string
-      atts[:width]                  = @width
-      atts[:layout_expand]          = [:width]
-      @title_object                 = Text.new(self, atts)
-      @title_object.layout_length   = @title_object.height
+      @current_style              =  options.fetch(:current_style, DEFAULT_STYLES)
+      atts                        = @current_style["title"]
+      atts[:text_string]          = string
+      atts[:width]                = @width
+      atts[:layout_expand]        = [:width]
+      @title_object               = Text.new(self, atts)
+      @title_object.layout_length = @title_object.height
       @title_object
     end
 
     def subtitle(string, options={})
+      @current_style              =  options.fetch(:current_style, DEFAULT_STYLES)
       atts                = @current_style["subtitle"]
       atts[:text_string]  = string
       atts[:width]        = @width
@@ -175,6 +177,7 @@ module RLayout
     end
 
     def leading(string, options={})
+      @current_style              =  options.fetch(:current_style, DEFAULT_STYLES)
       atts                          = @current_style["leading"]
       atts[:text_string]            = string
       atts[:width]                  = @width
@@ -185,6 +188,7 @@ module RLayout
     end
 
     def author(string, options={})
+      @current_style              =  options.fetch(:current_style, DEFAULT_STYLES)
       atts                          = @current_style["author"]
       atts[:text_string]            = string
       atts[:width]                  = @width

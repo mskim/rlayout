@@ -1,6 +1,7 @@
 TODO List
 	- center graphic with width and height
 	- draw lines in superview, so the lines don't get cut off
+		use transform instead of subview
 	- add ShoulderColumn, add footnote_area
 	- apply StyleSheet at runtime with default fall back
 	- ePub generation
@@ -17,8 +18,16 @@ TODO List
 		- merge with base
 		- make it yml
 	- modify kramdown into r_kramdown
-	- use Asciidotor
+	- support Asciidotor
 
+2015 5 10
+	1. GraphicViewMac Drawing
+		- I was using subviews to present chidren, but it has some problem.
+		- strokes that goes beyond the subview frame are cut off. 
+		- I decided not to use subviews for children,but use transforms instead
+		- I can also implement rotation using transforms
+		- in order to use transforms, I have to use bounds instead of frame.
+		- for center point rotation, I have to use center point bounds.
 2015 5 7
 	1. motion rlayout_test app to test in rubymotion environment.
 	

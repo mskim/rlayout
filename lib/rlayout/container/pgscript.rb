@@ -41,6 +41,8 @@ module RLayout
       add_graphics(Graphic.random_graphics(number))
     end
 
+
+
     # place graphis as float in using grid_frame
     def float(klass, grid_frame, options={})
       if klass.class == String

@@ -25,36 +25,26 @@ class GraphicViewMac < NSView
   end
 
   def draw_graphic_in_nsview(graphic, view_depth)
-    puts "view_depth:#{view_depth}"
     if view_depth > 0
       @context = NSGraphicsContext.currentContext
       transform = NSAffineTransform.transform            
       @context.saveGraphicsState
       transform.translateXBy(graphic.x, yBy:graphic.y)
+      # transform.transformPoint(ns_origin(graphic))
+      # transform.transformPoint(ns_origin(graphic))
+      # transform.rotateByRadians(0)
+      #do rotation       if graphic.rotation?
       transform.concat
-    end
-    # transform.transformPoint(ns_origin(graphic))
-    # transform.transformPoint(ns_origin(graphic))
-    
-    # transform.rotateByRadians(0)
-    #do rotation       if graphic.rotation?
-    if view_depth > 0
-      puts "graphic.klass:#{graphic.klass}"
     end
     
     draw_fill(graphic)            if graphic.fill
     draw_stroke(graphic)          if graphic.stroke
     draw_text(graphic)            if graphic.text_record
     draw_image(graphic)           if graphic.image_record
-      # draw children graphics
-      # @graphic.draw_grid(r)     if @graphic.respond_to?(:grid_base) && @graphic.show_grid
-      # @graphic.draw_grid_rects  if @graphic.respond_to?(:grid_rects) && @graphic.grid_rects
-    # context = NSGraphicsContext.currentContext.graphicsPort
     draw_fixtures(graphic.fixtures, view_depth + 1)    if !graphic.fixtures.nil? && graphic.fixtures.length > 0
     draw_graphics(graphic.graphics, view_depth + 1)    if !graphic.graphics.nil? && graphic.graphics.length > 0
     draw_floats(graphic.floats, view_depth + 1)        if !graphic.floats.nil? && graphic.floats.length > 0
-    if view_depth > 1
-      puts "@context:#{@context}"
+    if view_depth > 0
       @context.restoreGraphicsState
     end  
   end

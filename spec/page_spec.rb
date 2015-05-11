@@ -1,5 +1,7 @@
 require File.dirname(__FILE__) + "/spec_helper"
 # 
+
+
 describe 'create page' do
   before do
     @p = Page.new(nil)
@@ -10,7 +12,6 @@ describe 'create page' do
     @p.relayout!
     @page_svg_test = File.dirname(__FILE__) + "/output/page_svg_test.svg"
   end
-  
   it 'should save svg' do
      @p.save_svg(@page_svg_test)
      assert File.exists?(@page_svg_test) 
@@ -40,7 +41,6 @@ describe 'create page with fixtures' do
     @p.save_svg(@svg_path)
     File.exists?(@svg_path).must_equal true
     system("open #{@svg_path}") 
-    
   end
   
 end

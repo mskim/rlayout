@@ -47,6 +47,83 @@ module RLayout
     name[0] = name[0].upcase
     name
   end
+  
+  def convert_to_nscolor(color)
+    return color_from_string(color) if color.class == String
+    color
+  end
+  
+  
+  def color_from_string(color_string)
+    if color_string == nil
+      return NSColor.whiteColor
+    end
+
+    if color_string==""
+      return NSColor.whiteColor
+    end
+
+    if COLOR_NAMES.include?(color_string)
+      return color_from_name(color_string)
+    end
+    # TODO
+    # elsif color_string=~/^#   for hex color
+
+    color_array=color_string.split("=")
+    color_kind=color_array[0]
+    color_values=color_array[1].split(",")
+    if color_kind=~/RGB/
+        @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
+    elsif color_kind=~/CMYK/
+        @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
+    elsif color_kind=~/NSCalibratedWhiteColorSpace/
+        @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
+    elsif color_kind=~/NSCalibratedBlackColorSpace/
+        @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)
+    else
+        @color = GraphicRecord.color_from_name(color_string)
+    end
+    @color
+  end
+
+  def color_from_name(name)
+    case name
+    when "black"
+      return NSColor.blackColor
+    when "blue"
+      return NSColor.blueColor
+    when "brown"
+      return NSColor.brownColor
+    when "clear"
+      return NSColor.clearColor
+    when "cyan"
+      return NSColor.cyanColor
+    when "dark_gray", "darkGray"
+      return NSColor.darkGrayColor
+    when "gray"
+      return NSColor.grayColor
+    when "green"
+      return NSColor.greenColor
+    when "light_gray", "lightGray"
+      return NSColor.lightGrayColor
+    when "magenta"
+      return NSColor.magentaColor
+    when "orange"
+      return NSColor.orangeColor
+    when "purple"
+      return NSColor.purpleColor
+    when "red"
+      return NSColor.redColor
+    when "white"
+      return NSColor.whiteColor
+    when "yellow"
+      return NSColor.yellowColor
+    else
+      return NSColor.whiteColor
+    end
+  end
+  
+  
 end
 # puts capitalize_first('lightGray')
 # puts RLayout::color2hex('lightGray')
