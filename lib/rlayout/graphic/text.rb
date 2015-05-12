@@ -11,6 +11,12 @@ module RLayout
         if RUBY_ENGINE == 'rubymotion'
           @text_layout_manager = TextLayoutManager.new(self, options)
         end
+      elsif options[:text_record]
+        @text_record  = options[:text_record]
+        if RUBY_ENGINE == 'rubymotion'
+          @text_layout_manager = TextLayoutManager.new(self, options)
+        end
+        
       end
     end
 

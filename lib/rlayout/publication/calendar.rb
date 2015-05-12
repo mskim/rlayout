@@ -6,7 +6,8 @@ CALENDAR_SYTYES = {
 }
 
 # 2015 5 12
-
+# FIX IMAGE_FIT_TYPE_KEEP_RATIO
+# Month and month in English
 # 2014 1 2
 # I should use "cal", "ncal" that does lots of stuff that I was doing.
 # Use cal, instaed of re-inventing the wheel.
@@ -237,12 +238,13 @@ module RLayout
       @month      = options[:month]
       text        = `cal #{@month} #{@year}`
       @rows       = text.split("\n")
-      @days_of_the_week = @rows[1].split(" ") 
+      # @days_of_the_week = @rows[1].split(" ") 
       make_rows  
       self
     end
     
     def make_rows
+      make_month_name_row
       make_heading_row
       make_first_body_row
       make_body_rows
@@ -250,8 +252,16 @@ module RLayout
       relayout!
     end
     
+    def make_month_name_row
+      row_graphic = Container.new(self, :layout_direction=>'horizontal', :layout_space=>5, :layout_length=>1)
+      CalendarCell.new(row_graphic, :layout_length=>1)
+      CalendarCell.new(row_graphic, :text_string=> @rows.first)
+      CalendarCell.new(row_graphic, :layout_length=>1)
+      @graphics << row_graphic
+    end
+    
     def make_heading_row
-      row_graphic = Container.new(self, :layout_direction=>'horizontal', :layout_space=>5, :layout_length=>0.5)
+      row_graphic = Container.new(self, :layout_direction=>'horizontal', :layout_space=>5, :layout_length=>0.7)
       DAYS_OF_THE_WEEK.each do |heading_cell_text|
         CalendarCell.new(row_graphic, :text_string=> heading_cell_text)
       end
@@ -261,8 +271,10 @@ module RLayout
     def make_first_body_row
       row_graphic = Container.new(self, :layout_direction=>'horizontal', :layout_space=>5)
       first_row_text_array = @rows[2].split(" ")
-      previous_month_last_row.split(" ").each do |prev_month_day| 
-        CalendarCell.new(row_graphic, :text_string=> prev_month_day, :text_color=>'lightGray')
+      unless first_row_text_array.length >= 7
+        previous_month_last_row.split(" ").each do |prev_month_day| 
+          CalendarCell.new(row_graphic, :text_string=> prev_month_day, :text_color=>'lightGray')
+        end
       end
       first_row_text_array.each do |cell_text|
         CalendarCell.new(row_graphic, :text_string=> cell_text, )
@@ -296,7 +308,21 @@ module RLayout
     
     def adjust_last_row
       if has_six_rows?
-        #TODO make double numbered cell
+        #if we have six rows(overflowing), merge overflowing cells with last row cells
+        # make double numbered cell
+        overflowing_row = @graphics.pop
+        last_row        = @graphics.last
+        double_cells    = []
+        overflowing_row.graphics.each do |overflow_cell|
+          last_row_cell  = last_row.graphics.shift
+          dobule_cell =CalendarCell.merge_cells(last_row_cell, overflow_cell)
+          dobule_cell.parent_graphic = last_row
+          double_cells << dobule_cell
+        end
+        last_row.graphics.length
+        double_cells.each do |double_cell|
+          last_row.graphics.unshift(double_cell)
+        end
         
       elsif last_row_text_array.length < 7
         last_row = @graphics.last
@@ -347,7 +373,14 @@ module RLayout
       # 
       self
     end
-
+    
+    def self.merge_cells(first, second_cell)
+      dobule_cell =CalendarCell.new(nil)
+      dobule_cell.add_graphics(first)
+      dobule_cell.add_graphics(second_cell)
+      dobule_cell
+    end
+    
   end
 
   class CalendarEvents
