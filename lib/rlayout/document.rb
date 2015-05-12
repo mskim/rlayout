@@ -231,7 +231,7 @@ module RLayout
         puts "template #{rlayout_yaml_path} not found ..."
         hash = {}
       else
-        hash=YAML::load_file(rlayout_yaml_path)
+        hash=YAML::load(File.open(rlayout_yaml_path, 'r'){|f| f.read})
         if hash[:version] == '1.0'
           puts "hash:#{hash[:version]}"
           hash = upgrade_format(hash)

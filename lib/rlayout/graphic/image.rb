@@ -50,9 +50,10 @@ module RLayout
       @image_caption    = options[:image_caption]      
       @image_fit_type   = options.fetch(:image_fit_type, image_defaults[:image_fit_type])
       if @image_path && File.exists?(@image_path)
+        #TODO Get rid of this and do it for MRI
         if RUBY_ENGINE == 'rubymotion'
           @image_object     =NSImage.alloc.initByReferencingFile(@image_path)
-          @image_dimension  = [@image_object.size.width, @image_object.size.heigth] 
+          @image_dimension  = [@image_object.size.width, @image_object.size.height] 
           if @image_object && options[:adjust_height_to_keep_ratio]
             @height *= image_object_height_to_width_ratio
           end
@@ -74,34 +75,13 @@ module RLayout
       {
         image_path: nil,
         local_image: nil,
-        image_fit_type: IMAGE_FIT_TYPE_VIRTICAL, 
+        image_fit_type: IMAGE_FIT_TYPE_KEEP_RATIO, 
         # source_frame: NSZeroRect,
         clip_path: nil,
         rotation: 0
       }
     end
     
-    
-    def can_split_at?(position)
-      false
-    end
-        
-    def draw_image(rect)      
-      return unless @image_object
-      # This is confusing. 
-      # If I want to displace image with reduced % , I have to make the source_frame larger
-      if @image_fit_type == IMAGE_FIT_TYPE_IGNORE_RATIO 
-        @image_object.drawInRect(rect, fromRect:NSZeroRect, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      else
-        @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      end
-    end
-
-    def image_object_height_to_width_ratio
-      return 1 unless @image_object
-      @image_dimensions[1]/@image_dimensions[0]
-    end
-
     def apply_fit_type
       case @image_fit_type
       when  IMAGE_FIT_TYPE_ORIGINAL
@@ -116,25 +96,36 @@ module RLayout
         fit_ignore_ratio
       end
     end
-
-    def fit_original
-      @image_frame.size = @image_object.size
-      # mid_x = NSMidX(@image_frame)
-      # mid_y = NSMidY(@image_frame)
-      if frame
-        @source_frame = graphic_rect.dup
-      else
-        @source_frame = NSZeroRect
-        return
-      end
-      @source_frame.origin.x = @image_frame.size.width/2.0 - graphic_rect.size.width/2.0
-      @source_frame.origin.y = @image_frame.size.height/2.0 - graphic_rect.size.height/2.0
+    
+    def can_split_at?(position)
+      false
+    end
+        
+    def image_object_height_to_width_ratio
+      return 1 unless @image_object
+      @image_dimensions[1]/@image_dimensions[0]
     end
 
+    def fit_original
+      if RUBY_ENGINE == 'rubymotion'
+        @image_frame.size = @image_object.size
+        # mid_x = NSMidX(@image_frame)
+        # mid_y = NSMidY(@image_frame)
+        if frame
+          @source_frame = graphic_rect.dup
+        else
+          @source_frame = NSZeroRect
+          return
+        end
+        @source_frame.origin.x = @image_frame.size.width/2.0 - graphic_rect.size.width/2.0
+        @source_frame.origin.y = @image_frame.size.height/2.0 - graphic_rect.size.height/2.0
+      else
+        
+      end
+    end
     
     def fit_virtical
       return unless @image_object
-      @image_frame      = [0,0,0,0]
       if RUBY_ENGINE == 'rubymotion'
         @image_frame      = NSZeroRect
         @image_frame.size = @image_object.size
@@ -146,7 +137,8 @@ module RLayout
         end
         # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
          # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
-         source_width = @width / (height/@image_frame.size.height)
+         source_width = @width / (@height/@image_frame.size.height)
+         source_width = @width * (@height/@image_frame.size.height)
          @source_frame.origin.x = (@image_frame.size.width - source_width)/2.0
          @source_frame.origin.y = 0
          @source_frame.size.width = source_width
@@ -159,44 +151,47 @@ module RLayout
 
     def fit_horizontal
       return unless @image_object
-      @image_frame      = NSZeroRect
-      @image_frame.size = @image_object.size
-      if @image_frame
-        @source_frame = @image_frame.dup
+      if RUBY_ENGINE == 'rubymotion'
+        @image_frame      = NSZeroRect
+        @image_frame.size = @image_object.size
+        if @image_frame
+          @source_frame = @image_frame.dup
+        else
+          @source_frame = NSZeroRect
+          return
+        end
+        # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
+        # This is really confusing. If I want to make smaller image , I have to make the source_frame larger        
+        source_height = @height / (@width/@image_frame.size.width)
+        @source_frame.origin.x = 0
+        @source_frame.origin.y = (@image_frame.size.height - source_height)/2.0
+        @source_frame.size.height = source_height
+        @source_frame.size.width = @image_frame.size.width
       else
-        @source_frame = NSZeroRect
-        return
+        
       end
-      # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-      # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
-      source_height = @image_frame.size.height / (@image_frame.size.width/@image_frame.size.width)
-      @source_frame.origin.x = 0
-      @source_frame.origin.y = (@image_frame.size.height - source_height)/2.0
-      @source_frame.size.height = source_height
-      @source_frame.size.width = @image_frame.size.width
     end
 
     def fit_keep_ratio
-      return unless @owner_graphic
       return unless @image_object
-      @image_frame      = NSZeroRect
-      @image_frame.size = @image_object.size
-      grapaphic_rect_width_to_height_ratio  = frame.size.width/frame.size.height
-      image_frame_width_to_height_ratio     = @image_frame.size.width/@image_frame.size.height
-      if grapaphic_rect_width_to_height_ratio > image_frame_width_to_height_ratio
-        # fit vertical and reduce image_frame_width
-        # Todo
+      if RUBY_ENGINE == 'rubymotion'
+        @image_frame      = NSZeroRect
+        @image_frame.size = @image_object.size
+        grapaphic_rect_width_to_height_ratio  = @width/@height
+        image_frame_width_to_height_ratio     = @image_frame.size.width/@image_frame.size.height
+        if grapaphic_rect_width_to_height_ratio > image_frame_width_to_height_ratio
+          # fit horizontal 
+          fit_horizontal
+        else
+          # fit vertical 
+          fit_virtical
+          
+        end
       else
-
+        
       end
-      # Todo
-      # I need to figure out best fit
     end
     
-    def fit_cover_all
-      return unless @image_object
-      
-    end
     
     def fit_ignore_ratio
       @source_frame = NSZeroRect

@@ -19,19 +19,26 @@ TODO List
 		- make it yml
 	- modify kramdown into r_kramdown
 	- support Asciidotor
-
-2015 5 11
-	1. draw grid lines
-	1. set body_line_height for textColumn
-		- support for default and custom Styles
-	1. change Paragraph  
+	- change Paragraph  
 		- ParaStruct(:string, markup, :footnote, :index)
 		- parse_para_string2para_data
 		- para_data2atts_array
 		- atts_array with TextStruct
-	1. line type, line arrow,
-	1. Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
-	1. CorneredRect(rect,corners, shapes)
+	- line type, line arrow,
+	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
+	- CorneredRect(rect,corners, shapes)
+
+2015 5 12
+	1. image_fitting, image_frame
+	1. support for default and custom Styles
+		- set body_line_height for textColumn
+	
+	1. rjob, rnews, rbook, rnamecard, ridcard, rcalendar
+	
+2015 5 11
+	1. draw grid lines
+	1. update Text(text_layout_manager) for nsview drawing
+	
 	
 2015 5 10
 	1. GraphicViewMac Drawing

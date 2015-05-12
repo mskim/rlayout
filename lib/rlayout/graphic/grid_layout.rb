@@ -205,7 +205,7 @@ module RLayout
       grid_layout_list.sort!{|x,y| x.total_area <=> y.total_area} 
     end
     
-    def self.expand_grid_for_size(width, heigth, grid_key, options={})
+    def self.expand_grid_for_size(width, height, grid_key, options={})
       #TODO margin, gutter, v_gutter
       expanded = GRID_PATTERNS[grid_key].map do |cell|
         [cell[0]*grid_width, cell[1]*grid_height, cell[2]*grid_width, cell[3]*grid_height]

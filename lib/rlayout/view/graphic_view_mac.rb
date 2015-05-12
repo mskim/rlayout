@@ -37,10 +37,10 @@ class GraphicViewMac < NSView
       transform.concat
     end
     draw_fill(graphic)            if graphic.fill
-    draw_stroke(graphic)          if graphic.stroke
     draw_grid_rects(graphic)      if graphic.class == RLayout::TextColumn
     draw_text(graphic)            if graphic.text_record
     draw_image(graphic)           if graphic.image_record
+    draw_stroke(graphic)          if graphic.stroke
     draw_fixtures(graphic.fixtures, view_depth + 1)    if !graphic.fixtures.nil? && graphic.fixtures.length > 0
     draw_graphics(graphic.graphics, view_depth + 1)    if !graphic.graphics.nil? && graphic.graphics.length > 0
     draw_floats(graphic.floats, view_depth + 1)        if !graphic.floats.nil? && graphic.floats.length > 0
