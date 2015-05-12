@@ -44,7 +44,7 @@ module RLayout
       @layout_expand = []
       @para_string  = options.fetch(:para_string,"")
       @markup       = options.fetch(:markup,'p')
-      @text_font    = options.fetch(:text_font,'Times')
+      @font         = options.fetch(:font,'Times')
       @text_size    = options.fetch(:text_size, 12)
       @text_color   = options.fetch(:text_color, 'black')
       @layout_space = options.fetch(:layout_space, 0)
@@ -59,12 +59,12 @@ module RLayout
     end
     
     def create_tokens
-      font_object  = RFont.new(@text_font, @text_size)
+      font_object  = RFont.new(@font, @text_size)
       @token_space  = font_object.space_char_width
       @tokens = @para_string.split(" ").collect do |token_string|
         size  = font_object.string_size(token_string)
         @line_height   = @text_size*1.2 + @top_margin + @bottom_margin
-        TextToken.new(nil, :text_string=>token_string, :width=>size[0], :height=>@line_height, :layout_expand=>[], :text_font=>@text_font, :text_size=>@text_size) #, :line_width=>1, :line_color=>'green'
+        TextToken.new(nil, :text_string=>token_string, :width=>size[0], :height=>@line_height, :layout_expand=>[], :font=>@font, :text_size=>@text_size) #, :line_width=>1, :line_color=>'green'
       end
     end
     

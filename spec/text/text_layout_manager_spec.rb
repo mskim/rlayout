@@ -6,7 +6,7 @@ describe 'text overflow' do
       width: 100,
       height: 50,
       text_size: 12,
-      text_font: 'Times',
+      font: 'Times',
       text_line_spacing: 10,
       text_alignment: 'justified',
       text_string: "This is test. And this is the second paragraph. And some more sentence."*2,
@@ -37,7 +37,7 @@ describe 'dropcap' do
   before do
     drop_cap_options = {
       text_size: 12,
-      text_font: 'Times',
+      font: 'Times',
       text_line_spacing: 10,
       text_alignment: 'justified',
       text_string: '끓여 내오신 라면은 정말 꿀맛이었다. 감사한 마음에 온갖 애교와 아양을 떨었다.
@@ -47,7 +47,7 @@ describe 'dropcap' do
        text_string: "This is a test and this is good"*5,
        
       drop_lines:  2,
-      drop_text_font: 'Helvetica',
+      drop_font: 'Helvetica',
       drop_text_color: 'gray',
       width: 250
     }

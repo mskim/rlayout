@@ -13,7 +13,7 @@ module RLayout
     attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
     attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand
-    attr_accessor :text_markup, :text_direction, :text_string, :text_color, :text_size, :text_line_spacing, :text_font
+    attr_accessor :text_markup, :text_direction, :text_string, :text_color, :text_size, :text_line_spacing, :font
     attr_accessor :text_fit_type, :text_alignment, :text_tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
     attr_accessor :text_layout_manager
     attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :image_caption, :source_frame

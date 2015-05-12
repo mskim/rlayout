@@ -13,7 +13,7 @@
 #   it 'shuld have attribute of text_string' do
 #     @t.text_string.must_equal "This is a text"
 #     @t.text_size.must_equal 16
-#     @t.text_font.must_equal "Times"
+#     @t.font.must_equal "Times"
 #     @t.text_color.must_equal "black"
 #   end
 #   

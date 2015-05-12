@@ -43,12 +43,12 @@ module RLayout
     # TextRun containes run of uniform attributes.
 
     def create_tokens
-      font_object  = RFont.new(@text_font, @text_size)
+      font_object  = RFont.new(@font, @text_size)
       @token_space  = font_object.space_char_width
       @tokens = @para_string.split(" ").collect do |token_string|
         size  = font_object.string_size(token_string)
         @line_height   = @text_size*1.2 + @top_margin + @bottom_margin
-        TextToken.new(nil, :text_string=>token_string, :width=>size[0], :height=>@line_height, :layout_expand=>[], :text_font=>@text_font, :text_size=>@text_size) #, :line_width=>1, :line_color=>'green'
+        TextToken.new(nil, :text_string=>token_string, :width=>size[0], :height=>@line_height, :layout_expand=>[], :font=>@font, :text_size=>@text_size) #, :line_width=>1, :line_color=>'green'
       end
     end
 

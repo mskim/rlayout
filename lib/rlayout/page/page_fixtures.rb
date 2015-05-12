@@ -12,7 +12,7 @@ module RLayout
     
     def initialize(parent_graphic, options={})
       options[:text_size] = 8 unless options[:text_size]
-      options[:text_font] = 'Helvetica' unless options[:text_size]
+      options[:font] = 'Helvetica' unless options[:text_size]
       options[:text_string] = "" if options[:text_string].nil?
       options[:y]       = 50 - 8  #TODO
       options[:width]   = 300
@@ -37,14 +37,14 @@ module RLayout
     attr_accessor :pre_string, :post_string
     
     def initialize(parent_graphic, options={})
-      options[:text_size] = 8 unless options[:text_size]
-      options[:text_font] = 'Helvetica' unless options[:text_size]
-      options[:y] = parent_graphic.height - 50
-      page_number = parent_graphic.page_number
-      pre_string  = options.fetch(:pre_string, "-")
-      post_string = options.fetch(:post_string, "-")
-      options[:width]  = 300
-      options[:height] = 20
+      options[:text_size]   = 8 unless options[:text_size]
+      options[:font]        = 'Helvetica' unless options[:text_size]
+      options[:y]           = parent_graphic.height - 50
+      page_number           = parent_graphic.page_number
+      pre_string            = options.fetch(:pre_string, "-")
+      post_string           = options.fetch(:post_string, "-")
+      options[:width]       = 300
+      options[:height]      = 20
       options[:text_string] = "" if options[:text_string].nil?
       if parent_graphic.left_page?
         options[:x] = parent_graphic.left_inset + parent_graphic.left_margin

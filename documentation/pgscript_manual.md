@@ -14,7 +14,7 @@
 	  shape_corners,  shape_corner_type,  shape_bezier_path
 		# [1,1,1,1] # 0= no corner, 1=small, 2=medium, 3=large, 4= half of smaller side
 	text
-		text_string, text_color, text_font, text_size, text_style, text_alignment, text_v_alignment
+		text_string, text_color, font, text_size, text_style, text_alignment, text_v_alignment
 
 	image
 		image_path, image_fit_type, image_rect

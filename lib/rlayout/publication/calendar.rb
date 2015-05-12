@@ -4,6 +4,10 @@ CALENDAR_SYTYES = {
   heading_font: "Sunday",
   body_font: "Sunday",
 }
+# 2015 5 13
+# Style File
+# Text Align Left
+# Handle Events
 
 # 2015 5 12
 # FIX IMAGE_FIT_TYPE_KEEP_RATIO

@@ -159,7 +159,7 @@ module RLayout
     def make_atts
       @text_color = RLayout::convert_to_nscolor(@text_color)    unless @text_color.class == NSColor
       atts={}
-      atts[NSFontAttributeName]             = NSFont.fontWithName(@text_font, size:@text_size)
+      atts[NSFontAttributeName]             = NSFont.fontWithName(@font, size:@text_size)
       atts[NSForegroundColorAttributeName]  = @text_color
       if @guguri_width && @guguri_width < 0
         atts[NSStrokeWidthAttributeName] = atts_hash[:guguri_width] #0, -2,-5,-10
@@ -219,7 +219,7 @@ module RLayout
         @text_markup = 'p'
       end
       @text_string                   = options.fetch(:text_string, "")
-      @text_font                     = options.fetch(:text_font, "Times")
+      @font                          = options.fetch(:font, "Times")
       @text_size                     = options.fetch(:text_size, 16)
       @text_color                    = options.fetch(:text_color, "black")
       @text_line_spacing             = options.fetch(:text_line_spacing, @text_size)
@@ -300,12 +300,12 @@ module RLayout
       @drop_char_height      = @drop_lines*(@text_size + @text_line_spacing)
       proposed_width    = @owner_graphic.width
       proposed_width    = options[:proposed_width] if options[:proposed_width]
-      drop_text_font    = options.fetch(:drop_text_font, 'Helvetica')
+      drop_font    = options.fetch(:drop_font, 'Helvetica')
       drop_text_color   = options.fetch(:drop_text_color, @text_color)
       drop_text_color   = RLayout::convert_to_nscolor(drop_text_color)    unless drop_text_color.class == NSColor
       atts={}
       @drop_char_text_size                  = @drop_char_height
-      atts[NSFontAttributeName]             = NSFont.fontWithName(drop_text_font, size:@drop_char_text_size)
+      atts[NSFontAttributeName]             = NSFont.fontWithName(drop_font, size:@drop_char_text_size)
       atts[NSForegroundColorAttributeName]  = drop_text_color
       drop_char_att_string                  = NSMutableAttributedString.alloc.initWithString(@drop_char, attributes:atts)
       @drop_ct_line       = CTLineCreateWithAttributedString(drop_char_att_string)
