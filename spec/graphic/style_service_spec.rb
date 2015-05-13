@@ -17,6 +17,7 @@ describe 'create StyleService' do
   
   it 'should have chapter_style["body"]' do
     assert @sr.chapter_style['body'][:font] == 'Times'
+    assert @sr.chapter_style['body'][:text_size] == 10
   end
   
 end

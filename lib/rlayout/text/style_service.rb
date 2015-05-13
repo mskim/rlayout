@@ -10,7 +10,6 @@
 #  text_styles
 
 DEFAULT_STYLES={
-  "style_kind" => "DEFAULT_STYLES",
   "doc_info" => {
     paper_size: "A4", 
     portrait: true,
@@ -56,7 +55,6 @@ DEFAULT_STYLES={
 }
 
 MAGAZINE_STYLES={
-  "style_kind" => "MAGAZINE_STYLES",
   "heading_columns" => [1,2,2,2,3,4,4],
   "Title"   =>{:font => 'Times',     :text_size=>24.0, :text_color => 'yellow', :text_alignment=>'center'},
   "title"   =>{:font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
@@ -85,19 +83,18 @@ MAGAZINE_STYLES={
 }
 
 CHAPTER_STYLES={
-  "style_kind" => "CHAPTER_STYLES",
   "doc_info" => {
-    paper_size: "A5", 
-    portrait: true,
-    double_side: false,
-    starts_left: true,
-    width: 600,
-    height: 800,
-    left_margin: 50,
-    top_margin: 50,
+    paper_size:   "A5", 
+    portrait:     true,
+    double_side:  false,
+    starts_left:  true,
+    width:        600,
+    height:       800,
+    left_margin:  50,
+    top_margin:   50,
     right_margin: 50,
-    bottom_margin: 100,},
-  
+    bottom_margin:100,
+    },
   "heading_columns" => [1,2,3,4,4,4,4],
   "title"   =>{:font => 'Times',     :text_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
   "subtitle"=>{:font => 'Times',     :text_size=>16.0, :text_color => 'black'},
@@ -122,7 +119,6 @@ CHAPTER_STYLES={
 }
 
 NEWS_STYLES={
-  "style_kind" => "NEWS_STYLES",
   "heading_columns" => [1,2,2,2,3,4,4],
   "title"   =>{:font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center',:text_line_spacing=>10 },
   "subtitle"=>{:font => 'Times',     :text_size=>16.0, :text_color => 'black'},
