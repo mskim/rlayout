@@ -1,9 +1,17 @@
 CALENDAR_SYTYES = {
+  type: "desktop",
+  title: "Min Soo's Calendar",
   start_day: "Sunday",
-  start_day_color: "Sunday",
+  sunday_color: "red",
   heading_font: "Sunday",
-  body_font: "Sunday",
+  body_font: "Times",
 }
+
+# 2015 5 14
+# Cover page layout
+# Year Calendar
+# Mini Calendar
+
 # 2015 5 13
 # Style File
 # Text Align Left

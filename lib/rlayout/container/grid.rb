@@ -360,7 +360,6 @@ EOF
         end
         
         # recursive layout for children of graphic
-        # it could be relayout! or relayout_grid! depending on the graphic's layout_mode
         if graphic.kind_of?(Container)
           graphic.relayout  
         end

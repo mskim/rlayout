@@ -2,7 +2,6 @@
 module RLayout
   
   class Container < Graphic
-    attr_accessor :layout_mode     # layout_mode: "auto_layout" "grid"
     attr_accessor :layout_direction, :layout_space, :layout_align
     attr_accessor :show_grid, :show_text_grid, :grid_width, :grid_height
     attr_accessor :gutter_stroke_type, :gutter_stroke_width, :gutter_stroke_color, :gutter_stroke_dash
@@ -13,7 +12,6 @@ module RLayout
       @klass            = "Container"
       @graphics         = []
       layout_defaults_hash = auto_layout_defaults
-      @layout_mode      = options.fetch(:layout_mode, layout_defaults_hash[:layout_mode])
       @layout_direction = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
       @layout_space     = options.fetch(:layout_space, layout_defaults_hash[:layout_space])       
       @layout_align     = options.fetch(:layout_align, layout_defaults_hash[:layout_align])       
@@ -38,7 +36,6 @@ module RLayout
     
     def auto_layout_defaults
       h = {}
-      h[:layout_mode]       = "auto_layout"
       h[:layout_direction]  = "vertical"
       h[:layout_space]      = 0
       h[:layout_align]      = "top"
@@ -53,12 +50,13 @@ module RLayout
     end
     
     def relayout
-      return unless @graphics.length > 0
-      if @layout_mode == "auto_layout"
+      if @graphics.length > 0
         relayout!
-      elsif @layout_mode == "grid"
-        relayout_grid!
       end
+      # TODO
+      # if @floats.length > 0
+      #   relayout_grid!
+      # end
     end
     
     #TODO
