@@ -93,7 +93,7 @@ module RLayout
       @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
       @text_vertical_alignment = options.fetch(:text_vertical_alignment, "center")
       @text_size      = options[:text_size] || 16
-      @text_line_spacing = options[:text_line_spacing] || @text_size*1.2
+      @text_line_spacing = options[:text_line_spacing] || @text_size
       @att_string     = NSTextStorage.alloc.initWithAttributedString(make_att_string_from_option(options))
       @layout_manager = NSLayoutManager.alloc.init
       @att_string.addLayoutManager @layout_manager
@@ -119,9 +119,9 @@ module RLayout
       used_rect=@layout_manager.usedRectForTextContainer text_container
       if used_rect.size.height <= proposed_height
         # text fits into given room, but do we have enough room for text_line_spacing
-        if used_rect.size.height  <= proposed_height
+        if used_rect.size.height + @text_line_spacing  <= proposed_height
           # @owner_graphic.height = used_rect.size.height + @text_line_spacing
-          @owner_graphic.height = used_rect.size.height
+          @owner_graphic.height = used_rect.size.height + @text_line_spacing
         else
           @owner_graphic.height = proposed_height
         end
@@ -169,12 +169,15 @@ module RLayout
       if @text_tracking
         atts[NSKernAttributeName] = @text_tracking
       end
+      left_align        = NSMutableParagraphStyle.alloc.init.setAlignment(NSLeftTextAlignment)
       right_align       = NSMutableParagraphStyle.alloc.init.setAlignment(NSRightTextAlignment)
       center_align      = NSMutableParagraphStyle.alloc.init.setAlignment(NSCenterTextAlignment)
       justified_align   = NSMutableParagraphStyle.alloc.init.setAlignment(NSJustifiedTextAlignment)
       newParagraphStyle = NSMutableParagraphStyle.alloc.init # default is left align
 
       case @text_alignment
+      when "left"
+        newParagraphStyle = left_align
       when "right"
         newParagraphStyle = right_align
       when "center"
@@ -182,6 +185,8 @@ module RLayout
         # puts "newParagraphStyle.inspect:#{newParagraphStyle.inspect}"
       when 'justified'
         newParagraphStyle = justified_align
+      else
+        newParagraphStyle = left_align
       end
       newParagraphStyle.setLineSpacing(@text_line_spacing) if @text_line_spacing
       newParagraphStyle.setFirstLineHeadIndent(@text_first_line_head_indent) if @text_first_line_head_indent

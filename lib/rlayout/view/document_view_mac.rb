@@ -29,16 +29,5 @@ class DocumentViewMac
     @page_views.length
   end
   
-  def doc_pdf(path)
-    
-  end
-  
-  def doc_jpg(path)
-    
-  end
-  
-  def doc_thumbnail(path)
-    
-  end
 end
 

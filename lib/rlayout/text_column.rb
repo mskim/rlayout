@@ -24,9 +24,10 @@ module RLayout
       @complex_rect = false
       # @line_width   = 2
       # @line_color   = 'black'
+      @body_line_height = StyleService.shared_style_service.current_style['p'][:text_size]
+      @body_line_height = 10 if @body_line_height.nil?
       @current_position = @top_margin + @top_inset
       @room = text_rect[3] - @current_position
-      @body_line_height = options.fetch(:body_line_height, 10)
       if block
         instance_eval(&block)
       end
@@ -36,6 +37,7 @@ module RLayout
     # create grid_rects after relayou!
     # make sure the grids are created after adjusting the column size for the final layout
     def create_grid_rects
+      puts __method__
       @grid_rects = []
       column_rect = text_rect
       x     = column_rect[0] # text_box cordinate

@@ -145,36 +145,38 @@ HEADING_KIND= %w[h1 h2 h3 h4 title subtitle author lead]
 BODY_KIND= %w[h5 h6 p heading1 heading2 heading3 body]
 
 @@current_style_service = nil
-class StyleService
-  attr_accessor :current_style, :default_style, :chapter_style, :news_style, :magazine_style
-  def initialize
-    @chapter_style  = CHAPTER_STYLES
-    @news_style     = NEWS_STYLES
-    @magazine_style = MAGAZINE_STYLES
-    @default_style  = DEFAULT_STYLES
-    @current_style  = default_style
-    self
-  end
-  
-  # read style file from project, and update style
-  def update_style_with_custom_sytle(category, path)
-    unless File.exist?(path)
-      puts "#{path} doesn't exist!!!"
+module RLayout
+  class StyleService
+    attr_accessor :current_style, :default_style, :chapter_style, :news_style, :magazine_style
+    def initialize
+      @chapter_style  = CHAPTER_STYLES
+      @news_style     = NEWS_STYLES
+      @magazine_style = MAGAZINE_STYLES
+      @default_style  = DEFAULT_STYLES
+      @current_style  = default_style
+      self
     end
-    style = YAML::load(File.open(path, 'r'){|f| f.read})
-    case category
-    when 'chaper'
-      @chapter_style.merge!(style)
-    when 'news'
-      @news_style.merge!(style)
-    when 'magazine'
-      @magazine_style.merge!(style)
-    else
-      @default_style.merge!(style)
-    end
-  end
   
-  def self.shared_style_service
-    @@current_style_service = @@current_style_service || StyleService.new 
-  end  
+    # read style file from project, and update style
+    def update_style_with_custom_sytle(category, path)
+      unless File.exist?(path)
+        puts "#{path} doesn't exist!!!"
+      end
+      style = YAML::load(File.open(path, 'r'){|f| f.read})
+      case category
+      when 'chaper'
+        @chapter_style.merge!(style)
+      when 'news'
+        @news_style.merge!(style)
+      when 'magazine'
+        @magazine_style.merge!(style)
+      else
+        @default_style.merge!(style)
+      end
+    end
+  
+    def self.shared_style_service
+      @@current_style_service = @@current_style_service || StyleService.new 
+    end  
+  end
 end

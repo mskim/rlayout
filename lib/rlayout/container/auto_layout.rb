@@ -75,12 +75,13 @@ module RLayout
          @layout_space = room/spacing_number if spacing_number !=0
        end
       end
-      
+      ###### testing
       # This is the second pass
       @graphics.each do |graphic|
         next if !graphic.layout_member || graphic.layout_expand.nil?                  
         graphic_frame  = graphic.frame_rect              
         # adjust size
+        
         if (vertical ? graphic.expand_height? : graphic.expand_width?)
           if spacing_number == 0
             graphic_dimension = expandable_length
@@ -116,16 +117,24 @@ module RLayout
           end           
         end
        
+       
         # perpedicular alignment
         if (vertical ? graphic.expand_width? : graphic.expand_height?)
+          # for vertical mode, align graphic in left, center, right
           if vertical
-            graphic_frame[2]  = column_size[0] - (@left_margin + @right_margin + @right_inset + @left_inset) - graphic.right_margin - graphic.left_margin
-            graphic_frame[0]      = (@left_margin  + @left_inset)
+            # binding.pry
+            graphic_frame[0]  = (@left_margin  + @left_inset)
+            graphic_frame[2]  = column_size[0] - (@left_margin + @right_margin + @right_inset + @left_inset) #- graphic.right_margin - graphic.left_margin
           else
-            graphic_frame[3] = column_size[1] - (@top_margin + @bottom_margin + @top_inset + @bottom_inset) - graphic.top_margin - graphic.bottom_margin
-            graphic_frame[1]      = (@top_margin + @top_inset)
+            graphic_frame[1]  = (@top_margin + @top_inset)
+            graphic_frame[3]  = column_size[1] - (@top_margin + @bottom_margin + @top_inset + @bottom_inset) #- graphic.top_margin - graphic.bottom_margin
           end  
         end
+        
+        # if @klass == "Page" && graphic.klass = "TextBox"
+        #   binding.pry
+        # end
+        
         #perpedicular alignment for non perpedicular expanding child 
         # if !graphic.layout_align.nil?  
         #   case graphic.layout_align
@@ -152,6 +161,7 @@ module RLayout
          graphic.relayout! if graphic.kind_of?(Container)
         end
       end 
+      
       @graphics.each do |graphic|
         graphic.update_shape
       end

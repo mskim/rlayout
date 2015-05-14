@@ -49,7 +49,6 @@ module RLayout
       end
       @parent_graphic.pages << self if  @parent_graphic && !@parent_graphic.pages.include?(self)
       super
-
       @klass = "Page"
       @page_number = options.fetch(:page_number, 1)
       if @parent_graphic && @parent_graphic.double_side
@@ -72,19 +71,17 @@ module RLayout
       main_box_options[:item_space]   = options.fetch(:item_space, 3)
       main_box_options[:heading_columns]= options.fetch(:heading_columns, main_box_options[:column_count])
       if options[:text_box]
-        @main_box = text_box(main_box_options)
+        @main_box = TextBox.new(self, options)        
       elsif options[:object_box]
-        @main_box = object_box(main_box_options)
+        @main_box = ObjectBox.new(self, options)
       elsif options[:composite_box]
         @main_box = composite_box(main_box_options)
       elsif options[:news_box]
         @main_box = news_box(main_box_options)
       end
-
       if block
         instance_eval(&block)
       end
-
       self
     end
 
@@ -131,7 +128,6 @@ module RLayout
       return if @no_fixture_page # for pictures page
       options[:header][:font] = 8
       options[:footer][:font] = 8
-
       if first_page?
         if options[:header] && (header_rule[:first_page_only] || header_rule[:first_page])
           options[:header][:text_string] = options[:header][:first_page_text]
@@ -160,13 +156,22 @@ module RLayout
           options[:footer][:text_string] = options[:footer][:right_page_text]
           @footer_object = footer(options[:footer])
         end
-
       end
-
     end
 
-
-
+    # def create_column_grid_rects
+    #   puts __method__
+    #   @main_box.create_column_grid_rects
+    # end
+    # 
+    # def set_overlapping_grid_rect
+    #   @main_box.set_overlapping_grid_rect
+    # end
+    # 
+    # def layout_items(paragraphs)
+    #   @main_box.layout_items(paragraphs)
+    # end
+    
     def to_data
       h = {}
       instance_variables.each{|a|
@@ -242,27 +247,27 @@ module RLayout
 
     ########### PageScritp Verbs #############
     def text_box(options={}, &block)
-      @main_box     = TextBox.new(self, options)
+      TextBox.new(self, options)
     end
 
     def object_box(options={}, &block)
-      @main_box     = ObjectBox.new(self, options)
+      ObjectBox.new(self, options)
     end
 
     def header(options={})
       #TODO
-      @header_object = Header.new(self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
+      Header.new(self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
     end
 
     def footer(options={})
       #TODO
-      @footer_object = Footer.new(self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
+      Footer.new(self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
       # @footer_object = Footer.new(self, :text_string=>"This is header text", :is_fixture=>true)
     end
 
     def side_bar(options={})
       # @side_bar_object = SideBar.new(self, :text_string=>"This is side_bar text", :is_fixture=>true)
-      @side_bar_object = SideBar.new(self, :text_string=>options[:text_string], :is_fixture=>true)
+      SideBar.new(self, :text_string=>options[:text_string], :is_fixture=>true)
     end
 
     #

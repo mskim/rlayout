@@ -35,6 +35,10 @@ module RLayout
 
     def initialize(parent_graphic, options={}, &block)
       super
+      @left_margin  = 0
+      @right_margin = 0
+      @top_margin   = 0
+      @bottom_margin = 0
       @klass = "TextBox"
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)

@@ -11,8 +11,8 @@
 #     1. non-uniform heading width and height is used
 #         example: three column layout can have two column heading
 #
-# news_article:
-#     1. single page based
+# news_article: 
+#     1. single page based sub class of Page, not Document
 #     1. floats are used for heading
 #     1. width and height of layout is based on parent's grid
 #     1. parent grid_width, and grid_height is used to calculate frame
@@ -42,6 +42,7 @@ module RLayout
 
     def initialize(options={} ,&block)
       @paper_size         = options[:paper_size] if options[:paper_size]
+      options[:no_page]   = true #do not create any initial page
       super
       @bottom_margin      = 100
       @double_side        = true
@@ -49,15 +50,18 @@ module RLayout
       @column_count       = options.fetch(:column_count, 1)
       @toc_on             = options.fetch(:toc_on, false)
       @chapter_kind       = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
+      style_service       = RLayout::StyleService.shared_style_service
+      style_service.current_style = CHAPTER_STYLES
       @current_style      = CHAPTER_STYLES
       @heading_columns    = @current_style["heading_columns"][@column_count-1]
       options[:footer]    = true
       options[:header]    = true
       options[:text_box]  = true
+      options[:column_count]  = @column_count
       options[:heading_columns] = @heading_columns unless options[:heading_columns]
-      @page_count.times do |i|
+      @page_count.times do |i|  # a page is created by Document as default
         options[:page_number] = @starting_page_number + i
-        Page.new(self, options)
+        Page.new(self, options)        
       end
       if @story_path = options[:story_path]
         read_story
@@ -99,7 +103,7 @@ module RLayout
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
         #TODO should not pass the Hash, just name of it and make it look it up at paragraph level
-        para_options[:current_style]  = @current_style
+        # para_options[:current_style]  = @current_style
         @paragraphs << Paragraph.new(nil, para_options)
       end
 
@@ -107,7 +111,7 @@ module RLayout
 
     def layout_story
       page_index                = 0
-      @first_page               = @pages[page_index]
+      @first_page               = @pages[0]
       @heading[:layout_expand]  = [:width, :height]
       if @chapter_kind == "magazine_article"
         #make it a flost for magazine
@@ -121,31 +125,16 @@ module RLayout
         @heading[:left_inset]   = 0
         @heading[:right_inset]  = 0
         @heading[:chapter_kind]  = "magazine_article"
-        @heading[:current_style] = MAGAZINE_STYLES
         @first_page.main_box.floats << Heading.new(nil, @heading)
         # @first_page.main_box.relayout_floats!
-      elsif  @chapter_kind == "news_article"
-        #make it a flost for news_article
-        @heading[:width]        = @first_page.main_box.heading_width
-        @heading[:layout_expand]= nil
-        @heading[:top_margin]   = 0
-        @heading[:top_inset]    = 0
-        @heading[:bottom_margin]= 0
-        @heading[:tottom_inset] = 0
-        @heading[:left_inset]   = 0
-        @heading[:right_inset]  = 0
-        @first_page.main_box.floats << Heading.new(nil, @heading)
-        @first_page.relayout!
-        # @first_page.main_box.relayout_floats!
-      else
-        @heading[:chapter_kind]  = "chapter"
-        @heading[:current_style] = CHAPTER_STYLES
-        # make head a as one of graphics
+      else # chapter
+        # make head a as one of graphics for Chapter
         heading_object = Heading.new(nil, @heading)
         @first_page.graphics.unshift(heading_object)
         heading_object.parent_graphic = @first_page
       end
       @first_page.relayout!
+      @pages[1].relayout!
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
       @first_page.main_box.layout_items(@paragraphs)
@@ -164,6 +153,7 @@ module RLayout
         end
 
         @pages[page_index].main_box.layout_items(@paragraphs)
+        
       end
       update_header_and_footer
     end

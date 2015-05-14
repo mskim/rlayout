@@ -2,11 +2,11 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'create StyleService' do
   before do
-    @sr = StyleService.shared_style_service
+    @sr = RLayout::StyleService.shared_style_service
   end
   
   it 'should create StyleService' do
-    assert @sr.class == StyleService
+    assert @sr.class == RLayout::StyleService
   end
   
   it 'should have chapter_style' do

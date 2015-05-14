@@ -3,11 +3,13 @@ module RLayout
 
   class NewsArticle < Page
     attr_accessor :story_path, :paragraphs #:heading, :images
-    attr_accessor :output_path
+    attr_accessor :output_path, 
 
     def initialize(parent_graphic, options={})
-      @output_path = options[:output_path] if options[:output_path]
-      options[:chapter_kind]  = "news_article"
+      @output_path            = options[:output_path] if options[:output_path]
+      style_service           = RLayout::StyleService.shared_style_service
+      style_service.current_style = NEWS_STYLES
+      @current_style          = NEWS_STYLES
       options[:x]             = options.fetch(:x, 0)
       options[:y]             = options.fetch(:y, 0)
       if options[:grid_frame]
@@ -140,8 +142,6 @@ module RLayout
       @heading_options[:tottom_inset]   = 10
       @heading_options[:left_inset]     = 0
       @heading_options[:right_inset]    = 0
-      @heading_options[:chapter_kind]   = "news_article"
-      @heading_options[:current_style]  = NEWS_STYLES
       @main_box.floats << Heading.new(nil, @heading_options)
       relayout!
       @main_box.create_column_grid_rects

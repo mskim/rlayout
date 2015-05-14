@@ -29,10 +29,12 @@ TODO List
 	- CorneredRect(rect,corners, shapes)
 
 2015 5 12
-	1. image_fitting, image_frame
 	1. support for default and custom Styles
 		- set body_line_height for textColumn
-	
+		- @current_style =StyleService.shared_style_service.current_style
+
+2015 5 12
+	1. image_fitting, image_frame
 	1. rjob, rnews, rbook, rnamecard, ridcard, rcalendar
 	
 2015 5 11

@@ -35,10 +35,10 @@ module RLayout
     attr_accessor :align_to_body_text, :current_style
     def initialize(parent_graphic, options={}, &block)
       super
-      @current_style =  options.fetch(:current_style, DEFAULT_STYLES)
-      @klass = "Heading"
+      @current_style      = RLayout::StyleService.shared_style_service.current_style
+      @klass              = "Heading"
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
-      @layout_space = 2
+      @layout_space       = 2
       if options[:width]
         @width = options[:width]
       elsif @parent_graphic
@@ -155,7 +155,6 @@ module RLayout
 
     ######## PageScript verbes
     def title(string, options={})
-      @current_style              =  options.fetch(:current_style, DEFAULT_STYLES)
       atts                        = @current_style["title"]
       atts[:text_string]          = string
       atts[:width]                = @width
@@ -166,18 +165,16 @@ module RLayout
     end
 
     def subtitle(string, options={})
-      @current_style              =  options.fetch(:current_style, DEFAULT_STYLES)
-      atts                = @current_style["subtitle"]
-      atts[:text_string]  = string
-      atts[:width]        = @width
-      @subtitle_object    = Text.new(self, atts)
+      atts                          = @current_style["subtitle"]
+      atts[:text_string]            = string
+      atts[:width]                  = @width
+      @subtitle_object              = Text.new(self, atts)
       @subtitle_object.layout_expand  = [:width]
       @subtitle_object.layout_length  = @subtitle_object.height
       @subtitle_object
     end
 
     def leading(string, options={})
-      @current_style              =  options.fetch(:current_style, DEFAULT_STYLES)
       atts                          = @current_style["leading"]
       atts[:text_string]            = string
       atts[:width]                  = @width
@@ -188,7 +185,6 @@ module RLayout
     end
 
     def author(string, options={})
-      @current_style              =  options.fetch(:current_style, DEFAULT_STYLES)
       atts                          = @current_style["author"]
       atts[:text_string]            = string
       atts[:width]                  = @width

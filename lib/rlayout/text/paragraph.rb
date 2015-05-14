@@ -29,24 +29,22 @@ MININUM_LINES_FOR_SPLIT = 2
     attr_accessor  :para_data, :linked
     def initialize(parent_graphic, options={})
       text_options = nil
+      @current_style = RLayout::StyleService.shared_style_service.current_style
       if options[:para_data]
+        #TODO
         # options[:atts_array] = para_data2atts_array(options[:para_data])
       elsif options[:para_string]
+        #TODO
         # options[:atts_array] = para_data2atts_array(parse_string_into_para_data(options[:para_string]))
-        
-      else options[:markup]
-        @current_style = DEFAULT_STYLES
-        if options[:current_style]
-          @current_style = options[:current_style] 
-        end
-        if options[:markup]
-          text_options = @current_style[options[:markup]] 
-        else
-          text_options = @current_style['p']
-        end
-        text_options[:text_markup] = options[:markup]        
-        options.merge! text_options if text_options
       end
+      
+      if options[:markup]
+        text_options = @current_style[options[:markup]] 
+      else
+        text_options = @current_style['p']
+      end
+      text_options[:text_markup] = options[:markup]        
+      options.merge! text_options if text_options
       if options[:drop_cap]
       end
       options[:text_fit_type] = 0

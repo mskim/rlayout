@@ -83,11 +83,11 @@ module RLayout
         @starts_left= options[:doc_info].fetch(:starts_left, document_defaults[:starts_left])
       else
         @paper_size = options.fetch(:paper_size, "A4")
+        
         @portrait   = options.fetch(:portrait, document_defaults[:portrait])
         @double_side= options.fetch(:double_side, document_defaults[:double_side])
         @starts_left= options.fetch(:starts_left, document_defaults[:starts_left])
       end
-
       if @paper_size && @paper_size != "custom"
         @width = SIZES[@paper_size][0]
         @height = SIZES[@paper_size][1]
@@ -95,7 +95,7 @@ module RLayout
         @width      = options.fetch(:width, document_defaults[:width])
         @height     = options.fetch(:height, document_defaults[:height])
       end
-
+      
       @left_margin= options.fetch(:left_margin, document_defaults[:left_margin])
       @top_margin = options.fetch(:top_margin, document_defaults[:top_margin])
       @right_margin = options.fetch(:right_margin, document_defaults[:right_margin])
@@ -106,18 +106,21 @@ module RLayout
           @starts_left = false
         end
       elsif @starts_left
-        @starting_page_number = 2
-      else
         @starting_page_number = 1
+      else
+        @starting_page_number = 2
       end
-
-      if options[:pages]
+      
+      if options[:no_page]
+        # do not create any page
+      elsif options[:pages]
         options[:pages].each do |page_hash|
           Page.new(self, page_hash)
         end
       elsif options[:page_objects]
         @pages = options[:pages]
       else
+        # create single page as default 
         Page.new(self)
       end
 

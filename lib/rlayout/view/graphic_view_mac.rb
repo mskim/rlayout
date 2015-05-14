@@ -76,7 +76,10 @@ class GraphicViewMac < NSView
   def draw_grid_rects(graphic)
     return if graphic.show_grid_rects == false
     NSColor.yellowColor.set
-    graphic.grid_rects.each {|line| line.draw_grid_rect}
+    #TODO
+    if  graphic.grid_rects && graphic.grid_rects.length > 0
+      graphic.grid_rects.each {|line| line.draw_grid_rect}
+    end
   end
     
   def ns_origin(graphic)
