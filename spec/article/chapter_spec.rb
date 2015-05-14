@@ -22,6 +22,25 @@ require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 #   end
 # end
 
+describe 'chapter' do
+  before do
+    @path = "/Users/mskim/book/pastor/001.chapter.markdown"
+    @chapter = RLayout::Chapter.new(:paper_size=>'A5', :story_path=>@path)
+  end
+  
+  it 'shold create RLayout::Chapter' do
+    assert @chapter.class == RLayout::Chapter
+  end
+  
+  # it 'should save pdf' do
+  #   @pdf_path = "/Users/mskim/book/pastor/001.chapter.pdf"
+  #   @chapter.save_pdf(@pdf_path)
+  #   File.exist?(@pdf_path).should == true
+  # end
+  
+end
+
+__END__
 describe 'create Chapter page with TextBox' do
   before do
     @story_path = "/Users/mskim/chapter/2012-12-18-making-rlayout-for-variable-publishing.markdown"
