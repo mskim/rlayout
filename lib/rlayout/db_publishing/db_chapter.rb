@@ -9,7 +9,7 @@ module RLayout
       @double_side  = true
       @page_count   = options.fetch(:page_count, 2)
       @toc_on       = options.fetch(:toc_on, false)
-      @chapter_kind = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
+      @article_type = options.fetch(:article_type, "chapter") # magazin_article, news_article
       @page_options[:footer]        = true 
       @page_options[:header]        = true 
       @page_options[:object_box]    = true
@@ -18,7 +18,7 @@ module RLayout
       @page_options[:item_space]    = 3
       @page_count.times do |i|
         @page_options[:page_number] = @starting_page_number + i
-        p = Page.new(self, @page_options)
+        Page.new(self, @page_options)
       end
       read_pdf_item
       layout_db_item
@@ -37,7 +37,7 @@ module RLayout
       @first_page               = @pages[page_index]
       # @heading[:layout_expand]  = [:width, :height]
       # this is where we make heading as graphics or float
-      # if @chapter_kind == "magazine_article" || @chapter_kind == "news_article"
+      # if @article_type == "magazine_article" || @article_type == "news_article"
       #   #make it a flost for magazine, news_article
       #   @first_page.main_box.floats << Heading.new(nil, @heading)
       #   @first_page.relayout!
@@ -60,13 +60,13 @@ module RLayout
           @page_options[:column_count]= 4
           @page_options[:item_space]  = 5
           @page_options[:page_number] = @starting_page_number + page_index
-          p= Page.new(self, @page_options)          
+          Page.new(self, @page_options)          
         end
         @pages[page_index].main_box.layout_items(@db_items)
       end
       update_header_and_footer
       
-      column = @first_page.main_box.graphics.first      
+      @first_page.main_box.graphics.first      
     end
     
     def update_header_and_footer
@@ -87,7 +87,7 @@ module RLayout
     end
     
     def header_rule
-      h={
+      {
         :first_page_only  => true,
         :left_page        => false,
         :right_page       => false,

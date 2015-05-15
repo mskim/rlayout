@@ -38,7 +38,7 @@ module RLayout
 
   class Chapter < Document
     attr_accessor :story_path, :heading, :paragraphs, :current_style
-    attr_accessor :toc_on, :chapter_kind, :column_count
+    attr_accessor :toc_on, :article_type, :column_count
 
     def initialize(options={} ,&block)
       @paper_size         = options[:paper_size] if options[:paper_size]
@@ -49,7 +49,7 @@ module RLayout
       @page_count         = options.fetch(:page_count, 2)
       @column_count       = options.fetch(:column_count, 1)
       @toc_on             = options.fetch(:toc_on, false)
-      @chapter_kind       = options.fetch(:chapter_kind, "chapter") # magazin_article, news_article
+      @article_type       = options.fetch(:article_type, "chapter") # magazin_article, news_article
       style_service       = RLayout::StyleService.shared_style_service
       style_service.current_style = CHAPTER_STYLES
       @current_style      = CHAPTER_STYLES
@@ -59,14 +59,16 @@ module RLayout
       options[:text_box]  = true
       options[:column_count]  = @column_count
       options[:heading_columns] = @heading_columns unless options[:heading_columns]
+      if @story_path = options[:story_path]
+        read_story
+      end
       @page_count.times do |i|  # a page is created by Document as default
         options[:page_number] = @starting_page_number + i
         Page.new(self, options)        
       end
-      if @story_path = options[:story_path]
-        read_story
-        layout_story
-      end
+      
+      layout_story
+      
       if options[:output_path]
         save_pdf(options[:output_path])
       end
@@ -99,21 +101,18 @@ module RLayout
           next
         end
         para_options[:text_string]    = para[:string]
-        para_options[:chapter_kind]   = @chapter_kind
+        para_options[:article_type]   = @article_type
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
-        #TODO should not pass the Hash, just name of it and make it look it up at paragraph level
-        # para_options[:current_style]  = @current_style
         @paragraphs << Paragraph.new(nil, para_options)
       end
-
     end
 
     def layout_story
       page_index                = 0
       @first_page               = @pages[0]
       @heading[:layout_expand]  = [:width, :height]
-      if @chapter_kind == "magazine_article"
+      if @article_type == "magazine_article"
         #make it a flost for magazine
         @heading[:width]        = @first_page.main_box.heading_width
         @heading[:align_to_body_text]= true
@@ -124,11 +123,11 @@ module RLayout
         @heading[:tottom_inset] = 50
         @heading[:left_inset]   = 0
         @heading[:right_inset]  = 0
-        @heading[:chapter_kind]  = "magazine_article"
+        @heading[:article_type]  = "magazine_article"
         @first_page.main_box.floats << Heading.new(nil, @heading)
         # @first_page.main_box.relayout_floats!
       else # chapter
-        # make head a as one of graphics for Chapter
+        # insert heading at the top of first page
         heading_object = Heading.new(nil, @heading)
         @first_page.graphics.unshift(heading_object)
         heading_object.parent_graphic = @first_page

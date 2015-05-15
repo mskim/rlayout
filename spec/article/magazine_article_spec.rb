@@ -37,14 +37,14 @@ end
 #   
 #   it 'must_be-subclass of Chapter' do
 #     @m.must_be_kind_of Chapter
-#     @m.chapter_kind.must_equal "magazine_article"
+#     @m.article_type.must_equal "magazine_article"
 #   end
 # end
 
 # describe 'create MagazineChapter page with TextBox' do
 #   before do
 #     @story_path = "/Users/mskim/magazine/how-to-creaete-soochup.markdown"
-#     @m = MagazineArticle.new(:starts_left=>false, :story_path=>@story_path, :column_count =>3, :heading_columns=>2, :chapter_kind=>"magazine_article")    
+#     @m = MagazineArticle.new(:starts_left=>false, :story_path=>@story_path, :column_count =>3, :heading_columns=>2, :article_type=>"magazine_article")    
 #     @first_page = @m.pages.first
 #     @heading = @m.pages.first.main_box.heading
 #   end

@@ -125,7 +125,7 @@ module RLayout
         para_options[:text_string]    = para[:string]
         para_options[:layout_expand]  = [:width]
         para_options[:text_fit]       = FIT_FONT_SIZE
-        para_options[:chapter_kind]   = "news_article"
+        para_options[:article_type]   = "news_article"
         para_options[:layout_lines]   = false
         @paragraphs << Paragraph.new(nil, para_options)
       end

@@ -28,7 +28,11 @@ TODO List
 	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
 	- CorneredRect(rect,corners, shapes)
 
-2015 5 12
+2015 5 15
+	1. book
+		images, 
+		
+2015 5 13
 	1. support for default and custom Styles
 		- set body_line_height for textColumn
 		- @current_style =StyleService.shared_style_service.current_style
