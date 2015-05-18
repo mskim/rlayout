@@ -70,6 +70,8 @@ module RLayout
       main_box_options[:layout_space] = options.fetch(:gutter, main_box_options[:layout_space])
       main_box_options[:item_space]   = options.fetch(:item_space, 3)
       main_box_options[:heading_columns]= options.fetch(:heading_columns, main_box_options[:column_count])
+      main_box_options[:grid_base]    = options.fetch(:grid_base,"1x1")
+      
       if options[:text_box]
         @main_box = TextBox.new(self, options)        
       elsif options[:object_box]

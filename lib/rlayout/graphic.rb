@@ -9,7 +9,7 @@ module RLayout
     # attr_accessor :line_type, :line_color, :line_width, :line_dash, :line_drawing_sides
 
     attr_accessor :shape_type, :shape_bezier, :shape_corners, :shape_corne_type, :shape_sides, :shape_side_type
-    attr_accessor :grid, :grid_frame, :gutter, :v_gutter, :grid_cells, :show_grid
+    attr_accessor :gutter, :v_gutter, :grid_cells, :show_grid
     attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
     attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand
@@ -17,9 +17,9 @@ module RLayout
     attr_accessor :text_fit_type, :text_alignment, :text_tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
     attr_accessor :text_layout_manager
     attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :image_caption, :source_frame
-    attr_accessor :grid_frame
+    # attr_accessor :grid_frame
     attr_accessor :non_overlapping_rect
-    attr_accessor :fill, :stroke, :shape, :text_record, :image_record
+    attr_accessor :fill, :stroke, :shape, :text_record, :image_record, :grid
 
     # TODO
     # attr_accessor :fill_record, :line_record, :shape_record, :text_record, :image_record, :grid_record, :layout_record
@@ -28,7 +28,7 @@ module RLayout
       if parent_graphic
         if options[:is_float]
           @parent_graphic.floats << self if !@parent_graphic.floats.include?(self)
-          init_float(options)
+          # init_float(options)
         elsif options[:is_fixture]
           #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics
           @parent_graphic.fixtures << self if !@parent_graphic.fixtures.include?(self)
@@ -47,14 +47,16 @@ module RLayout
       @tag              = options[:tag]
       @auto_save        = options[:auto_save]
       init_layout(options)
-      # grid
-      if @parent_graphic && @parent_graphic.respond_to?(:grid_base) && @parent_graphic.grid_base && options[:grid_frame]
-        set_frame_in_parent_grid(options[:grid_frame]) if options[:grid_frame] && @parent_graphic.grid_base
-      end
+      #TODO
+      # # grid
+      # if @parent_graphic && @parent_graphic.respond_to?(:grid_base) && @parent_graphic.grid_base && options[:grid_frame]
+      #   set_frame_in_parent_grid(options[:grid_frame]) if options[:grid_frame] && @parent_graphic.grid_base
+      # end
       init_fill(options)
       init_stroke(options)
       init_text(options)
       init_image(options)
+      
       self
     end
 
@@ -76,7 +78,7 @@ module RLayout
     def update_shape
       @shape = RectStruct.new(@x,@y,@width,@height)
     end
-    
+        
     def current_style
       if @parent_graphic && @parent_graphic.current_style
         return @parent_graphic.current_style

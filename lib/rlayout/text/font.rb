@@ -17,8 +17,8 @@ module RLayout
   
   class RFont
     attr_accessor :font_name, :size, :width_table
-        
     def initialize(font_name, size, options={})
+      puts "font_name:#{font_name}"
       @font_name  = font_name
       @size       = size 
       @width_table= FONT_WIDTH_TABLE[font_name][:width_array]

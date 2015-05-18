@@ -39,16 +39,23 @@
 module  RLayout
   
   class Container < Graphic
-    attr_accessor :grid_base, :grid_width, :grid_height, :grid_frame, :grid_cells, :grid_color, :grid_h_gutter, :grid_v_gutter, :lines_in_grid         
     
     def init_grid(options)
-      @grid_base      = options.fetch(:grid_base, [7,12])
+      @grid_frame     = options.fetch(:grid_frame,[0,0,1,1])
+      @grid_base      = options.fetch(:grid_base, [@grid_frame[2],@grid_frame[3]])
       @grid_color     = options.fetch(:grid_color, 'blue')       
       @gutter         = options.fetch(:gutter, 0)
       @v_gutter       = options.fetch(:v_gutter, 0)
       @show_grid      = options.fetch(:show_grid, false)
-      update_grid_cells
-      
+      update_grid
+    end
+    
+    def update_grid
+      return unless @grid_base
+      return unless @grid_frame
+      @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
+      @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
+      @grid           = GridStruct.new(@grid_frame, @grid_width, @grid_height, @gutter, @v_gutter)
     end
     
     def update_grid_cells
@@ -82,23 +89,6 @@ module  RLayout
       h[:gutter]        = @gutter unless @gutter != 0
       h[:v_gutter]      = @v_gutter unless @v_gutter != 0
     end
-    
-    def grid_defaults
-      h = {
-        
-      }
-    end
-    
-    def draw_grid(r)
-      NSColor.blueColor.set
-      @grid_cells.each do |cell|
-        rect = NSMakeRect(cell[:x], cell[:y], cell[:width], cell[:height])
-        path = NSBezierPath.bezierPathWithRect(rect)
-        path.setLineWidth(1)
-        path.stroke
-      end
-    end
-    
     
     def grid_size
       [@grid_width, @grid_height]

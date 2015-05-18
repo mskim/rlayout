@@ -127,7 +127,7 @@ module RLayout
         end
         @text_overflow = false
       else
-        @owner_graphic.height = used_rect.size.height + @text_line_spacing
+        @owner_graphic.height = used_rect.size.height #+ @text_line_spacing
         @text_overflow = true
       end
     end
@@ -275,9 +275,6 @@ module RLayout
         h= 0.8
       end
       scale                 = [w,h].min
-      # puts "w:#{w}"
-      # puts "h:#{h}"
-      # puts "scale:#{scale}"
       @text_size*scale
     end
 

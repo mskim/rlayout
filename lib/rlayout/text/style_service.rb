@@ -176,7 +176,10 @@ module RLayout
     end
   
     def self.shared_style_service
-      @@current_style_service = @@current_style_service || StyleService.new 
+      if !@@current_style_service
+        @@current_style_service = StyleService.new 
+      end
+      @@current_style_service
     end  
   end
 end

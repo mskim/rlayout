@@ -299,7 +299,6 @@ module RLayout
         info[:height]     = grid_frame[3]*@grid_height
         info[:layout_expand] = nil
         info[:image_fit_type] = IMAGE_FIT_TYPE_HORIZONTAL
-        # info[:image_fit_type] = IMAGE_FIT_TYPE_VIRTICAL
         @article_info << info.dup
       end
       @article_info

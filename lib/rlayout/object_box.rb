@@ -35,11 +35,7 @@ module RLayout
       if block
         instance_eval(&block)
       end
-      
-      @floats.each do |float|
-        float.init_float
-      end
-      
+            
       self
     end
     

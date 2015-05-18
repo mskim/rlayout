@@ -34,7 +34,7 @@
 # end
 
 IMAGE_FIT_TYPE_ORIGINAL       = 0
-IMAGE_FIT_TYPE_VIRTICAL       = 1
+IMAGE_FIT_TYPE_VERTICAL       = 1
 IMAGE_FIT_TYPE_HORIZONTAL     = 2
 IMAGE_FIT_TYPE_KEEP_RATIO     = 3
 IMAGE_FIT_TYPE_IGNORE_RATIO   = 4
@@ -65,7 +65,6 @@ module RLayout
             @height *= image_object_height_to_width_ratio
           end
           apply_fit_type
-          
         end
       elsif @local_image
       end
@@ -86,8 +85,8 @@ module RLayout
       case @image_fit_type
       when  IMAGE_FIT_TYPE_ORIGINAL
         fit_original
-      when  IMAGE_FIT_TYPE_VIRTICAL
-        fit_virtical
+      when  IMAGE_FIT_TYPE_VERTICAL
+        fit_vertical
       when  IMAGE_FIT_TYPE_HORIZONTAL
         fit_horizontal
       when  IMAGE_FIT_TYPE_KEEP_RATIO
@@ -124,7 +123,7 @@ module RLayout
       end
     end
     
-    def fit_virtical
+    def fit_vertical      
       return unless @image_object
       if RUBY_ENGINE == 'rubymotion'
         @image_frame      = NSZeroRect
@@ -138,7 +137,6 @@ module RLayout
         # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
          # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
          source_width = @width / (@height/@image_frame.size.height)
-         source_width = @width * (@height/@image_frame.size.height)
          @source_frame.origin.x = (@image_frame.size.width - source_width)/2.0
          @source_frame.origin.y = 0
          @source_frame.size.width = source_width
@@ -180,12 +178,9 @@ module RLayout
         grapaphic_rect_width_to_height_ratio  = @width/@height
         image_frame_width_to_height_ratio     = @image_frame.size.width/@image_frame.size.height
         if grapaphic_rect_width_to_height_ratio > image_frame_width_to_height_ratio
-          # fit horizontal 
           fit_horizontal
         else
-          # fit vertical 
-          fit_virtical
-          
+          fit_vertical 
         end
       else
         

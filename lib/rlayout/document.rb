@@ -142,9 +142,9 @@ module RLayout
         portrait: true,
         double_side: false,
         starts_left: true,
-        width: 600,
-        height: 800,
-        margin: 100,
+        paper_size: "A4",
+        width: 595.28,
+        height: 841.89,
         left_margin: 50,
         top_margin: 50,
         right_margin: 50,
@@ -259,15 +259,13 @@ module RLayout
       layout_path= @path + "/layout.yml"
       File.open(layout_path,'w'){|f| f.write to_hash.to_yaml}
       pdf_path= @path + "/Preview.pdf"
-      # save_pdf_doc(pdf_path) if self.respond_to?(:save_pdf_doc)
+      save_pdf_doc(pdf_path) if respond_to?(:save_pdf_doc)
       # save_variables(@path) # in cased, we have variables in the document
     end
-    
 
     def save_yml(path)
       File.open(path, 'w'){|f| f.write to_hash.to_yaml}
     end
-
 
     def save_pdf(path)
       @ns_view = DocumentViewMac.new(self)

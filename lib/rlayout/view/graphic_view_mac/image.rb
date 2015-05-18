@@ -1,9 +1,6 @@
 
 class GraphicViewMac < NSView
-  
-  # image_frame: original image size
-  # @graphic_rect: graphic rect in CGRect
-  # @graphic_rect: graphic rect in CGRect
+
   attr_accessor :graphic_rect
   def draw_image(graphic)      
     return unless graphic.image_object

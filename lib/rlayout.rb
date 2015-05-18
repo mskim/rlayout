@@ -38,6 +38,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
   require File.dirname(__FILE__) + '/rlayout/text/style_service'
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'
+  require File.dirname(__FILE__) + '/rlayout/text/font'
+  require File.dirname(__FILE__) + '/rlayout/text/text_layout_ruby'
 
   require File.dirname(__FILE__) + '/rlayout/container/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container/place_item'

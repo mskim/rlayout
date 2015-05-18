@@ -199,14 +199,13 @@ describe 'generate random graphics' do
   
   it 'should save random grapics' do    
     p = Page.new(nil)
-    p.add_graphics(@g)
+    p.add_graphic(@g)
     p.save_svg(@path)
     system "open #{@path}"
   end
 end
 
 __END__
-
 
 describe ' Graphic from Hash ' do
   before do

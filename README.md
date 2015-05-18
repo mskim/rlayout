@@ -28,9 +28,16 @@ TODO List
 	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
 	- CorneredRect(rect,corners, shapes)
 
+2015 5 16
+	1. Newspaper
+		- float image
+		- article type 
+		- line decoration
+		 
 2015 5 15
 	1. book
 		images, 
+		fix line space between paragraph
 		
 2015 5 13
 	1. support for default and custom Styles

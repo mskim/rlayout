@@ -38,7 +38,7 @@ module RLayout
     end
 
     def random_graphics(number)
-      add_graphics(Graphic.random_graphics(number))
+      add_graphic(Graphic.random_graphics(number))
     end
 
 

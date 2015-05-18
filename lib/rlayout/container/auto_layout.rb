@@ -164,6 +164,7 @@ module RLayout
       
       @graphics.each do |graphic|
         graphic.update_shape
+        graphic.update_grid if graphic.respond_to?(:update_grid)
       end
       # relayout @owner_graphic's text with new geometry
       @text_record.update_text_fit if @text_record && @text_record.class == GTextRecord

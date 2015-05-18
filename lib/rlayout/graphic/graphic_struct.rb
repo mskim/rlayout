@@ -105,7 +105,19 @@ module RLayout
     end
   end
   
-  TextStruct = Struct.new(:string, :size, :color, :font, :style, :alignment) do
+  GridStruct = Struct.new(:grid_base, :grid_width, :grid_height, :gutter, :v_gutter) do
+    def to_hash
+      to_h.delete_if {|key,value| value==nil}
+    end    
+  end
+  
+  AttsRunStruct = Struct.new(:position, :length, :size, :color, :font, :style) do
+    def to_hash
+      to_h.delete_if {|key,value| value==nil}
+    end
+  end
+  
+  TextStruct = Struct.new(:string, :size, :color, :font, :style) do
     def to_hash
       to_h.delete_if {|key,value| value==nil}
     end

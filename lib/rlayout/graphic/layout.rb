@@ -3,6 +3,7 @@ module RLayout
   
   class Graphic
     def init_layout(options)
+      
       @left_margin    = options.fetch(:left_margin, layout_default[:left_margin])
       @top_margin     = options.fetch(:top_margin, layout_default[:top_margin])
       @right_margin   = options.fetch(:right_margin, layout_default[:right_margin])

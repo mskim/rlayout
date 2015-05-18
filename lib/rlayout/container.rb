@@ -3,24 +3,24 @@ module RLayout
   
   class Container < Graphic
     attr_accessor :layout_direction, :layout_space, :layout_align
-    attr_accessor :show_grid, :show_text_grid, :grid_width, :grid_height
+    attr_accessor :grid_base, :grid_width, :grid_height, :grid_frame, :grid_cells, :grid_color, :grid_h_gutter, :grid_v_gutter, :lines_in_grid         
     attr_accessor :gutter_stroke_type, :gutter_stroke_width, :gutter_stroke_color, :gutter_stroke_dash
-    attr_accessor :floats
+    attr_accessor :floats, :grid
     
     def initialize(parent_graphic, options={}, &block)
-      super
-      @klass            = "Container"
-      @graphics         = []
-      layout_defaults_hash = auto_layout_defaults
-      @layout_direction = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
-      @layout_space     = options.fetch(:layout_space, layout_defaults_hash[:layout_space])       
-      @layout_align     = options.fetch(:layout_align, layout_defaults_hash[:layout_align])       
-      @gutter_stroke_type = options[:gutter_stroke_type]     
-      @gutter_stroke_width= options[:gutter_stroke_width]
-      @gutter_stroke_color= options[:gutter_stroke_color]
-      @gutter_stroke_dash = options[:gutter_stroke_dash]
-      @floats           = options.fetch(:floats, [])
-      init_grid(options) if options[:grid_base]
+      super      
+      @klass                = "Container"
+      @graphics             = []
+      layout_defaults_hash  = auto_layout_defaults
+      @layout_direction     = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
+      @layout_space         = options.fetch(:layout_space, layout_defaults_hash[:layout_space])       
+      @layout_align         = options.fetch(:layout_align, layout_defaults_hash[:layout_align])       
+      @gutter_stroke_type   = options[:gutter_stroke_type]     
+      @gutter_stroke_width  = options[:gutter_stroke_width]
+      @gutter_stroke_color  = options[:gutter_stroke_color]
+      @gutter_stroke_dash   = options[:gutter_stroke_dash]
+      @floats               = options.fetch(:floats, [])
+      init_grid(options)    if options[:grid_base]
       if options[:graphics]
         create_children(options[:graphics])
       end
@@ -148,7 +148,7 @@ module RLayout
     end
     
     
-    def add_graphics(graphic)
+    def add_graphic(graphic)
       if graphic.is_a?(Array)
         graphic.each do |item|
           item.parent_graphic = self
@@ -251,7 +251,7 @@ module RLayout
         float_hash[:is_float] = true
         create_graphic_of_type(klass_name,float_hash)
       end
-      relayout_floats!
+      # relayout_floats!
     end
     
     ########### pgscript verbes

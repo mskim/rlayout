@@ -68,7 +68,7 @@ MONTH_IN_ENGLISH = %w(January February March April May June July
   August September October November December)
 
 # IMAGE_FIT_TYPE_ORIGINAL       = 0
-# IMAGE_FIT_TYPE_VIRTICAL       = 1
+# IMAGE_FIT_TYPE_VERTICAL       = 1
 # IMAGE_FIT_TYPE_HORIZONTAL     = 2
 # IMAGE_FIT_TYPE_KEEP_RATIO     = 3
 # IMAGE_FIT_TYPE_IGNORE_RATIO   = 4
@@ -183,8 +183,8 @@ module RLayout
       hash[:month] = @starting_month.to_i + index
       hash[:events] = @events
       p = CalendarPage.new(self, hash)
-      p.add_graphics(@month_images[index]) if @month_images[index]
-      p.add_graphics(@calendar_months[index]) if @calendar_months[index]
+      p.add_graphic(@month_images[index]) if @month_images[index]
+      p.add_graphic(@calendar_months[index]) if @calendar_months[index]
       p.relayout!
     end
     
@@ -388,8 +388,8 @@ module RLayout
     
     def self.merge_cells(first, second_cell)
       dobule_cell =CalendarCell.new(nil)
-      dobule_cell.add_graphics(first)
-      dobule_cell.add_graphics(second_cell)
+      dobule_cell.add_graphic(first)
+      dobule_cell.add_graphic(second_cell)
       dobule_cell
     end
     

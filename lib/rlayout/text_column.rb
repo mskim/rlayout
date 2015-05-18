@@ -24,7 +24,9 @@ module RLayout
       @complex_rect = false
       # @line_width   = 2
       # @line_color   = 'black'
-      @body_line_height = StyleService.shared_style_service.current_style['p'][:text_size]
+      # @body_line_height = StyleService.shared_style_service.current_style['p'][:text_size]
+      body_style = StyleService.shared_style_service.current_style['p']
+      @body_line_height = (body_style[:text_size] + body_style[:text_line_spacing])
       @body_line_height = 10 if @body_line_height.nil?
       @current_position = @top_margin + @top_inset
       @room = text_rect[3] - @current_position
@@ -37,7 +39,6 @@ module RLayout
     # create grid_rects after relayou!
     # make sure the grids are created after adjusting the column size for the final layout
     def create_grid_rects
-      puts __method__
       @grid_rects = []
       column_rect = text_rect
       x     = column_rect[0] # text_box cordinate
@@ -142,7 +143,7 @@ module RLayout
       @grid_rects.each_with_index do |grid_rect, i|
         if position >= min_y(grid_rect.rect) && position <= (max_y(grid_rect.rect) + 0.1) #make sure for flaot rounding
           # grid_rect height is half of body text rect
-          # we wont to snap to even numbered lines
+          # we always wont to snap to even numbered lines
           if i.odd?
             return max_y(@grid_rects[i+1].rect) unless i >= (@grid_rects.length - 1)
           else
@@ -163,75 +164,6 @@ module RLayout
       @room               = text_rect[3] - @current_position
     end
 
-
-    # They are not use in the production, it is test only.
-    def draw_collection_for_column
-      # from the top scan untile first text_area_gird,
-      starting_index = scan_covered_grid_from(0, true)
-      while starting_index < @grid_rects.length
-        ending_index = scan_covered_grid_from(starting_index, false)
-        draw_from_range(starting_index, ending_index)
-        starting_index = scan_covered_grid_from(ending_index, true)
-      end
-    end
-
-    # for testing
-    def draw_from_range(starting_index, ending_index)
-      if @complex_rect
-      	context = NSGraphicsContext.currentContext.graphicsPort
-        CGContextBeginPath(context)
-        starting_index  = current_grid_rect_index_at_position
-        ending_index    = @grid_rects.length - 1
-        starting_grid   = @grid_rects[starting_index]
-        #move to top_left_position
-        x,y = starting_grid.top_left_position
-        # CGPathMoveToPoint(path, nil, x,y)
-        CGContextMoveToPoint(context, x,y)
-        # add top path from left to right
-        starting_grid.draw_top_right(context)
-        #loop each box for going down right side
-        current_x, current_y = starting_grid.top_right_position
-        @grid_rects[(starting_index)..ending_index].each do |grid|
-          right_edge_x = max_x(grid.text_area)
-          if right_edge_x == current_x
-            # rigtt side is aligned with the previous grid
-            grid.draw_right_down(context)
-          else
-            # rigtt side is not aligned with the previous grid
-            # lineto right edge of next grid
-            x,y = grid.top_right_position
-            CGContextAddLineToPoint(context, x,y)
-            current_x = x
-            grid.draw_right_down(context)
-          end
-        end
-        # lineto left at the bottom
-        last_grid     = @grid_rects.last
-        last_grid.draw_bottom_left(context)  # draw up at the left edge
-        current_x, current_y = last_grid.bottom_left_position
-        # loop each grid for coming up left side
-        @grid_rects[starting_index..ending_index].reverse.each_with_index do |grid, i|
-          if min_x(grid.text_area) == current_x
-            # left side is aligned with the above grid
-            grid.draw_left_up(context)
-          else
-            # left side is not aligned with the above grid
-            # lineto left edge of above line
-            x,y = grid.bottom_left_position
-            CGContextAddLineToPoint(context, x,y)
-            current_x = x
-            grid.draw_left_up(context)
-          end
-        end
-        # close path
-        CGContextClosePath(context)
-        # stroke
-        # CGContextSetStrokeColor(context, )
-        NSColor.redColor.set
-        CGContextStrokePath(context)
-      end
-    end
-
     # skip fully_covered_rect and update current_position
     def update_current_position
       return unless @grid_rects
@@ -249,92 +181,6 @@ module RLayout
           @current_index += 1
         end
       end
-    end
-
-    # scan grids until, fully covered run or text_area run depending on covered option
-    # from given index
-    def scan_covered_grid_from(index, covered)
-      new_index = index
-      while new_index < @grid_rects.length do
-        return new_index if @grid_rects[new_index].fully_covered != covered
-        new_index += 1
-      end
-      new_index
-    end
-
-    # path_from_current_position is the work horse of complex layout.
-    # it constructs a path from given point to the bottom or the top of the next hole.
-    # created path is passed to text_layout_manager as proposed path.
-    # This handles all three cases
-    #   1. simple rect
-    #   2. complex shape with partial overlappings
-    #   3. Chunked column with multiple path.(fully covered areas in the middle of column)
-    # painful poth by path construction of irregular shape, using rectangles.
-    #   1. start the path at the top left
-    #   2. path from origin to the top right
-    #   2. go down the right side, gird by grid,
-    #        if the differet size is encounterd move horizotally to new edge.
-    #        repeat this until bottom is reached
-    #   3. path at the bottom right to bottom left
-    #   4. come up at the left side, similar to going down to right side.
-    #   5. Close path
-    def path_from_current_position
-      path_groups = []
-      if @complex_rect
-        starting_index  = current_grid_rect_index_at_position
-        # look for fully covered areas, otherwise go to bottom.
-        ending_index    = scan_covered_grid_from(starting_index, false)
-        path            = CGPathCreateMutable()
-        starting_grid   = @grid_rects[starting_index]
-        #move to top_left_position
-        x,y = starting_grid.top_left_position
-        CGPathMoveToPoint(path, nil, x,y)
-        # add top path from left to right
-        starting_grid.path_top_right(path)
-        #loop each box for going down right side
-        current_x, current_y = starting_grid.top_right_position
-        @grid_rects[(starting_index)..ending_index].each do |grid|
-          right_edge_x = max_x(grid.text_area)
-          if right_edge_x == current_x
-            # rigtt side is aligned with the previous grid
-            grid.path_right_down(path)
-          else
-            # rigtt side is not aligned with the previous grid
-            # lineto right edge of next grid
-            x,y = grid.top_right_position
-            CGPathAddLineToPoint(path, nil, x,y)
-            current_x = x
-            grid.path_right_down(path)
-          end
-        end
-        # lineto left at the bottom
-        last_grid     = @grid_rects.last
-        last_grid.path_bottom_left(path)  # draw up at the left edge
-        current_x, current_y = last_grid.bottom_left_position
-        # loop each grid for coming up left side
-        @grid_rects[starting_index..ending_index].reverse.each do |grid|
-          if min_x(grid.text_area) == current_x
-            # left side is aligned with the above grid
-            grid.path_left_up(path)
-          else
-            # left side is not aligned with the above grid
-            # lineto left edge of above line
-            x,y = grid.bottom_left_position
-            CGPathAddLineToPoint(path, nil, x,y)
-            current_x = x
-            grid.path_left_up(path)
-          end
-        end
-        # close path
-        CGPathCloseSubpath(path)
-        return path
-      end
-      # case for simple column
-      path    = CGPathCreateMutable()
-      bounds  = CGRectMake(frame_rect[0], @current_position, frame_rect[2], @height - @bottom_margin - @bottom_inset - @current_position)
-      bounds  = CGRectMake(frame_rect[0], @current_position, frame_rect[2], 1000)
-      CGPathAddRect(path, nil, bounds)
-      return path
     end
 
   end
@@ -461,70 +307,13 @@ module RLayout
       end
     end
 
+    #TODO
     def overlap?
       @overlap == true
     end
 
 
-    ############ point construction #########
-    # return x, y
-    def top_left_position
-      return text_area[0], text_area[1]
-    end
 
-    def top_right_position
-      return max_x(text_area), text_area[1]
-    end
-
-    def bottom_right_position
-      return max_x(text_area), max_y(text_area)
-    end
-
-    def bottom_left_position
-      return text_area[0], max_y(text_area)
-    end
-
-    ############ CGContext drawing #########
-    def draw_top_right(context)
-      x,y = top_right_position
-      CGContextAddLineToPoint(context, x,y)
-    end
-
-    def draw_right_down(context)
-      x,y = bottom_right_position
-      CGContextAddLineToPoint(context, x,y)
-    end
-
-    def draw_bottom_left(context)
-      x,y = bottom_left_position
-      CGContextAddLineToPoint(context, x,y)
-    end
-
-    def draw_left_up(context)
-      x,y=top_left_position
-      CGContextAddLineToPoint(context, x,y)
-    end
-
-    ############ path construction #########
-    def path_top_right(path)
-      x,y = top_right_position
-      CGPathAddLineToPoint(path, nil, x,y)
-    end
-
-    def path_right_down(path)
-      x,y = bottom_right_position
-      CGPathAddLineToPoint(path, nil, x,y)
-    end
-
-    def path_bottom_left(path)
-      x,y = bottom_left_position
-      CGPathAddLineToPoint(path, nil, x,y)
-    end
-
-    def path_left_up(path)
-      x,y=top_left_position
-      CGPathAddLineToPoint(path, nil, x,y)
-    end
   end
 
 end

@@ -11,7 +11,7 @@
 # PhotoSpread
 # If we have single photo per page, photo is placed in Image, whick take up the whole page.
 # Image is created on each side of page, left and right
-# Image has bleeding and its fitting mode is set to virtical fit.
+# Image has bleeding and its fitting mode is set to vertical fit.
 
 # How do we put more than single image to a page?
 # We can put number folled by _1.jpg, like 001_1.jpg,  001_2.jog, 001_3.jpg.

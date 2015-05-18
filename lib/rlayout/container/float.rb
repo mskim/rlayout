@@ -40,25 +40,6 @@ FLOAT_PUSH_SHAPE    = 2
 module RLayout
   
   class Graphic
-    attr_accessor :float_weight
-    attr_accessor :float_position, :flaot_bleeding
-    
-    def init_float(options={})
-      @grid_frame     = options.fetch(:grid_frame,[0,0,1,1])
-      @float_weight   = options.fetch(:float_weight, FLOAT_PUSH_RECT)
-      @float_position = options.fetch(:float_position, "top")
-      @flaot_bleeding = options.fetch(:flaot_bleeding, false)
-      self
-    end
-    
-    def float_to_hash
-      h = {}
-      h[:float_weight] = @float_weight if @float_weight != FLOAT_PUSH_RECT
-      h[:float_position] = @float_position if @float_position != "top"
-      h[:flaot_bleeding] = @flaot_bleeding if @flaot_bleeding != false
-      h
-    end
-    
     # givein column rect and float_rect return non_ovelapping new rect for column
     # If there is a hole in the middle, return Array of two rects if upper and lower area is big enough
     #
@@ -100,12 +81,23 @@ module RLayout
                     
         
     # place imaegs that are in the head of the story as floats
-    def place_float_images(images, grid_width, grid_height)
+    def place_float_images(images)
       @gutter = @layout_space
       return unless images
       images.each do |image_options|
+        if image_options.class == String
+          image_path = image_options
+          image_options = {}
+          frame_rect = grid_frame_to_frame_rect([0,0,1,1])
+          image_options[:x]       = frame_rect[0]
+          image_options[:y]       = frame_rect[1]
+          image_options[:width]   = frame_rect[2]
+          image_options[:height]  = frame_rect[3]
+    
+          image_options[:image_path] = @images_dir + "/#{image_path}"
         
-        if image_options[:grid_frame]
+        elsif image_options.class == hash
+          image_options[:grid_frame]
           frame_rect = grid_frame_to_frame_rect(image_options[:grid_frame])
           image_options[:x]       = frame_rect[0]
           image_options[:y]       = frame_rect[1]
@@ -118,27 +110,27 @@ module RLayout
           # image_options[:height]      = grid_height*grid_frame[3]
         end
         image_options[:layout_expand]   = nil
+        image_options[:is_float]        = true
         place_float_image(image_options)
       end
     end
     
     def place_float_image(options={})
-      options[:is_float]  = true
-      options[:adjust_height_to_keep_ratio]     = true
+      # options[:adjust_height_to_keep_ratio]     = true
       # puts "options:#{options}"
       # puts File.exists?(options[:image_path])
-      @image  = Image.new(self, options)      
+      @image  = Image.new(self, options)   
     end
     
     
     # change frame with grid frame values
-    def relayout_floats!
-      update_grid_cells
-      @floats.each do |float|
-        # TODO clean this up
-        float.set_frame frame_for(float.grid_frame)
-      end
-    end
+    # def relayout_floats!
+    #   update_grid_cells
+    #   @floats.each do |float|
+    #     # TODO clean this up
+    #     float.set_frame frame_for(float.grid_frame)
+    #   end
+    # end
     
 
     # layout_floats!
@@ -198,7 +190,12 @@ module RLayout
     
     def push_float_to_no_mens_land(occupied_arry, float)
       occupied_arry.each do |occupied_rect|
-        float.y = max_y(occupied_rect) if intersects_rect(occupied_rect, float.frame_rect)
+        if intersects_rect(occupied_rect, float.frame_rect)
+          puts "float.frame_rect:#{float.frame_rect}"
+          float.y = max_y(occupied_rect) 
+          puts "float.y:#{float.y}"
+          
+        end
       end
     end
   end

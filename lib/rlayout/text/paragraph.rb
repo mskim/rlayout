@@ -5,7 +5,7 @@ module RLayout
 # para_string: this is a string with markdown 
 #    markup: string starting with #, ##, ###, =, ==, ===
 #    style:  inline style markup string
-#    footnote: <fn>jfdasfda </fn>
+#    footnote: <ft>jfdasfda </ft>
 #    index: <index>stuff for index</index>
 
 #  illegular shaped text flow
@@ -56,15 +56,7 @@ MININUM_LINES_FOR_SPLIT = 2
       @klass = "Paragraph"
       self
     end
-    
-    def parse_para_string(para_string)
-      
-    end
-    
-    def para_data2atts_array(para_data)
-      
-    end
-    
+        
     def isFlipped
       true
     end

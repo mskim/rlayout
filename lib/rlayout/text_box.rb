@@ -3,21 +3,33 @@
 module RLayout
 
   # TextBox is container of flowing paragraphs.
-  # TextBox has Columns. Paragraphs flow along Columns.
-  # TextBox can be linek to other TextBox, "next_link" and "previous_link" points to them.
-  # ObjectBox, a sister class. It handls other types of objects, such as
-  # product items, BoxAds, Directory elements, quiz items or any other graphic objects,
-  # that support flowing item protocol, namely "set_width_and_adjust_height"
-  # one other flowing item protocol is :breakable?, whick tells whether the flowing item can be broken into parts.
-  # Breakable item should split itself into two or more parts, if it can with no orphan or widow consideration.
-  # Currently, I break paragraph up into two at the oveflowing point in att_string.
+  # TextBox has columns(TextColumn). Paragraphs flow along TextColumn.
+  # TextBox can be linked to other TextBoxs, "next_link" and "previous_link" points to them.
+  # ObjectBox, a sister class, handls other types of objects, such as
+  # flowing product items, Images, BoxAds, Directory elements, quiz items or any other graphic objects other than paragraphs,
+  # Both of the class support flowing item protocol, namely "set_width_and_adjust_height", 
+  # to adjust flowing items into different size columns.
+  # They also support :breakable?, which tells whether the flowing item can be broken into parts.
+  # Breakable item should split itself into two or more parts, if brakes with  orphan/widow consideration.
+  # Currently, Paragraph can be broken up into two parts at the oveflowing column.
 
-  # TextBox adds another layer called "floats", (now containers also have floats)
+  # TextBox adds another layer called "floats", (now Containers also have floats)
   # Floats sit on top layer and pushes out text content underneath it.
   # Typocal floats are Heading, Image, Quates, SideBox
   # Each float has its weight(float on top or push down), starting_posion, starting_column, width_in_column
   # Floats can be layed out with rules, or pre-design templates with profile.
+  # Floats default layout method is using Grid.
 
+  # TextColumn
+  # TextColumn is columns used in TextBox.
+  # TextColumn has line_grids.
+  # Line_grids are used to calculate overlapping areas between flowing text and
+  # floats on top
+  # I am using line_grids, instead of BezierPath for text wrap around of ilregular shapes.
+  # By have Line_grids of half the height of body text. This is good enough for text wrapping.
+  # Line_grids are also useed for vertically aligning text across differnt columns.
+  # We can force non-body paragraphs to spnap to line-grids.
+  
   #TODO
   # 1. text box with overlapping floats on top, sometimes fully covered with hole in the middle of the column.
   # 1. flowing image alone the text. attached Math block, inline math
@@ -35,17 +47,17 @@ module RLayout
 
     def initialize(parent_graphic, options={}, &block)
       super
-      @left_margin  = 0
-      @right_margin = 0
-      @top_margin   = 0
-      @bottom_margin = 0
-      @klass = "TextBox"
+      @left_margin      = 0
+      @right_margin     = 0
+      @top_margin       = 0
+      @bottom_margin    = 0
+      @klass            = "TextBox"
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)
       @column_count     = options.fetch(:column_count, 3).to_i
       @heading_columns  = options.fetch(:heading_columns, @column_count)
-      create_columns
       @floats           = options.fetch(:floats, [])
+      create_columns
       if block
         instance_eval(&block)
       end
@@ -54,7 +66,6 @@ module RLayout
 
     def create_columns
       @column_count.times do
-        #TODO body_line_height option
         TextColumn.new(self)
       end
       relayout!
