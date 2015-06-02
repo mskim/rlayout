@@ -1,5 +1,94 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'save svg' do
+  before do
+    @svg_folder_path = File.dirname(__FILE__) + "/../output/grid_svg"
+    # @pdf_path = File.dirname(__FILE__) + "/../output/ad_box_source_sample.pdf"
+    system("mkdir #{@svg_folder_path}") unless File.exist?(@svg_folder_path)
+    @grids = GridLayout.find_all
+    @grids.each do |grid|
+      grid.save_svg(@svg_folder_path)
+      grid.save_yaml(@svg_folder_path)
+    end
+  end
+  it 'should save svg' do
+    first_path = @svg_folder_path + "/1x1_1.svg"
+    assert File.exist?(first_path)
+  end
+  
+end
+
+__END__
+describe 'find_with_grid_key' do
+  before do
+    @gl = GridLayout.find_with_grid_key("7x12/5")
+    @svg_folder_path = File.dirname(__FILE__) + "/../output/grid_svg"
+  end
+  
+  it 'should save one svg' do
+    @gl.save_svg(@svg_folder_path)
+    @path = @svg_folder_path + "/7x12_5.svg"
+    assert File.exist?(@path)
+  end
+  
+  it 'should save one pgscript' do
+    @gl.save_yaml(@svg_folder_path)
+    @path = @svg_folder_path + "/7x12_5.yml"
+    assert File.exist?(@path)
+  end
+  
+end
+
+
+
+
+
+describe 'create variation' do
+  before do
+    @variabltions = GridLayout.create_variation_from("7x12/7")
+  end
+  
+  it 'should create variabltio from grid_key' do
+    assert @variabltions.class == Array
+  end
+end
+
+describe 'find all' do
+  before do
+    @grids = GridLayout.find_all
+    @grids.map do |grid|
+      grid.sort_frames_by_y_and_x
+    end
+  end
+  
+  it 'shuld create GridLayout from GRID_PATTERNS Hash' do
+    assert @grids.first.class == GridLayout
+    grid_patters = {}
+    @grids.each do |grid|
+      grid_patters["#{grid.grid_key}"] = grid.patterns
+    end
+    puts grid_patters
+  end
+  
+  
+end
+describe 'test sort_frames_by_y_and_x' do
+  before do
+    @p = RLayout::GridLayout.find_with_number_of_frames(5)
+    @g = @p[2]
+  end
+  it 'should sort_frames_by_y_and_x ' do
+    puts "before"
+    @g.frames.each{|f| puts "f.frame:#{f.frame}"}
+    @g.sort_frames_by_y_and_x
+    puts "after"
+    @g.frames.each{|f| puts "f.frame:#{f.frame}"}
+  end
+end
+
+__END__
+
+
 describe 'test has_too_distored_frame?' do
   before do
     @p = RLayout::GridLayout.find_grid_layout_with(2)
@@ -13,30 +102,14 @@ describe 'test has_too_distored_frame?' do
 
 end
 
-__END__
 
 
 
-describe 'test sort_frames_by_y_and_x' do
-  before do
-    @p = RLayout::GridLayout.find_grid_layout_with(5)
-    @g = @p[2]
-  end
-  it 'should sort_frames_by_y_and_x ' do
-    puts "before"
-    @g.frames.each{|f| puts "f.frame:#{f.frame}"}
-    
-    @g.sort_frames_by_y_and_x
-    puts "after"
-    @g.frames.each{|f| puts "f.frame:#{f.frame}"}
-  end
 
-
-end
 
 describe 'find_grid_layout_with(pattern)' do
   before do
-    @p = RLayout::GridLayout.find_grid_layout_with(5)
+    @p = RLayout::GridLayout.find_with_number_of_frames(5)
   end
   
   it 'should find GridLayouts' do
@@ -48,7 +121,7 @@ end
 
 describe 'area test' do
   before do
-    @p = RLayout::GridLayout.find_grid_layout_with(3)
+    @p = RLayout::GridLayout.find_with_number_of_frames(3)
   end
   
   it 'should calculate the are' do

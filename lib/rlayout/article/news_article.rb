@@ -38,9 +38,15 @@ module RLayout
       options[:bottom_margin] = 5 unless options[:bottom_margin]
 
       if options[:story_path]
+        unless File.exist?(options[:story_path])
+          puts "File #{options[:story_path]} does not exist!!!"
+          return
+        end
         @story_path   = options[:story_path]
+        puts "@story_path:#{@story_path}"
         @images_dir   = File.dirname(@story_path) + "/images"
         options.merge! read_story
+        puts "options:#{options}"
       elsif options[:story]
         @heading_options    = options[:story][:heading]
         @images     = options[:images]

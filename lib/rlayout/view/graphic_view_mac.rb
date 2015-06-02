@@ -103,16 +103,26 @@ class GraphicViewMac < NSView
     true
   end
 
-  def save_pdf(path, options={})
+  def save_pdf(pdf_path, options={})
     pdf = pdf_data
-    pdf.writeToFile(path, atomically:false)
+    unless options[:pdf] == false
+      pdf.writeToFile(pdf_path, atomically:false) 
+    end 
+      
     if options[:jpg]
-      image = NSImage.alloc.initWithData pdf
-      tiffdata = image.TIFFRepresentation
-      jpg_path = path.sub(".pdf", ".jpg")
-      tiffdata.writeToFile jpg_path, atomically:false
+      compression = options[:compression] || 0.5
+      compression = compression.to_f
+      image       = NSImage.alloc.initWithData pdf
+      imageData   = image.TIFFRepresentation
+      imageRep    = NSBitmapImageRep.imageRepWithData(imageData)  
+      # imageProps  = {NSImageCompressionFactor=> 1.0}
+      imageProps  = NSDictionary.dictionaryWithObject(NSNumber.numberWithFloat(compression), forKey:NSImageCompressionFactor)
+      imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
+      jpg_path    = pdf_path.sub(".pdf", ".jpg")
+      # puts "imageData.class:#{imageData}.class"
+      imageData.writeToFile(jpg_path, atomically:false)      
     end
-
+    
     if options[:thumb]
       #TODO
     end
@@ -204,5 +214,27 @@ class GraphicViewMac < NSView
     end
   end
   
+  def self.pdf2jpg(pdf_path, options={})
+    url = NSURL.fileURLWithPath pdf_path
+    pdfdoc = PDFDocument.alloc.initWithURL url
+    compression = options[:compression] || 0.5
+    compression = compression.to_f
+    page_count = pdfdoc.pageCount
+    page_count.times do |i|
+      page = pdfdoc.pageAtIndex i
+      pdfdata = page.dataRepresentation
+      image = NSImage.alloc.initWithData pdfdata
+      outfile = pdf_path.sub(".pdf", ".jpg")
+      if page_count > 1
+        outfile = "#{pdf_path}_#{i+1}.jpg"
+      end
+      imageData = image.TIFFRepresentation
+      imageRep = NSBitmapImageRep.imageRepWithData(imageData)  
+      imageProps = NSDictionary.dictionaryWithObject(NSNumber.numberWithFloat(compression), forKey:NSImageCompressionFactor)
+      imageData = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
+      imageData.writeToFile(outfile, atomically:false)
+    end
+    
+  end
 
 end

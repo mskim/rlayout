@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'create Newspaper' do
   before do
-    @newspaper = Newspaper.new("OurTimes")
+    @newspaper = Newspaper.new(name: "OurTimes")
   end
 
   it ' should create Newspaper' do
@@ -20,11 +20,11 @@ __END__
 describe 'change section layout' do
   before do
     @path = '/Users/Shared/Newspaper/OurTimes/2015-4-16/culture'
-    @section = RLayout::NewspaperSection.open(@path)
+    @section = RLayout::NewspaperSection.change_section_layout(@path, grid_key: "7x12/6")
   end
   
   it 'should change section' do
-    @section.change_section_layout("7x12/6")
+    @section
   end
 end
 

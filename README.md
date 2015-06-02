@@ -28,6 +28,24 @@ TODO List
 	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
 	- CorneredRect(rect,corners, shapes)
 
+2015 6 1
+	- move grid_frame and grid_size from story metadata to config in section
+	- I should hide this info from users, they don't need to see this.
+	- create symbolic link after creating pdf and jpg, if newsman server
+	 	is set
+	- newsman_issue_path: "/User/mskim/..../OurTownNews/-2015-5-20/Sports"
+	
+2015 5 30
+	- save jpg with option jpg: true
+	- don't save pdf with pdf: false
+	
+2015 5 21
+	1. NewspaperSection
+		- create images folder in section News
+		- working_site.html
+		- newsman@gmail.com
+		- multi-threaded rake, use global rake 
+		
 2015 5 16
 	1. Newspaper
 		- float image
