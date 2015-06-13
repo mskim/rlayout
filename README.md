@@ -27,7 +27,10 @@ TODO List
 	- line type, line arrow,
 	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
 	- CorneredRect(rect,corners, shapes)
-
+	
+2012 6 12 
+	- add  section_name to section config
+	
 2015 6 1
 	- move grid_frame and grid_size from story metadata to config in section
 	- I should hide this info from users, they don't need to see this.

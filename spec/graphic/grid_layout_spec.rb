@@ -1,24 +1,114 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
-describe 'save svg' do
+require 'pry'
+
+# describe "new_with_grid_key" do
+#   before do
+#     @gl = GridLayout.new_with_grid_key('7x12/6')
+#     puts @gl.pattern
+#   end
+#   it 'should generate gl with 4x4/3' do
+#     assert @gl.grid_key == "7x12/6"
+#   end  
+# end
+
+describe "new_with_grid_key" do
   before do
-    @svg_folder_path = File.dirname(__FILE__) + "/../output/grid_svg"
-    # @pdf_path = File.dirname(__FILE__) + "/../output/ad_box_source_sample.pdf"
-    system("mkdir #{@svg_folder_path}") unless File.exist?(@svg_folder_path)
-    @grids = GridLayout.find_all
-    @grids.each do |grid|
-      grid.save_svg(@svg_folder_path)
-      grid.save_yaml(@svg_folder_path)
-    end
+    @gl = GridLayout.new_with_grid_key('7x12/5')
+    puts @gl.pattern
   end
-  it 'should save svg' do
-    first_path = @svg_folder_path + "/1x1_1.svg"
-    assert File.exist?(first_path)
+  it 'should generate gl with 4x4/3' do
+    assert @gl.grid_key == "7x12/5"
+  end  
+end
+
+describe 'new_with_grid_base_and_number' do
+  before do
+    @gl = GridLayout.new_with_grid_base_and_number('7x12', 5)
+    puts @gl.pattern
+  end
+  
+  it 'should generate gl with 4x4/3' do
+    assert @gl.grid_key == "7x12/5"
   end
   
 end
 
 __END__
+describe 'create GridLayout' do
+  before do
+    @gl = GridLayout.new('4x4')
+  end
+  
+  it 'should create GridLayout' do
+    assert @gl.class == GridLayout
+  end
+  
+  it 'should create GridLayout' do
+    assert @gl.columns == 4
+    assert @gl.rows == 4
+  end
+  
+  it 'should create grid_key' do
+    assert @gl.grid_key == "4x4/1"
+  end
+  
+  it 'should be can_split?' do
+    assert @gl.can_split?
+  end
+  
+  it 'should have total_area' do
+    assert @gl.total_area == 16
+  end
+end
+
+
+describe 'split 4x4 GridLayout' do
+  before do
+    @gl = GridLayout.new('4x4')
+    @gl.split_grid
+    @gl.split_grid
+    @gl.split_grid
+  end
+
+  it 'should create grid_key' do
+    assert @gl.grid_key == "4x4/4"
+  end
+end
+
+describe 'split 5x5 GridLayout' do
+  before do
+    @gl = GridLayout.new('5x5')
+    @gl.split_grid
+    @gl.split_grid
+    @gl.split_grid
+    puts "@gl.pattern:#{@gl.pattern}"
+  end
+  it 'should create grid_key' do
+    assert @gl.grid_key == "5x5/4"
+  end
+  
+end
+
+__END__
+describe 'save svg' do
+  before do
+    @svg_folder_path = File.dirname(__FILE__) + "/../output/grid_svg"
+    # @pdf_path = File.dirname(__FILE__) + "/../output/ad_box_source_sample.pdf"
+    system("mkdir #{@svg_folder_path}") unless File.exist?(@svg_folder_path)
+    @grids = GridLayoutManager.find_all
+    @grids.each do |grid|
+      grid.save_svg(@svg_folder_path)
+      grid.save_yaml(@svg_folder_path)
+    end
+  end
+  
+  it 'should save svg' do
+    first_path = @svg_folder_path + "/1x1_1.svg"
+    assert File.exist?(first_path)
+  end
+end
+
 describe 'find_with_grid_key' do
   before do
     @gl = GridLayout.find_with_grid_key("7x12/5")
@@ -91,7 +181,7 @@ __END__
 
 describe 'test has_too_distored_frame?' do
   before do
-    @p = RLayout::GridLayout.find_grid_layout_with(2)
+    @p = RLayout::GridLayoutManager.find_grid_layout_with(2)
     @g = @p[0]
   end
   it 'should has_too_distored_frame? ' do
@@ -109,7 +199,7 @@ end
 
 describe 'find_grid_layout_with(pattern)' do
   before do
-    @p = RLayout::GridLayout.find_with_number_of_frames(5)
+    @p = RLayout::GridLayoutManager.find_with_number_of_frames(5)
   end
   
   it 'should find GridLayouts' do
@@ -121,7 +211,7 @@ end
 
 describe 'area test' do
   before do
-    @p = RLayout::GridLayout.find_with_number_of_frames(3)
+    @p = RLayout::GridLayoutManager.find_with_number_of_frames(3)
   end
   
   it 'should calculate the are' do

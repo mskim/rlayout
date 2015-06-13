@@ -1,9 +1,10 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 # require File.dirname(__FILE__) + '/../../lib/rlayout/article/news_article'
 
+require 'pry'
 describe 'news_article reading stoy' do
   before do
-    @path     = "/Users/mskim/news_article/section5/1.story.md"
+    @path     = "/Users/mskim/Dropbox/OurTownNews/2015-06-12/News/1.story.md"
     @article  = NewsArticle.new(nil, :story_path=>@path)
   end
     

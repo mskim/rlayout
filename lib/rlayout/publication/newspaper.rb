@@ -26,9 +26,6 @@ END
 SAMPLE_NEWS_ARTICLE =<<EOF
 ---
 title: 'This is a title for Story<%= @story_index %>'
-grid_frame: <%= @grid_frame %>
-grid_size: [<%= @grid_width %>, <%= @grid_height %>]
-
 author: 'Min Soo Kim'
 ---
 
@@ -42,9 +39,10 @@ The first value is x, y, width, height. So this the box will have size of 4 grid
 
 EOF
 
-DEFAULT_SECTIONS1 = %w{Current Economy Entertainment Sports Culture Technology }
+DEFAULT_SECTIONS = %w{Current Economy Entertainment Sports Culture Technology }
 DEFAULT_SECTIONS2 = %w{current sports culture technology}
 
+DEFAULT_NUMBER_OF_STORIES = [5,5,5,6,6,6]
 SECTION_HTML =<<EOF
 <h1>Visit Preview site! click the following lind</h1>
 <a href="http://www.softwarelab.me/{{publication}}/{{issue}}/{{section}}/">Visit </a>
@@ -65,6 +63,7 @@ module RLayout
       @width        = SIZES[@paper_size][0]
       @height       = SIZES[@paper_size][1]
       @sections     = options.fetch(:sections, DEFAULT_SECTIONS.dup)
+      @number_of_stories = options.fetch(:number_of_stories, DEFAULT_NUMBER_OF_STORIES.dup)
       @lines_in_grid= options.fetch(:lines_in_grid, 10)
       @gutter       = options.fetch(:gutter, 10)
       @v_gutter     = options.fetch(:v_gutter, 0)
@@ -101,6 +100,7 @@ module RLayout
       info = {}
       info['name']        = @name
       info['sections']    = @sections
+      info['number_of_stories']= @number_of_stories
       info['width']       = @width
       info['height']      = @height
       info['left_margin'] = @left_margin
@@ -123,7 +123,6 @@ module RLayout
     def line_height
       (@height - @top_margin - @bottom_margin)/page_lines
     end
-
   end
 
   class NewspaperIssue
@@ -144,9 +143,9 @@ module RLayout
         section_path = @issue_path + "/#{section_name}"
         output_path = section_path + "/section.pdf"
         if i== 0
-          news_section = NewspaperSection.new(nil, :section_path=>section_path, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i], :has_heading=>true)
+          news_section = NewspaperSection.new(nil, :section_path=>section_path, :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i], :has_heading=>true)
         else
-          news_section = NewspaperSection.new(nil, :section_path=>section_path, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i])
+          news_section = NewspaperSection.new(nil, :section_path=>section_path,  :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i])
         end
         news_section.create_section
         news_section.update_section
@@ -167,12 +166,13 @@ module RLayout
     attr_accessor :section_path, :issue_numner, :date, :publication, :issue, :date, :section_name, :output_path
     attr_accessor :has_heading, :heading_info, :paper_size
     attr_accessor :heading_type #none, top, left_top_box,
-    attr_accessor :articles_info, :grid_map, :grid_key, :number_of_stories
+    attr_accessor :section_config, :section_name, :articles_info, :story_frames, :grid_key, :grid_width, :grid_height, :number_of_stories
 
     def initialize(parent_graphic, options={}, &block)
       super
       @parent_graphic = parent_graphic
       @section_path   = options[:section_path] if options[:section_path]
+      @section_name   = options[:section_name] || "untitled"
       @output_path    = @section_path + "/section.pdf"
       @output_path    = options[:output_path]   if options[:output_path]      
       @paper_size     = options.fetch(:paper_size,"A2")
@@ -196,18 +196,17 @@ module RLayout
       @grid_key       = "#{@grid_base.join("x")}"
       @grid_key      += "/H" if @has_heading
       @grid_key      += "/#{@number_of_stories}"
-      @grid_map       = GRID_PATTERNS[@grid_key]
-      unless @grid_map
-        #TODO used some precentive default grid_map
-        puts "no @grid_map for #{@grid_map}!!!"
+      @story_frames   = GRID_PATTERNS[@grid_key]
+      unless @story_frames
+        #TODO used some precentive default story_frames
+        puts "no @story_frames for #{@grid_key}!!!"
       end 
       
       if options['grid_key']
         @grid_key     = options['grid_key'] 
-        @grid_map     = GRID_PATTERNS["#{@grid_key}"]
-        @has_heading = grid_key.split("/")[1]=~/^H/ ? true : false
-        @grid_map = GRID_PATTERNS[@grid_key]
-        @number_of_stories = @grid_map.length      
+        @story_frames = GRID_PATTERNS[@grid_key]
+        @has_heading  = grid_key.split("/")[1]=~/^H/ ? true : false
+        @number_of_stories = @story_frames.length      
       end
       @articles_info= make_articles_info
       if block
@@ -229,7 +228,8 @@ module RLayout
       config_path = path + "/config.yml"
       section_config = File.open(config_path, 'r'){|f| f.read}
       section_config = YAML::load(section_config)
-      section_config['grid_key'] = section_config
+      section_config['grid_key'] = grid_key
+      section_config['story_frames'] = @story_frames = GRID_PATTERNS[grid_key.to_sym]
       File.open(config_path, 'w'){|f| f.write section_config.to_yaml}
       section = self.open(path)
       section.update_section_layout
@@ -241,38 +241,41 @@ module RLayout
     end
     
     # grid_key has changed, so update section story files according to new layout
+    # and regenerate all stroies to new layout
+    # regenerate section.pdf and section.jpg
     def update_section_layout
+      puts __method__
       unless GRID_PATTERNS[@grid_key]
         puts "There is no grid_key as #{grid_key}"
         return
       end
       @has_heading = @grid_key.split("/")[0] =~/H$/ ? true : false
-      @grid_map = GRID_PATTERNS[@grid_key]
+      @story_frames = GRID_PATTERNS[@grid_key]
       # update config 
-      # section_config_path = @section_path + "/config.yml"
-      # section_config = make_section_config
-      # File.open(section_config_path, 'w'){|f| f.write section_config.to_yaml}
+      section_config_path = @section_path + "/config.yml"
+      section_config = make_section_config
+      File.open(section_config_path, 'w'){|f| f.write section_config.to_yaml}
       @number_of_stories.times do |i|
-        new_metadata = {}
-        new_metadata['has_heading'] = @has_heading
-        if @has_heading
-          new_metadata['grid_frame'] = @grid_map[i + 1].to_s
-        else
-          new_metadata['grid_frame'] = @grid_map[i + 1].to_s
-        end
-        new_metadata['grid_size'] = [@grid_width, @grid_height].to_s
         story_path =  @section_path + "/#{i + 1}.story.md"
         if File.exist?(story_path)
-          Story.update_metadata(story_path, new_metadata)
+          # Story.update_metadata(story_path, new_metadata)
         else
           # Need to create more story for new pattern
-          sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @grid_frame %>", @grid_frame.to_s)
-          sample = sample.gsub("<%= @grid_width %>", @grid_width.to_s)
-          sample = sample.gsub("<%= @grid_height %>", @grid_height.to_s)
-          sample = sample.gsub("<%= @story_index %>", (story_index + 1).to_s)
+          sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @story_index %>", (story_index + 1).to_s)
           File.open(story_path, 'w'){|f| f.write sample}
         end
+        # regenerate story
+        options = {}
+        options[:story_path]   = story_path
+        ext = File.extname(story_path)
+        options[:output_path]  = story_path.gsub(ext, ".pdf")
+        options[:jpg]  = true
+        NewsArticle.new(nil, options)
       end
+      # update section pdf
+      puts "generating section pdf..."
+      merge_article_pdf(:jpg=>true)
+      
     end
           	
     def make_section_config
@@ -281,6 +284,8 @@ module RLayout
       # It can play nicely since I could distinguish whether the options are coming from new or open
       # for  NewSection new, options keys are passed as symbols,
       # And for  NewSection open, options keys are stored as String, when reading from section config file.
+      # YAML kit also haves true as 1 and false as 0
+      # It reads 1. as 1.0 and 0 as 0.0, so be careful!!!!
       info ={}
       info['publication'] = @publication || "OurTimes"
       info['issue']       = @issue       || '100-100'
@@ -288,20 +293,21 @@ module RLayout
       info['section_name']= @section_name || "untitled"
       info['has_heading'] = @has_heading
       info['grid_key']    = @grid_key
+      info['grid_size']   = [@grid_width, @grid_height]
       info['width']       = @width
       info['height']      = @height
-      # info[:left_margin]  = @left_margin
-      # info[:right_margin] = @right_margin
-      # info[:top_margin]   = @top_margin
-      # info[:bottom_margin]= @bottom_margin
-      # info[:gutter]       = @gutter
+      info['story_frames']= GRID_PATTERNS[@grid_key]
+      info['left_margin']  = @left_margin
+      info['right_margin'] = @right_margin
+      info['top_margin']   = @top_margin
+      info['bottom_margin']= @bottom_margin
+      info['gutter']       = @gutter
       info
     end
     
     def make_articles_info
       @article_info = []
-      @grid_map.each_with_index do |grid_frame, i|
-        puts "grid_frame:#{grid_frame}"
+      @story_frames.each_with_index do |grid_frame, i|
         info = {}
         if @has_heading && i == 0
           info[:image_path] = @section_path + "/heading.pdf"
@@ -316,7 +322,6 @@ module RLayout
         info[:height]     = grid_frame[3]*@grid_height
         info[:layout_expand] = nil
         info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
-        puts "info:#{info}"
         @article_info << info.dup
       end
       @article_info
@@ -324,15 +329,12 @@ module RLayout
 
     def create_story(story_index)
       story_path =  @section_path + "/#{story_index + 1}.story.md"
-      if @has_heading
-        @grid_frame = @grid_map[story_index+1]
-      else
-        @grid_frame = @grid_map[story_index]
-      end 
-      sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @grid_frame %>", @grid_frame.to_s)
-      sample = sample.gsub("<%= @grid_width %>", @grid_width.to_s)
-      sample = sample.gsub("<%= @grid_height %>", @grid_height.to_s)
-      sample = sample.gsub("<%= @story_index %>", (story_index + 1).to_s)
+      # if @has_heading
+      #   @grid_frame = @story_frames[story_index+1]
+      # else
+      #   @grid_frame = @story_frames[story_index]
+      # end 
+      sample = SAMPLE_NEWS_ARTICLE.gsub("<%= @story_index %>", (story_index + 1).to_s)
       File.open(story_path, 'w'){|f| f.write sample}
     end
         
@@ -343,7 +345,7 @@ module RLayout
         create_story(i)
       end
       section_config_path = @section_path + "/config.yml"
-      section_config = make_section_config
+      @section_config = make_section_config
       File.open(section_config_path, 'w'){|f| f.write section_config.to_yaml}
       section_rake_path = @section_path + "/Rakefile"
       File.open(section_rake_path, 'w'){|f| f.write SECTION_RAKE_FILE} unless File.exist?(section_rake_path)

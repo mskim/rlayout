@@ -3,7 +3,7 @@ module RLayout
 
   class NewsArticle < TextBox
     attr_accessor :story_path, :paragraphs, :heading, :images
-    attr_accessor :output_path, :images_dir
+    attr_accessor :output_path, :images_dir, :has_heading, :story_frame_index
 
     def initialize(parent_graphic, options={}, &block)
       @output_path            = options[:output_path] if options[:output_path]
@@ -14,18 +14,22 @@ module RLayout
         if options[:grid_frame].class == String
           options[:grid_frame] = eval(options[:grid_frame])
         end
+        if options[:grid_size].class == String
+          options[:grid_size] = eval(options[:grid_size])
+        end
+        
         if options[:grid_width].class == String
           options[:grid_width] = eval(options[:grid_width])
         end
         if options[:grid_height].class == String
           options[:grid_height] = eval(options[:grid_height])
         end
+        @heading_columns = options[:grid_frame][2]
         @heading_columns = HEADING_COLUMNS_TABLE[options[:grid_frame][2].to_i]
-        # @heading_columns = options[:grid_frame][2]
-        options[:grid_frame] = eval(options[:grid_frame]) if options[:grid_frame].class == String
+        options[:grid_frame]  = eval(options[:grid_frame]) if options[:grid_frame].class == String
         options[:column_count]= options[:grid_frame][2]
-        @grid_width  = options.fetch(:grid_width, 200)
-        @grid_height  = options.fetch(:grid_height, 200)
+        @grid_width           = options.fetch(:grid_width, 200)
+        @grid_height          = options.fetch(:grid_height, 200)
         options[:gutter]      = 10 unless options[:gutter]
         options[:v_gutter]    = 0 unless options[:v_gutter]
         options[:width]       = options[:grid_frame][2]*options[:grid_width] + (options[:grid_frame][2] - 1)*options[:gutter]
@@ -42,11 +46,34 @@ module RLayout
           puts "File #{options[:story_path]} does not exist!!!"
           return
         end
-        @story_path   = options[:story_path]
-        puts "@story_path:#{@story_path}"
-        @images_dir   = File.dirname(@story_path) + "/images"
-        options.merge! read_story
-        puts "options:#{options}"
+        @story_path       = options[:story_path]
+        base_name         = File.basename(@story_path)
+        story_number      = base_name.match(/^(\d)*/).to_s.to_i 
+        @story_frame_index=  story_number.to_i - 1  
+        @images_dir       = File.dirname(@story_path) + "/images"
+        read_story
+        #TODO read from config.yml of section
+        section_config_path = File.dirname(options[:story_path]) + "/config.yml"
+        if File.exist?(section_config_path)
+          config = YAML::load(File.open(section_config_path, 'r'){|f| f.read})
+          # YamlKit in Rubymotion saves true as 1 and reads as 1.0
+          if config['has_heading'] == true || config['has_heading'] == 1.0
+            @story_frame_index += 1
+          end
+          options[:grid_frame]         = config['story_frames'][@story_frame_index]
+          options[:grid_frame]         = eval(options[:grid_frame]) if options[:grid_frame].class == String
+          options[:grid_frame]         = options[:grid_frame].map {|e| e.to_i}
+          options[:grid_base]          = [options[:grid_frame][2],options[:grid_frame][3]]
+          options[:gutter]             = config['gutter'] || 10
+          options[:v_gutter]           = config['gutter'] || 0
+          options[:column_count]       = options[:grid_frame][2]
+          options[:grid_width]         = config['grid_size'][0]
+          options[:grid_height]        = config['grid_size'][1]
+          options[:x]                  = 0
+          options[:y]                  = 0
+          options[:width]              = options[:grid_width] * options[:grid_frame][2] + (options[:grid_frame][2] - 1)*options[:gutter]
+          options[:height]             = options[:grid_height] * options[:grid_frame][3]+ (options[:grid_frame][3] - 1)*options[:v_gutter]
+        end
       elsif options[:story]
         @heading_options    = options[:story][:heading]
         @images     = options[:images]
@@ -72,34 +99,10 @@ module RLayout
     # path to story is given
     def read_story
       story               = Story.markdown2para_data(@story_path)
-      @paragraphs         =[]
-      make_paragraph(story[:paragraphs])
-      options = {}
-      @images             = story[:heading]['images']  if  story[:heading]['images']
-
-      options[:grid_frame]         = story[:heading]['grid_frame']
-      options[:grid_frame]         = eval(options[:grid_frame]) if options[:grid_frame].class == String
-      options[:grid_base]          = [options[:grid_frame][2],options[:grid_frame][3]]
-      options[:gutter]             = story[:heading]['gutter'] || 10
-      options[:v_gutter]           = story[:heading]['gutter'] || 0
-      options[:column_count]       = options[:grid_frame][2]
-      options[:grid_size]          = story[:heading]['grid_size'] || [188.188571428571, 158.674166666667]
-      options[:grid_size]          = eval(options[:grid_size]) if options[:grid_size].class == String
-      options[:grid_width]         = options[:grid_size][0]
-      options[:grid_height]        = options[:grid_size][1]
-      options[:x]                  = 0
-      options[:y]                  = 0
-      options[:width]              = options[:grid_width] * options[:grid_frame][2] + (options[:grid_frame][2] - 1)*options[:gutter]
-      options[:height]             = options[:grid_height] * options[:grid_frame][3]+ (options[:grid_frame][3] - 1)*options[:v_gutter]
-
       @heading_options    = story[:heading]
-      if @heading_options['heading_columns']
-        @heading_columns  = @heading_options['heading_columns'].to_i
-      else
-        @heading_columns  = HEADING_COLUMNS_TABLE[options[:grid_frame][2].to_i]
-      end
-
-      options
+      @paragraphs         = []
+      make_paragraph(story[:paragraphs])
+      @images             = story[:heading]['images']  if  story[:heading]['images']
     end
 
     def make_paragraph(para_data_array)
@@ -128,6 +131,7 @@ module RLayout
     end
 
     def layout_story
+      @heading_options = {} unless @heading_options
       @heading_options[:layout_expand]  = [:height]
       @heading_options[:width]          = width_of_columns(@heading_columns)
       @heading_options[:align_to_body_text]= true

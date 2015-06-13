@@ -1,5 +1,4 @@
 
-
 HEADING_COLUMNS_TABLE = {
   1 => 1,
   2 => 2,
@@ -40,8 +39,11 @@ GRID_PATTERNS ={
   "7x12/4"=>[[0, 1, 4, 4], [4, 1, 3, 4], [0, 5, 7, 2], [0, 7, 7, 5]], 
   "7x12/H/5"=>[[0, 0, 7, 1], [0, 1, 4, 3], [4, 1, 3, 4], [0, 4, 4, 5], [4, 5, 3, 4], [0, 9, 7, 3]], 
   "7x12/5"=>[[0, 0, 7, 3], [0, 3, 4, 3], [4, 3, 3, 4], [0, 6, 4, 5], [4, 7, 3, 4]], 
-  "7x12/H/6"=>[[0, 0, 7, 1], [0, 1, 4, 2], [4, 1, 3, 4], [0, 3, 4, 2], [0, 5, 4, 2], [4, 5, 3, 2], [0, 7, 7, 5]], 
+  "7x12/5_1"=>[[0, 0, 4, 3], [0, 3, 4, 3], [4, 0, 3, 6], [0, 6, 4, 6], [4, 6, 3, 6]],
+  "7x12/5_2"=>[[0, 0, 4, 6], [4, 0, 3, 6], [0, 6, 4, 6], [4, 6, 3, 3], [4, 3, 3, 3]],  "7x12/H/6"=>[[0, 0, 7, 1], [0, 1, 4, 2], [4, 1, 3, 4], [0, 3, 4, 2], [0, 5, 4, 2], [4, 5, 3, 2], [0, 7, 7, 5]], 
   "7x12/6"=>[[0, 1, 4, 2], [4, 1, 3, 4], [0, 3, 4, 2], [0, 5, 4, 2], [4, 5, 3, 2], [0, 7, 7, 5]], 
+  "7x12/6_1"=>[[0, 0, 4, 3], [0, 3, 4, 3], [4, 0, 3, 6], [0, 6, 4, 6], [4, 6, 3, 3], [4, 3, 3, 3]],
+  "7x12/6_2"=>[[0, 0, 7, 6], [0, 6, 4, 3], [0, 3, 2, 3], [2, 3, 2, 3], [4, 6, 3, 3], [4, 3, 3, 3]],
   "7x12/7"=>[[0, 0, 7, 1], [0, 1, 4, 2], [4, 1, 3, 4], [0, 3, 4, 2], [0, 5, 4, 2], [4, 5, 3, 2], [0, 7, 7, 5]]}
   
 NEWS_PAPER_DEFAULTS = {
@@ -61,6 +63,13 @@ NEW_SECTION_DEFAULTS = {
   :right_margin => 50,
   :bottom_margin=> 50,
 }
+
+
+# We have thre classes
+# GridFrame           :cell
+# GridLayout          :grid
+# GridPattern         :pattern
+# GridPatternManager  :pattern manager
 
 module RLayout
   class GridFrame
@@ -115,14 +124,14 @@ module RLayout
       s
     end
     
-    def flip_vertically(row_number)
+    def flip_vertically(rows)
       original = @frame.dup
-      @frame[1]= row_number - original[3]   
+      @frame[1]= rows - original[3]   
     end
     
-    def flip_horizontally(column_number)
+    def flip_horizontally(columns)
       original = @frame.dup
-      @frame[0]= column_number - original[2]
+      @frame[0]= columns - original[2]
     end
     
     def flip_both_way(width, height)
@@ -135,122 +144,158 @@ module RLayout
     end
   end
   
+  
   class GridLayout
-	  attr_accessor :grid_key, :frames, :column_number, :row_number, :patterns
-	  def initialize(grid_key, options={})
-	    @grid_key       = grid_key
-	    @patterns       = options.fetch(:frames, GRID_PATTERNS[@grid_key])
-  	  @grid_frames    = options[:grid_frames] if options[:grid_frames]
-	    @columns        = grid_key.split("/")[0].split("x")[0].to_i
-	    @rows           = grid_key.split("/")[0].split("x")[1].to_i
-	    @frames         = @patterns.map{|p| GridFrame.new(p, columns: @columns, rows: @rows)}
+	  attr_accessor :grid_base, :x, :y, :columns, :rows
+	  attr_accessor :children, :patterns
+	  def initialize(grid_base, options={})
+	    @grid_base      = grid_base
+	    @x              = options[:x] || 0
+	    @y              = options[:y] || 0
+	    @columns        = @grid_base.split("x")[0].to_i
+	    @rows           = @grid_base.split("x")[1].to_i
+	    @children       = []
+      @patterns       = []
 	    self
 	  end
     
-    # genetate a grid_patter with given grid_base and number_of_frames
-    # see if the generated pattern is present in the pool
-    # if not, save the new 
-    # grid_patterns.yml
-    # strategy
-    # 1. make 2, 3, 4, chunks
-    # 2. 
+    # return grid_rects array, derived from chidren tree 
+    def grid_rects
+      # binding.pry
+      grid_rects = []
+      if @children.length == 0
+        grid_rects += grid_rect
+      else
+        @children.each do |child|
+          grid_rects += child.grid_rects
+        end
+      end
+      grid_rects.flatten!
+      grid_rects.each_slice(4).map{|x| x}
+    end
+    
+    def grid_rect
+      [@x,@y, columns, rows]
+    end
+    
+    def frame_count
+      if @children.length == 0
+        return 1
+      else
+        count = 0
+        @children.each do |child|
+          count += child.frame_count
+        end
+      end
+      count
+    end
+    
+    def grid_key
+      "#{@grid_base}/#{frame_count}"
+    end
+    
+    # genetate a GridLayout with given grid_base and number_of_frames
     def self.new_with_grid_base_and_number(grid_base, number_of_frames)
-      [2..4].to_a.each do i
-        
+      gl = GridLayout.new(grid_base)
+      split_count = number_of_frames - 1
+      split_count.times do
+        gl.split_grid
+      end
+      gl
+    end
+    
+    # genetate a GridLayout with given grid_key 
+    def self.new_with_grid_key(grid_key)
+      input_array       = grid_key.split("/")
+      grid_base         = input_array[0]
+      number_of_frames  = input_array[1].to_i
+      gl = GridLayout.new(grid_base)
+      split_count = number_of_frames - 1
+      split_count.times do
+        gl.split_grid
+      end
+      gl
+    end
+    
+    def children_count
+      count = 0
+      @children.each do |child|
+        if child.children.length > 0
+          count += child.children_count
+        else
+          count += 1
+        end
       end
     end
     
-    def expand_grid_width_to(number)
-      
+    def can_split?
+      can_split = false
+      if @children.length < 2 && columns*rows > 1
+        can_split =  true
+      elsif @children[0].can_split?
+        can_split =  true 
+      elsif @children[1].can_split?
+        can_split =  true 
+      end
+      can_split
     end
     
-    # adds one more frame to exiisting grid patteren
-    # by selcting the largest area frame and spiting it.
-    def add_frame
-      frames_by_area    = frames.dup.sort{|x,y| x.area <=> y.area}
-      frames_by_area.first.spit
-      @number_of_frames +=1
-      # sort them by area
-      
+    def pattern
+      {"#{grid_key}" => grid_rects}
     end
     
-    def expand_grid_height_to(number)
-      
-    end
-    
-    def divide_cell_at(cell_index)
-      
+    # split grid into two
+    def split_grid
+      return false unless can_split?
+      if @children.length < 2
+        if columns >= rows
+          # split vertically
+          left_half_width = columns/2 
+          left_half_width += 1 if (columns % 2) != 0
+          right_half_width = columns - left_half_width
+          @children << GridLayout.new("#{left_half_width}x#{rows}", x: x, y: y)
+          @children << GridLayout.new("#{right_half_width}x#{rows}",x: left_half_width, y: y)
+          return true        
+        else
+          # split horizontally
+          top_half_height = rows/2 
+          top_half_height += 1 if (rows % 2) != 0
+          bottom_half_height = rows - top_half_height
+          @children << GridLayout.new("#{columns}x#{top_half_height}", x: x, y: y)
+          @children << GridLayout.new("#{columns}x#{bottom_half_height}", x: x, y: top_half_height)        
+          return true        
+        end
+      else
+        # spliting children in random fasion
+        # get ramddom value
+        random = [0,1].sample
+        # try splitting children at first ramddom value
+        if @children[random].split_grid
+          # firt attemp was sucessful
+          return true
+        else
+          # firt attemp was not sucessful
+          random = random - 1
+          # try splitting children at other ramddom value
+          return @children[random].split_grid
+        end
+      end
     end
     
     def self.new_2x2
     
-    end
-    
-    def has_heading?
-      grid_key.split("/")[1]=~/^H/ ? true : false
-    end
-    
-    def self.find_all
-      grid_object_array = []
-      GRID_PATTERNS.each do |item|
-        grid_object_array << GridLayout.new(item[0], :patterns=>item[1])
-      end
-      grid_object_array
-    end
-    
-    def self.find_with_grid_key(grid_key)
-      GridLayout.new(grid_key, :patterns=>GRID_PATTERNS[grid_key])
-    end
-    
-    # find all possible GridLayout with given number of grid_frames
-    def self.find_with_number_of_frames(number_of_frames)
-      candidates = []
-      GRID_PATTERNS.each do |item|
-        if item[0]=~/\/#{number_of_frames.to_s}(_\d)?$/
-           candidates << item
-        end     
-      end
-      candidates.map{|f| GridLayout.new(f[0], :patterns=>f[1])}
-    end
-    
-    
-    def self.find_with_grid_base_and_number(grid_base, number_of_frames)
-      candidates = []
-      GRID_PATTERNS.each do |item|
-        if item[0]=~/^#{grid_base}(H)?\/#{number_of_frames.to_s}(_\d)?$/
-           candidates << item
-        end     
-      end
-      candidates.map{|f| GridLayout.new(f[0], :patterns=>f[1])}
-    end
-    
-    # sort given grid_layout_list by its total area
-    def self.sort_by_area(grid_layout_list, options={})
-      grid_layout_list.sort!{|x,y| x.total_area <=> y.total_area} 
-    end
-    
-    def self.expand_grid_for_size(width, height, grid_key, options={})
-      #TODO margin, gutter, v_gutter
-      expanded = GRID_PATTERNS[grid_key].map do |cell|
-        [cell[0]*@grid_width, cell[1]*@grid_height, cell[2]*@grid_width, cell[3]*@grid_height]
-      end
-      expanded
-    end
+    end    
     
     def total_area
       total_area = 0
-      @frames.each do |item|
-        total_area += item.frame[2]*item.frame[3]
+      if @children.length > 1
+        @children.each do |child|
+          total_area += child.total_area
+        end
+      else
+        total_area = columns*rows
       end
       total_area
-    end
-    
-    # check if two arrays of frames are virtually equal,  
-    def self.has_equal_frames?(first, second)
-      first.each do |frame|
-        return false unless second.include?(frame)
-      end
-      true
     end
     
     def to_svg
@@ -306,18 +351,9 @@ EOF
       false
     end
     
-    def sort_frames_by_y_and_x
-      @frames.sort_by! {|f| [f.frame[1], f.frame[0]] }
-      @patterns = @frames.map{|f| f.frame}
-      # # in order to sort by y and x
-      # # first sort by x
-      # # then the final sort should be by y
-      # @frames.sort!{|x,y| x.frame[0] <=> y.frame[0]}      
-      # @frames.sort!{|x,y| x.frame[1] <=> y.frame[1]}
-    end
     
     def flip_vertically
-      height = @row_number
+      height = @rows
       if has_heading?
         heading     = copyed.shift 
         height -= 1
@@ -331,7 +367,7 @@ EOF
     
     def flip_horizontally 
       @frames.map do |frame|
-        frame.flip_horizontally(@column_number)
+        frame.flip_horizontally(@columns)
       end
       @patterns = @frames.map{|f| f.frame}
     end
@@ -339,6 +375,78 @@ EOF
     def flip_both_way
       flip_horizontally
       flip_vertically
+    end
+    
+  end
+
+
+  class GridPattern
+    attr_accessor :grid_key, :grid_rects
+    def initialize(grid_key, options={})
+      @grid_key = grid_key
+      @grid_rects = options[:grid_rects] if options[:grid_rects]
+      self
+    end
+    
+    def has_heading?
+      grid_key.split("/")[1]=~/^H/ ? true : false
+    end
+  end
+  
+  class GridPatternManager
+    def self.find_all
+      grid_object_array = []
+      GRID_PATTERNS.each do |item|
+        grid_object_array << GridPattern.new(item[0], :patterns=>item[1])
+      end
+      grid_object_array
+    end
+    
+    def sort_frames_by_y_and_x
+      @frames.sort_by! {|f| [f.frame[1], f.frame[0]] }
+      @patterns = @frames.map{|f| f.frame}
+      # # in order to sort by y and x
+      # # first sort by x
+      # # then the final sort should be by y
+      # @frames.sort!{|x,y| x.frame[0] <=> y.frame[0]}      
+      # @frames.sort!{|x,y| x.frame[1] <=> y.frame[1]}
+    end
+    
+    # sort given grid_layout_list by its total area
+    def self.sort_by_area(grid_layout_list, options={})
+      grid_layout_list.sort!{|x,y| x.total_area <=> y.total_area} 
+    end
+    
+    def self.find_with_grid_key(grid_key)
+      GridPattern.new(grid_key, :patterns=>GRID_PATTERNS[grid_key])
+    end
+    
+    # check if two arrays of frames are virtually equal,  
+    def self.has_equal_frames?(first, second)
+      first.each do |frame|
+        return false unless second.include?(frame)
+      end
+      true
+    end
+    # find all possible GridPattern with given number of grid_rects
+    def self.find_with_number_of_frames(number_of_frames)
+      candidates = []
+      GRID_PATTERNS.each do |item|
+        if item[0]=~/\/#{number_of_frames.to_s}(_\d)?$/
+           candidates << item
+        end     
+      end
+      candidates.map{|f| GridPattern.new(f[0], :patterns=>f[1])}
+    end
+    
+    def self.find_with_grid_base_and_number(grid_base, number_of_frames)
+      candidates = []
+      GRID_PATTERNS.each do |item|
+        if item[0]=~/^#{grid_base}(H)?\/#{number_of_frames.to_s}(_\d)?$/
+           candidates << item
+        end     
+      end
+      candidates.map{|f| GridPattern.new(f[0], :patterns=>f[1])}
     end
     
     # create a variation from give pattern
@@ -351,17 +459,17 @@ EOF
       if GRID_PATTERNS[grid_key]
         puts "grid_key:#{grid_key}"
         puts "#{GRID_PATTERNS[grid_key]}"
-        grid_layout = GridLayout.new(grid_key)
+        grid_layout = GridPattern.new(grid_key)
         a = grid_layout.flip_horizontally
         puts "flip_horizontally"
         puts a.to_s
         variations << a
-        grid_layout = GridLayout.new(grid_key)
+        grid_layout = GridPattern.new(grid_key)
         b = grid_layout.dup.flip_vertically
         puts "flip_vertically"
         puts b.to_s
         variations << b
-        grid_layout = GridLayout.new(grid_key)
+        grid_layout = GridPattern.new(grid_key)
         c = grid_layout.dup.flip_both_way
         puts "flip_vertically"
         puts c.to_s
@@ -372,7 +480,6 @@ EOF
       variations
     end
   end
-
 end
 
 __END__

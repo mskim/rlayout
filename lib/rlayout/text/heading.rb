@@ -57,26 +57,26 @@ module RLayout
       # width           = @width - @left_inset - @right_inset
       if options[:title]
         @title_object = title(options[:title], options)
-      elsif options[":title"]
-        @title_object = title(options[":title"], options)
+      elsif options["title"]
+        @title_object = title(options["title"], options)
       end
 
       if options[:subtitle]
         @subtitle_object = subtitle(options[:subtitle], options)
-      elsif options[":subtitle"]
-        @subtitle_object = subtitle(options[":subtitle"], options)
+      elsif options["subtitle"]
+        @subtitle_object = subtitle(options["subtitle"], options)
       end
 
       if options[:leading]
         @leading_object = leading(options[:leading], options)
-      elsif options[":leading"]
-        @leading_object = leading(options[":leading"], options)
+      elsif options["leading"]
+        @leading_object = leading(options["leading"], options)
       end
 
       if options[:author]
         @author_object = author(options[:author], options)
-      elsif options[":author"]
-        @author_object = author(options[":author"], options)
+      elsif options["author"]
+        @author_object = author(options["author"], options)
       end
 
       @line_type=0
