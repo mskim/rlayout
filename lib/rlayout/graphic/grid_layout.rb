@@ -40,7 +40,7 @@ GRID_PATTERNS ={
   "7x12/H/5"=>[[0, 0, 7, 1], [0, 1, 4, 3], [4, 1, 3, 4], [0, 4, 4, 5], [4, 5, 3, 4], [0, 9, 7, 3]], 
   "7x12/5"=>[[0, 0, 7, 3], [0, 3, 4, 3], [4, 3, 3, 4], [0, 6, 4, 5], [4, 7, 3, 4]], 
   "7x12/5_1"=>[[0, 0, 4, 3], [0, 3, 4, 3], [4, 0, 3, 6], [0, 6, 4, 6], [4, 6, 3, 6]],
-  "7x12/5_2"=>[[0, 0, 4, 6], [4, 0, 3, 6], [0, 6, 4, 6], [4, 6, 3, 3], [4, 3, 3, 3]],  "7x12/H/6"=>[[0, 0, 7, 1], [0, 1, 4, 2], [4, 1, 3, 4], [0, 3, 4, 2], [0, 5, 4, 2], [4, 5, 3, 2], [0, 7, 7, 5]], 
+  "7x12/5_2"=>[[0, 0, 7, 6], [0, 3, 4, 3], [4, 3, 3, 3], [0, 6, 4, 3], [4, 6, 3, 3]],
   "7x12/6"=>[[0, 1, 4, 2], [4, 1, 3, 4], [0, 3, 4, 2], [0, 5, 4, 2], [4, 5, 3, 2], [0, 7, 7, 5]], 
   "7x12/6_1"=>[[0, 0, 4, 3], [0, 3, 4, 3], [4, 0, 3, 6], [0, 6, 4, 6], [4, 6, 3, 3], [4, 3, 3, 3]],
   "7x12/6_2"=>[[0, 0, 7, 6], [0, 6, 4, 3], [0, 3, 2, 3], [2, 3, 2, 3], [4, 6, 3, 3], [4, 3, 3, 3]],
@@ -171,9 +171,13 @@ module RLayout
         end
       end
       grid_rects.flatten!
-      grid_rects.each_slice(4).map{|x| x}
+      grouped_rects = grid_rects.each_slice(4).map{|x| x}
+      puts "grouped_rects:#{grouped_rects}"
+      grouped_rects.sort_by! {|f| [f[1], f[0]] }
+      puts "sorted_rects:#{grouped_rects}"
+      grouped_rects
     end
-    
+        
     def grid_rect
       [@x,@y, columns, rows]
     end
@@ -284,7 +288,8 @@ module RLayout
     
     def self.new_2x2
     
-    end    
+    end   
+     
     
     def total_area
       total_area = 0
@@ -402,15 +407,6 @@ EOF
       grid_object_array
     end
     
-    def sort_frames_by_y_and_x
-      @frames.sort_by! {|f| [f.frame[1], f.frame[0]] }
-      @patterns = @frames.map{|f| f.frame}
-      # # in order to sort by y and x
-      # # first sort by x
-      # # then the final sort should be by y
-      # @frames.sort!{|x,y| x.frame[0] <=> y.frame[0]}      
-      # @frames.sort!{|x,y| x.frame[1] <=> y.frame[1]}
-    end
     
     # sort given grid_layout_list by its total area
     def self.sort_by_area(grid_layout_list, options={})

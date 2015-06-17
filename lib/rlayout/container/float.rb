@@ -84,30 +84,26 @@ module RLayout
     def place_float_images(images)
       @gutter = @layout_space
       return unless images
-      images.each do |image_options|
-        if image_options.class == String
-          image_path = image_options
-          image_options = {}
+      images.each do |image_info|
+        # image path only in String
+        image_options = {}
+        if image_info.class == String
           frame_rect = grid_frame_to_frame_rect([0,0,1,1])
           image_options[:x]       = frame_rect[0]
           image_options[:y]       = frame_rect[1]
           image_options[:width]   = frame_rect[2]
           image_options[:height]  = frame_rect[3]
-    
-          image_options[:image_path] = @images_dir + "/#{image_path}"
-        
-        elsif image_options.class == hash
-          image_options[:grid_frame]
-          frame_rect = grid_frame_to_frame_rect(image_options[:grid_frame])
+          image_options[:image_path] = @images_dir + "/#{image_info}"
+        # image path with grid_frame for layout as Hash
+        elsif image_info.class == Hash
+          image_options[:image_path] = @images_dir + "/#{image_info["image_path"]}"
+          image_options[:image_path] = @images_dir + "/#{image_info[:image_path]}" if image_info[:image_path]
+          frame_rect = grid_frame_to_frame_rect(image_info["grid_frame"])
+          frame_rect = grid_frame_to_frame_rect(image_info[:grid_frame]) if image_options[:grid_frame]
           image_options[:x]       = frame_rect[0]
           image_options[:y]       = frame_rect[1]
           image_options[:width]   = frame_rect[2]
           image_options[:height]  = frame_rect[3]
-          # grid_frame = image_options[:grid_frame]
-          # image_options[:x]           = grid_width*grid_frame[0] + gutter*grid_frame[0]
-          # image_options[:y]           = grid_width*grid_frame[1]
-          # image_options[:width]       = grid_width*grid_frame[2] + gutter*grid_frame[2]
-          # image_options[:height]      = grid_height*grid_frame[3]
         end
         image_options[:layout_expand]   = nil
         image_options[:is_float]        = true
@@ -169,7 +165,7 @@ module RLayout
           @occupied_rects << float.frame_rect
         elsif intersects_with_occupied_rects?(@occupied_rects, float.frame_rect)
               # move to some place  
-              push_float_to_no_mens_land(@occupied_rects,float)
+              move_float_to_unoccupied_area(@occupied_rects,float)
               @occupied_rects << float.frame_rect
         else
           @occupied_rects << float.frame_rect
@@ -188,7 +184,9 @@ module RLayout
       false
     end
     
-    def push_float_to_no_mens_land(occupied_arry, float)
+    # if float is overlapping, move float to unoccupied area 
+    # by moving float to the bottom of the overlapping float.
+    def move_float_to_unoccupied_area(occupied_arry, float)
       occupied_arry.each do |occupied_rect|
         if intersects_rect(occupied_rect, float.frame_rect)
           puts "float.frame_rect:#{float.frame_rect}"

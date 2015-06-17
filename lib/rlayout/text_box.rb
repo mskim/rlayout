@@ -80,7 +80,7 @@ module RLayout
     end
 
     def document
-
+      @parent_graphic.document if @parent_graphic
     end
 
     def add_to_toc_list(item)
@@ -143,13 +143,15 @@ module RLayout
     #   Those thin rectangles will not be able to containe any text, but able to form continuos path from currnet position to the bottom.
     # 5. place item in the column, if it fits(does not overflow).
     #   placing item sets the y value of item and updates @current_position, and room
-    #   if item has text_overflow, paragraph are splited the into two, at overflowing location.
+    #   if item has text_overflow, paragraph are splited into two, at overflowing location.
     #   Insert first_half to current column and put the second_half of splited paragraph back to the flowing_items array,
     #   and return true.
     #   I tred to insert overflowing second half to the next column,
     #   but becase I don't know about next column, whether it is complex colimn.
     #   leave it to the next iteration to take care of it.
     #
+    
+    # layout paragraphs into columns
     def layout_items(flowing_items)
       column_index = 0
       current_column = @graphics[column_index]
@@ -214,18 +216,14 @@ module RLayout
       return [0,0,100,100]          unless @graphics
       return [0,0,100,100]          if grid_frame.nil?
       return [0,0,100,100]          if grid_frame == ""
-      grid_frame = eval(grid_frame) if grid_frame.class == String
-
-      # x_val = grid_frame[0]
-      # y_val = grid_frame[1]
-      width_val = grid_frame[2]
-      # height_val = grid_frame[3]
-      column_frame = @graphics.first.frame_rect
-      column_width = column_frame[2]
-      x= @graphics[0].x
-      y = column_frame[1]
-      width = column_width*width_val + (width_val - 1)*@layout_space
-      height = width # TODO ?
+      grid_frame    = eval(grid_frame) if grid_frame.class == String
+      width_val     = grid_frame[2]
+      column_frame  = @graphics.first.frame_rect
+      column_width  = column_frame[2]
+      x             = @graphics[grid_frame[0]].x
+      y             = column_frame[1]
+      width         = column_width*width_val + (width_val - 1)*@layout_space
+      height        = width # TODO ?
       [x,y,width, height]
     end
 

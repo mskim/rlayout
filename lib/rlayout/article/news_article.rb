@@ -51,7 +51,13 @@ module RLayout
         story_number      = base_name.match(/^(\d)*/).to_s.to_i 
         @story_frame_index=  story_number.to_i - 1  
         @images_dir       = File.dirname(@story_path) + "/images"
-        read_story
+        # read story
+        story               = Story.markdown2para_data(@story_path)
+        @heading_options    = story[:heading]
+        @images             = story[:heading]['images']  if  story[:heading]['images']
+        @paragraphs         = []
+        make_paragraph(story[:paragraphs])
+        
         #TODO read from config.yml of section
         section_config_path = File.dirname(options[:story_path]) + "/config.yml"
         if File.exist?(section_config_path)
@@ -94,15 +100,6 @@ module RLayout
 
     def current_style
       NEWS_STYLES
-    end
-
-    # path to story is given
-    def read_story
-      story               = Story.markdown2para_data(@story_path)
-      @heading_options    = story[:heading]
-      @paragraphs         = []
-      make_paragraph(story[:paragraphs])
-      @images             = story[:heading]['images']  if  story[:heading]['images']
     end
 
     def make_paragraph(para_data_array)

@@ -27,6 +27,10 @@ TODO List
 	- line type, line arrow,
 	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
 	- CorneredRect(rect,corners, shapes)
+
+2012 6 17
+	- news_article add reading image layout info
+	- auto fit news_article
 	
 2012 6 12 
 	- add  section_name to section config

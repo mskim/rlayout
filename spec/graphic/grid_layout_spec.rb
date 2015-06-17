@@ -1,6 +1,27 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
-require 'pry'
+# require 'pry'
+
+describe 'save svg' do
+  before do
+    @svg_folder_path = File.dirname(__FILE__) + "/../output/grid_svg"
+    # @pdf_path = File.dirname(__FILE__) + "/../output/ad_box_source_sample.pdf"
+    system("mkdir #{@svg_folder_path}") unless File.exist?(@svg_folder_path)
+    @grid_layouts = GridLayoutManager.find_all
+    @grid_layouts.each do |grid_layout|
+      grid_layout.save_svg(@svg_folder_path)
+      grid_layout.save_yaml(@svg_folder_path)
+    end
+  end
+  
+  it 'should save svg' do
+    first_path = @svg_folder_path + "/1x1_1.svg"
+    assert File.exist?(first_path)
+  end
+end
+
+__END__
+
 
 # describe "new_with_grid_key" do
 #   before do
@@ -34,7 +55,6 @@ describe 'new_with_grid_base_and_number' do
   
 end
 
-__END__
 describe 'create GridLayout' do
   before do
     @gl = GridLayout.new('4x4')
@@ -91,23 +111,6 @@ describe 'split 5x5 GridLayout' do
 end
 
 __END__
-describe 'save svg' do
-  before do
-    @svg_folder_path = File.dirname(__FILE__) + "/../output/grid_svg"
-    # @pdf_path = File.dirname(__FILE__) + "/../output/ad_box_source_sample.pdf"
-    system("mkdir #{@svg_folder_path}") unless File.exist?(@svg_folder_path)
-    @grids = GridLayoutManager.find_all
-    @grids.each do |grid|
-      grid.save_svg(@svg_folder_path)
-      grid.save_yaml(@svg_folder_path)
-    end
-  end
-  
-  it 'should save svg' do
-    first_path = @svg_folder_path + "/1x1_1.svg"
-    assert File.exist?(first_path)
-  end
-end
 
 describe 'find_with_grid_key' do
   before do
