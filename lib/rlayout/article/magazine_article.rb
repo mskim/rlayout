@@ -1,7 +1,14 @@
 
+# MagazineArticle
+# given rlatyout_path
+# template latyou.rb
+# style.rb
+# contenet.md
+# images folder
+
 module RLayout
 
-  class MagazineArticle < Chapter
+  class MagazineArticle < Document
     def initialize(options={})
       options[:page_count]        = 1
       style_service               = RLayout::StyleService.shared_style_service

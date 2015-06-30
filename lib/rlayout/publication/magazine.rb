@@ -1,54 +1,58 @@
 # encoding: utf-8
 
+# publication
+
+# Issue
+#   PagePlan
+#   Sections
+#   Articles
+#   AdPage
+# 
+
+# workflow
+#  1. create page_plan in csv file 
+#       sections
+#       articles
+#       ads
+#  2. generate dummpy pages
+#  3. Fill in the dummy pages with content
+#  4. Preview in on the web
+#  5. Fine tune
+
+# Templates
+#    TOC
+#    interview-1
+#    interview-2
+#    interview-3
+#    interview-4
+
+MAGAZINE_SECTIONS = %w{cover toc news interview review}
+
 module RLayout
   
-  class Magazine < Book
-    def initialize(folder_path)
+  class Magazine 
+    attr_accessor :name, :publication_path, :sections, :ad, :articles
+    attr_accessor :page_plan, :style_sheet
+    
+    def initialize(options={}, &block)
+      # system("mkdir -p #{publication_path}") unless File.exists?(publication_path)
+      @name         = options.fetch(:name,"OurTimes")
+      @path         = options.fetch(:path, "/Users/Shared/Newspaper")
+      @publication_path = "#{@path}/#{@name}"
+      @paper_size   = options.fetch(:paper_size,"A2")
+      @width        = SIZES[@paper_size][0]
+      @height       = SIZES[@paper_size][1]
+      setup
       super
       self
     end
-        
-    def convert_markdown2pdf(markdown_path, options={})
-      pdf_path = markdown_path.gsub(".markdown", ".pdf")
-      title = File.basename(markdown_path, ".markdown")
-      if options[:starting_page_number]
-        article = MagazineArticle.new(:title =>title, :starts_left=>false, :story_path=>markdown_path, :starting_page_number=>options[:starting_page_number])
-      else
-        article = MagazineArticle.new(:title =>title, :starts_left=>false, :story_path=>markdown_path)
-      end
-      article.save_pdf(pdf_path)
-      article
+    
+    def setup
+      system "mkdir -p #{@publication_path}" unless File.exist?(@publication_path)
+      save_config_file
     end
     
-    def txt2markdown
-      Dir.glob("#{@folder_path}/*.txt") do |m|
-        convert_txt2markdown(m)
-      end
-    end
-      
-    def rtf2md(path)
-      
-    end
-    
-    def convert_txt2markdown(txt_path)
-      txt_content = File.open(txt_path, 'r'){|f| f.read}
-      title = File.basename(txt_path, ".txt")
-      markdown_path = txt_path.gsub(".txt", ".markdown")
-      yaml_header = <<EOF
----
-title: #{title}
----
 
-EOF
-      with_yaml_header = yaml_header + "\n" + txt_content
-      File.open(markdown_path, "w"){|f| f.write with_yaml_header}
-      
-    end
-    
-    def self.rtf2md(path)
-      
-    end
-        
     #TODO
     # breaks for digit that are already 3 digits or more
     # breaks for filenames with space 
@@ -70,5 +74,82 @@ EOF
       new_names
     end
   end  
+
+  class MagazineIssue
+    attr_accessor :publication_path, :issue_date, :issue_number, :issue_path
+    def initialize(publication_path, options={})
+      @publication_path = publication_path
+      @issue_date  = options.fetch(:issue_date, "2015-4-5")
+      @issue_path = @publication_path + "/" + @issue_date
+      create_page_plan
+      create_articles
+      self
+    end
+    
+    def create_page_plan
+      
+    end
+    
+    def create_articles
+      publication_config = File.open(@publication_path + "/config.yml", 'r'){|f| f.read}
+      @publication_info = YAML::load(publication_config)
+      @publication_info['sections'].each_with_index do |section_name, i|
+        section_path = @issue_path + "/#{section_name}"
+        if i== 0
+          magazine_section = MagazineSection.new(nil, :section_path=>section_path, :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i], :has_heading=>true)
+        else
+          magazine_section = MagazineSection.new(nil, :section_path=>section_path,  :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i])
+        end
+        news_section.create_section
+        news_section.update_section
+      end
+    end
+    
+  end  
+  
+  class MagazineArticle < Document
+    attr_accessor :path, :page_type #article, ad, cover 
+    attr_accessor :page_rule #left_side, anywhere, right_side 
+    attr_accessor :max_page_number 
+    
+    def initialize(options={})
+      unless options[:path]
+        puts "no path is given!!!"
+        return
+      end
+      @path             = options[:path]
+      @page_type        = options[:page_type] || "Article"
+      @max_page_number  = options[:max_page_number]
+      @page_rule        = options[:page_rule]
+      reqd_content
+      self
+    end 
+    
+    def reqd_content
+      
+    end
+  end
+  
+  # cover
+  #  cover_1
+  #  cover_2
+  #  cover_3
+  #  cover_4
+  # TOC
+  # news
+  # interview
+  # new_product
+  # Listing
+  
+  class PagePlan
+    attr_accessor :imposition_type # sattle_stiching, 
+    attr_accessor :page_plan_sheet
+    attr_accessor :page_runs
+    
+    def initialize(issue_path, options={})
+      
+      self
+    end
+  end
 
 end

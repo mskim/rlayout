@@ -104,44 +104,6 @@ describe 'StrokeStruct struct' do
   end
 end
 
-describe 'CornersStruct struct' do
-  before do
-    @s= CornersStruct.new(0, 1, 0, 1)
-  end
-  it 'test CornersStruct top_left' do
-    assert @s[:top_left] == 0
-  end
-  it 'test CornersStruct top_right' do
-    assert @s[:top_right] == 1
-  end
-  it 'test CornersStruct bottom_right' do
-    assert @s[:bottom_right] == 0
-  end
-  it 'test CornersStruct type' do
-    assert @s[:type] == nil
-  end
-end
-
-describe 'SidesStruct struct' do
-  before do
-    @s= SidesStruct.new(0, 1, 0, 1)
-  end
-  it 'test SidesStruct left' do
-    assert @s[:left] == 0
-  end
-  it 'test SidesStruct top' do
-    assert @s[:top] == 1
-  end
-  it 'test SidesStruct right' do
-    assert @s[:right] == 0
-  end
-  it 'test SidesStruct bottom' do
-    assert @s[:bottom] == 1
-  end
-  it 'test SidesStruct type' do
-    assert @s[:type] == nil
-  end
-end
 
 describe 'RectStruct struct' do
   before do

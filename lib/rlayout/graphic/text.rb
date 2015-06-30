@@ -16,7 +16,6 @@ module RLayout
         if RUBY_ENGINE == 'rubymotion'
           @text_layout_manager = TextLayoutManager.new(self, options)
         end
-        
       end
     end
 
@@ -26,6 +25,15 @@ module RLayout
       else
         9
       end
+    end
+    
+    # TODO
+    def set_text(new_string)
+      if @text_layout_manager.nil?
+        @text_layout_manager = TextLayoutManager.new(self, :text_string=>new_string)
+      else
+        @text_layout_manager.att_string.set_string(new_string)
+      end      
     end
     
     def text_string=(new_string)

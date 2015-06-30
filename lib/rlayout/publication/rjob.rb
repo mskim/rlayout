@@ -13,17 +13,19 @@ module RLayout
     end
 
     def process_job
-      # return if !File.exist?(@pgscript_path) && !
-      container = nil
-      if File.exist?(@pgscript_path)
-        pgscript = File.open(@pgscript_path, 'r'){|f| f.read}
-        #TODO add style to script
-        container = eval(pgscript)
-      elsif File.exist?(@style_path)
-        hash = eval(File.open(@style_path, 'r'){|f| f.read})
-        puts "hash:#{hash}"
-        container = Container.new(nil, hash)
+      unless File.exist?(@pgscript_path)
+        puts "#{@pgscript_path} does not exits!!!"
+        return
       end
+      container = nil
+      pgscript = File.open(@pgscript_path, 'r'){|f| f.read}
+      container = eval(pgscript)
+      # TODO add style to script
+      # if File.exist?(@style_path)      
+      #   hash = eval(File.open(@style_path, 'r'){|f| f.read})
+      #   puts "hash:#{hash}"
+      #   container = Container.new(nil, hash)
+      # end
       system("mkdir -p #{@output_folder}") unless File.exist?(@output_folder)
       container.save_pdf(@output_path) if container
     end

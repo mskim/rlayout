@@ -41,8 +41,14 @@ module  RLayout
   class Container < Graphic
     
     def init_grid(options)
-      @grid_frame     = options.fetch(:grid_frame,[0,0,1,1])
-      @grid_base      = options.fetch(:grid_base, [@grid_frame[2],@grid_frame[3]])
+      @grid_frame     = options.fetch(:grid_frame,[0,0,3,3])
+      if options[:grid_base]
+        if options[:grid_base].class == String && options[:grid_base] =~/x/
+          @grid_base    = options[:grid_base].split("x").map{|e| e.to_i}
+        elsif options[:grid_base].class == Array
+          @grid_frame   = options[:grid_base]
+        end
+      end
       @grid_color     = options.fetch(:grid_color, 'blue')       
       @gutter         = options.fetch(:gutter, 0)
       @v_gutter       = options.fetch(:v_gutter, 0)

@@ -39,8 +39,8 @@ module RLayout
       to_h.delete_if{|k,v| v.nil?}
     end
   end
-  CornersStruct   = Struct.new(:top_left, :top_right, :bottom_right, :bottom_left, :type)
-  SidesStruct     = Struct.new(:left, :top, :right, :bottom, :type)
+  # CornersStruct   = Struct.new(:top_left, :top_right, :bottom_right, :bottom_left, :type)
+  # SidesStruct     = Struct.new(:left, :top, :right, :bottom, :type)
   RectStruct      = Struct.new(:x, :y, :width, :height) do
     def to_svg
       "<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" replace_this_with_style></rect>"

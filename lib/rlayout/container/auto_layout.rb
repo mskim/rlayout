@@ -167,7 +167,7 @@ module RLayout
         graphic.update_grid if graphic.respond_to?(:update_grid)
       end
       # relayout @owner_graphic's text with new geometry
-      @text_record.update_text_fit if @text_record && @text_record.class == GTextRecord
+      @text_record.update_text_fit if @text_record && @text_record.class == TextStruct
       # adjust image with new geometry
       @image_record.apply_fit_type if @image_record
     end

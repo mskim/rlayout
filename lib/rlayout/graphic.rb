@@ -7,8 +7,7 @@ module RLayout
     attr_accessor :graphics, :fixtures, :floats
     # attr_accessor :fill_type, :fill_color, :fill_other_color
     # attr_accessor :line_type, :line_color, :line_width, :line_dash, :line_drawing_sides
-
-    attr_accessor :shape_type, :shape_bezier, :shape_corners, :shape_corne_type, :shape_sides, :shape_side_type
+    # attr_accessor :shape_type, :shape_bezier, :shape_corners, :shape_sides
     attr_accessor :gutter, :v_gutter, :grid_cells, :show_grid
     attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
@@ -17,7 +16,6 @@ module RLayout
     attr_accessor :text_fit_type, :text_alignment, :text_tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
     attr_accessor :text_layout_manager
     attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :image_caption, :source_frame
-    # attr_accessor :grid_frame
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record, :grid
 
@@ -47,13 +45,13 @@ module RLayout
       @tag              = options[:tag]
       @auto_save        = options[:auto_save]
       init_layout(options)
-      #TODO
-      # # grid
-      # if @parent_graphic && @parent_graphic.respond_to?(:grid_base) && @parent_graphic.grid_base && options[:grid_frame]
-      #   set_frame_in_parent_grid(options[:grid_frame]) if options[:grid_frame] && @parent_graphic.grid_base
-      # end
+      # if options[:grid_frame] is given, convert grid_frame to x,y,width,heigth of parent's grids cordinate
+      if options[:grid_frame] && @parent_graphic #&& @parent_graphic.respond_to?(:grid_base)
+        set_frame_in_parent_grid(options[:grid_frame]) if @parent_graphic.grid_base
+      end
       init_fill(options)
       init_stroke(options)
+      init_shape(options)
       init_text(options)
       init_image(options)
       

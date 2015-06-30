@@ -126,8 +126,7 @@ module RLayout
   end
 
   class NewspaperIssue
-    attr_accessor :publication_path, :issue_date, :issue_path
-    attr_accessor :issue_path, :issue_number, :issue_date
+    attr_accessor :publication_path, :issue_date, :issue_number, :issue_path
     def initialize(publication_path, options={})
       @publication_path = publication_path
       @issue_date  = options.fetch(:issue_date, "2015-4-5")
