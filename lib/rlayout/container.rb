@@ -102,6 +102,9 @@ module RLayout
           h[:floats] << float.to_hash
         end
       end
+      if @grid
+        h[:grid] = @grid.to_hash
+      end
       h
     end
         

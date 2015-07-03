@@ -39,6 +39,7 @@
 module  RLayout
   
   class Container < Graphic
+    attr_accessor :gutter, :v_gutter, :grid_cells, :show_grid
     
     def init_grid(options)
       @grid_frame     = options.fetch(:grid_frame,[0,0,3,3])

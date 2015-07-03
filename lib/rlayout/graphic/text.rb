@@ -1,6 +1,9 @@
 module RLayout
 
   class Graphic
+    attr_accessor :text_markup, :text_direction, :text_string, :text_color, :text_size, :text_line_spacing, :font
+    attr_accessor :text_fit_type, :text_alignment, :text_tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
+    attr_accessor :text_layout_manager
 
     def init_text(options)
       @text_fit_type = options.fetch(:text_fit_type,1)

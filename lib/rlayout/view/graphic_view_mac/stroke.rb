@@ -1,11 +1,17 @@
 
 class GraphicViewMac < NSView
+  attr_accessor :stroke, :line_position
   def draw_stroke(graphic)
-  
+    return if graphic.stroke[:thickness].nil?
+    return if graphic.stroke[:thickness] == 0 
+    @stroke = graphic.stroke
+    @line_position = 1
+    r = ns_bounds_rect(graphic)
+    drawLine(r, withTrap:0)
+    # drawArrow if @start_arrow && @owner_graphic
   end
 
   def getStrokeRect(r)
-
     if @line_position == 1 #LINE_POSITION_MIDDLE 
       return r
     elsif @line_position == 2 
@@ -49,14 +55,54 @@ class GraphicViewMac < NSView
     if @stroke[:type]==nil
       @stroke[:type] = 0
     end
+    
+    # @stroke[:type] == 0 means single line
+    # @stroke[:type] > 0 means double or triple line
     if(@stroke[:type] == 0)   
-      path = linePathWithRect(rect) 
       if @stroke[:thickness] == 0
         NSColor.lightGrayColor.set
+        # NSColor.lightGrayColor.set
       end
-      # NSColor.lightGrayColor.set
-      path.setLineWidth(@stroke[:thickness] + trap)
-      path.stroke
+      
+      # stroke each side
+      if @stroke[:sides] != [1,1,1,1] #TODO check for rectangle or roundrect
+        if @stroke[:sides][0] > 0
+          # puts  "draw left side"
+          path= NSBezierPath.bezierPath
+          path.setLineWidth(@stroke[:thickness]*@stroke[:sides][0])
+          path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y))
+          path.lineToPoint(NSPoint.new(rect.origin.x , rect.origin.y + rect.size.height))
+          path.stroke 
+        end
+        if @stroke[:sides][1] > 0
+          # puts  "draw top"
+          path= NSBezierPath.bezierPath
+          path.setLineWidth(@stroke[:thickness]*@stroke[:sides][1])
+          path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y))
+          path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y))
+          path.stroke 
+        end
+        if @stroke[:sides][2] > 0
+          # puts  "draw right"
+          path= NSBezierPath.bezierPath
+          path.setLineWidth(@stroke[:thickness]*@stroke[:sides][2])
+          path.moveToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y))
+          path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
+          path.stroke 
+        end
+        if @stroke[:sides][3] > 0
+          # puts  "draw bottom"
+          path= NSBezierPath.bezierPath
+          path.setLineWidth(@stroke[:thickness]*@stroke[:sides][3])
+          path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + rect.size.height))
+          path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
+          path.stroke 
+        end
+      else
+        path = linePathWithRect(rect) 
+        path.setLineWidth(@stroke[:thickness] + trap)
+        path.stroke
+      end
 
     else 
         @line1=@line_types_width_table[@stroke[:type]][0]*@stroke[:thickness]

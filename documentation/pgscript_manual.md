@@ -7,9 +7,9 @@
 	fill
 		fill_color, fill_type, fill_other_color
 	stroke
-		stroke_color, stroke_width, stroke_dash, stroke_type, stroke_drawing_sides
+		stroke_color, stroke_width, stroke_dash, stroke_type, stroke_sides stroke_drawing_sides
 	shape
-	  :shape_type, :shape_bezier, :shape_corners, :shape_corner_type, :shape_sides, :shape_side_type
+	  shape_type, shape_bezier, shape_corners, shape_corner_type, shape_side_type
 
 	  shape_corners,  shape_corner_type,  shape_bezier_path
 		# [1,1,1,1] # 0= no corner, 1=small, 2=medium, 3=large, 4= half of smaller side

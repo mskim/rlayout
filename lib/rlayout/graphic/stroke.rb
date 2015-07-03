@@ -17,11 +17,14 @@ module RLayout
       @stroke[:color]     = options[:stroke_color] if options[:stroke_color]
       @stroke[:thickness] = options[:line_width] if options[:line_width] # supporting commomly used name
       @stroke[:thickness] = options[:stroke_thickness] if options[:stroke_thickness]
+      @stroke[:thickness] = options[:stroke_width] if options[:stroke_width]
       @stroke[:thickness] = options[:thickness] if options[:thickness]
       @stroke[:dash]      = options[:dash] if options[:dash]
       @stroke[:line_cap]  = options[:line_cap] if options[:line_cap]
       @stroke[:line_join] = options[:line_join] if options[:line_join]
       @stroke[:type]      = options[:line_type] if options[:line_type]
+      @stroke[:sides]     = options[:stroke_sides] || [1,1,1,1]   # [1,1,1,1], [1,0,1,0]
+      
     end
     
   end

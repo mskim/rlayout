@@ -40,11 +40,21 @@ IMAGE_FIT_TYPE_KEEP_RATIO     = 3
 IMAGE_FIT_TYPE_IGNORE_RATIO   = 4
 IMAGE_FIT_TYPE_REPEAT_MUTIPLE = 5
 
+# local_image is used for getting images in project, images in images folder
+# ex. should put images in project.rlayout/images/my_image.jpg
 module RLayout
   class Graphic
+    attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :image_caption, :source_frame
+    
     def init_image(options)
       @image_record  = options.fetch(:image_record,nil)
-      return unless options[:image_path]
+      unless options[:image_path]
+        if options[:local_image] && $ProjectPath
+          options[:image_path] = $ProjectPath + "/images/" + options[:local_image]
+        else
+          return 
+        end
+      end
       @image_path       = options[:image_path]
       # @image_frame      = options.fetch(:image_frame, image_defaults[:image_frame])
       @image_caption    = options[:image_caption]      

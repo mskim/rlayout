@@ -2,25 +2,11 @@
 module RLayout
 
   class Graphic
-    attr_accessor :parent_graphic, :klass, :tag, :ns_view, :svg_view
-    attr_accessor :x, :y, :width, :height
+    attr_accessor :parent_graphic, :klass, :tag, :ns_view, :svg_view, :path
     attr_accessor :graphics, :fixtures, :floats
-    # attr_accessor :fill_type, :fill_color, :fill_other_color
-    # attr_accessor :line_type, :line_color, :line_width, :line_dash, :line_drawing_sides
-    # attr_accessor :shape_type, :shape_bezier, :shape_corners, :shape_sides
-    attr_accessor :gutter, :v_gutter, :grid_cells, :show_grid
-    attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
-    attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
-    attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand
-    attr_accessor :text_markup, :text_direction, :text_string, :text_color, :text_size, :text_line_spacing, :font
-    attr_accessor :text_fit_type, :text_alignment, :text_tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
-    attr_accessor :text_layout_manager
-    attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :image_caption, :source_frame
     attr_accessor :non_overlapping_rect
-    attr_accessor :fill, :stroke, :shape, :text_record, :image_record, :grid
+    attr_accessor :fill, :stroke, :shape, :text_record, :image_record
 
-    # TODO
-    # attr_accessor :fill_record, :line_record, :shape_record, :text_record, :image_record, :grid_record, :layout_record
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
       if parent_graphic
@@ -48,6 +34,8 @@ module RLayout
       # if options[:grid_frame] is given, convert grid_frame to x,y,width,heigth of parent's grids cordinate
       if options[:grid_frame] && @parent_graphic #&& @parent_graphic.respond_to?(:grid_base)
         set_frame_in_parent_grid(options[:grid_frame]) if @parent_graphic.grid_base
+        # disable autolayout
+        @layout_expand = nil
       end
       init_fill(options)
       init_stroke(options)

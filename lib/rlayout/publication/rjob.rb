@@ -1,9 +1,11 @@
 
 module RLayout
+  ProjectPath   = nil
   class RJob
     attr_accessor :path, :pgscript_path, :style_path, :valid_job, :output_path
     def initialize(path, opttions={})
       @path           = path
+      $ProjectPath    = @path
       @pgscript_path  = @path + "/layout.rb"
       @style_path     = @path + "/style.rb"
       @output_path    = @path + "/QuickLook/Preview.pdf"
@@ -18,7 +20,7 @@ module RLayout
         return
       end
       container = nil
-      pgscript = File.open(@pgscript_path, 'r'){|f| f.read}
+      pgscript  = File.open(@pgscript_path, 'r'){|f| f.read}
       container = eval(pgscript)
       # TODO add style to script
       # if File.exist?(@style_path)      
