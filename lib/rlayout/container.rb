@@ -139,6 +139,15 @@ module RLayout
       h
     end
     
+    def profile
+      tags = []
+      @graphics.each do |g|
+        tags << g.tag if g.tag
+      end
+      tags.sort!
+      tags.join("_")
+    end
+    
     def to_mongo
       h = to_hash
       h.delete(:graphics)

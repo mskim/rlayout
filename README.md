@@ -27,7 +27,14 @@ TODO List
 	- line type, line arrow,
 	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
 	- CorneredRect(rect,corners, shapes)
-2013 7 1
+	
+2015 7 3
+	improve PageScript 
+	- add profile
+	- add place
+	- add replace
+	
+2015 7 1
 	- project_path local_image
 	
 	- name, division, job_title, address1, address2
@@ -39,11 +46,11 @@ TODO List
 	- title, subtitle, author, leading, quate, p, h4, h5, h6
 	
 	
-2012 6 17
+2015 6 17
 	- news_article add reading image layout info
 	- auto fit news_article
 	
-2012 6 12 
+2015 6 12 
 	- add  section_name to section config
 	
 2015 6 1

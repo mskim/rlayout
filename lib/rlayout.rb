@@ -8,7 +8,9 @@ if defined?(Motion::Project::Config)
   end
   #
   # raise "This file must be required within a RubyMotion project Rakefile."
-
+elsif RUBY_ENGINE == "opal"
+  # require files for Opal
+  #
 else
   require 'pry'
   require 'strscan'
@@ -22,6 +24,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/graphic/image'
   require File.dirname(__FILE__) + '/rlayout/graphic/layout'
   require File.dirname(__FILE__) + '/rlayout/graphic/stroke'
+  require File.dirname(__FILE__) + '/rlayout/graphic/shape'
   require File.dirname(__FILE__) + '/rlayout/graphic/node_tree'
   require File.dirname(__FILE__) + '/rlayout/graphic/text'
   require File.dirname(__FILE__) + '/rlayout/graphic/grid_layout'

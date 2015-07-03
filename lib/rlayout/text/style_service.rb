@@ -144,7 +144,6 @@ NEWS_STYLES={
 HEADING_KIND= %w[h1 h2 h3 h4 title subtitle author lead]
 BODY_KIND= %w[h5 h6 p heading1 heading2 heading3 body]
 
-@@current_style_service = nil
 module RLayout
   class StyleService
     attr_accessor :current_style, :default_style, :chapter_style, :news_style, :magazine_style
@@ -174,7 +173,8 @@ module RLayout
         @default_style.merge!(style)
       end
     end
-  
+    
+    @@current_style_service = nil
     def self.shared_style_service
       if !@@current_style_service
         @@current_style_service = StyleService.new 

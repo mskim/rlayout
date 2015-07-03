@@ -24,6 +24,10 @@ module RLayout
     def rect(options={})
       Rectangle.new(self, options)
     end
+    
+    def rectangle(options={})
+      Rectangle.new(self, options)
+    end
 
     def text(options={})
       Text.new(self, options)
@@ -69,9 +73,40 @@ module RLayout
     def stack_v (graphic, options={})
       add_graphic(graphic)
     end
-
-    def place(graphic, grid_frame)
-
+    
+    # place graphic by replacing place holder with same tag
+    # this is how we use layout template
+    # by creating place holder with tag and replacing them with user graphic
+    def place(graphic, options={})
+      if graphic.class == Array
+        graphic.each do |g|
+          next unless g.tag
+          replace_graphic(g)
+        end
+      else
+        return unless graphic.tag
+        replace_graphic(graphic)
+      end
+    end
+    
+    def replace_graphic(graphic)
+      tag = graphic.tag
+      @graphics.each do |place_folder|
+        if place_folder.tag == tag
+          index = @graphics.index(place_folder)
+          @graphics.delete_at(index)
+          @graphics.insert(index, graphic)
+        end
+      end
+      
+      @floats.each do |place_folder|
+        if g.tag == tag
+          index = @graphics.index(place_folder)
+          @floats.delete_at(index)
+          @floats.insert(index, graphic)
+        end
+      end
+      
     end
 
     def split(number=2, options={})

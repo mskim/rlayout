@@ -1,5 +1,21 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+describe 'test profile' do
+  before do
+    @g5 = Container.new(nil, :tag=> 'g2', :layout_direction=>'horizontal')
+      RoundRect.new(@g5, :tag => "RoundRect")
+      Circle.new(@g5, :tag => "Circle")
+      RoundRect.new(@g5, :tag => "RoundRect2")
+      Circle.new(@g5, :tag => "Circle2")
+  end
+  
+  it 'should return profile' do
+    assert @g5.profile == "Circle_Circle2_RoundRect_RoundRect2"
+  end
+  
+end
+
+
 describe 'testing container with graphics' do
   before do
     @container = Container.new(nil, :x=>200, :y=>50, :width=>300, :height=>500)
