@@ -94,7 +94,9 @@ module RLayout
       @graphics.each do |place_folder|
         if place_folder.tag == tag
           index = @graphics.index(place_folder)
+          frame_rect = place_folder.frame_rect
           @graphics.delete_at(index)
+          graphic.set_frame(frame_rect)
           @graphics.insert(index, graphic)
         end
       end

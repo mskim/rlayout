@@ -51,7 +51,6 @@ MININUM_LINES_FOR_SPLIT = 2
       # options[:line_width] = 2
       # options[:line_color] = 'black'
       # options[:fill_color] = 'yellow'
-      
       super
       @klass = "Paragraph"
       self

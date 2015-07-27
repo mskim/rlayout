@@ -46,8 +46,8 @@ DEFAULT_STYLES={
   "Head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h6"      =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
-  "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'left', :text_first_line_head_indent=>10},
-  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
+  "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :line_height=>13.0, :text_alignment=>'left', :text_first_line_head_indent=>10},
+  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :line_height=>13.0, :text_alignment=>'left', :text_first_line_head_indent=>10},
   "caption" =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
@@ -74,8 +74,8 @@ MAGAZINE_STYLES={
   "Head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h6"      =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
-  "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_color => 'black'},
+  "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :line_height=>13.0, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :line_height=>13.0, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "caption" =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black', :footer_margin=>30},
@@ -110,8 +110,8 @@ CHAPTER_STYLES={
   "head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
   "h6"      =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray", :text_head_indent=>0, :text_tail_indent=>0},
   # "p"       =>{:font => 'SDMyoungjo',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "p"       =>{:font => 'smSSMyungjoP-W30',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+  "p"       =>{:font => 'smSSMyungjoP-W30',     :text_size=>10.0, :text_line_spacing=>10, :line_height=>13.0, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :line_height=>13.0, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "caption" =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black', :footer_margin=>30},
@@ -133,8 +133,8 @@ NEWS_STYLES={
   "h5"      =>{:font => 'Helvetica', :text_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
   "head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
   "h6"      =>{:font => 'Helvetica', :text_size=>10.0, :text_line_spacing=>5, :text_color => 'black'},
-  "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black', :text_alignment=>'justified'},
-  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_color => 'black', :text_alignment=>'justified'},
+  "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black', :line_height=>13.0},
+  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black', :line_height=>13.0},
   "caption" =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
@@ -155,7 +155,12 @@ module RLayout
       @current_style  = default_style
       self
     end
-  
+    
+    # get the height of body text by calling size method with sample text
+    #  
+    def current_style_body_height
+      
+    end
     # read style file from project, and update style
     def update_style_with_custom_sytle(category, path)
       unless File.exist?(path)

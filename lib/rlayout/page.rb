@@ -9,19 +9,24 @@ module RLayout
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
       @document       = parent_graphic
-      if options[:width]
-      elsif !@parent_graphic.nil? && @parent_graphic.width
-          options[:width]  = @parent_graphic.width
+      if options[:paper_size] && options[:paper_size] != "custom"
+        options[:width] = SIZES[options[:paper_size]][0]
+        options[:height] = SIZES[options[:paper_size]][1]
       else
-        options[:width]  = page_defaults[:width]
+        if options[:width]
+        elsif !@parent_graphic.nil? && @parent_graphic.width
+            options[:width]  = @parent_graphic.width
+        else
+          options[:width]  = page_defaults[:width]
+        end
+        if options[:height]
+        elsif @parent_graphic && @parent_graphic.height
+          options[:height]  = @parent_graphic.height
+        else
+          options[:height]  = page_defaults[:height]
+        end
       end
-      if options[:height]
-      elsif @parent_graphic && @parent_graphic.height
-        options[:height]  = @parent_graphic.height
-      else
-        options[:height]  = page_defaults[:height]
-      end
-
+      
       if options[:left_margin]
       elsif @parent_graphic && @parent_graphic.left_margin
         options[:left_margin]  = @parent_graphic.left_margin

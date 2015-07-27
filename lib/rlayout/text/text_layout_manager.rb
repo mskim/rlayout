@@ -1,3 +1,36 @@
+# I need a way to find out what the hight of line is,
+# given font with size and line spaceing for paragraph
+#
+# counting lines
+# NSLayoutManager *layoutManager = [textView layoutManager];
+# unsigned numberOfLines, index, numberOfGlyphs =
+#         [layoutManager numberOfGlyphs];
+# NSRange lineRange;
+# for (numberOfLines = 0, index = 0; index < numberOfGlyphs; numberOfLines++){
+#     (void) [layoutManager lineFragmentRectForGlyphAtIndex:index
+#             effectiveRange:&lineRange];
+#     index = NSMaxRange(lineRange);
+# }
+
+# The key methods here are -
+# lineFragmentRectForGlyphAtIndex:effectiveRange:, -
+# lineFragmentUsedRectForGlyphAtIndex:, -locationOfGlyphAtIndex:, and
+# NSTypesetter's -baselineOffsetInLayoutManager:glyphIndex:.  It's a
+# little difficult for me to describe all of the relationships between
+# these measurements without a diagram, but you should be able to try
+# them out and see how they differ in all of the various cases you're
+# interested in--paragraph spacing, line spacing, line height multiple,
+# etc.  The line fragment rect is the rect within which the line was
+# laid out.  The used rect is the rect within that actually taken up by
+# the text, including some forms of padding.  The baseline offset is the
+# distance from the bottom of the line fragment rect to the baseline for
+# a particular glyph.
+
+# Circle View
+# lineFragmentRect = @layoutManager.lineFragmentRectForGlyphAtIndex i, effectiveRange:nil
+# layoutLocation = @layoutManager.locationForGlyphAtIndex(i)
+
+
 # TextLayoutManager is for hanldling Text in Cocoa(Mac OS X)
 
 # There two of ways of saving Text data.
@@ -115,7 +148,7 @@ module RLayout
         proposed_height = options[:proposed_height] 
       end
       @text_container.setContainerSize(NSMakeSize(width, proposed_height))
-      @layout_manager.glyphRangeForTextContainer @text_container
+      range = @layout_manager.glyphRangeForTextContainer @text_container
       used_rect=@layout_manager.usedRectForTextContainer text_container
       if used_rect.size.height <= proposed_height
         # text fits into given room, but do we have enough room for text_line_spacing

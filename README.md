@@ -27,24 +27,29 @@ TODO List
 	- line type, line arrow,
 	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
 	- CorneredRect(rect,corners, shapes)
+
+2015 7 7
+	- improve text layout
+		fix text spacing
+	- try rlayout with Opal
 	
 2015 7 3
 	improve PageScript 
 	- add profile
 	- add place
 	- add replace
+	- * nested replace
+
+2015 7 2
+	- add stroke_sides
 	
 2015 7 1
 	- project_path local_image
-	
 	- name, division, job_title, address1, address2
 	- en_name, en_division, en_job_title, en_address1, en_address2
 	- ch_name, ch_division, ch_job_title, ch_address1, ch_address2
-	
 	- heading, text_box, side_bar, image_box, text_bar
-	
 	- title, subtitle, author, leading, quate, p, h4, h5, h6
-	
 	
 2015 6 17
 	- news_article add reading image layout info

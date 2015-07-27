@@ -60,15 +60,15 @@ module  RLayout
     def update_grid
       return unless @grid_base
       return unless @grid_frame
-      @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
-      @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
-      @grid           = GridStruct.new(@grid_frame, @grid_width, @grid_height, @gutter, @v_gutter)
+      @grid_width   = (@width - @left_margin - @right_margin - (@grid_base[0]-1)*@gutter)/@grid_base[0]
+      @grid_height  = (@height - @top_margin - @bottom_margin - (@grid_base[1]-1)*@v_gutter)/@grid_base[1]
+      @grid         = GridStruct.new(@grid_frame, @grid_width, @grid_height, @gutter, @v_gutter)
     end
     
     def update_grid_cells
-      @grid_cells     = []
-      @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
-      @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
+      @grid_cells   = []
+      @grid_width   = (@width - @left_margin - @right_margin - (@grid_base[0]-1)*@gutter)/@grid_base[0]
+      @grid_height  = (@height - @top_margin - @bottom_margin - (@grid_base[1]-1)*@v_gutter)/@grid_base[1]
       x_position = @left_margin
       y_position = @top_margin
       @grid_base[1].times do |row|

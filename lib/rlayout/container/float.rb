@@ -189,10 +189,7 @@ module RLayout
     def move_float_to_unoccupied_area(occupied_arry, float)
       occupied_arry.each do |occupied_rect|
         if intersects_rect(occupied_rect, float.frame_rect)
-          puts "float.frame_rect:#{float.frame_rect}"
-          float.y = max_y(occupied_rect) 
-          puts "float.y:#{float.y}"
-          
+          float.y = max_y(occupied_rect)           
         end
       end
     end

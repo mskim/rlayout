@@ -1,5 +1,19 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'newspaper body text' do
+  before do
+    @sr = RLayout::StyleService.shared_style_service
+    @news_style = @sr.news_style
+    
+  end
+  
+  it 'should return current_style_body_height' do
+    
+  end
+    
+end
+
+
 describe 'create StyleService' do
   before do
     @sr = RLayout::StyleService.shared_style_service

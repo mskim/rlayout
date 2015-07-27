@@ -26,8 +26,9 @@ module RLayout
       # @line_color   = 'black'
       # @body_line_height = StyleService.shared_style_service.current_style['p'][:text_size]
       body_style = StyleService.shared_style_service.current_style['p']
-      @body_line_height = (body_style[:text_size] + body_style[:text_line_spacing])
-      @body_line_height = 10 if @body_line_height.nil?
+      line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
+      line_height = body_style[:line_height] if body_style[:line_height]
+      @body_line_height = (line_height + body_style[:text_line_spacing])
       @current_position = @top_margin + @top_inset
       @room = text_rect[3] - @current_position
       if block
