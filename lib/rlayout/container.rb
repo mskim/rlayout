@@ -28,9 +28,13 @@ module RLayout
         create_floats(options[:floats])
       end
       
+      # if block
+      #   instance_eval(&block)
+      # end   
       if block
-        instance_eval(&block)
-      end      
+        block.arity < 1 ? instance_eval(&block) : block[self]
+      end
+         
       self
     end
     
@@ -199,6 +203,33 @@ module RLayout
         rect(fill_color: random_color)
       end
       ad
+    end
+    
+    def graphics_with_tag(searching_tag)
+      return if searching_tag.nil?
+      taged_graphics_array=[]
+      @graphics.each do |graphic|
+        if graphic.tag == searching_tag.to_s
+          taged_graphics_array << graphic 
+        end
+        
+        if graphic.kind_of?(Container)
+          taged_graphics_array += graphic.graphics_with_tag(searching_tag) 
+        end
+      end
+      taged_graphics_array
+    end
+    
+    def images_with_tag
+      images_array=[]
+      @graphics.each do |graphic|
+        if graphic.kind_of?(Image) && !@tag.nil?
+          images_array<<graphic
+        elsif graphic.kind_of?(Container)
+          images_array += graphic.images_with_tag
+        end
+      end
+      images_array
     end
     
     def create_graphic_of_type(klass, options={})

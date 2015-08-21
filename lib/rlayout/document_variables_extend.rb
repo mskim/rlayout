@@ -32,19 +32,52 @@ module RLayout
       else
         @project_path = File.dirname(File.dirname(options[:output_path]))
       end
-      
-      template = options[:template_hash].dup
-      pages = []
-      template[:pages].each do |page_hash|
-        options[:template_hash] = page_hash
-        options[:for_variable_document] = true
-        pages << Page.variable_page(options)
+      document = nil
+      if options[:template_hash]
+        document = Document.new(options[:template_hash])
+        document.pages.each do |page|
+          page.keys = @keys
+          page.data = @data
+          page.replace_tagged_graphic
+          page.replace_image
+        end
+      elsif options[:template_document]
+        document = options[:template_document]
+        document.pages.each do |page|
+          page.keys = @keys
+          page.data = @data
+          page.replace_tagged_graphic
+          page.replace_image
+        end        
       end
-      template[:pages] = nil
-      document = Document.new(template)
-      pages.each do |page_hash|
-        Page.new(document, page_hash)
-      end      
+      
+      page = document.pages.first
+      # puts "page.graphics.length:#{page.graphics.length}"
+      # puts "page.graphics.first.class:#{page.graphics.first.class}"
+      # puts "page.graphics.first.x:#{page.graphics.first.x}"
+      # puts "page.graphics.first.y:#{page.graphics.first.y}"
+      # puts "page.graphics.first.width:#{page.graphics.first.width}"
+      # puts "page.graphics.first.height:#{page.graphics.first.height}"
+      
+      if page.graphics.first.class == RLayout::Image
+        puts "image........"
+        puts "page.graphics.first.image_path:#{page.graphics.first.image_path}"
+      end
+      # template = options[:template_hash].dup
+      # pages = []
+      # template[:pages].each do |page_hash|
+      #   options[:template_hash] = page_hash
+      #   options[:keys] = @keys
+      #   options[:data] = @data
+      #   options[:for_variable_document] = true
+      #   # pages << Page.variable_page(options)
+      #   Page.new(document, Page.variable_page(options))
+      # end  
+      # document.pages = []
+      # document.add_page(pages)
+      # puts "after document.pages.length:#{document.pages.length}"
+      
+      puts "options[:output_path]:#{options[:output_path]}"
       if options[:output_path]
         document.save_pdf(options[:output_path])
       end
@@ -54,16 +87,27 @@ module RLayout
     # batch process with template and csv file 
     def self.batch_variable_documents(options={})
       template_hash = nil
+      template_document = nil
       if options[:template_path]
         template_hash = YAML::load_file(options[:template_path])
-      else
+      elsif options[:template_hash]
         template_hash = options[:template_hash]
+      elsif options[:template_document]
+        template_document = options[:template_document]
+        first_page = template_document.pages.first
+        first = first_page.graphics.first
+        puts "first.class:#{first.class}"
+        if first.class == RLayout::Image
+          puts "first.image_path:#{first.image_path}"
+        end
       end
       # we should have template_hash or template_path option to process
-      unless template_hash
+      # unless template_hash
+      unless template_document
         puts "No template!!!"
         return 
       end
+      
       csv_path = options[:csv_path]     if options[:csv_path]
       unless File.exists?(csv_path)
         puts "No csv_path!!!"
@@ -75,7 +119,7 @@ module RLayout
       system("mkdir -p #{@output_folder}") unless File.exists?(@output_folder)
       rows= Page.parse_csv(csv_path)
       keys=rows[0]
-      documents = []
+      # documents = []
       rows.each_with_index do |row_data, index|
         next if index==0
         next unless row_data[0] # preventive in case the name field is empty
@@ -84,9 +128,11 @@ module RLayout
         name.gsub!("(","_")
         name.gsub!(")","_")
         output_path =@output_folder + "/#{name}.pdf"
-        documents << Document.variable_document(:template_hash=>template_hash, :output_path=>output_path, :keys=>keys, :data=>row_data)  
+        Document.variable_document(:template_document=>template_document.dup, :output_path=>output_path, :keys=>keys, :data=>row_data)  
+        
+        # documents << Document.variable_document(:template_hash=>template_hash, :output_path=>output_path, :keys=>keys, :data=>row_data)  
       end
-      documents
+      # documents
     end
         
   end

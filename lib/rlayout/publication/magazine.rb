@@ -107,29 +107,6 @@ module RLayout
     
   end  
   
-  class MagazineArticle < Document
-    attr_accessor :path, :page_type #article, ad, cover 
-    attr_accessor :page_rule #left_side, anywhere, right_side 
-    attr_accessor :max_page_number 
-    
-    def initialize(options={})
-      unless options[:path]
-        puts "no path is given!!!"
-        return
-      end
-      @path             = options[:path]
-      @page_type        = options[:page_type] || "Article"
-      @max_page_number  = options[:max_page_number]
-      @page_rule        = options[:page_rule]
-      reqd_content
-      self
-    end 
-    
-    def reqd_content
-      
-    end
-  end
-  
   # cover
   #  cover_1
   #  cover_2

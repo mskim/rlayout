@@ -4,7 +4,7 @@ module RLayout
   class Page < Container
     attr_accessor :page_number, :left_page, :no_fixture_page
     attr_accessor :main_box, :header_object, :footer_object, :side_bar_object
-    attr_accessor :fixtures
+    attr_accessor :fixtures, :document
 
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
@@ -86,9 +86,7 @@ module RLayout
       elsif options[:news_box]
         @main_box = news_box(main_box_options)
       end
-      if block
-        instance_eval(&block)
-      end
+      
       self
     end
 

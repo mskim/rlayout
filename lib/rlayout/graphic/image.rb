@@ -50,15 +50,15 @@ module RLayout
       @image_record  = options.fetch(:image_record,nil)
       unless options[:image_path]
         if options[:local_image] && $ProjectPath
-          options[:image_path] = $ProjectPath + "/images/" + options[:local_image]
+            options[:image_path] = $ProjectPath + "/images/" + options[:local_image]
         else
           return 
         end
       end
       @image_path       = options[:image_path]
-      # @image_frame      = options.fetch(:image_frame, image_defaults[:image_frame])
       @image_caption    = options[:image_caption]      
       @image_fit_type   = options.fetch(:image_fit_type, image_defaults[:image_fit_type])
+      @image_fit_type   = @image_fit_type.to_i
       if @image_path && File.exists?(@image_path)
         #TODO Get rid of this and do it for MRI
         if RUBY_ENGINE == 'rubymotion'
@@ -84,7 +84,8 @@ module RLayout
       {
         image_path: nil,
         local_image: nil,
-        image_fit_type: IMAGE_FIT_TYPE_KEEP_RATIO, 
+        # image_fit_type: IMAGE_FIT_TYPE_KEEP_RATIO, 
+        image_fit_type: IMAGE_FIT_TYPE_IGNORE_RATIO, 
         # source_frame: NSZeroRect,
         clip_path: nil,
         rotation: 0
@@ -154,7 +155,6 @@ module RLayout
       else
         
       end
- 
     end
 
     def fit_horizontal

@@ -25,10 +25,11 @@ class DocumentViewMac
     unless File.extname(path) == '.pdf'
       pdf_path=path + ".pdf"
     end
-    pdf_document.writeToFile(pdf_path)
+    pdf_doc = pdf_document
+    pdf_doc.writeToFile(pdf_path)
     if options[:jpg]
-      pdfdoc.pageCount.times do |i|
-        page      = pdfdoc.pageAtIndex i
+      pdf_doc.pageCount.times do |i|
+        page      = pdf_doc.pageAtIndex i
         pdfdata     = page.dataRepresentation
         image       = NSImage.alloc.initWithData pdfdata
         imageData   = image.TIFFRepresentation

@@ -113,8 +113,8 @@ module RLayout
       h.merge!(@fill.to_hash)   if @fill
       h.merge!(@stroke.to_hash) if @stroke
       h.merge!(@shape.to_hash)  if @shape
-      h.merge!(@text.to_hash)   if @text_record
-      h.merge!(@image.to_hash)  if @image_record
+      h.merge!(@text_record.to_hash)   if @text_record
+      h.merge!(@image_record.to_hash)  if @image_record
       h
     end
 
@@ -368,8 +368,6 @@ module RLayout
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path, options)
       end
-      #TODO
-      # puts "DRb not found!!!!"
     end
 
     def save_jpg(path)

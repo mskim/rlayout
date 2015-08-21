@@ -15,7 +15,7 @@ else
   require 'pry'
   require 'strscan'
   require 'yaml'
-  require 'mini_magick'
+  # require 'mini_magick'
   require "rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
   require File.dirname(__FILE__) + '/rlayout/graphic/color'

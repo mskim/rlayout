@@ -22,7 +22,7 @@ module RLayout
       color
     end
     def to_hash
-      to_h.delete_if{|k,v| v.nil?}
+      {color: color}
     end
   end
   
@@ -36,7 +36,15 @@ module RLayout
       s
     end
     def to_hash
-      to_h.delete_if{|k,v| v.nil?}
+      h = {}
+      h[:color]     = color if color
+      h[:thickness] = thickness if thickness
+      h[:dash]      = dash if dash
+      h[:line_cap]  = line_cap if line_cap
+      h[:line_join] = line_join if line_join
+      h[:type]      = type if type
+      h[:sides]     = sides if sides
+      h
     end
   end
   # CornersStruct   = Struct.new(:top_left, :top_right, :bottom_right, :bottom_left, :type)
@@ -46,7 +54,12 @@ module RLayout
       "<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" replace_this_with_style></rect>"
     end
     def to_hash
-      to_h.delete_if{|k,v| v.nil?}
+      h = {}
+      h[:x]       = x if x
+      h[:y]       = y if y
+      h[:width]   = width if width
+      h[:height]  = height if height
+      h    
     end
   end
   
@@ -55,7 +68,15 @@ module RLayout
       "<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" rx=\"#{rx}\" ry=\"#{ry}\" replace_this_with_style />"
     end
     def to_hash
-      to_h.delete_if{|k,v| v.nil?}
+      h = {}
+      h[:x]       = x if x
+      h[:y]       = y if y
+      h[:width]   = width if width
+      h[:height]  = height if height
+      h[:rx]      = rx if rx
+      h[:ry]      = ry if ry
+      h[:corners] = corners if corners
+      h    
     end
   end
   
@@ -64,7 +85,11 @@ module RLayout
       "<circle cx=\"#{cx}\" cy=\"#{cy}\" r=\"#{r}\" replace_this_with_style />"
     end
     def to_hash
-      to_h.delete_if{|k,v| v.nil?}
+      h = {}
+      h[:cx]  = cx if cx
+      h[:cy]   = cy if cy
+      h[:r]   = r if r
+      h    
     end
   end
   
@@ -73,7 +98,12 @@ module RLayout
       "<ellipse cx=\"#{cx}\" cy=\"#{cy}\" rx=\"#{rx}\" ry=\"#{ry}\" replace_this_with_style />"
     end
     def to_hash
-      to_h.delete_if{|k,v| v.nil?}
+      h = {}
+      h[:cx]  = cx if cx
+      h[:cy]  = cy if cy
+      h[:rx]  = rx if rx
+      h[:ry]  = ry if ry
+      h    
     end
     
   end
@@ -84,7 +114,9 @@ module RLayout
       "<line x1=\"#{x1}\" y1=\"#{mid_y}\" x2=\"#{x2}\" y2=\"#{mid_y}\" replace_this_with_style />"
     end
     def to_hash
-      to_h.delete_if{|k,v| v.nil?}
+      h = {}
+      # self.to_h.delete_if{|k,v| v.nil?}
+      h
     end
   end
   
@@ -93,7 +125,9 @@ module RLayout
       #TODO
     end
     def to_hash
-      to_h.delete_if{|k,v| v.nil?}
+      h = {}
+      # self.to_h.delete_if{|k,v| v.nil?}
+      h
     end
   end
   BezierStruct = Struct.new(:points, :style) do
@@ -101,26 +135,38 @@ module RLayout
       #TODO
     end
     def to_hash
-      to_h.delete_if{|k,v| v.nil?}
+      to_h
+      # self.to_h.delete_if{|k,v| v.nil?}
     end
   end
   
   GridStruct = Struct.new(:grid_base, :grid_width, :grid_height, :gutter, :v_gutter) do
     def to_hash
-      to_h.delete_if {|key,value| value==nil}
+      h = {}
+      # self.to_h.delete_if{|k,v| v.nil?}
+      h
     end    
   end
   
   AttsRunStruct = Struct.new(:position, :length, :size, :color, :font, :style) do
     def to_hash
-      to_h.delete_if {|key,value| value==nil}
+      h = {}
+      # self.to_h.delete_if{|k,v| v.nil?}
+      h
     end
   end
   
   TextStruct = Struct.new(:string, :size, :color, :font, :style) do
     def to_hash
-      to_h.delete_if {|key,value| value==nil}
+      h = {}
+      h[:string]  = string if string
+      h[:size]    = size if size
+      h[:color]   = color if color
+      h[:font]    = font if font
+      h[:style]   = style if style
+      h    
     end
+    
     def to_svg
       "<text font-size=\"#{size}\" replace_this_with_text_origin fill=\"#{color}\">#{string}</text>\n"
     end
@@ -128,7 +174,8 @@ module RLayout
   
   ImageStruct = Struct.new(:image_path, :fit_type, :rotation) do
     def to_hash
-      to_h.delete_if {|key,value| value==nil}
+      to_h
+      # self.to_h.delete_if{|k,v| v.nil?}
     end
     
     def to_svg
@@ -138,7 +185,8 @@ module RLayout
   
   ParagraphStruct = Struct.new(:string, :markup, :footnote, :index) do
     def to_hash
-      to_h.delete_if {|key,value| value==nil}
+      to_h
+      # self.to_h.delete_if{|k,v| v.nil?}
     end
   end
   

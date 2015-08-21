@@ -17,21 +17,45 @@ TODO List
 	- Style
 		- merge with base
 		- make it yml
+		
 	- modify kramdown into r_kramdown
+		- I am using parsing from Asciidotor  instead of kramdown
+	
 	- support Asciidotor
 	- change Paragraph  
 		- ParaStruct(:string, markup, :footnote, :index)
 		- parse_para_string2para_data
 		- para_data2atts_array
 		- atts_array with TextStruct
-	- line type, line arrow,
+	- line type, line arrow, line_sides
 	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
 	- CorneredRect(rect,corners, shapes)
+	- support Opal
+
+2015 8 22
+	- TODO: prevent blocks from executing multiple times
+	  once in super and one more time in child class
+	  get rid of block processing in Page
+	
+2015 8 14
+	- fix image fitting in nested pgscript layout
+	- add position 
+		top_left, top_center, top_right
+		middle_left, middle_center, middle_right
+		bottom_left, bottom_center, bottom_right
+		
+2015 8 5
+	- support graphic rotation
+	- multiple layout templates for selection
+	- magazine
+	- pgscript manual
+	
+2015 7 29
+	- rjob batch mode
 
 2015 7 7
 	- improve text layout
 		fix text spacing
-	- try rlayout with Opal
 	
 2015 7 3
 	improve PageScript 

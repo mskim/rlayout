@@ -71,6 +71,7 @@ module RLayout
     attr_accessor :page_view_count, :toc_elements
     attr_accessor :current_style
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
+    attr_accessor :pdf_path, :jpg
     def initialize(options={}, &block)
       @pages      = []
       @title      = "untitled"
@@ -81,19 +82,27 @@ module RLayout
         @portrait   = options[:doc_info].fetch(:portrait, document_defaults[:portrait])
         @double_side= options[:doc_info].fetch(:double_side, document_defaults[:double_side])
         @starts_left= options[:doc_info].fetch(:starts_left, document_defaults[:starts_left])
-      else
+      else        
         @paper_size = options.fetch(:paper_size, "A4")
-        
         @portrait   = options.fetch(:portrait, document_defaults[:portrait])
         @double_side= options.fetch(:double_side, document_defaults[:double_side])
         @starts_left= options.fetch(:starts_left, document_defaults[:starts_left])
       end
-      if @paper_size && @paper_size != "custom"
-        @width = SIZES[@paper_size][0]
-        @height = SIZES[@paper_size][1]
+      if @paper_size && @paper_size == "custom"
+        @width  = options.fetch(:width, document_defaults[:width])
+        @height = options.fetch(:height, document_defaults[:height])
       else
-        @width      = options.fetch(:width, document_defaults[:width])
-        @height     = options.fetch(:height, document_defaults[:height])
+        @width  = SIZES[@paper_size][0]
+        @height = SIZES[@paper_size][1]
+      end
+      
+      # for printing 
+      if options[:pdf_path]
+        @pdf_path = options[:pdf_path]
+      end
+      
+      if options[:jpg]
+        @jpg = options[:jpg]
       end
       
       @left_margin= options.fetch(:left_margin, document_defaults[:left_margin])
@@ -111,7 +120,7 @@ module RLayout
         @starting_page_number = 2
       end
       
-      if options[:no_page]
+      if !options[:initial_page]
         # do not create any page
       elsif options[:pages]
         options[:pages].each do |page_hash|
@@ -158,9 +167,10 @@ module RLayout
 
     def add_page(page, options={})
       if page.class == Page
-        page.document = self
+        page.parent_graphic = self
         @pages << page
       elsif page.class == Array
+        puts "adding Array of pages" 
         page.each do |p|
           add_page(p)
         end
@@ -254,22 +264,30 @@ module RLayout
     end
     
     # called from save_document(sender) of MyDocument
-    def save_document
-      system("mkdir -p #{@path}") unless File.exists?(@path)
-      layout_path= @path + "/layout.yml"
-      File.open(layout_path,'w'){|f| f.write to_hash.to_yaml}
-      pdf_path= @path + "/Preview.pdf"
-      save_pdf_doc(pdf_path) if respond_to?(:save_pdf_doc)
-      # save_variables(@path) # in cased, we have variables in the document
-    end
+    # def save_document
+    #   system("mkdir -p #{@path}") unless File.exists?(@path)
+    #   layout_path= @path + "/layout.yml"
+    #   File.open(layout_path,'w'){|f| f.write to_hash.to_yaml}
+    #   pdf_path= @path + "/Preview.pdf"
+    #   save_pdf_doc(pdf_path) if respond_to?(:save_pdf_doc)
+    #   # save_variables(@path) # in cased, we have variables in the document
+    # end
 
     def save_yml(path)
       File.open(path, 'w'){|f| f.write to_hash.to_yaml}
     end
-
-    def save_pdf(path)
+    
+    def save_pdf_doc
+      puts __method__
+      puts "@pdf_path:#{@pdf_path}"
       @ns_view = DocumentViewMac.new(self)
-      @page_view_count = @ns_view.save_pdf(path)
+      options[:jpg] = @jpg
+      @page_view_count = @ns_view.save_pdf(@pdf_path, options)
+    end
+    
+    def save_pdf(path, options={})
+      @ns_view = DocumentViewMac.new(self)
+      @page_view_count = @ns_view.save_pdf(path, options)
     end
 
     def save_toc(path)

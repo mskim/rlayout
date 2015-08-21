@@ -19,15 +19,15 @@ module RLayout
       end
       project_path = File.dirname(File.dirname(options[:output_path]))
       project_path = options[:project_path] if options[:project_path]      
-      template = options[:template_hash].dup
-      Page.replace_tagged_hash(@keys, @data, template[:graphics])
-      Page.replace_image_hash(template[:graphics], project_path)
+      template     = options[:template_hash].dup
+      puts "template:#{template}"
+      Page.replace_tagged_hash(@keys, @data, template[:graphics]) if template[:graphics]
+      Page.replace_image_hash(template[:graphics], project_path) if template[:graphics]
 
       # return hash of replaces page for variable document
       if options[:for_variable_document]
         return template
       end
-      
       page=Page.new(nil, template)      
       if options[:output_path]
         page.save_pdf(options[:output_path])
@@ -106,10 +106,10 @@ module RLayout
     def replace_tagged_graphic
       return unless @keys
       @keys.each_with_index do |key,index|
-        graphics=graphics_with_tag(key.to_s) 
+        graphics=graphics_with_tag(key) 
         graphics.each do |target_graphic|
           @data[index]
-          target_graphic.replace_string(@data[index])
+          target_graphic.set_string(@data[index]) if target_graphic.respond_to?(:set_string)
         end
       end
     end
@@ -131,37 +131,20 @@ module RLayout
     # image_box will have following tag
     #   QRcode
     def replace_image
+      puts __method__
       images_boxes=images_with_tag
       images_boxes.each do |image_box|
         image_box.auto_layout.expand=nil if image_box.auto_layout
         tag=image_box.tag
+        puts "tag:#{tag}"
+        next if tag == 'logo'
         image_folder=File.dirname(@path) + "/#{tag}"
+        puts "image_folder:#{image_folder}"
         if File.exists?(image_folder)
           images_path_without_extension=image_folder + "/#{@data[0]}"
           image_box.replace_image_content(images_path_without_extension)
         end
       end
-    end
-    
-    def graphics_with_tag(searching_tag)
-      taged_graphics_array=[]
-      @graphics.each do |graphic|
-        taged_graphics_array<< graphic if graphic.tag == searching_tag
-        taged_graphics_array += graphic.graphics_with_tag(tag) if graphic.kind_of?(Container)
-      end
-      taged_graphics_array
-    end
-    
-    def images_with_tag
-      images_array=[]
-      @graphics.each do |graphic|
-        if graphic.kind_of?(Image) && !@tag.nil?
-          images_array<<graphic
-        elsif graphic.kind_of?(Container)
-          images_array += graphic.images_with_tag
-        end
-      end
-      images_array
     end
     
     def self.parse_csv(csv_path)
@@ -179,9 +162,16 @@ module RLayout
       else
         result = NSString.alloc.initWithContentsOfFile(csv_path, encoding:NSUTF8StringEncoding, error:nil)
       end
+      result = File.open(csv_path, 'r'){|f| f.read}
+      # puts "result:#{result}"
       
       if result  # if reading was successful
-        rows = CSV.parse(result)
+        if RUBY_ENGINE == "rubymotion"
+          rows = MotionCSV.parse(result)
+          rows.unshift(MotionCSV.parse_headers(result))
+        else
+          rows = CSV.parse(result)
+        end
         rows.pop if rows.last.length == 0
         return rows
       else

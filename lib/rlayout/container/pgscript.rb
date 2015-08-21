@@ -49,6 +49,13 @@ module RLayout
       add_graphic(Graphic.random_graphics(number))
     end
 
+    def text_box(options={})
+      TextBox.new(self, options)
+    end
+
+    def heading(options={}, &block)
+      Heading.new(self, options, &block)
+    end
 
 
     # place graphis as float in using grid_frame
@@ -87,6 +94,7 @@ module RLayout
         return unless graphic.tag
         replace_graphic(graphic)
       end
+      self
     end
     
     def replace_graphic(graphic)
@@ -96,19 +104,20 @@ module RLayout
           index = @graphics.index(place_folder)
           frame_rect = place_folder.frame_rect
           @graphics.delete_at(index)
-          graphic.set_frame(frame_rect)
           @graphics.insert(index, graphic)
+          graphic.set_frame(frame_rect) # set_frame triggers content reloay
         end
       end
       
       @floats.each do |place_folder|
         if g.tag == tag
           index = @graphics.index(place_folder)
+          frame_rect = place_folder.frame_rect
           @floats.delete_at(index)
           @floats.insert(index, graphic)
+          graphic.set_frame(frame_rect) # set_frame triggers content reloay
         end
       end
-      
     end
 
     def split(number=2, options={})
