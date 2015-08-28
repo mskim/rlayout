@@ -54,6 +54,8 @@ SIZES = { "4A0" => [4767.87, 6740.79],
        "IDCARD"=> [147.40, 260.79],
        "PRODUCT"=> [300, 300]}
 
+# gim: Grouped Image Manager
+# Image layout pattern
 
 module RLayout
   BookNode = Struct.new(:category, :title, :starting_page, :page_count) do
@@ -69,7 +71,7 @@ module RLayout
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_accessor :pages, :document_view, :starting_page_number
     attr_accessor :page_view_count, :toc_elements
-    attr_accessor :current_style
+    attr_accessor :current_style, :header_rule, :footer_rule, :gim
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_accessor :pdf_path, :jpg
     def initialize(options={}, &block)
@@ -120,7 +122,7 @@ module RLayout
         @starting_page_number = 2
       end
       
-      if !options[:initial_page]
+      if options[:no_initial_page]        
         # do not create any page
       elsif options[:pages]
         options[:pages].each do |page_hash|
@@ -128,7 +130,12 @@ module RLayout
         end
       elsif options[:page_objects]
         @pages = options[:pages]
+      elsif options[:page_count]
+        options[:page_count].times do
+          Page.new(self, options)
+        end
       else
+        puts "create page"
         # create single page as default 
         Page.new(self)
       end

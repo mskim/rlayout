@@ -8,8 +8,8 @@
 
 module RLayout
 
-  class MagazineArticle < Document
-    def initialize(options={})
+  class MagazineArticle < Chapter
+    def initialize(options={}, &block)
       options[:page_count]        = 1
       style_service               = RLayout::StyleService.shared_style_service
       style_service.current_style = MAGAZINE_STYLES

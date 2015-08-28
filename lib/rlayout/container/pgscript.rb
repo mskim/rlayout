@@ -29,7 +29,8 @@ module RLayout
       Rectangle.new(self, options)
     end
 
-    def text(options={})
+    def text(string, options={})
+      options[:text_string] = string
       Text.new(self, options)
     end
 
@@ -49,7 +50,7 @@ module RLayout
       add_graphic(Graphic.random_graphics(number))
     end
 
-    def text_box(options={})
+    def text_box(options={}, &block)
       TextBox.new(self, options)
     end
 
@@ -57,7 +58,14 @@ module RLayout
       Heading.new(self, options, &block)
     end
 
-
+    def bar(options={}, &block)
+      Bar.new(self, options, &block)
+    end
+    
+    def grid_box(options={}, &block)
+      GridBox.new(self, options, &block)
+    end
+    
     # place graphis as float in using grid_frame
     def float(klass, grid_frame, options={})
       if klass.class == String

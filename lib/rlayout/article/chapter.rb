@@ -1,17 +1,19 @@
 # encoding: utf-8
 
-# There are three types of articles, chapter, magazine_article, and news article/
-# chapter:
+# Document is subclassed to handle stroy
+# We have three such classes, Chapter, MagazineArticle, and NewsArticle.
+
+# Chapter:
 #     1. page numbers can grow to arbitrary pages
 #     1. Usually heading is not floating elelment, just graphics layer
 
-# magazine_article:
-#     1. page number is usually fixed to 1, 2, 3, or 4 as specified
+# MagazineArticle:
+#     1. page number fixed to 1, 2, 3, or 4 as specified
 #     1. flats are used for heading, image, side_box, quotes, leading
 #     1. non-uniform heading width and height is used
 #         example: three column layout can have two column heading
 #
-# news_article: 
+# NewsArticle: 
 #     1. single page based sub class of Page, not Document
 #     1. floats are used for heading
 #     1. width and height of layout is based on parent's grid
@@ -29,6 +31,7 @@ module RLayout
   #  call @pages.first.main_box.layout_story(:heading=>@heading, :paragraphs=> @paragraphs)
   #    main_box takes heading data and creates chapter front page heading
   #    main_box take @paragraphs data out of Array and inserts it into text_box.
+  #  Layout paragraphs until we run out of paragraph.
   #  if the changed paragraphs length is 0, which means all the paragraphs have been layed out
   #    we are done.
   #  else means we have leftover paragraphs, go to next page, if no page, create one with TextBox
@@ -66,7 +69,7 @@ module RLayout
         options[:page_number] = @starting_page_number + i
         Page.new(self, options)        
       end
-      
+      return unless @heading
       layout_story
       
       if options[:output_path]

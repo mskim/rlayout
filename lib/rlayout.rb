@@ -39,11 +39,13 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/text_form'
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
-  require File.dirname(__FILE__) + '/rlayout/text/style_service'
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'
   require File.dirname(__FILE__) + '/rlayout/text/font'
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_ruby'
 
+  require File.dirname(__FILE__) + '/rlayout/style/style_service'
+  require File.dirname(__FILE__) + '/rlayout/style/image_layout'
+  
   require File.dirname(__FILE__) + '/rlayout/container/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container/place_item'
   require File.dirname(__FILE__) + '/rlayout/container/quiz_item'
@@ -63,12 +65,14 @@ else
 
   require File.dirname(__FILE__) + '/rlayout/article/story'
   require File.dirname(__FILE__) + '/rlayout/article/reader'
-  require File.dirname(__FILE__) + '/rlayout/article/chapter'
+  # require File.dirname(__FILE__) + '/rlayout/article/chapter'
+  require File.dirname(__FILE__) + '/rlayout/article/chapter_maker'
   require File.dirname(__FILE__) + '/rlayout/article/news_article'
-  require File.dirname(__FILE__) + '/rlayout/article/magazine_article'
-
+  # require File.dirname(__FILE__) + '/rlayout/article/magazine_article'
+  require File.dirname(__FILE__) + '/rlayout/article/magazine_article_maker'
+  # require File.dirname(__FILE__) + '/rlayout/article'
+  
   require File.dirname(__FILE__) + '/rlayout/publication/rjob'
-  # require File.dirname(__FILE__) + '/rlayout/publication/name_card'
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/catalog'

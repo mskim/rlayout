@@ -28,13 +28,9 @@ module RLayout
         create_floats(options[:floats])
       end
       
-      # if block
-      #   instance_eval(&block)
-      # end   
       if block
-        block.arity < 1 ? instance_eval(&block) : block[self]
-      end
-         
+        instance_eval(&block)
+      end            
       self
     end
     
@@ -321,6 +317,16 @@ module RLayout
     
     def merge_down(number=1)
       
+    end
+  end
+  
+  # Bar is Container with layout_direction set to 'horizontal'
+  class Bar < Container
+    def initialize(parent_graphic, options={}, &block)
+      options[:layout_direction] = "horizontal"
+      super
+      @width = 300 unless options[:width]
+      self
     end
   end
   

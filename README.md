@@ -32,6 +32,15 @@ TODO List
 	- CorneredRect(rect,corners, shapes)
 	- support Opal
 
+2015 8 24
+	- DocumentMaker
+		replace Chapter, MagazineArticle, NewsArticle
+	- support custom style, so that I can use customised styles
+	
+2015 8 23
+	- class Bar
+	- Bar is Container starting as layout_direction set to "horizontal" 
+	
 2015 8 22
 	- TODO: prevent blocks from executing multiple times
 	  once in super and one more time in child class
