@@ -3,12 +3,35 @@ module RLayout
 
   class Graphic
     attr_accessor :parent_graphic, :klass, :tag, :ns_view, :svg_view, :path
-    attr_accessor :graphics, :fixtures, :floats
+    attr_accessor :graphics, :fixtures, :floats, :grid_frame
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
 
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
+      @klass = options.fetch(:klass, graphic_defaults[:klass])
+      if options[:parent_frame] && @parent_graphic
+        set_frame(@parent_graphic.layout_rect)
+      elsif options[:grid_frame] && @parent_graphic && @parent_graphic.grid
+        # if options[:grid_frame] is given, convert grid_frame to x,y,width,heigth of parent's grid cordinate
+        set_frame_in_parent_grid(options[:grid_frame])
+        # disable autolayout
+        @layout_expand = nil        
+      else
+        @x                = options.fetch(:x, graphic_defaults[:x])
+        @y                = options.fetch(:y, graphic_defaults[:y])
+        @width            = options.fetch(:width, graphic_defaults[:width])
+        @height           = options.fetch(:height, graphic_defaults[:height])
+      end
+      @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))
+      @tag              = options[:tag]
+      @auto_save        = options[:auto_save]
+      init_layout(options)
+      init_fill(options)
+      init_stroke(options)
+      init_shape(options)
+      init_text(options)
+      init_image(options)
       if parent_graphic
         if options[:is_float]
           @parent_graphic.floats << self if !@parent_graphic.floats.include?(self)
@@ -22,30 +45,10 @@ module RLayout
           @parent_graphic.graphics << self
         end
       end
-      @klass = options.fetch(:klass, graphic_defaults[:klass])
-      @x                = options.fetch(:x, graphic_defaults[:x])
-      @y                = options.fetch(:y, graphic_defaults[:y])
-      @width            = options.fetch(:width, graphic_defaults[:width])
-      @height           = options.fetch(:height, graphic_defaults[:height])
-      @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))
-      @tag              = options[:tag]
-      @auto_save        = options[:auto_save]
-      init_layout(options)
-      # if options[:grid_frame] is given, convert grid_frame to x,y,width,heigth of parent's grids cordinate
-      if options[:grid_frame] && @parent_graphic #&& @parent_graphic.respond_to?(:grid_base)
-        set_frame_in_parent_grid(options[:grid_frame]) if @parent_graphic.grid_base
-        # disable autolayout
-        @layout_expand = nil
-      end
-      init_fill(options)
-      init_stroke(options)
-      init_shape(options)
-      init_text(options)
-      init_image(options)
       
       self
     end
-
+        
     def set_frame_in_parent_grid(grid_frame)
       set_frame(@parent_graphic.frame_for(grid_frame))
     end
@@ -73,7 +76,7 @@ module RLayout
     end
 
     def heading_columns_for(column_number)
-      @current_style["heading_columns"][column_number-1]
+      current_style["heading_columns"][column_number-1]
     end
 
     def body_height
@@ -82,7 +85,7 @@ module RLayout
     end
 
     def style_for_markup(markup, options={})
-      h = @current_style[markup]
+      h = current_style[markup]
       h[:text_markup] = markup
       h
     end
@@ -126,8 +129,8 @@ module RLayout
     # difference between to_hash and to_data:
     # to_hash does not save values, if they are equal to default
     # to_data save values, even if they are equal to default
-    # to_data is uesed to send the data to view for drawing
-
+    # to_data is used to send the data to view for drawing
+    # to_hash is used for archiving, so reduced the size if possible.
     def to_data
       h = {}
       instance_variables.each do |a|
@@ -140,6 +143,7 @@ module RLayout
       end
       h
     end
+    
     def self.random_text
       TEXT_STRING_SAMPLES.sample
     end
@@ -254,13 +258,26 @@ module RLayout
     def self.with(parent_graphic, style_name, &block)
       Graphic.new(parent_graphic, Style.shared_style(style_name), &block)
     end
-
+    
+    def relayout!
+      return unless @grid_frame
+      
+    end
+    
     def frame_rect
       [@x,@y,@width,@height]
     end
 
     def bounds_rect
       [0,0,@width,@height]
+    end
+
+    def layout_rect
+      [@left_margin, @top_margin, @width - @left_margin - @right_margin - @left_margin, @height - @top_margin - @bottom_margin]
+    end
+    
+    def layout_size
+      [@width - @left_margin - @right_margin - @left_inset - @right_inset, @height - @top_margin - @top_inset - @bottom_margin - @bottom_inset]
     end
 
     def text_rect

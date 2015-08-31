@@ -122,7 +122,7 @@ module RLayout
         @starting_page_number = 2
       end
       
-      if options[:no_initial_page]        
+      if options[:initial_page] == false        
         # do not create any page
       elsif options[:pages]
         options[:pages].each do |page_hash|
@@ -135,8 +135,7 @@ module RLayout
           Page.new(self, options)
         end
       else
-        puts "create page"
-        # create single page as default 
+        # create single page as default initial page
         Page.new(self)
       end
 

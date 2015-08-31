@@ -34,9 +34,6 @@ module RLayout
       Text.new(self, options)
     end
 
-    def image(options={})
-      Image.new(self, options)
-    end
 
     def circle(options={})
       Circle.new(self, options)
@@ -49,7 +46,7 @@ module RLayout
     def random_graphics(number)
       add_graphic(Graphic.random_graphics(number))
     end
-
+        
     def text_box(options={}, &block)
       TextBox.new(self, options)
     end
@@ -66,7 +63,7 @@ module RLayout
       GridBox.new(self, options, &block)
     end
     
-    # place graphis as float in using grid_frame
+    # place graphis as float using grid_frame
     def float(klass, grid_frame, options={})
       if klass.class == String
         # single float
@@ -76,7 +73,7 @@ module RLayout
 
       end
     end
-
+    
     def stack(graphic, options={})
 
     end

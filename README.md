@@ -31,21 +31,30 @@ TODO List
 	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
 	- CorneredRect(rect,corners, shapes)
 	- support Opal
+	
+2015 8 30
+	- TODO: prevent blocks from executing multiple times
+	  once in super and one more time in child class
+	  get rid of block processing in Page
+	- do not execute blocks in Container
+	- do it only at the super class of Container
+	
+2015 8 28
+	- MagazineArticleMaker
+	- main_text
+	- heading, float_image , quote, leading
+		floats using grid_frame
 
-2015 8 24
-	- DocumentMaker
+2015 8 27
+	- ChapterMaker, MagazineArticleMaker, 
 		replace Chapter, MagazineArticle, NewsArticle
-	- support custom style, so that I can use customised styles
+	- support custom style loading at rum time
 	
 2015 8 23
 	- class Bar
 	- Bar is Container starting as layout_direction set to "horizontal" 
 	
-2015 8 22
-	- TODO: prevent blocks from executing multiple times
-	  once in super and one more time in child class
-	  get rid of block processing in Page
-	
+
 2015 8 14
 	- fix image fitting in nested pgscript layout
 	- add position 
@@ -340,9 +349,6 @@ TODO List
 	- composite_page
 
 2013 11 25
-	- ImageColumn
-
-2013 11 25
 	- Dropcap
 
 2013 11 24
@@ -367,7 +373,8 @@ TODO List
 2014 11 12
 	- auto_layout align top, center, bottom, justified
 	- layout non-expanding children column
-	- fix set_frame, should reset text_layout_area
+	- fix set_frame, should reset text layout_size
+	
 2014 11 10
 	- image drawing,
 	- update image with frame changes

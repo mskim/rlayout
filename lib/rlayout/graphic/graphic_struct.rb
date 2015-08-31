@@ -22,7 +22,9 @@ module RLayout
       color
     end
     def to_hash
-      {color: color}
+      h = {}
+      h[:color]     = color if color
+      h
     end
   end
   

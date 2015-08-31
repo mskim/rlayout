@@ -69,12 +69,12 @@ module RLayout
           end
           apply_fit_type
         else
-          @image_object     = MiniMagick::Image.open(@image_path)
-          @image_dimension  = @image_object.dimensions
-          if @image_object && options[:adjust_height_to_keep_ratio]
-            @height *= image_object_height_to_width_ratio
-          end
-          apply_fit_type
+          # @image_object     = MiniMagick::Image.open(@image_path)
+          # @image_dimension  = @image_object.dimensions
+          # if @image_object && options[:adjust_height_to_keep_ratio]
+          #   @height *= image_object_height_to_width_ratio
+          # end
+          # apply_fit_type
         end
       elsif @local_image
       end

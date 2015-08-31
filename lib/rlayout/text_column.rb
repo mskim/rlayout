@@ -39,7 +39,10 @@ module RLayout
 
     # create grid_rects after relayou!
     # make sure the grids are created after adjusting the column size for the final layout
-    def create_grid_rects
+    def create_grid_rects(options={})
+      if options[:show_grid_rects] == false
+        @show_grid_rects == false
+      end
       @grid_rects = []
       column_rect = text_rect
       x     = column_rect[0] # text_box cordinate

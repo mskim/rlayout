@@ -24,7 +24,7 @@
 
 module RLayout
 
-  # heading width is set to parents's layout_area[width].
+  # heading width is set to parents's layout_size[width].
   # heading height is set to content height sum initially.
   # And the height is re-adjusted by the parent.
   # Each heading element layout_length is set to it's height
@@ -42,7 +42,7 @@ module RLayout
       if options[:width]
         @width = options[:width]
       elsif @parent_graphic
-        @width = @parent_graphic.layout_area[0]
+        @width = @parent_graphic.layout_size[0]
       else
         @width = 600
       end
@@ -55,34 +55,36 @@ module RLayout
       @layout_align   = 'center'
       @layout_expand  = options.fetch(:layout_expand,[:width, :height])
       # width           = @width - @left_inset - @right_inset
+      @line_type=0
+      # @line_color="red"
+      # @line_width= 2
+      # @fill_color="green"
+      set_heading_content(options)
+      self
+    end
+    
+    def set_heading_content(options)
       if options[:title]
         @title_object = title(options[:title], options)
       elsif options["title"]
         @title_object = title(options["title"], options)
       end
-
       if options[:subtitle]
         @subtitle_object = subtitle(options[:subtitle], options)
       elsif options["subtitle"]
         @subtitle_object = subtitle(options["subtitle"], options)
       end
-
       if options[:leading]
         @leading_object = leading(options[:leading], options)
       elsif options["leading"]
         @leading_object = leading(options["leading"], options)
       end
-
       if options[:author]
         @author_object = author(options[:author], options)
       elsif options["author"]
         @author_object = author(options["author"], options)
       end
-
-      @line_type=0
-      # @line_color="red"
-      # @line_width= 2
-      # @fill_color="green"
+      
       height_sum = 0
       height_sum +=@title_object.height    unless @title_object.nil?
       height_sum +=@subtitle_object.height unless @subtitle_object.nil?
@@ -98,9 +100,8 @@ module RLayout
         @height           = mutiple_height
       end
       relayout!
-      self
     end
-
+    
     # create container with template and replace variavle data to get our heaing
     def self.variable_heading(options)
       unless options[:keys] && options[:data]

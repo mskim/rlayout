@@ -122,7 +122,6 @@ module RLayout
         if (vertical ? graphic.expand_width? : graphic.expand_height?)
           # for vertical mode, align graphic in left, center, right
           if vertical
-            # binding.pry
             graphic_frame[0]  = (@left_margin  + @left_inset)
             graphic_frame[2]  = column_size[0] - (@left_margin + @right_margin + @right_inset + @left_inset) #- graphic.right_margin - graphic.left_margin
           else
@@ -131,9 +130,6 @@ module RLayout
           end  
         end
         
-        # if @klass == "Page" && graphic.klass = "TextBox"
-        #   binding.pry
-        # end
         
         #perpedicular alignment for non perpedicular expanding child 
         # if !graphic.layout_align.nil?  

@@ -5,12 +5,13 @@ module RLayout
     attr_accessor :layout_direction, :layout_space, :layout_align
     attr_accessor :grid_base, :grid_width, :grid_height, :grid_frame, :grid_cells, :grid_color, :grid_h_gutter, :grid_v_gutter, :lines_in_grid         
     attr_accessor :gutter_stroke_type, :gutter_stroke_width, :gutter_stroke_color, :gutter_stroke_dash
-    attr_accessor :floats, :grid
+    attr_accessor :floats, :grid #, :main_box
     
     def initialize(parent_graphic, options={}, &block)
+      @graphics             = []
+      @floats               = options.fetch(:floats, [])
       super      
       @klass                = "Container"
-      @graphics             = []
       layout_defaults_hash  = auto_layout_defaults
       @layout_direction     = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
       @layout_space         = options.fetch(:layout_space, layout_defaults_hash[:layout_space])       
@@ -19,7 +20,6 @@ module RLayout
       @gutter_stroke_width  = options[:gutter_stroke_width]
       @gutter_stroke_color  = options[:gutter_stroke_color]
       @gutter_stroke_dash   = options[:gutter_stroke_dash]
-      @floats               = options.fetch(:floats, [])
       init_grid(options)    if options[:grid_base]
       if options[:graphics]
         create_children(options[:graphics])
@@ -27,10 +27,9 @@ module RLayout
       if options[:floats]
         create_floats(options[:floats])
       end
-      
-      if block
-        instance_eval(&block)
-      end            
+      # if block
+      #   instance_eval(&block)
+      # end            
       self
     end
     
@@ -64,11 +63,7 @@ module RLayout
       return 0 if @graphics.length == 0
       @layout_space * (@graphics.length-1)
     end
-    
-    def layout_area
-      [@width - @left_margin - @right_margin - @left_inset - @right_inset, @height - @top_margin - @top_inset - @bottom_margin - @bottom_inset]
-    end
-    
+        
     def graphics_height_sum
       return 0 if @graphics.length == 0
       @sum = 0

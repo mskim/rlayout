@@ -60,12 +60,13 @@ module RLayout
         @left_page  = @page_number.even?
       else
         @left_page  = true
-      end
+      end      
+      
       @fixtures = []
-      @floats = []
-      @x = 0
-      @y = 0
-      main_box_options = {}
+      @floats   = []
+      @x        = 0
+      @y        = 0
+      main_box_options                = {}
       main_box_options[:x]            = @left_margin
       main_box_options[:y]            = @top_margin
       main_box_options[:width]        = @width - @left_margin - @right_margin
@@ -78,18 +79,33 @@ module RLayout
       main_box_options[:grid_base]    = options.fetch(:grid_base,"1x1")
       
       if options[:text_box]
-        @main_box = TextBox.new(self, options)        
+        @main_box = TextBox.new(self, main_box_options)    
       elsif options[:object_box]
-        @main_box = ObjectBox.new(self, options)
+        @main_box = ObjectBox.new(self, main_box_options)
       elsif options[:composite_box]
         @main_box = composite_box(main_box_options)
       elsif options[:news_box]
         @main_box = news_box(main_box_options)
       end
-      
+      if block
+        instance_eval(&block)
+      end            
       self
     end
-
+    
+    def main_text(options={}, &block)
+      options[:parent_frame]  = true # fit to page's layout_frame
+      options[:grid_base]     = "3x3" unless options[:grid_base]
+      options[:gutter]        = 10    unless options[:gutter]
+      @main_box=TextBox.new(self, options, &block)
+      # readjust float after they are inserted
+      @main_box.layout_floats!  
+      # create column grid_rects for ovelapping detection
+      @main_box.create_column_grid_rects
+      # mark overlapping grid_rects with floats 
+      @main_box.set_overlapping_grid_rect    
+    end
+    
     def document
       @parent_graphic
     end
@@ -274,11 +290,6 @@ module RLayout
       # @side_bar_object = SideBar.new(self, :text_string=>"This is side_bar text", :is_fixture=>true)
       SideBar.new(self, :text_string=>options[:text_string], :is_fixture=>true)
     end
-
-    #
-    # def image(options={})
-    #
-    # end
 
 
     def self.magazine_page(document)

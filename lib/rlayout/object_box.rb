@@ -172,7 +172,7 @@ module RLayout
       new_frame[1] = @current_position
       original_width = item.width
       original_height = item.height
-      new_frame[2] = layout_area[0]
+      new_frame[2] = layout_size[0]
       #TODO
       # if item.is_breakable?   
       #   # puts " linked item was successfully inserted to column"     

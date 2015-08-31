@@ -96,9 +96,7 @@ module RLayout
           current_line = @graphics.last
           current_line.insert_token(front_most_token)
         end
-      end
-      # binding.pry
-      
+      end      
       # relayout!
 
       # now change the height of paragraph

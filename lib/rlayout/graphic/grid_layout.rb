@@ -161,7 +161,6 @@ module RLayout
     
     # return grid_rects array, derived from chidren tree 
     def grid_rects
-      # binding.pry
       grid_rects = []
       if @children.length == 0
         grid_rects += grid_rect

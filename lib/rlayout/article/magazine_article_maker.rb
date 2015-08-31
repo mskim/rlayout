@@ -1,14 +1,21 @@
 # encoding: utf-8
 
-# MagazineArticle need highly customizable desing
+# MagazineArticle should be able to support highly customizable designs.
 # MagazineArticle works with given folder with story, layout.rb, and images
-# Page Count is usually fixed
+# layout.rb can define layout and styles
+# if layout.rb doesn't exist in article folder, 
+# default layout is used, "/Users/Shared/SoftwareLab/article_template/magazine.rb" is used.
+# Image layout can be set using GIM
+# Images can be stored in images folder by page and image size
+# making almost every image in the article hand controlable.
+ 
+# Page Count is usually fixed, default is 2
 
 module RLayout
 
   class MagazineArticleMaker
-    attr_accessor :article_path, :template, :story_path
-    attr_accessor :document
+    attr_accessor :article_path, :template, :story_path, :image_path
+    attr_accessor :document, :style, :output_path
 
     def initialize(options={} ,&block)
       unless options[:article_path]
@@ -16,18 +23,24 @@ module RLayout
         return
       end
       @article_path = options[:article_path]
-      puts "Dir.glob...."
-      puts Dir.glob("#{@article_path}/*.{md,markdown}").first
       @story_path = Dir.glob("#{@article_path}/*.{md,markdown}").first
       unless @story_path
         puts "No story_path !!!"
         return
       end
       @template     = @article_path + "/layout.rb"
+      $ProjectPath  = @article_path
+      @style_path   = @article_path + "/style.rb"
+      @output_path  = @article_path + "/output.pdf"
       unless File.exist?(@template)
         @template = "/Users/Shared/SoftwareLab/article_template/magazine.rb"
       end
-      @document = eval(File.open(@template,'r'){|f| f.read})
+      unless File.exist?(@style_path)
+        @style_path   = "/Users/Shared/SoftwareLab/article_template/magazine_style.rb"        
+      end
+      @document       = eval(File.open(@template,'r'){|f| f.read})
+      # @current_style  = eval(File.open(@style_path, 'r'){|f| f.read})
+      @document.current_style = eval(File.open(@style_path, 'r'){|f| f.read})
       unless @document
         puts "No @document created !!!"
         return
@@ -35,12 +48,16 @@ module RLayout
       read_story
       layout_story
       
-      if options[:output_path]
-        @document.save_pdf(options[:output_path])
+      if @output_path
+        if RUBY_ENGINE =="rubymotion"
+          @document.save_pdf(@output_path)
+        else
+          puts 
+        end
       end
       self
     end
-        
+    
     def read_story
       unless File.exists?(@story_path)
         puts "Can not find file #{@story_path}!!!!"
@@ -50,7 +67,12 @@ module RLayout
       @story = Story.markdown2para_data(@story_path)
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
-
+      if @document.pages[0].main_box.floats.length == 0
+        @document.pages[0].main_box.floats << Heading.new(nil, @heading)
+      elsif @document.pages[0].main_box.has_heading?
+        @document.pages[0].main_box.get_heading.set_heading_content(@heading)
+      end
+      
       @paragraphs =[]
       @story[:paragraphs].each do |para|
         para_options = {}
@@ -77,32 +99,9 @@ module RLayout
     def layout_story
       page_index                = 0
       @first_page               = @document.pages[0]
-      @heading[:layout_expand]  = [:width, :height]
-      # if @article_type == "magazine_article"
-        #make it a flost for magazine
-
-        @heading[:width]        = @first_page.main_box.width
-        @heading[:align_to_body_text]= true
-        @heading[:layout_expand]= nil
-        @heading[:top_margin]   = 10
-        @heading[:top_inset]    = 50
-        @heading[:bottom_margin]= 10
-        @heading[:tottom_inset] = 50
-        @heading[:left_inset]   = 0
-        @heading[:right_inset]  = 0
-        @heading[:article_type]  = "magazine_article"
-        @first_page.main_box.floats << Heading.new(nil, @heading)
-        # @first_page.main_box.relayout_floats!
-      # # else # chapter
-      #   # insert heading at the top of first page
-      #   heading_object = Heading.new(nil, @heading)
-      #   @first_page.graphics.unshift(heading_object)
-      #   heading_object.parent_graphic = @first_page
-      # end
-      @first_page.relayout!
-      @document.pages[1].relayout!
-      @first_page.main_box.create_column_grid_rects
+      @first_page.main_box.layout_floats!  
       @first_page.main_box.set_overlapping_grid_rect
+      
       @first_page.main_box.layout_items(@paragraphs)
       while @paragraphs.length > 0
         page_index += 1
@@ -114,12 +113,11 @@ module RLayout
           options[:page_number] = @starting_page_number + page_index
           options[:column_count]= @column_count
           p=Page.new(self, options)
-          p.relayout!
-          p.main_box.create_column_grid_rects
+          p.main_box.layout_floats!  
+          p.main_box.set_overlapping_grid_rect
         end
 
         @document.pages[page_index].main_box.layout_items(@paragraphs)
-        
       end
       update_header_and_footer
     end

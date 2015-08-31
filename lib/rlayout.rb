@@ -32,7 +32,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/view/graphic_view_svg'
   require File.dirname(__FILE__) + '/rlayout/container'
   require File.dirname(__FILE__) + '/rlayout/container/auto_layout'
-  require File.dirname(__FILE__) + '/rlayout/container/float'
+  # require File.dirname(__FILE__) + '/rlayout/container/float'
   require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
   require File.dirname(__FILE__) + '/rlayout/container/table'
