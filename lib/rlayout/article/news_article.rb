@@ -143,7 +143,7 @@ module RLayout
       Heading.new(self, @heading_options)
       relayout!
       create_column_grid_rects
-      place_float_images(@images)
+      float_images(@images)
       layout_floats!
       set_overlapping_grid_rect
       layout_items(@paragraphs)

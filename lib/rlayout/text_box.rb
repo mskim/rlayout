@@ -258,12 +258,9 @@ module RLayout
       true
     end
     
-    def float_image(options)
-      place_float_image(options)
-    end
-    
+
     # place imaegs that are in the head of the story as floats
-    def place_float_image(options)
+    def float_image(options)
       image_options = {}
       image_options[:image_path] = "#{options[:image_path]}" if options[:image_path]
       image_options[:image_path] = "#{$ProjectPath}/images/#{options[:local_image]}" if options[:local_image]
@@ -277,13 +274,13 @@ module RLayout
       @image  = Image.new(self, image_options)   
     end
     
-    def place_float_images(images)
+    def float_images(images)
       if images.class == Array
         images.each do |image_info|
-          place_float_image(image_info)
+          float_image(image_info)
         end
       elsif images.class == Hash
-        place_float_image(images)
+        float_image(images)
       end
     end
     

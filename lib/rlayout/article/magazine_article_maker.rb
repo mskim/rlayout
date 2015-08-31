@@ -15,13 +15,14 @@ module RLayout
 
   class MagazineArticleMaker
     attr_accessor :article_path, :template, :story_path, :image_path
-    attr_accessor :document, :style, :output_path
+    attr_accessor :document, :style, :output_path, :starting_page_number
 
     def initialize(options={} ,&block)
       unless options[:article_path]
         puts "No article_path given !!!"
         return
       end
+      @starting_page_number = options.fetch(:starting_page_number, 1)
       @article_path = options[:article_path]
       @story_path = Dir.glob("#{@article_path}/*.{md,markdown}").first
       unless @story_path
@@ -101,23 +102,13 @@ module RLayout
       @first_page               = @document.pages[0]
       @first_page.main_box.layout_floats!  
       @first_page.main_box.set_overlapping_grid_rect
-      
       @first_page.main_box.layout_items(@paragraphs)
-      while @paragraphs.length > 0
-        page_index += 1
-        if page_index >= @document.pages.length
-          options ={}
-          options[:footer]      = true
-          options[:header]      = true
-          options[:text_box]    = true
-          options[:page_number] = @starting_page_number + page_index
-          options[:column_count]= @column_count
-          p=Page.new(self, options)
-          p.main_box.layout_floats!  
-          p.main_box.set_overlapping_grid_rect
-        end
-
+      puts "@document.pages.length:#{@document.pages.length}"
+      page_index += 1
+      # for magazine , do not add pages even if we have overflowing paragraphs
+      while @paragraphs.length > 0 && page_index < @document.pages.length
         @document.pages[page_index].main_box.layout_items(@paragraphs)
+        page_index += 1
       end
       update_header_and_footer
     end

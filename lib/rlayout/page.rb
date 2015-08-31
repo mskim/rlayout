@@ -100,8 +100,6 @@ module RLayout
       @main_box=TextBox.new(self, options, &block)
       # readjust float after they are inserted
       @main_box.layout_floats!  
-      # create column grid_rects for ovelapping detection
-      @main_box.create_column_grid_rects
       # mark overlapping grid_rects with floats 
       @main_box.set_overlapping_grid_rect    
     end
