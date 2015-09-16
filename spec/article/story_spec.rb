@@ -1,8 +1,29 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'reading story' do
+  before do
+    story_path = "/Users/mskim/magazine_article/sample.markdown"
+    @story  = Story.markdown2para_data(story_path)
+    puts @story
+    @story[:paragraphs].each do |para|
+      puts para[:markup]
+    end
+  end
+    
+  it 'should read markdown' do
+    assert @story.is_a?(Hash)
+  end
+  it 'should have heading and paragraphs' do
+    assert @story[:heading]
+    assert @story[:paragraphs]
+  end
+end
+
+__END__
+
 describe 'Story.read_matadata' do
   before do
-    @path = "/Users/mskim/news_article/sample/1.story.md"
+    @path = "/Users/mskim/magazine_article/first_article/2012-12-05-automation-catalog-publication.markdown"
     @meta_data = Story.read_metadata(@path)
   end
 
@@ -11,20 +32,6 @@ describe 'Story.read_matadata' do
     puts @meta_data
   end
 end
-
-__END__
-describe 'save sample story yaml' do
-  require 'lorem'
-  require 'yaml'
-  it 'should save sample yml story' do
-    @path = "/Users/mskim/rjob_samples/news_section.rlayout/content.yml"
-    content = Story.sample_story_yaml
-    File.open(@path, 'w'){|f| f.write content.to_yaml}
-    File.exist?(@path).must_equal true
-  end
-
-end
-
 
 
 # require File.dirname(__FILE__) + "/../../article"

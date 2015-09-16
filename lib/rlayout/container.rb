@@ -195,7 +195,7 @@ module RLayout
       end
       ad
     end
-    
+        
     def graphics_with_tag(searching_tag)
       return if searching_tag.nil?
       taged_graphics_array=[]

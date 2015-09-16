@@ -71,7 +71,7 @@ module RLayout
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_accessor :pages, :document_view, :starting_page_number
     attr_accessor :page_view_count, :toc_elements
-    attr_accessor :current_style, :header_rule, :footer_rule, :gim
+    attr_accessor :header_rule, :footer_rule, :gim
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_accessor :pdf_path, :jpg
     def initialize(options={}, &block)
@@ -138,9 +138,8 @@ module RLayout
         # create single page as default initial page
         Page.new(self)
       end
-
-      @current_style = options.fetch(:current_style, DEFAULT_STYLES)
-
+            
+      RLayout::StyleService.shared_style_service.current_style = options.fetch(:current_style, DEFAULT_STYLES)
       if @toc_on
         # save_toc elements for this document
         @toc_elements = []

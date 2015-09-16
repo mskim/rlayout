@@ -15,7 +15,8 @@ module RLayout
   # They also support :breakable?, which tells whether the flowing item can be broken into parts.
   # Breakable item should split itself into two or more parts, if brakes with  orphan/widow consideration.
   # Currently, Paragraph can be broken up into two parts at the oveflowing column.
-
+  # Another example of breakable flowing object is a Table.
+  
   # TextBox adds another layer called "floats", (now Containers also have floats)
   # Floats sit on top layer and pushes out text content underneath it.
   # Typocal floats are Heading, Image, Quates, SideBox
@@ -33,21 +34,32 @@ module RLayout
   # Line_grids are also useed for vertically aligning text across differnt columns.
   # We can force non-body paragraphs to spnap to line-grids.
   
+  # SideColumn
+  # SideColumn is used when we have flowing images with paragraphs
+  # SideColumn can be place on the right or left side of TextBox
+  
   #TODO
   # 1. text box with overlapping floats on top, sometimes fully covered with hole in the middle of the column.
   # 1. flowing image alone the text. attached Math block, inline math
   # 1. Image that are floating and bleeding at the edge.
   # 1. Dropcap suppoert. Dropcap Image
-
+  # 1. SideColumn
+  
   # align_body_text
   # If align_body_text is on, start body paragraphs on even numbered grid_rects only.
   # so that body texts are horozontally aligned, across the columns
   #
+  
+  # laying out running float images
+  # This is when we have images that are larger than the column width and floating.
+  # We need to sit them, rearrange floats, and adjust other items
+  
+  # add text_path option
+  # this will allow us to import marddown text at the run time.
   class TextBox < Container
     attr_accessor :heading_columns, :side_box, :quote_box, :shoulder_column, :grid_size
     attr_accessor :starting_item_index, :ending_item_index
     attr_accessor :column_count, :next_link, :previous_link, :align_body_text
-
     def initialize(parent_graphic, options={}, &block)
       super
       @left_margin      = 0
@@ -64,9 +76,10 @@ module RLayout
       if options[:column_grid]
         create_column_grid_rects
       end
+      
       if block
         instance_eval(&block)
-      end
+      end      
       self
     end
     
@@ -168,14 +181,17 @@ module RLayout
     end
 
     # layout_items steps
-    # 1. take out(shift) front_most_item from flowing_items array,
-    #    and processed in the loop untill all items are consumed.
-    # 2. call item.layout_text, which calles @text_layout_manager.layout_text_lines for line layout.
-    #   I pass two key/values as options, path and proposed_height.
+    # 0. Array of flowing_items are passed as parameter.
+    # 1.  front_most_item is taken out(shift) from flowing_items array,
+    #    and layouted out untill all items are consumed.
+    # 2. layout_text is called or each item. layout_text calles @text_layout_manager.layout_text_lines for line layout.
+    #   I pass two key/values as options, path?(this should be changed to passing grid_rect id) and proposed_height.
     #   "proposed_height" is the height of path, and also the room(avilable space) of current column.
     #   @text_layout_manager.layout_text_lines returns actual item height after line layout.
     #   Text overflow is detected by comparing "proposed_height" and returned actual height.
     #   if the result is greater than the prososed_height, text is overflowing.
+    
+    # this is deprecated, I am now using grid_rects for detecting float overlapping.
     # 3. path is contructed by " def path_from_current_position"
     #   a. if column is simple with no overlapping floats, path is rectange.
     #   b. if column is complex with overlapping floats, path is constructed from grid_rects, with non-overlapping shapes.
@@ -225,6 +241,9 @@ module RLayout
           # item.layout_text(:proposed_path=>text_area_path) # item.width:
           item.layout_text(:proposed_height=>current_column.room) # item.width is set already
         elsif item.class == RLayout::Image
+          if item.grid_frame[2] > 1
+            puts "we have running floating image"
+          end
           item.width  = current_column.text_width
           item.layout_expand  = [:width]
           if item.image_object

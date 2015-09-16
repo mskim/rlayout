@@ -93,6 +93,15 @@ module RLayout
       self
     end
     
+    def first_text_box
+      @graphics.each do |graphic|
+        if graphic.kind_of?(RLayout::TextBox)
+          return graphic
+        end
+      end
+      return nil
+    end
+    
     def main_text(options={}, &block)
       options[:parent_frame]  = true # fit to page's layout_frame
       options[:grid_base]     = "3x3" unless options[:grid_base]

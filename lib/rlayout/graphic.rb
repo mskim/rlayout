@@ -69,10 +69,7 @@ module RLayout
     end
         
     def current_style
-      if @parent_graphic && @parent_graphic.current_style
-        return @parent_graphic.current_style
-      end
-      DEFAULT_STYLES
+      RLayout::StyleService.shared_style_service.current_style
     end
 
     def heading_columns_for(column_number)
@@ -611,12 +608,27 @@ module RLayout
   end
   
   class Line < Graphic
+    attr_accessor :line_type, :strating_point, :ending_point   
+    #"horizontal_rule", vertical_rule, top_left_to_bottom_right, bottom_left_to_top_right
     def initialize(parent_graphic, options={})
       super
       @klass = "Line"
       update_shape
+      case line_type
+      when "horizontal_rule"
+        @strating_point = [@x, mid_y(frame_rect)]
+        @ending_point   = [max_x(frame_rect), mid_y(frame_rect)]
+      when "vertical_rule"
+        @strating_point = [mid_x(frame_rect), @y]
+        @ending_point   = [max_x(frame_rect), max_y(frame_rect)]
+      when "top_left_to_bottom_right"
+      when "bottom_right_to_top_left"
+      when "top_right_to_bottom_left"
+      else
+      end
       self
     end
+    
     def update_shape
       @shape = LineStruct.new(@x, @y, @x + @width, @y + @height)
     end

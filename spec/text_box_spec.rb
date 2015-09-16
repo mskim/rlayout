@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+
 describe 'TextBox creation' do
   before do
     @tb = TextBox.new(nil, column_count: 2, width:400, height: 700)
@@ -25,7 +26,6 @@ describe 'TextBox creation' do
   end
 end
 
-__END__
 describe ' TextBox creation' do
   before do
     @tb = TextBox.new(nil, x:50, y:50, :width=>600, :height=>800, :column_count=>4)

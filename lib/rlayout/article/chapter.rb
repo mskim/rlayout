@@ -40,7 +40,7 @@ module RLayout
   #  keep going until we have no more leftover paragraphs.
 
   class Chapter < Document
-    attr_accessor :story_path, :heading, :paragraphs, :current_style
+    attr_accessor :story_path, :heading, :paragraphs
     attr_accessor :toc_on, :article_type, :column_count
 
     def initialize(options={} ,&block)
@@ -53,9 +53,7 @@ module RLayout
       @column_count       = options.fetch(:column_count, 1)
       @toc_on             = options.fetch(:toc_on, false)
       @article_type       = options.fetch(:article_type, "chapter") # magazin_article, news_article
-      style_service       = RLayout::StyleService.shared_style_service
-      style_service.current_style = CHAPTER_STYLES
-      @current_style      = CHAPTER_STYLES
+      @current_style      = RLayout::StyleService.shared_style_service.current_style
       @heading_columns    = @current_style["heading_columns"][@column_count-1]
       options[:footer]    = true
       options[:header]    = true

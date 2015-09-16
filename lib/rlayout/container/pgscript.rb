@@ -34,13 +34,24 @@ module RLayout
       Text.new(self, options)
     end
 
-
     def circle(options={})
       Circle.new(self, options)
     end
 
+    def image(options={})
+      Image.new(self, options)
+    end
+    
+    def line(options={})
+      Line.new(self, options)
+    end
+    
     def container(options={}, &block)
       Container.new(self, options, &block)
+    end
+
+    def bar(options={}, &block)
+      Bar.new(self, options, &block)
     end
 
     def random_graphics(number)
@@ -53,10 +64,6 @@ module RLayout
 
     def heading(options={}, &block)
       Heading.new(self, options, &block)
-    end
-
-    def bar(options={}, &block)
-      Bar.new(self, options, &block)
     end
     
     def grid_box(options={}, &block)

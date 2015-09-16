@@ -24,7 +24,6 @@ module RLayout
       @complex_rect = false
       # @line_width   = 2
       # @line_color   = 'black'
-      # @body_line_height = StyleService.shared_style_service.current_style['p'][:text_size]
       body_style = StyleService.shared_style_service.current_style['p']
       line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
       line_height = body_style[:line_height] if body_style[:line_height]

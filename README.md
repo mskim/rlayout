@@ -31,6 +31,30 @@ TODO List
 	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
 	- CorneredRect(rect,corners, shapes)
 	- support Opal
+	- add bgcolor, deco_large, deco_medium, deco_small,
+	- warning, example, 
+	- title_box, grid_box
+	- convert markdown to story
+	- convert ascidoctor to story
+
+2015 9 7
+	- Custom Chapter style
+	- running float image, bleed
+	- HorizontalRule Rule < Line
+	- add Heading background
+	- add running page insert marker
+	
+2015 9 6
+	- parse image ![]{grid_frame: [0,0,1,1], local_image: "1.jpg"}
+
+2015 9 1
+	- error handling when pgscript eval fails
+	- show/hide grid rects in TextColumn
+	
+	
+2015 8 31
+	- magazine: do not add page when layout, just use as designed 
+	- news_article_maker
 	
 2015 8 30
 	- TODO: prevent blocks from executing multiple times

@@ -1,17 +1,40 @@
 # encoding: utf-8
 
 # ChapterMaker merges Story and Document.
-# Document template can come from variaous Document Template file.
-# The key is to make it flexible, loading custom designs at run time.
+# Story can come from couple of sources, markdown, adoc, or html(URL blog)
+# Story can be adoc, markdown, or html format.
+# Stories are first converted to para_data format and saved as yaml files. 
+
 # ChapterMaker loads template from file, which includes custom Styles .
-# Story can come from couple of sources, markdown or URL(blog)
-# Document Template can be evaled
+
+# How to place images in long document?
+# There are two ways of placing images in the long document.
+# One way is to embed image markup in the text. 
+# Image markup can container layout information, such as grid_frame, size, position attributes.
+# Or another ways is to use pre-desinged layout.rb with images boxes.
+# Or the third way is to combine above two, automate it first, auto generate layout.rb file and let designer manually adjust it,
+# For book chapters, first method is used.
+# For short documents, such as magazine article, second choice is used.
+
+# mark up image with # ## ##
+# # image: filename: "1.jpg", grid_frame: [0,0,1,1], bleed: true
+# ## image: filename: "1.jpg" grid_frame: [0,0,1,1]
+# ### image: filename: "1.jpg"
+
+# each indicate the side of image
+# How to place image caption?
+# have a file that has same name but extension of .caption?
+# add p write after the # image tag, this should be the caption?
+
+# Add Image bleeding support
+
+# Inserting Pre-Made PDF Pages in the middle of the pages. 
 
 module RLayout
 
   class ChapterMaker
-    attr_accessor :template, :story_path
-    attr_accessor :document
+    attr_accessor :project_path, :template, :story_path
+    attr_accessor :document, :output_path
 
     def initialize(options={} ,&block)
       @template = options.fetch(:template, "/Users/Shared/SoftwareLab/article_template/chapter.rb")
@@ -20,23 +43,33 @@ module RLayout
         return
       else
         @story_path = options[:story_path]
+        @project_path = File.dirname(@story_path)
+        $ProjectPath  = @project_path
+        
         unless File.exist?(@story_path)
           puts "No story_path doen't exist !!!"
           return
         end
+        if options[:output_path]
+          @output_path = options[:output_path]
+        else
+          ext = File.extname(@story_path)
+          @output_path = @story_path.gsub(ext, ".pdf")
+        end
       end
       @document = eval(File.open(@template,'r'){|f| f.read})
-      
-      unless @document
-        puts "No @document created !!!"
+      if @document.is_a?(SyntaxError)
+        puts "SyntaxError in #{@template} !!!!"
+        return
+      end
+      unless @document.kind_of?(RLayout::Document)
+        puts "Not a @document kind created !!!"
         return
       end
       read_story
-      layout_story
+      layout_story      
+      @document.save_pdf(@output_path) unless options[:no_output]
       
-      if options[:output_path]
-        @document.save_pdf(options[:output_path])
-      end
       self
     end
         
@@ -45,23 +78,22 @@ module RLayout
         puts "Can not find file #{@story_path}!!!!"
         return {}
       end
-
-      @story = Story.markdown2para_data(@story_path)
+      @story      = Story.markdown2para_data(@story_path)
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
-
       @paragraphs =[]
       @story[:paragraphs].each do |para|
         para_options = {}
         para_options[:markup]         = para[:markup]
         para_options[:layout_expand]  = [:width]
         if para[:markup] == 'img'
-          source = para[:image_path]
-          para_options[:caption]        = para[:caption]
-          para_options[:bottom_margin]  = 10
-          para_options[:bottom_inset]   = 10
-          full_image_path = File.dirname(@story_path) + "/#{source}"
-          para_options[:image_path] = full_image_path
+          para_options.merge!(eval(para[:string]))
+          # source = para[:image_path]
+          # para_options[:caption]        = para[:caption]
+          # para_options[:bottom_margin]  = 10
+          # para_options[:bottom_inset]   = 10
+          # full_image_path = File.dirname(@story_path) + "/#{source}"
+          # para_options[:image_path] = full_image_path
           @paragraphs << Image.new(nil, para_options)
           next
         end
@@ -77,28 +109,9 @@ module RLayout
       page_index                = 0
       @first_page               = @document.pages[0]
       @heading[:layout_expand]  = [:width, :height]
-      # if @article_type == "magazine_article"
-      #   #make it a flost for magazine
-      #   unless @document.main_box
-      #     # add main_box
-      #   end
-      #   @heading[:width]        = @first_page.main_box.heading_width
-      #   @heading[:align_to_body_text]= true
-      #   @heading[:layout_expand]= nil
-      #   @heading[:top_margin]   = 10
-      #   @heading[:top_inset]    = 50
-      #   @heading[:bottom_margin]= 10
-      #   @heading[:tottom_inset] = 50
-      #   @heading[:left_inset]   = 0
-      #   @heading[:right_inset]  = 0
-      #   @heading[:article_type]  = "magazine_article"
-      #   @first_page.main_box.floats << Heading.new(nil, @heading)
-      #   # @first_page.main_box.relayout_floats!
-      # else # chapter
-        # insert heading at the top of first page
-        heading_object = Heading.new(nil, @heading)
-        @first_page.graphics.unshift(heading_object)
-        heading_object.parent_graphic = @first_page
+      heading_object = Heading.new(nil, @heading)
+      @first_page.graphics.unshift(heading_object)
+      heading_object.parent_graphic = @first_page
       # end
       @first_page.relayout!
       @document.pages[1].relayout!
@@ -169,7 +182,33 @@ module RLayout
       h[:right_page]      = true
       h
     end
-
+    # generate layout.rb file with script in each page
+    # for manual image adjusting
+    def generate_layout
+      @page_content = ""
+layout_text =<<EOF
+RLayout::Document.new do
+#{@page_content}
+EOF
+page_text =<<EOF
+  #page: #{@page_number}
+  page do
+    main_text do
+      #{@image_layout}
+    end
+  end
+EOF
+      @document.pages.each_with_index do |page, i|
+        @page_number = i + 1
+        @image_layout = ""
+        page.floats.each do |float|
+          @image_layout += float.to_script
+        end
+        @page_content += page_text
+      end
+      layout_file = layout_text
+      File.open(layout_path, 'w'){|f| f.write layout_file}
+    end
   end
 
 end

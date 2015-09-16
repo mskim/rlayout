@@ -139,6 +139,7 @@ NEWS_STYLES={
   "header"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "page_number" =>{:font => 'Times', :text_size=>10.0, :text_color => 'black'},
+  "grid_size" => [147.22, 131.98],
 }
 
 HEADING_KIND= %w[h1 h2 h3 h4 title subtitle author lead]

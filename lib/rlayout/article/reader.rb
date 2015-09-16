@@ -577,8 +577,9 @@ module RLayout
       markup_stirng = s.scan(/#*\s?/)
       #TODO img, math, table, admonition, quote, code
       #TODO don't allow more than h6
-
+      # binding.pry
       case markup_stirng
+
       when "\# ", "\#"
         if starting_heading_level > 6
           markup = "h6"
@@ -616,7 +617,12 @@ module RLayout
         markup = 'p'
       end
       string = s.scan(/.*/)
-      {:markup =>markup, :string=>string}
+      if markup == "p" && string =~/!\[/
+        image_info = string.match(/\{.*\}/)
+        {:markup =>"img", :string=>image_info.to_s}
+      else
+        {:markup =>markup, :string=>string}
+      end
     end
 
     def self.markdown2para_data(path)
@@ -626,6 +632,8 @@ module RLayout
         if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
           @contents = md.post_match
           @metadata = YAML.load(md.to_s)
+        else
+          @contents = source
         end
       rescue => e
         puts "YAML Exception reading #filename: #{e.message}"
@@ -643,8 +651,8 @@ module RLayout
       # take out the top meta-data part from source
       # Set Document Options
       # And Create Heading from this
-
       reader = RLayout::Reader.new @contents, nil, :starting_heading_level=>starting_heading_level
+      puts 
       blocks_array = []
       block = []
       reader.lines.each do |line|

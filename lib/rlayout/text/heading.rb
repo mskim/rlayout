@@ -32,7 +32,7 @@ module RLayout
   # heading height should be multiles of body text height
   class Heading < Container
     attr_accessor :title_object, :subtitle_object, :leading_object, :author_object
-    attr_accessor :align_to_body_text, :current_style
+    attr_accessor :align_to_body_text
     def initialize(parent_graphic, options={}, &block)
       super      
       @klass              = "Heading"
@@ -195,6 +195,11 @@ module RLayout
       @author_object.layout_length  = @author_object.height
       @author_object
     end
+    
+    def background(image_path, options={})
+      options[:loca_image] = image_path
+      init_image(options) 
+    end
   end
 
 
@@ -202,7 +207,6 @@ module RLayout
   class Banner < Heading
     attr_accessor :place, :when, :organization, :image
     attr_accessor :category, :width, :height, :direction
-
   end
 
 end

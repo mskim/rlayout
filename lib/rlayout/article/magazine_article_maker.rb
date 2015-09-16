@@ -24,7 +24,7 @@ module RLayout
       end
       @starting_page_number = options.fetch(:starting_page_number, 1)
       @article_path = options[:article_path]
-      @story_path = Dir.glob("#{@article_path}/*.{md,markdown}").first
+      @story_path   = Dir.glob("#{@article_path}/*.{md,markdown}").first
       unless @story_path
         puts "No story_path !!!"
         return
@@ -40,15 +40,23 @@ module RLayout
         @style_path   = "/Users/Shared/SoftwareLab/article_template/magazine_style.rb"        
       end
       @document       = eval(File.open(@template,'r'){|f| f.read})
-      # @current_style  = eval(File.open(@style_path, 'r'){|f| f.read})
-      @document.current_style = eval(File.open(@style_path, 'r'){|f| f.read})
-      unless @document
-        puts "No @document created !!!"
+      if @document.is_a?(SyntaxError)
+        puts "SyntaxError in #{@template} !!!!"
         return
       end
+      unless @document.kind_of?(RLayout::Document)
+        puts "Not a @document kind created !!!"
+        return
+      end
+      current_style  = eval(File.open(@style_path, 'r'){|f| f.read})
+      if current_style.is_a?(SyntaxError)
+        puts "SyntaxError in #{@style_path} !!!!"
+        return
+      end
+      RLayout::StyleService.shared_style_service.current_style = current_style
+      
       read_story
       layout_story
-      
       if @output_path
         if RUBY_ENGINE =="rubymotion"
           @document.save_pdf(@output_path)
@@ -103,7 +111,6 @@ module RLayout
       @first_page.main_box.layout_floats!  
       @first_page.main_box.set_overlapping_grid_rect
       @first_page.main_box.layout_items(@paragraphs)
-      puts "@document.pages.length:#{@document.pages.length}"
       page_index += 1
       # for magazine , do not add pages even if we have overflowing paragraphs
       while @paragraphs.length > 0 && page_index < @document.pages.length
