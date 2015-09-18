@@ -9,6 +9,7 @@ describe 'create SinglePageMaker' do
   it ' should create SinglePageMaker' do
     @sp.must_be_kind_of SinglePageMaker
   end
+  
   it ' should have first_text_box' do
     @tb = @sp.page.first_text_box
     @tb.must_be_kind_of TextBox

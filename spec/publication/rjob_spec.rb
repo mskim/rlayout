@@ -3,13 +3,13 @@ require File.dirname(__FILE__) + "/../spec_helper"
 describe 'RJob with pgscript' do
   before do
     @pdf_path = "/Users/mskim/rjob_samples/doc_sample/output.pdf"
-my_text=<<EOF
-RLayout::Document.new(pdf_path: "#{@pdf_path}") do
-  page
-  page
-end
+    my_text= <<-EOF
+    RLayout::Document.new(pdf_path: "#{@pdf_path}") do
+      page
+      page
+    end
 
-EOF
+    EOF
     @d= eval(my_text)
     
     # @job = RJob.new(nil, pdf_path: @pdf_path, pgscript: my_text,  has_pgscript: true)

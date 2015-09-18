@@ -201,12 +201,12 @@ module  RLayout
     end
     
     def save_map_html(options={})
-      html =<<EOF
-<div class="grid_map">
-  #{grid_cells_html}
-</div>
+      html = <<-EOF
+      <div class="grid_map">
+        #{grid_cells_html}
+      </div>
       
-EOF
+      EOF
       html
     end
     

@@ -182,9 +182,9 @@ module RLayout
 
     # layout_items steps
     # 0. Array of flowing_items are passed as parameter.
-    # 1.  front_most_item is taken out(shift) from flowing_items array,
+    # 1. front_most_item is taken out(shift) from flowing_items array,
     #    and layouted out untill all items are consumed.
-    # 2. layout_text is called or each item. layout_text calles @text_layout_manager.layout_text_lines for line layout.
+    # 2. layout_text is called for each item. layout_text calles @text_layout_manager.layout_text_lines for line layout.
     #   I pass two key/values as options, path?(this should be changed to passing grid_rect id) and proposed_height.
     #   "proposed_height" is the height of path, and also the room(avilable space) of current column.
     #   @text_layout_manager.layout_text_lines returns actual item height after line layout.
@@ -277,7 +277,6 @@ module RLayout
       true
     end
     
-
     # place imaegs that are in the head of the story as floats
     def float_image(options)
       image_options = {}

@@ -53,13 +53,13 @@ end
 
 describe 'processing from raw text ' do
   before do
-    @text =<<EOF
-    Container.new(nil, :width=>600, :height=>800) do
-      split_v(3, :fill_color=>"blue", :layout_space=>10)
-      @graphics.first.fill.color = 'white'
-      @graphics.first.split_h(3, :fill_color=>'red', :layout_space=>10)
-    end
-EOF
+    @text = <<-EOF
+        Container.new(nil, :width=>600, :height=>800) do
+          split_v(3, :fill_color=>"blue", :layout_space=>10)
+          @graphics.first.fill.color = 'white'
+          @graphics.first.split_h(3, :fill_color=>'red', :layout_space=>10)
+        end
+    EOF
     @container = eval(@text)
   end
   

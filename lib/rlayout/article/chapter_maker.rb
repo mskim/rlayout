@@ -186,18 +186,18 @@ module RLayout
     # for manual image adjusting
     def generate_layout
       @page_content = ""
-layout_text =<<EOF
-RLayout::Document.new do
-#{@page_content}
-EOF
-page_text =<<EOF
-  #page: #{@page_number}
-  page do
-    main_text do
-      #{@image_layout}
-    end
-  end
-EOF
+      layout_text = <<-EOF
+      RLayout::Document.new do
+        #{@page_content}
+      EOF
+      page_text = <<-EOF
+        #page: #{@page_number}
+        page do
+          main_text do
+            #{@image_layout}
+          end
+        end
+      EOF
       @document.pages.each_with_index do |page, i|
         @page_number = i + 1
         @image_layout = ""
