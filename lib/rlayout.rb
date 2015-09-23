@@ -16,6 +16,7 @@ else
   require 'strscan'
   require 'yaml'
   require 'csv'
+  require 'erb'
   
   # require 'mini_magick'
   require "rlayout/version"
@@ -36,7 +37,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/auto_layout'
   require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
-  require File.dirname(__FILE__) + '/rlayout/container/table'
   require File.dirname(__FILE__) + '/rlayout/container/text_form'
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
@@ -54,6 +54,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/title_box'
   require File.dirname(__FILE__) + '/rlayout/text_column'
   require File.dirname(__FILE__) + '/rlayout/text_box'
+  require File.dirname(__FILE__) + '/rlayout/table'
 
   require File.dirname(__FILE__) + '/rlayout/page'
   require File.dirname(__FILE__) + '/rlayout/page/page_fixtures'
@@ -71,12 +72,12 @@ else
   # require File.dirname(__FILE__) + '/rlayout/article/news_article'
   require File.dirname(__FILE__) + '/rlayout/article/news_article_box'
   require File.dirname(__FILE__) + '/rlayout/article/news_article_maker'
+  require File.dirname(__FILE__) + '/rlayout/article/news_section_page'
   # require File.dirname(__FILE__) + '/rlayout/article/magazine_article'
   require File.dirname(__FILE__) + '/rlayout/article/magazine_article_maker'
-  # require File.dirname(__FILE__) + '/rlayout/article'
   require File.dirname(__FILE__) + '/rlayout/article/single_page_maker'
+  require File.dirname(__FILE__) + '/rlayout/article/rjob'
   
-  require File.dirname(__FILE__) + '/rlayout/publication/rjob'
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/dorok'
   require File.dirname(__FILE__) + '/rlayout/publication/catalog'

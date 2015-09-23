@@ -542,6 +542,17 @@ module RLayout
     end
   end
 
+  class TableCell < Text
+    # lookup table style and applied the table_cell style
+    def initialize(parent_graphic, options={})
+      options[:text_font] = "smGothicP-W10",
+      super
+      puts "options[:text_string]:#{options[:text_string]}"
+      self
+    end
+    
+  end
+  
   class Rectangle < Graphic
     def initialize(parent_graphic, options={})
       super

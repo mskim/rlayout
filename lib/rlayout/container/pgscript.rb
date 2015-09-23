@@ -66,6 +66,10 @@ module RLayout
       Heading.new(self, options, &block)
     end
     
+    def table(options={}, &block)
+      Table.new(self, options, &block)
+    end
+    
     def grid_box(options={}, &block)
       GridBox.new(self, options, &block)
     end

@@ -115,7 +115,12 @@ module RLayout
     end
     
     def heading
-      Heading.new(self, :is_float=>true)
+      h = Heading.new(self, :is_float=>true)
+      unless h== @floats.first
+        # make heading as first one in floats
+        h = @floats.pop
+        @floats.unshift(h)
+      end      
     end
     
     # does current text_box include Heading in floats

@@ -46,12 +46,12 @@ module RLayout
       else
         @width = 600
       end
-      @top_inset      = options.fetch(:top_inset,5)
-      @bottom_inset   = options.fetch(:top_inset,5)
+      @top_inset      = options.fetch(:top_inset,0)
+      @bottom_inset   = options.fetch(:top_inset,0)
       @left_inset     = options.fetch(:left_inset,5)
       @right_inset    = options.fetch(:right_inset,5)
-      @top_margin     = options.fetch(:top_margin,10)
-      @bottom_margin  = options.fetch(:bottom_margin,10)
+      @top_margin     = options.fetch(:top_margin,0)
+      @bottom_margin  = options.fetch(:bottom_margin,0)
       @layout_align   = 'center'
       @layout_expand  = options.fetch(:layout_expand,[:width, :height])
       # width           = @width - @left_inset - @right_inset
@@ -90,7 +90,9 @@ module RLayout
       height_sum +=@subtitle_object.height unless @subtitle_object.nil?
       height_sum +=@leading_object.height  unless @leading_object.nil?
       height_sum +=@author_object.height   unless @author_object.nil?
-      @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
+      # @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
+      @height = height_sum
+      
       if @align_to_body_text
         mutiple           = (@height/body_height).to_i
         mutiple_height    = mutiple*body_height

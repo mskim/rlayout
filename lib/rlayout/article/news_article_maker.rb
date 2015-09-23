@@ -29,7 +29,7 @@ module RLayout
         puts "No story_path !!!"
         return
       end
-      @template     = @article_path + "/layout.rb"
+      @template     = Dir.glob("#{@article_path}/layout.{rb,script,erb,pgscript}").first
       $ProjectPath  = @article_path
       @style_path   = @article_path + "/style.rb"
       @output_path  = @article_path + "/output.pdf"
@@ -69,14 +69,13 @@ module RLayout
         puts "Can not find file #{@story_path}!!!!"
         return {}
       end
-
       @story = Story.markdown2para_data(@story_path)
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
-      if @news_article_box.floats.length == 0
-        @news_article_box.floats << Heading.new(nil, @heading)
-      elsif @news_article_box.has_heading?
+      if @news_article_box.has_heading?
         @news_article_box.get_heading.set_heading_content(@heading)
+      elsif @heading !={}
+        @news_article_box.heading(@heading)
       end
       
       @paragraphs =[]
@@ -107,56 +106,5 @@ module RLayout
       @news_article_box.set_overlapping_grid_rect
       @news_article_box.layout_items(@paragraphs)
     end
-        
-    def self.read_story_config(section_config_path, story_index)
-        config = YAML::load(File.open(section_config_path, 'r'){|f| f.read})
-        # YamlKit in Rubymotion saves true as 1 and reads as 1.0
-        story_frame_index = story_index.to_i
-        if config['has_heading'] == true || config['has_heading'] == 1.0
-          story_frame_index += 1
-        end
-        options = {}
-        options[:grid_frame]         = config['story_frames'][story_frame_index]
-        options[:grid_frame]         = eval(options[:grid_frame]) if options[:grid_frame].class == String
-        options[:grid_frame]         = options[:grid_frame].map {|e| e.to_i}
-        options[:grid_base]          = [options[:grid_frame][2],options[:grid_frame][3]]
-        options[:gutter]             = config['gutter'] || 10
-        options[:v_gutter]           = config['gutter'] || 0
-        options[:column_count]       = options[:grid_frame][2]
-        options[:grid_width]         = config['grid_size'][0]
-        options[:grid_height]        = config['grid_size'][1]
-        options[:x]                  = 0
-        options[:y]                  = 0
-        options[:width]              = options[:grid_width] * options[:grid_frame][2] + (options[:grid_frame][2] - 1)*options[:gutter]
-        options[:height]             = options[:grid_height] * options[:grid_frame][3]+ (options[:grid_frame][3] - 1)*options[:v_gutter]
-        options      
-    end
-    
-    def self.make_layout(article_path)
-      require 'erb'
-      unless File.exist?(article_path)
-        puts "no article_path #{article_path} found !!!"
-        return
-      end
-      template_path     = "/Users/Shared/SoftwareLab/article_template/news_article.rb.erb"
-      unless File.exist?(template_path)
-        puts "no template_path #{template_path} found !!!"
-        return
-      end
-      section_path  = File.dirname(article_path)
-      story_index   = File.basename(article_path,".md").split(".").first
-      images        = Dir.glob("#{article_path}/images/*.{jpg,pdf,tiff}")
-      @story_options = self.read_story_config(section_path + "/config.yml", story_index)
-      # make image text
-      @image_text = ""
-      images.each_with_index do |image, i|
-        @image_text += "  float_image(:local_image=>\"#{File.basename(image)}\", :grid_frame=>[0,#{i},1,1])\n"
-      end
-      layout_path = article_path + "/layout.rb"
-      template_text = File.open(template_path, 'r'){|f| f.read}
-      erb = ERB.new(template_text)
-      File.open(layout_path, 'w'){|f| f.write erb.result(binding)}
-    end
   end
-
 end

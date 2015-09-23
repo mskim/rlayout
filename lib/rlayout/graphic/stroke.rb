@@ -24,7 +24,6 @@ module RLayout
       @stroke[:line_join] = options[:line_join] if options[:line_join]
       @stroke[:type]      = options[:line_type] if options[:line_type]
       @stroke[:sides]     = options[:stroke_sides] || [1,1,1,1]   # [1,1,1,1], [1,0,1,0]
-      
     end
     
   end

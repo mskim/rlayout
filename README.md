@@ -37,6 +37,31 @@ TODO List
 	- convert markdown to story
 	- convert ascidoctor to story
 
+2015 9 22
+	- table 
+		- Hangul Support
+		- text fitting
+		- line drawing, # book_mode, book_mode1, news_mode
+		- row width array
+		- Heading style, first row style, body cycling
+		
+		- table style in Styles
+		- custom table style support
+		
+		- linked table
+		- linked table has_heading	
+			
+2015 9 20
+	- Newspaper
+	- NewspaperIssue
+	- NewspaperSection
+	- made NewsArticle work with story folder
+	
+2015 9 18
+	- NewsArticleMaker bug that heading is not showing
+	- def heading in TextBox
+	- support \n for new line in text_record
+	
 2015 9 7
 	- Custom Chapter style
 	- running float image, bleed

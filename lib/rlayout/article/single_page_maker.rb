@@ -52,7 +52,7 @@ module RLayout
         return
       end
       RLayout::StyleService.shared_style_service.current_style = current_style
-      puts "current_style:#{current_style}"
+      # puts "current_style:#{current_style}"
       if @story_path && File.exist?(@story_path)
         if @page.kind_of?(RLayout::TextBox)
           @text_box = @page

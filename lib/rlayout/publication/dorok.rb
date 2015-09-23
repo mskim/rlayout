@@ -1,11 +1,21 @@
 
 # Dorok
-# Dorok is crated with given page folders.
-# Page folders can be created from Excel, csv file and images collection
+# Dorik is Koren name for art collection picture book.
+# This program is used to automate the process of creating Dorok.
+
+# Dorok can be crated in several ways.
+# First and most intuitive way is to creaete folders that are represeting the pages.
+# And placing corresposing pictures in that folder, and let this program automate the process
+
+# Another way is to use Excel or csv to even automate the first process.
+# For this case, we need images on the designated place, like online image storage.
+# Page folders can be created from csv file and images can be placed automaticall.
+
 # Each page folders contain, images, layout, and text.md
-# layout is auto selected from the templates, layouts are auto selected by profile.
-# Several layouts, with same profile, are pulled from the library.
+# Layouts are auto selected from the templates. 
+# Layouts are auto selected by profile.
 # Profile is detmined by the number of pictures in the images folder, and number of text.md files.
+# Several layouts, with same profile, are pulled from the library, to allows us to present several options.
 
 # PhotoPage
 # Each page is layed out and PDF is generated

@@ -1,8 +1,12 @@
 
+# NewsArticleBox 
+# grid_frame is passed to detemine the width, height, and column_number of text_box
+# Used when creating NewsArticle
+
 module RLayout
 
   class NewsArticleBox < TextBox
-    attr_accessor :story_path, :heading, :images
+    attr_accessor :story_path
 
     def initialize(parent_graphic, options={}, &block)
       if options[:grid_frame]
