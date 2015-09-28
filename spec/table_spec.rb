@@ -1,23 +1,24 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+
 describe 'table row' do
   before do
     @csv_path = "/Users/mskim/flier/demo.csv"
     @table_style_path = "/Users/mskim/flier/table_style.rb"
     @csv_data = File.open(@csv_path, 'r'){|f| f.read}
     @tbl      = Table.new(nil, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
-    @head_row = @tbl.head_row
-    @body_row = @tbl.rows[0]
   end
   
   it 'should have table with csv_data' do
     assert @tbl.has_head_row? == true
   end
-    
-  it 'should have stroke_sides as [0,1,0,1]' do
-    assert @head_row.class == Hash
-  end
   
+  it 'should have cell with stroke_sides' do
+    body_row_last_cell = @tbl.graphics[1].graphics.last
+    puts body_row_last_cell.stroke.sides
+    assert body_row_last_cell.stroke.sides == [1,0,0,0]
+  end
+      
 end
 
 __END__
