@@ -128,7 +128,7 @@ module RLayout
     :body_row_atts   => { row_type: "body_row", fill_color: "white", stroke_sides: [0,1,0,1]},
     :body_cell_atts  => { font: "smSSMyungjoP-W35", stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
     # :body_row_atts   => { row_type: "head_row", cycle_color: ["green", "blue"], stroke_sides: [0,1,0,1]},
-    # :category_colors  => [["green", "green_10%"],["blue", "blue_10%"],["pink", "pink_10%"]]
+    # :category_colors  => [["green", "green"],["blue", "blue"],["pink", "pink"]]
 }
   
   class Table < Container
@@ -160,6 +160,15 @@ module RLayout
       
       if options[:table_style_path]        
         @table_style  = eval(File.open(options[:table_style_path], 'r'){|f| f.read})
+        #TOFO
+        # @table_style = DEFAULT_TABLE_STYLE.merge(@table_style)
+        # puts "@table_style:#{@table_style}"
+        unless @table_style.class == Hash
+          puts "invalid table style !!!"
+          @table_style  = DEFAULT_TABLE_STYLE
+        end
+      elsif options[:table_style]  
+        @table_style  = options[:table_style]
         unless @table_style.class == Hash
           puts "invalid table style !!!"
           @table_style  = DEFAULT_TABLE_STYLE

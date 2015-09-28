@@ -1,3 +1,32 @@
+=begin
+- (id)shadeColor:(NSColor *)color shade:(float)s {
+    NSString *space = [color colorSpaceName];
+    if(s == 1) return color;
+    if([space isEqualToString:SMDeviceSpotColorSpace]) {
+  float c, m, y, k;
+  NSString *colorName;
+  NSColor *screenColor = [(SMSpotColor *)color screenColor];
+  [screenColor getCyan:&c magenta:&m yellow:&y black:&k alpha:NULL];
+  colorName = [color colorNameComponent];
+  color = [SMSpotColor colorWithSpotCyan:c magenta:m yellow:y black:k alpha:1.0 name:colorName];
+  [(SMSpotColor *)color setShade:s];
+  return color;
+    }
+    else if(tocmyk || [space isEqualToString:NSDeviceCMYKColorSpace]) {
+  float c, m, y, k, a;
+  [[color colorUsingColorSpaceName:NSDeviceCMYKColorSpace] getCyan:&c magenta:&m yellow:&y black:&k alpha:&a];
+  return [NSColor colorWithDeviceCyan:c*s magenta:m*s yellow:y*s black:k*s alpha:a];
+    } else if([space isEqualToString:NSCalibratedWhiteColorSpace] || [space isEqualToString:NSDeviceWhiteColorSpace]) {
+  float w = (1.0 - [color whiteComponent]) * s;
+  return [NSColor colorWithCalibratedWhite:w alpha:[color alphaComponent]];
+    } else {
+  float r, g, b, a;
+  s = 1.0 - s;
+  [color getRed:&r green:&g blue:&b alpha:&a];
+  return [NSColor colorWithCalibratedRed:r + (1.0 - r)*s green:g + (1.0-g)*s blue:b+(1.0 - b)*s alpha:a];
+    }
+}
+=end
 
 #shape
 RECTANGLE   = 0
@@ -155,27 +184,34 @@ class GraphicViewMac < NSView
 
     if COLOR_NAMES.include?(color_string)
       return color_from_name(color_string)
+    elsif color_string=~/^#/   #for hex color
+      string = color_string[1..5] 
+      color_values = hex2rgb(string)
+      return NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:1.0)
     end
-    # TODO
-    # elsif color_string=~/^#   for hex color
-
     color_array=color_string.split("=")
     color_kind=color_array[0]
     color_values=color_array[1].split(",")
-    if color_kind=~/RGB/
+    case color_kind
+    when "RGB" , "rgb"  
         @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
-    elsif color_kind=~/CMYK/
+    when "CMYK", "cmyk"
         @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
-    elsif color_kind=~/NSCalibratedWhiteColorSpace/
+    when "NSCalibratedWhiteColorSpace"
         @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
-    elsif color_kind=~/NSCalibratedBlackColorSpace/
+    when "NSCalibratedBlackColorSpace"
         @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)
     else
-        @color = GraphicRecord.color_from_name(color_string)
+        @color = NSColor.whiteColor
     end
     @color
   end
 
+  def hex2rgb(hex)
+    d_hex = hex.downcase
+    r,g,b = d_hex[0..1], d_hex[2..3], d_hex[4..5]
+    [r,g,b].map { |e| e.to_i(16) }
+  end
 
   def color_from_name(name)
     case name

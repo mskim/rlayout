@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
 
-describe 'table row' do
+describe 'table style' do
   before do
     @csv_path = "/Users/mskim/flier/demo.csv"
     @table_style_path = "/Users/mskim/flier/table_style.rb"
@@ -14,8 +14,9 @@ describe 'table row' do
   end
   
   it 'should have cell with stroke_sides' do
-    body_row_last_cell = @tbl.graphics[1].graphics.last
-    puts body_row_last_cell.stroke.sides
+    body_row = @tbl.graphics[1]
+    puts body_row.fill.color
+    body_row_last_cell = body_row.graphics.last
     assert body_row_last_cell.stroke.sides == [1,0,0,0]
   end
       

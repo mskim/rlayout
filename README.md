@@ -38,19 +38,21 @@ TODO List
 	- convert ascidoctor to story
 
 2015 9 28
+	- TextCell vertical fit
 	- support toned down color
 	- category_level = 1 table
 	
 2015 9 27
 	- TextCell font
 	- TextCell stroke_sides line drawing
-	- TextCell vertical fit
 	- default table_style
 	- support custom table_style
 	- Table Style Keys
 		head_row_atts
+		head_cell_atts
 		body_row_atts
-		body_row_colors
+		body_cell_atts
+		body_row_colors = body_cell_atts[:cycle_colors]
 		category_colors
 
 2015 9 23
