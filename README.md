@@ -20,7 +20,7 @@ TODO List
 		
 	- modify kramdown into r_kramdown
 		- I am using parsing from Asciidotor  instead of kramdown
-	
+		- I am using parsing with part of code from Asciidotor
 	- support Asciidotor
 	- change Paragraph  
 		- ParaStruct(:string, markup, :footnote, :index)
@@ -37,11 +37,50 @@ TODO List
 	- convert markdown to story
 	- convert ascidoctor to story
 
+2015 9 28
+	- support toned down color
+	- category_level = 1 table
+	
+2015 9 27
+	- TextCell font
+	- TextCell stroke_sides line drawing
+	- TextCell vertical fit
+	- default table_style
+	- support custom table_style
+	- Table Style Keys
+		head_row_atts
+		body_row_atts
+		body_row_colors
+		category_colors
+
+2015 9 23
+	- form for complex short table
+		- stack, bar, hori, vert
+		form do
+		 bar do 
+			"this",
+			stack("that", "this"),
+			"that"
+		 end
+		end
+		
+	table_text = <<-EOF
+	---
+	has_head: true
+	___
+	
+	|this span(d1)| that| more text|
+	|             |     | more text|
+	EOF
+	
 2015 9 22
 	- table 
-		- Hangul Support
-		- text fitting
+		bug fix
+			- Hangul Support(motion-csv bug)
+			- underline drawn at some cells
+			
 		- line drawing, # book_mode, book_mode1, news_mode
+		- text fitting
 		- row width array
 		- Heading style, first row style, body cycling
 		
@@ -50,7 +89,10 @@ TODO List
 		
 		- linked table
 		- linked table has_heading	
-			
+		- multi-column
+		- category, category_level
+		- head_corner_cell col\row
+		
 2015 9 20
 	- Newspaper
 	- NewspaperIssue

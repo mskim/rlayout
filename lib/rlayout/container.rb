@@ -315,6 +315,16 @@ module RLayout
     end
   end
   
+  # Stack is Container with layout_direction set to 'vertical'
+  class Stack < Container
+    def initialize(parent_graphic, options={}, &block)
+      options[:layout_direction] = "vertical"
+      super
+      @width = 300 unless options[:width]
+      self
+    end
+  end
+  
   # Bar is Container with layout_direction set to 'horizontal'
   class Bar < Container
     def initialize(parent_graphic, options={}, &block)

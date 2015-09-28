@@ -63,7 +63,6 @@ class GraphicViewMac < NSView
         NSColor.lightGrayColor.set
         # NSColor.lightGrayColor.set
       end
-      
       # stroke each side
       if @stroke[:sides] != [1,1,1,1] #TODO check for rectangle or roundrect
         if @stroke[:sides][0] > 0

@@ -1,29 +1,23 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname(__FILE__) + "/spec_helper"
 
 describe 'table row' do
   before do
     @csv_path = "/Users/mskim/flier/demo.csv"
+    @table_style_path = "/Users/mskim/flier/table_style.rb"
     @csv_data = File.open(@csv_path, 'r'){|f| f.read}
-    @tbl      = Table.new(nil, csv_data: @csv_data, has_head_row: true)
-    @row      = @tbl.graphics.first
-    @body_row = @tbl.graphics[0]
-    puts @body_row.row_type
+    @tbl      = Table.new(nil, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
+    @head_row = @tbl.head_row
+    @body_row = @tbl.rows[0]
   end
   
-  it 'should create TableRow' do
-    puts "@row.graphics.length:#{@row.graphics.length}"
-    assert @row.class == RLayout::TableRow
+  it 'should have table with csv_data' do
+    assert @tbl.has_head_row? == true
   end
-  
+    
   it 'should have stroke_sides as [0,1,0,1]' do
-    assert @row.stroke[:sides] == [0,1,0,1]
+    assert @head_row.class == Hash
   end
   
-  it 'should have head_row' do
-    assert @row.row_type == 'head_row'
-    puts "@body_row.row_type:#{@body_row.row_type}"
-    assert @body_row.row_type == 'body_row'
-  end
 end
 
 __END__

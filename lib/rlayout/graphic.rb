@@ -544,10 +544,10 @@ module RLayout
 
   class TableCell < Text
     # lookup table style and applied the table_cell style
+    attr_accessor :h_span, :v_span, :text_direction
     def initialize(parent_graphic, options={})
-      options[:text_font] = "smGothicP-W10",
+      # options[:text_font] = "smGothicP-W10"
       super
-      puts "options[:text_string]:#{options[:text_string]}"
       self
     end
     

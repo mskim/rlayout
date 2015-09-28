@@ -254,9 +254,6 @@ module RLayout
       layout_index  = story_index
       layout_index  = story_index + 1 if @has_heading
       @story_options= make_story_options(layout_index)
-      puts "@story_options:#{@story_options}"
-      puts "++++++++ images:#{images}"
-      # make image text
       @image_text   = ""
       images.each_with_index do |image, i|
         @image_text += "  float_image(:local_image=>\"#{File.basename(image)}\", :grid_frame=>[0,#{i},1,1])\n"
