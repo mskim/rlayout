@@ -1,12 +1,11 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
-
 describe 'table style' do
   before do
-    @csv_path = "/Users/mskim/flier/demo.csv"
+    @csv_path = "/Users/mskim/flier/category_demo.csv"
     @table_style_path = "/Users/mskim/flier/table_style.rb"
     @csv_data = File.open(@csv_path, 'r'){|f| f.read}
-    @tbl      = Table.new(nil, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
+    @tbl      = Table.new(nil, width: 595.28, height: 841.89, category_level: 1, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
   end
   
   it 'should have table with csv_data' do
@@ -23,6 +22,46 @@ describe 'table style' do
 end
 
 __END__
+csv = <<EOF
+
+company, name, title, phone, email
+SoftwareLab, Min, CEO, 010-234-5588, mskim@gmail.com
+SoftwareLab, Yong, VP Sales, 010-234-5588, mskim@gmail.com
+SoftwareLab, Tae, VP Marketing, 010-234-5588, mskim@gmail.com
+SoftwareLab, Tae, VP Marketing, 010-234-5588, mskim@gmail.com
+Apple, Tae1, VP Marketing, 010-234-5588, mskim@gmail.com
+Apple, Tae2, VP Marketing, 010-234-5588, mskim@gmail.com
+Apple, Tae3, VP Marketing, 010-234-5588, mskim@gmail.com
+
+EOF
+
+describe 'table style' do
+  before do
+    @table_style_path = "/Users/mskim/flier/table_style.rb"
+    @tbl      = Table.new(nil, csv_data: csv, table_style_path: @table_style_path, category_level: 1 )
+  end
+  
+  it 'should have cell with stroke_sides' do
+    assert @tbl.graphics.length == 8
+  end
+
+  it 'should have floating category cells' do
+    assert @tbl.floats.length == 2
+  end
+  
+  it 'should have floating category cells with vertically stacked' do
+    assert @tbl.floats[0].y <  @tbl.floats[1].y
+  end
+  
+  it 'should have floating category cells with category text' do
+    assert @tbl.floats[0].y <  @tbl.floats[1].y
+  end
+     
+end
+
+
+__END__
+
 
 describe 'table with csv' do
   before do
