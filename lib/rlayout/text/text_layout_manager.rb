@@ -126,7 +126,7 @@ module RLayout
       @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
       @text_vertical_alignment = options.fetch(:text_vertical_alignment, "center")
       @text_size      = options[:text_size] || 16
-      @text_line_spacing = options[:text_line_spacing] || @text_size
+      @text_line_spacing = options[:text_line_spacing] || @text_size*0.5
       @att_string     = NSTextStorage.alloc.initWithAttributedString(make_att_string_from_option(options))
       @layout_manager = NSLayoutManager.alloc.init
       @att_string.addLayoutManager @layout_manager
@@ -143,25 +143,29 @@ module RLayout
       @overflow_line_count = 0
       width           = @owner_graphic.width
       width           = options[:proposed_width] if options[:proposed_width]
-      proposed_height = @owner_graphic.height
       if options[:proposed_height]
-        proposed_height = options[:proposed_height] 
-      end
-      @text_container.setContainerSize(NSMakeSize(width, proposed_height))
-      range = @layout_manager.glyphRangeForTextContainer @text_container
-      used_rect=@layout_manager.usedRectForTextContainer text_container
-      if used_rect.size.height <= proposed_height
-        # text fits into given room, but do we have enough room for text_line_spacing
-        if used_rect.size.height + @text_line_spacing  <= proposed_height
-          # @owner_graphic.height = used_rect.size.height + @text_line_spacing
-          @owner_graphic.height = used_rect.size.height + @text_line_spacing
-        else
-          @owner_graphic.height = proposed_height
-        end
-        @text_overflow = false
+        @text_container.setContainerSize(NSMakeSize(width, options[:proposed_height]))
       else
-        @owner_graphic.height = used_rect.size.height #+ @text_line_spacing
-        @text_overflow = true
+        @text_container.setContainerSize(NSMakeSize(width, @owner_graphic.height))
+      end
+      range     = @layout_manager.glyphRangeForTextContainer @text_container
+      used_rect = @layout_manager.usedRectForTextContainer text_container
+      if options[:proposed_height]
+        if used_rect.size.height <= options[:proposed_height]
+          # text fits into given room, and we also have enough room for text_line_spacing
+          if used_rect.size.height + @text_line_spacing  <= options[:proposed_height]
+            @owner_graphic.height = used_rect.size.height + @text_line_spacing
+          else
+            @owner_graphic.height = options[:proposed_height]
+          end
+          @text_overflow = false
+        else
+          # text doesn't fit into proposed height, raise text_overflow
+          @owner_graphic.height = used_rect.size.height #+ @text_line_spacing
+          @text_overflow = true
+        end
+      else
+        @text_overflow = true if used_rect.size.height > @owner_graphic.height
       end
     end
 

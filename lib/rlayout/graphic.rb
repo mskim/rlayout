@@ -179,9 +179,17 @@ module RLayout
     def mid_y(rect)
       rect[1] + rect[3]/2
     end
-    
+        
     def max_x(rect)
       rect[0] + rect[2]
+    end
+    
+    def y_max
+      @y + @height
+    end
+    
+    def x_max
+      @x + @width
     end
     
     def max_y(rect)

@@ -107,27 +107,25 @@
 
 
 module RLayout
-  # DEFAULT_TABLE_STYLE = {
-  #   :head_row_atts    => { fill_color: "gray", text_color: 'white', font: "Helvetica", stroke_sides: [0,1,0,1]},
-  #   :body_row_atts    => {font: "smSSMyungjoP-W35", stroke_sides: [0,1,0,1]},
-  #   :body_row_colors  => ["green", "blue"],
-  #   :category_colors  => [["green", "green_10%"],["blue", "blue_10%"],["pink", "pink_10%"]]
-  # }
-  # notice :body_row_atts   => { cycle_color: ["green", "blue"],
-  # cycle_color is a array of colors, this means row has cycling colors  
 
-  # notice :body_cell_atts  => {font: "smSSMyungjoP-W35", stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
-  # stroke_sides is a array of stroke_sides, first one is the left most cell, second one is the cells in the middle, and the last one is the right most cell.
+# if body_row_atts has cycle_colors, it means body row is cycling with ["green", "blue"]  
+# body_row_atts   => { cycle_colors: ["green", "blue"], ... }
 
-  # category_colors
-  # category_colors are array of arrays of category color
-  # first element represents category color, and second element represent items color
-  DEFAULT_TABLE_STYLE = {
+# stroke_sides are a array of stroke_sides, first one is the left most cell, second one is the cells in the middle, and the last one is the right most cell.
+# body_cell_atts  => {font: "smSSMyungjoP-W35", stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
+
+# category_colors
+# category_colors are array of cycling category colors
+# first element represents category color, and second element represent items color
+# :category_colors  => [["CMYK=0.1,0,0,0,1", "CMYK=0.05,0,0,0,1"],["CMYK=0,0.1,0,0,1", "CMYK=0,0.05,0,0,1"],["CMYK=0,0,0.1,0,1", "CMYK=0,0,0.05,0,1"]]
+# shading?, tone_down
+
+DEFAULT_TABLE_STYLE = {
     :head_row_atts   => { row_type: "head_row", fill_color: 'gray', stroke_sides: [1,1,1,1]},
     :head_cell_atts  => { fill_color: "clear", text_color: 'white', font: "Helvetica", stroke_sides: [1,0,1,0]},
     :body_row_atts   => { row_type: "body_row", fill_color: "white", stroke_sides: [0,1,0,1]},
     :body_cell_atts  => { font: "smSSMyungjoP-W35", stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
-    # :body_row_atts   => { row_type: "head_row", cycle_color: ["green", "blue"], stroke_sides: [0,1,0,1]},
+    # :body_row_atts   => { row_type: "head_row", cycle_colors: ["green", "blue"], stroke_sides: [0,1,0,1]},
     # :category_colors  => [["green", "green"],["blue", "blue"],["pink", "pink"]]
 }
   
@@ -136,7 +134,7 @@ module RLayout
     attr_accessor :has_head_row
     attr_accessor :column_width_array, :column_alignment_arrau,:column_v_alignment
     attr_accessor :column_v_alignment
-    attr_accessor :table_data_array, :rows, :body
+    attr_accessor :table_data, :rows, :body
     attr_accessor :table_style, :csv
     attr_accessor :column_count, :next_link, :prev_link
     attr_accessor :body_row_colors
@@ -149,7 +147,7 @@ module RLayout
       @column_width_array = options.fetch(:column_width_array, [1,1,1])
       @column_alignment   = options.fetch(:column_alignment, %w[left left left])
       @column_v_alignment = options.fetch(:column_v_alignment, %w[top top top])
-      @table_data_array               = []
+      @table_data         = []
       if options[:csv_data]
         @csv              = options[:csv_data]
       elsif options[:csv_path]
@@ -176,8 +174,8 @@ module RLayout
       else
         @table_style  = DEFAULT_TABLE_STYLE
       end
-      if @table_style[:body_row_atts][:cycle_color]
-        @body_row_colors    = @table_style[:body_row_atts][:cycle_color] 
+      if @table_style[:body_row_atts][:cycle_colors]
+        @body_row_colors    = @table_style[:body_row_atts][:cycle_colors] 
       else    
         @body_row_colors    = [@table_style[:body_row_atts][:fill_color]]
       end
@@ -185,13 +183,17 @@ module RLayout
       @title              = options.fetch(:title, nil)
       @source             = options.fetch(:source, nil)
       #TODO fix this for quoted ,
-      @table_data_array = @csv.split("\n")
-      @table_data_array = @table_data_array.map{|row| row.split","}
-      @head_row = @table_data_array.shift if has_head_row?
-       
+      @table_data = @csv.split("\n")
+      @table_data = @table_data.map{|row| row.split","}
       create_rows
-      make_cetegory_cells if @category_level > 0
+      @parent_graphic.relayout! if @parent_graphic
+      #TODO I should not call this
+      # check why?? I have to call this
       relayout!
+      make_cetegory_cells if @category_level > 0
+      @floats.each do |float|
+        float.puts_frame
+      end
       if block
         instance_eval(&block)
       end            
@@ -201,12 +203,12 @@ module RLayout
     def create_rows
       if has_head_row?
         row_options               = @table_style[:head_row_atts]
-        row_options[:row_data]    = @table_data_array[0]
+        row_options[:row_data]    = @table_data[0]
         row_options[:cell_atts]   = @table_style[:head_cell_atts]
         TableRow.new(self, row_options)
       end
       body_cycle = @body_row_colors.length
-      @table_data_array.each_with_index do |row_data, i|
+      @table_data.each_with_index do |row_data, i|
         next if i == 0
         row_options               = @table_style[:body_row_atts]
         current_cylcle            = i % body_cycle        
@@ -220,7 +222,35 @@ module RLayout
     end
     
     def make_cetegory_cells
-      
+      # make range of category range
+      @current_category = @table_data[0][0]
+      @category_range   = []
+      @position = 0
+      @table_data.each_with_index do |row_data, i|
+        if row_data[0] != @current_category 
+          new_range = @position..(i - 1)
+          @category_range << new_range
+          @current_category = row_data[0]
+          @position = i 
+        end        
+      end
+      # close the last range
+      if @category_range.last.end < @table_data.length - 1
+        @category_range << (@position..(@table_data.length - 1))
+      end  
+      @category_range.each_with_index do |range, i|
+        next if has_head_row? && i == 0
+        options = {}
+        options[:x]     = @graphics[range.begin].x
+        options[:y]     = @graphics[range.begin].y
+        options[:width] = @graphics[range.begin].graphics.first.width
+        options[:height]= @graphics[range.end].y_max - @graphics[range.begin].y
+        options[:fill_color] = "green"
+        options[:is_float] = true
+        puts "options:#{options}"
+        puts "text:#{@table_data[range.begin][0]}"
+        text(@table_data[range.begin][0], options)
+      end
     end
     
     def has_head_row?
