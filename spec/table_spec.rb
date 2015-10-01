@@ -1,5 +1,20 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+describe 'table column_width_array' do
+  before do
+    @csv_path = "/Users/mskim/flier/category_demo.csv"
+    @table_style_path = "/Users/mskim/flier/table_style.rb"
+    @csv_data = File.open(@csv_path, 'r'){|f| f.read}
+    @tbl      = Table.new(nil, width: 595.28, height: 841.89, category_level: 0, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
+  end
+  
+  it 'should create table_width_table' do
+    assert @tbl.column_width_array.class == Array
+  end
+  
+end
+
+__END__
 describe 'table style' do
   before do
     @csv_path = "/Users/mskim/flier/category_demo.csv"
@@ -21,7 +36,6 @@ describe 'table style' do
       
 end
 
-__END__
 csv = <<EOF
 
 company, name, title, phone, email

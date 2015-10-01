@@ -36,6 +36,13 @@ TODO List
 	- title_box, grid_box
 	- convert markdown to story
 	- convert ascidoctor to story
+
+2015 10 1
+	- table_column_width_array
+	- table_column_width_array_average
+	- table_column_width_array_longest
+	- auto_column_width = off, average, 
+	- table_column_align_array 
 	
 2015 9 30
 	- fix: fill_color should not be Text background color  

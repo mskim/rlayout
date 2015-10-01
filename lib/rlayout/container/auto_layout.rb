@@ -38,13 +38,13 @@ module RLayout
         if (vertical ? graphic.expand_height? : graphic.expand_width?)
           expandable_graphics += 1
           have_expanding_child = true
-          layout_length_sum +=graphic.layout_length
+          layout_length_sum +=graphic.layout_length          
         else
           expandable_length -= vertical ? graphic.height : graphic.width
           non_expanding_length_sum += vertical ? graphic.height : graphic.width
         end
-          vertical ? graphic.top_margin + graphic.bottom_margin
-                    : graphic.left_margin + graphic.right_margin
+        vertical ? graphic.top_margin + graphic.bottom_margin
+                  : graphic.left_margin + graphic.right_margin
       end
       spacing_number   = @graphics.length - 1
       unit_size        = 0
@@ -54,7 +54,7 @@ module RLayout
         if layout_length_sum ==0
           unit_size    = expandable_length
         else
-          unit_size    = expandable_length/layout_length_sum
+          unit_size    = expandable_length/layout_length_sum.to_f
         end
       else
         unit_size
@@ -67,12 +67,12 @@ module RLayout
        when "top","left" 
        # nothing to do
        when "center", "middle"
-         current_position = room/2
+         current_position = room/2.0
        when "bottom", "right"
          current_position = room
        when "justified"
          # we need different @layout_space for justified case
-         @layout_space = room/spacing_number if spacing_number !=0
+         @layout_space = room/spacing_number.to_f if spacing_number !=0
        end
       end
       ###### testing
@@ -91,7 +91,7 @@ module RLayout
           if vertical
             graphic_frame[3]  = graphic_dimension
           else
-            graphic_frame[2]   = graphic_dimension
+            graphic_frame[2]  = graphic_dimension
           end
         end
         graphic_dimension = vertical ? graphic_frame[3] : graphic_frame[2]
@@ -116,8 +116,6 @@ module RLayout
             current_position += graphic.width + @layout_space
           end           
         end
-       
-       
         # perpedicular alignment
         if (vertical ? graphic.expand_width? : graphic.expand_height?)
           # for vertical mode, align graphic in left, center, right
@@ -129,35 +127,13 @@ module RLayout
             graphic_frame[3]  = column_size[1] - (@top_margin + @bottom_margin + @top_inset + @bottom_inset) #- graphic.top_margin - graphic.bottom_margin
           end  
         end
-        
-        
-        #perpedicular alignment for non perpedicular expanding child 
-        # if !graphic.layout_align.nil?  
-        #   case graphic.layout_align
-        #   when "left", "top" #{}"bottom"
-        #     # Nothing to do
-        #   when "center", "middle"
-        #     if vertical
-        #       graphic_frame[0] = (column_size[0] / 2.0) - (graphic_frame[0] / 2.0)
-        #     else
-        #       graphic_frame[1] = (column_size[1] / 2.0) - (graphic_frame[1] / 2.0)
-        #     end
-        #   when "right", "bottom"
-        #     if vertical
-        #       graphic_frame[0] = column_size[0] - graphic_frame[0] - @bottom_margin
-        #     else
-        #       graphic_frame[1] = column_size[1] - graphic_frame[1] - @top_margin
-        #     end
-        #   end
-        # end
         graphic.set_frame(graphic_frame)
         # recursive layout_member for child graphics
         if graphic.layout_expand.nil?
         else
          graphic.relayout! if graphic.kind_of?(Container)
         end
-      end 
-      
+      end       
       @graphics.each do |graphic|
         graphic.update_shape
         graphic.update_grid if graphic.respond_to?(:update_grid)

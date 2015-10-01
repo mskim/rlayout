@@ -132,21 +132,19 @@ DEFAULT_TABLE_STYLE = {
   class Table < Container
     attr_accessor :title, :source, :category_level
     attr_accessor :has_head_row
-    attr_accessor :column_width_array, :column_alignment_arrau,:column_v_alignment
+    attr_accessor :column_width_array, :column_alignment, :column_v_alignment
     attr_accessor :column_v_alignment
     attr_accessor :table_data, :rows, :body
     attr_accessor :table_style, :csv
     attr_accessor :column_count, :next_link, :prev_link
     attr_accessor :body_row_colors
     attr_accessor :column_line_color
-    
     def initialize(parent_graphic, options={}, &block)
       super
       @column_count       = options.fetch(:column_count, 1)
       @category_level     = options.fetch(:category_level, 0)
-      @column_width_array = options.fetch(:column_width_array, [1,1,1])
-      @column_alignment   = options.fetch(:column_alignment, %w[left left left])
-      @column_v_alignment = options.fetch(:column_v_alignment, %w[top top top])
+      @column_width_array = options.fetch(:column_width_array, nil)
+      @column_alignment   = options.fetch(:column_alignment, nil)
       @table_data         = []
       if options[:csv_data]
         @csv              = options[:csv_data]
@@ -155,10 +153,9 @@ DEFAULT_TABLE_STYLE = {
       else
         puts "No csv data:#{@data}"
       end
-      
       if options[:table_style_path]        
         @table_style  = eval(File.open(options[:table_style_path], 'r'){|f| f.read})
-        #TOFO
+        #TODO
         # @table_style = DEFAULT_TABLE_STYLE.merge(@table_style)
         # puts "@table_style:#{@table_style}"
         unless @table_style.class == Hash
@@ -191,9 +188,6 @@ DEFAULT_TABLE_STYLE = {
       # check why?? I have to call this
       relayout!
       make_cetegory_cells if @category_level > 0
-      @floats.each do |float|
-        float.puts_frame
-      end
       if block
         instance_eval(&block)
       end            
@@ -201,10 +195,14 @@ DEFAULT_TABLE_STYLE = {
     end
         
     def create_rows
+      unless @column_width_array
+        calculate_column_width_array
+      end
       if has_head_row?
         row_options               = @table_style[:head_row_atts]
         row_options[:row_data]    = @table_data[0]
         row_options[:cell_atts]   = @table_style[:head_cell_atts]
+        row_options[:column_width]= @column_width_array
         TableRow.new(self, row_options)
       end
       body_cycle = @body_row_colors.length
@@ -215,10 +213,22 @@ DEFAULT_TABLE_STYLE = {
         row_options[:fill_color]  =  @body_row_colors[current_cylcle]
         row_options[:row_data]    = row_data
         row_options[:cell_atts]   = @table_style[:body_cell_atts]
-        # puts "row_options;#{row_options}"
-        # row_options[:font]        =  body_styles[current_cylcle][:font]
+        row_options[:column_width]= @column_width_array
         TableRow.new(self, row_options)
       end      
+    end
+    
+    # calculate width of longest cells for each column, 
+    # so that we can set good looking layout
+    # We might need average width?? option
+    def calculate_column_width_array(type="longest")
+      @column_width_array = []
+      @column_width_array = @table_data[0].map{|cell| cell.length}
+      @table_data.each do |row|
+        row.each_with_index do |cell, i|
+          @column_width_array[i] = cell.length if cell.length > @column_width_array[i]
+        end
+      end
     end
     
     def make_cetegory_cells
@@ -247,8 +257,6 @@ DEFAULT_TABLE_STYLE = {
         options[:height]= @graphics[range.end].y_max - @graphics[range.begin].y
         options[:fill_color] = "green"
         options[:is_float] = true
-        puts "options:#{options}"
-        puts "text:#{@table_data[range.begin][0]}"
         text(@table_data[range.begin][0], options)
       end
     end
@@ -275,19 +283,19 @@ DEFAULT_TABLE_STYLE = {
   
   class TableRow < Container
     attr_accessor :row_type, :fit_type, :font
-    attr_accessor :column_sytle_array, :column_alignment,:column_v_alignment
+    attr_accessor :column_sytle_array, :column_alignment
     def initialize(parent_graphic, options={}, &block)
       super
       cell_atts = options[:cell_atts]
       @row_data = options[:row_data]
       @row_type             = options.fetch(:row_type, "body_row")
       @layout_direction     = 'horizontal'
-      # @column_width_array   = parent_graphic.column_width_array
-      # @column_alignment     = parent_graphic.column_alignment
-      # @column_v_alignment   = parent_graphic.column_v_alignment
       @row_data.each_with_index do |cell_text, i|
-        cell_atts[:text_string] = cell_text
-        cell_sides_type = cell_atts[:stroke_sides].length
+        cell_atts[:text_string]   = cell_text
+        cell_atts[:text_size]     = 9.0
+        
+        cell_atts[:layout_length] = options[:column_width][i] if options[:column_width]
+        cell_sides_type           = cell_atts[:stroke_sides].length
         case cell_sides_type
         when 4
           # do noting. This is single array [0,0,0,0]

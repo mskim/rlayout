@@ -1,61 +1,25 @@
-# I need a way to find out what the hight of line is,
-# given font with size and line spaceing for paragraph
-#
-# counting lines
-# NSLayoutManager *layoutManager = [textView layoutManager];
-# unsigned numberOfLines, index, numberOfGlyphs =
-#         [layoutManager numberOfGlyphs];
-# NSRange lineRange;
-# for (numberOfLines = 0, index = 0; index < numberOfGlyphs; numberOfLines++){
-#     (void) [layoutManager lineFragmentRectForGlyphAtIndex:index
-#             effectiveRange:&lineRange];
-#     index = NSMaxRange(lineRange);
-# }
 
-# The key methods here are -
-# lineFragmentRectForGlyphAtIndex:effectiveRange:, -
-# lineFragmentUsedRectForGlyphAtIndex:, -locationOfGlyphAtIndex:, and
-# NSTypesetter's -baselineOffsetInLayoutManager:glyphIndex:.  It's a
-# little difficult for me to describe all of the relationships between
-# these measurements without a diagram, but you should be able to try
-# them out and see how they differ in all of the various cases you're
-# interested in--paragraph spacing, line spacing, line height multiple,
-# etc.  The line fragment rect is the rect within which the line was
-# laid out.  The used rect is the rect within that actually taken up by
-# the text, including some forms of padding.  The baseline offset is the
-# distance from the bottom of the line fragment rect to the baseline for
-# a particular glyph.
-
-# Circle View
-# lineFragmentRect = @layoutManager.lineFragmentRectForGlyphAtIndex i, effectiveRange:nil
-# layoutLocation = @layoutManager.locationForGlyphAtIndex(i)
-
-
-# TextLayoutManager is for hanldling Text in Cocoa(Mac OS X)
-
-# There two of ways of saving Text data.
-# 1. When entire Text has uniform attrbutes, use atts hash.
-# 2. When Text has mixed attrbutes, use atts_array
+# TextLayoutManager 
+# Text layout for Cocoa(Mac OS X) mode
 
 # atts_array
 # atts_array is Array of attribute Hash.
 # Each run is represented as hash of attributes and string
-# First hash has all the attribures and the follwing hashes have changing attributes from the previous one.
-# for example:
-# [{font: 'Helvetical, size:16, style:plaine string:"this is "}, {style:italic string:"a string"}]
 
 # def markup2atts_array
 #  # convert markedup string to atts_array
 #  "this is _itatic_ string" to [{string: "this is ", style: PLAIN}, {string: 'itatic', style: ITALIC}, {sting:' string', style:PLAIN}]
 # end
+
 # def atts_array2markup:
 #  # convert atts_array to markedup string, opposite of markup2atts_array
 # end
 
+
 # Apple implemetation of  NSAttributtedString,
 # Apple Text implemetation keeps whole string in one chunk, and each attribute has range.
-# But, It makes it difficult to edit content manually, since you have to update the ranges of every attribute runs when text string is chamged,
-# it forces you to use additional tool to reconstuct the string, not ideal for editing with a text editor.
+# But, It makes it difficult to edit content manually, since editing party has to update ranges of every attribute runs.
+# It forces you to use additional tool to reconstuct the string, not ideal for editing with a text editor.
 # I want to keep attributes and string together in a single hash(atts), making it much easier to edit string by hand.
 
 # Using CoreText (I went back to using NSTextSystem. I am getting strange errors, (context invalid error), that I can't figure out why!! Some blogs says it is bug, I don't want to pull my hair out anymore.)
@@ -84,12 +48,16 @@
 #   7. paragraph based editing support, where text needs to be prosented per paragraph base, and so on...
 #   8. Squeeze text to fit
 
+# There two of ways of saving Text data.
+# 1. When entire Text has uniform attrbutes, use atts hash.
+# 2. When Text has mixed attrbutes, use atts_array
+
 # Text Fit Mode
 # Three are two text fitting mode
 # one is fiiting text inside of the box, changing font size to fit
 # and the other way is to layout text by keeping font size, expanding container size or overflow
 # for Text class, default fit mode is       TEXT_FIT_TO_BOX = 0  (chnage font size)
-# for Pargaraph class, default fit mode is  TEXT_FIT_TO_FONT =1  (chnage container size)
+# for Pargaraph class, default fit mode is  TEXT_FIT_TO_FONT = 1  (chnage container size)
 
 # dropcap_lines = 2-3
 # dropcap_char  = 1
@@ -116,7 +84,8 @@ module RLayout
   class TextLayoutManager
     attr_accessor :owner_graphic
     attr_accessor :text_direction, :text_markup
-    attr_accessor :line_count, :text_size, :linked, :text_line_spacing, :text_alignment, :text_vertical_alignment
+    attr_accessor :line_count, :text_size, :linked, :text_line_spacing
+    attr_accessor :text_alignment, :text_vertical_alignment, :text_vertical_offset
     attr_accessor :drop_lines, :drop_char, :drop_char_width, :drop_char_height
     attr_accessor :text_fit_type, :text_overflow, :overflow_line_count
     attr_reader   :att_string, :layout_manager, :text_container
@@ -148,7 +117,8 @@ module RLayout
       else
         @text_container.setContainerSize(NSMakeSize(width, @owner_graphic.height))
       end
-      range     = @layout_manager.glyphRangeForTextContainer @text_container
+      # range     = @layout_manager.glyphRangeForTextContainer @text_container
+      @layout_manager.glyphRangeForTextContainer @text_container
       used_rect = @layout_manager.usedRectForTextContainer text_container
       if options[:proposed_height]
         if used_rect.size.height <= options[:proposed_height]
@@ -166,6 +136,21 @@ module RLayout
         end
       else
         @text_overflow = true if used_rect.size.height > @owner_graphic.height
+      end
+      # vertically align text
+      unless @text_overflow
+        top_space     = @owner_graphic.top_margin + @owner_graphic.top_inset
+        bottom_space  = @owner_graphic.bottom_margin + @owner_graphic.bottom_inset
+        graphic_space = @owner_graphic.height - top_space - bottom_space
+        @text_vertical_offset = top_space
+        case @text_vertical_alignment
+        when 'center'
+          @text_vertical_offset = (graphic_space - used_rect.size.height)/2
+        when 'bottom'
+          @text_vertical_offset = graphic_space - used_rect.size.height
+        else
+          @text_vertical_offset = top_space
+        end
       end
     end
 
@@ -404,3 +389,36 @@ module RLayout
   end
 
 end
+
+# I need a way to find out what the hight of line is,
+# given font with size and line spaceing for paragraph
+#
+# counting lines
+# NSLayoutManager *layoutManager = [textView layoutManager];
+# unsigned numberOfLines, index, numberOfGlyphs =
+#         [layoutManager numberOfGlyphs];
+# NSRange lineRange;
+# for (numberOfLines = 0, index = 0; index < numberOfGlyphs; numberOfLines++){
+#     (void) [layoutManager lineFragmentRectForGlyphAtIndex:index
+#             effectiveRange:&lineRange];
+#     index = NSMaxRange(lineRange);
+# }
+
+# The key methods here are -
+# lineFragmentRectForGlyphAtIndex:effectiveRange:, -
+# lineFragmentUsedRectForGlyphAtIndex:, -locationOfGlyphAtIndex:, and
+# NSTypesetter's -baselineOffsetInLayoutManager:glyphIndex:.  It's a
+# little difficult for me to describe all of the relationships between
+# these measurements without a diagram, but you should be able to try
+# them out and see how they differ in all of the various cases you're
+# interested in--paragraph spacing, line spacing, line height multiple,
+# etc.  The line fragment rect is the rect within which the line was
+# laid out.  The used rect is the rect within that actually taken up by
+# the text, including some forms of padding.  The baseline offset is the
+# distance from the bottom of the line fragment rect to the baseline for
+# a particular glyph.
+
+# Circle View
+# lineFragmentRect = @layoutManager.lineFragmentRectForGlyphAtIndex i, effectiveRange:nil
+# layoutLocation = @layoutManager.locationForGlyphAtIndex(i)
+
