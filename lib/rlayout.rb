@@ -49,12 +49,12 @@ else
   
   require File.dirname(__FILE__) + '/rlayout/container/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container/place_item'
-  require File.dirname(__FILE__) + '/rlayout/container/quiz_item'
 
   require File.dirname(__FILE__) + '/rlayout/title_box'
   require File.dirname(__FILE__) + '/rlayout/text_column'
   require File.dirname(__FILE__) + '/rlayout/text_box'
   require File.dirname(__FILE__) + '/rlayout/table'
+  require File.dirname(__FILE__) + '/rlayout/quiz_item'
 
   require File.dirname(__FILE__) + '/rlayout/page'
   require File.dirname(__FILE__) + '/rlayout/page/page_fixtures'

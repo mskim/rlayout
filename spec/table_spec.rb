@@ -1,5 +1,18 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+describe 'table with category color' do
+  before do
+    @csv_path = "/Users/mskim/flier/category_demo.csv"
+    @table_style_path = "/Users/mskim/flier/table_style.rb"
+    @csv_data = File.open(@csv_path, 'r'){|f| f.read}
+    @tbl      = Table.new(nil, width: 595.28, height: 841.89, category_level: 1, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
+  end
+  
+  it 'should create category table cells' do
+    assert @tbl.floats.length > 0
+  end
+end
+
 describe 'table column_width_array' do
   before do
     @csv_path = "/Users/mskim/flier/category_demo.csv"

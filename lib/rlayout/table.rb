@@ -108,10 +108,10 @@
 
 module RLayout
 
-# if body_row_atts has cycle_colors, it means body row is cycling with ["green", "blue"]  
+# if body_row_atts has cycle_colors, it means body row is cycling with ["green", "blue", "orange"] something like it.  
 # body_row_atts   => { cycle_colors: ["green", "blue"], ... }
 
-# stroke_sides are a array of stroke_sides, first one is the left most cell, second one is the cells in the middle, and the last one is the right most cell.
+# stroke_sides are a array of stroke_sides, first one is for left most cell, second one is for cells in the middle, and the last one is for right most cell.
 # body_cell_atts  => {font: "smSSMyungjoP-W35", stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
 
 # category_colors
@@ -119,6 +119,11 @@ module RLayout
 # first element represents category color, and second element represent items color
 # :category_colors  => [["CMYK=0.1,0,0,0,1", "CMYK=0.05,0,0,0,1"],["CMYK=0,0.1,0,0,1", "CMYK=0,0.05,0,0,1"],["CMYK=0,0,0.1,0,1", "CMYK=0,0,0.05,0,1"]]
 # shading?, tone_down
+
+# column_width_array
+# when it is passed as options use it
+# otherwise, calculate_column_width_array is called to create one.
+# it scans all cells and get the longest text for each column, including head row.
 
 DEFAULT_TABLE_STYLE = {
     :head_row_atts   => { row_type: "head_row", fill_color: 'gray', stroke_sides: [1,1,1,1]},
@@ -171,10 +176,12 @@ DEFAULT_TABLE_STYLE = {
       else
         @table_style  = DEFAULT_TABLE_STYLE
       end
-      if @table_style[:body_row_atts][:cycle_colors]
-        @body_row_colors    = @table_style[:body_row_atts][:cycle_colors] 
+      if @category_level > 0 && @table_style[:category_colors]
+        # do nothing yet if we are in category type 
+      elsif @table_style[:body_row_atts][:cycle_colors]
+        @body_row_colors  = @table_style[:body_row_atts][:cycle_colors] 
       else    
-        @body_row_colors    = [@table_style[:body_row_atts][:fill_color]]
+        @body_row_colors  = [@table_style[:body_row_atts][:fill_color]]
       end
       @has_head_row       = options.fetch(:has_head_row, true)
       @title              = options.fetch(:title, nil)
@@ -205,12 +212,12 @@ DEFAULT_TABLE_STYLE = {
         row_options[:column_width]= @column_width_array
         TableRow.new(self, row_options)
       end
-      body_cycle = @body_row_colors.length
+      body_cycle = @body_row_colors.length if @body_row_colors
       @table_data.each_with_index do |row_data, i|
         next if i == 0
         row_options               = @table_style[:body_row_atts]
-        current_cylcle            = i % body_cycle        
-        row_options[:fill_color]  =  @body_row_colors[current_cylcle]
+        current_cylcle            = i % body_cycle if @body_row_colors       
+        row_options[:fill_color]  =  @body_row_colors[current_cylcle] if @body_row_colors
         row_options[:row_data]    = row_data
         row_options[:cell_atts]   = @table_style[:body_cell_atts]
         row_options[:column_width]= @column_width_array
@@ -248,16 +255,28 @@ DEFAULT_TABLE_STYLE = {
       if @category_range.last.end < @table_data.length - 1
         @category_range << (@position..(@table_data.length - 1))
       end  
+      if  @table_style[:category_colors]
+        @category_colors = @table_style[:category_colors]
+      else
+        @category_colors = DEFAULT_TABLE_STYLE[:category_colors]
+      end
+      category_cycle = @category_colors.length
       @category_range.each_with_index do |range, i|
         next if has_head_row? && i == 0
-        options = {}
+        options         = {}
         options[:x]     = @graphics[range.begin].x
         options[:y]     = @graphics[range.begin].y
         options[:width] = @graphics[range.begin].graphics.first.width
         options[:height]= @graphics[range.end].y_max - @graphics[range.begin].y
-        options[:fill_color] = "green"
+        current_cylcle  = i % category_cycle        
+        options[:fill_color]  =  @category_colors[current_cylcle][0]
         options[:is_float] = true
         text(@table_data[range.begin][0], options)
+        # make row body rows colors with paired color
+        @graphics[range].each do |body_row|
+          body_row.fill.color = @category_colors[current_cylcle][1]
+        end
+        
       end
     end
     
@@ -286,47 +305,45 @@ DEFAULT_TABLE_STYLE = {
     attr_accessor :column_sytle_array, :column_alignment
     def initialize(parent_graphic, options={}, &block)
       super
-      cell_atts = options[:cell_atts]
-      @row_data = options[:row_data]
-      @row_type             = options.fetch(:row_type, "body_row")
-      @layout_direction     = 'horizontal'
+      cell_atts           = options[:cell_atts] 
+      @row_data           = options[:row_data]
+      @row_type           = options.fetch(:row_type, "body_row")
+      @layout_direction   = 'horizontal'
       @row_data.each_with_index do |cell_text, i|
         cell_atts[:text_string]   = cell_text
         cell_atts[:text_size]     = 9.0
-        
         cell_atts[:layout_length] = options[:column_width][i] if options[:column_width]
-        cell_sides_type           = cell_atts[:stroke_sides].length
-        case cell_sides_type
-        when 4
-          # do noting. This is single array [0,0,0,0]
-        when 3
-          # binding.pry
-          # this is when left most, middle, right most are different
-          # [[0,0,1,0], [1,0,1,0], [1,0,0,0]]
-          if i == 0
+        if cell_atts[:stroke_sides]
+          cell_sides_type           = cell_atts[:stroke_sides].length 
+          case cell_sides_type
+          when 4
+            # do noting. This is single array [0,0,0,0]
+          when 3
+            # this is when left most, middle, right most are different
+            # [[0,0,1,0], [1,0,1,0], [1,0,0,0]]
+            if i == 0
+              cell_atts[:stroke_sides] = cell_atts[:stroke_sides][0]
+            elsif i == (@row_data.length - 1)
+              cell_atts[:stroke_sides] = cell_atts[:stroke_sides][2]
+            else
+              cell_atts[:stroke_sides] = cell_atts[:stroke_sides][1]
+            end
+          when 2
+            # this is right of left most column
+            # [[0,0,1,0], [0,0,0,0]]
+            if i == 0
+              cell_atts[:stroke_sides] = cell_atts[:stroke_sides][0]
+            else
+              cell_atts[:stroke_sides] = cell_atts[:stroke_sides][1]
+            end
+          when 1
+            # this is nested case, just flatten it
+            # [[0,0,1,0]]
             cell_atts[:stroke_sides] = cell_atts[:stroke_sides][0]
-          elsif i == (@row_data.length - 1)
-            cell_atts[:stroke_sides] = cell_atts[:stroke_sides][2]
-          else
-            cell_atts[:stroke_sides] = cell_atts[:stroke_sides][1]
           end
-        when 2
-          # this is right of left most column
-          # [[0,0,1,0], [o,0,0,0]]
-          
-          if i == 0
-            cell_atts[:stroke_sides] = cell_atts[:stroke_sides][0]
-          else
-            cell_atts[:stroke_sides] = cell_atts[:stroke_sides][1]
-          end
-        when 1
-          # this is nested case, just flatten it
-          # [[0,0,1,0]]
-          cell_atts[:stroke_sides] = cell_atts[:stroke_sides][0]
         end
         td(cell_atts)
       end
-            
       self
     end
         

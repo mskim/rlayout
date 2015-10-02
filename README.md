@@ -36,7 +36,15 @@ TODO List
 	- title_box, grid_box
 	- convert markdown to story
 	- convert ascidoctor to story
-
+	- parse Hangul or export get retrieve:
+	
+2015 10 2
+	- categorized Table with category color
+	- CategoryRow: group of rows with Text
+	- ImageCategoryRow Image as category item. 
+	- ImageRow: Row with image cells
+	- CustomHead : customizable text
+	
 2015 10 1
 	- table_column_width_array
 	- table_column_width_array_average
@@ -45,7 +53,7 @@ TODO List
 	- table_column_align_array 
 	
 2015 9 30
-	- fix: fill_color should not be Text background color  
+	- fix: fill_color should not be Text background color 
 	- fix: make layout_text_lines auto adjusting height optional 
 	
 2015 9 28
@@ -573,15 +581,19 @@ TODO List
  1. toc.rb
  1. DRb server
  1. book_config.rb
+
 2014 10 10
  1. get rid of styles category, use @current_style
  1. text_bar.rb
  1. footer page number font is different from footer title text
+
 2014 10 9
  1. fixed Paragraph clipping bug, by adding text_line_spacing to the height.
  1. head1, head2 height should be multiples of body height, and vertically centered
+
 2014 10 8
  1. alignment justify
+
 2014 10 7
  1. chapter heading only header
  1. book title and page number footer on left side

@@ -95,7 +95,7 @@ module RLayout
       @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
       @text_vertical_alignment = options.fetch(:text_vertical_alignment, "center")
       @text_size      = options[:text_size] || 16
-      @text_line_spacing = options[:text_line_spacing] || @text_size*0.5
+      @text_line_spacing = options[:text_line_spacing] || 0 #@text_size*0.5
       @att_string     = NSTextStorage.alloc.initWithAttributedString(make_att_string_from_option(options))
       @layout_manager = NSLayoutManager.alloc.init
       @att_string.addLayoutManager @layout_manager
@@ -249,7 +249,7 @@ module RLayout
       @font                          = options.fetch(:font, "Times")
       @text_size                     = options.fetch(:text_size, 16)
       @text_color                    = options.fetch(:text_color, "black")
-      @text_line_spacing             = options.fetch(:text_line_spacing, @text_size)
+      @text_line_spacing             = options.fetch(:text_line_spacing, 0)
       @text_fit_type                 = options.fetch(:text_fit_type, 0)
       @text_alignment                = options.fetch(:text_alignment, "center")
       @text_tracking                 = options.fetch(:text_tracking, 0)  if options[:text_tracking ]
