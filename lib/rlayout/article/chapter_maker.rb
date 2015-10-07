@@ -186,11 +186,11 @@ module RLayout
     # for manual image adjusting
     def generate_layout
       @page_content = ""
-      layout_text = <<-EOF
+      layout_text = <<-EOF.gsub(/^\s*/, "")
       RLayout::Document.new do
         #{@page_content}
       EOF
-      page_text = <<-EOF
+      page_text = <<-EOF.gsub(/^\s*/, "")
         #page: #{@page_number}
         page do
           main_text do

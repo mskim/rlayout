@@ -49,7 +49,7 @@ module RLayout
       spacing_number   = @graphics.length - 1
       unit_size        = 0
       @layout_space    = 0 if @layout_space.nil?
-      if spacing_number>0
+      if spacing_number > 0
         expandable_length -= spacing_number*@layout_space if @layout_space
         if layout_length_sum ==0
           unit_size    = expandable_length
@@ -145,5 +145,16 @@ module RLayout
       @image_record.apply_fit_type if @image_record
     end
   end  
-
+  
+  # layout_content! should be called to layout out content
+  # after graphics positiona are settled from relayout!
+  # text_box and table should respond and layout content
+  def layout_content!
+    return unless @graphics
+    return if @graphics.length <= 0
+    
+    @graphics.each do |graphic|
+      graphic.layout_content!
+    end
+  end
 end

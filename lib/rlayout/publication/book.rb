@@ -119,12 +119,12 @@ module RLayout
       txt_content = File.open(txt_path, 'r'){|f| f.read}
       title = File.basename(txt_path, ".txt")
       markdown_path = txt_path.gsub(".txt", ".markdown")
-      yaml_header = <<EOF
----
-title: #{title}
----
+      yaml_header = <<-EOF.gsub(/^\s*/, "")
+      ---
+      title: #{title}
+      ---
 
-EOF
+      EOF
       with_yaml_header = yaml_header + "\n" + txt_content
       File.open(markdown_path, "w"){|f| f.write with_yaml_header}
       

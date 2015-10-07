@@ -1,8 +1,8 @@
 # encoding: utf-8
 
 
-#SECTION_RAKE_FILE is a single quoted heredoc to escape #{}
-SECTION_RAKE_FILE = <<-'EOF'
+  #SECTION_RAKE_FILE is a single quoted heredoc to escape #{}
+  SECTION_RAKE_FILE = <<-'EOF'.gsub(/^\s*/, "")
   task :default => 'section.pdf'
   source_files = FileList["**/*.md", "**/*.markdown"]
 

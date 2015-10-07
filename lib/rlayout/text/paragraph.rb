@@ -254,11 +254,11 @@ MININUM_LINES_FOR_SPLIT = 2
     end
   
     def to_html
-<<EOF
-  <div class=#{@markup} id=#{@order}>
-    #{@string}
-  </div>
-EOF
+    <<-EOF.gsub(/^\s*/, "")
+      <div class=#{@markup} id=#{@order}>
+        #{@string}
+      </div>
+    EOF
     end
   end
 

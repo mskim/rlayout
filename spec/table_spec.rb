@@ -1,5 +1,37 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+describe 'create page with table' do
+  before do
+    @page = RLayout::Page.new(nil) do
+      text("Table Sample", fill_color: "yellow", text_size: 16)
+      col_width = [2,1,1,1,1.5,1.5,3]
+      t1 = table(column_width_array: col_width, csv_path: "/Users/mskim/flier/category_demo.csv", category_level: 1, layout_length: 7, table_style_path: "/Users/mskim/flier/table_style.rb")
+      t2 = table(column_width_array: col_width, csv_path: "/Users/mskim/flier/category_demo.csv", category_level: 1, layout_length: 7, table_style_path: "/Users/mskim/flier/table_style.rb")
+      # table(csv_path:  "/Users/mskim/flier/demo.csv", layout_length: 5, table_style_path: "/Users/mskim/flier/table_style.rb")
+      # table(layout_expand: [:width], column_width_array: col_width, csv_path:  "/Users/mskim/flier/category_demo.csv", category_level: 1, layout_length: 7, table_style_path: "/Users/mskim/flier/table_style.rb")
+      relayout!
+      t1.layout_content
+      t2.layout_content
+    end
+  end
+  
+  it 'should create page' do
+    assert @page.class == Page
+    puts "@page.width:#{@page.width}"
+    puts "@page.height:#{@page.height}"
+  end
+  
+  it 'should create table' do
+    assert @page.graphics.first.class == Text
+    puts "@page.graphics[0].class:#{@page.graphics[0].class}"
+    puts "@page.graphics[1].height:#{@page.graphics[1].height}"
+    puts "@page.graphics[2].height:#{@page.graphics[2].height}"
+    assert @page.graphics[1].class == Table
+  end
+end
+
+__END__
+
 describe 'table with category color' do
   before do
     @csv_path = "/Users/mskim/flier/category_demo.csv"

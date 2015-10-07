@@ -20,6 +20,11 @@
 # Table body_rows are similar to Paragraph. They can flow into TableBox columns.
 # Table can also have multiple columns.
 
+# layout is done in two steps for table and text_box.
+# First phase is setting graphics position relativev to others.
+# After the position is set, contents can be poured.
+# "layout_content" is the second phase.
+
 # Complex tables should use RLayout::Form, not Table.
 
 # Table can have category columns.
@@ -48,7 +53,6 @@
 #        , body2_2, body2_3, body2_4, body2_5
 #        , body3_2, body3_3, body3_4, body1_5
 #        , body4_2, body4_3, body4_4, body4_5
-
 
 # Table creating by DSL
 # @tbl = Table.new(nil) do
@@ -105,6 +109,12 @@
 #   body_cycling: {bgcolor:["black", "green"]}
 # }
 
+# It is tricky to layout multiple tables in a single page.
+# Tables first need to be placed with right frames in parent_graphics, before contents can be layed out.
+# ???
+# I should devide Table init into two parts, first part init getting getting frame
+# Second part actually layout the data after proper size is set.
+# set_content(options={}) should be used for the later call.
 
 module RLayout
 
@@ -123,15 +133,15 @@ module RLayout
 # column_width_array
 # when it is passed as options use it
 # otherwise, calculate_column_width_array is called to create one.
-# it scans all cells and get the longest text for each column, including head row.
+# calculate_column_width_array scans all cells and get the longest text for each column, including head row.
 
 DEFAULT_TABLE_STYLE = {
     :head_row_atts   => { row_type: "head_row", fill_color: 'gray', stroke_sides: [1,1,1,1]},
     :head_cell_atts  => { fill_color: "clear", text_color: 'white', font: "Helvetica", stroke_sides: [1,0,1,0]},
     :body_row_atts   => { row_type: "body_row", fill_color: "white", stroke_sides: [0,1,0,1]},
-    :body_cell_atts  => { font: "smSSMyungjoP-W35", stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
-    # :body_row_atts   => { row_type: "head_row", cycle_colors: ["green", "blue"], stroke_sides: [0,1,0,1]},
-    # :category_colors  => [["green", "green"],["blue", "blue"],["pink", "pink"]]
+    :body_cell_atts  => { font: "smSSMyungjoP-W35", text_size: 9.0, stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
+    :category_atts   => { font: "smSSMyungjoP-W35", text_size: 9.0, stroke_sides: [1,1,1,1]},
+    :category_colors => [["CMYK=0.1,0,0,0,1", "CMYK=0.05,0,0,0,1"],["CMYK=0,0.1,0,0,1", "CMYK=0,0.05,0,0,1"],["CMYK=0,0,0.1,0,1", "CMYK=0,0,0.05,0,1"]]
 }
   
   class Table < Container
@@ -160,9 +170,9 @@ DEFAULT_TABLE_STYLE = {
       end
       if options[:table_style_path]        
         @table_style  = eval(File.open(options[:table_style_path], 'r'){|f| f.read})
-        #TODO
-        # @table_style = DEFAULT_TABLE_STYLE.merge(@table_style)
-        # puts "@table_style:#{@table_style}"
+        # merge is with DEFAULT_TABLE_STYLE
+        # this prevents from missing keys in table_style_path hash 
+        @table_style = DEFAULT_TABLE_STYLE.merge(@table_style)
         unless @table_style.class == Hash
           puts "invalid table style !!!"
           @table_style  = DEFAULT_TABLE_STYLE
@@ -189,18 +199,24 @@ DEFAULT_TABLE_STYLE = {
       #TODO fix this for quoted ,
       @table_data = @csv.split("\n")
       @table_data = @table_data.map{|row| row.split","}
-      create_rows
-      @parent_graphic.relayout! if @parent_graphic
+      # create_rows
+      # @parent_graphic.relayout! if @parent_graphic
       #TODO I should not call this
       # check why?? I have to call this
-      relayout!
-      make_cetegory_cells if @category_level > 0
+      # relayout!
+      # make_cetegory_cells if @category_level > 0
       if block
         instance_eval(&block)
       end            
       self
     end
-        
+    
+    def layout_content!
+      create_rows
+      relayout!
+      make_cetegory_cells if @category_level > 0
+    end
+    
     def create_rows
       unless @column_width_array
         calculate_column_width_array
@@ -263,7 +279,7 @@ DEFAULT_TABLE_STYLE = {
       category_cycle = @category_colors.length
       @category_range.each_with_index do |range, i|
         next if has_head_row? && i == 0
-        options         = {}
+        options         = @table_style[:category_atts]
         options[:x]     = @graphics[range.begin].x
         options[:y]     = @graphics[range.begin].y
         options[:width] = @graphics[range.begin].graphics.first.width
@@ -276,7 +292,6 @@ DEFAULT_TABLE_STYLE = {
         @graphics[range].each do |body_row|
           body_row.fill.color = @category_colors[current_cylcle][1]
         end
-        
       end
     end
     
@@ -348,8 +363,10 @@ DEFAULT_TABLE_STYLE = {
     end
         
     def td(options={})
-      options[:fill_color] = 'clear'
+      options[:fill_color]        = 'clear'
       options[:stroke_thickness]  = 1
+      options[:text_fit_type]     = 'fit_text_to_box'
+      
       if @row_type == "head_row"
         options[:stroke_thickness]  = 1 
         TableCell.new(self, options)

@@ -3,7 +3,7 @@ module RLayout
   # DesignerText
   # merges pre-designed layot template and text
   CUSTOM_HEAD_TEXT = {
-    :example => <<-EOF
+    :example => <<-EOF.gsub(/^\s*/, "")
       Container.new(nil) do
         round_text(<%= @text %>)
         line

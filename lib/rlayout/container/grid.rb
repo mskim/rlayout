@@ -201,7 +201,7 @@ module  RLayout
     end
     
     def save_map_html(options={})
-      html = <<-EOF
+      html = <<-EOF.gsub(/^\s*/, "")
       <div class="grid_map">
         #{grid_cells_html}
       </div>

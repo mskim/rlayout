@@ -46,7 +46,7 @@ module RLayout
         
       else @fill.class == RadialGradient
         
-        s2 = <<-EOF
+        s2 = <<-EOF.gsub(/^\s*/, "")
               <defs>
               <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />

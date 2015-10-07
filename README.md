@@ -37,6 +37,22 @@ TODO List
 	- convert markdown to story
 	- convert ascidoctor to story
 	- parse Hangul or export get retrieve:
+
+2015 10 6
+	- fit_text_to_box
+	- ImageGroup
+	
+2015 10 5
+	- Table category cell font size
+	- fix text overflow for non-proposed_height 
+		it should be 
+		range= @layout_manager.glyphRangeForTextContainer @text_container
+		if range.length < @att_string.string.length
+		
+2015 10 3
+	- delayed content layout 
+		- by calling layout_content
+		- Page should call layout_content to nested graphics 
 	
 2015 10 2
 	- categorized Table with category color
@@ -54,7 +70,7 @@ TODO List
 	
 2015 9 30
 	- fix: fill_color should not be Text background color 
-	- fix: make layout_text_lines auto adjusting height optional 
+	- fix: layout_text_lines should have auto adjusting height optional 
 	
 2015 9 28
 	- TextCell vertical fit

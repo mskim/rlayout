@@ -1,4 +1,7 @@
 
+# layout_content! 
+# layout_content calls layout_content for each text_box, and table.
+# 
 module RLayout
 
   class Page < Container
@@ -91,6 +94,20 @@ module RLayout
         instance_eval(&block)
       end            
       self
+    end
+    
+    # layout_content! should be called to layout out content
+    # after graphics positiona are settled from relayout!
+    # text_box and table should respond and layout content
+    def layout_content!
+      return unless @graphics
+      return if @graphics.length <= 0
+
+      @graphics.each do |graphic|
+        if graphic.respond_to?(:layout_content!)
+          graphic.layout_content! 
+        end
+      end
     end
     
     def first_text_box
@@ -276,6 +293,10 @@ module RLayout
     ########### PageScritp Verbs #############
     def text_box(options={}, &block)
       TextBox.new(self, options)
+    end
+
+    def table(options={}, &block)
+      Table.new(self, options, &block)
     end
 
     def object_box(options={}, &block)

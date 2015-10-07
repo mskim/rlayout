@@ -117,9 +117,9 @@ module RLayout
       else
         @text_container.setContainerSize(NSMakeSize(width, @owner_graphic.height))
       end
-      # range     = @layout_manager.glyphRangeForTextContainer @text_container
-      @layout_manager.glyphRangeForTextContainer @text_container
-      used_rect = @layout_manager.usedRectForTextContainer text_container
+      range     = @layout_manager.glyphRangeForTextContainer @text_container
+      # @layout_manager.glyphRangeForTextContainer @text_container
+      used_rect = @layout_manager.usedRectForTextContainer @text_container
       if options[:proposed_height]
         if used_rect.size.height <= options[:proposed_height]
           # text fits into given room, and we also have enough room for text_line_spacing
@@ -135,22 +135,31 @@ module RLayout
           @text_overflow = true
         end
       else
-        @text_overflow = true if used_rect.size.height > @owner_graphic.height
+        # if range.length is less than @att_string.string.length
+        # there is a overflow
+        @text_overflow = true if range.length < @att_string.string.length 
+        if @text_overflow
+          fit_text_to_box if @text_fit_type =="fit_text_to_box"
+          # @text_overflow == false
+          range     = @layout_manager.glyphRangeForTextContainer @text_container
+          if range.length < @att_string.string.length
+            puts "Still overflowing"
+          end
+          used_rect = @layout_manager.usedRectForTextContainer @text_container
+        end
       end
       # vertically align text
-      unless @text_overflow
-        top_space     = @owner_graphic.top_margin + @owner_graphic.top_inset
-        bottom_space  = @owner_graphic.bottom_margin + @owner_graphic.bottom_inset
-        graphic_space = @owner_graphic.height - top_space - bottom_space
+      top_space     = @owner_graphic.top_margin + @owner_graphic.top_inset
+      bottom_space  = @owner_graphic.bottom_margin + @owner_graphic.bottom_inset
+      graphic_space = @owner_graphic.height - top_space - bottom_space
+      @text_vertical_offset = top_space
+      case @text_vertical_alignment
+      when 'top'
         @text_vertical_offset = top_space
-        case @text_vertical_alignment
-        when 'center'
-          @text_vertical_offset = (graphic_space - used_rect.size.height)/2
-        when 'bottom'
-          @text_vertical_offset = graphic_space - used_rect.size.height
-        else
-          @text_vertical_offset = top_space
-        end
+      when 'bottom'
+        @text_vertical_offset = graphic_space - used_rect.size.height
+      else
+        @text_vertical_offset = (graphic_space - used_rect.size.height)/2
       end
     end
 
@@ -187,7 +196,6 @@ module RLayout
         atts[NSStrokeWidthAttributeName] = atts_hash[:guguri_width] #0, -2,-5,-10
         atts[NSStrokeColorAttributeName]=GraphicRecord.color_from_string(attributes[:guguri_color])
       end
-
       if @text_tracking
         atts[NSKernAttributeName] = @text_tracking
       end
@@ -275,43 +283,33 @@ module RLayout
       @line_count >= 4
     end
 
+    def fontSizedForAreaSize
+      text_size       = @att_string.size   
+      # container_size  = NSMakeSize(@owner_graphic.text_rect[2], @owner_graphic.text_rect[3])
+      container_size  = @text_container.containerSize  
+      ptr = Pointer.new(NSRange.type)
+      ptr[0]= NSMakeRange(0,0)
+      current_font    = @att_string.attributesAtIndex(0, effectiveRange:ptr)[NSFontAttributeName]
+      scale           = scaleToAspectFit(text_size, container_size)
+      NSFont.fontWithDescriptor(current_font.fontDescriptor, size:scale * current_font.pointSize)
+    end
 
-    ############ text fitting #######
-    # fit text to box by reducing font size
-    # 1. calculate box of current att_string
-    # 2. compare it with current text_rect to  box ratio
-    # 3. take the min value of w,h
-    # 3. reduce font by the ratio
-    # 4. See if they fit, and adjust font size for best fit
-    def new_font_size_for_fit
-      text_size             = @att_string.size
-      proposed_total_width  = @proposed_line_count*@owner_graphic.text_rect[2]
-      # puts "proposed_total_width:#{proposed_total_width}"
-      # puts "text_size.width:#{text_size.width}"
-      height                = @owner_graphic.text_rect[3]
-      w                     = proposed_total_width/text_size.width
-      h                     = height/text_size.height
-      # if heightis less than the full font height
-      # puts "@proposed_line_count:#{@proposed_line_count}"
-      if  @proposed_line_count <= 1
-        h= 0.8
-      end
-      scale                 = [w,h].min
-      @text_size*scale
+    def scaleToAspectFit(source, box)
+      # Todo  10 should be the inset and including in the margin
+      h_margin = @text_container.lineFragmentPadding
+      h_margin += @owner_graphic.left_margin + @owner_graphic.right_margin
+      v_margin = @text_container.lineFragmentPadding
+      h_margin += @owner_graphic.top_margin + @owner_graphic.bottom_margin
+      w=(box.width-h_margin)/(source.width + 4.0) 
+      h=(box.height-v_margin)/source.height
+      [w,h].min - 0.1 #TODO Why do I need this???
     end
 
     def fit_text_to_box
-      return unless @text_overflow
-      new_size = new_font_size_for_fit
-      @text_size = new_size
-      range=NSMakeRange(0,0)
-      atts=@att_string.attributesAtIndex(0, effectiveRange:range)
-      current_font = atts[NSFontAttributeName].fontName
-      new_font_atts = {}
-      new_font_atts[NSFontAttributeName] = NSFont.fontWithName(current_font, size:new_size)
+      fitting_font=fontSizedForAreaSize
+      atts={NSFontAttributeName=>fitting_font}
       range=NSMakeRange(0,@att_string.length)
-      @att_string.addAttributes(new_font_atts, range:range)
-      layout_text_lines
+      @att_string.addAttributes(atts, range:range)
     end
 
     # layout layout_drop_cap_lines

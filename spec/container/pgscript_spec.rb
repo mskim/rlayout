@@ -53,7 +53,7 @@ end
 
 describe 'processing from raw text ' do
   before do
-    @text = <<-EOF
+    @text = <<-EOF.gsub(/^\s*/, "")
         Container.new(nil, :width=>600, :height=>800) do
           split_v(3, :fill_color=>"blue", :layout_space=>10)
           @graphics.first.fill.color = 'white'

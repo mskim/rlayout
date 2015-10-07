@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 describe 'RJob with pgscript' do
   before do
     @pdf_path = "/Users/mskim/rjob_samples/doc_sample/output.pdf"
-    my_text= <<-EOF
+    my_text= <<-EOF.gsub(/^\s*/, "")
     RLayout::Document.new(pdf_path: "#{@pdf_path}") do
       page
       page

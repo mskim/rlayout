@@ -309,7 +309,7 @@ module RLayout
       end
       style ="style=\"fill:white;stroke-color:red;stroke-width:3\""
       
-      s= <<-EOF
+      s= <<-EOF.gsub(/^\s*/, "")
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <rect x="0%" y="0%" width="100%" height="100%" #{style} />
       #{svg_sting}

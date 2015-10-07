@@ -61,7 +61,7 @@ module RLayout
     def text_box(options={}, &block)
       TextBox.new(self, options)
     end
-
+    
     def heading(options={}, &block)
       Heading.new(self, options, &block)
     end
