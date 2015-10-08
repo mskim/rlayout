@@ -38,6 +38,12 @@ TODO List
 	- convert ascidoctor to story
 	- parse Hangul or export get retrieve:
 
+2015 10 7
+	- Book, 
+	- Document generate document_layout.rb
+	- Page generate page_layout.rb
+	- place dummy_image if no image is present
+	
 2015 10 6
 	- fit_text_to_box
 	- ImageGroup

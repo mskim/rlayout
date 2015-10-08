@@ -82,7 +82,6 @@ class GraphicViewMac < NSView
       fixtures.each do |child|
         #translate position
         #translate rotation
-        puts "child.to_hash:#{child.to_hash}"
         draw_graphic_in_nsview(child, view_depth)
       end
   end

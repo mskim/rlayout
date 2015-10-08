@@ -33,11 +33,10 @@
 module RLayout
 
   class ChapterMaker
-    attr_accessor :project_path, :template, :story_path
-    attr_accessor :document, :output_path
+    attr_accessor :project_path, :template_path, :story_path
+    attr_accessor :document, :output_path, :starting_page_number, :column_count
 
     def initialize(options={} ,&block)
-      @template = options.fetch(:template, "/Users/Shared/SoftwareLab/article_template/chapter.rb")
       unless options[:story_path]
         puts "No story_path !!!"
         return
@@ -57,27 +56,32 @@ module RLayout
           @output_path = @story_path.gsub(ext, ".pdf")
         end
       end
-      @document = eval(File.open(@template,'r'){|f| f.read})
+      if options[:template_path]
+        unless File.exist?(options[:template_path])
+          puts "Template #{options[:template_path]} doesn't exist!!!"
+          return
+        end
+      end
+      @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/chapter.rb")
+      # puts layout = File.open(@template_path,'r'){|f| f.read}
+      # @document = eval(layout)
+      @document = eval(File.open(@template_path,'r'){|f| f.read})
       if @document.is_a?(SyntaxError)
-        puts "SyntaxError in #{@template} !!!!"
+        puts "SyntaxError in #{@template_path} !!!!"
         return
       end
       unless @document.kind_of?(RLayout::Document)
         puts "Not a @document kind created !!!"
         return
       end
+      @starting_page_number = options.fetch(:starting_page_number,1)
       read_story
       layout_story      
-      @document.save_pdf(@output_path) unless options[:no_output]
-      
+      @document.save_pdf(@output_path) unless options[:no_output] 
       self
     end
         
     def read_story
-      unless File.exists?(@story_path)
-        puts "Can not find file #{@story_path}!!!!"
-        return {}
-      end
       @story      = Story.markdown2para_data(@story_path)
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
@@ -88,12 +92,6 @@ module RLayout
         para_options[:layout_expand]  = [:width]
         if para[:markup] == 'img'
           para_options.merge!(eval(para[:string]))
-          # source = para[:image_path]
-          # para_options[:caption]        = para[:caption]
-          # para_options[:bottom_margin]  = 10
-          # para_options[:bottom_inset]   = 10
-          # full_image_path = File.dirname(@story_path) + "/#{source}"
-          # para_options[:image_path] = full_image_path
           @paragraphs << Image.new(nil, para_options)
           next
         end
@@ -109,31 +107,35 @@ module RLayout
       page_index                = 0
       @first_page               = @document.pages[0]
       @heading[:layout_expand]  = [:width, :height]
-      heading_object = Heading.new(nil, @heading)
+      heading_object            = Heading.new(nil, @heading)
       @first_page.graphics.unshift(heading_object)
       heading_object.parent_graphic = @first_page
       # end
       @first_page.relayout!
-      @document.pages[1].relayout!
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
       @first_page.main_box.layout_items(@paragraphs)
+      page_index = 1
       while @paragraphs.length > 0
-        page_index += 1
         if page_index >= @document.pages.length
           options ={}
           options[:footer]      = true
           options[:header]      = true
           options[:text_box]    = true
           options[:page_number] = @starting_page_number + page_index
-          options[:column_count]= @column_count
-          p=Page.new(self, options)
+          options[:column_count]= @document.column_count
+          puts "adding new page"
+          p=Page.new(@document, options)
           p.relayout!
           p.main_box.create_column_grid_rects
+          puts "p.main_box.class:#{p.main_box.class}"
+          puts "p.main_box.graphics.length:#{p.main_box.graphics.length}"
         end
-
+        puts "page_index:#{page_index}"
+        puts "@document.pages[page_index].main_box.graphics.length:#{@document.pages[page_index].main_box.graphics.length}"
+        @document.pages[page_index].relayout!
         @document.pages[page_index].main_box.layout_items(@paragraphs)
-        
+        page_index += 1
       end
       update_header_and_footer
     end
@@ -153,7 +155,6 @@ module RLayout
       header[:first_page_text]  = "| #{@book_title} |" if @book_title
       header[:left_page_text]   = "| #{@book_title} |" if @book_title
       header[:right_page_text]  = @title if @title
-
       footer= {}
       footer[:first_page_text]  = @book_title if @book_title
       footer[:left_page_text]   = @book_title if @book_title

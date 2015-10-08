@@ -73,7 +73,7 @@ module RLayout
     attr_accessor :page_view_count, :toc_elements
     attr_accessor :header_rule, :footer_rule, :gim
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
-    attr_accessor :pdf_path, :jpg
+    attr_accessor :pdf_path, :jpg, :column_count
     def initialize(options={}, &block)
       @pages      = []
       @title      = "untitled"
@@ -138,7 +138,8 @@ module RLayout
         # create single page as default initial page
         Page.new(self)
       end
-            
+      
+      @column_count = options.fetch(:column_count, 1)
       RLayout::StyleService.shared_style_service.current_style = options.fetch(:current_style, DEFAULT_STYLES)
       if @toc_on
         # save_toc elements for this document
@@ -291,12 +292,26 @@ module RLayout
     end
     
     def save_pdf(path, options={})
-      @ns_view = DocumentViewMac.new(self)
-      @page_view_count = @ns_view.save_pdf(path, options)
+      if RUBY_ENGINE == 'rubymotion'
+        @ns_view = DocumentViewMac.new(self)
+        @page_view_count = @ns_view.save_pdf(path, options)
+      else
+        puts "RUBY_ENGINE:#{RUBY_ENGINE}"
+      end
     end
 
     def save_toc(path)
       File.open(path, 'w'){|f| f.write toc_element.to_yaml}
+    end
+    
+    def pages_layout_file
+      ""
+    end
+    
+    def save_document_layout(options={})
+      doc_layout_file= "RLayout::Document.new(paper_size: #{@paper_size})\n"
+      doc_layout_file+= pages_layout_file
+      doc_layout_file+= "end"
     end
   end
 

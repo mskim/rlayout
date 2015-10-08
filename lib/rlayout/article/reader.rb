@@ -652,7 +652,6 @@ module RLayout
       # Set Document Options
       # And Create Heading from this
       reader = RLayout::Reader.new @contents, nil, :starting_heading_level=>starting_heading_level
-      puts 
       blocks_array = []
       block = []
       reader.lines.each do |line|

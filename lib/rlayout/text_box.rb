@@ -34,21 +34,20 @@ module RLayout
   # Line_grids are also useed for vertically aligning text across differnt columns.
   # We can force non-body paragraphs to spnap to line-grids.
   
-  # SideColumn
-  # SideColumn is used when we have flowing images with paragraphs
-  # SideColumn can be place on the right or left side of TextBox
+  # side_column
+  # side_column is used when we have flowing images with paragraphs
+  # side_column can be place on the right or left side of TextBox
   
   #TODO
   # 1. text box with overlapping floats on top, sometimes fully covered with hole in the middle of the column.
   # 1. flowing image alone the text. attached Math block, inline math
   # 1. Image that are floating and bleeding at the edge.
   # 1. Dropcap suppoert. Dropcap Image
-  # 1. SideColumn
+  # 1. side_column
   
   # align_body_text
   # If align_body_text is on, start body paragraphs on even numbered grid_rects only.
   # so that body texts are horozontally aligned, across the columns
-  #
   
   # laying out running float images
   # This is when we have images that are larger than the column width and floating.
@@ -56,22 +55,25 @@ module RLayout
   
   # add text_path option
   # this will allow us to import marddown text at the run time.
+  
+  
   class TextBox < Container
-    attr_accessor :heading_columns, :side_box, :quote_box, :shoulder_column, :grid_size
+    attr_accessor :heading_columns, :quote_box, :grid_size
     attr_accessor :starting_item_index, :ending_item_index
     attr_accessor :column_count, :next_link, :previous_link, :align_body_text
+    attr_accessor :left_side_column, :has_side_column, :side_column
+    
     def initialize(parent_graphic, options={}, &block)
+      @grid_base        = options.fetch(:grid_base, '3x3')
       super
-      @left_margin      = 0
-      @right_margin     = 0
-      @top_margin       = 0
-      @bottom_margin    = 0
       @klass            = "TextBox"
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)
-      @column_count     = options.fetch(:column_count, 3).to_i
+      @column_count     = options.fetch(:column_count, 1).to_i
       @heading_columns  = options.fetch(:heading_columns, @column_count)
       @floats           = options.fetch(:floats, [])
+      @has_side_column  = options.fetch(:has_side_column, false)
+      @left_side_column = options.fetch(:left_side_column, true)
       create_columns
       if options[:column_grid]
         create_column_grid_rects
@@ -90,8 +92,14 @@ module RLayout
     end
     
     def create_columns
-      @column_count.times do
-        TextColumn.new(self)
+      if @has_side_column
+        @column_count = 1
+        TextColumn.new(self, layout_length: 3)
+        @side_column = TextColumn.new(self, layout_length: 1, fill_color: 'lightGray')
+      else
+        @column_count.times do
+          TextColumn.new(self)
+        end
       end
       relayout!
     end
@@ -131,7 +139,6 @@ module RLayout
       false
     end
     
-    
     def get_heading
       @floats.each do |float|
         return float if float.class == RLayout::Heading
@@ -169,7 +176,7 @@ module RLayout
         end
       end
     end
-
+        
     # set text_column's overlapping grid_rect area
     # this method is called after float is added and relayout!
     def set_overlapping_grid_rect
@@ -195,8 +202,8 @@ module RLayout
     #   @text_layout_manager.layout_text_lines returns actual item height after line layout.
     #   Text overflow is detected by comparing "proposed_height" and returned actual height.
     #   if the result is greater than the prososed_height, text is overflowing.
-    
-    # this is deprecated, I am now using grid_rects for detecting float overlapping.
+    #   this is deprecated, I am now using grid_rects for detecting float overlapping.
+ 
     # 3. path is contructed by " def path_from_current_position"
     #   a. if column is simple with no overlapping floats, path is rectange.
     #   b. if column is complex with overlapping floats, path is constructed from grid_rects, with non-overlapping shapes.
@@ -224,6 +231,7 @@ module RLayout
       current_column = @graphics[column_index]
       while item      = flowing_items.shift do
         if item.text_layout_manager
+          # We have text
           item.width  = current_column.text_width
           if current_column.room < current_column.body_line_height || current_column.room < item.text_line_height
             column_index +=1
@@ -239,28 +247,46 @@ module RLayout
           current_column.update_current_position
           #TODO????
           # check if current column is simple
-
           # text_area_path  = current_column.path_from_current_position
           # bounding_rect = CGPathGetPathBoundingBox(text_area_path)
           # current_column.current_position = bounding_rect.origin.y
           # item.layout_text(:proposed_path=>text_area_path) # item.width:
           item.layout_text(:proposed_height=>current_column.room) # item.width is set already
         elsif item.class == RLayout::Image
-          if item.grid_frame[2] > 1
-            puts "we have running floating image"
-          end
-          item.width  = current_column.text_width
-          item.layout_expand  = [:width]
-          if item.image_object
-            # if item is image, height should be proportional to image_object ratio, not frame width height ratio
-            item.height = item.image_object_height_to_width_ratio*item.width
-            item.apply_fit_type
-          else
-            item.height = item.width
-          end
+          # We have image
+            # check if the image is floating image
+            if item.grid_frame && item.grid_frame[2]> 1
+              # "we have floating image"
+              item.x      = current_column.width * item.grid_frame[0]
+              item.x      += @gutter*(item.grid_frame[0]-1) if item.grid_frame[0] > 1
+              item.width  = current_column.width * item.grid_frame[2] + @gutter*(item.grid_frame[2]-1)
+              grid_height = @height/@grid_base[1].to_f
+              item.y      = grid_height * item.grid_frame[1]              
+              item.height = grid_height * item.grid_frame[3]
+              if item.bleed
+                #TODO do bleeding on the edges
+              end
+              @floats << item
+            else
+              # we have column running image
+              item.width  = current_column.text_width
+              item.layout_expand  = [:width]
+              # if item is image, height should be proportional to image_object ratio, not frame width height ratio
+              item.height = item.image_object_height_to_width_ratio*item.width
+              item.apply_fit_type
+              if @has_side_column
+                #TODO set y position
+                @side_column.graphics <<  item if @side_column
+              
+              end
+            end
+        else
+          item.height = item.width
         end
-
-        if !item.overflow? # item fits in column
+        
+        if !item.respond_to?(:overflow?)
+          current_column.place_item(item)
+        elsif !item.overflow? # item fits in column
           current_column.place_item(item)
         else
           second_half = item.split_overflowing_lines
@@ -318,7 +344,7 @@ module RLayout
       x             = @graphics[grid_frame[0]].x
       y             = column_frame[1]
       width         = column_width*width_val + (width_val - 1)*@layout_space
-      height        = width # TODO ?
+      height        = width 
       [x,y,width, height]
     end
 
@@ -422,6 +448,15 @@ module RLayout
       end
       
 
+  end
+  
+  class TextBoxWithSide < TextBox
+    def initialize(parent_graphic, options={})
+      
+      self
+    end
+    
+    
   end
 
 end

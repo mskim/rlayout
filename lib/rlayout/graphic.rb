@@ -570,9 +570,21 @@ module RLayout
   end
 
   class Image < Graphic
+    attr_accessor :caption , :bleed
     def initialize(parent_graphic, options={})
+      if options[:grid_frame]
+        @grid_frame = options[:grid_frame]
+      end
+      if options[:caption]
+        @caption = options[:caption]
+      end
+      if options[:bleed]
+        @bleed = options[:bleed]
+      end
+      
       super
       @klass        = "Image"
+      
       if options[:image_path]
         @image_path   = options[:image_path]
         @image_record = ImageStruct.new(options[:image_path])
