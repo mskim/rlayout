@@ -41,7 +41,7 @@ module RLayout
     
     def create_columns(options={})
       column_options = {}
-      column_options[:layout_space] = options.fetch(:item_space, 0)
+      column_options[:layout_space] = options.fetch(:layout_space, 0)
       @column_count.times do
         ObjectColumn.new(self, column_options)
       end
@@ -151,7 +151,7 @@ module RLayout
       @stroke[:color] = "black"
       
       @klass = "ObjectColumn"
-      @layout_space = options.fetch(:item_space, 0)
+      @layout_space = options.fetch(:layout_space, 0)
       @current_position = @top_margin + @top_inset
       if block
         instance_eval(&block)

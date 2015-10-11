@@ -567,7 +567,7 @@ module RLayout
       end
       @metadata
     end
-
+        
     def self.block2para_data(text_block, options={})
       s=StringScanner.new(text_block[0])
       # starting_heading_level is 1, h1

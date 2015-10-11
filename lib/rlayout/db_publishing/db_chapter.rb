@@ -15,7 +15,7 @@ module RLayout
       @page_options[:object_box]    = true
       @page_options[:column_count]  = 4
       @page_options[:column_layout_space]  = 5
-      @page_options[:item_space]    = 3
+      @page_options[:layout_space]    = 3
       @page_count.times do |i|
         @page_options[:page_number] = @starting_page_number + i
         Page.new(self, @page_options)
@@ -58,7 +58,7 @@ module RLayout
           @page_options[:header]      = true 
           @page_options[:object_box]  = true
           @page_options[:column_count]= 4
-          @page_options[:item_space]  = 5
+          @page_options[:layout_space]  = 5
           @page_options[:page_number] = @starting_page_number + page_index
           Page.new(self, @page_options)          
         end

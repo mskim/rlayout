@@ -13,11 +13,11 @@ module RLayout
   # Both of the class support flowing item protocol, namely "set_width_and_adjust_height", 
   # to adjust flowing items into different size columns.
   # They also support :breakable?, which tells whether the flowing item can be broken into parts.
-  # Breakable item should split itself into two or more parts, if brakes with  orphan/widow consideration.
+  # Breakable item should split itself into two or more parts, it brakes with  orphan/widow consideration.
   # Currently, Paragraph can be broken up into two parts at the oveflowing column.
   # Another example of breakable flowing object is a Table.
   
-  # TextBox adds another layer called "floats", (now Containers also have floats)
+  # TextBox adds another layer called "floats", (Containers also have floats)
   # Floats sit on top layer and pushes out text content underneath it.
   # Typocal floats are Heading, Image, Quates, SideBox
   # Each float has its weight(float on top or push down), starting_posion, starting_column, width_in_column
@@ -35,7 +35,7 @@ module RLayout
   # We can force non-body paragraphs to spnap to line-grids.
   
   # side_column
-  # side_column is used when we have flowing images with paragraphs
+  # side_column is used when we have flowing images along side paragraphs
   # side_column can be place on the right or left side of TextBox
   
   #TODO
@@ -48,20 +48,25 @@ module RLayout
   # align_body_text
   # If align_body_text is on, start body paragraphs on even numbered grid_rects only.
   # so that body texts are horozontally aligned, across the columns
+  # We have grid_rects with height 1/2 of body text height.
   
   # laying out running float images
   # This is when we have images that are larger than the column width and floating.
   # We need to sit them, rearrange floats, and adjust other items
   
-  # add text_path option
-  # this will allow us to import marddown text at the run time.
+  # add text_path option, for importing marddown text at the time.
+  
+  # side_column image markup??
+  # ![] {}
+  # side_column text markup??
+  # ![] 
   
   
   class TextBox < Container
     attr_accessor :heading_columns, :quote_box, :grid_size
     attr_accessor :starting_item_index, :ending_item_index
     attr_accessor :column_count, :next_link, :previous_link, :align_body_text
-    attr_accessor :left_side_column, :has_side_column, :side_column
+    attr_accessor :has_side_column, :left_side_column, :side_column
     
     def initialize(parent_graphic, options={}, &block)
       @grid_base        = options.fetch(:grid_base, '3x3')
@@ -73,7 +78,7 @@ module RLayout
       @heading_columns  = options.fetch(:heading_columns, @column_count)
       @floats           = options.fetch(:floats, [])
       @has_side_column  = options.fetch(:has_side_column, false)
-      @left_side_column = options.fetch(:left_side_column, true)
+      @left_side_column = options.fetch(:left_side_column, false)
       create_columns
       if options[:column_grid]
         create_column_grid_rects
@@ -93,9 +98,14 @@ module RLayout
     
     def create_columns
       if @has_side_column
-        @column_count = 1
-        TextColumn.new(self, layout_length: 3)
-        @side_column = TextColumn.new(self, layout_length: 1, fill_color: 'lightGray')
+        @column_count = 2
+        if @left_side_column
+          @side_column = TextColumn.new(self, layout_length: 1, fill_color: 'lightGray')
+          TextColumn.new(self, layout_length: 3)
+        else
+          TextColumn.new(self, layout_length: 3)
+          @side_column = TextColumn.new(self, layout_length: 1, fill_color: 'lightGray')
+        end
       else
         @column_count.times do
           TextColumn.new(self)
@@ -254,12 +264,17 @@ module RLayout
           item.layout_text(:proposed_height=>current_column.room) # item.width is set already
         elsif item.class == RLayout::Image
           # We have image
-            # check if the image is floating image
-            if item.grid_frame && item.grid_frame[2]> 1
+            # check if the image is floating image, out of the column
+            if item.grid_frame #&& item.grid_frame[2]> 1
               # "we have floating image"
               item.x      = current_column.width * item.grid_frame[0]
               item.x      += @gutter*(item.grid_frame[0]-1) if item.grid_frame[0] > 1
               item.width  = current_column.width * item.grid_frame[2] + @gutter*(item.grid_frame[2]-1)
+              puts "@grid_base:#{@grid_base}"
+              puts "@gutter:#{@gutter}"
+              puts "item.grid_frame:#{item.grid_frame}"
+              puts "current_column.width:#{current_column.width}"
+              puts "item.width:#{item.width}"
               grid_height = @height/@grid_base[1].to_f
               item.y      = grid_height * item.grid_frame[1]              
               item.height = grid_height * item.grid_frame[3]
@@ -267,6 +282,11 @@ module RLayout
                 #TODO do bleeding on the edges
               end
               @floats << item
+              # push out paragraphs 
+              set_overlapping_grid_rect
+              #TODO
+              # I need to redo layout_items
+              
             else
               # we have column running image
               item.width  = current_column.text_width

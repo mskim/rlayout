@@ -118,21 +118,16 @@ module RLayout
       page_index = 1
       while @paragraphs.length > 0
         if page_index >= @document.pages.length
-          options ={}
+          options               = {}
           options[:footer]      = true
           options[:header]      = true
           options[:text_box]    = true
           options[:page_number] = @starting_page_number + page_index
           options[:column_count]= @document.column_count
-          puts "adding new page"
           p=Page.new(@document, options)
           p.relayout!
           p.main_box.create_column_grid_rects
-          puts "p.main_box.class:#{p.main_box.class}"
-          puts "p.main_box.graphics.length:#{p.main_box.graphics.length}"
         end
-        puts "page_index:#{page_index}"
-        puts "@document.pages[page_index].main_box.graphics.length:#{@document.pages[page_index].main_box.graphics.length}"
         @document.pages[page_index].relayout!
         @document.pages[page_index].main_box.layout_items(@paragraphs)
         page_index += 1

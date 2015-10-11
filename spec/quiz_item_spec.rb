@@ -1,34 +1,40 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
-describe 'create QuizItem' do
+describe 'create QuizMaker' do
   before do
-    choices = [
-      "first choice",
-      "second choice",
-      "third choice",
-      "fource choice"]
-    question = "What is you name?"
-    @quiz = QuizItem.new(nil, number: 7, question: question, choices: choices)
+    @quiz = QuizMaker.new
   end
   
   it 'should create QuizItem' do
-    assert @quiz.class == QuizItem
+    assert @quiz.class == QuizMaker
   end
   
   it 'should create question' do
-    assert @quiz.question.class == Text
-    assert @quiz.graphics.last.class == TableRow
+    assert @quiz.question.class == String
+    assert @quiz.quiz_item.class == QuizItem
   end
   
   it 'should create choices' do
-    assert @quiz.first.class == TableCell
-    assert @quiz.second.class == TableCell
-    assert @quiz.third.class == TableCell
-    assert @quiz.fourth.class == TableCell
-  end
-  it 'chould have correct text_string' do
-    assert @quiz.first.text_record.string == "first choice"
+    assert @quiz.choice_1 == "choice1"
+    assert @quiz.choice_2 == "choice2"
+    assert @quiz.choice_3 == "choice3"
+    assert @quiz.choice_4 == "choice4"
   end
 end
 
+describe 'parse quiz file' do
+  before do
+    @path       = "/Users/mskim/quiz/sample_quiz.yml"
+    @quiz_list  = QuizMaker.yaml2quiz_items(@path)
+  end
+  
+  it 'should parse quiz file' do
+    assert @quiz_list.class == Array
+  end
+  
+  it 'should parse quiz file' do
+    assert @quiz_list.first.class == QuizItem
+  end
+  
+end
 

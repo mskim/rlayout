@@ -1,5 +1,27 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+describe 'side column' do
+  before do
+    @tb = TextBox.new(nil, has_side_column: true, width:400, height: 700)
+  end
+  
+  it 'shuld create side_column' do
+    assert @tb.has_side_column == true
+  end
+  
+  it 'shoul have right side colum' do
+    assert @tb.left_side_column == false
+  end
+  
+  it 'should have two graphics' do
+    assert @tb.graphics.length == 2
+  end
+  
+  it'shuld have layout_length 3, 1' do
+    assert @tb.graphics.first.layout_length == 3
+    assert @tb.graphics.last.layout_length == 1
+  end
+end
 
 describe 'TextBox creation' do
   before do
@@ -19,10 +41,12 @@ describe 'TextBox creation' do
     @tb.must_be_kind_of TextBox
   end
   
+  it 'should create two columns' do
+    assert @tb.graphics.length == 2
+  end
   it 'should return width_of_columns' do
     @tb.width_of_columns(0).must_equal 0
-    @tb.width_of_columns(1).must_equal 195
-    @tb.width_of_columns(2).must_equal 400
+    @tb.width_of_columns(1).must_equal 400
   end
 end
 
