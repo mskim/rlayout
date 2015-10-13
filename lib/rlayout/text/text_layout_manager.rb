@@ -72,6 +72,12 @@
 FIT_FONT_SIZE   = 0   # keep given font size
 FIT_TO_BOX      = 1   # change font size to fit text into box
 
+# 'fit_text_to_box'
+# 'adjust_box_height'
+# 'keep_box_height'    
+
+#overflow or vertical adjustment
+
 # TODO
 FIT_EACH_LINE   = 2   # adjust font size for each line to fit text into lines.
                       # So, fewer the text, larger the font size becomes in for each line
@@ -113,7 +119,7 @@ module RLayout
       width           = @owner_graphic.width
       width           = options[:proposed_width] if options[:proposed_width]
       if options[:proposed_height]
-        @text_container.setContainerSize(NSMakeSize(width, options[:proposed_height]))
+        @text_container.setContainerSize(NSMakeSize(width, options[:proposed_height]))        
       else
         @text_container.setContainerSize(NSMakeSize(width, @owner_graphic.height))
       end
@@ -134,6 +140,8 @@ module RLayout
           @owner_graphic.height = used_rect.size.height #+ @text_line_spacing
           @text_overflow = true
         end
+      elsif options[:text_fit_type] == 'adjust_box_height'
+        @owner_graphic.height = used_rect.size.height
       else
         # if range.length is less than @att_string.string.length
         # there is a overflow
@@ -143,7 +151,7 @@ module RLayout
           # @text_overflow == false
           range     = @layout_manager.glyphRangeForTextContainer @text_container
           if range.length < @att_string.string.length
-            puts "Still overflowing"
+            # puts "Still overflowing"
           end
           used_rect = @layout_manager.usedRectForTextContainer @text_container
         end

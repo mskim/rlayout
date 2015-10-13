@@ -320,13 +320,15 @@ DEFAULT_TABLE_STYLE = {
     attr_accessor :column_sytle_array, :column_alignment
     def initialize(parent_graphic, options={}, &block)
       super
+      @klass              = 'TableRow'
       cell_atts           = options[:cell_atts] 
       @row_data           = options[:row_data]
       @row_type           = options.fetch(:row_type, "body_row")
+      @fit_type           = options.fetch(:fit_type, "adjust_row_height")
       @layout_direction   = 'horizontal'
       @row_data.each_with_index do |cell_text, i|
         cell_atts[:text_string]   = cell_text
-        cell_atts[:text_size]     = 9.0
+        # cell_atts[:text_size]     = 9.0
         cell_atts[:layout_length] = options[:column_width][i] if options[:column_width]
         if cell_atts[:stroke_sides]
           cell_sides_type           = cell_atts[:stroke_sides].length 
@@ -359,13 +361,21 @@ DEFAULT_TABLE_STYLE = {
         end
         td(cell_atts)
       end
+      case @fit_type
+      when 'adjust_row_height'
+        # find tallest cell and adjust height to accomodate it.
+        @height = tallest_cell_height 
+      else
+        # we might have to sqeeze in the cells to fit???
+      end
+        
       self
     end
         
     def td(options={})
       options[:fill_color]        = 'clear'
       options[:stroke_thickness]  = 1
-      options[:text_fit_type]     = 'fit_text_to_box'
+      options[:text_fit_type]     = 'adjust_box_height'
       
       if @row_type == "head_row"
         options[:stroke_thickness]  = 1 
@@ -374,6 +384,14 @@ DEFAULT_TABLE_STYLE = {
         TableCell.new(self, options)
       end
       self
+    end
+    
+    def tallest_cell_height
+      tallest_height = @graphics.first.height
+      @graphics.each do |graphic|
+        tallest_height = graphic.height if graphic.height > tallest_height
+      end
+      tallest_height
     end
   end
   

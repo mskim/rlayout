@@ -82,16 +82,11 @@ module RLayout
       
       if options[:text_box]
         @main_box = TextBox.new(self, main_box_options)    
-      elsif options[:object_box]
-        @main_box = ObjectBox.new(self, main_box_options)
-      elsif options[:composite_box]
-        @main_box = composite_box(main_box_options)
-      elsif options[:news_box]
-        @main_box = news_box(main_box_options)
       end
       if block
         instance_eval(&block)
-      end            
+      end     
+      
       self
     end
     
@@ -116,6 +111,14 @@ module RLayout
         end
       end
       return nil
+    end
+    
+    # does page include Heading in graphics
+    def get_heading?
+      @graphics.each do |graphic|
+        return graphic if graphic.class == RLayout::Heading
+      end
+      nil
     end
     
     def main_text(options={}, &block)

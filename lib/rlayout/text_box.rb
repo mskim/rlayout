@@ -132,8 +132,9 @@ module RLayout
       end
     end
     
-    def heading
-      h = Heading.new(self, :is_float=>true)
+    def heading(options={})
+      options[:is_float] = true
+      h = Heading.new(self, options)
       unless h== @floats.first
         # make heading as first one in floats
         h = @floats.pop
@@ -270,11 +271,11 @@ module RLayout
               item.x      = current_column.width * item.grid_frame[0]
               item.x      += @gutter*(item.grid_frame[0]-1) if item.grid_frame[0] > 1
               item.width  = current_column.width * item.grid_frame[2] + @gutter*(item.grid_frame[2]-1)
-              puts "@grid_base:#{@grid_base}"
-              puts "@gutter:#{@gutter}"
-              puts "item.grid_frame:#{item.grid_frame}"
-              puts "current_column.width:#{current_column.width}"
-              puts "item.width:#{item.width}"
+              # puts "@grid_base:#{@grid_base}"
+              # puts "@gutter:#{@gutter}"
+              # puts "item.grid_frame:#{item.grid_frame}"
+              # puts "current_column.width:#{current_column.width}"
+              # puts "item.width:#{item.width}"
               grid_height = @height/@grid_base[1].to_f
               item.y      = grid_height * item.grid_frame[1]              
               item.height = grid_height * item.grid_frame[3]
@@ -297,10 +298,17 @@ module RLayout
               if @has_side_column
                 #TODO set y position
                 @side_column.graphics <<  item if @side_column
-              
               end
             end
+        elsif item.class == RLayout::QuizItem
+          item.width  = current_column.text_width
+          item.height = item.width
+          item.set_quiz_content_with_width(:width=> current_column.text_width)
+        elsif item.class == RLayout::QuizRefText # GeeMoon
+          item.width  = current_column.text_width
+          item.height = item.width
         else
+          item.width  = current_column.text_width
           item.height = item.width
         end
         

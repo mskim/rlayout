@@ -47,10 +47,7 @@ MININUM_LINES_FOR_SPLIT = 2
       options.merge! text_options if text_options
       if options[:drop_cap]
       end
-      options[:text_fit_type] = 0
-      # options[:line_width] = 2
-      # options[:line_color] = 'black'
-      # options[:fill_color] = 'yellow'
+      options[:text_fit_type] = 'adjust_box_height'
       super
       @klass = "Paragraph"
       self

@@ -54,7 +54,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/text_column'
   require File.dirname(__FILE__) + '/rlayout/text_box'
   require File.dirname(__FILE__) + '/rlayout/table'
-  require File.dirname(__FILE__) + '/rlayout/quiz_item'
 
   require File.dirname(__FILE__) + '/rlayout/page'
   require File.dirname(__FILE__) + '/rlayout/page/page_fixtures'
@@ -77,6 +76,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/article/magazine_article_maker'
   require File.dirname(__FILE__) + '/rlayout/article/single_page_maker'
   require File.dirname(__FILE__) + '/rlayout/article/rjob'
+  require File.dirname(__FILE__) + '/rlayout/article/quiz_maker'
   
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/dorok'

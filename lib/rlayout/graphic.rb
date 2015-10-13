@@ -528,9 +528,6 @@ module RLayout
 
   class Text < Graphic
     def initialize(parent_graphic, options={})
-      # options[:line_width] = 2
-      # options[:line_color] = 'red'
-      # options[:text_fit_type] = 1 unless options[:text_fit_type]
       super
       @klass = "Text"
       self

@@ -53,12 +53,8 @@ module RLayout
       @top_margin     = options.fetch(:top_margin,0)
       @bottom_margin  = options.fetch(:bottom_margin,0)
       @layout_align   = 'center'
-      @layout_expand  = options.fetch(:layout_expand,[:width, :height])
-      # width           = @width - @left_inset - @right_inset
+      @layout_expand  = options.fetch(:layout_expand,[:width])
       @line_type=0
-      # @line_color="red"
-      # @line_width= 2
-      # @fill_color="green"
       set_heading_content(options)
       self
     end
@@ -161,6 +157,7 @@ module RLayout
       atts                        = @current_style["title"]
       atts[:text_string]          = string
       atts[:width]                = @width
+      atts[:text_fit_type]        = 'adjust_box_height'
       atts[:layout_expand]        = [:width]
       @title_object               = Text.new(self, atts)
       @title_object.layout_length = @title_object.height
@@ -171,9 +168,10 @@ module RLayout
       atts                          = @current_style["subtitle"]
       atts[:text_string]            = string
       atts[:width]                  = @width
+      atts[:text_fit_type]          = 'adjust_box_height'
       @subtitle_object              = Text.new(self, atts)
-      @subtitle_object.layout_expand  = [:width]
-      @subtitle_object.layout_length  = @subtitle_object.height
+      @subtitle_object.layout_expand= [:width]
+      @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object
     end
 
@@ -181,6 +179,7 @@ module RLayout
       atts                          = @current_style["leading"]
       atts[:text_string]            = string
       atts[:width]                  = @width
+      atts[:text_fit_type]          = 'adjust_box_height'
       @leading_object               = Text.new(self, atts)
       @leading_object.layout_expand = [:width]
       @leading_object.layout_length = @leading_object.height
@@ -191,6 +190,7 @@ module RLayout
       atts                          = @current_style["author"]
       atts[:text_string]            = string
       atts[:width]                  = @width
+      atts[:text_fit_type]          = 'adjust_box_height'
       atts[:right_indent]           = 10
       @author_object                = Text.new(self, atts)
       @author_object.layout_expand  = [:width]

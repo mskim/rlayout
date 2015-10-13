@@ -37,14 +37,24 @@ TODO List
 	- convert markdown to story
 	- convert ascidoctor to story
 	- parse Hangul or export get retrieve:
+	- Tab Leaders, able with leaders
+	- master page
+	- Nested Styles: Container Objects with customizable styles
+	- Tab separated styles(TextRuns)
 
-2015 10 11
-	- side_column support
-	- image_layout.rb??
-	- quiz
+2015 10 13
+	- grow/shorten graphic height as text height 
+	- 'keep_box_height', 'fit_text_to_box', 'adjust_box_height'    
+	
+2015 10 12
+	- QuizMaker
+	- custom style support, 
+	- fix multi column bug
 	
 2015 10 7
 	- Book, 
+	- side_column support
+	- image_layout.rb?
 	- Document generate document_layout.rb
 	- place dummy_image.jpg if no image is present
 	
