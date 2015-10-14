@@ -16,6 +16,56 @@
 # give option for text_layout_manager to adjust the text height
 # Do the number
 
+# @quiz_style = {
+#   heading_space: 20,  
+#   item_space: 30, 
+#   column_gutter: 10,  
+#   column_gutter_line: true, 
+#   
+#   :num_style => {
+#     q_num_type: "numeric",
+#     font: 'Helvetica',
+#     text_size: 20,
+#     text_color: 'black',
+#     chice_num_type: 'circled_alphabet' 
+#   },
+#   #number, alphaber, hangul_jaum,
+#   #plain, circled, reverse_circled, 
+#   :q_style => {    
+#     font: 'Helvetica',
+#     text_size: 20,
+#     text_color: 'black',
+#     text_alignment: 'left',
+#     text_vertical_alignment: 'top',
+#     text_fit_type: 'adjust_box_height',
+#     text_head_indent: 20,
+#     layout_expand: [:width],
+#     space_after:10,
+#   },
+#   
+#   :choice_style =>{
+#     font: 'Times',
+#     text_size: 16,
+#     text_color: 'black',
+#     text_head_indent: 16,
+#     text_alignment: 'left',
+#     text_vertical_alignment: 'top',
+#     text_fit_type: 'adjust_box_height',
+#     stroke_sides: [0,0,0,0],
+#     layout_expand: [:width],
+#     space_after: 10,
+#     gutter: 5,
+#   },
+# }
+# options = {}
+# options[:paper_size]      = "A3"
+# options[:page_count]      = 2
+# options[:footer]          = true
+# options[:header]          = true
+# options[:text_box]        = true
+# options[:column_count]    = 2
+# options[:current_style]   = current_tyle
+# RLayout::Document.new(options)
 
 module RLayout
 

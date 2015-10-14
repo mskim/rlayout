@@ -46,12 +46,6 @@ TODO List
 	- fix bug: in text_box layout_item duplicating item insert
 	- draw inter_column lines
 	- custom style support
-		heading layout
-		q font, size, color, head_indent, tail_indent
-		number font, size, color
-		choice font, size, color, number_type
-		space between q and choices
-		space between choices
 	- answer sheet
 	
 2015 10 13
