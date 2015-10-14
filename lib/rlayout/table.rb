@@ -326,10 +326,15 @@ DEFAULT_TABLE_STYLE = {
       @row_type           = options.fetch(:row_type, "body_row")
       @fit_type           = options.fetch(:fit_type, "adjust_row_height")
       @layout_direction   = 'horizontal'
+      @cell_widths        = []
       @row_data.each_with_index do |cell_text, i|
         cell_atts[:text_string]   = cell_text
         # cell_atts[:text_size]     = 9.0
-        cell_atts[:layout_length] = options[:column_width][i] if options[:column_width]
+        if options[:column_width]
+          cell_atts[:layout_length] = options[:column_width][i] 
+        else
+          @cell_widths[i] = 1
+        end
         if cell_atts[:stroke_sides]
           cell_sides_type           = cell_atts[:stroke_sides].length 
           case cell_sides_type
@@ -358,6 +363,8 @@ DEFAULT_TABLE_STYLE = {
             # [[0,0,1,0]]
             cell_atts[:stroke_sides] = cell_atts[:stroke_sides][0]
           end
+          #TODO
+          cell_atts[:width] = @width*(@cell_widths[i] - 20)/@cell_widths.reduce(:+).to_f if @width != 100
         end
         td(cell_atts)
       end
@@ -371,7 +378,11 @@ DEFAULT_TABLE_STYLE = {
         
       self
     end
-        
+    
+    def adjust_height
+      @height = tallest_cell_height 
+    end
+    
     def td(options={})
       options[:fill_color]        = 'clear'
       options[:stroke_thickness]  = 1

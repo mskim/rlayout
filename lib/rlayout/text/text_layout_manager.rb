@@ -220,7 +220,6 @@ module RLayout
         newParagraphStyle = right_align
       when "center"
         newParagraphStyle = center_align
-        # puts "newParagraphStyle.inspect:#{newParagraphStyle.inspect}"
       when 'justified'
         newParagraphStyle = justified_align
       else

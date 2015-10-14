@@ -65,7 +65,7 @@ module RLayout
   class TextBox < Container
     attr_accessor :heading_columns, :quote_box, :grid_size
     attr_accessor :starting_item_index, :ending_item_index
-    attr_accessor :column_count, :next_link, :previous_link, :align_body_text
+    attr_accessor :column_count, :column_layout_space, :next_link, :previous_link, :align_body_text
     attr_accessor :has_side_column, :left_side_column, :side_column
     
     def initialize(parent_graphic, options={}, &block)
@@ -75,6 +75,7 @@ module RLayout
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)
       @column_count     = options.fetch(:column_count, 1).to_i
+      @column_layout_space = options.fetch(:column_layout_space, 10)
       @heading_columns  = options.fetch(:heading_columns, @column_count)
       @floats           = options.fetch(:floats, [])
       @has_side_column  = options.fetch(:has_side_column, false)
@@ -108,7 +109,7 @@ module RLayout
         end
       else
         @column_count.times do
-          TextColumn.new(self)
+          TextColumn.new(self, layout_space: @column_layout_space)
         end
       end
       relayout!
@@ -240,18 +241,18 @@ module RLayout
     def layout_items(flowing_items)
       column_index = 0
       current_column = @graphics[column_index]
-      while item      = flowing_items.shift do
-        if item.text_layout_manager
+      while @item  = flowing_items.shift do
+        if @item.text_layout_manager
           # We have text
-          item.width  = current_column.text_width
-          if current_column.room < current_column.body_line_height || current_column.room < item.text_line_height
+          @item.width  = current_column.text_width
+          if current_column.room < current_column.body_line_height || current_column.room < @item.text_line_height
             column_index +=1
             if column_index < @column_count
               current_column = @graphics[column_index]
-              flowing_items.unshift(item)
+              flowing_items.unshift(@item)
               next
             else
-              flowing_items.unshift(item)
+              flowing_items.unshift(@item)
               return false
             end
           end
@@ -262,27 +263,22 @@ module RLayout
           # bounding_rect = CGPathGetPathBoundingBox(text_area_path)
           # current_column.current_position = bounding_rect.origin.y
           # item.layout_text(:proposed_path=>text_area_path) # item.width:
-          item.layout_text(:proposed_height=>current_column.room) # item.width is set already
-        elsif item.class == RLayout::Image
+          @item.layout_text(:proposed_height=>current_column.room) # item.width is set already
+        elsif @item.class == RLayout::Image
           # We have image
             # check if the image is floating image, out of the column
-            if item.grid_frame #&& item.grid_frame[2]> 1
+            if @item.grid_frame #&& item.grid_frame[2]> 1
               # "we have floating image"
-              item.x      = current_column.width * item.grid_frame[0]
-              item.x      += @gutter*(item.grid_frame[0]-1) if item.grid_frame[0] > 1
-              item.width  = current_column.width * item.grid_frame[2] + @gutter*(item.grid_frame[2]-1)
-              # puts "@grid_base:#{@grid_base}"
-              # puts "@gutter:#{@gutter}"
-              # puts "item.grid_frame:#{item.grid_frame}"
-              # puts "current_column.width:#{current_column.width}"
-              # puts "item.width:#{item.width}"
+              @item.x      = current_column.width * @item.grid_frame[0]
+              @item.x      += @gutter*(@item.grid_frame[0]-1) if @item.grid_frame[0] > 1
+              @item.width  = current_column.width * @item.grid_frame[2] + @gutter*(@item.grid_frame[2]-1)
               grid_height = @height/@grid_base[1].to_f
-              item.y      = grid_height * item.grid_frame[1]              
-              item.height = grid_height * item.grid_frame[3]
-              if item.bleed
+              @item.y      = grid_height * @item.grid_frame[1]              
+              @item.height = grid_height * @item.grid_frame[3]
+              if @item.bleed
                 #TODO do bleeding on the edges
               end
-              @floats << item
+              @floats << @item
               # push out paragraphs 
               set_overlapping_grid_rect
               #TODO
@@ -290,39 +286,56 @@ module RLayout
               
             else
               # we have column running image
-              item.width  = current_column.text_width
-              item.layout_expand  = [:width]
+              @item.width  = current_column.text_width
+              @item.layout_expand  = [:width]
               # if item is image, height should be proportional to image_object ratio, not frame width height ratio
-              item.height = item.image_object_height_to_width_ratio*item.width
-              item.apply_fit_type
+              @item.height = @item.image_object_height_to_width_ratio*@item.width
+              @item.apply_fit_type
               if @has_side_column
                 #TODO set y position
-                @side_column.graphics <<  item if @side_column
+                @side_column.graphics <<  @item if @side_column
               end
             end
-        elsif item.class == RLayout::QuizItem
-          item.width  = current_column.text_width
-          item.height = item.width
-          item.set_quiz_content_with_width(:width=> current_column.text_width)
-        elsif item.class == RLayout::QuizRefText # GeeMoon
-          item.width  = current_column.text_width
-          item.height = item.width
+        elsif @item.class == RLayout::QuizItem
+          @item.width  = current_column.text_width
+          @item.set_quiz_content
+        elsif @item.class == RLayout::QuizRefText # GeeMoon
+          @item.width  = current_column.text_width
+          @item.height = @item.width
+          #TODO layout text
         else
-          item.width  = current_column.text_width
-          item.height = item.width
+          @item.width  = current_column.text_width
+          @item.height = @item.width
         end
         
-        if !item.respond_to?(:overflow?)
-          current_column.place_item(item)
-        elsif !item.overflow? # item fits in column
-          current_column.place_item(item)
+        if @item.class != Paragraph
+          if current_column.room < @item.height
+            # goto next column
+            column_index +=1
+            if column_index < @column_count              
+              current_column = @graphics[column_index]
+              flowing_items.unshift(@item)
+              next
+            else
+              # if no more column, return falose
+              flowing_items.unshift(@item)              
+              return false
+            end
+          else
+            # place @item
+            current_column.place_item(@item)
+            next
+          end
+        elsif !@item.overflow? # @item fits in column
+          current_column.place_item(@item)
         else
-          second_half = item.split_overflowing_lines
-          current_column.place_item(item)
+          second_half = @item.split_overflowing_lines
+          current_column.place_item(@item)
           column_index +=1
           if column_index < @column_count
             current_column = @graphics[column_index]
             flowing_items.unshift(second_half)
+            next
           else
             # we are done with this text_box
             # insert second_half  back to the item list

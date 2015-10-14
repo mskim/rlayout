@@ -158,6 +158,7 @@ module RLayout
     end
 
     def place_item(item)
+      return if @graphics.include?(item)
       @graphics << item
       item.parent_graphic = self
       item.x              = @left_margin + @left_inset

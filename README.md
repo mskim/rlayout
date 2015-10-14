@@ -42,13 +42,24 @@ TODO List
 	- Nested Styles: Container Objects with customizable styles
 	- Tab separated styles(TextRuns)
 
+2015 10 14
+	- fix bug: in text_box layout_item duplicating item insert
+	- draw inter_column lines
+	- custom style support
+		heading layout
+		q font, size, color, head_indent, tail_indent
+		number font, size, color
+		choice font, size, color, number_type
+		space between q and choices
+		space between choices
+	- answer sheet
+	
 2015 10 13
 	- grow/shorten graphic height as text height 
 	- 'keep_box_height', 'fit_text_to_box', 'adjust_box_height'    
 	
 2015 10 12
 	- QuizMaker
-	- custom style support, 
 	- fix multi column bug
 	
 2015 10 7

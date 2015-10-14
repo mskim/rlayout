@@ -38,7 +38,7 @@ module RLayout
       @klass              = "Heading"
       @current_style      = RLayout::StyleService.shared_style_service.current_style
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
-      @layout_space       = 2
+      @layout_space       = 3
       if options[:width]
         @width = options[:width]
       elsif @parent_graphic
@@ -83,9 +83,13 @@ module RLayout
       
       height_sum = 0
       height_sum +=@title_object.height    unless @title_object.nil?
+      height_sum += 5
       height_sum +=@subtitle_object.height unless @subtitle_object.nil?
+      height_sum += 5
       height_sum +=@leading_object.height  unless @leading_object.nil?
+      height_sum += 5
       height_sum +=@author_object.height   unless @author_object.nil?
+      height_sum += 5
       # @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
       @height = height_sum
       

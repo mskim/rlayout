@@ -1,9 +1,11 @@
 # encoding: utf-8
 
-# QuizMaker merges QuizData and Document.
-# Story can come from couple of sources, markdown, adoc, or html(URL blog)
-# Story can be adoc, markdown, or html format.
+# QuizMaker parses QuizData and Makes PDF document.
+# QuizData is strore in md or yml file.
+# It has meta-data yml header with title, subtitle, data etc...
 # QuizData is first converted to QuizItem using QuizItemMaker. 
+
+# set_quiz_content is call when layout time.
 
 #TODO
 # paper size
@@ -13,6 +15,7 @@
 
 # give option for text_layout_manager to adjust the text height
 # Do the number
+
 
 module RLayout
 
@@ -48,7 +51,6 @@ module RLayout
       @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/quiz.rb")
       template = File.open(@template_path,'r'){|f| f.read}
       @document = eval(template)
-      
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return
@@ -57,6 +59,7 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
+      $QuizStyle  = @quiz_style
       @starting_page_number = options.fetch(:starting_page_number,1)
       read_quiz_items
       layout_quiz_items      
@@ -68,7 +71,8 @@ module RLayout
       @quiz_hash  = QuizItemMaker.yaml2quiz_hash(@quiz_data_path)
       @heading    = @quiz_hash[:heading] || {}
       @title      = @heading[:title] || "Untitled"
-      @heading[:fill_color] = "orange"
+      @heading[:stroke_sides] = [1,1,1,1]
+      @heading[:stroke_width] = 1
       @quiz_items = @quiz_hash[:quiz_items]
     end
 
@@ -83,6 +87,9 @@ module RLayout
         @first_page.graphics.unshift(@first_page.graphics.pop)
       end
       @first_page.main_box.layout_length = 8
+      @first_page.layout_space = 20
+      @first_page.main_box.layout_space = 10
+      @first_page.main_box.graphics.each{|col| col.layout_space = 30}
       @first_page.relayout!
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
@@ -97,6 +104,7 @@ module RLayout
           options[:text_box]    = true
           options[:page_number] = @starting_page_number + page_index
           options[:column_count]= @document.column_count
+          options[:column_layout_space] = 30
           p=Page.new(@document, options)
           p.relayout!
           p.main_box.create_column_grid_rects
@@ -145,7 +153,7 @@ module RLayout
   class QuizItemMaker
     # attr_accessor :number, :question, :cap, :image
     # attr_accessor :choice_1, :choice_2, :choice_3, :choice_4, :choice_5
-    attr_accessor :quiz_item
+    attr_accessor :quiz_item, :quiz_style
     def initialize(options={})
       @number     = options.fetch('number', "1")
       @question   = options.fetch('q', {text_string: "Some questiongoes goes here? "})
@@ -159,7 +167,6 @@ module RLayout
       @choice_3   = "3. " + @choice_3
       @choice_4   = options.fetch(4, "choice4")
       @choice_4   = "4. " + @choice_4
-      @cell_atts  = options.fetch('cell_atts', {text_size: 16, text_head_indent: 16, text_alignment: 'left', text_fit_type: 'adjust_box_height', text_vertical_alignment: 'top', stroke_sides: [0,0,0,0]})
       @choice_5   = options.fetch(5, nil)
       @choice_5   = "5. " + @choice_4 if @choice_5
       @answer     = options.fetch('ans', nil)
@@ -170,8 +177,8 @@ module RLayout
       item_options[:q]    = @question
       item_options[:img]  = @image
       item_options[:cap]  = @cap
-      item_options[:row1] = {row_data: [@choice_1, @choice_2], cell_atts: @cell_atts}
-      item_options[:row2] = {row_data: [@choice_3, @choice_4], cell_atts: @cell_atts}
+      item_options[:row1] = {row_data: [@choice_1, @choice_2], cell_atts: $QuizStyle[:choice_style]}
+      item_options[:row2] = {row_data: [@choice_3, @choice_4], cell_atts: $QuizStyle[:choice_style]}
       item_options[:ans]  = {text_string: @answer}
       item_options[:exp]  = {text_string: @exp}
       @quiz_item  = QuizItem.new(nil, item_options) 
@@ -220,65 +227,58 @@ module RLayout
   # cell_atts, choice_indent, choice_gutter
   class QuizItem < Container
     attr_accessor :q_object, :row1_object, :row2_object, :ans_object, :exp_object
-    attr_accessor :img_object, :data
+    attr_accessor :img_object, :data, :processed
     def initialize(parent_graphic, options={}, &block)
       @data           = options
       @layout_space   = 2
       @layout_expand  = options.fetch(:layout_expand,[:width])
       super
-      @klass      = 'QuizItem'
-      
+      @klass          = 'QuizItem'
+      @processed       = false
       unless options[:delayed_layout]
-        set_quiz_content(options)
+        set_quiz_content
       end
       self
     end
     
-    def set_quiz_content_with_width(options={})
-      @data[:width] = options[:width] if options[:width]
-      set_quiz_content(@data)
-    end
-    
-    def set_quiz_content(options)
-      if options[:width]
-        @width = options[:width]
+    def set_quiz_content
+      return if @processed
+      if @data[:q]
+        text_options = $QuizStyle[:q_style]
+        text_options[:width] = @width - @left_margin - @right_margin
+        @q_object = text(@data[:q], text_options)
+      end
+      if @data[:img]
+        @img_object = image(@data[:img])
       end
       
-      if options[:q]
-        text_option={text_alignment: 'left', text_size: 24, text_head_indent: 24}
-        @q_object = text(options[:q], text_option)
-      elsif options["q"]
-        @q_object = text(options["q"])
-      end
-      if options[:img]
-        @img_object = image(options[:img])
-      elsif options["img"]
-        @img_object = image(options["img"])
+      if @data[:row1]
+        row_indent            = $QuizStyle[:q_style][:text_head_indent] || 20
+        @data[:row1][:width]  = @width - row_indent - @left_margin - @right_margin
+        @data[:row1][:left_margin] = row_indent
+        @row1_object          = TableRow.new(self, @data[:row1])
+        @row1_object.relayout!
       end
       
-      if options[:row1]
-        @row1_object = TableRow.new(self, options[:row1])
-      elsif options["row1"]
-        @row1_object = TableRow.new(self, options["row1"])
+      if @data[:row2]
+        row_indent            = $QuizStyle[:q_style][:text_head_indent] || 20
+        @data[:row2][:width]  = @width - row_indent - @left_margin - @right_margin
+        @data[:row2][:left_margin] = row_indent
+        @row2_object          = TableRow.new(self, @data[:row2])
+        @row1_object.relayout!        
       end
       
-      if options[:row2]
-        @row2_object = TableRow.new(self, options[:row2])
-      elsif options["row2"]
-        @row2_object = TableRow.new(self, options["row2"])
-      end
-      
-      # if options[:ans]
-      #   @ans_object = text(options[:ans])
-      # elsif options["ans"]
-      #   @ans_object = text(options["ans"])
+      # if @data[:ans]
+      #   @ans_object = text(@data[:ans])
+      # elsif @data["ans"]
+      #   @ans_object = text(@data["ans"])
       # end
       # puts "after ans"
       # 
-      # if options[:exp]
-      #   @exp_object = text(options[:exp])
-      # elsif options["exp"]
-      #   @exp_object = text(options["exp"])
+      # if @data[:exp]
+      #   @exp_object = text(@data[:exp])
+      # elsif @data["exp"]
+      #   @exp_object = text(@data["exp"])
       # end
       # puts "after exp"
       
@@ -290,7 +290,6 @@ module RLayout
       height_sum +=@exp_object.height   unless @exp_object.nil?
       # @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
       @height = height_sum
-      
       if @align_to_body_text
         mutiple           = (@height/body_height).to_i
         mutiple_height    = mutiple*body_height
@@ -299,7 +298,8 @@ module RLayout
         @bottom_inset     +=  room/2
         @height           = mutiple_height
       end
-      relayout!
+      relayout!      
+      @processed = true # prevent it from creating duplicates
     end
     
     def to_hash
