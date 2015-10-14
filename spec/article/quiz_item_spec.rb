@@ -5,10 +5,19 @@ describe 'create QuizMaker' do
     @path       = "~/quiz/sample_quiz.yml"
     @quiz_maker = QuizMaker.new(quiz_data_path: File.expand_path(@path))
   end
+  
   it 'shuld create QuizMaker' do
     assert @quiz_maker.class == QuizMaker
   end
   
+  # it 'shuld create docment' do
+  #   assert @quiz_maker.document.class == Document
+  # end
+  # 
+  # it 'should create two columns in text_box' do
+  #   tb = @quiz_maker.document.pages.first.main_box
+  #   assert tb.graphics.length == 2
+  # end
 end
 
 __END__
