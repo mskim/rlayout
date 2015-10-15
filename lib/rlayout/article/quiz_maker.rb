@@ -105,6 +105,8 @@ module RLayout
         puts "SyntaxError in #{@template_path} !!!!"
         return
       end
+      # raise "SyntaxError in #{@template_path} !!!!" if @document.is_a?(SyntaxError)
+      
       unless @document.kind_of?(RLayout::Document)
         puts "Not a @document kind created !!!"
         return
@@ -121,9 +123,15 @@ module RLayout
       @quiz_hash  = QuizItemMaker.yaml2quiz_hash(@quiz_data_path)
       @heading    = @quiz_hash[:heading] || {}
       @title      = @heading[:title] || "Untitled"
-      @heading[:stroke_sides] = [1,1,1,1]
-      @heading[:stroke_width] = 1
-      @quiz_items = @quiz_hash[:quiz_items]
+      # @heading[:stroke_sides] = [1,1,1,1]
+      # @heading[:stroke_width] = 1
+      @heading              = @heading.merge!($QuizStyle[:heading])
+      @main_layout_space    = $QuizStyle[:heading][:heading_space_after] || 20
+      @column_gutter        = $QuizStyle[:text_box][:column_gutter] || 10
+      @item_space           = $QuizStyle[:text_box][:item_space] || 10
+      @draw_gutter_stroke   = $QuizStyle[:text_box][:draw_gutter_stroke] || false
+      @text_box_layout_length=$QuizStyle[:text_box][:layout_length] || 8
+      @quiz_items           = @quiz_hash[:quiz_items] || 30
     end
 
     def layout_quiz_items
@@ -136,10 +144,12 @@ module RLayout
         heading = Heading.new(@first_page, @heading)
         @first_page.graphics.unshift(@first_page.graphics.pop)
       end
-      @first_page.main_box.layout_length = 8
-      @first_page.layout_space = 20
-      @first_page.main_box.layout_space = 10
-      @first_page.main_box.graphics.each{|col| col.layout_space = 30}
+      @first_page.main_box.layout_length    = @text_box_layout_length
+      @first_page.layout_space              = @main_layout_space
+      @first_page.main_box.layout_space     = @column_gutter 
+      @first_page.main_box.draw_gutter_stroke= @draw_gutter_stroke 
+      
+      @first_page.main_box.graphics.each{|col| col.layout_space = @item_space}
       @first_page.relayout!
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
@@ -293,6 +303,7 @@ module RLayout
     
     def set_quiz_content
       return if @processed
+      @layout_space = $QuizStyle[:item_style][:layout_space] || 10
       if @data[:q]
         text_options = $QuizStyle[:q_style]
         text_options[:width] = @width - @left_margin - @right_margin
@@ -333,12 +344,36 @@ module RLayout
       # puts "after exp"
       
       height_sum = 0
-      height_sum +=@q_object.height    unless @q_object.nil?
-      height_sum +=@row1_object.height unless @row1_object.nil?
-      height_sum +=@row2_object.height  unless @row2_object.nil?
-      height_sum +=@ans_object.height   unless @ans_object.nil?
-      height_sum +=@exp_object.height   unless @exp_object.nil?
-      # @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
+      if @q_object
+        height_sum +=@q_object.height
+        height_sum += @layout_space
+      end
+      
+      if @img_object
+        height_sum +=@img_object.height
+        height_sum += @layout_space
+      end
+      
+      if @row1_object
+        height_sum +=@row1_object.height
+        height_sum += @layout_space
+      end
+      
+      if @row2_object
+        height_sum +=@row2_object.height
+        height_sum += @layout_space
+      end
+      
+      if @ans_object
+        height_sum +=@ans_object.height
+        height_sum += @layout_space
+      end
+      
+      if @exp_object
+        height_sum +=@exp_object.height
+        height_sum += @layout_space
+      end
+       # @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
       @height = height_sum
       if @align_to_body_text
         mutiple           = (@height/body_height).to_i
@@ -350,6 +385,7 @@ module RLayout
       end
       relayout!      
       @processed = true # prevent it from creating duplicates
+      @data[:q] = nil
     end
     
     def to_hash

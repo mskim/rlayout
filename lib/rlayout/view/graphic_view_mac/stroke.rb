@@ -2,6 +2,8 @@
 class GraphicViewMac < NSView
   attr_accessor :stroke, :line_position
   def draw_stroke(graphic)
+    draw_gutter_stroke(graphic)
+    
     return if graphic.stroke[:thickness].nil?
     return if graphic.stroke[:thickness] == 0 
     @stroke = graphic.stroke
@@ -10,7 +12,36 @@ class GraphicViewMac < NSView
     drawLine(r, withTrap:0)
     # drawArrow if @start_arrow && @owner_graphic
   end
-
+  
+  def draw_gutter_stroke(graphic)
+    return unless graphic.kind_of?(RLayout::TextBox)
+    return unless graphic.gutter_stroke
+    #draw gutter lines
+    space = graphic.layout_space/2.0
+    width = graphic.gutter_stroke[:thickness]
+    convert_to_nscolor(graphic.gutter_stroke[:color]).set
+    graphic.graphics.each_with_index do |g, i|
+      next if i == graphic.graphics.length - 1 # last one
+      if graphic.layout_direction == "vertical"
+        starting  = NSMakePoint(graphic.x , g.x_max + space)
+        ending    = NSMakePoint(g.x_max, g.y_max + space)
+        draw_line_from(starting, ending, width)
+      else
+        starting  = NSMakePoint(g.x_max + space, g.y)
+        ending    = NSMakePoint(g.x_max + space, g.y_max)
+        draw_line_from(starting, ending, width)
+      end
+    end
+  end
+  
+  def draw_line_from(starting, ending, width)
+    path= NSBezierPath.bezierPath
+    path.setLineWidth(width)
+    path.moveToPoint(starting)
+    path.lineToPoint(ending)
+    path.stroke 
+  end
+  
   def getStrokeRect(r)
     if @line_position == 1 #LINE_POSITION_MIDDLE 
       return r

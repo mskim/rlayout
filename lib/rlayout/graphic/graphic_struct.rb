@@ -49,6 +49,7 @@ module RLayout
       h
     end
   end
+  GutterStrokeStruct = Struct.new(:color, :thickness, :dash, :type)
   # CornersStruct   = Struct.new(:top_left, :top_right, :bottom_right, :bottom_left, :type)
   # SidesStruct     = Struct.new(:left, :top, :right, :bottom, :type)
   RectStruct      = Struct.new(:x, :y, :width, :height) do

@@ -43,6 +43,9 @@ TODO List
 	- Tab separated styles(TextRuns)
 
 2015 10 14
+	- heading text element with "clear" color as default fill_color
+	  
+2015 10 14
 	- fix bug: in text_box layout_item duplicating item insert
 	- draw inter_column lines
 	- custom style support

@@ -163,6 +163,8 @@ module RLayout
       atts[:width]                = @width
       atts[:text_fit_type]        = 'adjust_box_height'
       atts[:layout_expand]        = [:width]
+      atts[:fill_color]           = options.fetch(:fill_color, 'clear')
+      atts                        = options.merge(atts)
       @title_object               = Text.new(self, atts)
       @title_object.layout_length = @title_object.height
       @title_object
@@ -173,6 +175,8 @@ module RLayout
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
+      atts[:fill_color]             = options.fetch(:fill_color, 'clear')
+      atts                          = options.merge(atts)
       @subtitle_object              = Text.new(self, atts)
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
@@ -184,6 +188,8 @@ module RLayout
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
+      atts[:fill_color]             = options.fetch(:fill_color, 'clear')
+      atts                          = options.merge(atts)
       @leading_object               = Text.new(self, atts)
       @leading_object.layout_expand = [:width]
       @leading_object.layout_length = @leading_object.height
@@ -196,6 +202,8 @@ module RLayout
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:right_indent]           = 10
+      atts[:fill_color]             = options.fetch(:fill_color, 'clear')
+      atts                          = options.merge(atts)
       @author_object                = Text.new(self, atts)
       @author_object.layout_expand  = [:width]
       @author_object.layout_length  = @author_object.height

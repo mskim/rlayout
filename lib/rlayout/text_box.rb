@@ -66,7 +66,7 @@ module RLayout
     attr_accessor :heading_columns, :quote_box, :grid_size
     attr_accessor :starting_item_index, :ending_item_index
     attr_accessor :column_count, :column_layout_space, :next_link, :previous_link, :align_body_text
-    attr_accessor :has_side_column, :left_side_column, :side_column
+    attr_accessor :has_side_column, :left_side_column, :side_column, :draw_gutter_stroke
     
     def initialize(parent_graphic, options={}, &block)
       @grid_base        = options.fetch(:grid_base, '3x3')
