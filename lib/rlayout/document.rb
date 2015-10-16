@@ -73,7 +73,7 @@ module RLayout
     attr_accessor :page_view_count, :toc_elements
     attr_accessor :header_rule, :footer_rule, :gim
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
-    attr_accessor :pdf_path, :jpg, :column_count
+    attr_accessor :pdf_path, :jpg, :column_count, :layout_style
     def initialize(options={}, &block)
       @pages      = []
       @title      = "untitled"
@@ -84,6 +84,11 @@ module RLayout
         @portrait   = options[:doc_info].fetch(:portrait, document_defaults[:portrait])
         @double_side= options[:doc_info].fetch(:double_side, document_defaults[:double_side])
         @starts_left= options[:doc_info].fetch(:starts_left, document_defaults[:starts_left])
+      elsif options[:layout_style]
+        @paper_size = options[:layout_style].fetch(:paper_size, "A4")
+        @portrait   = options[:layout_style].fetch(:portrait, document_defaults[:portrait])
+        @double_side= options[:layout_style].fetch(:double_side, document_defaults[:double_side])
+        @starts_left= options[:layout_style].fetch(:starts_left, document_defaults[:starts_left])
       else        
         @paper_size = options.fetch(:paper_size, "A4")
         @portrait   = options.fetch(:portrait, document_defaults[:portrait])
@@ -136,7 +141,7 @@ module RLayout
         end
       else
         # create single page as default initial page
-        Page.new(self)
+        Page.new(self, options)
       end
       
       @column_count = options.fetch(:column_count, 1)

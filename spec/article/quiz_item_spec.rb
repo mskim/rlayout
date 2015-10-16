@@ -10,14 +10,14 @@ describe 'create QuizMaker' do
     assert @quiz_maker.class == QuizMaker
   end
   
-  # it 'shuld create docment' do
-  #   assert @quiz_maker.document.class == Document
-  # end
-  # 
-  # it 'should create two columns in text_box' do
-  #   tb = @quiz_maker.document.pages.first.main_box
-  #   assert tb.graphics.length == 2
-  # end
+  it 'shuld create docment' do
+    assert @quiz_maker.document.class == Document
+  end
+  
+  it 'should create two columns in text_box' do
+    tb = @quiz_maker.document.pages.first.main_box
+    assert tb.graphics.length == 2    
+  end
 end
 
 __END__

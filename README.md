@@ -42,9 +42,38 @@ TODO List
 	- Nested Styles: Container Objects with customizable styles
 	- Tab separated styles(TextRuns)
 
-2015 10 14
+2015 10 16
+	- fix quiz markup for GeeMoo 
+	- style
+		- add layout info to text styles
+			fill_color, fill_type, stroke_sides, stroke_width
+		- pass layout_style to document
+		
+2015 10 15
 	- heading text element with "clear" color as default fill_color
-	  
+	- apply styles to newly creating pages, and TextBoxes
+	- master_page
+		doc, 
+		pages
+			starting_page, middle_page, ending_page
+			left_side, right_side
+			starting_left_page, starting_right_page, 
+			middle_left_page, middle_right_page, 
+			ending_left_page, ending_right_page
+		heading
+		text_box
+			heading
+			image_box
+			image_collection
+			quote_box
+			lead_box
+			table
+			side_column
+			make_even_bottom
+		header
+		footer
+		item
+		
 2015 10 14
 	- fix bug: in text_box layout_item duplicating item insert
 	- draw inter_column lines

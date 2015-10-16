@@ -6,7 +6,7 @@ module RLayout
 
   class Page < Container
     attr_accessor :page_number, :left_page, :no_fixture_page
-    attr_accessor :main_box, :header_object, :footer_object, :side_bar_object
+    attr_accessor :main_box, :heading_object, :header_object, :footer_object, :side_bar_object
     attr_accessor :fixtures, :document
 
     def initialize(parent_graphic, options={}, &block)
@@ -55,6 +55,7 @@ module RLayout
       else
         options[:bottom_margin] = layout_default[:bottom_margin]
       end
+            
       @parent_graphic.pages << self if  @parent_graphic && !@parent_graphic.pages.include?(self)
       super
       @klass = "Page"
@@ -64,14 +65,9 @@ module RLayout
       else
         @left_page  = true
       end      
-      
       @fixtures = []
       @floats   = []
-      @x        = 0
-      @y        = 0
       main_box_options                = {}
-      main_box_options[:x]            = @left_margin
-      main_box_options[:y]            = @top_margin
       main_box_options[:width]        = @width - @left_margin - @right_margin
       main_box_options[:height]       = @height - @top_margin - @bottom_margin
       main_box_options[:column_count] = options.fetch(:column_count, 1)
@@ -80,7 +76,9 @@ module RLayout
       main_box_options[:layout_space] = options.fetch(:gutter, main_box_options[:layout_space])
       main_box_options[:heading_columns]= options.fetch(:heading_columns, main_box_options[:column_count])
       main_box_options[:grid_base]    = options.fetch(:grid_base,"3x4")
-      
+      if options[:text_box_options]
+        main_box_options.merge!(options[:text_box_options])
+      end
       if options[:text_box]
         @main_box = TextBox.new(self, main_box_options)    
       end
@@ -89,6 +87,16 @@ module RLayout
       end     
       
       self
+    end
+    
+    def is_first_page?
+      return true unless @document
+      return true if @document.pages.first == self
+      false
+    end
+    
+    def is_left_page?
+      @left_page
     end
     
     # layout_content! should be called to layout out content

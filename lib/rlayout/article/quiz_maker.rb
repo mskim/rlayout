@@ -18,7 +18,7 @@
 
 # @quiz_style = {
 #   heading_space: 20,  
-#   item_space: 30, 
+#   column_layout_space: 30, 
 #   column_gutter: 10,  
 #   column_gutter_line: true, 
 #   
@@ -72,7 +72,7 @@ module RLayout
   class QuizMaker
     attr_accessor :project_path, :template_path, :quiz_data_path
     attr_accessor :document, :output_path, :starting_page_number, :column_count
-
+    attr_accessor :layout_style
     def initialize(options={} ,&block)
       unless options[:quiz_data_path]
         puts "No quiz_data_path !!!"
@@ -111,7 +111,7 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
-      $QuizStyle  = @quiz_style
+      $layout_style = @layout_style
       @starting_page_number = options.fetch(:starting_page_number,1)
       read_quiz_items
       layout_quiz_items      
@@ -125,12 +125,12 @@ module RLayout
       @title      = @heading[:title] || "Untitled"
       # @heading[:stroke_sides] = [1,1,1,1]
       # @heading[:stroke_width] = 1
-      @heading              = @heading.merge!($QuizStyle[:heading])
-      @main_layout_space    = $QuizStyle[:heading][:heading_space_after] || 20
-      @column_gutter        = $QuizStyle[:text_box][:column_gutter] || 10
-      @item_space           = $QuizStyle[:text_box][:item_space] || 10
-      @draw_gutter_stroke   = $QuizStyle[:text_box][:draw_gutter_stroke] || false
-      @text_box_layout_length=$QuizStyle[:text_box][:layout_length] || 8
+      @heading              = @heading.merge!(@layout_style[:heading])
+      @main_layout_space    = @layout_style[:heading][:heading_space_after] || 20
+      @column_gutter        = @layout_style[:text_box][:column_gutter] || 10
+      @column_layout_space  = @layout_style[:text_box][:column_layout_space] || 10
+      @draw_gutter_stroke   = @layout_style[:text_box][:draw_gutter_stroke] || false
+      @text_box_layout_length=@layout_style[:text_box][:layout_length] || 8
       @quiz_items           = @quiz_hash[:quiz_items] || 30
     end
 
@@ -144,17 +144,26 @@ module RLayout
         heading = Heading.new(@first_page, @heading)
         @first_page.graphics.unshift(@first_page.graphics.pop)
       end
-      @first_page.main_box.layout_length    = @text_box_layout_length
       @first_page.layout_space              = @main_layout_space
+      @first_page.main_box.layout_length    = @text_box_layout_length
       @first_page.main_box.layout_space     = @column_gutter 
       @first_page.main_box.draw_gutter_stroke= @draw_gutter_stroke 
-      
-      @first_page.main_box.graphics.each{|col| col.layout_space = @item_space}
+      @first_page.main_box.graphics.each{|col| col.layout_space = @column_layout_space}
       @first_page.relayout!
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
       @first_page.main_box.layout_items(@quiz_items)
-            
+      if @document.pages[1]
+        @second_page  = @document.pages[1] 
+        @second_page.layout_space              = @main_layout_space
+        @second_page.main_box.layout_length    = @text_box_layout_length
+        @second_page.main_box.layout_space     = @column_gutter 
+        @second_page.main_box.draw_gutter_stroke= @draw_gutter_stroke 
+        @second_page.main_box.graphics.each{|col| col.layout_space = @column_layout_space}
+        @second_page.relayout!
+        @second_page.main_box.create_column_grid_rects
+        @second_page.main_box.set_overlapping_grid_rect      
+      end
       page_index = 1
       while @quiz_items.length > 0
         if page_index >= @document.pages.length
@@ -162,12 +171,12 @@ module RLayout
           options[:footer]      = true
           options[:header]      = true
           options[:text_box]    = true
+          options[:text_box_options]    = @layout_style[:text_box]
           options[:page_number] = @starting_page_number + page_index
-          options[:column_count]= @document.column_count
-          options[:column_layout_space] = 30
           p=Page.new(@document, options)
           p.relayout!
           p.main_box.create_column_grid_rects
+          
         end
         @document.pages[page_index].relayout!
         @document.pages[page_index].main_box.layout_items(@quiz_items)
@@ -237,10 +246,11 @@ module RLayout
       item_options[:q]    = @question
       item_options[:img]  = @image
       item_options[:cap]  = @cap
-      item_options[:row1] = {row_data: [@choice_1, @choice_2], cell_atts: $QuizStyle[:choice_style]}
-      item_options[:row2] = {row_data: [@choice_3, @choice_4], cell_atts: $QuizStyle[:choice_style]}
+      item_options[:row1] = {row_data: [@choice_1, @choice_2], cell_atts: $layout_style[:quiz_item_style][:choice_style]}
+      item_options[:row2] = {row_data: [@choice_3, @choice_4], cell_atts: $layout_style[:quiz_item_style][:choice_style]}
       item_options[:ans]  = {text_string: @answer}
       item_options[:exp]  = {text_string: @exp}
+      item_options[:layout_expand] = [:width]
       @quiz_item  = QuizItem.new(nil, item_options) 
       self   
     end
@@ -303,9 +313,9 @@ module RLayout
     
     def set_quiz_content
       return if @processed
-      @layout_space = $QuizStyle[:item_style][:layout_space] || 10
+      @layout_space = $layout_style[:quiz_item_style][:layout_space] || 10
       if @data[:q]
-        text_options = $QuizStyle[:q_style]
+        text_options = $layout_style[:quiz_item_style][:q_style]
         text_options[:width] = @width - @left_margin - @right_margin
         @q_object = text(@data[:q], text_options)
       end
@@ -314,7 +324,7 @@ module RLayout
       end
       
       if @data[:row1]
-        row_indent            = $QuizStyle[:q_style][:text_head_indent] || 20
+        row_indent            = $layout_style[:quiz_item_style][:q_style][:text_head_indent] || 20
         @data[:row1][:width]  = @width - row_indent - @left_margin - @right_margin
         @data[:row1][:left_margin] = row_indent
         @row1_object          = TableRow.new(self, @data[:row1])
@@ -322,7 +332,7 @@ module RLayout
       end
       
       if @data[:row2]
-        row_indent            = $QuizStyle[:q_style][:text_head_indent] || 20
+        row_indent            = $layout_style[:quiz_item_style][:q_style][:text_head_indent] || 20
         @data[:row2][:width]  = @width - row_indent - @left_margin - @right_margin
         @data[:row2][:left_margin] = row_indent
         @row2_object          = TableRow.new(self, @data[:row2])

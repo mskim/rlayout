@@ -67,7 +67,6 @@ module RLayout
     attr_accessor :starting_item_index, :ending_item_index
     attr_accessor :column_count, :column_layout_space, :next_link, :previous_link, :align_body_text
     attr_accessor :has_side_column, :left_side_column, :side_column, :draw_gutter_stroke
-    
     def initialize(parent_graphic, options={}, &block)
       @grid_base        = options.fetch(:grid_base, '3x3')
       super
@@ -80,6 +79,7 @@ module RLayout
       @floats           = options.fetch(:floats, [])
       @has_side_column  = options.fetch(:has_side_column, false)
       @left_side_column = options.fetch(:left_side_column, false)
+      @item_space       = options.fetch(:item_space, 30)
       create_columns
       if options[:column_grid]
         create_column_grid_rects
