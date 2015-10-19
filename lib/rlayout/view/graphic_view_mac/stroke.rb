@@ -2,8 +2,7 @@
 class GraphicViewMac < NSView
   attr_accessor :stroke, :line_position
   def draw_stroke(graphic)
-    draw_gutter_stroke(graphic)
-    
+    draw_gutter_stroke(graphic) if graphic.respond_to?(:gutter_stroke) && graphic.draw_gutter_stroke
     return if graphic.stroke[:thickness].nil?
     return if graphic.stroke[:thickness] == 0 
     @stroke = graphic.stroke
@@ -14,8 +13,7 @@ class GraphicViewMac < NSView
   end
   
   def draw_gutter_stroke(graphic)
-    return unless graphic.kind_of?(RLayout::TextBox)
-    return unless graphic.gutter_stroke
+    # return unless graphic.kind_of?(RLayout::TextBox)
     #draw gutter lines
     space = graphic.layout_space/2.0
     width = graphic.gutter_stroke[:thickness]

@@ -87,7 +87,11 @@ module RLayout
       
       if block
         instance_eval(&block)
-      end      
+      end    
+      if @floats.length > 0
+        layout_floats! 
+        set_overlapping_grid_rect    
+      end
       self
     end
     
@@ -382,7 +386,13 @@ module RLayout
       width_val     = grid_frame[2]
       column_frame  = @graphics.first.frame_rect
       column_width  = column_frame[2]
-      x             = @graphics[grid_frame[0]].x
+      # when grid_frame[0] is greater than columns
+      x             = column_frame[0]
+      if grid_frame[0] >= @graphics.length 
+        x           = @graphics.last.x_max
+      else
+        x           = @graphics[grid_frame[0]].x
+      end
       y             = column_frame[1]
       width         = column_width*width_val + (width_val - 1)*@layout_space
       height        = width 
@@ -419,14 +429,15 @@ module RLayout
         @bottom_occupied_rects = []
         @floats.each_with_index do |float, i|
           next unless float.kind_of?(Image) || float.kind_of?(Heading)
+          @float_rect = float.frame_rect
           if i==0
             @occupied_rects << float.frame_rect
-          elsif intersects_with_occupied_rects?(@occupied_rects, float.frame_rect)
+          elsif intersects_with_occupied_rects?(@occupied_rects, @float_rect)
                 # move to some place  
                 move_float_to_unoccupied_area(@occupied_rects,float)
-                @occupied_rects << float.frame_rect
+                @occupied_rects << @float_rect
           else
-            @occupied_rects << float.frame_rect
+            @occupied_rects << @float_rect
           end
         end
         @floats.each do |float|

@@ -573,11 +573,10 @@ module RLayout
       # starting_heading_level is 1, h1
       # if starting_heading_level = 3, h1 => h3
       #
-      starting_heading_level = options[:starting_heading_level] || 1
+      starting_heading_level = options.fetch(:starting_heading_level, 4)
       markup_stirng = s.scan(/#*\s?/)
       #TODO img, math, table, admonition, quote, code
       #TODO don't allow more than h6
-      # binding.pry
       case markup_stirng
 
       when "\# ", "\#"
@@ -625,7 +624,7 @@ module RLayout
       end
     end
 
-    def self.markdown2para_data(path)
+    def self.markdown2para_data(path, options={})
       source = File.open(path, 'r'){|f| f.read}
       #TODO
       begin
@@ -638,7 +637,7 @@ module RLayout
       rescue => e
         puts "YAML Exception reading #filename: #{e.message}"
       end
-      starting_heading_level = 1 # h1
+      starting_heading_level = options.fetch(:demotion, 4)
       if @metadata
         if @metadata.class == Array
           #TODO it seem like a bug in motion-yaml

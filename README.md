@@ -38,10 +38,18 @@ TODO List
 	- convert ascidoctor to story
 	- parse Hangul or export get retrieve:
 	- Tab Leaders, able with leaders
-	- master page
+	- master_page
 	- Nested Styles: Container Objects with customizable styles
 	- Tab separated styles(TextRuns)
 
+2015 10 19
+	- Rakefile, add changes to layout.rb file
+	- Guardfile
+	- fix grid_rect, set show grid_rect from document
+	
+2015 10 18
+	- set demotion level 4, when parse markdown to para_data
+	
 2015 10 16
 	- fix quiz markup for GeeMoo 
 	- style

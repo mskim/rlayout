@@ -47,14 +47,7 @@ module RLayout
       unless @document.kind_of?(RLayout::Document)
         puts "Not a @document kind created !!!"
         return
-      end
-      current_style  = eval(File.open(@style_path, 'r'){|f| f.read})
-      if current_style.is_a?(SyntaxError)
-        puts "SyntaxError in #{@style_path} !!!!"
-        return
-      end
-      RLayout::StyleService.shared_style_service.current_style = current_style
-      
+      end      
       read_story
       layout_story
       if @output_path
@@ -164,7 +157,26 @@ module RLayout
       h[:right_page]      = true
       h
     end
+    
+    def self.save_rakefile(path)
+      rake_text  = <<-EOF.gsub(/^\s*/, "")
+      task :default => :pdf
 
+      source_files = FileList["**/*.md", "**/*.markdown", "**/layout.rb"]
+
+      task :pdf => source_files.map {|source_file| File.dirname(source_file) + "/output.pdf" }
+
+      source_files.each do |md_file|
+        pdf_file = File.dirname(md_file) + "/output.pdf"
+        file pdf_file => md_file do
+          sh "/Applications/magazine.app/Contents/MacOS/magazine  #{File.dirname(md_file)}"
+        end
+      end
+      
+      
+      EOF
+      File.open(path, 'w'){|f| f.write rake_text}
+    end
   end
 
 end

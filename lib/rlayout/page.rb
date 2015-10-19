@@ -12,7 +12,10 @@ module RLayout
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
       @document       = parent_graphic
-      if options[:paper_size] && options[:paper_size] != "custom"
+      if @document
+        options[:width]   = @document.width
+        options[:height]  = @document.height
+      elsif options[:paper_size] && options[:paper_size] != "custom"
         options[:width] = SIZES[options[:paper_size]][0]
         options[:height] = SIZES[options[:paper_size]][1]
       else
@@ -84,8 +87,7 @@ module RLayout
       end
       if block
         instance_eval(&block)
-      end     
-      
+      end    
       self
     end
     
@@ -135,10 +137,6 @@ module RLayout
       options[:grid_base]     = "3x3" unless options[:grid_base]
       options[:gutter]        = 10    unless options[:gutter]
       @main_box=TextBox.new(self, options, &block)
-      # readjust float after they are inserted
-      @main_box.layout_floats!  
-      # mark overlapping grid_rects with floats 
-      @main_box.set_overlapping_grid_rect    
     end
     
     def document

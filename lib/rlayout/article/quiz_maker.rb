@@ -111,10 +111,12 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
-      $layout_style = @layout_style
+      
+      $layout_style         = @layout_style
+      $quiz_item_style      = @quiz_item_style
       @starting_page_number = options.fetch(:starting_page_number,1)
       read_quiz_items
-      layout_quiz_items      
+      layout_quiz_items   
       @document.save_pdf(@output_path) unless options[:no_output] 
       self
     end
@@ -176,7 +178,6 @@ module RLayout
           p=Page.new(@document, options)
           p.relayout!
           p.main_box.create_column_grid_rects
-          
         end
         @document.pages[page_index].relayout!
         @document.pages[page_index].main_box.layout_items(@quiz_items)
@@ -246,8 +247,8 @@ module RLayout
       item_options[:q]    = @question
       item_options[:img]  = @image
       item_options[:cap]  = @cap
-      item_options[:row1] = {row_data: [@choice_1, @choice_2], cell_atts: $layout_style[:quiz_item_style][:choice_style]}
-      item_options[:row2] = {row_data: [@choice_3, @choice_4], cell_atts: $layout_style[:quiz_item_style][:choice_style]}
+      item_options[:row1] = {row_data: [@choice_1, @choice_2], cell_atts: $quiz_item_style[:choice_style]}
+      item_options[:row2] = {row_data: [@choice_3, @choice_4], cell_atts: $quiz_item_style[:choice_style]}
       item_options[:ans]  = {text_string: @answer}
       item_options[:exp]  = {text_string: @exp}
       item_options[:layout_expand] = [:width]
@@ -293,6 +294,9 @@ module RLayout
     
   end
   
+  class QuizRefText < Container
+    
+  end
   # num_atts, q_atts, cap_atts,  
   # cell_atts, choice_indent, choice_gutter
   class QuizItem < Container
@@ -313,9 +317,9 @@ module RLayout
     
     def set_quiz_content
       return if @processed
-      @layout_space = $layout_style[:quiz_item_style][:layout_space] || 10
+      @layout_space = $quiz_item_style[:layout_space] || 10
       if @data[:q]
-        text_options = $layout_style[:quiz_item_style][:q_style]
+        text_options = $quiz_item_style[:q_style]
         text_options[:width] = @width - @left_margin - @right_margin
         @q_object = text(@data[:q], text_options)
       end
@@ -324,7 +328,7 @@ module RLayout
       end
       
       if @data[:row1]
-        row_indent            = $layout_style[:quiz_item_style][:q_style][:text_head_indent] || 20
+        row_indent            = $quiz_item_style[:q_style][:text_head_indent] || 20
         @data[:row1][:width]  = @width - row_indent - @left_margin - @right_margin
         @data[:row1][:left_margin] = row_indent
         @row1_object          = TableRow.new(self, @data[:row1])
@@ -332,7 +336,7 @@ module RLayout
       end
       
       if @data[:row2]
-        row_indent            = $layout_style[:quiz_item_style][:q_style][:text_head_indent] || 20
+        row_indent            = $quiz_item_style[:q_style][:text_head_indent] || 20
         @data[:row2][:width]  = @width - row_indent - @left_margin - @right_margin
         @data[:row2][:left_margin] = row_indent
         @row2_object          = TableRow.new(self, @data[:row2])

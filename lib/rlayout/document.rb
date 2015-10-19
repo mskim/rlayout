@@ -102,7 +102,6 @@ module RLayout
         @width  = SIZES[@paper_size][0]
         @height = SIZES[@paper_size][1]
       end
-      
       # for printing 
       if options[:pdf_path]
         @pdf_path = options[:pdf_path]
@@ -126,7 +125,6 @@ module RLayout
       else
         @starting_page_number = 2
       end
-      
       if options[:initial_page] == false        
         # do not create any page
       elsif options[:pages]

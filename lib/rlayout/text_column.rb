@@ -20,10 +20,8 @@ module RLayout
       super
       @klass = "TextColumn"
       @show_grid_rects = options[:show_grid_rects] || true
-      @layout_space = 0
+      @layout_space = options.fetch(:layout_space, 0)
       @complex_rect = false
-      # @line_width   = 2
-      # @line_color   = 'black'
       body_style = StyleService.shared_style_service.current_style['p']
       line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
       line_height = body_style[:line_height] if body_style[:line_height]
@@ -315,8 +313,6 @@ module RLayout
     def overlap?
       @overlap == true
     end
-
-
 
   end
 

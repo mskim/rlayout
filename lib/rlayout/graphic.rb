@@ -278,7 +278,7 @@ module RLayout
     end
 
     def layout_rect
-      [@left_margin, @top_margin, @width - @left_margin - @right_margin - @left_margin, @height - @top_margin - @bottom_margin]
+      [@left_margin, @top_margin, @width - @left_margin - @right_margin - @left_inset - @right_inset, @height - @top_margin - @bottom_margin - @top_inset - @bottom_inset]
     end
     
     def layout_size
@@ -590,7 +590,10 @@ module RLayout
       end
       self
     end
-
+    def frame_rect
+      [@x,@y,@width,@height]
+    end
+    
   end
 
   class Circle < Graphic
