@@ -139,6 +139,9 @@ module RLayout
     
     def heading(options={})
       options[:is_float] = true
+      if @heading_columns != @column_count  
+        options[:width] = width_of_columns(@heading_columns)
+      end  
       h = Heading.new(self, options)
       unless h== @floats.first
         # make heading as first one in floats
@@ -177,12 +180,12 @@ module RLayout
     end
     
     # sum of width columns width including gaps
-    def width_of_columns(columns)
+    def width_of_columns(columns)      
       return 0 if columns==0
       if columns <= @graphics.length
-        return (@graphics.last.frame_rect)[2] + (@graphics.last.frame_rect)[0] - (@graphics.first.frame_rect)[0]
+        return @graphics[columns - 1].x_max - @graphics.first.x
       end
-      (@graphics.last.frame_rect)[2] + (@graphics.last.frame_rect)[0] - (@graphics.first.frame_rect)[0]
+      @graphics.last.x_max - @graphics.first.x
     end
 
     def create_column_grid_rects
@@ -422,6 +425,12 @@ module RLayout
       # float_paistion: "center" 
       def layout_floats!
         return unless @floats
+        
+        # reset heading width
+        if has_heading? && (@heading_columns != @column_count)
+          heading = get_heading
+          heading.width = width_of_columns(@heading_columns)
+        end
         @occupied_rects =[]
         #TODO position bottom bottom_occupied_rects
         # middle occupied rect shoul

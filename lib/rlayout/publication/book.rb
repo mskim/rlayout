@@ -1,5 +1,11 @@
 # encoding: utf-8
 
+# book new name --template==spring
+# rake create chapters
+# rake update pdf 
+# rake publish pdf_book
+# rake publish web_site
+
 module RLayout
   
   class Book

@@ -177,7 +177,22 @@ module RLayout
         layout_length:  1,
       }
     end
-
+    
+    # does current text_box include Heading in floats
+    def has_heading?
+      @graphics.each do |g|
+        return true if g.class == RLayout::Heading
+      end
+      false
+    end
+    
+    def get_heading
+      @graphics.each do |g|
+        return g if g.class == RLayout::Heading
+      end
+      nil
+    end
+    
     def update_header_and_footer(options={})
       return if @no_fixture_page # for pictures page
       options[:header][:font] = 8

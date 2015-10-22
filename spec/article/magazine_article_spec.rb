@@ -2,6 +2,26 @@ require File.dirname(__FILE__) + "/../spec_helper"
 require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 require File.dirname(__FILE__) + '/../../lib/rlayout/article/magazine_article'
 
+
+describe 'create MagazineChapter with Image' do
+  before do
+    @story_path = "/Users/mskim/magazine_article/second_article"
+    @m = MagazineArticleMaker.new(:starts_left=>false, :story_path=>@story_path, :column_count =>3)    
+  end
+  
+  it 'should crete' do  
+    assert @m.class == MagazineArticleMaker  
+    @pdf_path = File.dirname(__FILE__) + "/../output/magazine_article_with_imag.pdf"
+  end
+  
+  # it 'should save yml' do    
+  #   @yml_path = File.dirname(__FILE__) + "/../output/magazine_article_with_imag.yml"
+  #   @m.save_yml(@yml_path)
+  #   File.exists?(@yml_path).must_equal true
+  # end
+end
+
+__END__
 describe 'create MagazineChapter with Image' do
   before do
     @story_path = "/Users/mskim/magazine/how-to-creaete-soochup2.markdown"

@@ -69,7 +69,10 @@ module RLayout
       @story = Story.markdown2para_data(@story_path)
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
-      if @document.pages[0].main_box.floats.length == 0
+      if @document.pages[0].has_heading?
+        @document.pages[0].get_heading.set_heading_content(@heading)
+        @document.pages[0].relayout!
+      elsif @document.pages[0].main_box.floats.length == 0
         @document.pages[0].main_box.floats << Heading.new(nil, @heading)
       elsif @document.pages[0].main_box.has_heading?
         @document.pages[0].main_box.get_heading.set_heading_content(@heading)
@@ -162,17 +165,24 @@ module RLayout
       rake_text  = <<-EOF.gsub(/^\s*/, "")
       task :default => :pdf
 
+      md_files = FileList["**/*.md", "**/*.markdown"]
       source_files = FileList["**/*.md", "**/*.markdown", "**/layout.rb"]
 
       task :pdf => source_files.map {|source_file| File.dirname(source_file) + "/output.pdf" }
 
-      source_files.each do |md_file|
-        pdf_file = File.dirname(md_file) + "/output.pdf"
-        file pdf_file => md_file do
-          sh "/Applications/magazine.app/Contents/MacOS/magazine  #{File.dirname(md_file)}"
+      source_files.each do |source_file|
+        pdf_file = File.dirname(source_file) + "/output.pdf"
+        file pdf_file => source_file do
+          sh "/Applications/magazine.app/Contents/MacOS/magazine  #{File.dirname(source_file)}"
         end
       end
-      
+
+      task :force do
+      	md_files.each do |md_file|
+      		sh "/Applications/magazine.app/Contents/MacOS/magazine  #{File.dirname(md_file)}"
+      	end
+      end
+
       
       EOF
       File.open(path, 'w'){|f| f.write rake_text}

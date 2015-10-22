@@ -1,4 +1,28 @@
-# encoding: utf-8
+
+# Git Repository for each user
+# when client commits change, githook triggers the layout server to pull the change.
+
+# Rails Server with Sinatra
+# Each user has working clone of Git Repository
+# It pulls changes from Git Repository when notified by the webhook event
+# runs update and pushed changes back to Git Repository 
+
+# Client
+# installs Rubygem Newsman
+# create new publication
+# in config file add email and authentication key which you get from the server site
+# www.newsman.com
+
+# nesman new name --template==spring
+
+# rake create new_issue data
+# rake update pdf 
+# rake publish pdf_issue
+# rake publish web_site
+
+# For rake process that requires server, it 
+#  pushes the content to the server
+#  lays out the content and downloads it pulls back the result
 
 
   #SECTION_RAKE_FILE is a single quoted heredoc to escape #{}

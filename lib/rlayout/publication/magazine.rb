@@ -1,16 +1,32 @@
 # encoding: utf-8
 
+# magazine new name --template==spring
+# rake new_issue date
+# rake create aticles
+# rake update pdf 
+# rake publish pdf_book
+# rake publish web_site
+
+
 # publication
 
 # Issue
 #   PagePlan
-#   Sections
-#   Articles
-#   AdPage
-# 
+#   1.cover
+#   2.cover 
+#   3.toc
+#   4.ad_Samsung
+#   5.ad_Apple
+#   6.ad_Apple
+#   7.interview: Min Soo Kim
+#   .
+#   .
+#   .
+
+#   Guardfile
 
 # workflow
-#  1. create page_plan in csv file 
+#  1. create page_plan in yml file 
 #       sections
 #       articles
 #       ads
@@ -25,11 +41,17 @@
 #    interview-2
 #    interview-3
 #    interview-4
+#    news-1
+#    news-2
+#    news-3
+#    news-4
+
+
 
 MAGAZINE_SECTIONS = %w{cover toc news interview review}
 
 module RLayout
-  
+    
   class Magazine 
     attr_accessor :name, :publication_path, :sections, :ad, :articles
     attr_accessor :page_plan, :style_sheet
@@ -84,10 +106,6 @@ module RLayout
       create_page_plan
       create_articles
       self
-    end
-    
-    def create_page_plan
-      
     end
     
     def create_articles

@@ -159,6 +159,15 @@ module RLayout
 	    self
 	  end
     
+    # return grid_layout with given cell count 
+    def self.grid_layout_with_cell_count(cell_count)
+      choices = []
+      GRID_PATTERNS.each do |grid_pattern|
+        choices << grid_pattern if grid_pattern.key =~/$\/#{cell_count}/
+      end
+      choices
+    end
+    
     # return grid_rects array, derived from chidren tree 
     def grid_rects
       grid_rects = []
@@ -241,6 +250,24 @@ module RLayout
         can_split =  true 
       end
       can_split
+    end
+    
+    # given cell number, calculate needed rows and columns 
+    def calculate_columns_and_rows_for(number, options={})
+      int_value=Math.sqrt(number).to_i
+      
+      if Math.sqrt(number) > Math.sqrt(number).to_i
+        if (int_value+1)*(int_value) >=  number
+          @columns  = int_value+1
+          @rows     = int_value
+        else
+          @columns  = int_value+1
+          @rows     = int_value+1
+        end
+      elsif Math.sqrt(number) == Math.sqrt(number).to_i
+        @columns  = int_value
+        @rows     = int_value
+      end
     end
     
     def pattern

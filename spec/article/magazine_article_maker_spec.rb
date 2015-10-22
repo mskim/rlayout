@@ -2,15 +2,12 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'create MagazineArticleMaker' do
   before do
-    @path       = "~/magazine_article/first_article"
+    @path       = "~/magazine_article/second_article"
     @magazine_maker = MagazineArticleMaker.new(article_path: File.expand_path(@path))
   end
   
   it 'shuld create MagazineArticleMaker' do
     assert @magazine_maker.class == MagazineArticleMaker
-    assert @magazine_maker.document.class == Document
-    tb = @magazine_maker.document.pages.first.main_box
-    assert tb.class == TextBox    
   end
   
 end

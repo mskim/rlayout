@@ -49,6 +49,7 @@ else
   
   require File.dirname(__FILE__) + '/rlayout/container/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container/place_item'
+  require File.dirname(__FILE__) + '/rlayout/container/image_box'
 
   require File.dirname(__FILE__) + '/rlayout/title_box'
   require File.dirname(__FILE__) + '/rlayout/text_column'
