@@ -322,7 +322,11 @@ module RLayout
     def table(options={}, &block)
       Table.new(self, options, &block)
     end
-
+    
+    def image_box(options={}, &block)
+      ImageBox.new(self, options, &block)
+    end
+    
     def object_box(options={}, &block)
       ObjectBox.new(self, options)
     end
