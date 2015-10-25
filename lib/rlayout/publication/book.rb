@@ -169,7 +169,29 @@ module RLayout
       
     end
     
-    
+    def self.merge_pdf_articles(project_path)
+      # Dir.glob("#{@project_path}/*.pdf") 
+      puts "Project Path: #{project_path}"
+      if RUBY_ENGINE == 'ruby'
+        puts "RUBY_ENGINE:#{RUBY_ENGINE}"
+        return
+      end
+      book_pdf = PDFDocument.new
+      puts "book_pdf.class:#{book_pdf.class}"
+      Dir.glob("#{project_path}/**/*.pdf") do |pdf_path|
+        next if pdf_path =~ /book.pdf$/
+        puts "merging ...: #{pdf_path}"
+        url = NSURL.fileURLWithPath pdf_path
+        pdf_chapter = PDFDocument.alloc.initWithURL url
+        pdf_chapter.pageCount.times do |i|
+          page = pdf_chapter.pageAtIndex i
+          pdf_data = page.dataRepresentation
+          page=PDFDocument.alloc.initWithData(pdf_data).pageAtIndex(0)
+          book_pdf.insertPage(page, atIndex: book_pdf.pageCount)
+        end
+      end
+      book_pdf.writeToFile("#{project_path}/book.pdf")
+    end
     
     #TODO
     # skip files that are already 3 digits or more
