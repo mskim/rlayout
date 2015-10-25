@@ -41,7 +41,19 @@ TODO List
 	- master_page
 	- Nested Styles: Container Objects with customizable styles
 	- Tab separated styles(TextRuns)
+	- Image Caption
 
+2015 10 25
+	- Listing
+	- BoxAd
+
+2015 10 23
+	- ObjectBox
+	
+2015 10 22
+	- ImageBox, image_pattern
+	- 
+	
 2015 10 19
 	- Rakefile, add changes to layout.rb file
 	- Guardfile

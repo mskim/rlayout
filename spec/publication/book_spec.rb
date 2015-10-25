@@ -1,20 +1,26 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
-# describe 'create new book' do
-#   before do
-#     @path = "/Users/mskim/Dropbox/RLayout/pastor"
-#     # @path = "/Users/mskim/Dropbox/RLayout/pastor"
-#     @book = Book.new(@path)
-#   end
-#
-#   it 'should create Book' do
-#     @book.must_be_kind_of Book
-#   end
-#
-#   it 'should create a folder ' do
-#     File.exists?(@path).must_equal true
-#   end
-# end
+
+describe 'create new book' do
+  before do
+    @path = "/Users/mskim/magazine_article"
+    @book = Book.new(@path)
+  end
+
+  it 'should create Book' do
+    @book.must_be_kind_of Book
+  end
+
+  it 'should create a folder ' do
+    File.exists?(@path).must_equal true
+  end
+  
+  it 'should merge pdf_articles ' do
+    @book.merge_pdf_articles
+  end
+end
+
+__END__
 
 describe 'generate pdf' do
   before do

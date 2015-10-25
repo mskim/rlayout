@@ -48,7 +48,7 @@ module RLayout
 	  attr_accessor :grid_base, :grid_frames, :profile
 	  def initialize(parent_graphic, options={})
 	    super
-	    @profile = options.fetch(:profile, nil)
+	    @profile    = options.fetch(:profile, nil)
 	    @grid_base  = []
 	    @h_gutter   = options.fetch(:h_gutter, 0)
       @v_gutter   = options.fetch(:v_gutter, 0)

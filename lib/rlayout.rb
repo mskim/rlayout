@@ -49,12 +49,17 @@ else
   
   require File.dirname(__FILE__) + '/rlayout/container/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container/place_item'
-  require File.dirname(__FILE__) + '/rlayout/container/image_box'
+  require File.dirname(__FILE__) + '/rlayout/container/object_box'
 
-  require File.dirname(__FILE__) + '/rlayout/title_box'
-  require File.dirname(__FILE__) + '/rlayout/text_column'
-  require File.dirname(__FILE__) + '/rlayout/text_box'
-  require File.dirname(__FILE__) + '/rlayout/table'
+  require File.dirname(__FILE__) + '/rlayout/box/box_ad_box'
+  require File.dirname(__FILE__) + '/rlayout/box/image_box'
+  require File.dirname(__FILE__) + '/rlayout/box/object_box'
+  require File.dirname(__FILE__) + '/rlayout/box/text_column'
+  require File.dirname(__FILE__) + '/rlayout/box/text_box'
+  require File.dirname(__FILE__) + '/rlayout/box/table'
+  require File.dirname(__FILE__) + '/rlayout/box/title_box'
+
+  require File.dirname(__FILE__) + '/rlayout/'
 
   require File.dirname(__FILE__) + '/rlayout/page'
   require File.dirname(__FILE__) + '/rlayout/page/page_fixtures'

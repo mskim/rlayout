@@ -9,24 +9,25 @@
 module RLayout
   
   class Book
-    attr_accessor :folder_path
-    def initialize(folder_path)
-      @folder_path  = folder_path
-      unless File.exists?(@folder_path)
-        system("mkdir -p #{@folder_path}") 
-        copy_template
+    attr_accessor :project_path
+    def initialize(project_path, options={})
+      @project_path  = project_path
+      unless File.exists?(@project_path)
+        system("mkdir -p #{@project_path}") 
+        copy_template if options[:template]
       end
       self
     end
     
     def copy_template
       source = "/Users/Shared/SoftwareLab/book"
-      system("cp -r #{source}/ #{@folder_path}/")
+      system("cp -r #{source}/ #{@project_path}/")
     end
+    
     
     def merge_pdf_chpaters
       book_pdf = PDFDocument.new
-      Dir.glob("#{@folder_path}/*.pdf") do |path|
+      Dir.glob("#{@project_path}/*.pdf") do |path|
         next if path =~ /book.pdf$/
         puts path
         url = NSURL.fileURLWithPath path
@@ -39,14 +40,42 @@ module RLayout
         end
         puts "book_pdf.pageCount:#{book_pdf.pageCount}"
       end
-      
-      book_pdf.writeToFile("#{@folder_path}/book.pdf")
+      book_pdf.writeToFile("#{@project_path}/book.pdf")
     end
     
+    def merge_pdf_articles
+      # Dir.glob("#{@project_path}/*.pdf") 
+      if RUBY_ENGINE == 'rubymotion'
+        book_pdf = PDFDocument.new
+      end
+      
+      Dir.glob("#{@project_path}/**/*.pdf") do |pdf_path|
+        next if pdf_path =~ /book.pdf$/
+        if RUBY_ENGINE == 'rubymotion'
+          url = NSURL.fileURLWithPath pdf_path
+          pdf_chapter = PDFDocument.alloc.initWithURL url
+          pdf_chapter.pageCount.times do |i|
+            page = pdf_chapter.pageAtIndex i
+            pdf_data = page.dataRepresentation
+            page=PDFDocument.alloc.initWithData(pdf_data).pageAtIndex(0)
+            book_pdf.insertPage(page, atIndex: book_pdf.pageCount)
+          end
+        else
+          puts "RUBY_ENGINE:#{RUBY_ENGINE}"
+        end
+      end
+      if RUBY_ENGINE == 'rubymotion'
+        book_pdf.writeToFile("#{@project_path}/book.pdf")
+      end
+    end
+    
+    def process_articles
+      
+    end
     
     def process_markdown_files(options={})
       options[:starting_page_number]=1
-      Dir.glob("#{@folder_path}/*.markdown") do |m|
+      Dir.glob("#{@project_path}/*.markdown") do |m|
         result = convert_markdown2pdf(m, options)
         options[:starting_page_number] = result.next_chapter_starting_page_number if result
       end
@@ -54,7 +83,7 @@ module RLayout
     end
     
     def update_book_tree(options={})
-      book_tree_path  = @folder_path + "/chapter_tree.yml" 
+      book_tree_path  = @project_path + "/chapter_tree.yml" 
       book_tree_hash  = YAML.load_file(book_tree_path)
       starting_page   = options.fetch(:strating_page, 1)
       book_tree_hash.each do |node|
@@ -70,7 +99,7 @@ module RLayout
     end
     
     def delete_pdf_files
-      Dir.glob("#{@folder_path}/*.pdf") do |m|
+      Dir.glob("#{@project_path}/*.pdf") do |m|
         puts "deleting #{m}..."
         system("rm #{m}")
       end
@@ -78,7 +107,7 @@ module RLayout
     end
 
     def delete_markdown_files
-      Dir.glob("#{@folder_path}/*.markdown") do |m|
+      Dir.glob("#{@project_path}/*.markdown") do |m|
         puts "deleting #{m}..."
         system("rm #{m}")
       end
@@ -109,7 +138,7 @@ module RLayout
     end
     
     def txt2markdown
-      Dir.glob("#{@folder_path}/*.txt") do |m|
+      Dir.glob("#{@project_path}/*.txt") do |m|
         convert_txt2markdown(m)
       end
     end
@@ -147,14 +176,14 @@ module RLayout
     # fix filenames with space 
     def normalize_filenames
       new_names = []
-      Dir.glob("#{@folder_path}/*") do |m|
+      Dir.glob("#{@project_path}/*") do |m|
         basename = File.basename(m)
         if basename =~ /^\d+/
           r= /^\d*/
           matching_string = (basename.match r).to_s
           long_digit = make_long_ditit(matching_string, 3)
           new_base = basename.sub(matching_string, long_digit)
-          new_path = @folder_path + "/#{new_base}"
+          new_path = @project_path + "/#{new_base}"
           puts m
           puts new_path
           # system("mv #{m} #{new_path}")
