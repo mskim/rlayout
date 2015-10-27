@@ -16,7 +16,7 @@ module RLayout
   class MagazineArticleMaker
     attr_accessor :article_path, :template, :story_path, :image_path
     attr_accessor :document, :style, :output_path, :starting_page_number
-
+    attr_accessor :no_story
     def initialize(options={} ,&block)
       unless options[:article_path]
         puts "No article_path given !!!"
@@ -27,7 +27,7 @@ module RLayout
       @story_path   = Dir.glob("#{@article_path}/*.{md,markdown}").first
       unless @story_path
         puts "No story_path !!!"
-        return
+        @no_story = true
       end
       @template     = @article_path + "/layout.rb"
       $ProjectPath  = @article_path
@@ -47,9 +47,13 @@ module RLayout
       unless @document.kind_of?(RLayout::Document)
         puts "Not a @document kind created !!!"
         return
-      end      
-      read_story
-      layout_story
+      end   
+      
+      unless @no_story == true
+        read_story
+        layout_story
+      end
+      
       if @output_path
         if RUBY_ENGINE =="rubymotion"
           @document.save_pdf(@output_path)

@@ -58,20 +58,19 @@ module RLayout
     
     def initialize(options={}, &block)
       # system("mkdir -p #{publication_path}") unless File.exists?(publication_path)
-      @name         = options.fetch(:name,"OurTimes")
+      @name         = options.fetch(:name,"MyMagazine")
       @path         = options.fetch(:path, "/Users/Shared/Newspaper")
       @publication_path = "#{@path}/#{@name}"
       @paper_size   = options.fetch(:paper_size,"A2")
       @width        = SIZES[@paper_size][0]
       @height       = SIZES[@paper_size][1]
       setup
-      super
       self
     end
     
     def setup
-      system "mkdir -p #{@publication_path}" unless File.exist?(@publication_path)
-      save_config_file
+      # system "mkdir -p #{@publication_path}" unless File.exist?(@publication_path)
+      # save_config_file
     end
     
 
@@ -95,6 +94,29 @@ module RLayout
       end
       new_names
     end
+    
+    # 1. search each article folder and get  .md file
+    # 1. look for yaml header
+    # 1. get title
+    # 1. save a file called toc.md in toc article folder
+    def self.create_toc(project_path)
+      toc_text = ""
+      Dir.glob("#{project_path}/**/*.md") do |story|
+        title_text = '# '
+        title_text += Story.get_metadata_from_stroy(story)["title"]
+        title_text += "\t{{page_number}}"
+        toc_text += title_text
+        toc_text += "\r\n"
+      end
+      toc_folder = project_path + "/toc"
+      system("mkdir -p #{toc_folder}") unless File.exist?(toc_folder)
+      toc_md_path = toc_folder + "/toc.md"
+      File.open(toc_md_path, 'w'){|f| f.write toc_text}
+    end
+    
+    def create_news_issue(issue_date)
+      
+    end
   end  
 
   class MagazineIssue
@@ -104,8 +126,13 @@ module RLayout
       @issue_date  = options.fetch(:issue_date, "2015-4-5")
       @issue_path = @publication_path + "/" + @issue_date
       create_page_plan
-      create_articles
+      # create_articles
       self
+    end
+    
+    def create_article_with_page_plan
+      #copy article templates
+            
     end
     
     def create_articles
@@ -138,12 +165,16 @@ module RLayout
   
   class PagePlan
     attr_accessor :imposition_type # sattle_stiching, 
-    attr_accessor :page_plan_sheet
+    attr_accessor :page_plan
     attr_accessor :page_runs
     
     def initialize(issue_path, options={})
       
       self
+    end
+    
+    def generate_toc
+      
     end
   end
 

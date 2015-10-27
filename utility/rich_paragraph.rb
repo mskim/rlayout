@@ -3,26 +3,27 @@
 # ColumnObject
 # TextColumn
 # Paragraph
+# RichParagraph
 # Line
 # TextToken
 
-# Paragraph
-#  Paragraph
-#  Paragraph is desinged to automate complex, design rich paragraph, layout. 
+# RichParagraph
+#  RichParagraph
+#  RichParagraph is desinged to automate complex, design rich paragraph, layout. 
 #  It has been difficult to automate design rich publiscations, 
 #  which contain various boxed paragraphs, graphics based numbering, graphics based paragraph identifiers, specially designed dropcap. 
 #  They are usually implemented using multiple graphics. 
 #  But, that process makes it difficult to automate and keep in sync as a resuable data once thay are created.
-#  Solution is to use Paragraph.
-#  Paragraph uses pre-defined templates and treat them as varibale graphics.
-#  Paragraph content is stored in each paragraph separate from grphiphcs, and only this part is edited and synced to representing graphics. 
-#  Paragraphs are also made to flow along columns.
-#  Paragraph is layed out in object_column, which belongs to object_box.
+#  Solution is to use RichParagraph.
+#  RichParagraph uses pre-defined templates and treat them as varibale graphics.
+#  RichParagraph content is stored in each paragraph separate from grphiphcs, and only this part is edited and synced to representing graphics. 
+#  RichParagraphs are also made to flow along columns.
+#  RichParagraph is layed out in object_column, which belongs to object_box.
 #  For case where paragraph has to be split into different columns, child text can be created to hanle overflowing text.
 #  This enable us to automate design rich publication.
 
 # Number one requsted feature for text implemetation was auto line alignment to grid line.
-# Paragraph aligns lines with TextColumn line grid, making lines of adjacent column's lines align vertically.
+# RichParagraph aligns lines with TextColumn line grid, making lines of adjacent column's lines align vertically.
 # When head paragraph, which might have difference height than the body paragraph, is placed in the middle of the column
 # causing vertical misalignment, follinging body paragraph should snap back to next grid.
 
@@ -30,17 +31,26 @@
 # heading paragrph lines should be vertically centers within head's paragraph box. 
 # change_width_and_adjust_height for heading paragrph should set height as multiples of grid_line_height
 
-# Paragraph is initialize with para_string, it creates series of TextTokens with default size and font.
+# RichParagraph is initialize with para_string, it creates series of TextTokens with default size and font.
 # When it is inserted into column, it generates lines(TextLine).
 
 module RLayout
+  class TabSeparatedText < Graphic
+    attr_accessor :atts_array, :tab_separated_string, :att_string
+    def initialize(parent_graphic, options={})
+      super
+      
+      self
+    end
+    
+  end
   
   class RichParagraph < Container
     attr_accessor :breakable, :part # head, body, tail
     attr_accessor :markup, :para_string, :tokens, :line_height
     def initialize(parent_graphic, options={})
       super
-      @klass = "Paragraph"
+      @klass = "RichParagraph"
       @layout_expand = []
       @para_string  = options.fetch(:para_string,"")
       @markup       = options.fetch(:markup,'p')
@@ -133,7 +143,7 @@ module RLayout
       list = []
       text = "M One two  three four five six seven eight nine ten eleven twelve thirteen."
       number.times do
-        list << Paragraph.new(nil, :para_string=>text, :markup=>"p")
+        list << RichParagraph.new(nil, :para_string=>text, :markup=>"p")
       end
       list
     end

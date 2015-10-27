@@ -14,7 +14,7 @@ module RLayout
       @document       = parent_graphic
       if @document
         options[:width]   = @document.width
-        options[:height]  = @document.height
+        options[:height]  = @document.height        
       elsif options[:paper_size] && options[:paper_size] != "custom"
         options[:width] = SIZES[options[:paper_size]][0]
         options[:height] = SIZES[options[:paper_size]][1]

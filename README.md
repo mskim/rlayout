@@ -43,6 +43,17 @@ TODO List
 	- Tab separated styles(TextRuns)
 	- Image Caption
 
+2015 10 27
+	- ImageFrame
+	
+2015 10 26
+	- Magazine save_toc
+	- Document save_layout_info option layout_info.yml
+		page_count: page_count
+		toc
+		x_ref
+		index
+		
 2015 10 25
 	- Listing
 	- BoxAd

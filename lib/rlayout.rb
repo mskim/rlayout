@@ -49,7 +49,6 @@ else
   
   require File.dirname(__FILE__) + '/rlayout/container/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container/place_item'
-  require File.dirname(__FILE__) + '/rlayout/container/object_box'
 
   require File.dirname(__FILE__) + '/rlayout/box/box_ad_box'
   require File.dirname(__FILE__) + '/rlayout/box/image_box'
@@ -75,7 +74,7 @@ else
   # require File.dirname(__FILE__) + '/rlayout/article/chapter'
   require File.dirname(__FILE__) + '/rlayout/article/chapter_maker'
   # require File.dirname(__FILE__) + '/rlayout/article/news_article'
-  require File.dirname(__FILE__) + '/rlayout/article/news_article_box'
+  # require File.dirname(__FILE__) + '/rlayout/article/news_article_box'
   require File.dirname(__FILE__) + '/rlayout/article/news_article_maker'
   require File.dirname(__FILE__) + '/rlayout/article/news_section_page'
   # require File.dirname(__FILE__) + '/rlayout/article/magazine_article'

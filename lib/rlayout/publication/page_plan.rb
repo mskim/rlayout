@@ -103,5 +103,8 @@ module RLayout
       page_plan_path = issue_path + "/page_plan.yml"
       File.open(page_plan_path, 'w'){|f| f.write SAMPLE_PLAN}
     end
+    
+
   end
+  
 end

@@ -119,6 +119,19 @@ module RLayout
       Story.new(h)
     end
     
+    def self.get_metadata_from_stroy(story_path)
+      contents = File.open(story_path, 'r'){|f| f.read}
+      begin
+        if (md = contents.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
+          @story_markdown = md.post_match
+          @metadata = YAML.load(md.to_s)
+        end
+      rescue => e
+        puts "YAML Exception reading #filename: #{e.message}"
+      end
+      @metadata
+    end
+    
     def Story.update_metadata(story_path, new_metadata_hash)
       contents = File.open(story_path, 'r'){|f| f.read}
       begin

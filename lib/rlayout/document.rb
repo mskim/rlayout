@@ -95,12 +95,19 @@ module RLayout
         @double_side= options.fetch(:double_side, document_defaults[:double_side])
         @starts_left= options.fetch(:starts_left, document_defaults[:starts_left])
       end
+      
       if @paper_size && @paper_size == "custom"
         @width  = options.fetch(:width, document_defaults[:width])
         @height = options.fetch(:height, document_defaults[:height])
       else
         @width  = SIZES[@paper_size][0]
         @height = SIZES[@paper_size][1]
+      end
+      
+      if @portrait == false
+        temp    = @width
+        @width  = @height
+        @height = temp
       end
       # for printing 
       if options[:pdf_path]
