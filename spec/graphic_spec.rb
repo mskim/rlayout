@@ -1,5 +1,48 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+
+describe 'draw rotation' do
+  before do
+    
+    @page = <<-EOF 
+    @output_path = "/Users/mskim/Development/ruby/gems/rlayout/spec/output/graphic/shadow_sample.pdf"
+    RLayout::Page.new(nil) do
+      rectangle(x: 150, y:200, fill_color: "red", rotation: 5)
+      rectangle(x: 300, y:200, fill_color: "green", rotation: -5)
+      rectangle(x: 450, y:200, fill_color: "blue", rotation: 5)
+    end
+    EOF
+    
+  end
+  
+  it 'should save using rjob, and savegraphic with pdf' do
+    @output_path = "/Users/mskim/Development/ruby/gems/rlayout/spec/output/graphic/shadow_sample.pdf"
+    system("echo '#{@page}' | /Applications/rjob.app/Contents/MacOS/rjob")
+    assert File.exist?(@output_path)
+  end
+end
+
+__END__
+
+describe 'draw shodow' do
+  before do
+    
+    @page = <<-EOF 
+    @output_path = "/Users/mskim/Development/ruby/gems/rlayout/spec/output/graphic/shadow_sample.pdf"
+    RLayout::Page.new(nil) do
+      rectangle(x: 100, y:200, fill_color: "red", shadow: true, shadow_color: "darkGray")
+    end
+    EOF
+    
+  end
+  
+  it 'should save using rjob, and savegraphic with pdf' do
+    @output_path = "/Users/mskim/Development/ruby/gems/rlayout/spec/output/graphic/shadow_sample.pdf"
+    system("echo '#{@page}' | /Applications/rjob.app/Contents/MacOS/rjob")
+    assert File.exist?(@output_path)
+  end
+end
+
 describe 'create Graphic ' do
   before do
     @g = Graphic.new(nil, :fill_color=>"blue")

@@ -19,10 +19,10 @@ module RLayout
         # disable autolayout
         @layout_expand = nil        
       else
-        @x                = options.fetch(:x, graphic_defaults[:x])
-        @y                = options.fetch(:y, graphic_defaults[:y])
-        @width            = options.fetch(:width, graphic_defaults[:width])
-        @height           = options.fetch(:height, graphic_defaults[:height])
+        @x              = options.fetch(:x, graphic_defaults[:x])
+        @y              = options.fetch(:y, graphic_defaults[:y])
+        @width          = options.fetch(:width, graphic_defaults[:width])
+        @height         = options.fetch(:height, graphic_defaults[:height])
       end
       @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))
       @tag              = options[:tag]
@@ -31,6 +31,8 @@ module RLayout
       init_fill(options)
       init_stroke(options)
       init_shape(options)
+      init_shadow(options)    if options[:shadow]
+      init_rotation(options)  if options[:rotation] || options[:rotation_content]
       init_text(options)
       init_image(options)
       if parent_graphic

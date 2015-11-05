@@ -44,9 +44,10 @@ IMAGE_FIT_TYPE_REPEAT_MUTIPLE = 5
 # ex. should put images in project.rlayout/images/my_image.jpg
 module RLayout
   class Graphic
-    attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :image_caption, :source_frame
+    attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :source_frame
     
     def init_image(options)
+      #TODO why is image_object is used instead of @image_record??
       @image_record  = options.fetch(:image_record,nil)
       unless options[:image_path]
         if options[:local_image] && $ProjectPath
@@ -56,7 +57,6 @@ module RLayout
         end
       end
       @image_path       = options[:image_path]
-      @image_caption    = options[:image_caption]      
       @image_fit_type   = options.fetch(:image_fit_type, image_defaults[:image_fit_type])
       @image_fit_type   = @image_fit_type.to_i
       if @image_path && File.exists?(@image_path)

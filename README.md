@@ -44,8 +44,14 @@ TODO List
 	- Image Caption
 	
 2014 11 5
-	- process inline element _itatic_, *bold*, underline, super, sub, 
-	
+	- Graphic
+		- fill_image, shadow, rotation
+	- process emphasis element _itatic_, *bold*, underline, super, sub, 
+	- app distribution, 
+		demo version, validation date check with license server, 		
+		installation, auto update
+		Documentation
+		
 2014 11 4
 	- text_string_array, text_atts_array
 	
@@ -63,10 +69,6 @@ TODO List
 2015 11 1
 	- paragraph
 	- prefix_text, prefix_image, prefix_number
-	
-2015 10 27
-	- Graphic
-		- bg_image, shadow, rotation
 	
 2015 10 26
 	- Magazine save_toc

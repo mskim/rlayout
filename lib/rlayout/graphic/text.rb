@@ -6,6 +6,7 @@ module RLayout
     attr_accessor :text_layout_manager
 
     def init_text(options)
+      #TODO hide instance variables into TextStruct
       @text_fit_type = options.fetch(:text_fit_type,'keep_box_height')
       if options[:text_string] || options[:text_string_array]
         #TODO merge string if options[:text_string_array]

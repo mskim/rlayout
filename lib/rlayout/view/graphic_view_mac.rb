@@ -50,62 +50,55 @@ class GraphicViewMac < NSView
   end
   
   def drawRect(r)
-    draw_graphic_in_nsview(@graphic, 0)   # draw top level @graphic
+    draw_graphic_in_nsview(@graphic)
   end
 
-  def draw_graphic_in_nsview(graphic, view_depth)
-    if view_depth > 0
-      @context = NSGraphicsContext.currentContext
-      transform = NSAffineTransform.transform            
-      @context.saveGraphicsState
-      transform.translateXBy(graphic.x, yBy:graphic.y)
-      # transform.transformPoint(ns_origin(graphic))
-      # transform.transformPoint(ns_origin(graphic))
-      # transform.rotateByRadians(0)
-      #do rotation       if graphic.rotation?
-      transform.concat
+  def draw_graphic_in_nsview(graphic)
+    @context = NSGraphicsContext.currentContext
+    transform = NSAffineTransform.transform            
+    @context.saveGraphicsState
+    transform.translateXBy(graphic.x, yBy:graphic.y)
+    
+    if graphic.rotation
+      transform.transformPoint(ns_center_point(graphic))
+      # transform.rotateByRadians(-graphic.rotation)
+      # using -angle for flipped view
+      transform.rotateByDegrees(-graphic.rotation)
     end
+    transform.concat
+    draw_shadow(graphic)          if graphic.shadow
     draw_fill(graphic)            if graphic.fill
     draw_grid_rects(graphic)      if graphic.class == RLayout::TextColumn
     draw_text(graphic)            if graphic.text_record || graphic.text_layout_manager
     draw_image(graphic)           if graphic.image_record
     draw_stroke(graphic)          if graphic.stroke
-    draw_fixtures(graphic.fixtures, view_depth + 1)    if !graphic.fixtures.nil? && graphic.fixtures.length > 0
-    draw_graphics(graphic.graphics, view_depth + 1)    if !graphic.graphics.nil? && graphic.graphics.length > 0
-    draw_floats(graphic.floats, view_depth + 1)        if !graphic.floats.nil? && graphic.floats.length > 0
-    if view_depth > 0
-      @context.restoreGraphicsState
-    end  
+    draw_fixtures(graphic.fixtures)    if !graphic.fixtures.nil? && graphic.fixtures.length > 0
+    draw_graphics(graphic.graphics)    if !graphic.graphics.nil? && graphic.graphics.length > 0
+    draw_floats(graphic.floats)        if !graphic.floats.nil? && graphic.floats.length > 0
+    @context.restoreGraphicsState
   end
     
-  def draw_fixtures(fixtures, view_depth)
+  def draw_fixtures(fixtures)
       fixtures.each do |child|
-        #translate position
-        #translate rotation
-        draw_graphic_in_nsview(child, view_depth)
+        draw_graphic_in_nsview(child)
       end
   end
   
-  def draw_graphics(graphics, view_depth)
+  def draw_graphics(graphics)
     graphics.each do |child|
-      #translate position
-      #translate rotation
-      draw_graphic_in_nsview(child, view_depth)
+      draw_graphic_in_nsview(child)
     end
   end
   
-  def draw_floats(floats, view_depth)
+  def draw_floats(floats)
     floats.each do |child|
-      #translate position
-      #translate rotation
-      draw_graphic_in_nsview(child, view_depth)
+      draw_graphic_in_nsview(child)
     end
   end
   
   def draw_grid_rects(graphic)
     return if graphic.show_grid_rects == false
     NSColor.yellowColor.set
-    #TODO
     if  graphic.grid_rects && graphic.grid_rects.length > 0
       graphic.grid_rects.each {|line| line.draw_grid_rect}
     end
@@ -115,6 +108,13 @@ class GraphicViewMac < NSView
     r = graphic.frame_rect
     puts p = NSPoint.new(r[0], r[1])
     p
+  end
+  
+  def ns_center_point(graphic)
+    r = graphic.frame_rect
+    x_center = r[0] + r[2]/2.0
+    y_center = r[1] + r[3]/2.0
+    NSPoint.new(x_center, y_center)
   end
   
   def ns_bounds_rect(graphic)
@@ -127,7 +127,6 @@ class GraphicViewMac < NSView
     NSMakeRect(r[0], r[1],r[2],r[3])
   end
     
-  # make it flopped view
   def isFlipped
     true
   end

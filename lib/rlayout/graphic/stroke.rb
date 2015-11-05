@@ -7,9 +7,7 @@
 # LINE_TYPE_TRIPPLE_LINES_2 = 5
 # LINE_TYPE_TRIPPLE_LINES_3 = 6
 
-
-module RLayout
-  
+module RLayout  
   class Graphic
     def init_stroke(options)
       @stroke             = options.fetch(:stroke, StrokeStruct.new('black', 0))
