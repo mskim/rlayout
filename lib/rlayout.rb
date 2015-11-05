@@ -92,6 +92,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/newspaper'
   require File.dirname(__FILE__) + '/rlayout/publication/photo_book'
   require File.dirname(__FILE__) + '/rlayout/publication/calendar'
+  require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
 
 end
 

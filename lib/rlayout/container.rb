@@ -3,7 +3,7 @@ module RLayout
   
   class Container < Graphic
     attr_accessor :layout_direction, :layout_space, :layout_align
-    attr_accessor :grid_base, :grid_width, :grid_height, :grid_frame, :grid_cells, :grid_color, :grid_h_gutter, :grid_v_gutter, :lines_in_grid         
+    attr_accessor :grid_base, :grid_width, :grid_height, :grid_frame, :grid_h_gutter, :grid_v_gutter, :lines_in_grid         
     attr_accessor :draw_gutter_stroke, :gutter_stroke #:gutter_stroke_type, :gutter_stroke_width, :gutter_stroke_color, :gutter_stroke_dash
     attr_accessor :floats, :grid #, :main_box
     
@@ -29,9 +29,13 @@ module RLayout
       if options[:floats]
         create_floats(options[:floats])
       end
-      # if block
-      #   instance_eval(&block)
-      # end            
+      # Container should not process block, when called by subclass as super method.
+      # Process block only when block was called from class itself.
+      if self.class == Container
+        if block
+          instance_eval(&block)
+        end     
+      end     
       self
     end
     
@@ -41,7 +45,6 @@ module RLayout
       h[:layout_space]      = 0
       h[:layout_align]      = "top"
       h[:grid_base]         = [3,3]
-      h[:grid_cells]        = Array.new
       h[:grid_color]        = "blue"
       h[:grid_frame]        = [0,0,1,1]
       h[:grid_width]        = 0

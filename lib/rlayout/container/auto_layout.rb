@@ -144,6 +144,7 @@ module RLayout
       # adjust image with new geometry
       @image_record.apply_fit_type if @image_record
     end
+    self
   end  
   
   # layout_content! should be called to layout out content

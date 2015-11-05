@@ -18,28 +18,36 @@ module RLayout
     attr_accessor :document, :style, :output_path, :starting_page_number
     attr_accessor :no_story
     def initialize(options={} ,&block)
-      unless options[:article_path]
-        puts "No article_path given !!!"
-        return
+      if options[:script]
+        @document   = eval(options[:script])
+        @output_path= options[:output_path] if options[:output_path]
+        #todo
+        @no_story   = options.fetch(:no_story, true)        
+      else
+        unless options[:article_path]
+          puts "No article_path given !!!"
+          return
+        end
+        @starting_page_number = options.fetch(:starting_page_number, 1)
+        @article_path = options[:article_path]
+        @story_path   = Dir.glob("#{@article_path}/*.{md,markdown}").first
+        unless @story_path
+          puts "No story_path !!!"
+          @no_story = true
+        end
+        @template     = @article_path + "/layout.rb"
+        $ProjectPath  = @article_path
+        @style_path   = @article_path + "/style.rb"
+        @output_path  = @article_path + "/output.pdf"
+        unless File.exist?(@template)
+          @template = "/Users/Shared/SoftwareLab/article_template/magazine.rb"
+        end
+        unless File.exist?(@style_path)
+          @style_path   = "/Users/Shared/SoftwareLab/article_template/magazine_style.rb"        
+        end
+        @document       = eval(File.open(@template,'r'){|f| f.read})
       end
-      @starting_page_number = options.fetch(:starting_page_number, 1)
-      @article_path = options[:article_path]
-      @story_path   = Dir.glob("#{@article_path}/*.{md,markdown}").first
-      unless @story_path
-        puts "No story_path !!!"
-        @no_story = true
-      end
-      @template     = @article_path + "/layout.rb"
-      $ProjectPath  = @article_path
-      @style_path   = @article_path + "/style.rb"
-      @output_path  = @article_path + "/output.pdf"
-      unless File.exist?(@template)
-        @template = "/Users/Shared/SoftwareLab/article_template/magazine.rb"
-      end
-      unless File.exist?(@style_path)
-        @style_path   = "/Users/Shared/SoftwareLab/article_template/magazine_style.rb"        
-      end
-      @document       = eval(File.open(@template,'r'){|f| f.read})
+      
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@template} !!!!"
         return
@@ -58,9 +66,12 @@ module RLayout
         if RUBY_ENGINE =="rubymotion"
           @document.save_pdf(@output_path)
         else
-          puts 
+          puts "RUBY_ENGINE == ruby"
         end
+      elsif @document.pdf_path
+        @document.save_pdf_doc
       end
+      
       self
     end
     
@@ -81,7 +92,6 @@ module RLayout
       elsif @document.pages[0].main_box.has_heading?
         @document.pages[0].main_box.get_heading.set_heading_content(@heading)
       end
-      
       @paragraphs =[]
       @story[:paragraphs].each do |para|
         para_options = {}

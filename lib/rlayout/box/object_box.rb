@@ -27,10 +27,7 @@ module RLayout
 	    end
 	    generate_cell_images
 	    super
-	        
-	    
-	    
-	    
+	        	    
 	    self
 	  end
 	  

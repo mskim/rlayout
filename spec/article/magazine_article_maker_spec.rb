@@ -2,6 +2,21 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'create MagazineArticleMaker' do
   before do
+    @pdf_path = "/Users/mskim/sample.pdf"
+@script = <<-EOF
+  RLayout::Document.new(page_count: 4, pdf_path: \"#{@pdf_path}\")
+EOF
+  system "echo '#{@script}' | /Applications/magazine.app/Contents/MacOS/magazine"
+  end
+  
+  it 'should save pdf ' do
+    assert File.exist?(@pdf_path)
+  end
+end
+
+__END__
+describe 'create MagazineArticleMaker' do
+  before do
     @path       = "~/magazine_article/second_article"
     @magazine_maker = MagazineArticleMaker.new(article_path: File.expand_path(@path))
   end
@@ -12,7 +27,7 @@ describe 'create MagazineArticleMaker' do
   
 end
 
-__END__
+
 # describe 'pgscript float_image' do
 #   before do
 #     @doc = RLayout::Document.new(:initial_page=>false) do

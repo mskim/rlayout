@@ -6,6 +6,7 @@ module RLayout
     attr_accessor :graphics, :fixtures, :floats, :grid_frame
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
+    attr_accessor :frame_image, :shadow, :rotation
 
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
@@ -389,6 +390,8 @@ module RLayout
       if RUBY_ENGINE == 'rubymotion'
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path, options)
+      elsif RUBY_ENGINE == 'ruby' 
+        puts "RUBY_ENGINE:#{RUBY_ENGINE}"
       end
     end
 
@@ -568,7 +571,7 @@ module RLayout
 
   class Image < Graphic
     attr_accessor :caption , :bleed
-    def initialize(parent_graphic, options={})
+    def initialize(parent_graphic, options={})      
       if options[:grid_frame]
         @grid_frame = options[:grid_frame]
       end

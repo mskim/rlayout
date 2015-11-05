@@ -33,7 +33,13 @@ module RLayout
       options[:text_string] = string
       Text.new(self, options)
     end
-
+    
+    def text_runs(strings_array, atts_array, options={})
+      options[:text_string_array] = strings_array
+      options[:text_atts_array]   = atts_array
+      Text.new(self, options)
+    end
+    
     def circle(options={})
       Circle.new(self, options)
     end

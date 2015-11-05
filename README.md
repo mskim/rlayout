@@ -42,9 +42,31 @@ TODO List
 	- Nested Styles: Container Objects with customizable styles
 	- Tab separated styles(TextRuns)
 	- Image Caption
-
+	
+2014 11 5
+	- process inline element _itatic_, *bold*, underline, super, sub, 
+	
+2014 11 4
+	- text_string_array, text_atts_array
+	
+2015 11 3
+	- flowing_item
+		member_item, product_item, 
+	- anchor
+	  {from_right: 30, from_bottom: 20}
+	- center[:vertical, :horizontal]
+	- page_count, scale, fit text to text_box
+	
+2015 11 2
+	- image_caption is done with flowing item
+	
+2015 11 1
+	- paragraph
+	- prefix_text, prefix_image, prefix_number
+	
 2015 10 27
-	- ImageFrame
+	- Graphic
+		- bg_image, shadow, rotation
 	
 2015 10 26
 	- Magazine save_toc

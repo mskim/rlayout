@@ -1,5 +1,18 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'text_string_array and text_atts_array' do
+  before do
+    @text_string_array  = ["This is a", "String"]
+    @text_atts_array    = [{text_size:24, text_color: "red"}, {text_size:16, text_color: "black"} ]
+    @text               = Text.new(nil, text_string_array: @text_string_array, text_atts_array: @text_atts_array)
+    
+  end
+  
+end
+
+__END__
+
+
 describe 'text overflow' do
   before do
     options = {
@@ -32,7 +45,6 @@ describe 'text overflow' do
 end
 
 
-__END__
 describe 'dropcap' do
   before do
     drop_cap_options = {

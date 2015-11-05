@@ -2,7 +2,9 @@
 # TextLayoutManager 
 # Text layout for Cocoa(Mac OS X) mode
 
-# atts_array
+# text_string_array
+# text_atts_array
+
 # atts_array is Array of attribute Hash.
 # Each run is represented as hash of attributes and string
 
@@ -94,7 +96,9 @@ module RLayout
     attr_accessor :text_alignment, :text_vertical_alignment, :text_vertical_offset
     attr_accessor :drop_lines, :drop_char, :drop_char_width, :drop_char_height
     attr_accessor :text_fit_type, :text_overflow, :overflow_line_count
+    attr_accessor :text_atts_array, :text_string_array
     attr_reader   :att_string, :layout_manager, :text_container
+    
     def initialize(owner_graphic, options={})
       @owner_graphic  = owner_graphic
       @text_fit_type  = @owner_graphic.text_fit_type if @owner_graphic
@@ -234,25 +238,48 @@ module RLayout
     end
 
     def make_att_string_from_option(options)
-      if options[:atts_array]
-        make_att_string_from_atts_array(options[:atts_array])
+      if options[:text_string_array] && options[:text_atts_array]
+        make_att_string_with_string_and_atts_array(options[:text_string_array], options[:text_atts_array])        
+      # elsif has_inline_elements?(options[:text_string])
+      #TODO implement inline element, italic, bold, underline, sub, super, emphasis(color)
+      # if it exists, make it into text_string_array, and text_atts_array
+      
       else
         make_att_string(options)
       end
     end
-
-    def make_att_string_from_atts_array(atts_array)
+    
+    #TODO
+    # def has_inline_elements?(text_string)
+    #   style_char = nil
+    #   if text_string =~ /_.*_/
+    #     style_char = "_"
+    #   elsif text_string =~ /\*.*\*/
+    #     style_char += "*"
+    #   end
+    # end
+    
+    # make att_string by merging segments of diffrent attributed strings
+    # given in text_strings and text atts
+    def make_att_string_with_string_and_atts_array(text_string_array, text_atts_array)
       att_string = NSMutableAttributedString.alloc.init
-      atts_array.each do |atts|
-        att_string.appendAttributedString(att_string(atts))
+      #TODO make sure text_atts_array.length > 0
+      default_atts = {}
+      default_atts = text_atts_array[0]  if text_atts_array.length > 0       
+      text_string_array.each_with_index do |string, i|
+        atts = default_atts
+        if text_atts_array.length > i
+          atts = text_atts_array[i]
+        end
+        atts[:text_string] = string
+        att_string.appendAttributedString(make_att_string(atts))
       end
       att_string
     end
-
+    
     def make_att_string(options={})
       #TODO
       # atts[NSKernAttributeName] = @text_track           if @text_track
-      # implement inline element, italic, bold, underline, sub, super, emphasis(color)
       if options[:text_markup]
         @text_markup = options[:text_markup]
       elsif options[:markup]

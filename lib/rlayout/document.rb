@@ -278,26 +278,14 @@ module RLayout
       doc.rlayout(path)      
       doc
     end
-    
-    # called from save_document(sender) of MyDocument
-    # def save_document
-    #   system("mkdir -p #{@path}") unless File.exists?(@path)
-    #   layout_path= @path + "/layout.yml"
-    #   File.open(layout_path,'w'){|f| f.write to_hash.to_yaml}
-    #   pdf_path= @path + "/Preview.pdf"
-    #   save_pdf_doc(pdf_path) if respond_to?(:save_pdf_doc)
-    #   # save_variables(@path) # in cased, we have variables in the document
-    # end
 
     def save_yml(path)
       File.open(path, 'w'){|f| f.write to_hash.to_yaml}
     end
     
-    def save_pdf_doc
-      puts __method__
-      puts "@pdf_path:#{@pdf_path}"
+    def save_pdf_doc(options={})
       @ns_view = DocumentViewMac.new(self)
-      options[:jpg] = @jpg
+      options[:jpg] = @jpg if @jpg
       @page_view_count = @ns_view.save_pdf(@pdf_path, options)
     end
     

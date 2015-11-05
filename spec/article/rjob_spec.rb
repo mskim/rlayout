@@ -2,15 +2,17 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'RJob with pgscript' do
   before do
-    @pdf_path = "/Users/mskim/rjob_samples/doc_sample/output.pdf"
-    my_text= <<-EOF.gsub(/^\s*/, "")
+    @pdf_path = "/Users/mskim/rjob/rjob_sample.pdf"
+    @jpg_path = "/Users/mskim/rjob/rjob_sample_1.jpg"
+    @my_text= <<-EOF.gsub(/^\s*/, "")
+    @output_path = "/Users/mskim/rjob/rjob_sample.pdf"
+    @jpg         = true
     RLayout::Document.new(pdf_path: "#{@pdf_path}") do
       page
       page
     end
-
     EOF
-    @d= eval(my_text)
+    @d= eval(@my_text)
     
     # @job = RJob.new(nil, pdf_path: @pdf_path, pgscript: my_text,  has_pgscript: true)
   end
@@ -19,6 +21,12 @@ describe 'RJob with pgscript' do
     @d.must_be_kind_of RLayout::Document
     assert @d.pdf_path == @pdf_path
     assert @d.jpg == nil
+  end
+  
+  it 'should save rjob' do
+    system("echo '#{@my_text}' | /Applications/rjob.app/Contents/MacOS/rjob ")
+    assert File.exist?(@pdf_path) == true
+    assert File.exist?(@jpg_path) == true
   end
 end
 

@@ -34,7 +34,6 @@ class DocumentViewMac
         image       = NSImage.alloc.initWithData pdfdata
         imageData   = image.TIFFRepresentation
         imageRep    = NSBitmapImageRep.imageRepWithData(imageData)  
-        # imageProps = NSDictionary.dictionaryWithObject(NSNumber.numberWithFloat(1.0), forKey:NSImageCompressionFactor)
         imageProps  = {NSImageCompressionFactor=> 1.0}
         imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
         jpg_path    = pdf_path.sub(".pdf", "_#{i+1}.jpg")
