@@ -539,8 +539,11 @@ module RLayout
     end
     
     def text_string
-      return nil unless @text_layout_manager
-      @text_layout_manager.att_string.string
+      if @text_layout_manager
+        @text_layout_manager.att_string.string
+      elsif @text_record
+        @text_record.string
+      end
     end
 
     def self.sample(options={})

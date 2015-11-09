@@ -42,6 +42,10 @@ TODO List
 	- Nested Styles: Container Objects with customizable styles
 	- Tab separated styles(TextRuns)
 	- Image Caption
+
+2014 11 7
+	- is_anchor: true, from_lelf, from_bottom, width, height
+	- class growing_box < Container 
 	
 2014 11 5
 	- Graphic

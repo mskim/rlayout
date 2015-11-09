@@ -8,7 +8,9 @@ describe 'RJob with pgscript' do
     @output_path = "/Users/mskim/rjob/rjob_sample.pdf"
     @jpg         = true
     RLayout::Document.new(pdf_path: "#{@pdf_path}") do
-      page
+      page do
+        RLayout::Text.new(self, text_string: "some_text", text_size: 12, font: "smGothicP-W70")
+      end
       page
     end
     EOF

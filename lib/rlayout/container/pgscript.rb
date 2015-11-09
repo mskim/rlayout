@@ -40,6 +40,19 @@ module RLayout
       Text.new(self, options)
     end
     
+    def text_train(text_string_array, atts_array, options={})
+      options[:text_string_array] = text_string_array.split(" ")
+      options[:text_atts_array]   = atts_array
+      TextTrain.new(self, options)
+    end
+    
+    def char_train(string, atts_array)
+      options = {}
+      options[:text_string_array] = string.split("")
+      options[:text_atts_array]   = atts_array
+      TextTrain.new(self, options)
+    end
+    
     def circle(options={})
       Circle.new(self, options)
     end

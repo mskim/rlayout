@@ -38,6 +38,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
   require File.dirname(__FILE__) + '/rlayout/container/text_form'
+  require File.dirname(__FILE__) + '/rlayout/container/text_train'
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'

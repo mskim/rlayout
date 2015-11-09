@@ -16,11 +16,17 @@ module RLayout
   class RJob
     attr_accessor :output_path, :jpg
     def initialize(options={})
-      unless options[:script]
-        puts "no script !!!"
-        return
+      created_object = nil
+      if options[:script]
+        created_object = eval(options[:script])
+      elsif options[:script_path]
+        unless File.exist?(options[:script_path])
+          puts "no file #{options[:script_path]} doesn't exit!!! "
+          return
+        end
+        script = File.open(options[:script_path], 'r'){|f| f.read}
+        created_object = eval(script)
       end
-      created_object = eval(options[:script])
       if created_object.class == SyntaxError
         puts "eval SyntaxError !!!!"
         return

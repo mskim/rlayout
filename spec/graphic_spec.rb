@@ -6,11 +6,13 @@ describe 'draw rotation' do
     
     @page = <<-EOF 
     @output_path = "/Users/mskim/Development/ruby/gems/rlayout/spec/output/graphic/shadow_sample.pdf"
-    RLayout::Page.new(nil) do
-      rectangle(x: 150, y:200, fill_color: "red", rotation: 5)
-      rectangle(x: 300, y:200, fill_color: "green", rotation: -5)
-      rectangle(x: 450, y:200, fill_color: "blue", rotation: 5)
+    p = RLayout::Page.new(nil, layout_space: 5) do
+      rectangle(fill_color: "red", layout_length: 2)
+      rectangle(fill_color: "yellow")
+      rectangle(fill_color: "blue")
     end
+    p.relayout!
+    p
     EOF
     
   end
