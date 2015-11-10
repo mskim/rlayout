@@ -45,7 +45,7 @@ IMAGE_PATTERNS = {
 module RLayout
 	class ImageBox < Container
 	  attr_accessor :image_group_path, :images, :used_image_count, :h_gutter, :v_gutter
-	  attr_accessor :grid_base, :grid_frames, :profile
+	  attr_accessor :grid_base, :grid_frames, :profile, :image_style
 	  def initialize(parent_graphic, options={})
 	    super
 	    @profile    = options.fetch(:profile, nil)
@@ -55,6 +55,7 @@ module RLayout
 	    @image_group_path = options.fetch(:image_group_path, "#{$ProjectPath}/images")
 	    @images     = Dir.glob("#{@image_group_path}/*{.jpg,.pdf,.tiff}")	    
 	    layout_images if options[:layout_images]
+	    @image_style= options[:image_style] if options[:image_style]
 	    self
 	  end
 	  
@@ -70,21 +71,24 @@ module RLayout
 	      @grid_base[0] = pattern.keys[0].split("/")[1].split("x")[0].to_i
 	      @grid_base[1] = pattern.keys[0].split("/")[1].split("x")[1].to_i
       end
-	    grid_width      = @width/@grid_base[0].to_f
-	    grid_height     = @height/@grid_base[1].to_f
+	    grid_width      = (@width - (@grid_base[0] - 1)*@h_gutter)/@grid_base[0].to_f 
+	    grid_height     = (@height - (@grid_base[1] - 1)*@v_gutter)/@grid_base[1].to_f 
 	    @used_image_count.times do |i|
 	      image = @images[i]
 	      options           = {}
-	      options[:x]       = @grid_frames[i][0]*grid_width  # add gutter
+	      options[:x]       = @grid_frames[i][0]*grid_width 
+	      options[:x]       += @grid_frames[i][0]*@h_gutter if @grid_frames[i][0] > 0
 	      options[:y]       = @grid_frames[i][1]*grid_height # add gutter
-	      options[:width]   = @grid_frames[i][2]*grid_height + (@grid_frames[i][2] - 1)*@h_gutter
+	      options[:y]       += @grid_frames[i][1]*@h_gutter if @grid_frames[i][1] > 0
+	      options[:width]   = @grid_frames[i][2]*grid_width + (@grid_frames[i][2] - 1)*@h_gutter
 	      options[:height]  = @grid_frames[i][3]*grid_height + (@grid_frames[i][3] - 1)*@v_gutter
 	      options[:image_path] = image
+	      options.merge!(@image_style) if @image_style
 	      Image.new(self, options)
       end
 	  end
 	  
-	  # mage grid_frames of size 1x1 for columns(grid_base[0]) and rows(grid_base[1])
+	  # make grid_frames of size 1x1 for columns(grid_base[0]) and rows(grid_base[1])
 	  def make_grid_frames
 	    @grid_frames = []
 	    @grid_base[1].times do |j|
@@ -98,7 +102,7 @@ module RLayout
 	  # profile is used to pick specific layout pattern
 	  # used_image_count is actual number of images that are used
     def pattern_with_image_count(cell_count)
-      # if profile is specified, use that one
+      # if profile is specified, use that one	    
       if @profile
         IMAGE_PATTERNS.each do |k,v|
           if k == @profile
@@ -109,7 +113,7 @@ module RLayout
         return {}
       end
       IMAGE_PATTERNS.each do |k,v|
-        @used_image_count = @images_length
+        @used_image_count = @images.length
         return {k=>v} if k =~/^#{cell_count}/
       end
       {}

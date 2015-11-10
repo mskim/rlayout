@@ -124,7 +124,7 @@ class GraphicViewMac < NSView
   
   def ns_frame_rect(graphic)
     r = graphic.frame_rect
-    NSMakeRect(r[0], r[1],r[2],r[3])
+    NSMakeRect(r[0],r[1],r[2],r[3])
   end
     
   def isFlipped

@@ -24,6 +24,18 @@ module RLayout
         @width          = options.fetch(:width, graphic_defaults[:width])
         @height         = options.fetch(:height, graphic_defaults[:height])
       end
+      if options[:margin]
+        @left_margin    = options[:margin]
+        @top_margin     = options[:margin]
+        @right_margin   = options[:margin]
+        @bottom_margin  = options[:margin]
+      end
+      if options[:inset]
+        @left_inset     = options[:inset]
+        @top_inset      = options[:inset]
+        @right_inset    = options[:inset]
+        @bottom_inset   = options[:inset]
+      end
       @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))
       @tag              = options[:tag]
       @auto_save        = options[:auto_save]
@@ -274,6 +286,8 @@ module RLayout
     
     def frame_rect
       [@x,@y,@width,@height]
+      # [@x+@left_margin, @y+@top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
+      
     end
 
     def bounds_rect
@@ -576,7 +590,7 @@ module RLayout
 
   class Image < Graphic
     attr_accessor :caption , :bleed
-    def initialize(parent_graphic, options={})      
+    def initialize(parent_graphic, options={})  
       if options[:grid_frame]
         @grid_frame = options[:grid_frame]
       end
@@ -586,7 +600,6 @@ module RLayout
       if options[:bleed]
         @bleed = options[:bleed]
       end
-      
       super
       @klass        = "Image"
       

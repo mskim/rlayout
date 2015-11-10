@@ -22,6 +22,9 @@ module RLayout
     end
     
     # When images are not grouped 
+    # we check how many total images we have, images_count
+    # look for template that is tayler made for images_count 
+    # copy pre-made patters and replace image with our images
     def copy_images_to_book_folder
       images        = Dir.glob("#{source}/**.jpg")
       images_count  = images.length
@@ -47,6 +50,7 @@ module RLayout
             elsif template_item =~ /.pdf$/
               # do not copy pdf
             else
+              # copy layout files and other
               system("cp #{template_item} #{page}/")
             end
           end          

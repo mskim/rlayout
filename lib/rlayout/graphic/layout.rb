@@ -13,22 +13,24 @@ module RLayout
         @top_margin     = options[:margin]
         @right_margin   = options[:margin]
         @bottom_margin  = options[:margin]
+      else
+        @left_margin    = options.fetch(:left_margin, layout_default[:left_margin])     unless @left_margin
+        @top_margin     = options.fetch(:top_margin, layout_default[:top_margin])       unless @top_margin
+        @right_margin   = options.fetch(:right_margin, layout_default[:right_margin])   unless @right_margin
+        @bottom_margin  = options.fetch(:bottom_margin, layout_default[:bottom_margin]) unless @bottom_margin
       end
-      
       if options[:inset]
         @left_inset    = options[:inset]
         @top_inset     = options[:inset]
         @right_inset   = options[:inset]
         @bottom_inset  = options[:inset]
+      else
+        @left_inset     = options.fetch(:left_inset, layout_default[:left_inset])       unless @left_inset
+        @top_inset      = options.fetch(:top_inset, layout_default[:top_inset])         unless @top_inset
+        @right_inset    = options.fetch(:right_inset, layout_default[:right_inset])     unless @right_inset
+        @bottom_inset   = options.fetch(:bottom_inset, layout_default[:bottom_inset])   unless @bottom_inset
       end
-      @left_margin    = options.fetch(:left_margin, layout_default[:left_margin])     unless @left_margin
-      @top_margin     = options.fetch(:top_margin, layout_default[:top_margin])       unless @top_margin
-      @right_margin   = options.fetch(:right_margin, layout_default[:right_margin])   unless @right_margin
-      @bottom_margin  = options.fetch(:bottom_margin, layout_default[:bottom_margin]) unless @bottom_margin
-      @left_inset     = options.fetch(:left_inset, layout_default[:left_inset])       unless @left_inset
-      @top_inset      = options.fetch(:top_inset, layout_default[:top_inset])         unless @top_inset
-      @right_inset    = options.fetch(:right_inset, layout_default[:right_inset])     unless @right_inset
-      @bottom_inset   = options.fetch(:bottom_inset, layout_default[:bottom_inset])   unless @bottom_inset
+      
       @layout_direction = options.fetch(:layout_direction, layout_default[:layout_direction])
       @layout_member    = options.fetch(:layout_member, layout_default[:layout_member])
       @layout_expand    = options.fetch(:layout_expand, layout_default[:layout_expand])
