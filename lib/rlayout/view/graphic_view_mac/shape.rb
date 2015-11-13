@@ -3,7 +3,6 @@ class GraphicViewMac < NSView
     shape_class = graphic.shape.class
     case shape_class.to_s
     when RLayout::RectStruct.to_s
-      puts "RLayout::RectStruct.to_s:#{RLayout::RectStruct.to_s}"
       path = NSBezierPath.bezierPathWithRect(ns_bounds_rect(graphic))
     when RLayout::RoundRectStruct.to_s
       path = NSBezierPath.bezierPathWithRect(ns_bounds_rect(graphic))

@@ -24,18 +24,18 @@ module RLayout
         @width          = options.fetch(:width, graphic_defaults[:width])
         @height         = options.fetch(:height, graphic_defaults[:height])
       end
-      if options[:margin]
-        @left_margin    = options[:margin]
-        @top_margin     = options[:margin]
-        @right_margin   = options[:margin]
-        @bottom_margin  = options[:margin]
-      end
-      if options[:inset]
-        @left_inset     = options[:inset]
-        @top_inset      = options[:inset]
-        @right_inset    = options[:inset]
-        @bottom_inset   = options[:inset]
-      end
+      # if options[:margin]
+      #   @left_margin    = options[:margin]
+      #   @top_margin     = options[:margin]
+      #   @right_margin   = options[:margin]
+      #   @bottom_margin  = options[:margin]
+      # end
+      # if options[:inset]
+      #   @left_inset     = options[:inset]
+      #   @top_inset      = options[:inset]
+      #   @right_inset    = options[:inset]
+      #   @bottom_inset   = options[:inset]
+      # end
       @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))
       @tag              = options[:tag]
       @auto_save        = options[:auto_save]

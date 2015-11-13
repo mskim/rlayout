@@ -43,11 +43,26 @@ TODO List
 	- Tab separated styles(TextRuns)
 	- Image Caption
 
-2014 11 7
+2015 11 13
+	- fix ImageBox height calculation bug
+	- fix Image shadow bug
+	- add ImageBox IMAGE_PATTERNS add rotation, [1,1,1,1,5], [1,1,1,1,-5]
+	- ImageBox add image_pattern options
+	
+2015 11 10
+	- fill upto margin_rect I need to fill the entire area with fill
+	
+2015 11 10
+	- fix ImageBox image_style
+	
+2015 11 9
+	- TextTrain, char_train
+
+2015 11 7
 	- is_anchor: true, from_lelf, from_bottom, width, height
 	- class growing_box < Container 
 	
-2014 11 5
+2015 11 5
 	- Graphic
 		- fill_image, shadow, rotation
 	- process emphasis element _itatic_, *bold*, underline, super, sub, 
@@ -56,7 +71,7 @@ TODO List
 		installation, auto update
 		Documentation
 		
-2014 11 4
+2015 11 4
 	- text_string_array, text_atts_array
 	
 2015 11 3

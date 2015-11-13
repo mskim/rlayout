@@ -30,9 +30,4 @@ class GraphicViewMac < NSView
       myGradient.drawInBezierPath(path, relativeCenterPosition:graphic.fill.center)
     end
   end  
-
-
-
-
-
 end

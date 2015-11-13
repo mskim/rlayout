@@ -66,12 +66,16 @@ class GraphicViewMac < NSView
       transform.rotateByDegrees(-graphic.rotation)
     end
     transform.concat
-    draw_shadow(graphic)          if graphic.shadow
     draw_fill(graphic)            if graphic.fill
     draw_grid_rects(graphic)      if graphic.class == RLayout::TextColumn
     draw_text(graphic)            if graphic.text_record || graphic.text_layout_manager
     draw_image(graphic)           if graphic.image_record
     draw_stroke(graphic)          if graphic.stroke
+    # shadow was drawen for image itself and the frame
+    # I only want frame to be shadowed 
+    # draw_shadow should be called at last 
+    # TODO  how about text shadow???
+    draw_shadow(graphic)          if graphic.shadow
     draw_fixtures(graphic.fixtures)    if !graphic.fixtures.nil? && graphic.fixtures.length > 0
     draw_graphics(graphic.graphics)    if !graphic.graphics.nil? && graphic.graphics.length > 0
     draw_floats(graphic.floats)        if !graphic.floats.nil? && graphic.floats.length > 0

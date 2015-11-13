@@ -4,19 +4,27 @@ require File.dirname(__FILE__) + "/../spec_helper"
 describe 'create ImageBox' do
   before do
     @path = "/Users/mskim/photo_book/images"
-    @g = ImageBox.new(nil, width: 400, height: 600, image_group_path: @path, h_gutter: 10, v_gutter: 10, profile: "5/3x2/1")
+    image_style = {
+      margin: 5,
+      # inset: 5,
+      rotation: 5,
+      shadow: true,
+    }
+    image_pattern = {"2/1x2/1"=>[[0, 0, 2, 1], [0, 1, 2, 1]]}
+    @g = RLayout::Document.new(:initial_page=>false, paper_size: "A5", portrait: false) do
+      page(margin: 30) do
+        # image_box =image_box(fill_color: 'darkGray', profile: "5/3x2/1", image_style: image_style, h_gutter: 20, v_gutter: 20)
+        image_box =image_box(fill_color: 'darkGray', image_pattern: image_pattern, image_style: image_style, h_gutter: 20, v_gutter: 20)
+        relayout!
+        image_box.layout_images!
+      end
+    end
   end
   
   it 'should create Image object' do
-    assert @g.class == ImageBox
+    assert @g.class == Document
   end
   
-  it 'should layout_image!' do
-    @g.layout_images!
-    assert @g.graphics.first.class == Image
-    assert @g.h_gutter == 10
-    assert @g.v_gutter == 10
-  end
   
 
   # it 'shluld save pdf' do

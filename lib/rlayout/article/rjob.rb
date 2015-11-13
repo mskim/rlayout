@@ -27,11 +27,11 @@ module RLayout
         script = File.open(options[:script_path], 'r'){|f| f.read}
         created_object = eval(script)
       end
+      puts "@output_path from eval:#{@output_path}"
       if created_object.class == SyntaxError
         puts "eval SyntaxError !!!!"
         return
       end
-      
       unless @output_path
         @output_path = created_object.pdf_path  if created_object.respond_to?(:pdf_path)
       end

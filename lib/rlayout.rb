@@ -28,6 +28,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/graphic/layout'
   require File.dirname(__FILE__) + '/rlayout/graphic/stroke'
   require File.dirname(__FILE__) + '/rlayout/graphic/shape'
+  require File.dirname(__FILE__) + '/rlayout/graphic/rotation'
+  require File.dirname(__FILE__) + '/rlayout/graphic/shadow'
   require File.dirname(__FILE__) + '/rlayout/graphic/node_tree'
   require File.dirname(__FILE__) + '/rlayout/graphic/text'
   require File.dirname(__FILE__) + '/rlayout/graphic/grid_layout'
