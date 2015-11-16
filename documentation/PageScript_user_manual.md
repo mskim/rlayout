@@ -1,7 +1,6 @@
 # PageScript User Guide
 
-	PageScript is Ruby DSL for Page Layout. PageScript is an attempt to improve page layout process. PageScript has many advantages over using WYSIWIG Page Layout App, we can automate many mundane processes. 
-	
+  PageScript is Ruby DSL for creating PDF pages. PageScript is an attempt to improve page layout process. PageScript improves automating processes, over using WYSIWIG Page Layout App. 
 PageScript assumes that there are three different tasks done by three different groups of people.
  
 	1. layout
@@ -15,9 +14,8 @@ PageScript assumes that there are three different tasks done by three different 
 	style is changes by the designers for the publication, similar to css
 	
 1. Content 
-	Content is written by the writters for each publication, using markdown, asciimath, or asciidoctor.
+	Content is written by the writers for each publication, using markdown, or asciidoctor.
 	
-
 PageScript serves to merge three resources and output for multiple medium, print, web, and mobile.
 
 
@@ -61,15 +59,25 @@ PageScript serves to merge three resources and output for multiple medium, print
 		polygon
 		star
 		bubble
+	- raotation
+		rotation
+		rotation_point # center, top_left, bottom_left, top_right, botton_right
+		
+	- shdow
+		shdow
+		shdow_color
+		shdow_offset
+		shdow_bluer_radius
 		
 	- text_record
-		text_string, markup
+		text_string, text_color, font, text_size, 
+		text_alignment, text_v_alignment, 
+		markup, 
 		text_layout_manager
 		
 	- image_record
 		image_path
 		local_image
-		image_caption
 		image_fit_type
 
 ### Graphic Subclass
@@ -86,10 +94,10 @@ Rectangle.new(nil, width:200, height:500, fill_color: 'red')
 
 ### Container
 	- auto_layout
-		layout_length
 		layout_direction
+		layout_length
 		layout_space
-		layout_expand(children)
+		layout_expand
 		
 	- grid
 		grid_base
@@ -114,9 +122,12 @@ Rectangle.new(nil, width:200, height:500, fill_color: 'red')
 	- Footer
 	- SideBar
 	- SideBox
-	- Composite
-		Mart
-
+	
+### CompositePage
+	- Mart
+	- NewspaperSection
+	- Jubo
+	
 ### Story
 	- heading
 		title
@@ -132,6 +143,11 @@ Rectangle.new(nil, width:200, height:500, fill_color: 'red')
 	- text_string
 	
 ### Document
+	- paper_size 	# A4, A3, Tabloid, NAMECARD,
+	- portrait   	# true, false
+	- doulbe_side 	# true, false
+	- starts_left 	# true, false
+	- margin
 	- pages
 
 ### Document Subclass
