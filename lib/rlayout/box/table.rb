@@ -198,7 +198,7 @@ DEFAULT_TABLE_STYLE = {
       @source             = options.fetch(:source, nil)
       #TODO fix this for quoted ,
       @table_data = @csv.split("\n")
-      @table_data = @table_data.map{|row| row.split","}
+      @table_data = @table_data.map{|row| row.split(",")}
       # create_rows
       # @parent_graphic.relayout! if @parent_graphic
       #TODO I should not call this

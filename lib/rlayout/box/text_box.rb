@@ -247,6 +247,10 @@ module RLayout
     # layout paragraphs into columns
     def layout_items(flowing_items)
       column_index = 0
+      puts "flowing_items.length:#{flowing_items.length}"
+      flowing_items.each do |item|
+        puts item.height
+      end
       current_column = @graphics[column_index]
       while @item  = flowing_items.shift do
         if @item.text_layout_manager
@@ -316,6 +320,9 @@ module RLayout
         end
         
         if @item.class != Paragraph
+          puts "if @item.class != Paragraph"
+          puts "@item.class:#{@item.class}"
+          puts "@item.height:#{@item.height}"
           if current_column.room < @item.height
             # goto next column
             column_index +=1

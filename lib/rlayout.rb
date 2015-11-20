@@ -60,6 +60,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/box/text_box'
   require File.dirname(__FILE__) + '/rlayout/box/table'
   require File.dirname(__FILE__) + '/rlayout/box/title_box'
+  require File.dirname(__FILE__) + '/rlayout/box/menu'
 
   require File.dirname(__FILE__) + '/rlayout/'
 

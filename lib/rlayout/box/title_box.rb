@@ -18,25 +18,22 @@ module RLayout
   # This is very awkward to automate, so this will to do trick.
   # list_text are read from csv.
   # leading_character: dot, dash, 
-  class TabedList < Container
-    attr_accessor :leading_character, :layout_length_array, :laeading_char_column
-    attr_accessor :list_text
-    
-  end
+  # class TabedList < Container
+  #   attr_accessor :leading_character, :layout_length_array, :laeading_char_column
+  #   attr_accessor :list_text
+  #   
+  # end
   
   # This is a box with Head title
   # title_shape: rectangular, round_rect, circular
   # frame_type:  solid, double
-	class TitledBox < Container
-		attr_accessor :title, :body, :column_count
-		attr_accessor :title_shape, :frame_type
-		
-		
-		
-	end
-
-  class Menu < TitledBox
-    
-  end
+  # class TitledBox < Container
+  #   attr_accessor :title, :body, :column_count
+  #   attr_accessor :title_shape, :frame_type
+  #   
+  #   
+  #   
+  # end
+  # 
 
 end

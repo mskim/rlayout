@@ -4,29 +4,7 @@ module RLayout
   
   # BookAssembler assembles each documents in the page plan to a single book.
   # 
-  class BookBuilder
-    def build
-      compile
-      link
-      assemble
-    end
-    
-    # compile each document
-    def compile
-      
-    end
-    
-    # compile post generated files
-    def link
-      
-    end
-    
-    # assembe generated docuemnts into one book
-    def assemble
-      
-    end
-    
-  end
+
   
   # PagePlan is used for planing publication
   # PagePlan is also used to collect the document template for articles.
@@ -34,10 +12,10 @@ module RLayout
   
   class PagePlan
     attr_accessor :publication_type, :publication_name, :issue, :binding
-    attr_accessor :template_path
-    def initialize(path, options={}, &block)
-      
-      
+    attr_accessor :project_path, :template_path, 
+    def initialize(project_path, options={}, &block)
+      @publication_type = options.fetch(:type, "Chapter")
+      create_page_plan
       self
     end
     
@@ -45,21 +23,20 @@ module RLayout
       
     end
     
-    def make_pdf_book
-      
-    end
     
     # PagePlan
     # key is the page number
     # first word is name of template
     # rest of text is the title or info
     def create_page_plan
-      SAMPLE_CSV_PLAN <<-EOF.gsub(/^\s*/, "")
+      SAMPLE_MAGAZINE_PLAN <<-EOF.gsub(/^\s*/, "")
       ---
       publication: MyMagazine
+      type: Magazine
+      template: magazine_1
       issue: 2015_10
       ---
-      page, template, title
+      
       1, cover1,
       2, cover2, Samsung Ad
       3, toc,
@@ -78,30 +55,36 @@ module RLayout
       
       EOF
       
-      SAMPLE_PLAN <<-EOF.gsub(/^\s*/, "")
+      SAMPLE_CHAPTER_PLAN <<-EOF.gsub(/^\s*/, "")
       ---
-      publication:
-      issue:
-      1: cover1
-      2: cover2
-      3: toc
-      5: news
-      7: people Interview With Min Soo Kim
-      9: review iPhone 4
-      11: review MacBook Pro
-      13: review Windows 10
-      15: review Galaxy 5
-      17: review Tesla S5
-      18: review Porche 916
-      19: review Porche 916
-      21: review Paragon Dron
-      23: cover3
-      24: cover4
+      publication: MySampleBook
+      author: Some Author
+      ---
+      
+      cover1
+      cover2
+      toc
+      1.chapter
+      2.chapter iPhone 4
+      3.chapter MacBook Pro
+      4.chapter Windows 10
+      5.chapter Galaxy 5
+      6.chapter Tesla S5
+      7.chapter Porche 916
+      cover3
+      cover4
       ---
       EOF
 
-      page_plan_path = issue_path + "/page_plan.yml"
-      File.open(page_plan_path, 'w'){|f| f.write SAMPLE_PLAN}
+      page_plan_path = @project_path + "/page_plan.yml"
+      case @publication_type
+      when "Chapter"
+        File.open(page_plan_path, 'w'){|f| f.write SAMPLE_CHAPTER_PLAN}
+      when "Magazine"
+        File.open(page_plan_path, 'w'){|f| f.write SAMPLE_MAGAZINE_PLAN}
+      else
+        File.open(page_plan_path, 'w'){|f| f.write SAMPLE_CHAPTER_PLAN}
+      end
     end
     
 
