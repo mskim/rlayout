@@ -181,6 +181,11 @@ module RLayout
       layout_text_lines
     end
 
+    def replace_string_with(string)
+      range = NSMakeRange(0, @att_string.length)
+      @att_string.replaceCharactersInRange(range, withString: string)
+    end
+
     #TODO
     def att_string_to_hash(att_string)
       Hash.new

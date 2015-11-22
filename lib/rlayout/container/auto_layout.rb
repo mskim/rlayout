@@ -31,7 +31,6 @@ module RLayout
       expandable_graphics = 0
       layout_length_sum   = 0
       non_expanding_length_sum   = 0
-      
       # This is the first pass
       @graphics.each_with_index do |graphic, index|
         next if !graphic.layout_member || graphic.layout_expand.nil?                  
@@ -127,6 +126,31 @@ module RLayout
             graphic_frame[3]  = column_size[1] - (@top_margin + @bottom_margin + @top_inset + @bottom_inset) #- graphic.top_margin - graphic.bottom_margin
           end  
         end
+        
+        # layout alignment
+        if vertical
+          if @layout_alignment == 'justify' 
+          
+          
+          
+          elsif @layout_alignment == 'bottom'
+          
+          
+          
+          end
+        else
+          if @layout_alignment == 'justify' 
+          
+          
+          
+          elsif @layout_alignment == 'bottom'
+          
+          
+          
+          end
+          
+        end
+        
         graphic.set_frame(graphic_frame)
         # recursive layout_member for child graphics
         if graphic.layout_expand.nil?

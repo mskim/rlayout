@@ -17,6 +17,7 @@ module RLayout
     attr_accessor :output_path, :jpg
     def initialize(options={})
       created_object = nil
+      @output_path   = options[:output_path] if options[:output_path]
       if options[:script]
         created_object = eval(options[:script])
       elsif options[:script_path]
@@ -26,14 +27,14 @@ module RLayout
         end
         script = File.open(options[:script_path], 'r'){|f| f.read}
         created_object = eval(script)
+        unless @output_path
+          @output_path = File.dirname(options[:script_path]) + "/output.pdf"
+        end
+        
       end
-      puts "@output_path from eval:#{@output_path}"
       if created_object.class == SyntaxError
         puts "eval SyntaxError !!!!"
         return
-      end
-      unless @output_path
-        @output_path = created_object.pdf_path  if created_object.respond_to?(:pdf_path)
       end
       unless @output_path
         puts "no output_path !!!"

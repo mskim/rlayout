@@ -5,7 +5,7 @@ module RLayout
     attr_accessor :x, :y, :width, :height
     attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
-    attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand
+    attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand, :layout_alignment
     
     def init_layout(options)
       if options[:margin]
@@ -35,7 +35,7 @@ module RLayout
       @layout_member    = options.fetch(:layout_member, layout_default[:layout_member])
       @layout_expand    = options.fetch(:layout_expand, layout_default[:layout_expand])
       @layout_length    = options.fetch(:layout_length, layout_default[:layout_length])
-
+      @layout_alignment = 
       # convert unit to point if they are in cm or mm
       @x              = convert_to_pt(@x)           if @x.class == String
       @y              = convert_to_pt(@y)           if @y.class == String

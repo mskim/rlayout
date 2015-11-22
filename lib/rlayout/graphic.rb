@@ -551,7 +551,7 @@ module RLayout
       @klass = "Text"
       self
     end
-    
+        
     def text_string
       if @text_layout_manager
         @text_layout_manager.att_string.string

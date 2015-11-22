@@ -1,3 +1,18 @@
+# profile
+  # layout_direction
+  # menu_column_count
+  # menu_item_count
+  # paper_size
+
+# title style
+
+# menu style
+  # item_color, item_font, item_size, item_alignment
+  # leader_color, leader_font, leader_size, leader_alignment
+  # price_color, price_font, price_size, price_alignment
+  # left_margin, right_margin
+
+
 module RLayout
   
   class Menu < Container
@@ -21,6 +36,10 @@ module RLayout
       end
       self
     end
+    
+    def relayout!
+      super
+    end
   end
     
   # fills the box with leader_character at run time
@@ -30,15 +49,54 @@ module RLayout
     def initialize(parent_graphic, options={})
       options[:text_size] = parent_graphic.height - 4
       options[:height] = parent_graphic.height - 2
-      super
       @is_leader = options.fetch(:is_leader, false)
+      
       @leader_character = options.fetch(:leader_character, ".")
+      if @is_leader
+        options[:text_string] = @leader_character
+      end
+      super
       self
+    end
+    
+    def set_leader_char(width)
+      puts __method__
+      if RUBY_ENGINE == 'rubymotion'
+        puts "@text_layout_manager.att_string.string.length:#{@text_layout_manager.att_string.string.length}"
+        string_width = @text_layout_manager.att_string.size.width
+        if string_width < width
+          puts "sting is short"
+        else
+          puts "sting is long"
+          puts "width:#{width}"
+          puts "string_width:#{string_width}"
+          count = string_width/width
+          new_string = @leader_character*count
+          @text_layout_manager.replace_string_with(new_string)
+        end
+        # leader_string = "."
+        # while width > leader_string/2.0
+        #   leader_string += "."
+        # end
+        # puts "leader_string.length:#{leader_string.length}"
+        
+      else
+        leader_string = "."
+        while width > leader_string/2.0
+          leader_string += "."
+        end
+        puts "leader_string.length:#{leader_string.length}"
+        # set 
+      end
+    end
+    
+    def is_leader?
+      @is_leader
     end
     
     # adjust_cell_size by adjusting text font size and width according to given cell_height
     def adjust_cell_size(cell_height)
-      puts __method__
+      # puts __method__
     end
   end
   
@@ -47,13 +105,12 @@ module RLayout
   class LeaderRow < Container
     attr_accessor :row_text
     def initialize(parent_graphic, options={}, &block)
-      options[:height] = 16 unless options[:height]
-      options[:layout_expand] = [:width]
+      options[:height] = 24 unless options[:height]
+      # options[:layout_expand] = [:width, :height]
       options[:layout_direction] = "horizontal"
       super
       @row_text = options[:row_text]
       create_cells
-      relayout!
       self
     end
     
@@ -64,12 +121,17 @@ module RLayout
     def create_cells
       cell_text = @row_text.split(",")
       cell_text.each_with_index do |text_string, i|
-        LeaderCell.new(self, text_string:text_string)
+        if i == cell_text.length - 1
+          # align right for price
+          LeaderCell.new(self, text_string:text_string, text_alignment: "right")
+        else
+          LeaderCell.new(self, text_string:text_string)
+        end
         LeaderCell.new(self, is_leader:true) unless i >= cell_text.length - 1
       end
     end
     
-    def relayout!
+    def relayout!      
       cell_height         = @height - 2
       text_cells          = @graphics.select{|cell| cell.is_leader!=true}
       text_cells.each do |cell|
@@ -81,11 +143,17 @@ module RLayout
       leader_cells.each {|cell| cell.width = space_for_leader}
       x= 0
       @graphics.each do |cell|
-        cell.x      = x
-        cell.y      = 1
-        cell.height = cell_height
+        y      = 1
+        height = cell_height
+        width = cell.width
+        if cell.is_leader?
+          width = space_for_leader 
+          cell.set_leader_char(width)
+        end
+        cell.set_frame([x,y,width,height])
         x += cell.width
       end
+      
     end
   end
 end

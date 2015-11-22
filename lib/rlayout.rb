@@ -17,7 +17,7 @@ else
   require 'yaml'
   require 'csv'
   require 'erb'
-  
+  require 'nokogiri'
   # require 'mini_magick'
   require "rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
@@ -97,6 +97,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/photo_book'
   require File.dirname(__FILE__) + '/rlayout/publication/calendar'
   require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
+  
+  require File.dirname(__FILE__) + '/rlayout/hwpml/hwpml'
 
 end
 
