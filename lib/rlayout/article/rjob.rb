@@ -30,7 +30,6 @@ module RLayout
         unless @output_path
           @output_path = File.dirname(options[:script_path]) + "/output.pdf"
         end
-        
       end
       if created_object.class == SyntaxError
         puts "eval SyntaxError !!!!"
