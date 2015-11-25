@@ -43,6 +43,17 @@ TODO List
 	- Tab separated styles(TextRuns)
 	- Image Caption
 
+2015 11 25
+	- fix hwpml parsing for fragmented paragraph
+	- add paragraph level
+	
+2015 11 24
+	- parse hwpml
+	- save image
+		![Alt text](/path/to/img.jpg)
+		![Alt text](/path/to/img.jpg "Optional title")
+	- parse table
+
 2015 11 13
 	- fix ImageBox height calculation bug
 	- fix Image shadow bug

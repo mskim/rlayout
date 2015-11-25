@@ -45,6 +45,5 @@ module RLayout
       created_object.save_pdf(@output_path, :jpg=>@jpg) if created_object.respond_to?(:save_pdf)
       self
     end
-    
   end
 end

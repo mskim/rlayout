@@ -18,6 +18,7 @@ else
   require 'csv'
   require 'erb'
   require 'nokogiri'
+  require 'base64'
   # require 'mini_magick'
   require "rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
