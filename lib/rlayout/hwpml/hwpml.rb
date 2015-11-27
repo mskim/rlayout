@@ -14,19 +14,22 @@
 module RLayout
 	class Hwpml
 	  attr_accessor :path, :output_path, :doc, :hwpml
-	  attr_accessor :head, :body, :tail
+	  attr_accessor :head, :body, :tail, :bin_data_list_items, :bin_data_set
 	  attr_accessor :para_styles, :char_styles, :styles
 	  attr_accessor :block_list, :story, :tables, :images
 	  
 	  def initialize(path, options={})
-	    @path       = path
-  	  @hwpml      = File.open(@path, 'r'){|f| f.read}
+	    @path                 = path
+  	  @hwpml                = File.open(@path, 'r'){|f| f.read}
       if options[:output_path]
-        @output_path  = options[:output_path] 
+        @output_path        = options[:output_path] 
       else
-        @output_path  = @path.gsub(".hml", "")
+        @output_path        = @path.gsub(".hml", "")
       end
-      @doc = Nokogiri::XML(@hwpml)
+      @doc                  = Nokogiri::XML(@hwpml)
+      @bin_data_list_items  = @doc.xpath("//BINDATALIST/BINITEM")
+      @bin_data_set         = doc.xpath("//BINDATASTORAGE/BINDATA")
+      
       parse_char_styles
       parse_para_styles
       parse_styles
@@ -53,24 +56,31 @@ module RLayout
       end
 	  end
 	  
+	  def extract_image_info(image_element)
+	    image_info = {}
+	    image_field               = image_element.children.select {|child| child.name == "IMAGE"}
+      bin_item_value            = image_field.first.attributes["BinItem"]
+      bin_item_index            = bin_item_value.to_s.to_i - 1
+      bin_data_list_item        = @bin_data_list_items.at(bin_item_index)
+      file_type                 = bin_data_list_item.attributes["Format"]
+      image_info[:file_type]    = file_type
+      image_info[:bin_item_index]= bin_item_index
+      image_info
+	  end
+	  
 	  def save_images
 	    images_path     = @output_path + "/images"
       system("mkdir -p #{images_path}") unless File.directory?(images_path)
-	    @images.each_with_index do |image, i|
-	      image_path      = images_path + "/#{i+1}.bmp"
-	      image_info      = image.children.select {|child| child.name == "IMAGE"}
-	      bin_item_index  = image_info.first.attributes["BinItem"]
-	      bin_item_index  = bin_item_index.to_s.to_i - 1
-        bin_data_set    = doc.xpath("//BINDATASTORAGE/BINDATA")
-        data            = bin_data_set.at(bin_item_index)        
+	    @images.each_with_index do |image_info, i|
+	      image_type      = image_info[:file_type]
+	      image_path      = images_path + "/#{i+1}.#{image_type}"
+        data            = @bin_data_set.at(image_info[:bin_item_index])        
         File.open(image_path, 'w'){|f| f.write Base64.decode64(data.text)}
       end
 	  end
 	  
     def save(options={})
-      puts "@output_path:#{@output_path}"
       system("mkdir -p #{@output_path}") unless File.directory?(@output_path)
-      puts "File.directory?(@output_path):#{File.directory?(@output_path)}"
       save_style
       save_tables
       save_images
@@ -134,7 +144,8 @@ module RLayout
 	    @images     = []
 	    picture_count = 1
 	    @doc.xpath('//SECTION/P').each do | top_level_block|
-	      grand_child = top_level_block.children.first.children.first
+	      first_child = top_level_block.children.first
+	      grand_child = top_level_block.children.first.children.first if first_child
 	      type = grand_child.name if grand_child
         case type
         when "CHAR"
@@ -171,10 +182,10 @@ module RLayout
           @tables << grand_child
         when "PICTURE"
           @story += "\n"
-          file_type = "jpg"
-          @story += "image::#{picture_count}.#{file_type}\n"
+          image_info = extract_image_info(grand_child)
+          @story += "image::#{picture_count}.#{image_info[:file_type]}\n"
           picture_count += 1
-          @images << grand_child
+          @images << image_info
         when "LINE"
           @story += "\n"
           @story += "line"

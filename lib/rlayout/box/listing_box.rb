@@ -24,6 +24,7 @@ module RLayout
     end
   end
   
+  # text list
   class ListItemRow  < Container
     def initialize(parent_graphics, options={}, &block)
       
@@ -31,5 +32,32 @@ module RLayout
     
   end
   
+  # image list
+  
+  class ListImageRow < Containaer
+    attr_accessor :images_array
+    
+    def initialize(parent_graphic, options={}, &block)
+      options[:layout_direction] = "horizontal" unless options[:layout_direction]
+      super
+      @images_array = options[:images_array]
+      @images_array.each do |image_path|
+        if image_path
+          Image.new(image_path: image_path)
+        elsif options[:images_array] =~/[.jpg|.pdf$]/
+          Text.new(text_string: image_path)
+        else
+          Rectangle.new(image_path: image_path)
+        end
+      end
+      
+      self
+    end
+    
+    
+    
+    
+    
+  end
 
 end

@@ -19,6 +19,9 @@ describe 'save style heading' do
     @path         = "/Users/mskim/Development/hwp/section_test1.hml"
     @output_path  = "/Users/mskim/Development/hwp/section_test1" 
     
+    @path         = "/Users/mskim/Development/hwp/imagetest.hml"
+    @output_path  = "/Users/mskim/Development/hwp/imagetest" 
+    
     @hwp  = Hwpml.new(@path)
   end
   

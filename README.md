@@ -42,7 +42,13 @@ TODO List
 	- Nested Styles: Container Objects with customizable styles
 	- Tab separated styles(TextRuns)
 	- Image Caption
-
+	
+2015 11 25
+	- create hwpml to rlayout , create layout.rb and Rakefile
+	- hwpml korean file name not displayed proproly in Mac 
+	- determin image file types
+	- save table info to disk
+	 
 2015 11 25
 	- fix hwpml parsing for fragmented paragraph
 	- add paragraph level
