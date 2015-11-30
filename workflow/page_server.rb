@@ -1,9 +1,12 @@
 
 require 'sinatra'
+require 'slim'
+
 REPOS_PATH = "/Users/mskim/repos_path"
 
 get "/" do
-  "Welcome to PageServer..."
+  slim :index 
+  
 end
 
 get "/process/:email/:project" do
@@ -18,7 +21,7 @@ get "/process/:email/:project" do
   end
 end
 
-get "/print/:email/:project" do
+get "/pdf/:email/:project" do
   repo = REPOS_PATH + "/#{params[:email]}/#{params[:project]}"
   unless File.directory?(repo)
     "project #{repo} not found !!! "
@@ -33,3 +36,24 @@ get "/print_reday/:email/:project" do
   # sleep 10
   # system "(cd #{repo} && git push)"
 end
+
+
+__END__
+
+@@layout 
+doctype html 
+html
+  head 
+    meta charset="utf-8" 
+    title Just Do It 
+    link rel="stylesheet" media="screen, projection" href="/styles.css" 
+    /[if lt IE 9] 
+      script src="http://html5shiv.googlecode.com/svn/trunk/html5.js" 
+  body 
+    h1 Just Do It 
+    == yield 
+
+@@index 
+h2 My Tasks
+ul.tasks
+  li Get Milk

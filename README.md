@@ -42,12 +42,31 @@ TODO List
 	- Nested Styles: Container Objects with customizable styles
 	- Tab separated styles(TextRuns)
 	- Image Caption
+
+2015 11 25
+	- Korean localization
+		- title, subtitle, author, lead, quote
+		- heading, text_box
+		- header, footer 
+		- table, image, warning, example,
+		
+	- text format(use Asciidoctor/Markdown)
+		- italic 
+		- bold
+		- underline, strike-through, super, sub
+		- custom emp(color)
+
+2015 11 29
+	- Admonition, label list, icon
+	- synthesised char symbol 
+	- convert hwpml table to adoc table(psv)
 	
 2015 11 25
-	- create hwpml to rlayout , create layout.rb and Rakefile
-	- hwpml korean file name not displayed proproly in Mac 
-	- determin image file types
-	- save table info to disk
+	- create hwpml to rlayout
+		- create layout.rb and Rakefile
+		- hwpml korean file name not displayed properly in Mac 
+		- determine image file types
+		- save table info to disk
 	 
 2015 11 25
 	- fix hwpml parsing for fragmented paragraph

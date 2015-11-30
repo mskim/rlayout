@@ -1,5 +1,22 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'parse table' do
+  before do
+    @path         = "/Users/mskim/Development/hwp/ms.hml"
+    @style_path   = "/Users/mskim/Development/hwp/ms/style.yml"
+    @output_path  = "/Users/mskim/Development/hwp/ms" 
+    @tables_path  = "/Users/mskim/Development/hwp/ms/tables" 
+    @hwp  = Hwpml.new(@path)
+  end
+  
+  it 'should create tables' do
+    @hwp.save
+    assert File.directory?(@tables_path) == true
+  end
+  
+end
+
+__END__
 describe 'save style heading' do
   before do
     @path         = "/Users/mskim/Development/hwp/section_test1.hml"
