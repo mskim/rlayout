@@ -59,25 +59,26 @@ module RLayout
       @image_path       = options[:image_path]
       @image_fit_type   = options.fetch(:image_fit_type, image_defaults[:image_fit_type])
       @image_fit_type   = @image_fit_type.to_i
-      if @image_path && File.exists?(@image_path)
-        #TODO Get rid of this and do it for MRI
-        if RUBY_ENGINE == 'rubymotion'
-          @image_object     =NSImage.alloc.initByReferencingFile(@image_path)
-          @image_dimension  = [@image_object.size.width, @image_object.size.height] 
-          if @image_object && options[:adjust_height_to_keep_ratio]
-            @height *= image_object_height_to_width_ratio
-          end
-          apply_fit_type
-        else
-          # @image_object     = MiniMagick::Image.open(@image_path)
-          # @image_dimension  = @image_object.dimensions
-          # if @image_object && options[:adjust_height_to_keep_ratio]
-          #   @height *= image_object_height_to_width_ratio
-          # end
-          # apply_fit_type
-        end
-      elsif @local_image
+      unless File.exists?(@image_path)
+        @image_path = "/Users/Shared/SoftwareLab/images/dummy.jpg"
       end
+      #TODO Get rid of this and do it for MRI
+      if RUBY_ENGINE == 'rubymotion'
+        @image_object     =NSImage.alloc.initByReferencingFile(@image_path)
+        @image_dimension  = [@image_object.size.width, @image_object.size.height] 
+        if @image_object && options[:adjust_height_to_keep_ratio]
+          @height *= image_object_height_to_width_ratio
+        end
+        apply_fit_type
+      else
+        # @image_object     = MiniMagick::Image.open(@image_path)
+        # @image_dimension  = @image_object.dimensions
+        # if @image_object && options[:adjust_height_to_keep_ratio]
+        #   @height *= image_object_height_to_width_ratio
+        # end
+        # apply_fit_type
+      end
+      
     end
     
     def image_defaults
