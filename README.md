@@ -57,7 +57,8 @@ TODO List
 		- custom emp(color)
 
 2015 12 2 
-	- for articles, support design layouts with different name as long as they have .rb extension.
+	- for articles, support design layouts with different name
+	 	as long as they have .rb extension.
 	- fix newspaper for new structure
 	
 2015 12 1
