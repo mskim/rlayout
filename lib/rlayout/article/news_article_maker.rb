@@ -18,57 +18,55 @@ module RLayout
     attr_accessor :news_article_box, :style, :output_path
 
     def initialize(options={} ,&block)
-      unless options[:article_path]
-        puts "No article_path given !!!"
-        return
+      @article_path = options[:project_path] || options[:article_path]
+      if @article_path
+        @story_path = Dir.glob("#{@article_path}/*.{md,markdown}").first
+      elsif options[:story_path]
+        @story_path = options[:story_path]
+        unless File.exist?(@story_path)
+          puts "No story_path doen't exist !!!"
+          return
+        end
+        @article_path = File.dirname(@story_path)
       end
-      @starting_page_number = options.fetch(:starting_page_number, 1)
-      @article_path = options[:article_path]
-      @story_path = Dir.glob("#{@article_path}/*.{md,markdown}").first
-      unless @story_path
-        puts "No story_path !!!"
-        return
-      end
-      @template     = Dir.glob("#{@article_path}/layout.{rb,script,erb,pgscript}").first
       $ProjectPath  = @article_path
-      @style_path   = @article_path + "/style.rb"
-      @output_path  = @article_path + "/output.pdf"
-      unless File.exist?(@template)
-        self.make_news_article_layout
-        # @template = "/Users/Shared/SoftwareLab/article_template/news_article.rb"
+      if options[:image_path]
+        @image_path = options[:image_path]
+      else
+        @image_path = @article_path + "/images"
       end
-      unless File.exist?(@style_path)
-        @style_path   = "/Users/Shared/SoftwareLab/article_template/news_article_style.rb"        
+      
+      if options[:output_path]
+        @output_path = options[:output_path]
+      else
+        @output_path  = @article_path + "/output.pdf"
+      end
+      
+      if options[:template_path] && File.exist?(options[:template_path])
+        @template_path = options[:template_path]
+      else
+        @template_path = Dir.glob("#{@article_path}/*.{rb,script,pgscript}").first
+      end
+      unless @template_path
+        @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/news_article_style.rb")
       end
       @news_article_box       = eval(File.open(@template,'r'){|f| f.read})
-      unless @news_article_box
-        puts "No @news_article_box created !!!"
+      if @news_article_box.is_a?(SyntaxError)
+        puts "SyntaxError in #{@template_path} !!!!"
         return
       end
-      current_style  = eval(File.open(@style_path, 'r'){|f| f.read})
-      if current_style.is_a?(SyntaxError)
-        puts "SyntaxError in #{@style_path} !!!!"
-        return
-      end
-      RLayout::StyleService.shared_style_service.current_style = current_style
+
       read_story
       layout_story
-      
-      if @output_path
-        if RUBY_ENGINE =="rubymotion"
-          @news_article_box.save_pdf(@output_path)
-        else
-          puts 
-        end
+      if RUBY_ENGINE =="rubymotion"
+        @news_article_box.save_pdf(@output_path)
+      else
+        puts "not in rubymotion"
       end
       self
     end
     
     def read_story
-      unless File.exists?(@story_path)
-        puts "Can not find file #{@story_path}!!!!"
-        return {}
-      end
       @story = Story.markdown2para_data(@story_path)
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
@@ -77,7 +75,6 @@ module RLayout
       elsif @heading !={}
         @news_article_box.heading(@heading)
       end
-      
       @paragraphs =[]
       @story[:paragraphs].each do |para|
         para_options = {}

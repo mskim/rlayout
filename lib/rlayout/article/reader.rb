@@ -575,10 +575,15 @@ module RLayout
       #
       starting_heading_level = options.fetch(:starting_heading_level, 4)
       markup_stirng = s.scan(/#*\s?/)
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/table/)
+      end
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/image/) 
+      end
       #TODO img, math, table, admonition, quote, code
       #TODO don't allow more than h6
       case markup_stirng
-
       when "\# ", "\#"
         if starting_heading_level > 6
           markup = "h6"
@@ -612,18 +617,40 @@ module RLayout
         end
       when "\#\#\#\#\#\# ", "\#\#\#\#\#\#"
         markup = 'h6'
+      when "table"
+        markup = 'table'
+      when "image"
+        markup = 'image'
       else
         markup = 'p'
       end
       string = s.scan(/.*/)
       if markup == "p" && string =~/!\[/
         image_info = string.match(/\{.*\}/)
-        {:markup =>"img", :string=>image_info.to_s}
+        {:markup =>"img", :local_image=>image_info.to_s}
+      elsif markup == "image" 
+        {:markup =>"image", :local_image=>string.gsub("::", "")}
+      elsif markup == "table"
+        if text_block.length > 1
+          text_block.shift
+          {:markup =>"table", :csv_data=>text_block.join("\n")}
+        else
+          csv_path = string.gsub("::", "")
+          {:markup =>"table", :csv_path=>csv_path}
+        end
+      elsif markup == "image"
+        {:markup =>markup, :string=>string}
       else
         {:markup =>markup, :string=>string}
       end
     end
-
+    
+    def self.ascii_yml2para_data(path, options={})
+      yaml = File.open(path, 'r'){|f| f.read}
+      h    = YAML::load(yaml)
+      h
+    end
+    
     def self.markdown2para_data(path, options={})
       source = File.open(path, 'r'){|f| f.read}
       #TODO

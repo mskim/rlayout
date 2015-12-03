@@ -95,7 +95,11 @@ module RLayout
       h = current_style['p']
       h[:text_size] + h[:text_line_spacing]
     end
-
+    
+    def is_breakable?
+      false 
+    end
+    
     def style_for_markup(markup, options={})
       h = current_style[markup]
       h[:text_markup] = markup

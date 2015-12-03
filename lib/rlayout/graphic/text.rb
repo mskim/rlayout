@@ -11,14 +11,13 @@ module RLayout
       if options[:text_string] || options[:text_string_array]
         #TODO merge string if options[:text_string_array]
         if options[:text_string_array]
-          joined_string = options[:text_string_array].join(" ")
-          @text_record  = TextStruct.new(joined_string, nil, nil)
+          joined_string   = options[:text_string_array].join(" ")
+          @text_record    = TextStruct.new(joined_string, nil, nil)
         else
-          @text_record  = TextStruct.new(options[:text_string], nil, nil)
+          @text_record    = TextStruct.new(options[:text_string], nil, nil)
         end
-        @text_record  = TextStruct.new(options[:text_string], nil, nil)
         @text_record[:color] = options[:text_color] if options[:text_color]
-        @text_record[:size] = options[:text_size] if options[:text_size]
+        @text_record[:size]  = options[:text_size] if options[:text_size]
         if RUBY_ENGINE == 'rubymotion'
           @text_layout_manager = TextLayoutManager.new(self, options)
         end

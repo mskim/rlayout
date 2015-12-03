@@ -113,6 +113,7 @@ module RLayout
         
     def image_object_height_to_width_ratio
       return 1 unless @image_object
+      return 1 unless @image_dimensions
       @image_dimensions[1]/@image_dimensions[0]
     end
 

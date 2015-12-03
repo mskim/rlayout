@@ -37,34 +37,34 @@ module RLayout
     attr_accessor :document, :output_path, :starting_page_number, :column_count
 
     def initialize(options={} ,&block)
-      unless options[:story_path]
-        puts "No story_path !!!"
-        return
-      else
+      @project_path = options[:project_path] || options[:article_path]
+      if @project_path
+        @story_path = Dir.glob("#{@project_path}/*.{md,markdown}").first
+      elsif options[:story_path]
         @story_path = options[:story_path]
-        @project_path = File.dirname(@story_path)
-        $ProjectPath  = @project_path
-        
         unless File.exist?(@story_path)
           puts "No story_path doen't exist !!!"
           return
         end
-        if options[:output_path]
-          @output_path = options[:output_path]
-        else
-          ext = File.extname(@story_path)
-          @output_path = @story_path.gsub(ext, ".pdf")
-        end
+        @project_path = File.dirname(@story_path)
       end
-      if options[:template_path]
-        unless File.exist?(options[:template_path])
-          puts "Template #{options[:template_path]} doesn't exist!!!"
-          return
-        end
+      $ProjectPath  = @project_path
+      
+      if options[:output_path]
+        @output_path = options[:output_path]
+      else
+        ext = File.extname(@story_path)
+        @output_path = @story_path.gsub(ext, ".pdf")
       end
-      @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/chapter.rb")
-      # puts layout = File.open(@template_path,'r'){|f| f.read}
-      # @document = eval(layout)
+      
+      if options[:template_path] && File.exist?(options[:template_path])
+        @template_path = options[:template_path]
+      else
+        @template_path = Dir.glob("#{@project_path}/*.{rb,script,pgscript}").first
+      end
+      unless @template_path
+        @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/chapter.rb")
+      end
       @document = eval(File.open(@template_path,'r'){|f| f.read})
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
@@ -82,7 +82,13 @@ module RLayout
     end
         
     def read_story
-      @story      = Story.markdown2para_data(@story_path)
+      ext = File.extname(@story_path)
+      puts "ext:#{ext}"
+      if ext == ".md" || ext == ".markdown"
+        @story      = Story.markdown2para_data(@story_path)
+      elsif ext == ".adoc"
+        @story      = Story.adoc2para_data(@story_path)
+      end
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
       @paragraphs =[]
@@ -94,6 +100,9 @@ module RLayout
           para_options.merge!(eval(para[:string]))
           @paragraphs << Image.new(nil, para_options)
           next
+        elsif para[:markup] == 'table'
+          #TODO
+          @paragraphs << Table.new(nil, para)
         end
         para_options[:text_string]    = para[:string]
         para_options[:article_type]   = @article_type

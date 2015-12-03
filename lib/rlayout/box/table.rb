@@ -137,36 +137,42 @@ module RLayout
 
 DEFAULT_TABLE_STYLE = {
     :head_row_atts   => { row_type: "head_row", fill_color: 'gray', stroke_sides: [1,1,1,1]},
-    :head_cell_atts  => { fill_color: "clear", text_color: 'white', font: "Helvetica", stroke_sides: [1,0,1,0]},
+    :head_cell_atts  => { fill_color: "clear", text_color: 'white', font: "Helvetica", text_size: 12.0, stroke_sides: [1,0,1,0]},
     :body_row_atts   => { row_type: "body_row", fill_color: "white", stroke_sides: [0,1,0,1]},
-    :body_cell_atts  => { font: "smSSMyungjoP-W35", text_size: 9.0, stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
-    :category_atts   => { font: "smSSMyungjoP-W35", text_size: 9.0, stroke_sides: [1,1,1,1]},
+    :body_cell_atts  => { font: "smSSMyungjoP-W35", text_size: 12.0, stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
+    :category_atts   => { font: "smSSMyungjoP-W35", text_size: 12.0, stroke_sides: [1,1,1,1]},
     :category_colors => [["CMYK=0.1,0,0,0,1", "CMYK=0.05,0,0,0,1"],["CMYK=0,0.1,0,0,1", "CMYK=0,0.05,0,0,1"],["CMYK=0,0,0.1,0,1", "CMYK=0,0,0.05,0,1"]]
 }
   
   class Table < Container
     attr_accessor :title, :source, :category_level
-    attr_accessor :has_head_row
+    attr_accessor :has_head_row, :can_grow
     attr_accessor :column_width_array, :column_alignment, :column_v_alignment
     attr_accessor :column_v_alignment
     attr_accessor :table_data, :rows, :body
     attr_accessor :table_style, :csv
     attr_accessor :column_count, :next_link, :prev_link
     attr_accessor :body_row_colors
-    attr_accessor :column_line_color
+    attr_accessor :column_line_color, :row_spacing
+    attr_accessor :proposed_height, :row_height_sum, :overflow, :underflow
     def initialize(parent_graphic, options={}, &block)
       super
       @column_count       = options.fetch(:column_count, 1)
       @category_level     = options.fetch(:category_level, 0)
       @column_width_array = options.fetch(:column_width_array, nil)
       @column_alignment   = options.fetch(:column_alignment, nil)
-      @table_data         = []
+      @layout_space       = options.fetch(:layout_space, 0)
+      @overflow           = false
+      @underflow          = false
+      @table_data         = []      
       if options[:csv_data]
-        @csv              = options[:csv_data]
+        @csv = options[:csv_data].gsub("|", ",")
       elsif options[:csv_path]
-        @csv        = File.open(options[:csv_path], 'r'){|f| f.read}
+        @csv              = File.open(options[:csv_path], 'r'){|f| f.read}
+      elsif options[:csv_data]
       else
         puts "No csv data:#{@data}"
+        return
       end
       if options[:table_style_path]        
         @table_style  = eval(File.open(options[:table_style_path], 'r'){|f| f.read})
@@ -194,39 +200,32 @@ DEFAULT_TABLE_STYLE = {
         @body_row_colors  = [@table_style[:body_row_atts][:fill_color]]
       end
       @has_head_row       = options.fetch(:has_head_row, true)
+      @can_grow           = options.fetch(:can_grow, true)
       @title              = options.fetch(:title, nil)
       @source             = options.fetch(:source, nil)
-      #TODO fix this for quoted ,
       @table_data = @csv.split("\n")
       @table_data = @table_data.map{|row| row.split(",")}
-      # create_rows
-      # @parent_graphic.relayout! if @parent_graphic
-      #TODO I should not call this
-      # check why?? I have to call this
-      # relayout!
-      # make_cetegory_cells if @category_level > 0
       if block
         instance_eval(&block)
       end            
       self
     end
-    
-    def layout_content!
-      create_rows
-      relayout!
-      make_cetegory_cells if @category_level > 0
-    end
-    
+
     def create_rows
       unless @column_width_array
         calculate_column_width_array
       end
+      @row_height_sum = 0
       if has_head_row?
         row_options               = @table_style[:head_row_atts]
         row_options[:row_data]    = @table_data[0]
         row_options[:cell_atts]   = @table_style[:head_cell_atts]
         row_options[:column_width]= @column_width_array
-        TableRow.new(self, row_options)
+        if @can_grow
+          row_options[:layout_expand]= [:width]
+        end
+        r = TableRow.new(self, row_options)
+        @row_height_sum += r.height
       end
       body_cycle = @body_row_colors.length if @body_row_colors
       @table_data.each_with_index do |row_data, i|
@@ -237,9 +236,103 @@ DEFAULT_TABLE_STYLE = {
         row_options[:row_data]    = row_data
         row_options[:cell_atts]   = @table_style[:body_cell_atts]
         row_options[:column_width]= @column_width_array
-        TableRow.new(self, row_options)
-      end      
+        if @can_grow
+          row_options[:layout_expand]= [:width]
+        end
+        r=TableRow.new(self, row_options)
+        @row_height_sum += r.height
+      end  
+      row_space_sum = (@graphics.length - 1)*@layout_space
+      @row_height_sum +=row_space_sum
+      @height       = @row_height_sum + @top_margin + @bottom_margin + @top_inset + @bottom_inset
+      relayout!
+      make_cetegory_cells if @category_level > 0
     end
+    
+            
+    def layout_rows(proposed_height)
+      @proposed_height = proposed_height
+      minimum_height = @graphics.first.height + @graphics[1].height + @top_margin + @top_inset
+      if @height > @proposed_height
+        @overflow = true
+      elsif @proposed_height < minimum_height
+        @underflow = true
+      end
+    end
+
+    # split Table into two at height
+    # Starting with new head_row and tableRows that are overflwoing 
+    # return new table  
+    def split_overflowing_lines
+      # split rows
+      # create second table
+      second_half = Table.new(nil)
+      second_half.width         = @width
+      second_half.layout_space  = @layout_space
+      second_half.top_margin    = @top_margin
+      second_half.top_inset     = @top_inset
+      second_half.bottom_margin = @bottom_margin
+      second_half.bottom_inset  = @bottom_inset
+      second_half.fill          = @fill
+      second_half.stroke        = @stroke
+      first_half = first_half_row_count
+      second_half_count = @graphics.length - first_half
+      head_row = @graphics.first
+      second_half_count.times do
+        row = @graphics.pop
+        second_half.graphics.unshift(row)
+      end
+      second_half.graphics.unshift(head_row) 
+      second_half.adjust_heihgt
+      second_half
+    end    
+    
+    def adjust_heihgt
+      @row_height_sum     = 0
+      @graphics.each do |row|
+        @row_height_sum += row.height
+      end
+      @row_height_sum   += (@graphics.length - 1)*@layout_space
+      @height           = @row_height_sum + @top_margin + @bottom_margin + @top_inset + @bottom_inset
+      relayout!
+      make_cetegory_cells if @category_level > 0
+    end
+    
+    # return graphics index to split
+    # avoid widow or orphan
+    def first_half_row_count
+      @graphics.each_with_index do |row, i|
+        if @proposed_height < row.y_max
+          if i == @graphics.length - 1
+            # orphan, last row
+            return i - 1
+          end
+          return i 
+        end
+      end
+      @graphics.length
+    end
+    
+    # Can I break table into two?
+    # if row count is greater than 3 including head row
+    # breakable when we have at least 5 rows including head row
+    def is_breakable?
+      if @graphics.length > 4 
+        true 
+      else
+        false
+      end
+    end
+    
+    def overflow?
+      @overflow
+    end
+    
+    def underflow?
+      @underflow
+    end
+    
+
     
     # calculate width of longest cells for each column, 
     # so that we can set good looking layout
@@ -313,6 +406,8 @@ DEFAULT_TABLE_STYLE = {
     def tr(options={}, &block)
       TableRow.new(self, options, &block)
     end
+    
+
   end
   
   class TableRow < Container
@@ -371,7 +466,7 @@ DEFAULT_TABLE_STYLE = {
       case @fit_type
       when 'adjust_row_height'
         # find tallest cell and adjust height to accomodate it.
-        @height = tallest_cell_height 
+        @height = tallest_cell_height + 4
       else
         # we might have to sqeeze in the cells to fit???
       end
@@ -380,7 +475,7 @@ DEFAULT_TABLE_STYLE = {
     end
     
     def adjust_height
-      @height = tallest_cell_height 
+      @height = tallest_cell_height + 6
     end
     
     def td(options={})
@@ -390,9 +485,9 @@ DEFAULT_TABLE_STYLE = {
       
       if @row_type == "head_row"
         options[:stroke_thickness]  = 1 
-        TableCell.new(self, options)
+        tc = TableCell.new(self, options)
       else
-        TableCell.new(self, options)
+        tc = TableCell.new(self, options)
       end
       self
     end
@@ -406,5 +501,4 @@ DEFAULT_TABLE_STYLE = {
     end
   end
   
-
 end

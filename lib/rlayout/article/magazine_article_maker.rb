@@ -14,40 +14,45 @@
 module RLayout
 
   class MagazineArticleMaker
-    attr_accessor :article_path, :template, :story_path, :image_path
+    attr_accessor :article_path, :template, :story_path, :images_dir, :tables_dir
     attr_accessor :document, :style, :output_path, :starting_page_number
     attr_accessor :no_story
     def initialize(options={} ,&block)
-      if options[:script]
-        @document   = eval(options[:script])
-        @output_path= options[:output_path] if options[:output_path]
-        #todo
-        @no_story   = options.fetch(:no_story, true)        
+      
+      unless options[:article_path]
+        puts "No article_path given !!!"
+        return
+      end
+      @starting_page_number = options.fetch(:starting_page_number, 1)
+      @article_path = options[:article_path]
+      @story_path   = Dir.glob("#{@article_path}/*.{md,markdown}").first
+      unless @story_path
+        puts "No story_path !!!"
+        @no_story = true
+      end
+      @template     = @article_path + "/layout.rb"
+      $ProjectPath  = @article_path
+      @style_path   = @article_path + "/style.rb"
+      @output_path  = @article_path + "/output.pdf"
+      if options[:images_dir]
+        @images_dir   = @article_path + "/images"
       else
-        unless options[:article_path]
-          puts "No article_path given !!!"
-          return
-        end
-        @starting_page_number = options.fetch(:starting_page_number, 1)
-        @article_path = options[:article_path]
-        @story_path   = Dir.glob("#{@article_path}/*.{md,markdown}").first
-        unless @story_path
-          puts "No story_path !!!"
-          @no_story = true
-        end
-        @template     = @article_path + "/layout.rb"
-        $ProjectPath  = @article_path
-        @style_path   = @article_path + "/style.rb"
-        @output_path  = @article_path + "/output.pdf"
-        unless File.exist?(@template)
-          @template = "/Users/Shared/SoftwareLab/article_template/magazine.rb"
-        end
-        unless File.exist?(@style_path)
-          @style_path   = "/Users/Shared/SoftwareLab/article_template/magazine_style.rb"        
-        end
-        @document       = eval(File.open(@template,'r'){|f| f.read})
+        @images_dir   = @article_path + "/images"
+      end
+      if options[:tables_dir]
+        @tables_dir   = @article_path + "/tables"
+      else
+        @tables_dir   = @article_path + "/tables"
       end
       
+      unless File.exist?(@template)
+        @template = "/Users/Shared/SoftwareLab/article_template/magazine.rb"
+      end
+      unless File.exist?(@style_path)
+        @style_path   = "/Users/Shared/SoftwareLab/article_template/magazine_style.rb"        
+      end
+      @document       = eval(File.open(@template,'r'){|f| f.read})
+    
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@template} !!!!"
         return
@@ -98,13 +103,28 @@ module RLayout
         para_options[:markup]         = para[:markup]
         para_options[:layout_expand]  = [:width]
         if para[:markup] == 'img'
-          source = para[:image_path]
+          # support ![] syntex
+          source = para[:local_image]
           para_options[:caption]        = para[:caption]
           para_options[:bottom_margin]  = 10
           para_options[:bottom_inset]   = 10
-          full_image_path = File.dirname(@story_path) + "/#{source}"
-          para_options[:image_path] = full_image_path
+          para_options[:image_path] = @images_dir + "/#{source}"
           @paragraphs << Image.new(nil, para_options)
+          next
+        elsif para[:markup] == 'image'
+          source = para[:local_image]
+          # para_options[:caption]        = para[:caption]
+          para_options[:bottom_margin]  = 10
+          para_options[:bottom_inset]   = 10
+          para_options[:image_path] = @images_dir + "/#{source}"
+          @paragraphs << Image.new(nil, para_options)
+          next
+        elsif para[:markup] == 'table'
+          para[:layout_expand]  = [:width]
+          if para[:csv_path]
+            para[:csv_path] = @tables_dir + "/#{para[:csv_path]}"
+          end
+          @paragraphs << Table.new(nil, para)
           next
         end
         para_options[:text_string]    = para[:string]

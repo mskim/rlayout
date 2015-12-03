@@ -56,13 +56,22 @@ TODO List
 		- underline, strike-through, super, sub
 		- custom emp(color)
 
+2015 12 2 
+	- for articles, support design layouts with different name as long as they have .rb extension.
+	- fix newspaper for new structure
+	
+2015 12 1
+	- import table data from csv
+	- make table to grow height, break along liked columns 
+	- fix TableRow height
+	
 2015 11 29
 	- Admonition, label list, icon
 	- synthesised char symbol 
 	- convert hwpml table to adoc table(psv)
 	
 2015 11 25
-	- create hwpml to rlayout
+	- create hwpml to rlayout folder
 		- create layout.rb and Rakefile
 		- hwpml korean file name not displayed properly in Mac 
 		- determine image file types

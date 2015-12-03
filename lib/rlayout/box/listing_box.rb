@@ -34,7 +34,7 @@ module RLayout
   
   # image list
   
-  class ListImageRow < Containaer
+  class ListImageRow < Container
     attr_accessor :images_array
     
     def initialize(parent_graphic, options={}, &block)

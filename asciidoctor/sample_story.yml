@@ -1,0 +1,26 @@
+---
+title: This is the first line.
+author: Min Soo Kim
+email: mskimsid@gmail.com 
+preamble: 
+ - This is preamble
+ - Second line of preamble
+section_1: This is section.
+paragraph: 
+ - This is a paragraph.
+paragraph: 
+ - This is a paragraph.
+table:
+  head:
+    - thsfdsa 
+    - cda
+    - fdsafdas
+  body:
+    - 
+      - thsfdsa 
+      - cda
+      - fdsafdas
+    - 
+      - thsfdsa 
+      - cda
+      - fdsafdas

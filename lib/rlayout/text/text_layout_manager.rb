@@ -404,7 +404,7 @@ module RLayout
     # split att_string into two at overflowing position
     def split_overflowing_lines
       @lines_array            = CTFrameGetLines(@frame)
-      glyphCount =  CTLineGetGlyphCount(@lines_array.last)
+      glyphCount              = CTLineGetGlyphCount(@lines_array.last)
       last_line_range         = CTLineGetStringRange(@lines_array.last)
       second_half_position    = last_line_range.location + glyphCount
       first_half_range        = NSMakeRange(0, second_half_position)

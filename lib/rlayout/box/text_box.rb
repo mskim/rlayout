@@ -247,10 +247,6 @@ module RLayout
     # layout paragraphs into columns
     def layout_items(flowing_items)
       column_index = 0
-      puts "flowing_items.length:#{flowing_items.length}"
-      flowing_items.each do |item|
-        puts item.height
-      end
       current_column = @graphics[column_index]
       while @item  = flowing_items.shift do
         if @item.text_layout_manager
@@ -275,38 +271,45 @@ module RLayout
           # current_column.current_position = bounding_rect.origin.y
           # item.layout_text(:proposed_path=>text_area_path) # item.width:
           @item.layout_text(:proposed_height=>current_column.room) # item.width is set already
+          #TODO also check for underflow
         elsif @item.class == RLayout::Image
           # We have image
-            # check if the image is floating image, out of the column
-            if @item.grid_frame #&& item.grid_frame[2]> 1
-              # "we have floating image"
-              @item.x      = current_column.width * @item.grid_frame[0]
-              @item.x      += @gutter*(@item.grid_frame[0]-1) if @item.grid_frame[0] > 1
-              @item.width  = current_column.width * @item.grid_frame[2] + @gutter*(@item.grid_frame[2]-1)
-              grid_height = @height/@grid_base[1].to_f
-              @item.y      = grid_height * @item.grid_frame[1]              
-              @item.height = grid_height * @item.grid_frame[3]
-              if @item.bleed
-                #TODO do bleeding on the edges
-              end
-              @floats << @item
-              # push out paragraphs 
-              set_overlapping_grid_rect
-              #TODO
-              # I need to redo layout_items
-              
-            else
-              # we have column running image
-              @item.width  = current_column.text_width
-              @item.layout_expand  = [:width]
-              # if item is image, height should be proportional to image_object ratio, not frame width height ratio
-              @item.height = @item.image_object_height_to_width_ratio*@item.width
-              @item.apply_fit_type
-              if @has_side_column
-                #TODO set y position
-                @side_column.graphics <<  @item if @side_column
-              end
+          # check if the image is floating image, out of the column
+          if @item.grid_frame #&& item.grid_frame[2]> 1
+            # "we have floating image"
+            @item.x      = current_column.width * @item.grid_frame[0]
+            @item.x      += @gutter*(@item.grid_frame[0]-1) if @item.grid_frame[0] > 1
+            @item.width  = current_column.width * @item.grid_frame[2] + @gutter*(@item.grid_frame[2]-1)
+            grid_height = @height/@grid_base[1].to_f
+            @item.y      = grid_height * @item.grid_frame[1]              
+            @item.height = grid_height * @item.grid_frame[3]
+            if @item.bleed
+              #TODO do bleeding on the edges
             end
+            @floats << @item
+            # push out paragraphs 
+            set_overlapping_grid_rect
+            #TODO
+            # I need to redo layout_items
+          else
+            # we have column running image
+            @item.width  = current_column.text_width
+            @item.layout_expand  = [:width]
+            # if item is image, height should be proportional to image_object ratio, not frame width height ratio
+            @item.height = @item.image_object_height_to_width_ratio*@item.width
+            @item.apply_fit_type
+            if @has_side_column
+              #TODO set y position
+              @side_column.graphics <<  @item if @side_column
+            end
+          end
+        elsif @item.class == RLayout::Table
+          @item.width  = current_column.text_width
+          @item.create_rows if @item.graphics.length == 0 
+          # given avalable room in column
+          # layout rows into room. it can accomodate all rows or overflow         
+          @item.layout_rows(current_column.room) 
+          
         elsif @item.class == RLayout::QuizItem
           @item.width  = current_column.text_width
           @item.set_quiz_content
@@ -319,20 +322,16 @@ module RLayout
           @item.height = @item.width
         end
         
-        if @item.class != Paragraph
-          puts "if @item.class != Paragraph"
-          puts "@item.class:#{@item.class}"
-          puts "@item.height:#{@item.height}"
+        # if @item.class != Paragraph
+        if !@item.is_breakable?
           if current_column.room < @item.height
-            # goto next column
             column_index +=1
             if column_index < @column_count              
               current_column = @graphics[column_index]
               flowing_items.unshift(@item)
               next
             else
-              # if no more column, return falose
-              flowing_items.unshift(@item)              
+              flowing_items.unshift(@item)                            
               return false
             end
           else
@@ -342,7 +341,20 @@ module RLayout
           end
         elsif !@item.overflow? # @item fits in column
           current_column.place_item(@item)
+        elsif @item.respond_to?(:underflow?) && @item.underflow? 
+          # @item doesn't even fit a single line all
+          # no need to split, go to next column
+          column_index +=1
+           if column_index < @column_count              
+             current_column = @graphics[column_index]
+             flowing_items.unshift(@item)
+             next
+           else
+             flowing_items.unshift(@item)                            
+             return false
+           end
         else
+          # case of overflowing 
           second_half = @item.split_overflowing_lines
           current_column.place_item(@item)
           column_index +=1

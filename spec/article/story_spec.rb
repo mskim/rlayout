@@ -1,5 +1,17 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'read markdow table' do
+  before do
+    story_path = "/Users/mskim/Development/ruby/gems/rlayout/lib/rlayout/hwpml/sample.md"
+    @story  = Story.markdown2para_data(story_path)
+  end
+  
+  it 'shold create story' do
+    assert @story.class == Hash
+  end
+end
+
+__END__
 describe 'reading story' do
   before do
     story_path = "/Users/mskim/magazine_article/sample.markdown"
@@ -19,7 +31,7 @@ describe 'reading story' do
   end
 end
 
-__END__
+
 
 describe 'Story.read_matadata' do
   before do
