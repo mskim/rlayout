@@ -42,20 +42,38 @@ TODO List
 	- Nested Styles: Container Objects with customizable styles
 	- Tab separated styles(TextRuns)
 	- Image Caption
-
-2015 11 25
 	- Korean localization
 		- title, subtitle, author, lead, quote
 		- heading, text_box
 		- header, footer 
 		- table, image, warning, example,
-		
+
 	- text format(use Asciidoctor/Markdown)
 		- italic 
 		- bold
 		- underline, strike-through, super, sub
 		- custom emp(color)
 
+2015 12 6
+	- QuickLook options: save QuickLook/Preview.pdf to create template folder
+	 
+2015 12 5
+	- put include RLayout so that users don't have to type RLayout::
+	- Use easy to use name for layout file, such as 
+	- # Chapter.create
+	- # News.create
+	- # NewsSection.create
+	- # Magazine.create 
+	
+2015 12 4
+	- memo
+	- starts_at # new_page, new_text_box, new_column
+	
+2015 12 3
+	- custom table style support, named table style
+	- master page, chapter, toc, index
+	- admonition
+	
 2015 12 2 
 	- for articles, support design layouts with different name
 	 	as long as they have .rb extension.
@@ -71,13 +89,14 @@ TODO List
 	- synthesised char symbol 
 	- convert hwpml table to adoc table(psv)
 	
-2015 11 25
+2015 11 27
 	- create hwpml to rlayout folder
 		- create layout.rb and Rakefile
 		- hwpml korean file name not displayed properly in Mac 
 		- determine image file types
 		- save table info to disk
-	 
+
+
 2015 11 25
 	- fix hwpml parsing for fragmented paragraph
 	- add paragraph level

@@ -53,6 +53,7 @@ else
   
   require File.dirname(__FILE__) + '/rlayout/container/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container/place_item'
+  require File.dirname(__FILE__) + '/rlayout/container/memo_area'
 
   require File.dirname(__FILE__) + '/rlayout/box/box_ad_box'
   require File.dirname(__FILE__) + '/rlayout/box/image_box'
@@ -63,7 +64,9 @@ else
   require File.dirname(__FILE__) + '/rlayout/box/title_box'
   require File.dirname(__FILE__) + '/rlayout/box/menu'
 
-  require File.dirname(__FILE__) + '/rlayout/'
+  require File.dirname(__FILE__) + '/rlayout/box/menu'
+
+  require File.dirname(__FILE__) + '/rlayout/math/text_token'
 
   require File.dirname(__FILE__) + '/rlayout/page'
   require File.dirname(__FILE__) + '/rlayout/page/page_fixtures'
@@ -99,7 +102,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/calendar'
   require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
   
-  require File.dirname(__FILE__) + '/rlayout/hwpml/hwpml'
 
 end
 

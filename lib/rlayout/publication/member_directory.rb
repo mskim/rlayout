@@ -11,7 +11,7 @@ module RLayout
   end
   
   class MemberItem < RLayout::Container
-	  attr_accessor :image_path, :name, :spause, :phone, :cell, :group #polaoid, film, 
+	  attr_accessor :image_path, :name, :spouse, :phone, :cell, :group #polaoid, film, 
 	  attr_accessor :container_object, :template, :template_erb, :template_erb_path
 	  def initialize(parent_graphic, options={}, &block)
 	    super
@@ -21,7 +21,7 @@ module RLayout
   	  elsif @image_dir
         @image_path = @image_dir + "/#{@name}.jpg"
       end
-	    @spause     = options.fetch(:spause, "")
+	    @spouse     = options.fetch(:spouse, "")
 	    @phone      = options.fetch(:phone, "")
 	    @cell       = options.fetch(:cell, "")
 	    @group      = options.fetch(:group, "")

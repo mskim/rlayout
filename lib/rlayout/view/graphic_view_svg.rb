@@ -105,16 +105,4 @@ module RLayout
     
   end
   
-  class TextToken
-    def svg
-      
-      # TODO Line Fill Shape Image & Text
-      
-      s = ""
-      if @text_string !=nil && @text_string != ""
-        s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y + @height*0.8}\">#{@text_string}</text>\n"
-      end
-      s
-    end
-  end
 end

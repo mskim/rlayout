@@ -664,23 +664,27 @@ module RLayout
   end
   
   class Line < Graphic
-    attr_accessor :line_type, :strating_point, :ending_point   
+    attr_accessor :line_type, :starting_point, :ending_point   
     #"horizontal_rule", vertical_rule, top_left_to_bottom_right, bottom_left_to_top_right
     def initialize(parent_graphic, options={})
+      options[:thickness] = 1 unless options[:thickness]
       super
-      @klass = "Line"
+      @fill   = nil
+      @klass  = "Line"
       update_shape
       case line_type
       when "horizontal_rule"
-        @strating_point = [@x, mid_y(frame_rect)]
+        @starting_point = [@x, mid_y(frame_rect)]
         @ending_point   = [max_x(frame_rect), mid_y(frame_rect)]
       when "vertical_rule"
-        @strating_point = [mid_x(frame_rect), @y]
+        @starting_point = [mid_x(frame_rect), @y]
         @ending_point   = [max_x(frame_rect), max_y(frame_rect)]
       when "top_left_to_bottom_right"
       when "bottom_right_to_top_left"
       when "top_right_to_bottom_left"
       else
+        @starting_point = [@x, mid_y(frame_rect)]
+        @ending_point   = [max_x(frame_rect), mid_y(frame_rect)]
       end
       self
     end
@@ -689,5 +693,13 @@ module RLayout
       @shape = LineStruct.new(@x, @y, @x + @width, @y + @height)
     end
     
+    def ns_starting_point
+      NSMakePoint(starting_point[0], starting_point[1])
+      
+    end
+    
+    def ns_ending_point
+      NSMakePoint(ending_point[0], ending_point[1])
+    end
   end
 end

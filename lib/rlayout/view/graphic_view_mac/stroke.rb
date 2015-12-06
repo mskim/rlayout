@@ -8,7 +8,11 @@ class GraphicViewMac < NSView
     @stroke = graphic.stroke
     @line_position = 1
     r = ns_bounds_rect(graphic)
-    drawLine(r, withTrap:0)
+    if graphic.class == RLayout::Line      
+      draw_line_from(graphic.ns_starting_point, graphic.ns_ending_point, graphic.stroke[:thickness])
+    else
+      drawLine(r, withTrap:0)
+    end
     # drawArrow if @start_arrow && @owner_graphic
   end
   
@@ -73,6 +77,7 @@ class GraphicViewMac < NSView
 
     # return if @stroke[:thickness] == 0 &&  @graphic.drawing_mode == "printing"
     return if @stroke[:thickness] == 0 
+    
     unless trap
       trap = 0
     end

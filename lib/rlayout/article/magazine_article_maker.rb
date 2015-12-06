@@ -19,23 +19,21 @@ module RLayout
     attr_accessor :no_story
     def initialize(options={} ,&block)
       
-      unless options[:article_path]
-        puts "No article_path given !!!"
-        return
-      end
+      @article_path = options[:article_path] || options[:project_path]
       @starting_page_number = options.fetch(:starting_page_number, 1)
       @article_path = options[:article_path]
       @story_path   = Dir.glob("#{@article_path}/*.{md,markdown}").first
-      unless @story_path
+      if !@story_path && @article_path
         puts "No story_path !!!"
-        @no_story = true
+        return
       end
-      @template     = @article_path + "/layout.rb"
+      @no_story     = true unless @story_path
+      @template     = Dir.glob("#{@article_path}/*.{rb,pgscript}").first
       $ProjectPath  = @article_path
       @style_path   = @article_path + "/style.rb"
       @output_path  = @article_path + "/output.pdf"
       if options[:images_dir]
-        @images_dir   = @article_path + "/images"
+        @images_dir   = options[:images_dir]
       else
         @images_dir   = @article_path + "/images"
       end
@@ -52,7 +50,6 @@ module RLayout
         @style_path   = "/Users/Shared/SoftwareLab/article_template/magazine_style.rb"        
       end
       @document       = eval(File.open(@template,'r'){|f| f.read})
-    
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@template} !!!!"
         return
@@ -60,8 +57,7 @@ module RLayout
       unless @document.kind_of?(RLayout::Document)
         puts "Not a @document kind created !!!"
         return
-      end   
-      
+      end              
       unless @no_story == true
         read_story
         layout_story

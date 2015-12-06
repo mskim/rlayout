@@ -4,7 +4,7 @@ describe 'creating MemberItem' do
   before do
     @pdf_path = File.dirname(__FILE__) + "/../output/member/minsookim.pdf"
     image_path = "/Users/mskim/Pictures/Photo_Booth/minsookim.jpg"
-    @member   = MemberItem.new(nil, image_path: image_path, name: "김민수", spause: "(김지윤)", phone: "010-7468-0000", cell: "010-7468-8222")
+    @member   = MemberItem.new(nil, image_path: image_path, name: "김민수", spouse: "(김지윤)", phone: "010-7468-0000", cell: "010-7468-8222")
   end
   
   it 'should create MemberItem' do

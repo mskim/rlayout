@@ -1,4 +1,0 @@
-
-task :default do
-  system("macruby .rlayout/layout.rb")
-end

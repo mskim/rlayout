@@ -9,7 +9,7 @@
 
 path = "/Users/mskim/Development/HWP/section_test1"
 path = "/Users/mskim/Development/HWP/ms"
-path = "/Users/mskim/Development/HWP/table_test"
+path = "/Users/mskim/Development/hwp/table_test"
 
 system("/Applications/magazine.app/Contents/MacOS/magazine #{path}")
 

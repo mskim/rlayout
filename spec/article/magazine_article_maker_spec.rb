@@ -1,4 +1,39 @@
 require File.dirname(__FILE__) + "/../spec_helper"
+describe 'create magazine_article from template' do
+  before do
+    template = <<-EOF.gsub(/^(\s)*/,"")
+    RLayout::Document.new(:initial_page=>false) do
+      page(layout_space: 10) do
+        heading(fill_color: 'orange')
+        main_text(column_count: 3) do
+          float_image(:local_image=> "1.jpg", :grid_frame=> [0,0,1,1])
+          float_image(:local_image=> "2.jpg", :grid_frame=> [0,1,1,1])
+        end
+        relayout!
+      end
+
+      page do
+        main_text(column_count: 2) do
+          float_image(:local_image=> "3.jpg", :grid_frame=> [1,0,2,2])
+        end
+      end
+    end
+
+    EOF
+    @document = eval(template)
+    page = @document.pages.first
+    page.graphics.each do |g|
+      puts g.class
+      g.puts_frame
+    end
+  end
+  
+  it 'should process template' do
+    assert @document.class == Document
+  end
+end
+
+__END__
 
 describe 'create MagazineArticleMaker' do
   before do
@@ -14,7 +49,6 @@ EOF
   end
 end
 
-__END__
 describe 'create MagazineArticleMaker' do
   before do
     @path       = "~/magazine_article/second_article"
