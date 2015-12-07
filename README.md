@@ -1,26 +1,8 @@
 TODO List
-	- center graphic with width and height
-	- draw lines in superview, so the lines don't get cut off
-		use transform instead of subview
 	- add ShoulderColumn, add footnote_area
-	- apply StyleSheet at runtime with default fall back
-	- ePub generation
-	- Merge Grid and Float
-	- image smart fit, best_fit, best_fill
-	- support for default and custom Styles
 	- Header
 		- bleeding page number box
-	- AdBox DSL with profile, method_missing
-	- should filter markdown file
-		- for control characters
-		- should break lines for first_line_head_indent to take effect
-	- Style
-		- merge with base
-		- make it yml
-		
-	- modify kramdown into r_kramdown
-		- I am using parsing from Asciidotor  instead of kramdown
-		- I am using parsing with part of code from Asciidotor
+	- AdBox DSL with profile, method_missing		
 	- support Asciidotor
 	- change Paragraph  
 		- ParaStruct(:string, markup, :footnote, :index)
@@ -36,7 +18,6 @@ TODO List
 	- title_box, grid_box
 	- convert markdown to story
 	- convert ascidoctor to story
-	- parse Hangul or export get retrieve:
 	- Tab Leaders, able with leaders
 	- master_page
 	- Nested Styles: Container Objects with customizable styles
@@ -47,21 +28,19 @@ TODO List
 		- heading, text_box
 		- header, footer 
 		- table, image, warning, example,
-
 	- text format(use Asciidoctor/Markdown)
 		- italic 
 		- bold
 		- underline, strike-through, super, sub
 		- custom emp(color)
-
-		- QuickLook options: save QuickLook/Preview.pdf to create template folder
-		- starts_at # new_page, new_text_box, new_column
-		- put include RLayout so that users don't have to type RLayout::
-		- Use easy to use name for layout file, such as 
-		- # Chapter.create
-		- # News.create
-		- # NewsSection.create
-		- # Magazine.create 
+	- QuickLook options: save QuickLook/Preview.pdf to create template folder
+	- starts_at # new_page, new_text_box, new_column
+	- put include RLayout so that users don't have to type RLayout::
+	- Use easy to use name for layout file, such as 
+	- # Chapter.create
+	- # News.create
+	- # NewsSection.create
+	- # Magazine.create 
 
 2015 12 7
 	- get rid of Klass, just use class
@@ -71,9 +50,7 @@ TODO List
 	- 
 2015 12 5
 	- add MemoArea
-	
-2015 12 4
-	
+		
 2015 12 3
 	- custom table style support, named table style
 	- master page, chapter, toc, index
@@ -95,12 +72,12 @@ TODO List
 	- convert hwpml table to adoc table(psv)
 	
 2015 11 27
-	- create hwpml to rlayout folder
+	- parse Hangul hwpml, create hwpml to rlayout folder
 		- create layout.rb and Rakefile
 		- hwpml korean file name not displayed properly in Mac 
-		- determine image file types
+		- determine image file types, 
+		- fix .bmp filetype bug
 		- save table info to disk
-
 
 2015 11 25
 	- fix hwpml parsing for fragmented paragraph
