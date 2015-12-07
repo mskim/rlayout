@@ -331,9 +331,6 @@ module RLayout
       ObjectBox.new(self, options)
     end
     
-    def memo(options={})
-      MemoArea.new(self, options)
-    end
     def header(options={})
       #TODO
       Header.new(self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)

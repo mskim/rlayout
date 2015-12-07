@@ -642,6 +642,7 @@ module RLayout
       update_shape
       self
     end
+    
     def update_shape
       @shape = EllipseStruct.new((@x+@width)/2, (@y + @height)/2, @width/2, @height/2)
     end
@@ -655,51 +656,24 @@ module RLayout
       update_shape
       self
     end
+    
     def update_shape
       shorter = @width < @height ? @width : @height
       r= shorter/10
       @shape = RoundRectStruct.new(@x, @y, @width, @height, r, r)
     end
-
   end
   
   class Line < Graphic
-    attr_accessor :line_type, :starting_point, :ending_point   
-    #"horizontal_rule", vertical_rule, top_left_to_bottom_right, bottom_left_to_top_right
+    attr_accessor :line_type   
+    #"horizontal_rule", vertical_rule, top_left_to_bottom_right, top_right_to_bottom_left
     def initialize(parent_graphic, options={})
-      options[:thickness] = 1 unless options[:thickness]
+      options[:thickness]     = 1 unless options[:thickness]
+      options[:stroke_rule]   = "horizontal_rule" unless options[:stroke_rule]
       super
-      @fill   = nil
-      @klass  = "Line"
-      update_shape
-      case line_type
-      when "horizontal_rule"
-        @starting_point = [@x, mid_y(frame_rect)]
-        @ending_point   = [max_x(frame_rect), mid_y(frame_rect)]
-      when "vertical_rule"
-        @starting_point = [mid_x(frame_rect), @y]
-        @ending_point   = [max_x(frame_rect), max_y(frame_rect)]
-      when "top_left_to_bottom_right"
-      when "bottom_right_to_top_left"
-      when "top_right_to_bottom_left"
-      else
-        @starting_point = [@x, mid_y(frame_rect)]
-        @ending_point   = [max_x(frame_rect), mid_y(frame_rect)]
-      end
+      @klass      = "Line"
       self
     end
     
-    def update_shape
-      @shape = LineStruct.new(@x, @y, @x + @width, @y + @height)
-    end
-    
-    def ns_starting_point
-      NSMakePoint(starting_point[0], starting_point[1])
-      
-    end
-    
-    def ns_ending_point
-      NSMakePoint(ending_point[0], ending_point[1])
-    end
   end
 end

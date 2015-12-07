@@ -7,15 +7,18 @@ module RLayout
       super
       @title      = options.fetch(:title, "MEMO")
       text(@title, options)
-      @line_space = options.fetch(:line_space, 16)
+      options.delete(:text_string) if options[:text_string]
+      @line_space = options.fetch(:line_space, 12)
+      options[:fill_color] = "white"
+      options[:stroke_sides] = [0,0,0,0]
       @line       = Line.new(self, options)
       layout_lines
       self
     end 
     
     def layout_lines
-      count = (@height/@line_space).to_i
-      count.times do 
+      count = @height/@line_space
+      count.to_i.times do 
         @graphics << @line.dup
       end
       relayout!

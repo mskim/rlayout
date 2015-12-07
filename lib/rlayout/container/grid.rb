@@ -353,7 +353,7 @@ module  RLayout
         graphic.width  = graphic.grid_frame[WIDTH_VAL]*@grid_width
         graphic.height = graphic.grid_frame[HEIGHT_VAL]*@grid_height
                 
-        if graphic.klass == "Image"
+        if graphic.class == Image
           graphic.image_record.apply_fit_type if graphic.image_record
         end
         

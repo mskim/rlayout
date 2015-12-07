@@ -30,7 +30,7 @@ module RLayout
   
   LinearGradient= Struct.new(:starting_color, :ending_color, :angle, :steps)
   RadialGradient= Struct.new(:starting_color, :ending_color, :center, :steps)
-  StrokeStruct    = Struct.new(:color, :thickness, :dash, :line_cap, :line_join, :type, :sides) do
+  StrokeStruct    = Struct.new(:color, :thickness, :dash, :line_cap, :line_join, :type, :sides, :rule) do
     def to_svg
       s = "stroke:#{color};"
       s += "stroke-width:#{thickness}" if thickness > 0

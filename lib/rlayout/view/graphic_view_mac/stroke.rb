@@ -8,12 +8,31 @@ class GraphicViewMac < NSView
     @stroke = graphic.stroke
     @line_position = 1
     r = ns_bounds_rect(graphic)
-    if graphic.class == RLayout::Line      
-      draw_line_from(graphic.ns_starting_point, graphic.ns_ending_point, graphic.stroke[:thickness])
-    else
-      drawLine(r, withTrap:0)
-    end
+    drawLine(r, withTrap:0)
+    draw_rules(r) if @stroke[:rule]
     # drawArrow if @start_arrow && @owner_graphic
+  end
+    
+  def draw_rules(rect)
+    if @stroke[:rule] == "horizontal_rule"
+      # puts  "draw bottom"
+      path= NSBezierPath.bezierPath
+      path.setLineWidth(@stroke[:thickness])
+      path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + rect.size.height/2.0))
+      path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height/2.0))
+      path.stroke 
+    end
+    if @stroke[:rule] == "vertical_rule"
+      # puts  "draw bottom"
+      path= NSBezierPath.bezierPath
+      path.setLineWidth(@stroke[:thickness])
+      path.moveToPoint(NSPoint.new(rect.origin.x + rect.size.width/2.0, rect.origin.y ))
+      path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width/2.0, rect.origin.y + + rect.size.height))
+      path.stroke 
+    end
+    #TODO
+    # if @stroke[:rule]  == "top_left_to_bottom_right"
+    # if @stroke[:rule]  == "top_right_to_bottom_left"
   end
   
   def draw_gutter_stroke(graphic)
@@ -58,7 +77,6 @@ class GraphicViewMac < NSView
 
   def linePathWithRect(r)
     path = NSBezierPath.bezierPathWithRect(r)
-
     # path = @owner_graphic.bezierPathWithRect(r)
     path.setLineCapStyle(@stroke[:line_cap]) if @stroke[:line_cap]
     path.setLineJoinStyle(@stroke[:line_join]) if @stroke[:line_join]
@@ -131,12 +149,12 @@ class GraphicViewMac < NSView
           path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
           path.stroke 
         end
+
       else
         path = linePathWithRect(rect) 
         path.setLineWidth(@stroke[:thickness] + trap)
         path.stroke
-      end
-
+      end  
     else 
         @line1=@line_types_width_table[@stroke[:type]][0]*@stroke[:thickness]
         @line2=@line_types_width_table[@stroke[:type]][1]*@stroke[:thickness]

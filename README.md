@@ -54,20 +54,25 @@ TODO List
 		- underline, strike-through, super, sub
 		- custom emp(color)
 
-2015 12 6
-	- QuickLook options: save QuickLook/Preview.pdf to create template folder
-	 
+		- QuickLook options: save QuickLook/Preview.pdf to create template folder
+		- starts_at # new_page, new_text_box, new_column
+		- put include RLayout so that users don't have to type RLayout::
+		- Use easy to use name for layout file, such as 
+		- # Chapter.create
+		- # News.create
+		- # NewsSection.create
+		- # Magazine.create 
+
+2015 12 7
+	- get rid of Klass, just use class
+	- fix memo
+	- fix Line
+	- draw rule add stroke_rule, stroke[:rule]
+	- 
 2015 12 5
-	- put include RLayout so that users don't have to type RLayout::
-	- Use easy to use name for layout file, such as 
-	- # Chapter.create
-	- # News.create
-	- # NewsSection.create
-	- # Magazine.create 
+	- add MemoArea
 	
 2015 12 4
-	- memo
-	- starts_at # new_page, new_text_box, new_column
 	
 2015 12 3
 	- custom table style support, named table style

@@ -54,7 +54,7 @@ class GraphicViewMac < NSView
   end
 
   def draw_graphic_in_nsview(graphic)
-    @context = NSGraphicsContext.currentContext
+    @context  = NSGraphicsContext.currentContext
     transform = NSAffineTransform.transform            
     @context.saveGraphicsState
     transform.translateXBy(graphic.x, yBy:graphic.y)
@@ -110,7 +110,7 @@ class GraphicViewMac < NSView
     
   def ns_origin(graphic)
     r = graphic.frame_rect
-    puts p = NSPoint.new(r[0], r[1])
+    p = NSPoint.new(r[0], r[1])
     p
   end
   

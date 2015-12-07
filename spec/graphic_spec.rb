@@ -50,7 +50,7 @@ describe 'create Graphic ' do
     @g = Graphic.new(nil, :fill_color=>"blue")
   end
   it 'should create Graphic' do
-    assert @g.klass == "Rectangle"
+    assert @g.class == Rectangle
   end
   
   it 'should not have fill' do    
@@ -99,7 +99,7 @@ describe 'create Circle' do
     @c = Circle.new(nil, :width=>200, :height=>200)
   end
   it 'should create Circle' do
-    assert @c.klass == "Circle"
+    assert @c.class == Circle
   end
   it 'should create CircleStruct shape' do
     assert @c.shape.class   == CircleStruct
@@ -124,7 +124,7 @@ describe 'create Ellipse' do
     @c = Ellipse.new(nil, :width=>100, :height=>200, :fill_color=>"orange")
   end
   it 'should create Ellipse' do
-    assert @c.klass == "Ellipse"
+    assert @c.class == Ellipse
   end
   
   it 'should create EllipseStruct shape' do
@@ -160,7 +160,7 @@ describe 'create RoundRect' do
     @c = RoundRect.new(nil, :width=>100, :height=>200)
   end
   it 'should create RoundRect' do
-    assert @c.klass == "RoundRect"
+    assert @c.class == RoundRect
   end
   
   it 'should create RoundRectStruct shape' do

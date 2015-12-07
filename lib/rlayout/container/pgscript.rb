@@ -81,6 +81,10 @@ module RLayout
       TextBox.new(self, options)
     end
     
+    def memo(options={})
+      MemoArea.new(self, options)
+    end
+    
     def heading(options={}, &block)
       Heading.new(self, options, &block)
     end

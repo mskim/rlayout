@@ -4,8 +4,8 @@ module RLayout
   class Container < Graphic
     attr_accessor :layout_direction, :layout_space, :layout_align
     attr_accessor :grid_base, :grid_width, :grid_height, :grid_frame, :grid_h_gutter, :grid_v_gutter, :lines_in_grid         
-    attr_accessor :draw_gutter_stroke, :gutter_stroke #:gutter_stroke_type, :gutter_stroke_width, :gutter_stroke_color, :gutter_stroke_dash
-    attr_accessor :floats, :grid #, :main_box
+    attr_accessor :draw_gutter_stroke, :gutter_stroke 
+    attr_accessor :floats, :grid
     
     def initialize(parent_graphic, options={}, &block)
       @graphics             = []
