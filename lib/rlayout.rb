@@ -17,8 +17,12 @@ else
   require 'yaml'
   require 'csv'
   require 'erb'
-  require 'nokogiri'
   require 'base64'
+  require 'rexml/document'
+  require 'rexml/xpath_parser'
+  require 'zip'
+  require 'xmlsimple'
+
   # require 'mini_magick'
   require "rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
@@ -102,7 +106,13 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/calendar'
   require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
   
-
+  require File.dirname(__FILE__) + '/rlayout/idml/document'
+  require File.dirname(__FILE__) + '/rlayout/idml/page'
+  require File.dirname(__FILE__) + '/rlayout/idml/story'
+  require File.dirname(__FILE__) + '/rlayout/idml/style'
+  require File.dirname(__FILE__) + '/rlayout/idml/spread'
+  require File.dirname(__FILE__) + '/rlayout/idml/master_spread'
+    
 end
 
 module RLayout

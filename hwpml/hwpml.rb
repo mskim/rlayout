@@ -90,7 +90,7 @@ module RLayout
       end
       @story += "\n"
       @story += "#{story_text}\n"
-	  end
+    end
 	  
 	  def parse_table_row(row, options={})
 	    row_text = ""
@@ -145,14 +145,17 @@ module RLayout
       end
 	  end
 	  
-
-    def save(options={})
+    def save_markdown(options={})
       system("mkdir -p #{@output_path}") unless File.directory?(@output_path)
       save_style
       save_images
       story_path = @output_path + "/story.md"
       File.open(story_path, 'w'){|f| f.write @story}
     end	  
+	  
+	  def save_icml(options={})
+	   
+	  end
 	  
 	  def parse_char_styles
 	    @char_styles = []
@@ -281,4 +284,4 @@ end
 
 @path         = "/Users/mskim/Development/hwp/section_test1.hml"
 @hwp  = RLayout::Hwpml.new(@path)
-@hwp.save
+@hwp.save_markdown
