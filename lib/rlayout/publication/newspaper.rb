@@ -47,7 +47,7 @@
 
 SAMPLE_ARTICLE_LATOUT = <<-EOF
 
-RLayout::TextBox.new(nil, <%= @story_options %>) do
+RLayout::NewsArticleBox.new.new(nil, <%= @story_options %>) do
   heading
 <%= @image_text %>
 #  float_image(:local_image=>"1.jpg", :grid_frame=>[0,0,1,1])
