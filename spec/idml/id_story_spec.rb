@@ -122,6 +122,50 @@ TABLE_XML = <<-EOF
 
 EOF
 
+IMAGE_XML = <<-EOF
+<ParagraphStyleRange AppliedParagraphStyle="ParagraphStyle/Paragraph">
+  <CharacterStyleRange AppliedCharacterStyle="$ID/NormalCharacterStyle">
+    <Rectangle Self="uec" ItemTransform="1 0 0 1 75 -50">
+      <Properties>
+        <PathGeometry>
+          <GeometryPathType PathOpen="false">
+            <PathPointArray>
+              <PathPointType Anchor="-75 -50" LeftDirection="-75 -50" RightDirection="-75 -50" />
+              <PathPointType Anchor="-75 50" LeftDirection="-75 50" RightDirection="-75 50" />
+              <PathPointType Anchor="75 50" LeftDirection="75 50" RightDirection="75 50" />
+              <PathPointType Anchor="75 -50" LeftDirection="75 -50" RightDirection="75 -50" />
+            </PathPointArray>
+          </GeometryPathType>
+        </PathGeometry>
+      </Properties>
+      <Image Self="ue6" ItemTransform="1.0 0 0 1.0 -75 -50">
+        <Properties>
+          <Profile type="string">
+            $ID/Embedded
+            <GraphicBounds Left="0" Top="0" Right="150" Bottom="100" />
+          </Profile>
+        </Properties>
+        <Link Self="ueb" LinkResourceURI="file:image.jpg" />
+      </Image>
+    </Rectangle>
+  </CharacterStyleRange><Br />
+</ParagraphStyleRange>
+
+EOF
+
+describe 'create idImage from IMAGE_XML' do
+  before do
+    @table_element  = REXML::Document.new(IMAGE_XML)
+    @image          = IdImage.new(@table_element)
+  end
+
+  it 'should create IdImage' do
+    assert @image.class == IdImage
+  end
+  
+end
+
+__END__
 describe 'create table from table_xml' do
   before do
     @table_element  = REXML::Document.new(TABLE_XML)

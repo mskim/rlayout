@@ -174,6 +174,12 @@ TABLE_XML_ERB = <<-EOF.gsub(/^\s*/, "")
 
 EOF
 
+TABLE_CELLXML_ERB = <<-EOF
+<Cell Name="3:3" AppliedCellStyle="CellStyle/Cell">
+  <%= @cell_paragraphs %>
+</Cell>
+
+EOF
 
 
   class IdStory
@@ -186,17 +192,21 @@ EOF
         when 'StoryPreference'
         when 'InCopyExportOption'
         when 'ParagraphStyleRange'
-          @paragraphs << IdParagraph.new(story_item)
+          #TODO running image is wrapped in ParagraphStyleRange
+          if REXML::XPath.match(story_xml, "/ParagraphStyleRange/CharacterStyleRange/Rectangle/Image").length > 0
+            puts "running image"
+            @paragraphs << IdImage.new(story_item) 
+          else
+            @paragraphs << IdParagraph.new(story_item) 
+          end         
         when 'Table'
           @paragraphs << IdTable.new(story_item)
-        when 'Image'
-          @paragraphs << IdImage.new(story_item)
+        # when 'Image'
+        #   @paragraphs << IdImage.new(story_item)
         else
           
         end
       end
-      # story_hash =   XmlSimple.xml_in(story_xml)
-      # puts story_hash
       self
     end
     
@@ -264,13 +274,32 @@ EOF
     end
     
     def self.from_para_data(para_data)
-      @text = para_data[:string]
-      erb   = ERB.new(PARAGRAPH_XML_ERB)
-      xml   = erb.result(binding)         
-      @element = REXML::Document.new(xml)
+      @text     = para_data[:string]
+      erb       = ERB.new(PARAGRAPH_XML_ERB)
+      xml       = erb.result(binding)         
+      @element  = REXML::Document.new(xml)
     end  
   end  
   
+  class IdImage < IdElement
+    attr_accessor :image_path
+    def initialize(element)
+      super
+      image_element = REXML::XPath.first(@element, '//ParagraphStyleRange/CharacterStyleRange/Rectangle/Image')
+      # REXML::Element.elements are 1 base, not 0 based
+      @image_path   = image_element.elements[2].attributes['LinkResourceURI'].sub("file:", "")
+      #TODO get image frame??
+      # since this is running image, frame size may not be important
+      self
+    end
+    
+    def self.from_para_data(para_data)
+      @image_path = para_data[:image_path]
+      erb         = ERB.new(IMAGE_XML_ERB)
+      xml         = erb.result(binding)         
+      @element    = REXML::Document.new(xml)
+    end  
+  end
   
   # 
   class IdTable < IdElement
@@ -284,7 +313,7 @@ EOF
       @header_row_count     = @table_attributes['HeaderRowCount'].to_i
       @body_row_count       = @table_attributes['BodyRowCount'].to_i
       @column_count         = @table_attributes['ColumnCount'].to_i
-      @cells = []
+      @cells                = []
       REXML::XPath.match(@element, '//Table/Cell').each do |cell|
         @cells << IdTableCell.new(cell)
       end
@@ -293,10 +322,10 @@ EOF
     end
     
     def self.from_para_data(para_data)
-      @image_path = para_data[:image_path]
-      erb   = ERB.new(IMAGE_XML_ERB)
-      xml   = erb.result(binding)         
-      @element = REXML::Document.new(xml)
+      @image_path     = para_data[:image_path]
+      erb             = ERB.new(TABLE_XML_ERB)
+      xml             = erb.result(binding)         
+      @element        = REXML::Document.new(xml)
     end  
     
     def to_markdown
@@ -308,9 +337,9 @@ EOF
     attr_accessor :cell_name, :cell_style, :cell_text, :cell_paragraphs
     def initialize(element)
       super
-      @cell_name        = @element.attributes['Name']
-      @cell_style       = @element.attributes['AppliedCellStyle']
-      @cell_paragraphs  = []
+      @cell_name      = @element.attributes['Name']
+      @cell_style     = @element.attributes['AppliedCellStyle']
+      @cell_paragraphs= []
       # REXML::XPath.match(@element, '/Cell/ParagraphStyleRange').each do |cell_para|
       #   @cell_paragraphs  << IdParagraph.new(cell_para)
       # end
@@ -322,25 +351,13 @@ EOF
     end
   
     def self.from_para_data(para_data)
-      @image_path = para_data[:image_path]
-      erb   = ERB.new(IMAGE_XML_ERB)
-      xml   = erb.result(binding)         
-      @element = REXML::Document.new(xml)
+      #TODO convert cell_paragraphs into elements
+      @cell_paragraphs  = para_data[:cell_paragraphs]
+      erb               = ERB.new(TABLE_CELL_XML_ERB)
+      xml               = erb.result(binding)         
+      @element          = REXML::Document.new(xml)
     end  
   end
   
-  class IdImage < IdElement
-    def initialize(element)
-      super
-      self
-    end
-    
-    def self.from_para_data(para_data)
-      @image_path = para_data[:image_path]
-      erb   = ERB.new(IMAGE_XML_ERB)
-      xml   = erb.result(binding)         
-      @element = REXML::Document.new(xml)
-    end  
-  end
-  
+
 end
