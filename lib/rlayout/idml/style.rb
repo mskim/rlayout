@@ -4,7 +4,6 @@ module RLayout
   class Styles < IdPkg
     attr_accessor :paragraph_styles
     def initialize(xml, options={})
-      puts "in Styles"
       super
       parse_paragraph_styles
       self
@@ -30,7 +29,6 @@ module RLayout
         end
         @paragraph_styles << h
       end
-      puts "para_styles:#{@paragraph_styles}"
       @paragraph_styles
     end
     

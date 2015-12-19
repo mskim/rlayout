@@ -34,7 +34,6 @@ module RLayout
     attr_accessor :path, :designmap, :sections, :mimetype
     attr_accessor :master_spreads, :spreads, :backing_story, :stories
     attr_accessor :graphic_pkg, :fonts, :styles, :preferences, :tags
-    
     def initialize(idml_path, options={})
       @idml_path    = idml_path
       @stories = []
@@ -46,7 +45,7 @@ module RLayout
         # Graphic
         src_file =  REXML::XPath.first(design_map_xml, '/Document/idPkg:Graphic').attributes['src']
         pkg_data = zipped_files.get_entry(src_file).get_input_stream.read
-        @graphic = GraphicPkg.new(pkg_data) 
+        @graphic_pkg = GraphicPkg.new(pkg_data) 
         # Font
         src_file = REXML::XPath.first(design_map_xml, '/Document/idPkg:Fonts').attributes['src']
         pkg_data = zipped_files.get_entry(src_file).get_input_stream.read
@@ -56,7 +55,6 @@ module RLayout
         src_file =  REXML::XPath.first(design_map_xml, '/Document/idPkg:Styles').attributes['src']
         pkg_data = zipped_files.get_entry(src_file).get_input_stream.read
         @styles = Styles.new(pkg_data) 
-        puts "@styles:#{@styles}"
         # Preferences
         src_file =  REXML::XPath.first(design_map_xml, '/Document/idPkg:Preferences').attributes['src']
         pkg_data = zipped_files.get_entry(src_file).get_input_stream.read
@@ -114,25 +112,8 @@ module RLayout
       system("mkdir -p #{path + '/Spreads'}") unless File.exists?(path + '/Spreads')
       system("mkdir -p #{path + '/Stories'}") unless File.exists?(path + '/Stories')
       system("mkdir -p #{path + '/XML'}") unless File.exists?(path + '/XML')
-
     end
-
-    def	to_rlayout(options={})
-    	path = @idml_path.sub(".idml", '.rlayout')
-    	if options[:path]
-    	  path = options[:path]	
-    	end
-    	system "mkdir -p #{path}" unless File.exists?(path)
-    	layout_yaml = path + '/layout.yml'
-    	content = {}
-    	pages = []
-    	@spreads.each do |spread|
-  	    pages << spread.pages_hash
-    	end
-    	content[:pages] = pages
-    	File.open(layout_yaml, 'w'){|f| f.write content.to_yaml}
-    end
-          
+    
     def save_idml(path)
       # create_folders(path)
       # @graphic.save
@@ -144,6 +125,41 @@ module RLayout
       # save_spread
       # save_story
       # save_designmap
+    end
+    
+    def	to_rlayout(options={})
+      @rlayout_path = @idml_path
+      if @idml_path =~/.idml$/
+    	  @rlayout_path = @idml_path.sub(".idml", '.rlayout')
+      end
+    	if options[:path]
+    	  @rlayout_path = options[:path]	
+    	end
+    	system "mkdir -p #{@rlayout_path}" unless File.exists?(@rlayout_path)
+      save_id_layout_rb
+      save_id_stories
+    end
+          
+    def save_id_layout_rb
+      layout_rb_path = @rlayout_path + '/layout.rb'
+    	content = {}
+    	pages = []
+    	@spreads.each do |spread|
+  	    pages += spread.pages
+    	end
+    	layout_rb = ""
+    	pages.each_with_index do |page, i|
+    	  layout_rb += "  # page_#{i+1}\n"
+    	  layout_rb += page.page_layout_text
+  	  end
+  	  File.open(layout_rb_path, 'w'){|f| f.write layout_rb}
+    end
+    
+    def save_id_stories
+      puts __method__
+      @stories.each_with_index do |story, i|
+        story.save_story(@rlayout_path + "/story_#{i + 1}.md")
+      end
     end
     
     

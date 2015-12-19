@@ -106,9 +106,9 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/calendar'
   require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
   
-  require File.dirname(__FILE__) + '/rlayout/idml/document'
-  require File.dirname(__FILE__) + '/rlayout/idml/page'
-  require File.dirname(__FILE__) + '/rlayout/idml/story'
+  require File.dirname(__FILE__) + '/rlayout/idml/id_document'
+  require File.dirname(__FILE__) + '/rlayout/idml/id_element'
+  require File.dirname(__FILE__) + '/rlayout/idml/id_story'
   require File.dirname(__FILE__) + '/rlayout/idml/style'
   require File.dirname(__FILE__) + '/rlayout/idml/spread'
   require File.dirname(__FILE__) + '/rlayout/idml/master_spread'
