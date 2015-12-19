@@ -1,12 +1,11 @@
 
-    @path         = "/Users/mskim/Development/hwp/ms.hml"
-    @style_path   = "/Users/mskim/Development/hwp/ms/style.yml"
-    @output_path  = "/Users/mskim/Development/hwp/ms" 
-    @tables_path  = "/Users/mskim/Development/hwp/ms/tables" 
-    
-    @path         = "/Users/mskim/Development/hwp/section_test1.hml"
-    @hwp  = Hwpml.new(@path)
-    @hwp.save
+@path         = "/Users/mskim/Development/hwp/ms.hml"
+@style_path   = "/Users/mskim/Development/hwp/ms/style.yml"
+@output_path  = "/Users/mskim/Development/hwp/ms" 
+@tables_path  = "/Users/mskim/Development/hwp/ms/tables" 
+@path         = "/Users/mskim/Development/hwp/section_test1.hml"
+@hwp  = Hwpml.new(@path)
+@hwp.save
 
 
 __END__
