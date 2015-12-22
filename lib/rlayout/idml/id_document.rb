@@ -7,10 +7,6 @@
 # require 'awesome_print'
 # require 'xmlsimple'
 
-# I am trying to make the idPkg xml into Hash and using is as an Object 
-#   and edit them
-#   and get back the same idPkg xml
-
 # I have tried with XmlSimple.xml_in to convert xml to Hash
 # and XmlSimple.xml_out to get back xml.
 
@@ -136,14 +132,30 @@ module RLayout
     	  @rlayout_path = options[:path]	
     	end
     	system "mkdir -p #{@rlayout_path}" unless File.exists?(@rlayout_path)
-      save_id_layout_rb
-      save_id_stories
+      save_master_page
+      save_styles
+      save_layout
+      save_stories
     end
-          
-    def save_id_layout_rb
-      layout_rb_path = @rlayout_path + '/layout.rb'
-    	content = {}
-    	pages = []
+    
+    def save_styles
+      # master_page
+      # paragraph_style
+      # char_style
+      # table_style
+      # graphic_defaults
+      # heading_style
+      
+      styles_folder =  @rlayout_path + '/styles'
+      system("mkdir -p #{styles_folder}") unless File.exist?(styles_folder)
+    end
+    
+    def save_master_page
+      master_page_folder =  @rlayout_path + '/styles'
+      system("mkdir -p #{master_page_folder}") unless File.exist?(master_page_folder)
+      layout_rb_path          = master_page_folder + '/master_page.rb'
+    	content                 = {}
+    	pages                   = []
     	@spreads.each do |spread|
   	    pages += spread.pages
     	end
@@ -155,8 +167,22 @@ module RLayout
   	  File.open(layout_rb_path, 'w'){|f| f.write layout_rb}
     end
     
-    def save_id_stories
-      puts __method__
+    def save_layout
+      layout_rb_path  = @rlayout_path + '/layout.rb'
+    	content         = {}
+    	pages           = []
+    	@spreads.each do |spread|
+  	    pages += spread.pages
+    	end
+    	layout_rb = ""
+    	pages.each_with_index do |page, i|
+    	  layout_rb += "  # page_#{i+1}\n"
+    	  layout_rb += page.page_layout_text
+  	  end
+  	  File.open(layout_rb_path, 'w'){|f| f.write layout_rb}
+    end
+    
+    def save_stories
       @stories.each_with_index do |story, i|
         story.save_story(@rlayout_path + "/story_#{i + 1}.md")
       end
@@ -182,15 +208,32 @@ module RLayout
     end
   end
   
-  class IdPkg
+  class XMLElement
     attr_accessor :element
     def initialize(element, options={})
-      @element =  REXML::Document.new(element)
+      @element =  element
       self
+    end    
+  end
+  
+  class XMLPkgDocument
+    def initialize(xml_text, options={})
+      # super 
+      package   = REXML::Document.new(xml_text)
+      @element  = package.root.elements.first  if package.root.elements
+      self
+    end    
+  end
+  #   
+  # 
+  class XMLDocument
+    attr_accessor :element
+    def initialize(xml_text, options={})
+      @element   = REXML::Document.new(xml_text)
     end
   end
   
-  class GraphicPkg < IdPkg
+  class GraphicPkg < XMLPkgDocument
     attr_accessor :element
     def initialize(element, options={})
       @element =  element
@@ -198,7 +241,7 @@ module RLayout
     end
   end
   
-  class Fonts < IdPkg
+  class Fonts < XMLPkgDocument
     def initialize(xml, options={})
       super
       self
@@ -206,28 +249,27 @@ module RLayout
   end
 
  
-  class Preferences < IdPkg
+  class Preferences < XMLPkgDocument
     def initialize(xml, options={})
       super
       self
     end  
   end
   
-  class Tags < IdPkg
+  class Tags < XMLPkgDocument
     def initialize(xml, options={})
       super
       self
     end  
   end
 
-  class BackingStory < IdPkg
+  class BackingStory < XMLPkgDocument
     def initialize(xml, options={})
       super
       self
     end  
   end  
   
-
   
 end
 

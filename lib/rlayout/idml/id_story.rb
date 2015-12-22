@@ -182,19 +182,18 @@ TABLE_CELLXML_ERB = <<-EOF
 EOF
 
 
-  class IdStory
+  class IdStory < XMLPkgDocument
     attr_accessor :paragraphs
     def initialize(story_text)
+      super
       @paragraphs = []
-      story_xml =  REXML::Document.new(story_text)
-      REXML::XPath.first(story_xml, "/idPkg:Story/Story/").elements.each do |story_item|
+      @element.elements.each do |story_item|
+        # puts "story_item.name:#{story_item.name}"
         case story_item.name
         when 'StoryPreference'
         when 'InCopyExportOption'
         when 'ParagraphStyleRange'
-          #TODO running image is wrapped in ParagraphStyleRange
-          if REXML::XPath.match(story_xml, "/ParagraphStyleRange/CharacterStyleRange/Rectangle/Image").length > 0
-            puts "running image"
+          if REXML::XPath.first(story_item, "/ParagraphStyleRange/CharacterStyleRange/Rectangle/Image")
             @paragraphs << IdImage.new(story_item) 
           else
             @paragraphs << IdParagraph.new(story_item) 
@@ -202,6 +201,7 @@ EOF
         when 'Table'
           @paragraphs << IdTable.new(story_item)
         # when 'Image'
+        #   TODO running image is wrapped in ParagraphStyleRange
         #   @paragraphs << IdImage.new(story_item)
         else
           
@@ -215,7 +215,7 @@ EOF
       @paragraphs.each do |para|
         markdown += para.to_markdown
       end
-      puts "markdown:#{markdown}"
+      # puts "markdown:#{markdown}"
       File.open(path, 'w'){|f| f.write markdown}
     end
     
@@ -243,7 +243,7 @@ EOF
     end
   end
   
-  class IdParagraph < IdElement
+  class IdParagraph < XMLElement
     attr_accessor :markup, :text_string
     def initialize(element)
       super
@@ -281,7 +281,7 @@ EOF
     end  
   end  
   
-  class IdImage < IdElement
+  class IdImage < XMLElement
     attr_accessor :image_path
     def initialize(element)
       super
@@ -302,7 +302,7 @@ EOF
   end
   
   # 
-  class IdTable < IdElement
+  class IdTable < XMLElement
     attr_accessor :table_style, :header_row_count, :body_row_count, :column_count
     attr_accessor :cells
     def initialize(element)
@@ -333,7 +333,7 @@ EOF
     end
   end
     
-  class IdTableCell < IdElement
+  class IdTableCell < XMLElement
     attr_accessor :cell_name, :cell_style, :cell_text, :cell_paragraphs
     def initialize(element)
       super

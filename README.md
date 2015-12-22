@@ -33,7 +33,8 @@ TODO List
 		- bold
 		- underline, strike-through, super, sub
 		- custom emp(color)
-	- QuickLook options: save QuickLook/Preview.pdf to create template folder
+	- QuickLook options: save QuickLook/Preview.pdf for preview
+	
 	- starts_at # new_page, new_text_box, new_column
 	- put include RLayout so that users don't have to type RLayout::
 	- Use easy to use name for layout file, such as 
@@ -41,7 +42,14 @@ TODO List
 	- # News.create
 	- # NewsSection.create
 	- # Magazine.create 
+	- redo layout for complex container
 
+2015 12 21
+	- parse idml
+	
+2015 12 20
+	- add galley mode printing
+	
 2015 12 7
 	- get rid of Klass, just use class
 	- fix memo

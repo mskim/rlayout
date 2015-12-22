@@ -1,16 +1,8 @@
 
 module RLayout
   
-  ##
-  class IdElement 
-    attr_accessor :element
-    def initialize(element, options={})
-      @element =  element
-      self
-    end
-  end
-  
-  class IdPage < IdElement
+  ##  
+  class IdPage < XMLElement
     def initialize(xml, options={})
       super
       self
@@ -31,7 +23,7 @@ EOF
     end
   end
   
-  class IdTextFrame < IdElement
+  class IdTextFrame < XMLElement
     def initialize(xml, options={})
       super
       self

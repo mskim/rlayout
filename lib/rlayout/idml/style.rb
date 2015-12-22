@@ -1,51 +1,81 @@
 #encode :utf-8
 
 module RLayout
-  class Styles < IdPkg
-    attr_accessor :paragraph_styles
+  class Styles < XMLDocument
+    attr_accessor :character_styles, :paragraph_styles
+    attr_accessor :table_styles, :cell_styles, :object_styles
     def initialize(xml, options={})
       super
-      parse_paragraph_styles
+      @element.root.elements.each do |style_group|
+        case style_group.name
+        when 'RootCharacterStyleGroup'
+          parse_char_styles(style_group)
+        when 'RootParagraphStyleGroup'
+          parse_paragraph_styles(style_group)
+        when 'TOCStyle'
+          parse_toc_style(style_group)
+        when 'RootCellStyleGroup'
+          parse_cell_style(style_group)
+        when 'RootTableStyleGroup'
+          parse_table_style(style_group)
+        when 'RootObjectStyleGroup'
+          parse_object_style(style_group)
+        when 'TrapPreset'
+          puts 'RootTrapPresetGroup'
+        else 
+          puts style_group
+        end
+      end
+      
       self
     end  
     
-    def parse_paragraph_styles
-      @paragraph_styles = []
-      REXML::XPath.match(@element, "/idPkg:Styles/RootParagraphStyleGroup/ParagraphStyle").each do |para_style|
-        para_hash =   XmlSimple.xml_in(para_style.to_s)
+    def parse_char_styles(element)
+      @character_styles = []
+      element.elements.each do |char_style|
         h = {}
-        h[:name]              = para_hash['Name'].sub("$ID/","").sub("[","").sub("]","")
-        if para_hash['Properties'][0]['BasedOn']
-          h[:based_on]        = para_hash['Properties'][0]['BasedOn'][0]['content'].sub("$ID/[","").sub("]","")
+        h[:name] = char_style.attributes['Name']
+        @character_styles << h
+      end      
+    end
+    
+    def parse_paragraph_styles(style_group)
+      @paragraph_styles = []
+      style_group.elements.each do |para_style|
+        h = {}
+        h[:name] = para_style.attributes['Name']
+        attrs = para_style.attributes 
+        if based_on = para_style.elements['Properties'].elements['BasedOn']
+          h[:based_on]        = based_on.text
         else
-          h[:text_font]       = para_hash['Properties'][0]['AppliedFont'][0]['content'] 
-          h[:text_size]       = para_hash['PointSize']
-          h[:text_style]      = para_hash['FontStyle']
-          h[:text_alignment]  = para_hash['Justification']
-          h[:text_leading]    = para_hash['Properties'][0]['Leading'][0]['content'] 
-          h[:text_first_line_head_indent]= para_hash['FirstLineIndent'] 
-          h[:text_head_indent]= para_hash['LeftIndent']
-          h[:text_tail_indent]= para_hash['RightIndent']
+          h[:text_font]       = para_style.elements['Properties'].elements['AppliedFont'].text
+          h[:text_size]       = attrs['PointSize']
+          h[:text_style]      = attrs['FontStyle']
+          h[:text_alignment]  = attrs['Justification']
+          h[:text_leading]    = para_style.elements['Properties'].elements['Leading'].text
+          h[:text_first_line_head_indent]= attrs['FirstLineIndent'] 
+          h[:text_head_indent]= attrs['LeftIndent']
+          h[:text_tail_indent]= attrs['RightIndent']
         end
         @paragraph_styles << h
-      end
-      @paragraph_styles
+      end   
     end
     
-    def cell_style
-      
+    def parse_cell_style(style_group)
+      puts __method__
     end
     
-    def table_style
-      
+    def parse_table_style(style_group)
+      puts style_group
+      puts __method__
     end
     
-    def toc_style
-      
+    def parse_toc_style(style_group)
+      puts __method__
     end
     
-    def object_style
-      
+    def parse_object_style(style_group)
+      puts __method__
     end
   end
 

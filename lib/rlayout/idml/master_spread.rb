@@ -1,21 +1,28 @@
 #encode :utf-8
 
 module RLayout
-  class MasterSpread < IdPkg
-    attr_accessor :spread_attributes, :pages
-    def initialize(hash)
+  class MasterSpread < XMLPkgDocument
+    attr_accessor :spread_attributes, :pages, :spread_graphics
+    def initialize(master_spread_xml_text)
       super
       parse_master_spread
       self
     end  
     
     def parse_master_spread
-      master_spread = REXML::XPath.match(@element, "/idPkg:MasterSpread/MasterSpread")
-      @spread_attributes = master_spread.first.attributes
-      # @spread_hash =   XmlSimple.xml_in(master_spread.to_s)
-      @pages = []
-      REXML::XPath.match(@element, "/idPkg:MasterSpread/MasterSpread/Page").each do |page|
-        @pages << XmlSimple.xml_in(page.to_s)
+      master_spread_children    = @element.elements
+      @spread_attributes        = master_spread_children.first.attributes
+      @pages                    = []
+      @spread_children_graphics = []
+      master_spread_children.each do |spread_child|
+        case spread_child.name
+        when 'Page'
+          @pages << IdPage.new(spread_child)
+        when 'TextFrame'
+          @spread_children_graphics << IdTextFrame.new(spread_child)
+        else
+          # puts "spread_child.name:#{spread_child.name}"
+        end
       end
     end   
   end

@@ -6,6 +6,8 @@ describe 'create rlayout from idml' do
     @doc = IdDocument.new(@idml_path)
     @rlayout = @doc.to_rlayout
     @rlayout_path = "/Users/mskim/Development/InDesignSDK/devtools/sdktools/idmltools/samples/helloworld/helloworld-1.rlayout"
+    puts @doc.styles.character_styles
+    puts @doc.styles.paragraph_styles    
   end
   
   it 'should convert idml to rlayout' do
