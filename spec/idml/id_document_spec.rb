@@ -1,17 +1,15 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe 'create rlayout from idml' do
+describe 'create idyml from idml' do
   before do
-    @idml_path = "/Users/mskim/Development/InDesignSDK/devtools/sdktools/idmltools/samples/helloworld/helloworld-1.idml"
+    @idml_path = "/Users/mskim/Development/idml/samples/helloworld/helloworld-1.idml"
     @doc = IdDocument.new(@idml_path)
-    @rlayout = @doc.to_rlayout
-    @rlayout_path = "/Users/mskim/Development/InDesignSDK/devtools/sdktools/idmltools/samples/helloworld/helloworld-1.rlayout"
-    puts @doc.styles.character_styles
-    puts @doc.styles.paragraph_styles    
+    @idyml = @doc.to_id_layout
+    @id_layout_path = "/Users/mskim/Development/idml/samples/helloworld/helloworld-1.id_layout"
   end
   
-  it 'should convert idml to rlayout' do
-    assert File.directory?(@rlayout_path)
+  it 'should convert idml to idyml' do
+    assert File.directory?(@id_layout_path)
   end
     
 end

@@ -1,38 +1,7 @@
 #encode :utf-8
 
-module RLayout
-  class Spread < XMLPkgDocument
-    attr_accessor :spread_attributes, :pages, :text_frames
-    def initialize(spread_xml_text)
-      super      
-      parse_spread
-      self
-    end
-    
-    def parse_spread
-      spread_children    = @element.elements
-      @spread_attributes        = spread_children.first.attributes
-      @pages                    = []
-      @spread_children_graphics = []
-      spread_children.each do |spread_child|
-        case spread_child.name
-        when 'Page'
-          @pages << IdPage.new(spread_child)
-        when 'TextFrame'
-          @spread_children_graphics << IdTextFrame.new(spread_child)
-        else
-          # puts "spread_child.name:#{spread_child.name}"
-        end
-      end      
-    end   
-    
-  end  
-end
-
-
-__END__
 # What is spread and why use it?
-# Spread is left and right page unit of book.
+# Spread is container of left and right pages.
 # Magazine publishers work in spreads, because spread is what reader sees, not a single page.
 # There are cases where a single picture is layout across two pages.
 # So, it is natural for DTP applications to work in unit of spread.
@@ -57,6 +26,118 @@ __END__
 #    But for rectangle, supporting curve points are identical to the anchor points, since there are no curves in Rectangle.
 #    This is very flexible way of represent any shaped page items. 
 
+
+module RLayout
+
+    
+  class Spread < XMLPkgDocument
+    attr_accessor :spread_attributes, :pages, :text_frames, :spread_graphics
+    def initialize(spread_xml_text)
+      super      
+      parse_spread
+      self
+    end
+    
+    def spread_content
+      spread_text = ""
+      @pages.each do |page|
+        spread_text += page.page_content
+      end
+      @spread_graphics.each do |graphic|
+        spread_text +=graphic.graphic_content
+      end
+      spread_text
+    end
+        
+    def parse_spread
+      spread_children           = @element.elements
+      @spread_attributes        = spread_children.first.attributes
+      @pages                    = []
+      @spread_graphics = []
+      spread_children.each do |spread_child|
+        case spread_child.name
+        when 'Page'
+          @pages << RLayout::IdPage.new(spread_child)
+        when 'TextFrame'
+          @spread_graphics << RLayout::IdTextFrame.new(spread_child)
+        else
+          # puts "spread_child.name:#{spread_child.name}"
+        end
+      end      
+    end   
+        
+  end
+  
+  class IdPage < XMLElement
+    attr_accessor :hash
+    def initialize(xml, options={})
+      super
+      h= {}
+      attrs                   = @element.attributes
+      h[:id]                  = attrs['Self']
+      h[:AppliedMaster]       = attrs['AppliedMaster']
+      h[:GeometricBounds]     = attrs['GeometricBounds']
+      h[:ItemTransform]       = attrs['ItemTransform']
+      h[:MasterPageTransform] = attrs['MasterPageTransform']
+      h[:Name]                = attrs['Name']
+      margin_atts             = @element.elements['MarginPreference'].attributes
+      h[:Bottom]              = margin_atts['Bottom']
+      h[:ColumnCount]         = margin_atts['ColumnCount']
+      h[:ColumnDirection]     = margin_atts['ColumnDirection']
+      h[:ColumnGutter]        = margin_atts['ColumnGutter']
+      h[:Left]                = margin_atts['Left']
+      h[:Right]               = margin_atts['Right']
+      h[:Top]                 = margin_atts['Top']
+      @hash = h
+      self
+    end 
+     
+    def page_content
+      <<-EOF
+  page = #{@hash.to_s}
+  EOF
+    end
+    
+  end
+  
+  class IdTextFrame < XMLElement
+    attr_accessor :hash
+    def initialize(xml, options={})
+      super
+      attrs     = @element.attributes
+      h={}
+      h[:id]                  = attrs['Self']
+      h[:AppliedObjectStyle]  = attrs['AppliedObjectStyle']
+      h[:ParentStory]         = attrs['ParentStory']
+      h[:NextTextFrame]       = attrs['NextTextFrame']
+      h[:PreviousTextFrame]   = attrs['PreviousTextFrame']
+      h[:StrokeWeight]        = attrs['StrokeWeight']
+      h[:ContentType]         = attrs['ContentType']
+      h[:Visible]             = attrs['Visible']
+      h[:Locked]              = attrs['Locked']
+      h[:ItemTransform]       = attrs['ItemTransform']
+      path_point_array = @element.elements['Properties'].elements['PathGeometry'].elements['GeometryPathType']
+      h[:path_points] = []
+      path_point_array.elements.each do |points|
+        h[:path_points] << points.attributes
+      end
+      h[:TextColumnFixedWidth] = @element.elements['TextFramePreference'].elements['TextColumnFixedWidth']
+      @hash = h
+      self
+    end
+    
+    def graphic_content
+        <<-EOF
+    text_frame = #{@hash.to_s}
+    EOF
+    end  
+  end
+  
+
+end
+
+
+__END__
 
 module Idml
   

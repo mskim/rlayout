@@ -183,9 +183,10 @@ EOF
 
 
   class IdStory < XMLPkgDocument
-    attr_accessor :paragraphs
+    attr_accessor :paragraphs, :story_id
     def initialize(story_text)
       super
+      @story_id = @element.attributes['Self']
       @paragraphs = []
       @element.elements.each do |story_item|
         # puts "story_item.name:#{story_item.name}"
@@ -193,16 +194,15 @@ EOF
         when 'StoryPreference'
         when 'InCopyExportOption'
         when 'ParagraphStyleRange'
-          if REXML::XPath.first(story_item, "/ParagraphStyleRange/CharacterStyleRange/Rectangle/Image")
-            @paragraphs << IdImage.new(story_item) 
+          if story_item.elements['CharacterStyleRange'] && rect = story_item.elements['CharacterStyleRange'].elements['Rectangle']
+            if rect.elements['Image']
+              @paragraphs << IdImage.new(story_item) 
+            end
           else
             @paragraphs << IdParagraph.new(story_item) 
           end         
         when 'Table'
           @paragraphs << IdTable.new(story_item)
-        # when 'Image'
-        #   TODO running image is wrapped in ParagraphStyleRange
-        #   @paragraphs << IdImage.new(story_item)
         else
           
         end

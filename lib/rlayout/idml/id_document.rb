@@ -1,33 +1,41 @@
 #encode :utf-8
 
-# require 'nokogiri'
-# require 'active_support'
-# require "active_support/core_ext"
-# require 'xmlsimple'
-# require 'awesome_print'
-# require 'xmlsimple'
+# idml is edited by first converting it to an intermediate working folder.
+# working folder is created next to idml with same basename with .id_layout extension.
+# it contains intermediate format, IDML converted to hash(yaml) in idyml. 
+# And other supporing story files, such as hwpml, Word, or markdown files.
+# it can also script layout using pgscript. 
+# After idyml are edited, it is converted back to IDML.
 
-# I have tried with XmlSimple.xml_in to convert xml to Hash
-# and XmlSimple.xml_out to get back xml.
+# my.idml
+# my.id_layout
+#   idyml
+#      designmap.yml
+#      story.yml
+#      master_spread.yml
+#      spread.yml
+#      styles.yml
+#      
+#   my_hangul.hml
+#   my_hangul 
+#      story.md
+#   pgscript.rb
+#   images
+#   Rakefile
 
-# It draws error for some reason when I try to convert designmap.xml.
-# it is getting rid of the idPak:name. 
-# I could use Nokogiri and just get the source files using XPath
-# but I am trying to use pure Ruby imlementatios only for rubymotion port.
-# TODO Maybe I can use REXML with XPath ??
-# So, after some trial error, I am using the following combination.
-
-# I am using active_support/core_ext for Hash.from_xml for parsing designmap.xml
-# And for each pkg files
-#   using xmlsimple xml_in(xml) and XmlSimple.xml_out(@hash) and 
-# TODO I need to find a way to merge two into one.
-# My final goal is to run it as rubymotoion commonad line app
-# So, I need pure Ruby implementation, so no Nokogiri if I can avoid it.
+# workflow
+# 1. pre-desinged idml file is given
+# 1. create id_layout working folder from it.
+# 1. place hwpml file into the folder and generate story.md
+# 1. place story.md into id_layout 
+# 1. update idml file using rake 
+# 1. open idml to prreview.
 
 module RLayout
     
   class IdDocument
-    attr_accessor :path, :designmap, :sections, :mimetype
+    attr_accessor :idml_path, :id_layout_path, :styles_folder
+    attr_accessor :designmap, :mimetype
     attr_accessor :master_spreads, :spreads, :backing_story, :stories
     attr_accessor :graphic_pkg, :fonts, :styles, :preferences, :tags
     def initialize(idml_path, options={})
@@ -83,15 +91,7 @@ module RLayout
       end
       self
     end
-    
-    def paragraph_styles
-      @styles.paragraph_styles
-    end
-    
-    def get_char_styles
-      
-    end
-    
+        
     def all_stories
       text_content = ""
       @stories.each do |story|
@@ -99,102 +99,93 @@ module RLayout
       end
       text_content
     end
-    
-    def create_folders(path)
-      system("mkdir -p #{path}") unless File.exists?(path)
-      system("mkdir -p #{path + '/MasterSpreads'}") unless File.exists?(path + '/MasterSpreads')
-      system("mkdir -p #{path + '/META-INF'}") unless File.exists?(path + '/META-INF')
-      system("mkdir -p #{path + '/Resources'}") unless File.exists?(path + '/Resources')
-      system("mkdir -p #{path + '/Spreads'}") unless File.exists?(path + '/Spreads')
-      system("mkdir -p #{path + '/Stories'}") unless File.exists?(path + '/Stories')
-      system("mkdir -p #{path + '/XML'}") unless File.exists?(path + '/XML')
-    end
-    
-    def save_idml(path)
-      # create_folders(path)
-      # @graphic.save
-      # save_font
-      # save_styles
-      # @preferences.save
-      # save_tags
-      # save_master_spread
-      # save_spread
-      # save_story
-      # save_designmap
-    end
-    
-    def	to_rlayout(options={})
-      @rlayout_path = @idml_path
+            
+    def	to_id_layout(options={})
+      @id_layout_path = @idml_path
       if @idml_path =~/.idml$/
-    	  @rlayout_path = @idml_path.sub(".idml", '.rlayout')
+    	  @id_layout_path = @idml_path.sub(".idml", '.id_layout')
       end
     	if options[:path]
-    	  @rlayout_path = options[:path]	
+    	  @id_layout_path = options[:path]	
     	end
-    	system "mkdir -p #{@rlayout_path}" unless File.exists?(@rlayout_path)
-      save_master_page
+    	@styles_folder      =  @id_layout_path + '/styles'
+      
+    	system "mkdir -p #{@id_layout_path}" unless File.exists?(@id_layout_path)
       save_styles
       save_layout
       save_stories
     end
     
     def save_styles
-      # master_page
+      system("mkdir -p #{styles_folder}") unless File.exist?(@styles_folder)
+      save_master_page
+      save_layout
       # paragraph_style
-      # char_style
-      # table_style
+      text_styles       = @styles.paragraph_styles.to_yaml
+      # char_style     
+      text_styles       += @styles.character_styles.to_yaml
+      text_style_path   = @styles_folder + '/text_style.yml'
+      File.open(text_style_path, 'w'){|f| f.write text_styles}
+      # save cell style
+      cell_styles      = @styles.cell_styles.to_yaml
+      cell_style_path   = @styles_folder + '/cell_style.yml'
+      File.open(cell_style_path, 'w'){|f| f.write cell_styles}
+      # save table style
+      table_styles      = @styles.table_styles.to_yaml
+      table_style_path   = @styles_folder + '/cell_styles.yml'
+      File.open(table_style_path, 'w'){|f| f.write table_styles}
       # graphic_defaults
       # heading_style
-      
-      styles_folder =  @rlayout_path + '/styles'
-      system("mkdir -p #{styles_folder}") unless File.exist?(styles_folder)
     end
     
     def save_master_page
-      master_page_folder =  @rlayout_path + '/styles'
-      system("mkdir -p #{master_page_folder}") unless File.exist?(master_page_folder)
-      layout_rb_path          = master_page_folder + '/master_page.rb'
-    	content                 = {}
-    	pages                   = []
-    	@spreads.each do |spread|
-  	    pages += spread.pages
-    	end
+      layout_rb_path          = @styles_folder + '/master_page.rb'
     	layout_rb = ""
-    	pages.each_with_index do |page, i|
-    	  layout_rb += "  # page_#{i+1}\n"
-    	  layout_rb += page.page_layout_text
-  	  end
+    	@master_spreads.each_with_index do |spread, i|
+        layout_rb += "  # spread_#{i+1}\n"
+  	    layout_rb += spread.spread_content
+    	end
   	  File.open(layout_rb_path, 'w'){|f| f.write layout_rb}
     end
     
     def save_layout
-      layout_rb_path  = @rlayout_path + '/layout.rb'
-    	content         = {}
-    	pages           = []
-    	@spreads.each do |spread|
-  	    pages += spread.pages
-    	end
+      layout_rb_path  = @id_layout_path + '/layout.rb'
     	layout_rb = ""
-    	pages.each_with_index do |page, i|
-    	  layout_rb += "  # page_#{i+1}\n"
-    	  layout_rb += page.page_layout_text
-  	  end
+    	@spreads.each_with_index do |spread, i|
+        layout_rb += "  # spread_#{i+1}\n"
+  	    layout_rb += spread.spread_content
+    	end
+
   	  File.open(layout_rb_path, 'w'){|f| f.write layout_rb}
     end
     
+    
     def save_stories
+      story_folder = @id_layout_path + "/story"
+      system("mkdir -p #{story_folder}") unless File.exist?(story_folder)
       @stories.each_with_index do |story, i|
-        story.save_story(@rlayout_path + "/story_#{i + 1}.md")
+        story.save_story(story_folder + "/story_#{story.story_id}.md")
       end
     end
-    
     
     # editing idml
     def self.create(path, options={})
       idml_template = options.fetch(:idml_template, "default_tempalte_path")
       IdDocument.new(idml_template)
     end
-        
+    
+    def add_text_frame
+      
+    end
+    
+    def append_story(story, text_frame)
+      
+    end
+    
+    def append_page
+      
+    end    
+    
     def append_spread(spread)
       
     end
@@ -203,36 +194,17 @@ module RLayout
       
     end
     
-    def append_story(story, text_frame)
-      
+    
+    # update IDML
+    def update_idml(path)
+      # save_spread
+      # save_story
+      # update_designmap
     end
+    
   end
   
-  class XMLElement
-    attr_accessor :element
-    def initialize(element, options={})
-      @element =  element
-      self
-    end    
-  end
-  
-  class XMLPkgDocument
-    def initialize(xml_text, options={})
-      # super 
-      package   = REXML::Document.new(xml_text)
-      @element  = package.root.elements.first  if package.root.elements
-      self
-    end    
-  end
-  #   
-  # 
-  class XMLDocument
-    attr_accessor :element
-    def initialize(xml_text, options={})
-      @element   = REXML::Document.new(xml_text)
-    end
-  end
-  
+
   class GraphicPkg < XMLPkgDocument
     attr_accessor :element
     def initialize(element, options={})
