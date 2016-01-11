@@ -154,6 +154,7 @@ module RLayout
       end
 
 	  end
+
     # def tallest_token
     #  
     # end
@@ -163,38 +164,7 @@ module RLayout
     end
   end
 
-  class MathToken
-  
-  end
 
-  class MathLine < Container
-  
-  end
-
-  class MathBlock < Container
-
-  end
-
-  class Sqrt
-
-  end
-
-  class Divide
-
-  end
-
-  class Integral
-
-  end
-
-  class Limit
-
-
-  end
-
-  class Sum
-
-  end
 
 end
 

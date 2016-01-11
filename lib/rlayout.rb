@@ -70,7 +70,9 @@ else
 
   require File.dirname(__FILE__) + '/rlayout/box/menu'
 
+  require File.dirname(__FILE__) + '/rlayout/math/eqn'
   require File.dirname(__FILE__) + '/rlayout/math/text_token'
+  require File.dirname(__FILE__) + '/rlayout/math/math_token'
 
   require File.dirname(__FILE__) + '/rlayout/page'
   require File.dirname(__FILE__) + '/rlayout/page/page_fixtures'
@@ -106,11 +108,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/calendar'
   require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
   
-  # require File.dirname(__FILE__) + '/rlayout/idml/id_xml_base'
-  # require File.dirname(__FILE__) + '/rlayout/idml/id_document'
-  # require File.dirname(__FILE__) + '/rlayout/idml/id_story'
-  # require File.dirname(__FILE__) + '/rlayout/idml/style'
-  # require File.dirname(__FILE__) + '/rlayout/idml/spread'
     
 end
 
