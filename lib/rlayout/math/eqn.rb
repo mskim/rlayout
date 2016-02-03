@@ -1,7 +1,15 @@
 
-# parse eqn string into nested Hash
+# parse eqn string into nested Array and Hash combination.
 # Elements are represent as Array, if they are series of + - =
-# And it is represented as Hash if they need to be combined, sqrt, sub, sup etc...
+# And non-linear elements, such as sqrt, sub, sup etc..., are represented as Hash.
+# There are preecdence of operation as following
+
+OPERATORS_PRECEDENCE = %w{
+dyad vec under bar tilde hat dot dotdot fwd back down up
+fat roman italic bold size
+sub sup sqrt over
+from to
+sum lim int}
 
 # 1 + 2               => [1, + , 2]
 # 1 over 2            => {:over => [1, 2]}
@@ -9,36 +17,13 @@
 # sqrt {2 over 2}     => {:sqrt=> {:over => [2, 2]} 
 # sqrt 2 +  sqrt x    => [{:sqrt=>2} + {:sqrt=>x} ]
 
-# 1. first step is to flatten braces({}), from deepest level and way up.
-#    and convert it to Hash by converting string into Array and calling to_hash to {} parts, 
-#    and save it in a hash with key, with id, as level_#{depth}_#{id}}
-# 2. Once we have flattened it all, convert it to an array.
-# 3. replae elements with saved braces. 
-# 4. And run to_hash to the flatted array for the final time.
+# over sqrt left right (these are group to the left to right, and rest oprators are processed from right to left )
 
-
-OPERATORS_PRECEDENCE = %w{
-dyad vec under bar tilde hat dot dotdot fwd back down up
-fat roman italic bold size
-sub sup sqrt over
-from to
-sum lim int} 
-
-# over sqrt left right (these are group to the left )
-
-FREGENT_OPERATIONS = {
-  '1 over 2': "some",
-  'sqrt 2': "some",
-  '1 over sqrt 2': "some",
-  '1 over {sqrt 2}': "some",
-  '{sqrt 2} over 2': "some",
-  'sqrt 2 over 2': "some",
-}
-EQN_Abbrebiation    = ['+-', 'pi']
-EQN_OPERATORS_0     = ['sup', 'sub', 'sqrt',]
-EQN_OPERATORS_1     = ['over', 'lim', 'sum']
-EQN_OPERATORS_2     = ['+', '-', 'x', '/']
-EQN_OPERATORS       = EQN_OPERATORS_0 + EQN_OPERATORS_1 + EQN_OPERATORS_2
+# eqn parsing strategy
+# 1. frist, flatten braces({}) from deepest level move up to next lebel of braces until we get rid of all braces.
+# 2. Once we have flattened it all.
+# 3. run to_hash to the flatted array for the final time.
+# 4. to_hash first converts string into Array and replace Array elements with saved braced Hashes.
 
 module RLayout
   
@@ -48,11 +33,11 @@ module RLayout
     
     def initialize(eqn_string, options={})
       @eqn_string = eqn_string      
-      flatten_eqn
+      flatten_braces
       self
     end
     
-    def flatten_eqn
+    def flatten_braces
       @brace_hash = {}
       # get deepest nested brace.
       @braced_parts = @eqn_string.scan(/\{[^\{]*\}/)
@@ -163,6 +148,58 @@ module RLayout
       else
         new_array
       end
+    end
+    
+    def to_ml(eqn_hash)
+      math_ml = ""
+      if eqn_hash.class == Array
+        math_ml += "<mrow>\n"
+          eqn_hash.each do |seg|
+            math_ml += to_ml(seg)
+          end
+        math_ml += "</mrow>\n"
+        
+      elsif eqn_hash.class == Hash
+        puts 
+        operator = eqn_hash.keys.first
+        case operator          
+        when :sqrt
+        when :over
+          puts "over"
+          math_ml += "<mover>\n"
+          math_ml += "  " + to_ml(eqn_hash.values[0][0])
+          math_ml += "  " + to_ml(eqn_hash.values[0][1])
+          math_ml += "<mover>\n"
+        when :sub
+        when :sup
+          
+        end
+        
+      elsif eqn_hash.class == String
+        puts "handleing when eqn_hash is String"
+        puts "eqn_hash:#{eqn_hash}"
+        #TODO check for number or alphabet
+        if eqn_hash =~/\d/
+          math_ml = "<mn>#{eqn_hash}</mn>\n"
+        elsif eqn_hash =~/[a-zA-Z]/
+          math_ml = "<mi>#{eqn_hash}</mi>\n"
+        else
+          math_ml = "<mo>#{eqn_hash}</mo>\n"
+        end
+      end
+      math_ml
+    end
+    
+    def to_math_ml
+      puts __method__
+      puts "@hash:#{@hash}"
+      math_ml = "<math>\n"
+      math_ml +=  to_ml(@hash)
+      math_ml += "</math>\n"
+    end
+    
+    def self.from_hash(hash)
+      
     end
         
   end

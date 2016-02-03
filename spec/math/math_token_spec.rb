@@ -1,13 +1,16 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
 
-describe 'create Sqrt' do
+describe 'create Over Token' do
   before do
-    @token = MathToken.create_math_token(nil, {over: ["a" , "b"]})
+    @token  = MathToken.create_math_token(nil, {over: ["a" , "b"]})
+    @token2 = MathToken.create_math_token(nil, {over: ["A" , "B"]})
   end
   
-  it 'should create math_token' do
+  it 'should set right font for capital and lower letter' do
     assert @token.class == Over
+    assert @token.font  == "STkboNB"
+    assert @token2.font == "STkboNA"
   end
 end
 
@@ -31,3 +34,4 @@ describe 'create Over' do
     assert @token.class == Over
   end
 end
+ㅁ

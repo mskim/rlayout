@@ -1,5 +1,19 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'generate math_ml' do
+  before do
+    @eq_1 = EQNParser.new("a over b ")
+    @math_ml = @eq_1.to_math_ml
+    puts @math_ml
+  end
+  
+  it 'should return String' do
+    assert @math_ml.class == String
+  end
+  
+end
+
+__END__
 describe 'parse braced eqn' do
 
   it 'should parse over' do

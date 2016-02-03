@@ -72,6 +72,7 @@ module RLayout
     attr_accessor :nominator, :denominator
     def initialize(parent_graphic, options={})      
       super
+      @font_style     = PLAIN_FONTS
       @nominator    = options[:over][0]
       @denominator  = options[:over][1]
       nominator_contains_capital_letter = false
@@ -80,12 +81,14 @@ module RLayout
         nominator_contains_capital_letter = true if contains_capital_letter(@nominator)
         denominator_contains_capital_letter = true if contains_capital_letter(@denominator)
         if nominator_contains_capital_letter && denominator_contains_capital_letter
-          puts "should use Capital letter STkboNA"
-          @font_style     = PLAIN_FONTS
-          @font_category  = MATH_SYMBOLS
+          # puts "should use Capital letter STkboNA"          
+          @font_category  = DIV_CAPITAL
+          @font = FONT_MAP[@font_style][@font_category]
           atts_string     = []
         elsif !nominator_contains_capital_letter && !denominator_contains_capital_letter
-          puts "should use lower letter STkboNB"
+          # puts "should use lower letter STkboNB"
+          @font_category  = DIV_LOWER
+          @font = FONT_MAP[@font_style][@font_category]          
         else
           #TODO what 
           puts "should use mixed letter"
@@ -148,11 +151,11 @@ FONT_MAP = [
 SHIFT_VALUE         = 16
 OPTION_SHIFT_VALUE  = 32
 
-MATH_SYMBOLS_FONT_AND_CHARCODE = {
-  sqrt: [[MATH_SYMBOLS, '`'], [[FONT_MAP[PLAIN_FONT][MATH_SYMBOLS], '`']],
-  int: [MATH_SYMBOLS, '`'],
-  sum: [MATH_SYMBOLS, '`'],
-  lim: [MATH_SYMBOLS, '`'],
-}
-
+# MATH_SYMBOLS_FONT_AND_CHARCODE = {
+#   sqrt: [[MATH_SYMBOLS, '`'], [[FONT_MAP[PLAIN_FONT][MATH_SYMBOLS], '`']],
+#   int: [MATH_SYMBOLS, '`'],
+#   sum: [MATH_SYMBOLS, '`'],
+#   lim: [MATH_SYMBOLS, '`'],
+# }
+# 
 
