@@ -1,6 +1,5 @@
-
-if defined?(Motion::Project::Config)
-
+# if RUBY_ENGINE == 'rubymotion'
+if defined?(Motion::Project::Config) 
   Motion::Project::App.setup do |app|
     Dir.glob(File.join(File.dirname(__FILE__), 'rlayout/**/*.rb')).each do |file|
       app.files.unshift(file)
@@ -8,16 +7,20 @@ if defined?(Motion::Project::Config)
   end
   #
   # raise "This file must be required within a RubyMotion project Rakefile."
+
 elsif RUBY_ENGINE == "opal"
   # require files for Opal
   #
 else
+  puts "RUBY_ENGINE:#{RUBY_ENGINE}"
+  puts "In MRI mode"
   require 'pry'
   require 'strscan'
   require 'yaml'
   require 'csv'
   require 'erb'
   require 'base64'
+  
   # require 'rexml/document'
   # require 'rexml/xpath_parser'
   # require 'zip'
