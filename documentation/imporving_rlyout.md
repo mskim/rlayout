@@ -12,6 +12,7 @@ We can achieve this by saving layout file and let users tweak it manually.
 1. tag to match the content.
 	image_1, table_1, math_1
 	make the size, fitting, style etc
+1. use FLOAT_PATTERNS(pre-designed image layout guide)
 
 We can setup guard to trigger layout each tiem we save.
 And have Preview open, it will be similar to running layout program.

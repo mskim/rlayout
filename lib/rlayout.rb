@@ -12,8 +12,7 @@ elsif RUBY_ENGINE == "opal"
   # require files for Opal
   #
 else
-  puts "RUBY_ENGINE:#{RUBY_ENGINE}"
-  puts "In MRI mode"
+  puts RUBY_ENGINE
   require 'pry'
   require 'strscan'
   require 'yaml'
@@ -49,6 +48,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
   require File.dirname(__FILE__) + '/rlayout/container/text_form'
   require File.dirname(__FILE__) + '/rlayout/container/text_train'
+  
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'
@@ -67,10 +67,9 @@ else
   require File.dirname(__FILE__) + '/rlayout/box/object_box'
   require File.dirname(__FILE__) + '/rlayout/box/text_column'
   require File.dirname(__FILE__) + '/rlayout/box/text_box'
+  require File.dirname(__FILE__) + '/rlayout/box/grid_box'
   require File.dirname(__FILE__) + '/rlayout/box/table'
   require File.dirname(__FILE__) + '/rlayout/box/title_box'
-  require File.dirname(__FILE__) + '/rlayout/box/menu'
-
   require File.dirname(__FILE__) + '/rlayout/box/menu'
 
   require File.dirname(__FILE__) + '/rlayout/math/eqn'
@@ -110,6 +109,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/photo_book'
   require File.dirname(__FILE__) + '/rlayout/publication/calendar'
   require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
+  
+  require File.dirname(__FILE__) + '/rlayout/music/code_music'
   
     
 end

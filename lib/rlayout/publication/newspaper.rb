@@ -41,8 +41,8 @@
   file 'section.pdf' => source_files.ext(".pdf") do |t|
     sh "/Applications/newsman.app/Contents/MacOS/newsman section_pdf #{pwd}"
   end
-
   EOF
+
 #SECTION_RAKE_FILE is a single quoted heredoc to escape #{}
 
 SAMPLE_ARTICLE_LATOUT = <<-EOF
@@ -282,31 +282,22 @@ module RLayout
       images.each_with_index do |image, i|
         @image_text += "  float_image(:local_image=>\"#{File.basename(image)}\", :grid_frame=>[0,#{i},1,1])\n"
       end
-      # TODO 
-      # If I read template then save, I am getting error writing file.
-      # Char Count is saved instead of String????
-      # template_path     = "/Users/Shared/SoftwareLab/article_template/news_article.rb.erb"
-      # unless File.exist?(template_path)
-      #   puts "no template_path #{template_path} found !!!"
-      #   return
-      # end
-      # template_text = File.open(template_path, 'r'){|f| f.read}
-      # puts "template_text:#{template_text}"
+
       layout_path   = article_path + "/layout.rb"
       erb           = ERB.new(SAMPLE_ARTICLE_LATOUT)
       File.open(layout_path, 'w'){|f| f.write erb.result(binding)}
     end 
     
+    # Each section folder has config.yml.
+    # config.yml contains information about the section.
+    # Rubymotion YAML kit doesn't seem to work with symbols it reads symbols as ':key' String.
+    # So, to make it work, I am saving keys  as String instead of symbol
+    # It can play nicely since I could distinguish whether the options are coming from new or open
+    # for  NewspaperSection new, options keys are passed as symbols,
+    # And for  NewspaperSection open, options keys are stored as String, when reading from section config file.
+    # YAML kit also haves true as 1 and false as 0
+    # It reads 1. as 1.0 and 0 as 0.0, so be careful!!!! need to convert it to_i after reading.
     def make_section_config
-      # Each section folderd keeps a file called config.yml.
-      # config.yml has information about the section.
-      # Rubymotion YAML kit doesn't seem to work with symbols it reads symbols as ':key' String.
-      # So, to make it work, I am saving keys  as String instead of symbol
-      # It can play nicely since I could distinguish whether the options are coming from new or open
-      # for  NewspaperSection new, options keys are passed as symbols,
-      # And for  NewspaperSection open, options keys are stored as String, when reading from section config file.
-      # YAML kit also haves true as 1 and false as 0
-      # It reads 1. as 1.0 and 0 as 0.0, so be careful!!!! need to convert it to_i after reading.
       info ={}
       info['publication'] = @issue.publication_name || "OurTimes"
       info['issue']       = @issue.issue_number       || '100-100'

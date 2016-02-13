@@ -1,4 +1,53 @@
 
+FLOAT_PATTERNS = {
+  "1/A1/1" => [[]],
+  "1/A1/2" => [[]],
+  "1/A1/3" => [[]],
+  "1/A1/4" => [[]],
+  "1/A1/5" => [[]],
+  "1/A1/6" => [[]],
+  "1/A1/7" => [[]],
+  "1/A1/8" => [[]],
+  "1/A1/9" => [[]],
+    
+  "2/A1_B1/1" => [[],[]],
+  "2/A1_B1/2" => [[],[]],
+  "2/A1_B1/3" => [[],[]],
+  
+  "2/A1_C1/1" => [[],[]],
+  "2/A1_C1/2" => [[],[]],
+  "2/A1_C1/3" => [[],[]],
+  
+  "2/B2/1" => [[],[]],
+  "2/B2/2" => [[],[]],
+  "2/B2/3" => [[],[]],
+  
+  "2/C2/1" => [[],[]],
+  "2/C2/2" => [[],[]],
+  "2/C2/3" => [[],[]],
+  
+  "3/A1_B2/1" => [[],[],[]],
+  "3/A1_B2/2" => [[],[],[]],
+  "3/A1_B2/3" => [[],[],[]],
+  
+  "3/A1_B2_C1/1" => [[],[],[]],
+  "3/A1_B2_C1/2" => [[],[],[]],
+  "3/A1_B2_C1/3" => [[],[],[]],
+  
+  "4/A1_B3/1" => [[],[],[],[]],
+  "4/A1_B3/2" => [[],[],[],[]],
+  "4/A1_B3/3" => [[],[],[],[]],
+  
+  "4/A1_B1_C2/1" => [[],[],[],[]],
+  "4/A1_B1_C2/2" => [[],[],[],[]],
+  "4/A1_B1_c2/3" => [[],[],[],[]],
+  
+  "4/A1_B2_C1/1" => [[],[],[],[]],
+  "4/A1_B2_C1/2" => [[],[],[],[]],
+  "4/A1_B2_C1/3" => [[],[],[],[]],
+
+}
+
 FLOAT_NO_PUSH       = 0
 FLOAT_PUSH_RECT     = 1
 FLOAT_PUSH_SHAPE    = 2
@@ -15,7 +64,7 @@ module RLayout
   # They also support :breakable?, which tells whether the flowing item can be broken into parts.
   # Breakable item should split itself into two or more parts, it brakes with  orphan/widow consideration.
   # Currently, Paragraph can be broken up into two parts at the oveflowing column.
-  # Another example of breakable flowing object is a Table.
+  # Another example of breakable flowing object is Table.
   
   # TextBox adds another layer called "floats", (Containers also have floats)
   # Floats sit on top layer and pushes out text content underneath it.
@@ -23,7 +72,11 @@ module RLayout
   # Each float has its weight(float on top or push down), starting_posion, starting_column, width_in_column
   # Floats can be layed out with rules, or pre-design templates with profile.
   # Floats default layout method is using Grid.
-
+  
+  # float patterns
+  # When we have several floats within TextBox, FLOAT_PATTERNS is used as lookup table.
+  # FLOAT_PATTERNS has a key representing profile, and float frames as value.
+  #
   # TextColumn
   # TextColumn is columns used in TextBox.
   # TextColumn has line_grids.
@@ -216,14 +269,19 @@ module RLayout
     # 1. front_most_item is taken out(shift) from flowing_items array,
     #    and layouted out untill all items are consumed.
     # 2. layout_text is called for each item. layout_text calles @text_layout_manager.layout_text_lines for line layout.
+    #   this is deprecated
     #   I pass two key/values as options, path?(this should be changed to passing grid_rect id) and proposed_height.
     #   "proposed_height" is the height of path, and also the room(avilable space) of current column.
     #   @text_layout_manager.layout_text_lines returns actual item height after line layout.
     #   Text overflow is detected by comparing "proposed_height" and returned actual height.
     #   if the result is greater than the prososed_height, text is overflowing.
     #   this is deprecated, I am now using grid_rects for detecting float overlapping.
- 
-    # 3. path is contructed by " def path_from_current_position"
+    
+    # 3. When we encounter floats, such as images or side_box,
+    #    FLOAT_PATTERNS is looed up. and re do the layout.
+    #    if we have room, go on, otherwise go to next page.
+    # 
+    # 4. path is contructed by " def path_from_current_position"(deprecated)
     #   a. if column is simple with no overlapping floats, path is rectange.
     #   b. if column is complex with overlapping floats, path is constructed from grid_rects, with non-overlapping shapes.
     #   c. if column is complex and is discontinuous, I need to have multiple path for each of them.

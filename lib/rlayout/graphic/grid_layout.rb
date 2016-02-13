@@ -72,11 +72,20 @@ NEW_SECTION_DEFAULTS = {
 # GridPatternManager  :pattern manager
 
 module RLayout
-  class GridFrame
-    attr_accessor :frame, :color, :tag, :kind, :grid_width, :grid_height
+  
+  class Graphic
+    attr_accessor :grid_layout
+    def init_grid_layout(options)
+      @grid_layout = GridLayoutManager.new(self, options)
+    end
+  end
+  
+  class GridLayoutManager   #GridFrame
+    attr_accessor :owner_graphic, :color, :tag, :kind, :grid_width, :grid_height
     attr_accessor :grid_column, :grid_row
-    def initialize(frame, options={})
-      @frame        = frame
+    def initialize(owner_graphic, options={})
+      @owner_graphic= owner_graphic
+      @frame        = owner_graphic.frame
       @color        = options.fetch(:color, 'white')
       @tag          = options[:tag] if options[:tag]
       @kind         = options[:kind] if options[:kind]
