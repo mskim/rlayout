@@ -22,7 +22,7 @@ module RLayout
       @gutter_stroke_dash   = options.fetch(:gutter_stroke_dash, nil)   
       @gutter_stroke_type   = options.fetch(:gutter_stroke_type, 0)   
       @gutter_stroke        = GutterStrokeStruct.new(@gutter_stroke_color,  @gutter_stroke_width, @gutter_stroke_dash, @gutter_stroke_type) if @draw_gutter_stroke
-      init_grid(options)    if options[:grid_base]
+      # init_grid(options)    if options[:grid_base]
       if options[:graphics]
         create_children(options[:graphics])
       end

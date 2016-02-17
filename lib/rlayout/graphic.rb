@@ -40,7 +40,7 @@ module RLayout
       @tag              = options[:tag]
       @auto_save        = options[:auto_save]
       init_layout(options)
-      init_grid(options)      if options[:grid]
+      # init_grid(options)      if options[:grid]
       init_fill(options)
       init_stroke(options)
       init_shape(options)

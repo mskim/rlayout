@@ -14,7 +14,7 @@ describe 'testing container creation' do
       rect(:fill_color=>"black")
       relayout_grid!
     end
-    @path = File.dirname(__FILE__) + "/../output/container_grid_test.svg"
+    @path = "/Users/Shared/rlayout/output/container_grid_test.svg"
     
   end
   

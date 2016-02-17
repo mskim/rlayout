@@ -34,7 +34,6 @@ TODO List
 		- underline, strike-through, super, sub
 		- custom emp(color)
 	- QuickLook options: save QuickLook/Preview.pdf for preview
-	
 	- starts_at # new_page, new_text_box, new_column
 	- put include RLayout so that users don't have to type RLayout::
 	- Use easy to use name for layout file, such as 
@@ -44,6 +43,15 @@ TODO List
 	- # Magazine.create 
 	- redo layout for complex container
 
+2016 2 17
+	- MusicChapter
+		- put the Header
+		- round_rect doesn't do rounding
+
+2016 2 15
+	- GridBox
+	- CompositePage, generate HTML with map
+	
 2015 12 21
 	- parse idml
 	

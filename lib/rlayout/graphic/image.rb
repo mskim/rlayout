@@ -114,8 +114,12 @@ module RLayout
         
     def image_object_height_to_width_ratio
       return 1 unless @image_object
-      return 1 unless @image_dimensions
-      @image_dimensions[1]/@image_dimensions[0]
+      if @image_dimensions
+        @image_dimensions[1]/@image_dimensions[0]
+      else
+        @height/@width
+      end
+      # return 1 unless 
     end
 
     def fit_original
@@ -201,7 +205,7 @@ module RLayout
     
     
     def fit_ignore_ratio
-      @source_frame = NSZeroRect
+      @source_frame = [0,0,0,0]
     end
 
     

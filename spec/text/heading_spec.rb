@@ -39,8 +39,8 @@ describe 'testing heading block' do
   end
   
   it 'should save heading' do
-    @svg_path = File.dirname(__FILE__) + "/../output/heading_test.svg"
-    # @pdf_path = File.dirname(__FILE__) + "/../output/heading_test.pdf"
+    @svg_path = "/Users/Shared/rlayout/output/heading_test.svg"
+    # @pdf_path = "/Users/Shared/rlayout/output/heading_test.pdf"
     @h.save_svg(@svg_path)
     File.exists?(@svg_path).must_equal true
     system "open #{@svg_path}"

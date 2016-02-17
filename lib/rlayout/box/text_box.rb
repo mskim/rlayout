@@ -1,58 +1,4 @@
 
-FLOAT_PATTERNS = {
-  "1/A1/1" => [[]],
-  "1/A1/2" => [[]],
-  "1/A1/3" => [[]],
-  "1/A1/4" => [[]],
-  "1/A1/5" => [[]],
-  "1/A1/6" => [[]],
-  "1/A1/7" => [[]],
-  "1/A1/8" => [[]],
-  "1/A1/9" => [[]],
-    
-  "2/A1_B1/1" => [[],[]],
-  "2/A1_B1/2" => [[],[]],
-  "2/A1_B1/3" => [[],[]],
-  
-  "2/A1_C1/1" => [[],[]],
-  "2/A1_C1/2" => [[],[]],
-  "2/A1_C1/3" => [[],[]],
-  
-  "2/B2/1" => [[],[]],
-  "2/B2/2" => [[],[]],
-  "2/B2/3" => [[],[]],
-  
-  "2/C2/1" => [[],[]],
-  "2/C2/2" => [[],[]],
-  "2/C2/3" => [[],[]],
-  
-  "3/A1_B2/1" => [[],[],[]],
-  "3/A1_B2/2" => [[],[],[]],
-  "3/A1_B2/3" => [[],[],[]],
-  
-  "3/A1_B2_C1/1" => [[],[],[]],
-  "3/A1_B2_C1/2" => [[],[],[]],
-  "3/A1_B2_C1/3" => [[],[],[]],
-  
-  "4/A1_B3/1" => [[],[],[],[]],
-  "4/A1_B3/2" => [[],[],[],[]],
-  "4/A1_B3/3" => [[],[],[],[]],
-  
-  "4/A1_B1_C2/1" => [[],[],[],[]],
-  "4/A1_B1_C2/2" => [[],[],[],[]],
-  "4/A1_B1_c2/3" => [[],[],[],[]],
-  
-  "4/A1_B2_C1/1" => [[],[],[],[]],
-  "4/A1_B2_C1/2" => [[],[],[],[]],
-  "4/A1_B2_C1/3" => [[],[],[],[]],
-
-}
-
-FLOAT_NO_PUSH       = 0
-FLOAT_PUSH_RECT     = 1
-FLOAT_PUSH_SHAPE    = 2
-
-module RLayout
 
   # TextBox is container of flowing paragraphs.
   # TextBox has columns(TextColumn). Paragraphs flow along TextColumn.
@@ -66,17 +12,6 @@ module RLayout
   # Currently, Paragraph can be broken up into two parts at the oveflowing column.
   # Another example of breakable flowing object is Table.
   
-  # TextBox adds another layer called "floats", (Containers also have floats)
-  # Floats sit on top layer and pushes out text content underneath it.
-  # Typocal floats are Heading, Image, Quates, SideBox
-  # Each float has its weight(float on top or push down), starting_posion, starting_column, width_in_column
-  # Floats can be layed out with rules, or pre-design templates with profile.
-  # Floats default layout method is using Grid.
-  
-  # float patterns
-  # When we have several floats within TextBox, FLOAT_PATTERNS is used as lookup table.
-  # FLOAT_PATTERNS has a key representing profile, and float frames as value.
-  #
   # TextColumn
   # TextColumn is columns used in TextBox.
   # TextColumn has line_grids.
@@ -86,6 +21,21 @@ module RLayout
   # By have Line_grids of half the height of body text. This is good enough for text wrapping.
   # Line_grids are also useed for vertically aligning text across differnt columns.
   # We can force non-body paragraphs to spnap to line-grids.
+  
+  # TextBox adds another layer called "floats", (Containers also have floats)
+  # Floats sit on top layer and pushes out text content underneath it.
+  # Typocal floats are Heading, Image, Quates, SideBox
+  # Each float has its weight(float on top or push down), starting_posion, starting_column, width_in_column
+  # Floats can be layed out with rules, or pre-design templates with profile.
+  # Floats default layout method is using Grid.
+  
+  # float_layout 
+  # float_layout markup is used to trigger a pre-definded float pattern for a page. 
+  # float_layout starts new page, so float_layout should be used at the begining of the page.
+  # float_layout should have FLOAT_PATTERNS key and image_paths.
+  # FLOAT_PATTERNS is used as lookup table.
+  # FLOAT_PATTERNS has a key representing profile, and float frames as value.
+
   
   # side_column
   # side_column is used when we have flowing images along side paragraphs
@@ -113,8 +63,12 @@ module RLayout
   # ![] {}
   # side_column text markup??
   # ![] 
-  
-  
+
+FLOAT_NO_PUSH       = 0
+FLOAT_PUSH_RECT     = 1
+FLOAT_PUSH_SHAPE    = 2
+
+module RLayout
   class TextBox < Container
     attr_accessor :heading_columns, :quote_box, :grid_size
     attr_accessor :starting_item_index, :ending_item_index
@@ -598,3 +552,53 @@ module RLayout
   end
 
 end
+
+
+FLOAT_PATTERNS = {
+  "1/A1/1" => [[]],
+  "1/A1/2" => [[]],
+  "1/A1/3" => [[]],
+  "1/A1/4" => [[]],
+  "1/A1/5" => [[]],
+  "1/A1/6" => [[]],
+  "1/A1/7" => [[]],
+  "1/A1/8" => [[]],
+  "1/A1/9" => [[]],
+    
+  "2/A1_B1/1" => [[],[]],
+  "2/A1_B1/2" => [[],[]],
+  "2/A1_B1/3" => [[],[]],
+  
+  "2/A1_C1/1" => [[],[]],
+  "2/A1_C1/2" => [[],[]],
+  "2/A1_C1/3" => [[],[]],
+  
+  "2/B2/1" => [[],[]],
+  "2/B2/2" => [[],[]],
+  "2/B2/3" => [[],[]],
+  
+  "2/C2/1" => [[],[]],
+  "2/C2/2" => [[],[]],
+  "2/C2/3" => [[],[]],
+  
+  "3/A1_B2/1" => [[],[],[]],
+  "3/A1_B2/2" => [[],[],[]],
+  "3/A1_B2/3" => [[],[],[]],
+  
+  "3/A1_B2_C1/1" => [[],[],[]],
+  "3/A1_B2_C1/2" => [[],[],[]],
+  "3/A1_B2_C1/3" => [[],[],[]],
+  
+  "4/A1_B3/1" => [[],[],[],[]],
+  "4/A1_B3/2" => [[],[],[],[]],
+  "4/A1_B3/3" => [[],[],[],[]],
+  
+  "4/A1_B1_C2/1" => [[],[],[],[]],
+  "4/A1_B1_C2/2" => [[],[],[],[]],
+  "4/A1_B1_c2/3" => [[],[],[],[]],
+  
+  "4/A1_B2_C1/1" => [[],[],[],[]],
+  "4/A1_B2_C1/2" => [[],[],[],[]],
+  "4/A1_B2_C1/3" => [[],[],[],[]],
+
+}

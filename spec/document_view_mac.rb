@@ -14,7 +14,7 @@ describe 'document_view_mac' do
         random_graphics(20)
       end
     end
-    @pdf_path = File.dirname(__FILE__) + "/output/document_test.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/document_test.pdf"
     @doc_view = DocumentViewMac.new(@doc.to_data)
   end
   it 'document should create document ' do

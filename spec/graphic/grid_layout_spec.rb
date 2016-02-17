@@ -4,8 +4,8 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'save svg' do
   before do
-    @svg_folder_path = File.dirname(__FILE__) + "/../output/grid_svg"
-    # @pdf_path = File.dirname(__FILE__) + "/../output/ad_box_source_sample.pdf"
+    @svg_folder_path = "/Users/Shared/rlayout/output/grid_svg"
+    # @pdf_path = "/Users/Shared/rlayout/output/ad_box_source_sample.pdf"
     system("mkdir #{@svg_folder_path}") unless File.exist?(@svg_folder_path)
     @grid_layouts = GridLayoutManager.find_all
     @grid_layouts.each do |grid_layout|
@@ -115,7 +115,7 @@ __END__
 describe 'find_with_grid_key' do
   before do
     @gl = GridLayout.find_with_grid_key("7x12/5")
-    @svg_folder_path = File.dirname(__FILE__) + "/../output/grid_svg"
+    @svg_folder_path = "/Users/Shared/rlayout/output/grid_svg"
   end
   
   it 'should save one svg' do

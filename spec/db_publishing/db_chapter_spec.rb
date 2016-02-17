@@ -5,7 +5,7 @@ describe 'create db_chapter' do
     @source_path = "/Users/mskim/membership/pdf"
     @source_path = "/Users/mskim/MediaWill/pdf/79x113"
     @db_ch    = DBChapter.new(title: 'my first db publishing sample', source_path: @source_path)
-    @pdf_path = File.dirname(__FILE__) + "/../output/db_chapter_sample.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/db_chapter_sample.pdf"
   end
   
   it 'should create DBChapter' do
@@ -19,7 +19,7 @@ describe 'create db_chapter' do
   end
   
   it 'should save yml' do
-    @yml_path = File.dirname(__FILE__) + "/../output/db_chapter_sample.yml"
+    @yml_path = "/Users/Shared/rlayout/output/db_chapter_sample.yml"
     @db_ch.save_yml(@yml_path)
     File.exists?(@yml_path).must_equal true
   end

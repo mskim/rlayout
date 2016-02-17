@@ -100,7 +100,7 @@ describe 'create NewsArticle with Image' do
   end
   
   it 'should save' do    
-    @pdf_path = File.dirname(__FILE__) + "/../output/news_article.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/news_article.pdf"
     @m.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true
     system("open #{@pdf_path}")

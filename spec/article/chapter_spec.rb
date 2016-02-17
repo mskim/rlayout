@@ -16,7 +16,7 @@ require File.dirname(__FILE__) + '/../../lib/rlayout/article/chapter'
 #   end
 #   
 #   it 'should save' do
-#     @pdf_path = File.dirname(__FILE__) + "/../output/chapter_test.pdf"
+#     @pdf_path = "/Users/Shared/rlayout/output/chapter_test.pdf"
 #     @m.save_pdf(@pdf_path)
 #     File.exists?(@pdf_path).must_equal true
 #   end
@@ -67,14 +67,14 @@ describe 'create Chapter page with TextBox' do
   # end
   
   it 'should save' do    
-     @pdf_path = File.dirname(__FILE__) + "/../output/chapter_test.pdf"
+     @pdf_path = "/Users/Shared/rlayout/output/chapter_test.pdf"
      @m.save_pdf(@pdf_path)
      File.exists?(@pdf_path).must_equal true
      system("open #{@pdf_path}")
    end
    
    # it 'should save hash' do
-   #   @yml_path = File.dirname(__FILE__) + "/../output/chapter_test.yml"
+   #   @yml_path = "/Users/Shared/rlayout/output/chapter_test.yml"
    #   @m.save_yml(@yml_path)
    #   File.exists?(@yml_path).must_equal true
    # end

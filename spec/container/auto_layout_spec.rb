@@ -10,7 +10,7 @@ describe 'testing container creation' do
       circle(:fill_color=>"green")
       relayout!
     end
-    @svg_path = File.dirname(__FILE__) + "/../output/auto_layout_test2.svg"
+    @svg_path = "/Users/Shared/rlayout/output/auto_layout_test2.svg"
   end
   
   it 'should save svg' do
@@ -42,7 +42,7 @@ describe 'testing container creation' do
       circle(:fill_color=>"green")
       relayout!
     end
-    @svg_path = File.dirname(__FILE__) + "/../output/auto_layout_test.svg"
+    @svg_path = "/Users/Shared/rlayout/output/auto_layout_test.svg"
   end
   
   it 'should save svg' do
@@ -91,13 +91,13 @@ describe 'has_expanding_child no' do
   end
     
   it 'should save svg' do
-    @svg_path = File.dirname(__FILE__) + "/../output/auto_layout_relayout_test.svg"
+    @svg_path = "/Users/Shared/rlayout/output/auto_layout_relayout_test.svg"
     @con.save_svg(@svg_path)
     system("open #{@svg_path}")
   end
   
   # it 'should save yml' do
-  #   @yml_path = File.dirname(__FILE__) + "/../output/auto_layout_relayout_test.yml"
+  #   @yml_path = "/Users/Shared/rlayout/output/auto_layout_relayout_test.yml"
   #   @con.save_yml(@yml_path)
   #   system("open #{@yml_path}")
   # end

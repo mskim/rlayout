@@ -40,9 +40,9 @@ IMAGE_PATTERNS = {
 #   "7x12/6"=>[[0, 1, 4, 2], [4, 1, 3, 4], [0, 3, 4, 2], [0, 5, 4, 2], [4, 5, 3, 2], [0, 7, 7, 5]], 
 #   "7x12/7"=>[[0, 0, 7, 1], [0, 1, 4, 2], [4, 1, 3, 4], [0, 3, 4, 2], [0, 5, 4, 2], [4, 5, 3, 2], [0, 7, 7, 5]]]
 # 
-
 # ImageBox is a convient way to place multiple images on to page
 #  
+
 module RLayout
 	class ImageBox < Container
 	  attr_accessor :image_group_path, :images, :used_image_count, :h_gutter, :v_gutter

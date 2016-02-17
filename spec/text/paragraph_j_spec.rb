@@ -4,7 +4,7 @@
 # describe 'create ParagraphJ' do
 #   before do
 #     @pj       = ParagraphJ.new(nil, text_string: "")
-#     @pdf_path = File.dirname(__FILE__) + "/../output/paragraph_japanese.pdf"
+#     @pdf_path = "/Users/Shared/rlayout/output/paragraph_japanese.pdf"
 #   end
 #   
 #   it 'should create ParagraphJ' do

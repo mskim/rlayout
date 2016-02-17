@@ -36,7 +36,7 @@ describe 'text overflow' do
   end
   
   it 'should save pdf' do
-    @pdf_path = File.dirname(__FILE__) + "/../output/text_layout_fit_to_box.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/text_layout_fit_to_box.pdf"
     @tl.fit_text_to_box
     @t.save_pdf(@pdf_path)
     File.exist?(@pdf_path).must_equal true
@@ -71,7 +71,7 @@ describe 'dropcap' do
   end
   
   it 'should save pdf' do
-    @pdf_path = File.dirname(__FILE__) + "/../output/text_layout_manager_dropcap.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/text_layout_manager_dropcap.pdf"
     @t.save_pdf(@pdf_path)
     File.exist?(@pdf_path).must_equal true
     system("open #{@pdf_path}")
@@ -82,7 +82,7 @@ end
 #   before do
 #     # @att_string = {:fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>200, :text_alignment=>'justified', :text_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
 #     @g = Graphic.new(nil, proposed_height: 1000, text_string: "This is some sample string. And some more text is here.")
-#     @pdf_path = File.dirname(__FILE__) + "/../output/text_layout_manager_test.pdf"
+#     @pdf_path = "/Users/Shared/rlayout/output/text_layout_manager_test.pdf"
 #   end
 #   
 #   it 'should create TextLayoutManager' do

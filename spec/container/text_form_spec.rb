@@ -32,7 +32,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 describe 'TextForm' do
   before do
     @page     = Page.new(nil)
-    @pdf_path = File.dirname(__FILE__) + "/../output/text_form.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/text_form.pdf"
     options   = {
         keys: ["Name", "Email","Phone",],
         data: ["Min Soo Kim", "mskimsid@gmail.com", "010-7468-8222"],

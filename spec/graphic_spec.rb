@@ -5,7 +5,7 @@ describe 'draw rotation' do
   before do
     
     @page = <<-EOF 
-    @output_path = "/Users/mskim/Development/ruby/gems/rlayout/spec/output/graphic/shadow_sample.pdf"
+    @output_path = "/Users/Shared/rlayout/output/graphic/shadow_sample.pdf"
     p = RLayout::Page.new(nil, layout_space: 5) do
       rectangle(fill_color: "red", layout_length: 2)
       rectangle(fill_color: "yellow")
@@ -18,7 +18,7 @@ describe 'draw rotation' do
   end
   
   it 'should save using rjob, and savegraphic with pdf' do
-    @output_path = "/Users/mskim/Development/ruby/gems/rlayout/spec/output/graphic/shadow_sample.pdf"
+    @output_path = "/Users/Shared/rlayout/output/graphic/shadow_sample.pdf"
     system("echo '#{@page}' | /Applications/rjob.app/Contents/MacOS/rjob")
     assert File.exist?(@output_path)
   end
@@ -30,7 +30,7 @@ describe 'draw shodow' do
   before do
     
     @page = <<-EOF 
-    @output_path = "/Users/mskim/Development/ruby/gems/rlayout/spec/output/graphic/shadow_sample.pdf"
+    @output_path = "/Users/Shared/rlayout/output/graphic/shadow_sample.pdf"
     RLayout::Page.new(nil) do
       rectangle(x: 100, y:200, fill_color: "red", shadow: true, shadow_color: "darkGray")
     end
@@ -39,7 +39,7 @@ describe 'draw shodow' do
   end
   
   it 'should save using rjob, and savegraphic with pdf' do
-    @output_path = "/Users/mskim/Development/ruby/gems/rlayout/spec/output/graphic/shadow_sample.pdf"
+    @output_path = "/Users/Shared/rlayout/output/graphic/shadow_sample.pdf"
     system("echo '#{@page}' | /Applications/rjob.app/Contents/MacOS/rjob")
     assert File.exist?(@output_path)
   end
@@ -148,7 +148,7 @@ describe 'create Ellipse' do
   end
   
   it 'should save' do
-    @path = File.dirname(__FILE__) + "/output/graphic_color_test.svg"
+    @path = "/Users/Shared/rlayout/output/graphic_color_test.svg"
     @c.save_svg(@path)
     system "open #{@path}"
   end
@@ -235,7 +235,7 @@ end
 describe 'generate random graphics' do
   before do
     @g = Graphic.random_graphics(200)
-    @path = File.dirname(__FILE__) + "/output/graphic_random_test.svg"
+    @path = "/Users/Shared/rlayout/output/graphic_random_test.svg"
   end
   
   it 'should create Graphic' do
@@ -266,7 +266,7 @@ describe ' Graphic from Hash ' do
   end
     
   it 'should save Rectangle from hash' do
-    @pdf_path = File.dirname(__FILE__) + "/output/graphic_from_hash.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/graphic_from_hash.pdf"
     @t.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true
     system("open #{@pdf_path}")
@@ -284,8 +284,8 @@ describe 'testing Text ' do
   end
   
   it 'should save Text' do
-    @svg_path = File.dirname(__FILE__) + "/output/text_test.svg"
-    @pdf_path = File.dirname(__FILE__) + "/output/texxt_test.pdf"
+    @svg_path = "/Users/Shared/rlayout/output/text_test.svg"
+    @pdf_path = "/Users/Shared/rlayout/output/texxt_test.pdf"
     # @t.save_svg(@svg_path)
     # File.exists?(@svg_path).must_equal true
     @t.save_pdf(@pdf_path)

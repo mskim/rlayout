@@ -114,8 +114,8 @@ describe 'testing container split-v' do
   end
   
   it 'should save' do
-    svg_path = File.dirname(__FILE__) + "/../output/container_pgscript_split-v.svg"
-    pdf_path = File.dirname(__FILE__) + "/../output/container_pgscript_split-v.pdf"
+    svg_path = "/Users/Shared/rlayout/output/container_pgscript_split-v.svg"
+    pdf_path = "/Users/Shared/rlayout/output/container_pgscript_split-v.pdf"
     @container.save_svg(svg_path)
     @container.save_pdf(pdf_path)
   end
@@ -141,8 +141,8 @@ describe 'testing container split-h' do
   end
   
   it 'should save' do
-    svg_path = File.dirname(__FILE__) + "/../output/container_pgscript_split-h.svg"
-    pdf_path = File.dirname(__FILE__) + "/../output/container_pgscript_split-h.pdf"
+    svg_path = "/Users/Shared/rlayout/output/container_pgscript_split-h.svg"
+    pdf_path = "/Users/Shared/rlayout/output/container_pgscript_split-h.pdf"
     @container.save_svg(svg_path)
     @container.save_pdf(pdf_path)
   end

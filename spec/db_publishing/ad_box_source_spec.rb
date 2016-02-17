@@ -4,7 +4,7 @@ describe 'sample ad' do
   before do
     @ad = AdBox.sample
     @ad.relayout!
-    @pdf_path = File.dirname(__FILE__) + "/../output/ad_box_source_sample.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/ad_box_source_sample.pdf"
   end
   
   it 'should create AdBox' do

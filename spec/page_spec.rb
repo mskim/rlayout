@@ -10,7 +10,7 @@ describe 'create page' do
     Container.new(@p,:fill_color=>'orange')
     Container.new(@p, :fill_color=>'gray')
     @p.relayout!
-    @page_svg_test = File.dirname(__FILE__) + "/output/page_svg_test.svg"
+    @page_svg_test = "/Users/Shared/rlayout/output/page_svg_test.svg"
   end
   it 'should save svg' do
      @p.save_svg(@page_svg_test)
@@ -37,7 +37,7 @@ describe 'create page with fixtures' do
   end
   
   it 'should save svg' do
-    @svg_path = File.dirname(__FILE__) + "/output/page_fixture_test.svg"
+    @svg_path = "/Users/Shared/rlayout/output/page_fixture_test.svg"
     @p.save_svg(@svg_path)
     File.exists?(@svg_path).must_equal true
     system("open #{@svg_path}") 
@@ -63,7 +63,7 @@ describe 'create right_side page  ' do
   end
   
   it 'should save svg' do
-    @svg_path = File.dirname(__FILE__) + "/output/page_fixture_right_side.svg"
+    @svg_path = "/Users/Shared/rlayout/output/page_fixture_right_side.svg"
     @p.save_svg(@svg_path)
     File.exists?(@svg_path).must_equal true
     system("open #{@svg_path}")

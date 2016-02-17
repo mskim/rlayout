@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'creating MemberItem' do
   before do
-    @pdf_path = File.dirname(__FILE__) + "/../output/member/minsookim.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/member/minsookim.pdf"
     image_path = "/Users/mskim/Pictures/Photo_Booth/minsookim.jpg"
     @member   = MemberItem.new(nil, image_path: image_path, name: "김민수", spouse: "(김지윤)", phone: "010-7468-0000", cell: "010-7468-8222")
   end
@@ -23,7 +23,7 @@ end
 __END__
 describe 'should create MemberDirectory' do
   before do
-    @pdf_path = File.dirname(__FILE__) + "/../output/member_item.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/member_item.pdf"
     @pdf_path = File.dirname(__FILE__) + "/member.csv"
     @directory = MemberDirectory.new(csv_path: @csv_path )
   end

@@ -11,11 +11,11 @@ describe 'create MagazineChapter with Image' do
   
   it 'should crete' do  
     assert @m.class == MagazineArticleMaker  
-    @pdf_path = File.dirname(__FILE__) + "/../output/magazine_article_with_imag.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/magazine_article_with_imag.pdf"
   end
   
   # it 'should save yml' do    
-  #   @yml_path = File.dirname(__FILE__) + "/../output/magazine_article_with_imag.yml"
+  #   @yml_path = "/Users/Shared/rlayout/output/magazine_article_with_imag.yml"
   #   @m.save_yml(@yml_path)
   #   File.exists?(@yml_path).must_equal true
   # end
@@ -29,14 +29,14 @@ describe 'create MagazineChapter with Image' do
   end
   
   it 'should save' do    
-    @pdf_path = File.dirname(__FILE__) + "/../output/magazine_article_with_imag.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/magazine_article_with_imag.pdf"
     @m.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true
     system("open #{@pdf_path}")
   end
   
   # it 'should save yml' do    
-  #   @yml_path = File.dirname(__FILE__) + "/../output/magazine_article_with_imag.yml"
+  #   @yml_path = "/Users/Shared/rlayout/output/magazine_article_with_imag.yml"
   #   @m.save_yml(@yml_path)
   #   File.exists?(@yml_path).must_equal true
   # end
@@ -70,14 +70,14 @@ end
 #   end
 #   
 #   it 'should save' do    
-#     @pdf_path = File.dirname(__FILE__) + "/../output/magazine_article2.pdf"
+#     @pdf_path = "/Users/Shared/rlayout/output/magazine_article2.pdf"
 #     @m.save_pdf(@pdf_path)
 #     File.exists?(@pdf_path).must_equal true
 #     system("open #{@pdf_path}")
 #   end
 #   
 #   it 'should save yml' do    
-#     @yml_path = File.dirname(__FILE__) + "/../output/magazine_article2.yml"
+#     @yml_path = "/Users/Shared/rlayout/output/magazine_article2.yml"
 #     @m.save_yml(@yml_path)
 #     File.exists?(@yml_path).must_equal true
 #   end

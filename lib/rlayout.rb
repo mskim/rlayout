@@ -12,7 +12,7 @@ elsif RUBY_ENGINE == "opal"
   # require files for Opal
   #
 else
-  puts RUBY_ENGINE
+  # puts RUBY_ENGINE
   require 'pry'
   require 'strscan'
   require 'yaml'
@@ -24,8 +24,8 @@ else
   # require 'rexml/xpath_parser'
   # require 'zip'
   # require 'xmlsimple'
-
   # require 'mini_magick'
+  
   require "rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
   require File.dirname(__FILE__) + '/rlayout/graphic/color'
@@ -68,6 +68,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/box/text_column'
   require File.dirname(__FILE__) + '/rlayout/box/text_box'
   require File.dirname(__FILE__) + '/rlayout/box/grid_box'
+  require File.dirname(__FILE__) + '/rlayout/box/composite_box'
+  
   require File.dirname(__FILE__) + '/rlayout/box/table'
   require File.dirname(__FILE__) + '/rlayout/box/title_box'
   require File.dirname(__FILE__) + '/rlayout/box/menu'
@@ -111,8 +113,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
   
   require File.dirname(__FILE__) + '/rlayout/music/code_music'
+  require File.dirname(__FILE__) + '/rlayout/music/music_chapter'
   
-    
 end
 
 module RLayout

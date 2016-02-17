@@ -71,6 +71,8 @@ module RLayout
       @fixtures = []
       @floats   = []
       main_box_options                = {}
+      main_box_options[:x]            = @left_margin
+      main_box_options[:y]            = @top_margin
       main_box_options[:width]        = @width - @left_margin - @right_margin
       main_box_options[:height]       = @height - @top_margin - @bottom_margin
       main_box_options[:column_count] = options.fetch(:column_count, 1)
@@ -83,11 +85,17 @@ module RLayout
         main_box_options.merge!(options[:text_box_options])
       end
       if options[:text_box]
-        @main_box = TextBox.new(self, main_box_options)    
+        @main_box = TextBox.new(self, main_box_options) 
+      elsif options[:grid_box]
+        @main_box = GridBox.new(self, main_box_options)
+      elsif options[:composite_box]
+        @main_box = CompositeBox.new(self, main_box_options)
       end
+      
       if block
         instance_eval(&block)
       end    
+      
       self
     end
     

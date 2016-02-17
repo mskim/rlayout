@@ -28,7 +28,11 @@ module RLayout
     def rectangle(options={})
       Rectangle.new(self, options)
     end
-
+    
+    def round_rect(options={})
+      RoundRect.new(self, options)
+    end
+    
     def text(string, options={})
       options[:text_string] = string
       Text.new(self, options)

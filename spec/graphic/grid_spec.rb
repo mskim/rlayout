@@ -6,7 +6,7 @@ describe 'adjust frame with grid_frame' do
     Graphic.new(@p, :grid_frame=>[0,0,3,1], :fill_color=>'green')
     Graphic.new(@p, :grid_frame=>[1,1,1,1], :fill_color=>'red')
     Graphic.new(@p, :grid_frame=>[2,2,1,1], :fill_color=>'blue')
-    @pdf_path = File.dirname(__FILE__) + "/../output/grid_frame_test.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/grid_frame_test.pdf"
   end
   
   it 'should create grid_cells in page' do

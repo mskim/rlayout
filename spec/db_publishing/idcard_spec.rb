@@ -32,7 +32,7 @@ describe 'create idcard from hash' do
       ]
     }
     @doc = Document.new(template)
-    @pdf_path = File.dirname(__FILE__) + "/../output/document_from_hash.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/document_from_hash.pdf"
   end
 
   it 'should save document pdf' do

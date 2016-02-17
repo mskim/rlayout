@@ -14,12 +14,12 @@ require File.dirname(__FILE__) + "/spec_helper"
 #       phone: '010-7468-8222',
 #       email: 'mskimsid@gmail.com'
 #     }   
-#     hash[:output_path]      = File.dirname(__FILE__) + "/../output/variables_page_sample.pdf"
+#     hash[:output_path]      = "/Users/Shared/rlayout/output/variables_page_sample.pdf"
 #     @vp = Page.variable_page(hash)
 #   end
 #     
 #   it 'should save hash' do
-#     @yml_path    = File.dirname(__FILE__) + "/../output/variables_page_sample.yml"
+#     @yml_path    = "/Users/Shared/rlayout/output/variables_page_sample.yml"
 #     @vp.save_yml(@yml_path)
 #   end
 # end

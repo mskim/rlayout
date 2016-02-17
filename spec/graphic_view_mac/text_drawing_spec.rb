@@ -3,7 +3,7 @@
 # describe 'text_drawing test' do
 #   before do
 #     @t = Text.new(nil, :text_string=> "This is a text", :text_alignment=>"center")
-#     @path = File.dirname(__FILE__) + "/../output/text_drawing_test.pdf"
+#     @path = "/Users/Shared/rlayout/output/text_drawing_test.pdf"
 #   end
 #   
 #   it 'should create Text object' do

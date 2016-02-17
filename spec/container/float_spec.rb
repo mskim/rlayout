@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'test float layout' do
   before do
-    @pdf_path = File.dirname(__FILE__) + "/../output/layout_float.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/layout_float.pdf"
     @tb     = TextBox.new(nil, column_count: 3, width:500, height:600)
     @image  = Image.new(@tb, is_float: true, fill_color: 'green')
     @image  = Image.new(@tb, is_float: true, fill_color: 'yellow', frame_rect: [3,0,1,10])

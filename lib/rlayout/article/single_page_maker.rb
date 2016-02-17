@@ -4,7 +4,7 @@
 # SinglePageMaker works with given folder with text.md, layout.rb, and images
 # layout.rb can define layout and styles
 # if layout.rb is not given or doesn't exist in article folder, return 
-# Images gemetries are pre-defined in layout.rb. 
+# Images location are pre-defined in layout.rb. 
 # Images are stored in images folder 
 # This is used for PhotoPage and AdBox 
 

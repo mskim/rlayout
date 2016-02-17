@@ -127,8 +127,8 @@ end
 describe 'TextColumn creation test' do
   before do
     @tb       = TextColumn.new(nil, :width=>300, :height=>800)
-    @path     = File.dirname(__FILE__) + "/../output/text_column_test.svg"
-    @pdf_path = File.dirname(__FILE__) + "/../output/text_column_test.pdf"
+    @path     = "/Users/Shared/rlayout/output/text_column_test.svg"
+    @pdf_path = "/Users/Shared/rlayout/output/text_column_test.pdf"
     # puts @para.inspect
   end
   

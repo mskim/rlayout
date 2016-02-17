@@ -20,7 +20,7 @@
 #     it 'should save pdf' do
 #       @para.change_width_and_adjust_height(300)
 #       # puts "@para.inspect:#{@para.inspect}"
-#       @pdf_path = File.dirname(__FILE__) + "/../output/paragraph_test.pdf"
+#       @pdf_path = "/Users/Shared/rlayout/output/paragraph_test.pdf"
 #       @para.save_pdf(@pdf_path)
 #       File.exists?(@pdf_path).must_equal true
 #       system "open #{@pdf_path}"
@@ -52,7 +52,7 @@
 #   before do
 #     @para = RichParagraph.new(nil, :para_string=>"This is a text and I like it very very much lets see if you can layout this one.", :markup=>"p")
 #     @para.change_width_and_adjust_height(300)
-#     @path = File.dirname(__FILE__) + "/../output/paragraph_test.svg"
+#     @path = "/Users/Shared/rlayout/output/paragraph_test.svg"
 #     
 #   end
 #   

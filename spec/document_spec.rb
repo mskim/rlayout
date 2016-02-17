@@ -1,8 +1,8 @@
-require File.dirname(__FILE__) + "/spec_helper"
+require "/Users/Shared/rlayout/spec_helper"
 
 describe 'shuld save rlayout docment' do
   before do 
-    @rlayout_path = File.dirname(__FILE__) + "/output/document_test.rlayout"   
+    @rlayout_path = "/Users/Shared/rlayout/output/document_test.rlayout"   
     @doc = Document.new(path:@rlayout_path )
   end
   it 'should create Document' do
@@ -18,7 +18,7 @@ __END__
 
 describe 'open document' do
   before do
-    @rlayout_path = File.dirname(__FILE__) + "/output/document_test.rlayout"
+    @rlayout_path = "/Users/Shared/rlayout/output/document_test.rlayout"
   end
   
   it 'should open hash' do
@@ -36,7 +36,7 @@ describe 'save multiple page document' do
         page
       end
     end
-    @pdf_path = File.dirname(__FILE__) + "/output/document_long_page_test.pdf"
+    @pdf_path = "/Users/Shared/rlayout/output/document_long_page_test.pdf"
     
   end
   
@@ -95,9 +95,9 @@ describe "document" do
   end
   
   it 'should save svg' do
-    @svg_path = File.dirname(__FILE__) + "/output/document_test.svg"
-    @svg0_path = File.dirname(__FILE__) + "/output/document_test0.svg"
-    @pdf_path = File.dirname(__FILE__) + "/output/document_test.pdf"
+    @svg_path = "/Users/Shared/rlayout/output/document_test.svg"
+    @svg0_path = "/Users/Shared/rlayout/output/document_test0.svg"
+    @pdf_path = "/Users/Shared/rlayout/output/document_test.pdf"
     @doc.save_svg(@svg_path)
     @doc.save_pdf(@pdf_path)
     File.exists?(@svg0_path).must_equal true
