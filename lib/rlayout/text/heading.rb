@@ -35,7 +35,6 @@ module RLayout
     attr_accessor :align_to_body_text
     def initialize(parent_graphic, options={}, &block)
       super      
-      @klass              = "Heading"
       @current_style      = RLayout::StyleService.shared_style_service.current_style
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
       @layout_space       = 3

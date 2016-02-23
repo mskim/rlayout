@@ -5,7 +5,7 @@
 # It has meta-data yml header with title, subtitle, data etc...
 # QuizData is first converted to QuizItem using QuizItemMaker. 
 
-# set_quiz_content is call when layout time.
+# set_quiz_content is called when layout time.
 
 #TODO
 # paper size
@@ -111,9 +111,12 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
-      
+      if @quiz_item_style.class == Array
+        $quiz_item_style      = @quiz_item_style[0]
+      else
+        $quiz_item_style      = @quiz_item_style
+      end
       $layout_style         = @layout_style
-      $quiz_item_style      = @quiz_item_style
       @starting_page_number = options.fetch(:starting_page_number,1)
       read_quiz_items
       layout_quiz_items   
@@ -129,6 +132,7 @@ module RLayout
       # @heading[:stroke_width] = 1
       @heading              = @heading.merge!(@layout_style[:heading])
       @main_layout_space    = @layout_style[:heading][:heading_space_after] || 20
+      @column_count         = @layout_style[:text_box][:column_count] || 2
       @column_gutter        = @layout_style[:text_box][:column_gutter] || 10
       @column_layout_space  = @layout_style[:text_box][:column_layout_space] || 10
       @draw_gutter_stroke   = @layout_style[:text_box][:draw_gutter_stroke] || false
@@ -137,6 +141,17 @@ module RLayout
     end
 
     def layout_quiz_items
+      if @document.pages.length == 0
+        options               = {}
+        options[:footer]      = true
+        options[:header]      = true
+        options[:text_box]    = true
+        options[:text_box_options]    = @layout_style[:text_box]
+        options[:page_number] = @starting_page_number
+        p=Page.new(@document, options)
+        p.relayout!
+        p.main_box.create_column_grid_rects
+      end
       page_index                = 0
       @first_page               = @document.pages[0]
       if heading = @first_page.get_heading?
@@ -148,6 +163,7 @@ module RLayout
       end
       @first_page.layout_space              = @main_layout_space
       @first_page.main_box.layout_length    = @text_box_layout_length
+      puts "@first_page.main_box.column_count:#{@first_page.main_box.column_count}"
       @first_page.main_box.layout_space     = @column_gutter 
       @first_page.main_box.draw_gutter_stroke= @draw_gutter_stroke 
       @first_page.main_box.graphics.each{|col| col.layout_space = @column_layout_space}
@@ -219,14 +235,24 @@ module RLayout
       h
     end
   end
-
+  
+  # number type, style
+  # 1. number
+  # a. alphbet
+  
+  # choice type 
+  # 1. number
+  # a. alphbet
+  # 넉. hangul-jaum
+  # a. alphbet
+  # choice style
+  #  1. , circle, ( )
+  
   class QuizItemMaker
-    # attr_accessor :number, :question, :cap, :image
-    # attr_accessor :choice_1, :choice_2, :choice_3, :choice_4, :choice_5
     attr_accessor :quiz_item, :quiz_style
     def initialize(options={})
       @number     = options.fetch('number', "1")
-      @question   = options.fetch('q', {text_string: "Some questiongoes goes here? "})
+      @question   = options.fetch('q', {text_string: "Some question goes here? "})
       @image      = options.fetch('img', nil)
       @cap        = options.fetch('cap', nil)
       @choice_1   = options.fetch(1, "choice1")
@@ -238,7 +264,7 @@ module RLayout
       @choice_4   = options.fetch(4, "choice4")
       @choice_4   = "4. " + @choice_4
       @choice_5   = options.fetch(5, nil)
-      @choice_5   = "5. " + @choice_4 if @choice_5
+      @choice_5   = "5. " + @choice_5 if @choice_5
       @answer     = options.fetch('ans', nil)
       @explanation= options.fetch('exp', nil)
       item_options = {}
@@ -246,10 +272,10 @@ module RLayout
       item_options[:num]  = @number
       item_options[:q]    = @question
       item_options[:img]  = @image
-      item_options[:cap]  = @cap
+      item_options[:cap]  = @cap      
       item_options[:row1] = {row_data: [@choice_1, @choice_2], cell_atts: $quiz_item_style[:choice_style]}
       item_options[:row2] = {row_data: [@choice_3, @choice_4], cell_atts: $quiz_item_style[:choice_style]}
-      item_options[:ans]  = {text_string: @answer}
+      item_options[:ans]  = {text_string: @answer}      
       item_options[:exp]  = {text_string: @exp}
       item_options[:layout_expand] = [:width]
       @quiz_item  = QuizItem.new(nil, item_options) 
@@ -285,8 +311,8 @@ module RLayout
       item_array = []
       blocks_array.each_with_index do |lines_block, i|
         yaml = YAML::load(lines_block)
-        q    = yaml[:q]
-        yaml[:q] = "#{i+1}. " + q if q
+        q    = yaml['q']
+        yaml['q'] = "#{i+1}. " + q if q
         item_array << QuizItemMaker.new(yaml).quiz_item
       end
       item_array

@@ -81,7 +81,6 @@ module RLayout
         puts "Can not find file #{@story_path}!!!!"
         return {}
       end
-
       @story = Story.markdown2para_data(@story_path)
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"

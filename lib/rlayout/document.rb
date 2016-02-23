@@ -176,7 +176,11 @@ module RLayout
         bottom_margin: 50,
       }
     end
-
+    
+    def layout_rect
+      [@left_margin, @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
+    end
+    
     def page(options={}, &block)
       Page.new(self, options, &block)
     end

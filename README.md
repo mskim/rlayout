@@ -43,6 +43,14 @@ TODO List
 	- # Magazine.create 
 	- redo layout for complex container
 
+2016 2 22
+	- heading QuizHeading, NewsHeading
+2016 2 21
+	- refactor grid in Graphic
+	    handle grid_frame option, parent_grid_base option
+		init_grid should go under container init 
+	- grid_box
+	
 2016 2 17
 	- MusicChapter
 		- put the Header

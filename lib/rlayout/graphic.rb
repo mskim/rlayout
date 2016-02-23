@@ -11,7 +11,9 @@ module RLayout
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
       @klass = options.fetch(:klass, graphic_defaults[:klass])
-      if options[:parent_frame] && @parent_graphic
+      # if @parent_graphic && @parent_graphic.class.kind_of?(Document)
+      #   set_frame(@parent_graphic.layout_rect)
+      if @parent_graphic && options[:parent_frame]
         set_frame(@parent_graphic.layout_rect)
       elsif options[:grid_frame] && @parent_graphic && @parent_graphic.grid
         # if options[:grid_frame] is given, convert grid_frame to x,y,width,heigth of parent's grid cordinate
@@ -40,7 +42,6 @@ module RLayout
       @tag              = options[:tag]
       @auto_save        = options[:auto_save]
       init_layout(options)
-      # init_grid(options)      if options[:grid]
       init_fill(options)
       init_stroke(options)
       init_shape(options)

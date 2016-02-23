@@ -58,10 +58,8 @@ module RLayout
       else
         options[:bottom_margin] = layout_default[:bottom_margin]
       end
-            
       @parent_graphic.pages << self if  @parent_graphic && !@parent_graphic.pages.include?(self)
       super
-      @klass = "Page"
       @page_number = options.fetch(:page_number, 1)
       if @parent_graphic && @parent_graphic.double_side
         @left_page  = @page_number.even?

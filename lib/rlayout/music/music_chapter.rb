@@ -27,7 +27,7 @@ module RLayout
         Page.new(self, @page_options)
       end
       read_image_item
-      layout_db_item
+      layout_db_item(options={})
       self
     end
     
@@ -39,7 +39,7 @@ module RLayout
       end
     end
     
-    def layout_db_item
+    def layout_db_item(options={})
       page_index                = 0
       @first_page               = @pages[page_index]
       Heading.new(@first_page, @heading_options)
@@ -47,19 +47,19 @@ module RLayout
       heading_object = @first_page.graphics.pop
       @first_page.graphics.unshift(heading_object)
       @first_page.relayout!
-      @pages[0].main_box.layout_items(@db_items, given_grid_column: 3)
+      @pages[0].main_box.layout_items(@db_items, options)
       while @db_items.length > 0
         page_index += 1
         if page_index >= @pages.length
           @page_options[:footer]      = true 
           @page_options[:header]      = true 
-          @page_options[:text_box]    = true
+          @page_options[:grid_box]    = true
           @page_options[:column_count]= 4
           @page_options[:layout_space]  = 5
           @page_options[:page_number] = @starting_page_number + page_index
           Page.new(self, @page_options)          
         end
-        @pages[page_index].main_box.layout_items(@db_items, given_grid_column: 3)
+        @pages[page_index].main_box.layout_items(@db_items, options)
       end
       update_header_and_footer
       @first_page.main_box.graphics.first      

@@ -7,30 +7,19 @@
 
 # GridBox can have 3 different layout modes.
 # 1. grid_base: grid_base is given and items should fit to those grid.
-# 2. given_grid_column: grid_column is given, number of grid_rows are determinded to fit items, with max grid_rows.
-# 3. grid_base and given_grid_column are nil": grid items are given and grid_base should be determinded to fit items. 
+# 3. grid_base is nil": grid items are given and grid_base should be determinded to fit items. 
 
 module RLayout
   class GridBox < Container
-    attr_accessor :grid_cells
-    attr_accessor :grid_base, :given_grid_column, :grid_column, :grid_row # layout mode is determinded with these two values
-    attr_accessor :grid_width, :grid_height, :grid_h_gutter, :grid_v_gutter
+    attr_accessor :grid_base, :grid_width, :grid_height, :grid_h_gutter, :grid_v_gutter
     attr_accessor :starting_item_index, :ending_item_index
     attr_accessor :next_link, :previous_link
     attr_accessor :draw_gutter_stroke, :over_flow
     def initialize(parent_graphic, options={}, &block)
       super
-      @grid_column = nil
-      @grid_row     = nil
-      if options[:grid_base]
-        @grid_base      = options[:grid_base]
-        @grid_column    = options[:grid_base][0]
-        @grid_row       = options[:grid_base][1]        
-      end
-      @grid_cells       = []
-      @given_grid_column= options[:given_grid_column]
-      @grid_h_gutter    = options.fetch(:grid_h_gutter, 10)
-      @grid_v_gutter    = options.fetch(:grid_v_gutter, 10)
+      @grid_h_gutter = options.fetch(:grid_h_gutter, 10)
+      @grid_v_gutter = options.fetch(:grid_v_gutter, 10)
+      
       if block
         instance_eval(&block)
       end    
@@ -42,21 +31,21 @@ module RLayout
     end
     
     # given cell number, calculate needed grid_base 
-    def calculate_grid_base_for
+    def calculate_grid_base_for_items
       number = @grid_items.length
       int_value=Math.sqrt(number).to_i
-      
+      @grid_base = []
       if Math.sqrt(number) > Math.sqrt(number).to_i
         if (int_value+1)*(int_value) >=  number
-          @grid_column= int_value+1
-          @grid_row   = int_value
+          @grid_base[0]= int_value+1
+          @grid_base[1]   = int_value
         else
-          @grid_column= int_value+1
-          @grid_row   = int_value+1
+          @grid_base[0]= int_value+1
+          @grid_base[1]   = int_value+1
         end
       elsif Math.sqrt(number) == Math.sqrt(number).to_i
-        @grid_column  = int_value
-        @grid_row     = int_value
+        @grid_base[0]     = int_value
+        @grid_base[1]     = int_value
       end
       make_better_fitting_rows_and_column
     end
@@ -66,9 +55,9 @@ module RLayout
       horizontal_room = @width - @left_margin - @right_margin
       vertical_room = @height - @top_margin - @bottom_margin
       if horizontal_room < vertical_room
-        temp_value  = @grid_column
-        @grid_column= @grid_row
-        @grid_row   = temp_value
+        temp_value  = @grid_base[0]
+        @grid_base[0]= @grid_base[1]
+        @grid_base[1]   = temp_value
       end
       # TODO
       # we have done calculate_columns_and_rows_for
@@ -88,14 +77,26 @@ module RLayout
     
     # layout items into grid_cells
     def layout_items(grid_items, options={})
-      @grid_items   = grid_items
+      @grid_items = grid_items
+      @grid_h_gutter = options[:grid_h_gutter] if options[:grid_h_gutter]
+      @grid_v_gutter = options[:grid_v_gutter] if options[:grid_v_gutter]
+      
       if options[:grid_base]
-        @grid_base   = options[:grid_base]
-        @grid_column = options[:grid_base][0]
-        @grid_row    = options[:grid_base][1]
-      end  
-      @given_grid_column  = options[:given_grid_column] if options[:given_grid_column] 
+        @grid_base      = options[:grid_base]
+        if @grid_base.class == String
+          grid_array    = @grid_array.split("x")
+          @grid_base    = []
+          @grid_base[0] = grid_array[0].to_i
+          @grid_base[1] = grid_array[1].to_i
+        end
+        @grid_base[0]   = options[:grid_base][0]
+        @grid_base[1]   = options[:grid_base][1]
+      else
+        # if options[:grid_base] is not specified, calculate optimun grid_base foth items
+        calculate_grid_base_for_items
+      end
       generate_grid_cells
+      # place items in the cell locations
       index = 0
       while @item  = grid_items.shift do
         break if index >= @grid_cells.length
@@ -108,30 +109,19 @@ module RLayout
         @graphics << @item
         index += 1
       end
+      
       self
     end
     
     def generate_grid_cells
-      if @given_grid_column
-        @grid_column = @given_grid_column
-        grid_row     = @grid_items.length/@given_grid_column
-        grid_row_remainer = @grid_items.length % @given_grid_column 
-        if grid_row_remainer > 0
-          grid_row += 1
-        end
-        @grid_row = grid_row
-      elsif @grid_base
-      else
-        calculate_grid_base_for
-      end
-      @grid_cells   = []      
-      @grid_width   = (@width - @left_margin - @right_margin - (@grid_column - 1)*@grid_h_gutter)/@grid_column
-      @grid_height  = (@height - @top_margin - @bottom_margin - (@grid_row - 1)*@grid_v_gutter)/@grid_row
+      @grid_cells   = []            
+      @grid_width   = (@width - @left_margin - @right_margin - (@grid_base[0] - 1)*@grid_h_gutter)/@grid_base[0]
+      @grid_height  = (@height - @top_margin - @bottom_margin - (@grid_base[1] - 1)*@grid_v_gutter)/@grid_base[1]
       x = @left_margin
       y = @top_margin
       index = 0
-      @grid_row.times do |i|
-        @grid_column.times do |j|
+      @grid_base[1].times do |i|
+        @grid_base[0].times do |j|
           @grid_cells           << []
           @grid_cells[index][0] = j
           @grid_cells[index][1] = i

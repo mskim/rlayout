@@ -39,7 +39,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/graphic/shadow'
   require File.dirname(__FILE__) + '/rlayout/graphic/node_tree'
   require File.dirname(__FILE__) + '/rlayout/graphic/text'
-  require File.dirname(__FILE__) + '/rlayout/graphic/grid_layout'
   require File.dirname(__FILE__) + '/rlayout/graphic'
   require File.dirname(__FILE__) + '/rlayout/view/graphic_view_svg'
   require File.dirname(__FILE__) + '/rlayout/container'
@@ -56,11 +55,13 @@ else
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_ruby'
 
   require File.dirname(__FILE__) + '/rlayout/style/style_service'
+  require File.dirname(__FILE__) + '/rlayout/style/grid_layout'
   require File.dirname(__FILE__) + '/rlayout/style/image_layout'
   
   require File.dirname(__FILE__) + '/rlayout/container/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container/place_item'
   require File.dirname(__FILE__) + '/rlayout/container/memo_area'
+  require File.dirname(__FILE__) + '/rlayout/container/grid'
 
   require File.dirname(__FILE__) + '/rlayout/box/box_ad_box'
   require File.dirname(__FILE__) + '/rlayout/box/image_box'

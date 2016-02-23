@@ -2,6 +2,24 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'create QuizMaker' do
   before do
+    @output_path = "/Users/mskim/quiz/sample_quiz.pdf"
+    @quiz_sample = <<-EOF
+@output_path = "/Users/mskim/quiz/sample_quiz.pdf"
+@quiz_data = "/Users/mskim/quiz/sample_quiz.yml"
+RLayout::QuizMaker.new(quiz_data_path: @quiz_data)
+
+EOF
+    system "echo '#{@quiz_sample}' | /Applications/rjob.app/Contents/MacOS/rjob"  
+  end
+  
+  it 'should save quiz sheet' do
+    assert File.exist?(@output_path)
+  end
+end
+
+__END__
+describe 'create QuizMaker' do
+  before do
     @path       = "~/quiz/sample_quiz.yml"
     @quiz_maker = QuizMaker.new(quiz_data_path: File.expand_path(@path))
   end
@@ -20,7 +38,11 @@ describe 'create QuizMaker' do
   end
 end
 
+
 __END__
+
+
+
 describe 'create QuizItemMaker' do
   before do
     @quiz = QuizItemMaker.new

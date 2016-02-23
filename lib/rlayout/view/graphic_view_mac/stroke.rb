@@ -38,9 +38,26 @@ class GraphicViewMac < NSView
   def draw_gutter_stroke(graphic)
     # return unless graphic.kind_of?(RLayout::TextBox)
     #draw gutter lines
+    return if graphic.gutter_stroke.nil?
+    if graphic.gutter_stroke.thickness.nil?
+      graphic.gutter_stroke.thickness = 1.0
+    end
+    if graphic.gutter_stroke.color.nil?
+      graphic.gutter_stroke.color = "black"
+    end
     space = graphic.layout_space/2.0
-    width = graphic.gutter_stroke[:thickness]
-    convert_to_nscolor(graphic.gutter_stroke[:color]).set
+    if graphic.gutter_stroke.nil?
+      gutter_stroke = {}
+      gutter_stroke[:thickness] = 1.0 
+      gutter_stroke[:color] = "black"
+      graphic.gutter_stroke = gutter_stroke
+    elsif graphic.gutter_stroke.thickness.nil?
+      graphic.gutter_stroke.thickness = 1.0
+    elsif graphic.gutter_stroke.color.nil?
+      graphic.gutter_stroke.color = "black"
+    end
+    width = graphic.gutter_stroke.thickness
+    convert_to_nscolor(graphic.gutter_stroke.color).set
     graphic.graphics.each_with_index do |g, i|
       next if i == graphic.graphics.length - 1 # last one
       if graphic.layout_direction == "vertical"
@@ -80,22 +97,18 @@ class GraphicViewMac < NSView
     # path = @owner_graphic.bezierPathWithRect(r)
     path.setLineCapStyle(@stroke[:line_cap]) if @stroke[:line_cap]
     path.setLineJoinStyle(@stroke[:line_join]) if @stroke[:line_join]
-
     if @dash
       if(@stroke[:line_cap] == 1 && @stroke[:dash][0] == 0) 
         @stroke[:dash][0] = 0.0001
       end
       path.setLineDash(@dash, count:@dash.length, phase:0)
     end
-
     path
   end  
 
   def drawLine(rect, withTrap:trap)  
-
     # return if @stroke[:thickness] == 0 &&  @graphic.drawing_mode == "printing"
     return if @stroke[:thickness] == 0 
-    
     unless trap
       trap = 0
     end
@@ -158,10 +171,8 @@ class GraphicViewMac < NSView
     else 
         @line1=@line_types_width_table[@stroke[:type]][0]*@stroke[:thickness]
         @line2=@line_types_width_table[@stroke[:type]][1]*@stroke[:thickness]
-
         w = @line1
         indentValue = (@stroke[:thickness] - w)/-2.0
-
         if(@stroke[:type] > 3) 
             path = linePathWithRect(rect)
             path.setLineWidth(@line2 + trap)

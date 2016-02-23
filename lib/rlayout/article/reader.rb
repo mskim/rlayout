@@ -677,17 +677,20 @@ module RLayout
       # take out the top meta-data part from source
       # Set Document Options
       # And Create Heading from this
+      
       reader = RLayout::Reader.new @contents, nil, :starting_heading_level=>starting_heading_level
       blocks_array = []
       block = []
       reader.lines.each do |line|
-        if line== ""
+        # filter out carriage return key, if line has one.
+        filtered_line = line.gsub(/$\r/, "")
+        if filtered_line== ""
           if block.length > 0
              blocks_array << block
              block = []
           end
         else
-          block << line
+          block << filtered_line
         end
       end
       if block.length > 0

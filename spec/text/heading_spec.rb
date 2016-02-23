@@ -2,6 +2,31 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'testing heading creation' do
   before do
+    @doc = RLayout::Document.new(:initial_page=>false) do
+      page(layout_space: 10) do
+        heading(fill_color: "orange", title: "This is title") 
+        main_text(column_count: 3) do
+          float_image(:local_image=> "1.jpg", :grid_frame=> [0,0,1,1])
+          float_image(:local_image=> "2.jpg", :grid_frame=> [0,1,1,1])
+        end
+        relayout!
+      end
+    end
+    
+    @first_page = @doc.pages.first
+    @heading = @first_page.graphics.first
+    @heading.puts_frame
+  end
+  
+  it 'should create Heading' do
+    assert @heading.class == Heading
+  end
+
+end
+
+__END__
+describe 'testing heading creation' do
+  before do
     @heading = Heading.new(nil)
   end
   
