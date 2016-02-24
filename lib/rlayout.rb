@@ -112,7 +112,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/photo_book'
   require File.dirname(__FILE__) + '/rlayout/publication/calendar'
   require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
-  
   require File.dirname(__FILE__) + '/rlayout/music/code_music'
   require File.dirname(__FILE__) + '/rlayout/music/music_chapter'
   

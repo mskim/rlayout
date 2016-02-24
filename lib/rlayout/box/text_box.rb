@@ -275,7 +275,6 @@ module RLayout
               return false
             end
           end
-          current_column.update_current_position
           #TODO????
           # check if current column is simple
           # text_area_path  = current_column.path_from_current_position
@@ -283,6 +282,7 @@ module RLayout
           # current_column.current_position = bounding_rect.origin.y
           # item.layout_text(:proposed_path=>text_area_path) # item.width:
           @item.layout_text(:proposed_height=>current_column.room) # item.width is set already
+          current_column.update_current_position
           #TODO also check for underflow
         elsif @item.class == RLayout::Image
           # We have image
@@ -327,7 +327,7 @@ module RLayout
           @item.set_quiz_content
         elsif @item.class == RLayout::QuizRefText # GeeMoon
           @item.width  = current_column.text_width
-          @item.height = @item.width
+          # @item.height = @item.width
           #TODO layout text
         else
           @item.width  = current_column.text_width

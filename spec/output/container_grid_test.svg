@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600px" height="800px">
-<rect x="0" y="0" width="600" height="800" style="fill:white;stroke:black;"></rect>
-<g transform="translate(0,0)">
-<rect x="0" y="0" width="100" height="100" style="fill:red;stroke:black;"></rect><rect x="0" y="0" width="100" height="100" style="fill:yellow;stroke:black;"></rect><circle cx="50" cy="50" r="50" style="fill:green;stroke:black;" /><rect x="0" y="0" width="100" height="100" style="fill:gray;stroke:black;"></rect><rect x="0" y="0" width="100" height="100" style="fill:blue;stroke:black;"></rect><rect x="0" y="0" width="100" height="100" style="fill:red;stroke:black;"></rect><rect x="0" y="0" width="100" height="100" style="fill:orange;stroke:black;"></rect><rect x="0" y="0" width="100" height="100" style="fill:brown;stroke:black;"></rect><rect x="0" y="0" width="100" height="100" style="fill:black;stroke:black;"></rect></g>
-</svg>

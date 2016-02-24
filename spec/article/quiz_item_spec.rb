@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+
 describe 'create QuizMaker' do
   before do
     @output_path = "/Users/mskim/quiz/sample_quiz.pdf"
@@ -18,19 +19,23 @@ EOF
 end
 
 __END__
+
+
+
 describe 'create QuizMaker' do
   before do
     @path       = "~/quiz/sample_quiz.yml"
     @quiz_maker = QuizMaker.new(quiz_data_path: File.expand_path(@path))
+    @text_box   = @quiz_maker.document.pages.first.main_box
   end
   
-  it 'shuld create QuizMaker' do
-    assert @quiz_maker.class == QuizMaker
-  end
-  
-  it 'shuld create docment' do
-    assert @quiz_maker.document.class == Document
-  end
+  # it 'shuld create QuizMaker' do
+  #   assert @quiz_maker.class == QuizMaker
+  # end
+  # 
+  # it 'shuld create docment' do
+  #   assert @quiz_maker.document.class == Document
+  # end
   
   it 'should create two columns in text_box' do
     tb = @quiz_maker.document.pages.first.main_box
@@ -38,8 +43,8 @@ describe 'create QuizMaker' do
   end
 end
 
-
 __END__
+
 
 
 

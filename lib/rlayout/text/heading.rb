@@ -54,6 +54,8 @@ module RLayout
       @layout_align   = 'center'
       @layout_expand  = options.fetch(:layout_expand,[:width])
       @line_type=0
+      #TODO
+      options.delete(:stroke_width)
       set_heading_content(options)
       self
     end

@@ -43,8 +43,13 @@ TODO List
 	- # Magazine.create 
 	- redo layout for complex container
 
+2015 2 23
+	- Quiz Maker
+		- add reading text
+		- add answers page
 2016 2 22
 	- heading QuizHeading, NewsHeading
+	
 2016 2 21
 	- refactor grid in Graphic
 	    handle grid_frame option, parent_grid_base option
