@@ -106,7 +106,7 @@ module RLayout
     def generate_pdf_for(template_file, layout_index)   
       require 'erb'
       template = File.open(template_file, 'r'){|f| f.read}
-      erb = ERB.new(template)
+      erb = ::ERB.new(template)
       layout = erb.result(binding)
       layout_path = @page_path + "/layout-#{layout_index}.rb"
       output_path = @page_path + "/#{layout_index}.pdf"

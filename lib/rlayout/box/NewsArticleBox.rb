@@ -39,8 +39,6 @@ module RLayout
       options[:top_margin]    = 5 unless options[:top_margin]
       options[:right_margin]  = 5 unless options[:right_margin]
       options[:bottom_margin] = 5 unless options[:bottom_margin]
-
-
       super
       self
     end

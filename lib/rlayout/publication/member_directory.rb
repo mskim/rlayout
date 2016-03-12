@@ -37,7 +37,7 @@ module RLayout
         member_template_path= "/Users/Shared/SoftwareLab/article_template/church_member.erb"
         @template_erb     = File.open(member_template_path, 'r') {|f| f.read}
       end
-      erb                 = ERB.new(@template_erb)
+      erb                 = ::ERB.new(@template_erb)
       @template           = erb.result(binding)   
       @container_object   = eval(@template)
 	    self

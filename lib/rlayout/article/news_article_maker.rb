@@ -50,7 +50,8 @@ module RLayout
       unless @template_path
         @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/news_article_style.rb")
       end
-      @news_article_box       = eval(File.open(@template,'r'){|f| f.read})
+      puts "@template_path:#{@template_path}"
+      @news_article_box       = eval(File.open(@template_path,'r'){|f| f.read})
       if @news_article_box.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return
@@ -70,10 +71,11 @@ module RLayout
       @story = Story.markdown2para_data(@story_path)
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
-      if @news_article_box.has_heading?
-        @news_article_box.get_heading.set_heading_content(@heading)
-      elsif @heading !={}
-        @news_article_box.heading(@heading)
+      if @heading !={}
+        box_heading = @news_article_box.get_heading
+        if !box_heading.nil? && box_heading.class == RLayout::Heading
+          box_heading.set_heading_content(@heading) 
+        end
       end
       @paragraphs =[]
       @story[:paragraphs].each do |para|

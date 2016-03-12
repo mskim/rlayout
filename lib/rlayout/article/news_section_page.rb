@@ -71,12 +71,14 @@ module RLayout
       @article_info = []
       @story_frames.each_with_index do |grid_frame, i|
         info = {}
-        if @has_heading && i == 0
+        if @has_heading == 1 && i == 0
           info[:image_path] = @section_path + "/heading.pdf"
-        elsif @has_heading && i >= 0
-          info[:image_path] = @section_path + "/#{i}/output.pdf"
-        elsif !@has_heading
-          info[:image_path] = @section_path + "/#{i + 1}/output.pdf"
+        elsif @has_heading == 1 && i >= 0
+          # info[:image_path] = @section_path + "/#{i}/output.pdf"
+          info[:image_path] = @section_path + "/#{i}.story/output.pdf"
+        elsif @has_heading == 0 #TODO false is represented as 0
+          # info[:image_path] = @section_path + "/#{i + 1}/output.pdf"
+          info[:image_path] = @section_path + "/#{i + 1}.story/output.pdf"
         end
         info[:x]          = grid_frame[0]*(@grid_width + @gutter) + @left_margin
         info[:y]          = grid_frame[1]*@grid_height  + @top_margin

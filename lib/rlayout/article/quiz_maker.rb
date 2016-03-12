@@ -305,7 +305,7 @@ module RLayout
     end
     
     def header_rule
-      {:first_page_only  => true,
+      {:first_page_only   => true,
         :left_page        => false,
         :right_page       => false,
       }
@@ -364,10 +364,8 @@ module RLayout
       @answer_hash = {}
       @answer_hash[:ans]  = @ans
       @answer_hash[:exp]  = @exp
-       
       self   
     end
-        
   end
   
   class QuizRefText < Text
@@ -375,15 +373,15 @@ module RLayout
   end
   # num_atts, q_atts, cap_atts,  
   # cell_atts, choice_indent, choice_gutter
+  
   class QuizItem < Container
-    attr_accessor :q_object, :row1_object, :row2_object, :ans_object, :exp_object
+    attr_accessor :q_object, :row1_object, :row2_object
     attr_accessor :img_object, :data, :processed
     def initialize(parent_graphic, options={}, &block)
       @data           = options
       @layout_space   = 2
       @layout_expand  = options.fetch(:layout_expand,[:width])
       super
-      @klass          = 'QuizItem'
       @processed       = false
       unless options[:delayed_layout]
         set_quiz_content
@@ -418,21 +416,7 @@ module RLayout
         @row2_object          = TableRow.new(self, @data[:row2])
         @row1_object.relayout!        
       end
-      
-      # if @data[:ans]
-      #   @ans_object = text(@data[:ans])
-      # elsif @data["ans"]
-      #   @ans_object = text(@data["ans"])
-      # end
-      # puts "after ans"
-      # 
-      # if @data[:exp]
-      #   @exp_object = text(@data[:exp])
-      # elsif @data["exp"]
-      #   @exp_object = text(@data["exp"])
-      # end
-      # puts "after exp"
-      
+            
       height_sum = 0
       if @q_object
         height_sum +=@q_object.height
@@ -453,17 +437,7 @@ module RLayout
         height_sum +=@row2_object.height
         height_sum += @layout_space
       end
-      
-      if @ans_object
-        height_sum +=@ans_object.height
-        height_sum += @layout_space
-      end
-      
-      if @exp_object
-        height_sum +=@exp_object.height
-        height_sum += @layout_space
-      end
-       # @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
+
       @height = height_sum
       if @align_to_body_text
         mutiple           = (@height/body_height).to_i
@@ -481,6 +455,5 @@ module RLayout
     def to_hash
       super
     end
-    
   end
 end

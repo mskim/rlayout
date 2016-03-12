@@ -32,10 +32,10 @@
 
   task :pdf => source_files.ext(".pdf")
   rule ".pdf" => ".md" do |t|
-    sh "/Applications/newsman.app/Contents/MacOS/newsman news_article #{pwd}/#{File.dirname(t.source)}"
+    sh "/Applications/newsman.app/Contents/MacOS/newsman news_article #{File.dirname(t.source)}"
   end
   rule ".pdf" => ".markdown" do |t|
-    sh "/Applications/newsman.app/Contents/MacOS/newsman news_article #{pwd}/#{File.dirname(t.source)}"
+    sh "/Applications/newsman.app/Contents/MacOS/newsman news_article ##{File.dirname(t.source)}"
   end
 
   file 'section.pdf' => source_files.ext(".pdf") do |t|
@@ -179,6 +179,7 @@ module RLayout
         section_path = @issue_path + "/#{section_name}"
         output_path = section_path + "/section.pdf"
         if i== 0
+          # put newspaper heading for front page
           news_section = NewspaperSection.new(self, :section_path=>section_path, :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i], :has_heading=>true)
         else
           news_section = NewspaperSection.new(self, :section_path=>section_path,  :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i])
@@ -282,21 +283,24 @@ module RLayout
       images.each_with_index do |image, i|
         @image_text += "  float_image(:local_image=>\"#{File.basename(image)}\", :grid_frame=>[0,#{i},1,1])\n"
       end
-
-      layout_path   = article_path + "/layout.rb"
-      erb           = ERB.new(SAMPLE_ARTICLE_LATOUT)
-      File.open(layout_path, 'w'){|f| f.write erb.result(binding)}
+      layout_path    = article_path + "/layout.rb"
+      layout_content = SAMPLE_ARTICLE_LATOUT.gsub("<%= @story_options %>", @story_options.to_s)
+      layout_content = layout_content.gsub("<%= @image_text %>", @image_text)
+      # ERB doesn' seem to work in rubymotion
+      # erb           = ::ERB.new(SAMPLE_ARTICLE_LATOUT)
+      File.open(layout_path, 'w'){|f| f.write layout_content}
     end 
     
+    # TODO if Rubymotion YAML kit is fixed the symbol issue in YAML kit, fix it
     # Each section folder has config.yml.
     # config.yml contains information about the section.
-    # Rubymotion YAML kit doesn't seem to work with symbols it reads symbols as ':key' String.
-    # So, to make it work, I am saving keys  as String instead of symbol
-    # It can play nicely since I could distinguish whether the options are coming from new or open
+    # At the moment, Rubymotion YAML kit doesn't seem to work with symbols it reads symbols as ':key' String.
+    # So, to make it work, I am saving keys  as String instead of symbol.
+    # It can play OK since I could distinguish whether the options are coming from new or open
     # for  NewspaperSection new, options keys are passed as symbols,
     # And for  NewspaperSection open, options keys are stored as String, when reading from section config file.
     # YAML kit also haves true as 1 and false as 0
-    # It reads 1. as 1.0 and 0 as 0.0, so be careful!!!! need to convert it to_i after reading.
+    # YAML kit also reads 1. as 1.0 and 0 as 0.0, so be careful!!!! need to convert it to_i after reading.
     def make_section_config
       info ={}
       info['publication'] = @issue.publication_name || "OurTimes"

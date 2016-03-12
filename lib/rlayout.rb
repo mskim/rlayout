@@ -96,7 +96,7 @@ else
   # require File.dirname(__FILE__) + '/rlayout/article/news_article_box'
   require File.dirname(__FILE__) + '/rlayout/article/news_article_maker'
   require File.dirname(__FILE__) + '/rlayout/article/news_section_page'
-  # require File.dirname(__FILE__) + '/rlayout/article/magazine_article'
+  require File.dirname(__FILE__) + '/rlayout/article/news_heading_maker'
   require File.dirname(__FILE__) + '/rlayout/article/magazine_article_maker'
   require File.dirname(__FILE__) + '/rlayout/article/single_page_maker'
   require File.dirname(__FILE__) + '/rlayout/article/rjob'
