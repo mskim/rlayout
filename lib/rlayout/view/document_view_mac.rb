@@ -27,7 +27,16 @@ class DocumentViewMac
     end
     pdf_doc = pdf_document
     pdf_doc.writeToFile(pdf_path)
-    if options[:jpg]
+    # if we have jpg option, save image as basename_(i+1).jpg format
+    # if we have preview option save images in /preview/page_00(i+1).jpg 
+    if options[:jpg] || options[:preview]
+      if options[:preview]
+        @preview_path = File.dirname(path) + "/preview"
+        # if we have old version, clear the folder 
+        system("rm -r #{@preview_path}")
+        #generate new folder
+        system("mkidir -p #{@preview_path}")
+      end
       pdf_doc.pageCount.times do |i|
         page      = pdf_doc.pageAtIndex i
         pdfdata     = page.dataRepresentation
@@ -36,9 +45,13 @@ class DocumentViewMac
         imageRep    = NSBitmapImageRep.imageRepWithData(imageData)  
         imageProps  = {NSImageCompressionFactor=> 1.0}
         imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
-        jpg_path    = pdf_path.sub(".pdf", "_#{i+1}.jpg")
+        if options[:preview]
+          jpg_path  =  @preview_path + "/page_#{(i+1).to_s.rjust(3,'0')}.jpg"
+        else
+          jpg_path  = pdf_path.sub(".pdf", "_#{(i+1).to_s.rjust(3,'0')}.jpg")
+        end
         imageData.writeToFile(jpg_path, atomically:false)
-      end
+      end      
     end
     @page_views.length
   end

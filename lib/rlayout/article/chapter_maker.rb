@@ -76,8 +76,9 @@ module RLayout
       end
       @starting_page_number = options.fetch(:starting_page_number,1)
       read_story
-      layout_story      
-      @document.save_pdf(@output_path) unless options[:no_output] 
+      layout_story
+      output_options = {:preview=>true}
+      @document.save_pdf(@output_path,output_options) unless options[:no_output] 
       self
     end
         

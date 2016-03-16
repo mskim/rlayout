@@ -14,10 +14,12 @@
 
 module RLayout
   class RJob
-    attr_accessor :output_path, :jpg
+    attr_accessor :output_path, :jpg, :preview
     def initialize(options={})
-      created_object = nil
-      @output_path   = options[:output_path] if options[:output_path]
+      created_object  = nil
+      @output_path    = options[:output_path] if options[:output_path]
+      @jpg            = options[:jpg] if options[:jpg]
+      @preview        = options[:preview] if options[:preview]
       if options[:script]
         # puts "options[:script]:#{options[:script]}"
         created_object = eval(options[:script])
@@ -34,7 +36,6 @@ module RLayout
         end
       end
       
-      
       if created_object.class == SyntaxError
         puts "eval SyntaxError !!!!"
         puts "created_object.inspect:#{created_object.inspect}"
@@ -49,7 +50,10 @@ module RLayout
       end
       # puts "created_object.class:#{created_object.class}"
       # puts "created_object.respond_to?(:save_pdf):#{created_object.respond_to?(:save_pdf)}"
-      created_object.save_pdf(@output_path, :jpg=>@jpg) if created_object.respond_to?(:save_pdf)
+      output_options            = {}
+      output_options[:jpg]      = @jpg if @jpg
+      output_options[:preview]  = @preview if @preview
+      created_object.save_pdf(@output_path, output_options) if created_object.respond_to?(:save_pdf)
       self
     end
   end

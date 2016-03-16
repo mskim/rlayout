@@ -73,7 +73,7 @@ module RLayout
     attr_accessor :page_view_count, :toc_elements
     attr_accessor :header_rule, :footer_rule, :gim
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
-    attr_accessor :pdf_path, :jpg, :column_count, :layout_style
+    attr_accessor :pdf_path, :jpg, :preview, :column_count, :layout_style
     def initialize(options={}, &block)
       @pages      = []
       @title      = "untitled"
@@ -116,6 +116,9 @@ module RLayout
       
       if options[:jpg]
         @jpg = options[:jpg]
+      end
+      if options[:preview]
+        @preview = options[:preview]
       end
       
       @left_margin= options.fetch(:left_margin, document_defaults[:left_margin])
@@ -287,11 +290,11 @@ module RLayout
       File.open(path, 'w'){|f| f.write to_hash.to_yaml}
     end
     
-    def save_pdf_doc(options={})
-      @ns_view = DocumentViewMac.new(self)
-      options[:jpg] = @jpg if @jpg
-      @page_view_count = @ns_view.save_pdf(@pdf_path, options)
-    end
+    # def save_pdf_doc(options={})
+    #   @ns_view = DocumentViewMac.new(self)
+    #   options[:jpg] = @jpg if @jpg
+    #   @page_view_count = @ns_view.save_pdf(@pdf_path, options)
+    # end
     
     def save_pdf(path, options={})
       if RUBY_ENGINE == 'rubymotion'

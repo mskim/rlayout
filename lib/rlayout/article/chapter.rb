@@ -71,7 +71,7 @@ module RLayout
       layout_story
       
       if options[:output_path]
-        save_pdf(options[:output_path])
+        save_pdf(options[:output_path], options)
       end
       self
     end

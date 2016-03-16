@@ -60,7 +60,7 @@ module RLayout
       read_story
       layout_story
       if RUBY_ENGINE =="rubymotion"
-        @news_article_box.save_pdf(@output_path)
+        @news_article_box.save_pdf(@output_path, :jpg=>true)
       else
         puts "not in rubymotion"
       end
