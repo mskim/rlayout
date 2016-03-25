@@ -33,9 +33,9 @@ class DocumentViewMac
       if options[:preview]
         @preview_path = File.dirname(path) + "/preview"
         # if we have old version, clear the folder 
-        system("rm -r #{@preview_path}")
+        system("rm -r #{@preview_path}") if File.directory?(@preview_path)
         #generate new folder
-        system("mkidir -p #{@preview_path}")
+        system("mkdir -p #{@preview_path}")
       end
       pdf_doc.pageCount.times do |i|
         page      = pdf_doc.pageAtIndex i
@@ -49,7 +49,7 @@ class DocumentViewMac
           jpg_path  =  @preview_path + "/page_#{(i+1).to_s.rjust(3,'0')}.jpg"
         else
           jpg_path  = pdf_path.sub(".pdf", "_#{(i+1).to_s.rjust(3,'0')}.jpg")
-        end
+        end        
         imageData.writeToFile(jpg_path, atomically:false)
       end      
     end
