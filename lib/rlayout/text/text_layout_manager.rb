@@ -178,7 +178,7 @@ module RLayout
     def set_frame
       # ???
       # layout_text_lines
-      layout_text_lines
+      layout_text_lines()
     end
 
     def replace_string_with(string)

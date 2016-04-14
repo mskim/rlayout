@@ -2,7 +2,7 @@
 module RLayout
 
   class Graphic
-    attr_accessor :parent_graphic, :klass, :tag, :ns_view, :svg_view, :path
+    attr_accessor :parent_graphic, :tag, :ns_view, :svg_view, :path
     attr_accessor :graphics, :fixtures, :floats, :grid_frame
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
@@ -10,7 +10,6 @@ module RLayout
 
     def initialize(parent_graphic, options={}, &block)
       @parent_graphic = parent_graphic
-      @klass = options.fetch(:klass, graphic_defaults[:klass])
       # if @parent_graphic && @parent_graphic.class.kind_of?(Document)
       #   set_frame(@parent_graphic.layout_rect)
       if @parent_graphic && options[:parent_frame]
@@ -124,7 +123,7 @@ module RLayout
     
     def to_hash
       h = {}
-      h[:klass]   = @klass
+      h[:klass]   = Class.to_s
       h[:x]       = @x        if @x != graphic_defaults[:x]
       h[:y]       = @y        if @y != graphic_defaults[:y]
       h[:width]   = @width    if @width != graphic_defaults[:width]
@@ -589,7 +588,6 @@ module RLayout
   class Rectangle < Graphic
     def initialize(parent_graphic, options={})
       super
-      @klass = "Rectangle"
       self
     end
   end
@@ -607,7 +605,6 @@ module RLayout
         @bleed = options[:bleed]
       end
       super
-      @klass        = "Image"
       
       if options[:image_path]
         @image_path   = options[:image_path]
@@ -626,7 +623,6 @@ module RLayout
   class Circle < Graphic
     def initialize(parent_graphic, options={})
       super
-      @klass = "Circle"
       update_shape
       self
     end
@@ -640,7 +636,6 @@ module RLayout
   class Ellipse < Graphic
     def initialize(parent_graphic, options={})
       super
-      @klass = "Ellipse"
       update_shape
       self
     end
@@ -654,7 +649,6 @@ module RLayout
   class RoundRect < Graphic
     def initialize(parent_graphic, options={})
       super
-      @klass = "RoundRect"
       update_shape
       self
     end
@@ -673,7 +667,6 @@ module RLayout
       options[:thickness]     = 1 unless options[:thickness]
       options[:stroke_rule]   = "horizontal_rule" unless options[:stroke_rule]
       super
-      @klass      = "Line"
       self
     end
     

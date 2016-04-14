@@ -1,8 +1,28 @@
+SMAMPLE_PARA =<<EOF
+
+/drop(T)his /color("black","is black") colored text in the middle of para.
+/bold(This is :) bold text at the /italic(begining) of line.
+/cmyk([30,30,0,0], colored) text $/frac({x+2}{y/sup2 + xy})$
+
+EOF
 
 module RLayout
   
-
-  TextToken   = Struct.new(:string, :x, :y, :width, :height) do
+  TextTokenAtts  = Struct.new(:font, :size, :color, :style, :language)
+  
+  class TextToken
+    attr_accessor :string, :atts, :x,:y, :width, :height, :horizontal
+    def initialize(options)
+      @string = options[:string]
+      @atts   = options[:atts]
+      calculate_size
+      self
+    end
+    
+    def calculate_size
+      
+    end
+    
     def svg
       # TODO <text font-size=\"#{text_size}\"
       s = ""
@@ -11,8 +31,12 @@ module RLayout
       end
       s
     end
+    
+    def draw
+      
+    end
+    
   end
-  StyleToken  = Struct.new(:font, :size, :color, :style, :h_alignment, :v_alignment)
   
   class RTextLayoutManager
     attr_accessor :owner_graphic, :text_container, :tokens
@@ -90,13 +114,13 @@ module RLayout
     
     def layout_text_lines
       while @text_layout_manager.tokens.length > 0
-        line = LineFragment.new(@text_layout_manager, width: @width)
+        line = RLineFragment.new(@text_layout_manager, width: @width)
         @lines << line
       end
     end    
   end
   
-  class	LineFragment 
+  class	RLineFragment < Container
     attr_accessor :text_layout_manager, :tokens
     attr_accessor :line_tokens
     attr_accessor :left_indent, :right_indent
@@ -131,6 +155,24 @@ module RLayout
 
 	  end
 	  
+    def layout_line_starting_at(tokens_index)
+      current_index   = tokens_index
+      @position = current_index
+      current_x       = @x
+      current_run     = @text_runs[current_index]
+      
+      while current_index < @text_runs.length  && current_x < @width do
+        if current_run.width + current_x <= width
+          current_run.x = @x
+          current_index += 1
+          current_x     += current_run.width + @space_width
+        else
+          break
+        end
+      end
+      current_index
+    end
+    
 	  def align_tokens
       @total_token_width -= @space_width if @line_tokens.length > 0
       room = @width - @total_token_width      
@@ -162,6 +204,7 @@ module RLayout
     def room
 	    @width - @left_indent - @right_indent
     end
+    
   end
 
 

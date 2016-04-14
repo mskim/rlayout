@@ -1,6 +1,6 @@
 
 # parse eqn string into nested Array and Hash combination.
-# Elements are represent as Array, if they are series of + - =
+# Elements are represented as Array, if they are series of + - =
 # And non-linear elements, such as sqrt, sub, sup etc..., are represented as Hash.
 # There are preecdence of operation as following
 
@@ -26,7 +26,6 @@ sum lim int}
 # 4. to_hash first converts string into Array and replace Array elements with saved braced Hashes.
 
 module RLayout
-  
   
   class EQNParser
     attr_accessor :eqn_string, :hash
@@ -176,7 +175,7 @@ module RLayout
         end
         
       elsif eqn_hash.class == String
-        puts "handleing when eqn_hash is String"
+        puts "handling when eqn_hash is String"
         puts "eqn_hash:#{eqn_hash}"
         #TODO check for number or alphabet
         if eqn_hash =~/\d/
@@ -201,7 +200,39 @@ module RLayout
     def self.from_hash(hash)
       
     end
+    
+    def latex_from_hash(hash)
+      case hash.keys.first
+      when :over
+      when :sqrt
+      when :sub
+      when :sup
+      else
         
+      end
+      
+    end
+    
+    def latex_from_array(array)
+      array.each do |item|
+        if item.class == Hash
+          return latex_string += latex_from_hash(hash)
+        elsif item.class == Array
+          return latex_string += latex_from_array(current_result)
+        end
+      end
+    end
+    
+    def to_latex
+      current_result = @hash
+      latex_string = ""
+      if current_result.class == Hash
+        return latex_string += latex_from_hash(hash)
+      elsif current_result.class == Array
+        return latex_string += latex_from_array(current_result)
+      end
+      latex_string
+    end
   end
 end
 

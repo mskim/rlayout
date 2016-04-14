@@ -27,14 +27,6 @@ module RLayout
       system("cp -r #{name_card_template} #{@folder_path}/")
     end
     
-    def save_rakefile(path)
-      rake_file = <<-EOF.gsub(/^\s*/,"")
-
-      
-      EOF
-      
-    end
-    
   end
   
 end

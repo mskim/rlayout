@@ -296,6 +296,11 @@ module RLayout
     #   @page_view_count = @ns_view.save_pdf(@pdf_path, options)
     # end
     
+    def pdf_document
+      @document_view ||= DocumentViewMac.new(self)
+      @document_view.pdf_document
+    end
+    
     def save_pdf(path, options={})
       if RUBY_ENGINE == 'rubymotion'
         @ns_view = DocumentViewMac.new(self)

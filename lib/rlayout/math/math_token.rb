@@ -7,6 +7,45 @@ module RLayout
   class MathLine < Container
 
   end
+  
+  class MathLine < Container
+
+  end
+
+  class InLineMath < Container
+    def initialize(parent_graphic, options={}, &block)
+      
+    end
+    
+  end
+  
+  class MathToken < Container
+    def initialize(parent_graphic, options={})
+      @text_string        = options.fetch(:text_string, "")
+      @type               = options.fetch(:type, "math")
+      parse_text_string
+      self   
+    end
+    
+    def parse_text_string(string)
+      
+    end
+    
+    # def frac(nominator, demominator)
+    #   
+    # end
+    # 
+    # def sup(sup_token)
+    #   sup_token.scale = 0.5
+    #   sup_token.origin.y += @height/2
+    # end
+    # 
+    # def sub(sub_token)
+    #   sub_token.scale = 0.5
+    #   sub_token.origin.y -= @height/2
+    # end
+    # 
+  end
 
   # style: nomal, monospace, bold, italic, bold-italic
   # font_category: English, division_capital_letter, division_lower_letter, 
@@ -37,12 +76,12 @@ module RLayout
       false
     end
     
-    def self.create_math_token(parent, math_hash)
+    def self.create_math_token_from_hash(parent, math_hash)
       return unless math_hash
       token = nil
       operator = math_hash.keys.first
       case operator
-      when :over
+      when :over, :frac
         token = Over.new(parent, math_hash)
       when :sqrt
         token = Sqrt.new(parent, math_hash)
@@ -52,6 +91,10 @@ module RLayout
         token = Integral.new(parent, math_hash)
       when :sum
         token = Sum.new(parent, math_hash)
+      when :sup
+        token = Sup.new(parent, math_hash)
+      when :sub
+        token = Sub.new(parent, math_hash)
       else
       end
       token 
@@ -107,7 +150,16 @@ module RLayout
     end
     
   end
-
+  
+  class Sup < MathToken
+    
+  end
+  
+  class Sub < MathToken
+    
+    
+  end
+  
   class Int < MathToken
 
   end

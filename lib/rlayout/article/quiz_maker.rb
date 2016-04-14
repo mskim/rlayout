@@ -1,17 +1,42 @@
 # encoding: utf-8
 
-# QuizMaker parses QuizData and Makes PDF document.
-# QuizData is strore in md or yml file.
-# It has meta-data yml header with title, subtitle, data etc...
-# QuizData is first converted to QuizItem using QuizItemMaker. 
+# QuizMaker is tool chain for creating Quiz, Answer Sheet, and IncorrectAnswesNote.
+# Quiz items are created unsing markdown with metadata.
+# Each Question is marked as ## and separated by \n\n.
+# Each choice is marked as ordered list.
+# Correct Choice is marked as ###
+# Explanation Answer is marked as <p>
 
-# set_quiz_content is called when layout time.
+# ---
+# title: Mid-term English Quiz
+# subject: English 101
+# ---
 
-#TODO
-# paper size
-# document column_count
-# Heading layout_length
-# QuizItem frame
+#   ## What is not the correnct answer?
+#   1. a
+#   2. b
+#   3. c
+#   4. d
+#   ### 4
+#   The answer is 4 because it is the answer.
+#
+#   ## What is the correnct answer?
+#   1. a
+#   2. b
+#   3. c
+#   4. d
+#   ### 2
+#   The answer is 2 because it is the answer.
+#
+
+# They are parsed and auto numbers and layouted out as Quiz Sheet PDF with Heading.
+# If correct_answer_page=true is passed, it also creates correct answer sheet page.
+
+# IncorrectAnswersNoteMaker
+# After quiz is taken,
+# IncorrectAnswersNoteMaker is used to create IncorrectAnswersNote for students who took the quiz.
+# This is ofen painstaking generated for each students.
+
 
 # give option for text_layout_manager to adjust the text height
 # Do the number
@@ -67,10 +92,15 @@
 # options[:current_style]   = current_tyle
 # RLayout::Document.new(options)
 
+# Math questions, 
+# 1. Need lots of room to write down while solving.
+# 1. choice is open in one single line, they are shourt and can get to 5 choices.
+# 1. It is usually two questions per page, with lots of room for writting.
+
 module RLayout
 
   class QuizMaker
-    attr_accessor :project_path, :template_path, :quiz_data_path, :answer_page
+    attr_accessor :project_path, :template_path, :quiz_data_path, :correct_answer_page
     attr_accessor :document, :output_path, :starting_page_number, :column_count
     attr_accessor :layout_style
     def initialize(options={} ,&block)
@@ -128,7 +158,7 @@ module RLayout
       @quiz_hash  = yaml2quiz_hash(@quiz_data_path)
       @heading    = @quiz_hash[:heading] || {}
       @title      = @heading[:title] || "Untitled"
-      @answer_page = @heading["answer_page"] if @heading["answer_page"]
+      @correct_answer_page = @heading["answer_page"] if @heading["answer_page"]
       # @heading[:stroke_sides] = [1,1,1,1]
       # @heading[:stroke_width] = 1
       @heading              = @heading.merge!(@layout_style[:heading])
@@ -141,13 +171,19 @@ module RLayout
       @quiz_items           = @quiz_hash[:quiz_items]
     end
     
+    # quiz item in markdown 
+    def parse_quiz_markdown(content)
+      
+    end
+    
+    # quiz item in yaml 
     def parse_quiz_items(content)
       blocks_array= content.split("\n\n")
       item_array = []
       @answer_item = []
       q_index = 0
       blocks_array.each do |lines_block|
-        if lines_block =~/t:/
+        if lines_block =~/t:/   # this is for reading text
           lines_block_text = lines_block.sub("t: ","")
           item_array << Paragraph.new(nil, markup: "body", text_string: lines_block_text, stroke_width: 1)
         else
@@ -246,7 +282,7 @@ module RLayout
         page_index += 1
       end
       
-      if @answer_page
+      if @correct_answer_page
         page_index = @document.pages.length + 1
         options               = {}
         options[:footer]      = true
@@ -454,6 +490,57 @@ module RLayout
     
     def to_hash
       super
+    end
+  end
+  
+  # IncorrectAnswersNoteMaker
+  # creates notes for each student.
+  # omr_cards folder keeps omr_cards for students
+  # finished notes are stored in mistaken_ttem_note folder 
+  # It takes quiz items, and series of omr_cards
+  class IncorrectAnswersNoteMaker
+    attr_accessor :project_path, :omr_card, :correct_answers, :wrong_answers
+    
+    def initialize(project_path)
+      @project_path = project_path
+      @omr_path     = @project_path + "/omr"
+      FileUtiles.mkdir_p(@omr_path) unless File.directory?(@omr_path)
+      @notes_path   = @project_path + "/notes"
+      FileUtiles.mkdir_p(@notes_path) unless File.directory?(@notes_path)
+      @correct_answers  = extract_correct_answers
+      Dir.glob("#{@omr_path}/*.txt").each do |orm_card|
+        IncorrectAnswersNote.new(@correct_answers, orm_card)
+      end
+      self
+    end
+    
+    def extract_correct_answers
+      
+    end
+    
+  end
+  
+  class IncorrectAnswersNote
+    attr_accessor :name, :omr_card, :correct_answers, :wrong_answers
+    
+    def initialize(correct_answers, orm_card)
+      @orm_card       = orm_card
+      @name           = extract_student_name
+      @wrong_answers  = extract_wrong_answers
+      save_note
+      self
+    end
+    
+    def extract_student_name
+      
+    end
+    
+    def extract_wrong_answers
+      
+    end
+    
+    def save_note
+      
     end
   end
 end
