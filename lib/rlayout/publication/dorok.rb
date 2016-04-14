@@ -104,7 +104,6 @@ module RLayout
     
     # generate layout.rb from template
     def generate_pdf_for(template_file, layout_index)   
-      require 'erb'
       template = File.open(template_file, 'r'){|f| f.read}
       erb = ::ERB.new(template)
       layout = erb.result(binding)

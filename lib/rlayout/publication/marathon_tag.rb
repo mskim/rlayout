@@ -64,6 +64,7 @@ EOF
   end
 end
 
+__END__
 require 'minitest/autorun'
 include RLayout
 
