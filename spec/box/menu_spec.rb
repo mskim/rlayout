@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 describe 'create LeaderRow' do
   before do
     row_text = "Noodle, 19.00"
-    @lr = LeaderRow.new(nil, width: 400, height: 18, row_text: row_text)
+    @lr = LeaderRow.new(width: 400, height: 18, row_text: row_text)
   end
     
   it 'should create LeaderRow' do
@@ -31,7 +31,7 @@ describe 'create page with menu' do
   before do
     @page = RLayout::Page.new(nil) do
       text("Menu Sample", fill_color: "yellow", text_size: 16)
-      m = Menu.new(self, menu_text_path: "/Users/mskim/menu/menu_text.csv", layout_length: 7)
+      m = Menu.new(parent: self, menu_text_path: "/Users/mskim/menu/menu_text.csv", layout_length: 7)
       relayout!
     end
   end

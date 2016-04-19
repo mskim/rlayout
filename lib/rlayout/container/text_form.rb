@@ -7,13 +7,13 @@ module RLayout
 
   class TextField < Container
     attr_accessor :label, :data_field, :data_layout_length
-	  def initialize(parent_graphic,options={})
+	  def initialize(options={})
 	    super
 	    @layout_space       = 2
 	    @layout_direction   ='horizontal'
 	    @data_layout_length = options.fetch(:data_layout_length, 2)
-	    @label              = Text.new(self, :text_string=>options[:key])
-	    @data_field         = Text.new(self, :text_string=>options[:data], :layout_length=>@data_layout_length)
+	    @label              = Text.new(:parent=>self, :text_string=>options[:key])
+	    @data_field         = Text.new(:parent=>self, :text_string=>options[:data], :layout_length=>@data_layout_length)
 	    self
 	  end
 
@@ -26,12 +26,12 @@ module RLayout
 
 	class TextForm < Container
 	  attr_accessor :keys, :data
-	  def initialize(parent_graphic, options={})
+	  def initialize(options={})
 	    super
 	    @keys = options[:keys]
 	    @data = options[:data]
 	    @keys.each_with_index do |key, i|
-	      TextField.new(self, :key=>key, :data=>@data[i])
+	      TextField.new(:parent=>self, :key=>key, :data=>@data[i])
 	    end
 	  end
 

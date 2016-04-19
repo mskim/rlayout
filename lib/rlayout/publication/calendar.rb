@@ -142,7 +142,7 @@ module RLayout
       image_files =Dir.glob("#{@path}/*.jpg")
       @month_images = []
       @number_of_months.times do |i|
-        @month_images << Image.new(nil, :image_path=>image_files[i], :image_fit_type=>IMAGE_FIT_TYPE_KEEP_RATIO, :line_width=>3, :line_color=>'black') # 3
+        @month_images << Image.new(:image_path=>image_files[i], :image_fit_type=>IMAGE_FIT_TYPE_KEEP_RATIO, :line_width=>3, :line_color=>'black') # 3
       end
     end
         
@@ -151,7 +151,7 @@ module RLayout
       year              = @year.to_i
       month             = @starting_month.to_i      
       @number_of_months.times do        
-        @calendar_months << CalendarMonth.new(nil, documnet:self, year:year, month:month)
+        @calendar_months << CalendarMonth.new(documnet:self, year:year, month:month)
         month += 1
         if month == 13
           month = 1
@@ -182,7 +182,8 @@ module RLayout
       hash[:year]  = @year
       hash[:month] = @starting_month.to_i + index
       hash[:events] = @events
-      p = CalendarPage.new(self, hash)
+      hash[:parent] = self
+      p = CalendarPage.new(hash)
       p.add_graphic(@month_images[index]) if @month_images[index]
       p.add_graphic(@calendar_months[index]) if @calendar_months[index]
       p.relayout!
@@ -191,8 +192,6 @@ module RLayout
     def add_pair_page(index)
       # add_image_page(index)
       # make deep dup
-      # page = Page.new(self, @calendar_page_template.to_hash)
-      # @pages << Page.new(self, @calendar_page_template.to_hash)
       add_calenard_page(index)
     end
     
@@ -243,7 +242,7 @@ module RLayout
 	class CalendarMonth < Container
     attr_accessor :year, :month, :company, :mini_month
     attr_accessor :heading_row, :rows, :document
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       @document   = options[:document]
       @year       = options[:year]
@@ -265,15 +264,15 @@ module RLayout
     end
     
     def make_month_name_row
-      row_graphic = Container.new(self, :layout_direction=>'horizontal', :layout_space=>5, :layout_length=>1)
-      CalendarCell.new(row_graphic, :layout_length=>1)
-      CalendarCell.new(row_graphic, :text_string=> @rows.first)
-      CalendarCell.new(row_graphic, :layout_length=>1)
+      row_graphic = Container.new(:parent=>self, :layout_direction=>'horizontal', :layout_space=>5, :layout_length=>1)
+      CalendarCell.new(:parent=>row_graphic, :layout_length=>1)
+      CalendarCell.new(:parent=>row_graphic, :text_string=> @rows.first)
+      CalendarCell.new(:parent=>row_graphic, :layout_length=>1)
       @graphics << row_graphic
     end
     
     def make_heading_row
-      row_graphic = Container.new(self, :layout_direction=>'horizontal', :layout_space=>5, :layout_length=>0.7)
+      row_graphic = Container.new(:parent=>self, :layout_direction=>'horizontal', :layout_space=>5, :layout_length=>0.7)
       DAYS_OF_THE_WEEK.each do |heading_cell_text|
         CalendarCell.new(row_graphic, :text_string=> heading_cell_text)
       end
@@ -281,7 +280,7 @@ module RLayout
     end
     
     def make_first_body_row
-      row_graphic = Container.new(self, :layout_direction=>'horizontal', :layout_space=>5)
+      row_graphic = Container.new(:parent=>self, :layout_direction=>'horizontal', :layout_space=>5)
       first_row_text_array = @rows[2].split(" ")
       unless first_row_text_array.length >= 7
         previous_month_last_row.split(" ").each do |prev_month_day| 
@@ -296,7 +295,7 @@ module RLayout
     def make_body_rows
       @rows.each_with_index do |row, i|
         next if i < 3
-        row_graphic = Container.new(self, :layout_direction=>'horizontal', :layout_space=>5)
+        row_graphic = Container.new(:parent=>self, :layout_direction=>'horizontal', :layout_space=>5)
         row.split(" ").each do |cell_text|
           CalendarCell.new(row_graphic, :text_string=> cell_text)
         end
@@ -354,7 +353,7 @@ module RLayout
     attr_accessor :events, :month, :day
     attr_accessor :sharing_second_day, :slash_color, :slash_width
     attr_accessor :national, :personal, :luna, :current_month
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       if options[:day]
         options[:text_string] = options[:day] 
       elsif options[:day_of_the_week]

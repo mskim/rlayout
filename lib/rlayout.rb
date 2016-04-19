@@ -26,7 +26,7 @@ else
   # require 'xmlsimple'
   # require 'mini_magick'
   
-  require "rlayout/version"
+  # require "rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
   require File.dirname(__FILE__) + '/rlayout/graphic/color'
   require File.dirname(__FILE__) + '/rlayout/graphic/graphic_struct'
@@ -52,7 +52,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'
   require File.dirname(__FILE__) + '/rlayout/text/font'
-  require File.dirname(__FILE__) + '/rlayout/text/text_layout_ruby'
+  # require File.dirname(__FILE__) + '/rlayout/text/text_layout_ruby'
 
   require File.dirname(__FILE__) + '/rlayout/style/style_service'
   require File.dirname(__FILE__) + '/rlayout/style/grid_layout'
@@ -111,9 +111,10 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/newspaper'
   require File.dirname(__FILE__) + '/rlayout/publication/photo_book'
   require File.dirname(__FILE__) + '/rlayout/publication/calendar'
+  require File.dirname(__FILE__) + '/rlayout/publication/marathon_tag'
   require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
-  require File.dirname(__FILE__) + '/rlayout/music/code_music'
-  require File.dirname(__FILE__) + '/rlayout/music/music_chapter'
+  # require File.dirname(__FILE__) + '/rlayout/music/code_music'
+  # require File.dirname(__FILE__) + '/rlayout/music/music_chapter'
   
 end
 

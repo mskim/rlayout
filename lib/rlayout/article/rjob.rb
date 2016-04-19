@@ -7,7 +7,7 @@
 # sample_script.rb
 # @output_path  = "/Users/name/some_path.pdf"
 # @jpg          = false
-# RLayout::Page.new(nil, ) do
+# RLayout::Page.new() do
 #  # puts some contrainer here.
 #
 # end
@@ -31,7 +31,6 @@ module RLayout
           return
         end
         $ProjectPath    = File.dirname(options[:script_path]) 
-        
         script = File.open(options[:script_path], 'r'){|f| f.read}
         unless @output_path
           @output_path = File.dirname(options[:script_path]) + "/output.pdf"
@@ -56,6 +55,7 @@ module RLayout
       output_options            = {}
       output_options[:jpg]      = @jpg if @jpg
       output_options[:preview]  = @preview if @preview
+      # puts "@output_path:#{@output_path}"
       created_object.save_pdf(@output_path, output_options) if created_object.respond_to?(:save_pdf)
       self
     end

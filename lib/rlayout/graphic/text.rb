@@ -7,8 +7,8 @@ module RLayout
 
     def init_text(options)
       #TODO hide instance variables into TextStruct
-      @text_fit_type = options.fetch(:text_fit_type,'keep_box_height')
       if options[:text_string] || options[:text_string_array]
+        @text_fit_type = options.fetch(:text_fit_type, 'keep_box_height')
         #TODO merge string if options[:text_string_array]
         if options[:text_string_array]
           joined_string   = options[:text_string_array].join(" ")
@@ -19,11 +19,13 @@ module RLayout
         @text_record[:color] = options[:text_color] if options[:text_color]
         @text_record[:size]  = options[:text_size] if options[:text_size]
         if RUBY_ENGINE == 'rubymotion'
+          options[:parent]  = self
           @text_layout_manager = TextLayoutManager.new(self, options)
         end
       elsif options[:text_record]
         @text_record  = options[:text_record]
         if RUBY_ENGINE == 'rubymotion'
+          options[:parent]  = self
           @text_layout_manager = TextLayoutManager.new(self, options)
         end
       end
@@ -40,7 +42,7 @@ module RLayout
     # TODO
     def set_text(new_string)
       if @text_layout_manager.nil?
-        @text_layout_manager = TextLayoutManager.new(self, :text_string=>new_string)
+        @text_layout_manager = TextLayoutManager.new(:parent=>self, :text_string=>new_string)
       else
         @text_layout_manager.att_string.set_string(new_string)
       end      
@@ -48,7 +50,7 @@ module RLayout
     
     def text_string=(new_string)
       if @text_layout_manager.nil?
-        @text_layout_manager = TextLayoutManager.new(self, :text_string=>new_string)
+        @text_layout_manager = TextLayoutManager.new(:parent=>self, :text_string=>new_string)
       # eles
       #   @text_layout_manager.att_string.set_string(new_string)
       end

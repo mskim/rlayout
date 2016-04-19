@@ -141,9 +141,9 @@ module RLayout
       @publication_info['sections'].each_with_index do |section_name, i|
         section_path = @issue_path + "/#{section_name}"
         if i== 0
-          magazine_section = MagazineSection.new(nil, :section_path=>section_path, :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i], :has_heading=>true)
+          magazine_section = MagazineSection.new(:section_path=>section_path, :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i], :has_heading=>true)
         else
-          magazine_section = MagazineSection.new(nil, :section_path=>section_path,  :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i])
+          magazine_section = MagazineSection.new(:section_path=>section_path,  :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i])
         end
         news_section.create_section
         news_section.update_section

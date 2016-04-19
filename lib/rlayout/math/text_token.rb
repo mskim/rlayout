@@ -43,7 +43,8 @@ module RLayout
     attr_accessor :text_string, :para_style, :font_object, :token_space_width
     def initialize(owner_graphic, options={})
       @owner_graphic  = owner_graphic
-      @text_container = RTextContainer.new(self, options)
+      options[:parent]= self
+      @text_container = RTextContainer.new(options)
       @tokens         = []
       @text_string    = options.fetch(:text_string, "")
       @para_style     = default_para_style

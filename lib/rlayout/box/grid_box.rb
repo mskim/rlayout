@@ -15,7 +15,7 @@ module RLayout
     attr_accessor :starting_item_index, :ending_item_index
     attr_accessor :next_link, :previous_link
     attr_accessor :draw_gutter_stroke, :over_flow
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       super
       @grid_h_gutter = options.fetch(:grid_h_gutter, 10)
       @grid_v_gutter = options.fetch(:grid_v_gutter, 10)

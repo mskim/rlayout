@@ -15,10 +15,12 @@ module RLayout
       @page_options[:object_box]    = true
       @page_options[:column_count]  = 4
       @page_options[:column_layout_space]  = 5
-      @page_options[:layout_space]    = 3
+      @page_options[:layout_space]  = 3
+      @page_options[:parent]        = self
+      
       @page_count.times do |i|
         @page_options[:page_number] = @starting_page_number + i
-        Page.new(self, @page_options)
+        Page.new(@page_options)
       end
       read_pdf_item
       layout_db_item
@@ -28,7 +30,7 @@ module RLayout
     def read_pdf_item
       @db_items = []
       Dir.glob("#{@source_path}/**.pdf") do |f|
-        @db_items << Image.new(nil, image_path: f)
+        @db_items << Image.new(image_path: f)
       end
     end
     
@@ -39,12 +41,12 @@ module RLayout
       # this is where we make heading as graphics or float
       # if @article_type == "magazine_article" || @article_type == "news_article"
       #   #make it a flost for magazine, news_article
-      #   @first_page.main_box.floats << Heading.new(nil, @heading)
+      #   @first_page.main_box.floats << Heading.new(@heading)
       #   @first_page.relayout!
       #   @first_page.main_box.relayout_floats!
       # else 
       #   # make head a as one of graphics
-      #   heading_object = Heading.new(nil, @heading)
+      #   heading_object = Heading.new(@heading)
       #   @first_page.graphics.unshift(heading_object)
       #   heading_object.parent_graphic = @first_page
       #   @first_page.relayout!
@@ -58,9 +60,10 @@ module RLayout
           @page_options[:header]      = true 
           @page_options[:object_box]  = true
           @page_options[:column_count]= 4
-          @page_options[:layout_space]  = 5
+          @page_options[:layout_space]= 5
           @page_options[:page_number] = @starting_page_number + page_index
-          Page.new(self, @page_options)          
+          @page_options[:parent]      = self
+          Page.new(@page_options)          
         end
         @pages[page_index].main_box.layout_items(@db_items)
       end

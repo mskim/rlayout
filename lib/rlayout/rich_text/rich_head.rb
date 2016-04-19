@@ -13,7 +13,7 @@ module RLayout
   }
   class DesignerText < Container
     attr_accessor :markup, :text, :layout
-    def initialize(parent_graphic, options={} &block)
+    def initialize(options={} &block)
       super
       
       

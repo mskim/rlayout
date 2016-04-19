@@ -5,7 +5,7 @@ require 'pry'
 describe 'news_article reading stoy' do
   before do
     @path     = "/Users/mskim/Dropbox/OurTownNews/2015-06-12/News/1.story.md"
-    @article  = NewsArticle.new(nil, :story_path=>@path)
+    @article  = NewsArticle.new(:story_path=>@path)
   end
     
   it 'should save svg' do
@@ -50,7 +50,7 @@ describe 'load stoy' do
         },
       :output_path => "/Users/mskim/Development/rails4/newsman/public/issues/1/1/2.pdf"
     }
-    @m = NewsArticle.new(nil, options) 
+    @m = NewsArticle.new(options) 
     @pdf_path ="/Users/mskim/Development/rails4/newsman/public/issues/1/1/2.pdf"
   end
 
@@ -67,7 +67,7 @@ describe 'load stoy' do
       :grid_width=>188.18, :grid_height=>158.67, 
       :story=>{:heading=>{:category=>"news", :title=>"Mr. Kim Welcome", :author=>"Min Soo Kim", :subtitle=>"This is some interesting article", :heading_columns=>2}, 
       :body_markdown=>"#### Some story is here. And we like it very much.\nThis is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area.\nThis is the body text and we need more of this to fill in the area.\n\n#### Second Heading\n\nThis is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area.\n\n#### This is some more head.\n\nThis is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area.\n\n#### some story is here.\n\nAnd we like it very much. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area.\n\n#### some story is here.\n\nAnd we like it very much. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area.\n\n#### some story is here. And we like it very much. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area.\n\n#### some story is here. And we like it very much. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area.\n\n#### some story is here. And we like it very much.\n\nThis is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area.\n\n#### some story is here. And we like it very much.\n\nThis is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area.\n\n#### some story is here. And we like it very much.\n\nThis is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area.\n\n#### some story is here. And we like it very much.\n\nThis is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area. This is the body text and we need more of this to fill in the area."}, :output_path=>"/Users/mskim/Development/rails4/newsman/public/issues/1/1/1.pdf"}
-    @m = NewsArticle.new(nil, options) 
+    @m = NewsArticle.new(options) 
     @pdf_path ="/Users/mskim/Development/rails4/newsman/public/issues/1/1/1.pdf"
   end
 
@@ -96,7 +96,7 @@ describe 'create NewsArticle with Image' do
       top_margin:       10, 
       bottom_margin:    10,
     }
-    @m = NewsArticle.new(nil, options)    
+    @m = NewsArticle.new(options)    
   end
   
   it 'should save' do    

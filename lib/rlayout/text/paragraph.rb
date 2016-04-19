@@ -27,7 +27,7 @@ MININUM_LINES_FOR_SPLIT = 2
 
   class Paragraph < Text
     attr_accessor  :para_data, :linked
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       text_options = nil
       @current_style = RLayout::StyleService.shared_style_service.current_style
       if options[:para_data]
@@ -107,7 +107,7 @@ MININUM_LINES_FOR_SPLIT = 2
       para_array = []
       number.times do 
         para_data = ParagraphModel.body(5)
-        para_array << Paragraph.new(nil, :para_data=>para_data)
+        para_array << Paragraph.new(:para_data=>para_data)
       end
       para_array
     end

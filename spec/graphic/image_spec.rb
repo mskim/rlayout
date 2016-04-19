@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 describe 'image_drawing test' do
   before do
     @image_path = "/Users/Shared/rlayout/image/1.jpg"
-    @image = Image.new(nil, :image_path=> @image_path)
+    @image = Image.new(:image_path=> @image_path)
     @path = "/Users/Shared/rlayout/output/image_drawing_test.pdf"
   end
   
@@ -24,7 +24,7 @@ end
 describe 'should update image as frame changes' do
   before do
     @image_path = "/Users/Shared/rlayout/image/1.jpg"
-    @image = Image.new(nil, :image_path=> @image_path, width: 300)
+    @image = Image.new(:image_path=> @image_path, width: 300)
     @path = "/Users/Shared/rlayout/output/image_fitting_test.pdf"
   end
   it 'should fit frame' do

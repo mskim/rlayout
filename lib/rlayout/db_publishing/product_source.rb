@@ -22,7 +22,7 @@ module RLayout
   class ProudctBox < Container
     attr_accessor :category, :name, :proudct_id, :price, :description, :image_path
     attr_accessor :template, :product_box
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       super
       @klass = "ProductBox"
       @template = options[:template]
@@ -40,7 +40,7 @@ module RLayout
     end
     
     def self.from_template(template, options={})
-      product_box = Container.new(nil, template)
+      product_box = Container.new(template)
       product_box.substibute_variables(options)
       product_box
     end
@@ -54,7 +54,7 @@ module RLayout
     end
     
     def self.sample
-      proudct = ProductBox.new(nil, line_width: 2, line_color: 'gray') do
+      proudct = ProductBox.new(line_width: 2, line_color: 'gray') do
         @company = text(text_string: ramdom_text, fill_color: random_color, line_with: 2, line_color: 'red')
         @phone   = text(text_string: ramdom_text, fill_color: random_color)
         @copy1   = text(text_string: ramdom_text, fill_color: random_color, line_with: 2, line_color: 'red')

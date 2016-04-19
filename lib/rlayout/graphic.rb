@@ -8,8 +8,8 @@ module RLayout
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
     attr_accessor :frame_image, :shadow, :rotation
 
-    def initialize(parent_graphic, options={}, &block)
-      @parent_graphic = parent_graphic
+    def initialize(options={}, &block)
+      @parent_graphic = options[:parent]
       # if @parent_graphic && @parent_graphic.class.kind_of?(Document)
       #   set_frame(@parent_graphic.layout_rect)
       if @parent_graphic && options[:parent_frame]
@@ -262,26 +262,26 @@ module RLayout
       samples
     end
 
-    def self.klass_of(parent_graphic, klass, options={})
+    def self.klass_of(klass, options={})
       case klass
       when "Rectanle"
-        Rectangle.new(parent_graphic, options)
+        Rectangle.new(options)
       when "Circle"
-        Circle.new(parent_graphic, options)
+        Circle.new(options)
       when "Ellipse"
-        Ellipse.new(parent_graphic, options)
+        Ellipse.new(options)
       when "RoundRect"
-        RoundRect.new(parent_graphic, options)
+        RoundRect.new(options)
       when "Text"
-        Text.new(parent_graphic, options)
+        Text.new(options)
       else
-        Rectangle.new(parent_graphic, options)
+        Rectangle.new(options)
       end
     end
 
 
-    def self.with(parent_graphic, style_name, &block)
-      Graphic.new(parent_graphic, Style.shared_style(style_name), &block)
+    def self.with(style_name, &block)
+      Graphic.new(Style.shared_style(style_name), &block)
     end
     
     def relayout!
@@ -551,7 +551,7 @@ module RLayout
   end
 
   class Text < Graphic
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       @klass = "Text"
       self
@@ -567,9 +567,9 @@ module RLayout
 
     def self.sample(options={})
       if options[:number] > 0
-        Text.new(nil, text_string: "This is a sample text string"*options[:number])
+        Text.new(text_string: "This is a sample text string"*options[:number])
       else
-        Text.new(nil, text_string: "This is a sample text string")
+        Text.new(text_string: "This is a sample text string")
       end
     end
   end
@@ -577,7 +577,7 @@ module RLayout
   class TableCell < Text
     # lookup table style and applied the table_cell style
     attr_accessor :h_span, :v_span, :text_direction
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       # options[:text_font] = "smGothicP-W10"
       super
       self
@@ -586,7 +586,7 @@ module RLayout
   end
   
   class Rectangle < Graphic
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       self
     end
@@ -594,7 +594,7 @@ module RLayout
 
   class Image < Graphic
     attr_accessor :caption , :bleed
-    def initialize(parent_graphic, options={})  
+    def initialize(options={})  
       if options[:grid_frame]
         @grid_frame = options[:grid_frame]
       end
@@ -621,7 +621,7 @@ module RLayout
   end
 
   class Circle < Graphic
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       update_shape
       self
@@ -634,7 +634,7 @@ module RLayout
   end
   
   class Ellipse < Graphic
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       update_shape
       self
@@ -647,7 +647,7 @@ module RLayout
   end
 
   class RoundRect < Graphic
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       update_shape
       self
@@ -663,7 +663,7 @@ module RLayout
   class Line < Graphic
     attr_accessor :line_type   
     #"horizontal_rule", vertical_rule, top_left_to_bottom_right, top_right_to_bottom_left
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       options[:thickness]     = 1 unless options[:thickness]
       options[:stroke_rule]   = "horizontal_rule" unless options[:stroke_rule]
       super

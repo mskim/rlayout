@@ -5,7 +5,7 @@ module RLayout
     attr_accessor :story_path, :paragraphs, :heading, :images
     attr_accessor :output_path, :images_dir, :has_heading, :story_frame_index
 
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       @output_path            = options[:output_path] if options[:output_path]
       style_service           = RLayout::StyleService.shared_style_service
       style_service.current_style = NEWS_STYLES
@@ -115,7 +115,7 @@ module RLayout
           para_options[:bottom_inset] = 10
           full_image_path = File.dirname(@story_path) + "/#{source}"
           para_options[:image_path]   = full_image_path
-          @paragraphs << Image.new(nil, para_options)
+          @paragraphs << Image.new(para_options)
           next
         end
         para_options[:text_string]    = para[:string]
@@ -123,7 +123,7 @@ module RLayout
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:article_type]   = "news_article"
         para_options[:layout_lines]   = false
-        @paragraphs << Paragraph.new(nil, para_options)
+        @paragraphs << Paragraph.new(para_options)
       end
     end
 
@@ -140,7 +140,8 @@ module RLayout
       @heading_options[:left_inset]     = 0
       @heading_options[:right_inset]    = 0
       @heading_options[:is_float]       = true
-      Heading.new(self, @heading_options)
+      @heading_options[:parent]         = self
+      Heading.new(@heading_options)
       relayout!
       create_column_grid_rects
       float_images(@images)

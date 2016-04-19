@@ -47,7 +47,7 @@ module RLayout
 	class ImageBox < Container
 	  attr_accessor :image_group_path, :images, :used_image_count, :h_gutter, :v_gutter
 	  attr_accessor :grid_base, :grid_frames, :profile, :image_style, :grid_width, :grid_height
-	  def initialize(parent_graphic, options={})
+	  def initialize(options={})
 	    super
 	    @image_pattern  = options.fetch(:image_pattern, nil)
 	    @profile        = options.fetch(:profile, nil)
@@ -63,14 +63,14 @@ module RLayout
 	  
 	  def layout_images!
 	    pattern = {}
-	    if @image_pattern
+      if @image_pattern
 	      pattern = @image_pattern
 	      @profile = @image_pattern.keys.first
 	      @used_image_count = @profile.split("/")[0].to_i
-	    elsif @profile && IMAGE_PATTERNS[@profile]
+      elsif @profile && IMAGE_PATTERNS[@profile]
 	      pattern = {@profile => IMAGE_PATTERNS[@profile]}
 	      @used_image_count = @profile.split("/")[0].to_i
-	    else
+      else
         @used_image_count = @images.length
         IMAGE_PATTERNS.each do |k,v|
           if k =~/^#{cell_count}/
@@ -103,7 +103,8 @@ module RLayout
         options[:rotation]= @grid_frames[i][4] if @grid_frames[i].length > 4
 	      options[:image_path] = image
 	      options.merge!(@image_style) if @image_style
-	      Image.new(self, options)
+	      options[:parent]  = self
+	      Image.new(options)
       end
 	  end
 	  

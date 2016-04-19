@@ -22,59 +22,71 @@ module RLayout
   class Container < Graphic
 
     def rect(options={})
-      Rectangle.new(self, options)
+      options[:parent] = self
+      Rectangle.new(options)
     end
     
     def rectangle(options={})
-      Rectangle.new(self, options)
+      options[:parent] = self
+      Rectangle.new(options)
     end
     
     def round_rect(options={})
-      RoundRect.new(self, options)
+      options[:parent] = self
+      RoundRect.new(options)
     end
     
     def text(string, options={})
+      options[:parent] = self
       options[:text_string] = string
-      Text.new(self, options)
+      Text.new(options)
     end
     
     def text_runs(strings_array, atts_array, options={})
+      options[:parent] = self
       options[:text_string_array] = strings_array
       options[:text_atts_array]   = atts_array
-      Text.new(self, options)
+      Text.new(options)
     end
     
     def text_train(text_string_array, atts_array, options={})
+      options[:parent] = self
       options[:text_string_array] = text_string_array.split(" ")
       options[:text_atts_array]   = atts_array
-      TextTrain.new(self, options)
+      TextTrain.new(options)
     end
     
     def char_train(string, atts_array)
       options = {}
+      options[:parent] = self
       options[:text_string_array] = string.split("")
       options[:text_atts_array]   = atts_array
-      TextTrain.new(self, options)
+      TextTrain.new(options)
     end
     
     def circle(options={})
-      Circle.new(self, options)
+      options[:parent] = self
+      Circle.new(options)
     end
 
     def image(options={})
-      Image.new(self, options)
+      options[:parent] = self
+      Image.new(options)
     end
     
     def line(options={})
-      Line.new(self, options)
+      options[:parent] = self
+      Line.new(options)
     end
     
     def container(options={}, &block)
-      Container.new(self, options, &block)
+      options[:parent] = self
+      Container.new(options, &block)
     end
 
     def bar(options={}, &block)
-      Bar.new(self, options, &block)
+      options[:parent] = self
+      Bar.new(options, &block)
     end
 
     def random_graphics(number)
@@ -82,23 +94,28 @@ module RLayout
     end
         
     def text_box(options={}, &block)
-      TextBox.new(self, options)
+      options[:parent] = self
+      TextBox.new(options)
     end
     
     def memo(options={})
-      MemoArea.new(self, options)
+      options[:parent] = self
+      MemoArea.new(options)
     end
     
     def heading(options={}, &block)
-      Heading.new(self, options, &block)
+      options[:parent] = self
+      Heading.new(options, &block)
     end
     
     def table(options={}, &block)
-      Table.new(self, options, &block)
+      options[:parent] = self
+      Table.new(options, &block)
     end
     
     def grid_box(options={}, &block)
-      GridBox.new(self, options, &block)
+      options[:parent] = self
+      GridBox.new(options, &block)
     end
     
     # place graphis as float using grid_frame
@@ -112,14 +129,6 @@ module RLayout
       end
     end
     
-    def stack(graphic, options={})
-
-    end
-
-    def stack_h(graphic, options={})
-
-    end
-
     def stack_v (graphic, options={})
       add_graphic(graphic)
     end
@@ -173,7 +182,8 @@ module RLayout
 
       if number.class == Fixnum
         number.times do
-          Container.new(self, options)
+          options[:parent] = self
+          Container.new(options)
         end
       elsif number.class == Array
         number.each do |attribute|

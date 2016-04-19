@@ -2,7 +2,7 @@ module RLayout
   
   class Toc < Container
     attr_accessor :column_count, :toc_text, :toc_text_path, :item_rows
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       @column_count = options.fetch(:column_count, 1)
       if options[:toc_text_path]
@@ -18,17 +18,17 @@ module RLayout
       rows = toc_text.split("\n")
       @item_rows = []
       rows.each do |row_text|
-        @item_rows << LeaderRow.new(nil, row_text:row_text)
+        @item_rows << LeaderRow.new(row_text:row_text)
       end
       self
     end  
     def layout_content!
       if @column_count > 1
         @item_rows.slice(@column_count) do |coulumn_group|
-          LeaderColumn.new(self, coulumn_group: coulumn_group)
+          LeaderColumn.new(:parent=>self, coulumn_group: coulumn_group)
         end
       else
-        LeaderColumn.new(self, coulumn_group: coulumn_group)
+        LeaderColumn.new(:parent=>self, coulumn_group: coulumn_group)
       end
       puts "items_per_columm:#{items_per_columm}"
     end    

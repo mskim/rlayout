@@ -4,7 +4,7 @@ describe 'text_string_array and text_atts_array' do
   before do
     @text_string_array  = ["This is a", "String"]
     @text_atts_array    = [{text_size:24, text_color: "red"}, {text_size:16, text_color: "black"} ]
-    @text               = Text.new(nil, text_string_array: @text_string_array, text_atts_array: @text_atts_array)
+    @text               = Text.new(text_string_array: @text_string_array, text_atts_array: @text_atts_array)
     
   end
   
@@ -26,7 +26,7 @@ describe 'text overflow' do
       width: 250,
       text_fit_type:  1
     }
-    @t = Text.new(nil, options)
+    @t = Text.new(options)
     @tl = @t.text_layout_manager
   end
   
@@ -63,7 +63,7 @@ describe 'dropcap' do
       drop_text_color: 'gray',
       width: 250
     }
-    @t = Text.new(nil, drop_cap_options)
+    @t = Text.new(drop_cap_options)
     @tl = TextLayoutManager.new(@t, drop_cap_options)
   end
   it 'shluld create TextLayoutManager' do
@@ -81,7 +81,7 @@ end
 # describe 'create TextLayoutManager' do
 #   before do
 #     # @att_string = {:fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>200, :text_alignment=>'justified', :text_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
-#     @g = Graphic.new(nil, proposed_height: 1000, text_string: "This is some sample string. And some more text is here.")
+#     @g = Graphic.new(proposed_height: 1000, text_string: "This is some sample string. And some more text is here.")
 #     @pdf_path = "/Users/Shared/rlayout/output/text_layout_manager_test.pdf"
 #   end
 #   
@@ -98,7 +98,7 @@ end
 # describe 'split TextLayoutManager' do
 #   before do
 #     # @att_string = {:fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>200, :text_alignment=>'justified', :text_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
-#     @g = Graphic.new(nil, proposed_height: 100, text_string: "This is some sample string. And some more overflowing text.")
+#     @g = Graphic.new(proposed_height: 100, text_string: "This is some sample string. And some more overflowing text.")
 #   end
 #     
 # 

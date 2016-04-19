@@ -52,7 +52,7 @@ module RLayout
     attr_accessor :type
     attr_accessor :position, :length, :x, :y, :width, :height, :string, :style
     attr_accessor :scale, :advancement, :origin # 
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       @line_framgment     = parent_graphic
       @position           = options.fetch(:position, 0)
       @length             = options.fetch(:position, 0.0)

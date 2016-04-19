@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'adjust frame with grid_frame' do
   before do
-    @p = Page.new(nil, grid: [3,3], :gutter=>10, :v_gutter=>5)
+    @p = Page.new(grid: [3,3], :gutter=>10, :v_gutter=>5)
     Graphic.new(@p, :grid_frame=>[0,0,3,1], :fill_color=>'green')
     Graphic.new(@p, :grid_frame=>[1,1,1,1], :fill_color=>'red')
     Graphic.new(@p, :grid_frame=>[2,2,1,1], :fill_color=>'blue')

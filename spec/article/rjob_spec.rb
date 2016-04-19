@@ -9,14 +9,14 @@ describe 'RJob with pgscript' do
     @jpg         = true
     RLayout::Document.new(pdf_path: "#{@pdf_path}") do
       page do
-        RLayout::Text.new(self, text_string: "some_text", text_size: 12, font: "smGothicP-W70")
+        RLayout::Text.new(parent: self, text_string: "some_text", text_size: 12, font: "smGothicP-W70")
       end
       page
     end
     EOF
     @d= eval(@my_text)
     
-    # @job = RJob.new(nil, pdf_path: @pdf_path, pgscript: my_text,  has_pgscript: true)
+    # @job = RJob.new(pdf_path: @pdf_path, pgscript: my_text,  has_pgscript: true)
   end
   
   it 'should create RJob' do

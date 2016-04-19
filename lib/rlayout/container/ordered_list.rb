@@ -6,7 +6,7 @@ module RLayout
   class ListItem < Container
     attr_accessor :bullet_type, :number_type, :level, :text
 
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       @bullet_type  = options.fetch(:bullet_type, "dot")
       @number_type  = options.fetch(:bullet_type, "alpha")
       @level        = options.fetch(:level, 0)

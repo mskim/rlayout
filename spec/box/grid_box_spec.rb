@@ -14,9 +14,9 @@ require File.dirname(__FILE__) + "/../spec_helper"
 #       @output_path = "#{@pdf_path}"
 #       @items = []
 #       20.times do 
-#         @items << RLayout::Image.new(nil, fill_color: "red")
+#         @items << RLayout::Image.new(fill_color: "red")
 #       end
-#       RLayout::GridBox.new(nil, width:500, height:600).layout_items(@items)
+#       RLayout::GridBox.new(width:500, height:600).layout_items(@items)
 #     EOF
 #     system "echo '#{script}' | /Applications/rjob.app/Contents/MacOS/rjob"
 #     assert File.exist?(@pdf_path) == true
@@ -28,9 +28,9 @@ require File.dirname(__FILE__) + "/../spec_helper"
 #       @output_path = "#{@pdf_path}"
 #       @items = []
 #       20.times do 
-#         @items << RLayout::Image.new(nil, image_path: "some_path", fill_color: "green")
+#         @items << RLayout::Image.new(image_path: "some_path", fill_color: "green")
 #       end
-#       RLayout::GridBox.new(nil, width:500, height:600).layout_items(@items)
+#       RLayout::GridBox.new(width:500, height:600).layout_items(@items)
 #     EOF
 #     system "echo '#{script}' | /Applications/rjob.app/Contents/MacOS/rjob"
 #     assert File.exist?(@pdf_path) == true
@@ -39,7 +39,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'layout_items with given grid_base' do
   before do
-    @gb = GridBox.new(nil, grid_base: [3,4], width:500, height:600)
+    @gb = GridBox.new(grid_base: [3,4], width:500, height:600)
     items = []
     20.times do 
       items << Image.new(nil)
@@ -55,7 +55,7 @@ end
 
 describe 'layout_items with given grid_column' do
   before do
-    @gb = GridBox.new(nil, given_grid_column: 3, width:500, height:600)
+    @gb = GridBox.new(given_grid_column: 3, width:500, height:600)
     items = []
     20.times do 
       items << Image.new(nil)
@@ -71,10 +71,10 @@ end
 
 describe 'layout_items with no grid_base' do
   before do
-    @gb = GridBox.new(nil, width:500, height:600)
+    @gb = GridBox.new(width:500, height:600)
     items = []
     20.times do 
-      items << Image.new(nil)
+      items << Image.new()
     end
     @gb.layout_items(items)
   end
@@ -86,7 +86,7 @@ end
 
 describe 'GridBox' do
   before do
-    @gb = GridBox.new(nil, )
+    @gb = GridBox.new()
   end
   
   it 'shuld create GridBox' do

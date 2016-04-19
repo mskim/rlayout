@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'create page with grid' do
   before do
-    @g = Container.new(nil, :show_grid=>true, :grid_base => [7,12], :gutter=>5, :width=>400, :height=>600, :left_margin=>50, :top_margin=>50, :right_margin=>50, :bottom_margin=>50)
+    @g = Container.new(:show_grid=>true, :grid_base => [7,12], :gutter=>5, :width=>400, :height=>600, :left_margin=>50, :top_margin=>50, :right_margin=>50, :bottom_margin=>50)
     @path = "/Users/Shared/rlayout/output/grid_test.pdf"
   end
   

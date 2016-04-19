@@ -37,7 +37,7 @@
 module RLayout
   class TabSeparatedText < Graphic
     attr_accessor :atts_array, :tab_separated_string, :att_string
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       
       self
@@ -48,7 +48,7 @@ module RLayout
   class RichParagraph < Container
     attr_accessor :breakable, :part # head, body, tail
     attr_accessor :markup, :para_string, :tokens, :line_height
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       @klass = "RichParagraph"
       @layout_expand = []
@@ -74,13 +74,13 @@ module RLayout
       @tokens = @para_string.split(" ").collect do |token_string|
         size  = font_object.string_size(token_string)
         @line_height   = @text_size*1.2 + @top_margin + @bottom_margin
-        TextToken.new(nil, :text_string=>token_string, :width=>size[0], :height=>@line_height, :layout_expand=>[], :font=>@font, :text_size=>@text_size) #, :line_width=>1, :line_color=>'green'
+        TextToken.new(:text_string=>token_string, :width=>size[0], :height=>@line_height, :layout_expand=>[], :font=>@font, :text_size=>@text_size) #, :line_width=>1, :line_color=>'green'
       end
     end
     
     # create a line 
     def add_line
-      t= TextLine.new(self, :x=>@left_inset, :y=>@line_y, :width=>(@width - @left_inset - @right_inset) , :height=>@line_height, :layout_space=>@token_space, :layout_expand=>[:width], :line_width=>1, :line_color=>'black' )
+      t= TextLine.new(parent: self, :x=>@left_inset, :y=>@line_y, :width=>(@width - @left_inset - @right_inset) , :height=>@line_height, :layout_space=>@token_space, :layout_expand=>[:width], :line_width=>1, :line_color=>'black' )
       @line_y += t.height
       t
     end
@@ -143,7 +143,7 @@ module RLayout
       list = []
       text = "M One two  three four five six seven eight nine ten eleven twelve thirteen."
       number.times do
-        list << RichParagraph.new(nil, :para_string=>text, :markup=>"p")
+        list << RichParagraph.new(:para_string=>text, :markup=>"p")
       end
       list
     end
@@ -152,7 +152,7 @@ module RLayout
   class TextLine < Container
     attr_accessor 
     
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       @klass = "TextLine"
       @top_margin = 2
@@ -196,7 +196,7 @@ module RLayout
     attr_accessor :font, :size, :rich_style, :horizontal
     attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
     
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       @attrs = options[:atts]
       
@@ -214,7 +214,7 @@ module RLayout
         
     # keep attributes that are diffrent from paragraph only
     attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       super      
       @klass = "TextToken"
       @layout_expand = []

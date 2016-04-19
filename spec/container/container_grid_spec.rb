@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'testing container creation' do
   before do
-    @con = Container.new(nil, :width=>600, :height=>800, :layout_space=>20) do
+    @con = Container.new(:width=>600, :height=>800, :layout_space=>20) do
       rect(:fill_color=>"red", :unit_length=>3)
       rect(:fill_color=>"yellow")
       circle(:fill_color=>"green")

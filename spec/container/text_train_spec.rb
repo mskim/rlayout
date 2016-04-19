@@ -10,7 +10,7 @@ describe 'create TextTrain' do
       {text_color: 'green'},
       {text_color: 'yellow'},
     ]
-    @tt = TextTrain.new(nil, text_string_array: text_string_array, text_atts_array: atts_array)
+    @tt = TextTrain.new(text_string_array: text_string_array, text_atts_array: atts_array)
     
   end
   it 'should create TextTrain' do

@@ -12,7 +12,7 @@ module RLayout
     attr_accessor :growing_direction # "top", "left"
     attr_accessor :from_bottom, :from_right  
     
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       @growing_direction = "top"
       
       self

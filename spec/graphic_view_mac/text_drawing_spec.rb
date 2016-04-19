@@ -2,7 +2,7 @@
 # 
 # describe 'text_drawing test' do
 #   before do
-#     @t = Text.new(nil, :text_string=> "This is a text", :text_alignment=>"center")
+#     @t = Text.new(:text_string=> "This is a text", :text_alignment=>"center")
 #     @path = "/Users/Shared/rlayout/output/text_drawing_test.pdf"
 #   end
 #   

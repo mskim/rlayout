@@ -11,10 +11,10 @@ class MenuMaker
   def layout_content!
     if @column_count > 1
       @item_rows.slice(@column_count) do |coulumn_group|
-        LeaderColumn.new(self, coulumn_group: coulumn_group)
+        LeaderColumn.new(:parent=>self, coulumn_group: coulumn_group)
       end
     else
-      LeaderColumn.new(self, coulumn_group: coulumn_group)
+      LeaderColumn.new(:parent=>self, coulumn_group: coulumn_group)
     end
     puts "items_per_columm:#{items_per_columm}"
   end

@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'create Graphic svg ' do
   before do
-    @g = Graphic.new(nil, :x=>200, :y=>400, :fill_color=>"blue")
+    @g = Graphic.new(:x=>200, :y=>400, :fill_color=>"blue")
     @svg_path = "/Users/Shared/rlayout/output/graphic_test.svg"
   end
   it 'should save svg' do
@@ -14,7 +14,7 @@ end
 
 describe 'create Circle svg ' do
   before do
-    @g = Circle.new(nil, :x=>400, :y=>400, :fill_color=>"red")
+    @g = Circle.new(:x=>400, :y=>400, :fill_color=>"red")
     @svg_path = "/Users/Shared/rlayout/output/circle_test.svg"
   end
   it 'should save svg' do
@@ -26,7 +26,7 @@ end
 
 describe 'create RoundRect svg ' do
   before do
-    @g = RoundRect.new(nil, :x=>400, :y=>400, :fill_color=>"yellow")
+    @g = RoundRect.new(:x=>400, :y=>400, :fill_color=>"yellow")
     @svg_path = "/Users/Shared/rlayout/output/round_rect_test.svg"
   end
   it 'should save svg' do
@@ -38,7 +38,7 @@ end
 
 describe 'create Ellipse svg ' do
   before do
-    @g = Ellipse.new(nil, :x=>500, :y=>200, :width=>500, :height=>200, :fill_color=>"gray")
+    @g = Ellipse.new(:x=>500, :y=>200, :width=>500, :height=>200, :fill_color=>"gray")
     @svg_path = "/Users/Shared/rlayout/output/ellipse_test.svg"
   end
   it 'should save svg' do
@@ -50,7 +50,7 @@ end
 
 describe 'create Line svg ' do
   before do
-    @g = Line.new(nil, :x=>20, :y=>30, :x2=>500, :y2=>200, :line_color=>"orange")
+    @g = Line.new(:x=>20, :y=>30, :x2=>500, :y2=>200, :line_color=>"orange")
     @svg_path = "/Users/Shared/rlayout/output/line_test.svg"
   end
   it 'should save svg' do

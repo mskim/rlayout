@@ -9,9 +9,9 @@ module RLayout
     attr_accessor :main_box, :heading_object, :header_object, :footer_object, :side_bar_object
     attr_accessor :fixtures, :document
 
-    def initialize(parent_graphic, options={}, &block)
-      @parent_graphic = parent_graphic
-      @document       = parent_graphic
+    def initialize(options={}, &block)
+      @parent_graphic = options[:parent] || options[:document]
+      @document       = @parent_graphic
       if @document
         options[:width]   = @document.width
         options[:height]  = @document.height        
@@ -79,15 +79,16 @@ module RLayout
       main_box_options[:layout_space] = options.fetch(:gutter, main_box_options[:layout_space])
       main_box_options[:heading_columns]= options.fetch(:heading_columns, main_box_options[:column_count])
       main_box_options[:grid_base]    = options.fetch(:grid_base,"3x4")
+      main_box_options[:parent] = self
       if options[:text_box_options]
         main_box_options.merge!(options[:text_box_options])
       end
       if options[:text_box]
-        @main_box = TextBox.new(self, main_box_options) 
+        @main_box = TextBox.new(main_box_options) 
       elsif options[:grid_box]
-        @main_box = GridBox.new(self, main_box_options)
+        @main_box = GridBox.new(main_box_options)
       elsif options[:composite_box]
-        @main_box = CompositeBox.new(self, main_box_options)
+        @main_box = CompositeBox.new(main_box_options)
       end
       
       if block
@@ -142,7 +143,8 @@ module RLayout
       options[:parent_frame]  = true # fit to page's layout_frame
       options[:grid_base]     = "3x3" unless options[:grid_base]
       options[:gutter]        = 10    unless options[:gutter]
-      @main_box=TextBox.new(self, options, &block)
+      options[:parent]        = self
+      @main_box=TextBox.new(options, &block)
     end
     
     def document
@@ -322,40 +324,42 @@ module RLayout
 
     ########### PageScritp Verbs #############
     def text_box(options={}, &block)
-      TextBox.new(self, options)
+      options[:parent] = self
+      TextBox.new(options)
     end
 
     def table(options={}, &block)
-      Table.new(self, options, &block)
+      options[:parent] = self
+      Table.new(options, &block)
     end
     
     def image_box(options={}, &block)
-      ImageBox.new(self, options, &block)
+      options[:parent] = self
+      ImageBox.new(options, &block)
     end
     
     def object_box(options={}, &block)
-      ObjectBox.new(self, options)
+      options[:parent] = self
+      ObjectBox.new(options)
     end
     
     def header(options={})
       #TODO
-      Header.new(self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
+      Header.new(:paernt=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
     end
 
     def footer(options={})
       #TODO
-      Footer.new(self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
-      # @footer_object = Footer.new(self, :text_string=>"This is header text", :is_fixture=>true)
+      Footer.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
     end
 
     def side_bar(options={})
-      # @side_bar_object = SideBar.new(self, :text_string=>"This is side_bar text", :is_fixture=>true)
-      SideBar.new(self, :text_string=>options[:text_string], :is_fixture=>true)
+      SideBar.new(:paernt=>self, :text_string=>options[:text_string], :is_fixture=>true)
     end
 
 
     def self.magazine_page(document)
-      Page.new(document, :header=>true, :footer=>true, :text_box=>true)
+      Page.new(:parent=>document, :header=>true, :footer=>true, :text_box=>true)
     end
   end
 

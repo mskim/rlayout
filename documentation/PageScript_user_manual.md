@@ -88,7 +88,7 @@ PageScript serves to merge three resources and output for multiple medium, print
 
 ```ruby
 
-Rectangle.new(nil, width:200, height:500, fill_color: 'red')
+Rectangle.new(width:200, height:500, fill_color: 'red')
 
 ```
 

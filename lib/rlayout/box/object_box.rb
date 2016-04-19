@@ -13,7 +13,7 @@
 module RLayout
 	class ObjectBox < ImageBox
 	  attr_accessor :cell_type, :data_path, :template_path
-	  def initialize(parent_graphic, options={})
+	  def initialize(options={})
 	    @image_group_path = options.fetch(:image_group_path, "#{$ProjectPath}/images")
 	    @template_path    = "#{$ProjectPath}/template"
 	    @data_path        = "#{$ProjectPath}/data"

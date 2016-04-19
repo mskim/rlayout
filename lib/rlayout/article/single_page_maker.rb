@@ -88,7 +88,7 @@ module RLayout
       @title      = @heading[:title] || "Untitled"
       if @heading !={}
         if @text_box.floats.length == 0
-          @text_box.floats << Heading.new(nil, @heading)
+          @text_box.floats << Heading.new(@heading)
         end
       elsif @text_box.has_heading?
         @text_box.get_heading.set_heading_content(@heading)
@@ -106,14 +106,14 @@ module RLayout
           para_options[:bottom_inset]   = 10
           full_image_path = File.dirname(@story_path) + "/#{source}"
           para_options[:image_path] = full_image_path
-          @paragraphs << Image.new(nil, para_options)
+          @paragraphs << Image.new(para_options)
           next
         end
         para_options[:text_string]    = para[:string]
         para_options[:article_type]   = "news_article"
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
-        @paragraphs << Paragraph.new(nil, para_options)
+        @paragraphs << Paragraph.new(para_options)
       end
     end
 

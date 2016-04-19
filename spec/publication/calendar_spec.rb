@@ -23,7 +23,7 @@ end
 __END__
 describe 'CalendarCell' do
   before do
-    @calCell  = CalendarCell.new(nil, :month=>'5', :day => '14')
+    @calCell  = CalendarCell.new(:month=>'5', :day => '14')
     @svg_path = File.dirname(__FILE__) + "/../output/calendar_cell_test.svg"
   end
   it 'should create CalendarCell' do
@@ -42,7 +42,7 @@ end
 
 describe "CalendarMonth" do
   before do
-    @month = CalendarMonth.new(nil, width: 400, height: 400, year: '2015', month: "5")
+    @month = CalendarMonth.new(width: 400, height: 400, year: '2015', month: "5")
     @svg_path = File.dirname(__FILE__) + "/../output/calendar_month_test.svg"
   end
   

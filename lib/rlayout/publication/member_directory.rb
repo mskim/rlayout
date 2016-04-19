@@ -13,7 +13,7 @@ module RLayout
   class MemberItem < RLayout::Container
 	  attr_accessor :image_path, :name, :spouse, :phone, :cell, :group #polaoid, film, 
 	  attr_accessor :container_object, :template, :template_erb, :template_erb_path
-	  def initialize(parent_graphic, options={}, &block)
+	  def initialize(options={}, &block)
 	    super
 	    @name       = options.fetch(:name, "Hong_Gil_Dong")
       if options[:image_path]

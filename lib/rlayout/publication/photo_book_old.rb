@@ -124,7 +124,7 @@ module RLayout
       while @image_files.length > 0 do
         left_image  = @image_files.shift
         right_image = @image_files.shift
-        sp          = PhotoSpread.new(self, path: @path, left: left_image, right: right_image, width: 1500, height: 600)
+        sp          = PhotoSpread.new(parent: self, path: @path, left: left_image, right: right_image, width: 1500, height: 600)
         pdf_path    = @path + "/page_#{spred_number}.pdf"
         puts "pdf_path:#{pdf_path}"
         sp.save_pdf(pdf_path)
@@ -136,7 +136,7 @@ module RLayout
   end
 
   class PageFoldingRect < Graphic
-    def initialized(parent_graphic, options={})
+    def initialized(options={})
       super
 
       self
@@ -161,8 +161,8 @@ module RLayout
   # @left_images folds images on the left side of spread
   # @right_images folds images on the right side of spread
 	class PhotoSpread < Page
-	  attr_accessor :parent_graphic, :middle_gutter, :template
-	  def initialize(parent_graphic, options={})
+	  attr_accessor :middle_gutter, :template
+	  def initialize(options={})
 	    super
 	    @klass = "PhotoSpread"
 	    @middle_x = @width/2
@@ -175,17 +175,17 @@ module RLayout
         # do multiple image layout
       else
         # Single image on left side
-        Image.new(self, image_path: @image_folder + "/#{@left_images}", x: -5, y: -5, width: @middle_x + 5, height: @height + 10)
+        Image.new(parent: self, image_path: @image_folder + "/#{@left_images}", x: -5, y: -5, width: @middle_x + 5, height: @height + 10)
       end
 
       if File.directory?(@image_folder + "/" + @left_image)
         #TODO multiple images in right page
         # Single image on left side
       else
-        Image.new(self, image_path: @image_folder + "/#{@right_images}", x: @middle_x, y: -5, width: @middle_x + 5, height: @height + 10)
+        Image.new(parent: self, image_path: @image_folder + "/#{@right_images}", x: @middle_x, y: -5, width: @middle_x + 5, height: @height + 10)
       end
 
-      PageFoldingRect.new(self, x: @middle_x - 10, y: -5, width: 20, height: @height + 10)
+      PageFoldingRect.new(parent: self, x: @middle_x - 10, y: -5, width: 20, height: @height + 10)
 	    self
 	  end
 	end

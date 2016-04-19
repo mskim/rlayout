@@ -8,7 +8,7 @@ module RLayout
 	class PhotoItem < Container
 	  attr_accessor :picture_frame #polaoid, film, 
 	  
-	  def initialize(parent_graphic, options={})
+	  def initialize(options={})
 	    super
 	    
 	    

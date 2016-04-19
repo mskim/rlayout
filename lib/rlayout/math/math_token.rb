@@ -13,14 +13,14 @@ module RLayout
   end
 
   class InLineMath < Container
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       
     end
     
   end
   
   class MathToken < Container
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       @text_string        = options.fetch(:text_string, "")
       @type               = options.fetch(:type, "math")
       parse_text_string
@@ -53,7 +53,7 @@ module RLayout
   #                
   class MathToken < Container
     attr_accessor :math_hash, :font_category, :font, :size, :style
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       @math_hash = options[:math_hash]
       if @math_hash.class == 'String'
@@ -102,7 +102,7 @@ module RLayout
   end
 
   class Sqrt < MathToken
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       @height_level   = options.fetch(:height_level, 0)
       @font_category  = :div_cap
@@ -113,7 +113,7 @@ module RLayout
 
   class Over < MathToken
     attr_accessor :nominator, :denominator
-    def initialize(parent_graphic, options={})      
+    def initialize(options={})      
       super
       @font_style     = PLAIN_FONTS
       @nominator    = options[:over][0]

@@ -60,12 +60,13 @@ module RLayout
       options[:text_box]  = true
       options[:column_count]  = @column_count
       options[:heading_columns] = @heading_columns unless options[:heading_columns]
+      options[:parent]    = self
       if @story_path = options[:story_path]
         read_story
       end
       @page_count.times do |i|  # a page is created by Document as default
         options[:page_number] = @starting_page_number + i
-        Page.new(self, options)        
+        Page.new(options)        
       end
       return unless @heading
       layout_story
@@ -98,14 +99,14 @@ module RLayout
           para_options[:bottom_inset]   = 10
           full_image_path = File.dirname(@story_path) + "/#{source}"
           para_options[:image_path] = full_image_path
-          @paragraphs << Image.new(nil, para_options)
+          @paragraphs << Image.new(para_options)
           next
         end
         para_options[:text_string]    = para[:string]
         para_options[:article_type]   = @article_type
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
-        @paragraphs << Paragraph.new(nil, para_options)
+        @paragraphs << Paragraph.new(para_options)
       end
     end
 
@@ -125,11 +126,11 @@ module RLayout
         @heading[:left_inset]   = 0
         @heading[:right_inset]  = 0
         @heading[:article_type]  = "magazine_article"
-        @first_page.main_box.floats << Heading.new(nil, @heading)
+        @first_page.main_box.floats << Heading.new(@heading)
         # @first_page.main_box.relayout_floats!
       else # chapter
         # insert heading at the top of first page
-        heading_object = Heading.new(nil, @heading)
+        heading_object = Heading.new(@heading)
         @first_page.graphics.unshift(heading_object)
         heading_object.parent_graphic = @first_page
       end
@@ -147,7 +148,8 @@ module RLayout
           options[:text_box]    = true
           options[:page_number] = @starting_page_number + page_index
           options[:column_count]= @column_count
-          p=Page.new(self, options)
+          options[:parent]      = self
+          p=Page.new(options)
           p.relayout!
           p.main_box.create_column_grid_rects
         end

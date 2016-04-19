@@ -185,14 +185,14 @@ module RLayout
       blocks_array.each do |lines_block|
         if lines_block =~/t:/   # this is for reading text
           lines_block_text = lines_block.sub("t: ","")
-          item_array << Paragraph.new(nil, markup: "body", text_string: lines_block_text, stroke_width: 1)
+          item_array << Paragraph.new(markup: "body", text_string: lines_block_text, stroke_width: 1)
         else
           yaml = YAML::load(lines_block)
           q    = yaml['q']
           yaml['q'] = "#{q_index+1}. " + q if q
           result = QuizItemMaker.new(yaml)
           item_array << result.quiz_item
-          @answer_item << Paragraph.new(nil, markup: "p", text_string: "#{q_index + 1}). #{result.answer_hash[:ans].to_s}   \r\nExplanation: \r\n#{result.answer_hash[:exp]}")
+          @answer_item << Paragraph.new(markup: "p", text_string: "#{q_index + 1}). #{result.answer_hash[:ans].to_s}   \r\nExplanation: \r\n#{result.answer_hash[:exp]}")
           q_index += 1
         end
       end
@@ -396,7 +396,7 @@ module RLayout
       item_options[:row1] = {row_data: [@choice_1, @choice_2], cell_atts: $quiz_item_style[:choice_style]}
       item_options[:row2] = {row_data: [@choice_3, @choice_4], cell_atts: $quiz_item_style[:choice_style]}
       item_options[:layout_expand] = [:width]
-      @quiz_item  = QuizItem.new(nil, item_options)
+      @quiz_item  = QuizItem.new(item_options)
       @answer_hash = {}
       @answer_hash[:ans]  = @ans
       @answer_hash[:exp]  = @exp
@@ -413,7 +413,7 @@ module RLayout
   class QuizItem < Container
     attr_accessor :q_object, :row1_object, :row2_object
     attr_accessor :img_object, :data, :processed
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       @data           = options
       @layout_space   = 2
       @layout_expand  = options.fetch(:layout_expand,[:width])
@@ -441,7 +441,8 @@ module RLayout
         row_indent            = $quiz_item_style[:q_style][:text_head_indent] || 20
         @data[:row1][:width]  = @width - row_indent - @left_margin - @right_margin
         @data[:row1][:left_margin] = row_indent
-        @row1_object          = TableRow.new(self, @data[:row1])
+        @data[:parent]        = self
+        @row1_object          = TableRow.new(@data[:row1])
         @row1_object.relayout!
       end
       
@@ -449,7 +450,8 @@ module RLayout
         row_indent            = $quiz_item_style[:q_style][:text_head_indent] || 20
         @data[:row2][:width]  = @width - row_indent - @left_margin - @right_margin
         @data[:row2][:left_margin] = row_indent
-        @row2_object          = TableRow.new(self, @data[:row2])
+        @data[:parent]        = self
+        @row2_object          = TableRow.new(@data[:row2])
         @row1_object.relayout!        
       end
             

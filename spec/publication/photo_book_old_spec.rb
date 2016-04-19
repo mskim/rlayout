@@ -37,7 +37,7 @@ describe 'PhotoSpread' do
       left: @left, 
       right: @right,
     }    
-    @ps = PhotoSpread.new(nil, options)
+    @ps = PhotoSpread.new(options)
     @pdf_path = "/Users/mskim/Development/photo_layout/photos/spread.pdf"
   end
   

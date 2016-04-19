@@ -3,7 +3,7 @@
 # 
 # describe 'create ParagraphJ' do
 #   before do
-#     @pj       = ParagraphJ.new(nil, text_string: "")
+#     @pj       = ParagraphJ.new(text_string: "")
 #     @pdf_path = "/Users/Shared/rlayout/output/paragraph_japanese.pdf"
 #   end
 #   

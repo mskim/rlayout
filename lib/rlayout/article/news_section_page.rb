@@ -6,9 +6,8 @@ module RLayout
     attr_accessor :has_heading, :heading_info, :paper_size
     attr_accessor :story_frames, :grid_key, :grid_width, :grid_height, :number_of_stories
     
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       super
-      @parent_graphic = parent_graphic
       @section_path   = options[:section_path] if options[:section_path]
       @output_path    = @section_path + "/section.pdf"
       @output_path    = options[:output_path]   if options[:output_path]  
@@ -101,14 +100,15 @@ module RLayout
       config          = File.open(config_path, 'r'){|f| f.read}
       section_options = YAML::load(config)
       section_options.merge!(options)
-      NewspaperSectionPage.new(nil, section_options)
+      NewspaperSectionPage.new(section_options)
     end
     
     def merge_article_pdf(options={})
       @output_path = options[:output_path] if options[:output_path]
       #TODO update page fixtures
       make_articles_info.each_with_index do |info, i|
-	      Image.new(self, info)
+        info[:parent] = self
+	      Image.new(info)
 	    end
       if @output_path
         save_pdf(@output_path, options)

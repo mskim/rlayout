@@ -23,7 +23,7 @@ module RLayout
   class ImageLayout < Container
     attr_accessor :profile, :grid_base, :grid_cells
     
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       @profile = options[:profile]
       

@@ -47,7 +47,7 @@
 
 SAMPLE_ARTICLE_LATOUT = <<-EOF
 
-RLayout::NewsArticleBox.new(nil, <%= @story_options %>) do
+RLayout::NewsArticleBox.new(<%= @story_options %>) do
   heading
 <%= @image_text %>
 #  float_image(:local_image=>"1.jpg", :grid_frame=>[0,0,1,1])
@@ -180,9 +180,9 @@ module RLayout
         output_path = section_path + "/section.pdf"
         if i== 0
           # put newspaper heading for front page
-          news_section = NewspaperSection.new(self, :section_path=>section_path, :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i], :has_heading=>true)
+          news_section = NewspaperSection.new(:parent=>self, :section_path=>section_path, :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i], :has_heading=>true)
         else
-          news_section = NewspaperSection.new(self, :section_path=>section_path,  :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i])
+          news_section = NewspaperSection.new(:parent=>self, :section_path=>section_path,  :section_name=>section_name, :output_path=> output_path, :number_of_stories=>@publication_info['number_of_stories'][i])
         end
         news_section.update_section
       end
@@ -422,7 +422,8 @@ module RLayout
       @output_path = options[:output_path] if options[:output_path]
       #TODO update page fixtures
       @articles_info.each_with_index do |info, i|
-	      Image.new(self, info)
+        info[:parent] = self
+	      Image.new(info)
 	    end
 	          
       if @output_path

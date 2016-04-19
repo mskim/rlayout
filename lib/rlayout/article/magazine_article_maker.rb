@@ -87,7 +87,7 @@ module RLayout
         @document.pages[0].get_heading.set_heading_content(@heading)
         @document.pages[0].relayout!
       elsif @document.pages[0].main_box.floats.length == 0
-        @document.pages[0].main_box.floats << Heading.new(nil, @heading)
+        @document.pages[0].main_box.floats << Heading.new(@heading)
       elsif @document.pages[0].main_box.has_heading?
         @document.pages[0].main_box.get_heading.set_heading_content(@heading)
       end
@@ -103,7 +103,7 @@ module RLayout
           para_options[:bottom_margin]  = 10
           para_options[:bottom_inset]   = 10
           para_options[:image_path] = @images_dir + "/#{source}"
-          @paragraphs << Image.new(nil, para_options)
+          @paragraphs << Image.new(para_options)
           next
         elsif para[:markup] == 'image'
           source = para[:local_image]
@@ -111,21 +111,21 @@ module RLayout
           para_options[:bottom_margin]  = 10
           para_options[:bottom_inset]   = 10
           para_options[:image_path] = @images_dir + "/#{source}"
-          @paragraphs << Image.new(nil, para_options)
+          @paragraphs << Image.new(para_options)
           next
         elsif para[:markup] == 'table'
           para[:layout_expand]  = [:width]
           if para[:csv_path]
             para[:csv_path] = @tables_dir + "/#{para[:csv_path]}"
           end
-          @paragraphs << Table.new(nil, para)
+          @paragraphs << Table.new(para)
           next
         end
         para_options[:text_string]    = para[:string]
         para_options[:article_type]   = @article_type
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
-        @paragraphs << Paragraph.new(nil, para_options)
+        @paragraphs << Paragraph.new(para_options)
       end
     end
 

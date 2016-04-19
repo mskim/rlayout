@@ -16,7 +16,7 @@ module RLayout
     attr_accessor :grid_rects, :body_line_height
     attr_accessor :complex_rect, :align_body_text, :show_grid_rects
 
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       super
       @klass = "TextColumn"
       @show_grid_rects = options[:show_grid_rects] || true

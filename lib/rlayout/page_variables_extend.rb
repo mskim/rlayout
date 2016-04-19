@@ -28,7 +28,7 @@ module RLayout
       if options[:for_variable_document]
         return template
       end
-      page=Page.new(nil, template)      
+      page=Page.new(template)      
       if options[:output_path]
         page.save_pdf(options[:output_path])
       end

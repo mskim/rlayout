@@ -6,7 +6,7 @@ describe 'draw rotation' do
     
     @page = <<-EOF 
     @output_path = "/Users/Shared/rlayout/output/graphic/shadow_sample.pdf"
-    p = RLayout::Page.new(nil, layout_space: 5) do
+    p = RLayout::Page.new(layout_space: 5) do
       rectangle(fill_color: "red", layout_length: 2)
       rectangle(fill_color: "yellow")
       rectangle(fill_color: "blue")
@@ -47,7 +47,7 @@ end
 
 describe 'create Graphic ' do
   before do
-    @g = Graphic.new(nil, :fill_color=>"blue")
+    @g = Graphic.new(:fill_color=>"blue")
   end
   it 'should create Graphic' do
     assert @g.class == Rectangle
@@ -77,7 +77,7 @@ end
 
 describe 'LinearFill ' do
   before do
-    @g = Graphic.new(nil, :fill_type=>'gradiation', :fill_color=>"blue")
+    @g = Graphic.new(:fill_type=>'gradiation', :fill_color=>"blue")
   end
   it 'should create LinearFill' do
     assert @g.fill.class == LinearGradient
@@ -86,7 +86,7 @@ end
 
 describe 'RadialFill ' do
   before do
-    @g = Graphic.new(nil, :starting_color=>"blue", :ending_color=>'red', :fill_type=>"radial")
+    @g = Graphic.new(:starting_color=>"blue", :ending_color=>'red', :fill_type=>"radial")
   end
   it 'should create LinearFill' do
     assert @g.fill.class == RadialGradient
@@ -96,7 +96,7 @@ end
 
 describe 'create Circle' do
   before do
-    @c = Circle.new(nil, :width=>200, :height=>200)
+    @c = Circle.new(:width=>200, :height=>200)
   end
   it 'should create Circle' do
     assert @c.class == Circle
@@ -121,7 +121,7 @@ end
 
 describe 'create Ellipse' do
   before do
-    @c = Ellipse.new(nil, :width=>100, :height=>200, :fill_color=>"orange")
+    @c = Ellipse.new(:width=>100, :height=>200, :fill_color=>"orange")
   end
   it 'should create Ellipse' do
     assert @c.class == Ellipse
@@ -157,7 +157,7 @@ end
 
 describe 'create RoundRect' do
   before do
-    @c = RoundRect.new(nil, :width=>100, :height=>200)
+    @c = RoundRect.new(:width=>100, :height=>200)
   end
   it 'should create RoundRect' do
     assert @c.class == RoundRect
@@ -181,7 +181,7 @@ end
 
 describe 'create Image' do
   before do
-    @c = Image.new(nil, :image_path=> "my_image_path.jpg", :width=>100, :height=>200)
+    @c = Image.new(:image_path=> "my_image_path.jpg", :width=>100, :height=>200)
   end
   it 'should create Image' do
     assert @c.klass       == "Image"
@@ -206,7 +206,7 @@ end
 
 describe 'create Text' do
   before do
-    @c = Text.new(nil, :text_string=> "This is my text string.", :width=>100, :height=>200)
+    @c = Text.new(:text_string=> "This is my text string.", :width=>100, :height=>200)
   end
   it 'should create Text' do
     assert @c.klass       == "Text"
@@ -262,7 +262,7 @@ describe ' Graphic from Hash ' do
         {:klass => "Rectangle", :fill_color=> 'green'},
         ]
     }
-    @t = Container.new(nil, h)
+    @t = Container.new(h)
   end
     
   it 'should save Rectangle from hash' do
@@ -275,7 +275,7 @@ end
 
 describe 'testing Text ' do
   before do
-    @t = Text.new(nil, width: 400,  text_string: "This is text string and I like it very much. Wouldn't you? "*4, text_size: 24, text_alignment: 'right')
+    @t = Text.new(width: 400,  text_string: "This is text string and I like it very much. Wouldn't you? "*4, text_size: 24, text_alignment: 'right')
   end
   
   it 'should create heading' do

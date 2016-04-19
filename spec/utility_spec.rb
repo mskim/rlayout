@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/spec_helper"
 
 describe 'convert_to_point' do
   before do
-    @g= Graphic.new(nil, x: '10cm', y: "2mm", width: '10cm', height: '20cm')
+    @g= Graphic.new(x: '10cm', y: "2mm", width: '10cm', height: '20cm')
   end
   
   it 'should convert unit to point' do

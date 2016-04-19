@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/spec_helper"
 
 describe 'test profile' do
   before do
-    @g5 = Container.new(nil, :tag=> 'g2', :layout_direction=>'horizontal')
+    @g5 = Container.new(:tag=> 'g2', :layout_direction=>'horizontal')
       RoundRect.new(@g5, :tag => "RoundRect")
       Circle.new(@g5, :tag => "Circle")
       RoundRect.new(@g5, :tag => "RoundRect2")
@@ -18,7 +18,7 @@ end
 
 describe 'testing container with graphics' do
   before do
-    @container = Container.new(nil, :x=>200, :y=>50, :width=>300, :height=>500)
+    @container = Container.new(:x=>200, :y=>50, :width=>300, :height=>500)
     @g5 = Container.new(@container, :tag=> 'g2', :layout_direction=>'horizontal')
       RoundRect.new(@g5, :fill_color=> 'yellow', :thickness=> 5)
       Circle.new(@g5, :fill_color=> 'lightGray', :thickness=> 5)
@@ -40,7 +40,7 @@ end
 
 describe 'testing container with line' do
   before do
-    @container = Container.new(nil, :x=>200, :y=>50, :width=>300, :height=>500)
+    @container = Container.new(:x=>200, :y=>50, :width=>300, :height=>500)
     @g1 = Line.new(@container, :line_color=> 'red', :line_width=> 20)
     @g2 = Line.new(@container, :line_color=> 'yellow', :line_width=> 10)
     @g3 = Line.new(@container, :line_color=> 'black', :line_width=> 5)

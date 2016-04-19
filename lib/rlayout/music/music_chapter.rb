@@ -24,7 +24,8 @@ module RLayout
       @page_options[:layout_space]  = 10
       @page_count.times do |i|
         @page_options[:page_number] = @starting_page_number + i
-        Page.new(self, @page_options)
+        @page_options[:parent]      = self
+        Page.new(@page_options)
       end
       read_image_item
       layout_db_item(options={})
@@ -35,7 +36,7 @@ module RLayout
     def read_image_item
       @db_items = []
       Dir.glob("#{@source_path}/*{.pdf,.jpg}") do |f|
-        @db_items << Image.new(nil, image_path: f, width: 300, height: 50)
+        @db_items << Image.new(image_path: f, width: 300, height: 50)
       end
     end
     
@@ -57,7 +58,8 @@ module RLayout
           @page_options[:column_count]= 4
           @page_options[:layout_space]  = 5
           @page_options[:page_number] = @starting_page_number + page_index
-          Page.new(self, @page_options)          
+          @page_options[:parent]      = self
+          Page.new(@page_options)          
         end
         @pages[page_index].main_box.layout_items(@db_items, options)
       end
@@ -100,7 +102,7 @@ module RLayout
   end
   
   # class MusicHeader < Header
-  #   def initialize(parent_graphic, options={}, &block)
+  #   def initialize(options={}, &block)
   #     super
   #     
   #     

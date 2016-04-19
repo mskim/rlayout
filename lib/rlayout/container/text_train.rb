@@ -17,7 +17,8 @@ module RLayout
           #TODO make it roll, not 0
           text_options.merge!(@text_atts_array[0])
         end
-        Text.new(self, text_options)
+        text_options[:parent] = self
+        Text.new(text_options)
       end
       self
     end

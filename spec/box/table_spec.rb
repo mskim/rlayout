@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'create page with table' do
   before do
-    @page = RLayout::Page.new(nil) do
+    @page = RLayout::Page.new() do
       text("Table Sample", fill_color: "yellow", text_size: 16)
       col_width = [2,1,1,1,1.5,1.5,3]
       t1 = table(column_width_array: col_width, csv_path: "/Users/mskim/flier/category_demo.csv", category_level: 1, layout_length: 7, table_style_path: "/Users/mskim/flier/table_style.rb")
@@ -37,7 +37,7 @@ describe 'table with category color' do
     @csv_path = "/Users/mskim/flier/category_demo.csv"
     @table_style_path = "/Users/mskim/flier/table_style.rb"
     @csv_data = File.open(@csv_path, 'r'){|f| f.read}
-    @tbl      = Table.new(nil, width: 595.28, height: 841.89, category_level: 1, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
+    @tbl      = Table.new(width: 595.28, height: 841.89, category_level: 1, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
   end
   
   it 'should create category table cells' do
@@ -50,7 +50,7 @@ describe 'table column_width_array' do
     @csv_path = "/Users/mskim/flier/category_demo.csv"
     @table_style_path = "/Users/mskim/flier/table_style.rb"
     @csv_data = File.open(@csv_path, 'r'){|f| f.read}
-    @tbl      = Table.new(nil, width: 595.28, height: 841.89, category_level: 0, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
+    @tbl      = Table.new(width: 595.28, height: 841.89, category_level: 0, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
   end
   
   it 'should create table_width_table' do
@@ -65,7 +65,7 @@ describe 'table style' do
     @csv_path = "/Users/mskim/flier/category_demo.csv"
     @table_style_path = "/Users/mskim/flier/table_style.rb"
     @csv_data = File.open(@csv_path, 'r'){|f| f.read}
-    @tbl      = Table.new(nil, width: 595.28, height: 841.89, category_level: 1, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
+    @tbl      = Table.new(width: 595.28, height: 841.89, category_level: 1, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
   end
   
   it 'should have table with csv_data' do
@@ -97,7 +97,7 @@ EOF
 describe 'table style' do
   before do
     @table_style_path = "/Users/mskim/flier/table_style.rb"
-    @tbl      = Table.new(nil, csv_data: csv, table_style_path: @table_style_path, category_level: 1 )
+    @tbl      = Table.new(csv_data: csv, table_style_path: @table_style_path, category_level: 1 )
   end
   
   it 'should have cell with stroke_sides' do
@@ -126,7 +126,7 @@ describe 'table with csv' do
   before do
     @csv_path = "/Users/mskim/idcard/CardDemo.csv"
     @csv_data = File.open(@csv_path, 'r'){|f| f.read}
-    @tbl      = Table.new(nil, csv_data: @csv_data, head_row: true)
+    @tbl      = Table.new(csv_data: @csv_data, head_row: true)
   end
   
   it 'should create table with csv_data' do

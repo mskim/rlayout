@@ -8,7 +8,7 @@ module RLayout
   class NewsArticleBox < TextBox
     attr_accessor :story_path
 
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       if options[:grid_frame]
         if options[:grid_frame].class == String
           options[:grid_frame] = eval(options[:grid_frame])
@@ -59,7 +59,7 @@ module RLayout
           para_options[:bottom_inset] = 10
           full_image_path = File.dirname(@story_path) + "/#{source}"
           para_options[:image_path]   = full_image_path
-          @paragraphs << Image.new(nil, para_options)
+          @paragraphs << Image.new(para_options)
           next
         end
         para_options[:text_string]    = para[:string]
@@ -67,7 +67,7 @@ module RLayout
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:article_type]   = "news_article"
         para_options[:layout_lines]   = false
-        @paragraphs << Paragraph.new(nil, para_options)
+        @paragraphs << Paragraph.new(para_options)
       end
     end
 

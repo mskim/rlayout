@@ -7,7 +7,7 @@ module RLayout
 	  attr_accessor :category, :picture
 	  attr_accessor :name, :cell, :address, :description
 	  
-	  def initialize(parent_graphic, options={})
+	  def initialize(options={})
 	    super
 	    
 	    

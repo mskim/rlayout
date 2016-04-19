@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + "/spec_helper"
 
 # describe 'variable page' do
 #   before do
-#     page = Page.new(nil, width: 400, height: 200)    
+#     page = Page.new(width: 400, height: 200)    
 #     Text.new(page, tag: "name")
 #     Text.new(page, tag: "phone")
 #     Text.new(page, tag: "email")
@@ -26,7 +26,7 @@ require File.dirname(__FILE__) + "/spec_helper"
 
 describe 'batch_variable_pages' do
   before do
-    page = Page.new(nil, width: 400, height: 200)
+    page = Page.new(width: 400, height: 200)
     Image.new(page, tag: "QRCode", image_path: "name")
     Text.new(page, tag: "name")
     Text.new(page, tag: "phone")

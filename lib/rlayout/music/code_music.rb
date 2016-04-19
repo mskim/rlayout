@@ -14,10 +14,7 @@ module RLayout
     end
     
     def layout_pages
-      measues_count = @music_hash[:measures].length
-      
-      
-      
+      @music_hash[:measures].length
     end
     
     def save_piano_keys_scripts
@@ -30,7 +27,7 @@ module RLayout
         puts "m[:lyric]:#{m[:lyric]}"
         piano_code_script = <<-EOF
   @output_path = '#{outputs_path}'
-  RLayout::PianoFinger.new(nil, number: '#{m[:number]}', cord: '#{m[:cord]}', lyric: '#{m[:lyric]}', project_path: '#{@project_path}')
+  RLayout::PianoFinger.new(number: '#{m[:number]}', cord: '#{m[:cord]}', lyric: '#{m[:lyric]}', project_path: '#{@project_path}')
 EOF
         File.open(script_path, 'w'){|f| f.write piano_code_script}
       end
@@ -50,15 +47,15 @@ EOF
   
   class CodeMusicPage < Page
     attr_accessor :heading, :code_layout, :sheet_image, :sheet_layout, :cord_layout
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       @sheet_image = options[:sheet_image]
       @grid_images = options[:grid_images]
       if @sheet_image
-        @cord_layout = GricBox.new(self, grid_images: @grid_images, grid_base: [3, 4], layout_length: 2)
-        @sheet_layout = Image.new(self, image_path: @sheet_image)
+        @cord_layout = GricBox.new(:parent=>self, grid_images: @grid_images, grid_base: [3, 4], layout_length: 2)
+        @sheet_layout = Image.new(:parent=>self, image_path: @sheet_image)
       else
-        @cord_layout = GricBox.new(self, grid_images: @grid_images, grid_base: [3, 8], layout_length: 2)
+        @cord_layout = GricBox.new(:parent=>self, grid_images: @grid_images, grid_base: [3, 8], layout_length: 2)
       end
       relayout!
       self
@@ -67,7 +64,7 @@ EOF
   
   class PianoFinger < Container
     attr_accessor :number, :project_path, :piano_codes_path, :image_path, :code, :lyric, :code_image, :lyric_layout, :output_path
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       options[:width] = 300 unless options[:width]
       super
       puts "options:#{options}"
@@ -82,8 +79,8 @@ EOF
       end
       puts "@lyric:#{@lyric}"
       puts "@image_path:#{@image_path}"
-      @lyric_layout     = Text.new(self, text_string: @lyric, text_size: 12)
-      @code_image       = Image.new(self, image_path: @image_path, layout_length: 4)
+      @lyric_layout     = Text.new(:parent=>self, text_string: @lyric, text_size: 12)
+      @code_image       = Image.new(:parent=>self, image_path: @image_path, layout_length: 4)
       relayout!
       self
     end

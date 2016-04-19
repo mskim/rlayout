@@ -99,17 +99,17 @@ module RLayout
         para_options[:layout_expand]  = [:width]
         if para[:markup] == 'img'
           para_options.merge!(eval(para[:string]))
-          @paragraphs << Image.new(nil, para_options)
+          @paragraphs << Image.new(para_options)
           next
         elsif para[:markup] == 'table'
           #TODO
-          @paragraphs << Table.new(nil, para)
+          @paragraphs << Table.new(para)
         end
         para_options[:text_string]    = para[:string]
         para_options[:article_type]   = @article_type
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
-        @paragraphs << Paragraph.new(nil, para_options)
+        @paragraphs << Paragraph.new(para_options)
       end
     end
 
@@ -117,7 +117,7 @@ module RLayout
       page_index                = 0
       @first_page               = @document.pages[0]
       @heading[:layout_expand]  = [:width, :height]
-      heading_object            = Heading.new(nil, @heading)
+      heading_object            = Heading.new(@heading)
       @first_page.graphics.unshift(heading_object)
       heading_object.parent_graphic = @first_page
       # end

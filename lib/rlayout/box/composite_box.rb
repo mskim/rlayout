@@ -6,7 +6,7 @@
 module RLayout
   class CompositeBox < Container
     attr_accessor :profile
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       @profile = options[:profile]
       

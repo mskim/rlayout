@@ -3,8 +3,8 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'create Over Token' do
   before do
-    @token  = MathToken.create_math_token(nil, {over: ["a" , "b"]})
-    @token2 = MathToken.create_math_token(nil, {over: ["A" , "B"]})
+    @token  = MathToken.create_math_token({over: ["a" , "b"]})
+    @token2 = MathToken.create_math_token({over: ["A" , "B"]})
   end
   
   it 'should set right font for capital and lower letter' do
@@ -17,7 +17,7 @@ end
 __END__
 describe 'create Limit' do
   before do
-    @token = MathToken.create_math_token(nil, {lim: [{from: 0}, {to: 4}, {sup: "x"}]})
+    @token = MathToken.create_math_token({lim: [{from: 0}, {to: 4}, {sup: "x"}]})
   end
   
   it 'should create math_token' do
@@ -27,7 +27,7 @@ end
 
 describe 'create Over' do
   before do
-    @token = MathToken.create_math_token(nil, {over: ["a" , "b"]})
+    @token = MathToken.create_math_token({over: ["a" , "b"]})
   end
   
   it 'should create math_token' do

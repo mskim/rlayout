@@ -10,7 +10,7 @@ module RLayout
 	
 	  attr_accessor :label, :list, :horizontal_layout
 	  
-	  def initialize(parent_graphic, options={}, &block)
+	  def initialize(options={}, &block)
 	    super
 	    if options[:horizontal_layout]
 	      

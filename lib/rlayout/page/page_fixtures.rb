@@ -10,7 +10,7 @@ module RLayout
     attr_accessor :left_side_string, :right_side_string # what to display, 
     attr_accessor :post_string, :page_number
     
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       options[:text_size] = 8 unless options[:text_size]
       options[:font] = 'Helvetica' unless options[:text_size]
       options[:text_string] = "" if options[:text_string].nil?
@@ -36,7 +36,7 @@ module RLayout
     attr_accessor :post_string, :page_number
     attr_accessor :pre_string, :post_string
     
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       options[:text_size]   = 8 unless options[:text_size]
       options[:font]        = 'Helvetica' unless options[:text_size]
       options[:y]           = parent_graphic.height - 50
@@ -65,7 +65,7 @@ module RLayout
   class SideBar < Text
     attr_accessor :rotation 
     
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       if @parent_graphic.left_page?
         @x = 0

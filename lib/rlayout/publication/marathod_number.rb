@@ -1,5 +1,5 @@
 Marathon_Layout =<<EOF
-RLayout::Page.new(nil, width:400, height:300)
+RLayout::Page.new(width:400, height:300)
   image(image_path:"logo.jpg")
   
 EOF
@@ -58,7 +58,6 @@ module RLayout
       # system("qrcode #{number} -o #{qrcode_path + "/#{number}")
     end
     
-      
     def generate_qrcode(number)
       puts "generating qrcode:#{number}"
     end

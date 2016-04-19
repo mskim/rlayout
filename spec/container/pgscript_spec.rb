@@ -54,7 +54,7 @@ end
 describe 'processing from raw text ' do
   before do
     @text = <<-EOF.gsub(/^\s*/, "")
-        Container.new(nil, :width=>600, :height=>800) do
+        Container.new(:width=>600, :height=>800) do
           split_v(3, :fill_color=>"blue", :layout_space=>10)
           @graphics.first.fill.color = 'white'
           @graphics.first.split_h(3, :fill_color=>'red', :layout_space=>10)
@@ -87,7 +87,7 @@ end
 
 describe 'testing container split-v' do
   before do
-    @container = Container.new(nil, :width=>600, :height=>800) do
+    @container = Container.new(:width=>600, :height=>800) do
       split_v(3, :fill_color=>"blue", :layout_space=>10)
       @graphics.first.fill.color = 'white'
       @graphics.first.split_h(3, :fill_color=>'red', :layout_space=>10)

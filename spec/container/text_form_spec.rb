@@ -6,7 +6,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 #       key: "name",
 #       data: "Min Soo Kim"
 #     }
-#     @t_field = TextField.new(nil, options)
+#     @t_field = TextField.new(options)
 #   end
 #   
 #   it 'should create TextField' do

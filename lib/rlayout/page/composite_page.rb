@@ -21,7 +21,9 @@ module RLayout
     def create_composites
       @composites.each do |composite|
         composite[:width] = make_width
-        Image.new(self, translate_grid_cordinate(composite))
+        options = translate_grid_cordinate(composite)
+        options[:parent] = self
+        Image.new(options)
       end
     end
     

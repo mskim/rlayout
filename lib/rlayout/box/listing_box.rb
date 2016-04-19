@@ -19,14 +19,14 @@ module RLayout
   
   class ListCategoryRow < Container
     attr_accessor :level, :category
-    def initialize(parent_graphics, options={}, &block)
+    def initialize(options={}, &block)
       
     end
   end
   
   # text list
   class ListItemRow  < Container
-    def initialize(parent_graphics, options={}, &block)
+    def initialize(options={}, &block)
       
     end
     
@@ -37,7 +37,7 @@ module RLayout
   class ListImageRow < Container
     attr_accessor :images_array
     
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       options[:layout_direction] = "horizontal" unless options[:layout_direction]
       super
       @images_array = options[:images_array]

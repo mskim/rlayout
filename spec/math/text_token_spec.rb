@@ -3,22 +3,22 @@ require File.dirname(__FILE__) + "/../spec_helper"
 describe 'crate RTextLayoutManager with h_alignment' do
   
   it 'shuld h_alignment left' do
-    @tm = RTextLayoutManager.new(nil, text_string: "this is a test string "*5, width: 200, height: 500, h_alignment: "left")
+    @tm = RTextLayoutManager.new(text_string: "this is a test string "*5, width: 200, height: 500, h_alignment: "left")
     assert @tm.para_style.h_alignment == "left"
   end
   
   it 'shuld h_alignment center' do
-    @tm = RTextLayoutManager.new(nil, text_string: "this is a test string "*5, width: 200, height: 500, h_alignment: "center")
+    @tm = RTextLayoutManager.new(text_string: "this is a test string "*5, width: 200, height: 500, h_alignment: "center")
     assert @tm.para_style.h_alignment == "center"
   end
   
   it 'shuld h_alignment right' do
-    @tm = RTextLayoutManager.new(nil, text_string: "this is a test string "*5, width: 200, height: 500, h_alignment: "right")
+    @tm = RTextLayoutManager.new(text_string: "this is a test string "*5, width: 200, height: 500, h_alignment: "right")
     assert @tm.para_style.h_alignment == "right"
   end
   
   it 'shuld h_alignment justified' do
-    @tm = RTextLayoutManager.new(nil, text_string: "this is a test string "*5, width: 200, height: 500, h_alignment: "justified")
+    @tm = RTextLayoutManager.new(text_string: "this is a test string "*5, width: 200, height: 500, h_alignment: "justified")
     assert @tm.para_style.h_alignment == "justified"
   end
   
@@ -27,7 +27,7 @@ end
 
 describe 'create RTextLayoutManager' do
   before do
-    @tm = RTextLayoutManager.new(nil, text_string: "this is a test string "*5, width: 200, height: 500)
+    @tm = RTextLayoutManager.new(text_string: "this is a test string "*5, width: 200, height: 500)
   end
   
   it 'shuld create RTextLayoutManager' do
@@ -51,7 +51,7 @@ end
 
 describe 'create LineFragment' do
   before do
-    @tm = RTextLayoutManager.new(nil, text_string: "this is a test string "*3)
+    @tm = RTextLayoutManager.new(text_string: "this is a test string "*3)
     @line = @tm.text_container.lines.first
   end
   

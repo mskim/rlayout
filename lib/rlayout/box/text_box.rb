@@ -74,7 +74,7 @@ module RLayout
     attr_accessor :starting_item_index, :ending_item_index
     attr_accessor :column_count, :column_layout_space, :next_link, :previous_link, :align_body_text
     attr_accessor :has_side_column, :left_side_column, :side_column, :draw_gutter_stroke
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       @grid_base        = options.fetch(:grid_base, '3x3')
       super
       @klass            = "TextBox"
@@ -112,15 +112,15 @@ module RLayout
       if @has_side_column
         @column_count = 2
         if @left_side_column
-          @side_column = TextColumn.new(self, layout_length: 1, fill_color: 'lightGray')
-          TextColumn.new(self, layout_length: 3)
+          @side_column = TextColumn.new(:parent=>self, layout_length: 1, fill_color: 'lightGray')
+          TextColumn.new(:parent=>self, layout_length: 3)
         else
-          TextColumn.new(self, layout_length: 3)
-          @side_column = TextColumn.new(self, layout_length: 1, fill_color: 'lightGray')
+          TextColumn.new(:parent=>self, layout_length: 3)
+          @side_column = TextColumn.new(:parent=>self, layout_length: 1, fill_color: 'lightGray')
         end
       else
         @column_count.times do
-          TextColumn.new(self, layout_space: @column_layout_space)
+          TextColumn.new(:parent=>self, layout_space: @column_layout_space)
         end
       end
       relayout!
@@ -145,11 +145,12 @@ module RLayout
     end
     
     def heading(options={})
-      options[:is_float] = true
+      options[:is_float]  = true
+      options[:parent]    = self
       if @heading_columns != @column_count  
         options[:width] = width_of_columns(@heading_columns)
       end  
-      h = Heading.new(self, options)
+      h = Heading.new(options)
       unless h== @floats.first
         # make heading as first one in floats
         h = @floats.pop
@@ -399,7 +400,8 @@ module RLayout
       image_options[:height]  = frame_rect[3]
       image_options[:layout_expand]   = nil
       image_options[:is_float]        = true
-      @image  = Image.new(self, image_options)   
+      image_options[:parent]
+      @image  = Image.new(image_options)   
     end
     
     def float_images(images)
@@ -543,7 +545,7 @@ module RLayout
   end
   
   class TextBoxWithSide < TextBox
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       
       self
     end

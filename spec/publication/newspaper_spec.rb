@@ -47,7 +47,7 @@ end
 describe 'create sample news_page with heading' do
   before do
     @section_path = "/Users/mskim/news_article/section8"
-    @section = NewspaperSection.new(nil, :section_path=>@section_path, :has_heading=> true)
+    @section = NewspaperSection.new(:section_path=>@section_path, :has_heading=> true)
     @section.create
   end
   
@@ -59,7 +59,7 @@ end
 # describe 'create sample news_page' do
 #   before do
 #     @section_path = "/Users/mskim/news_article/section9"
-#     @section = NewspaperSection.new(nil, :section_path=>@section_path)
+#     @section = NewspaperSection.new(:section_path=>@section_path)
 #     @section.create
 #   end
   
@@ -94,7 +94,7 @@ end
 
 describe 'create NewsArticle sample' do
   before do
-    @news_section = NewsSection.new(nil, '/Users/mskim/news_article/sample')
+    @news_section = NewsSection.new('/Users/mskim/news_article/sample')
     @sample = RLayout::NewsSection.make_sample_articles(5)
     @first_story_path = '/Users/mskim/news_article/sample/1.story.md'
   end

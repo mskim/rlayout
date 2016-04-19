@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'TextBox test' do
   before do
-    @tb = TextBox.new(nil, column_count: 2, width: 400, height:500)
+    @tb = TextBox.new(column_count: 2, width: 400, height:500)
     @tb.floats << Image.new(@tb, x:150, width:150, is_float: true)
     @tb.floats << Image.new(@tb, x:0, y:300, width:300, is_float: true)
     @tb.create_column_grid_rects
@@ -83,7 +83,7 @@ end
 
 describe 'TextColumn creation' do
   before do
-    @tb = TextBox.new(nil, column_count: 2, width:400, height: 700, body_line_height: 18)
+    @tb = TextBox.new(column_count: 2, width:400, height: 700, body_line_height: 18)
     @tc = @tb.graphics.first
     @tc.create_grid_rects
   end
@@ -110,7 +110,7 @@ end
 
 # describe 'path addition' do
 #   before  do
-#     @tb = TextBox.new(nil, column_count: 2, width:400, height: 700, body_line_height: 18)
+#     @tb = TextBox.new(column_count: 2, width:400, height: 700, body_line_height: 18)
 #     @tc = @tb.graphics.first
 #     @tc.create_grid_rects
 #     @proposed_path   = CGPathCreateMutable()
@@ -126,7 +126,7 @@ end
 # end
 describe 'TextColumn creation test' do
   before do
-    @tb       = TextColumn.new(nil, :width=>300, :height=>800)
+    @tb       = TextColumn.new(:width=>300, :height=>800)
     @path     = "/Users/Shared/rlayout/output/text_column_test.svg"
     @pdf_path = "/Users/Shared/rlayout/output/text_column_test.pdf"
     # puts @para.inspect

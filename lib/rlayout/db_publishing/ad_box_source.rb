@@ -4,7 +4,7 @@ module RLayout
   class AdBox < Container
     attr_accessor :company, :phone, :coyp1, :copy2, :image_path
     attr_accessor :template, :ad_box
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       super
       @klass = "AdBox"
       @template = options[:template]
@@ -22,7 +22,7 @@ module RLayout
     end
     
     def self.from_template(template, options={})
-      ad_box = Container.new(nil, template)
+      ad_box = Container.new(template)
       ad_box.substibute_variables(options)
       ad_box
     end
@@ -36,7 +36,7 @@ module RLayout
     end
     
     def self.sample
-      ad = AdBox.new(nil, line_width: 2, line_color: 'gray') do
+      ad = AdBox.new(line_width: 2, line_color: 'gray') do
         @company = text(text_string: ramdom_text, fill_color: random_color, line_with: 2, line_color: 'red')
         @phone   = text(text_string: ramdom_text, fill_color: random_color)
         @copy1   = text(text_string: ramdom_text, fill_color: random_color, line_with: 2, line_color: 'red')

@@ -33,7 +33,7 @@ module RLayout
   class Heading < Container
     attr_accessor :title_object, :subtitle_object, :leading_object, :author_object
     attr_accessor :align_to_body_text
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       super      
       @current_style      = RLayout::StyleService.shared_style_service.current_style
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
@@ -132,7 +132,7 @@ module RLayout
         options.delete(:template_hash)
         hash.merge(options)
       end
-      heading=Heading.new(nil, hash)
+      heading=Heading.new(hash)
       heading.replace_tagged_graphic(variables_hash)
       heading.replace_variables(variables_hash)
       heading
@@ -151,7 +151,7 @@ module RLayout
     end
 
     def self.make_headline(options={})
-      headline= Heading.new(nil, options)
+      headline= Heading.new(options)
       if options[:output_path]
         headline.save_pdf(options[:output_path])
       end
@@ -166,7 +166,8 @@ module RLayout
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts                        = options.merge(atts)
-      @title_object               = Text.new(self, atts)
+      atts[:parent]               = self
+      @title_object               = Text.new(atts)
       @title_object.layout_length = @title_object.height
       @title_object
     end
@@ -178,7 +179,8 @@ module RLayout
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts                          = options.merge(atts)
-      @subtitle_object              = Text.new(self, atts)
+      atts[:parent]                 = self
+      @subtitle_object              = Text.new(atts)
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object
@@ -191,7 +193,8 @@ module RLayout
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts                          = options.merge(atts)
-      @leading_object               = Text.new(self, atts)
+      atts[:parent]                 = self
+      @leading_object               = Text.new(atts)
       @leading_object.layout_expand = [:width]
       @leading_object.layout_length = @leading_object.height
       @leading_object
@@ -205,7 +208,8 @@ module RLayout
       atts[:right_indent]           = 10
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts                          = options.merge(atts)
-      @author_object                = Text.new(self, atts)
+      atts[:parent]                 = self
+      @author_object                = Text.new(atts)
       @author_object.layout_expand  = [:width]
       @author_object.layout_length  = @author_object.height
       @author_object

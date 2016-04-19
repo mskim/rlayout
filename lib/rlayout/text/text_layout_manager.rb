@@ -415,7 +415,7 @@ module RLayout
       second_half_options     = to_hash
       second_half_options[:att_string]  = second_half_stirng
       second_half_options[:linked]      = true
-      second_paragraph        = Paragraph.new(nil, second_half_options)
+      second_paragraph        = Paragraph.new(second_half_options)
       return second_paragraph
     end
 

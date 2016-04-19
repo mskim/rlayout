@@ -2,7 +2,7 @@
 # 
 # describe 'RichParagraph creation test' do
 #   before do
-#     @para = RichParagraph.new(nil, :para_string=>"One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen", :markup=>"p")    
+#     @para = RichParagraph.new(:para_string=>"One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen", :markup=>"p")    
 #   end
 #   
 #   it 'should create Pagragraph object' do
@@ -29,7 +29,7 @@
 # 
 # describe 'RichParagraph line creation test' do
 #   before do
-#     @para = RichParagraph.new(nil, :para_string=>"This is a text and I like it very very much lets see if you can layout this one.", :markup=>"p")
+#     @para = RichParagraph.new(:para_string=>"This is a text and I like it very very much lets see if you can layout this one.", :markup=>"p")
 #   end
 #   
 #   it 'should create Pagragraph object' do
@@ -50,7 +50,7 @@
 # 
 # describe 'RichParagraph should change width and layout lines' do
 #   before do
-#     @para = RichParagraph.new(nil, :para_string=>"This is a text and I like it very very much lets see if you can layout this one.", :markup=>"p")
+#     @para = RichParagraph.new(:para_string=>"This is a text and I like it very very much lets see if you can layout this one.", :markup=>"p")
 #     @para.change_width_and_adjust_height(300)
 #     @path = "/Users/Shared/rlayout/output/paragraph_test.svg"
 #     

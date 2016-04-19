@@ -52,7 +52,9 @@ SIZES = { "4A0" => [4767.87, 6740.79],
        "TABLOID" => [792.00, 1224.00],
        "NAMECARD"=> [260.79, 147.40],
        "IDCARD"=> [147.40, 260.79],
-       "PRODUCT"=> [300, 300]}
+       "MARATHON"=> [841.89, 595.28],
+       "PRODUCT"=> [300, 300],
+       }
 
 # gim: Grouped Image Manager
 # Image layout pattern
@@ -139,17 +141,20 @@ module RLayout
         # do not create any page
       elsif options[:pages]
         options[:pages].each do |page_hash|
-          Page.new(self, page_hash)
+          page_hash[:parent]  = self
+          Page.new(page_hash)
         end
       elsif options[:page_objects]
         @pages = options[:pages]
       elsif options[:page_count]
         options[:page_count].times do
-          Page.new(self, options)
+          page_hash[:parent]  = self
+          Page.new(page_hash)
         end
       else
         # create single page as default initial page
-        Page.new(self, options)
+        options[:parent]  = self
+        Page.new(options)
       end
       
       @column_count = options.fetch(:column_count, 1)
@@ -185,7 +190,9 @@ module RLayout
     end
     
     def page(options={}, &block)
-      Page.new(self, options, &block)
+      options[:parent] = self
+      options[:paper_size] = @paper_size
+      @pages << Page.new(options, &block)
     end
 
     def add_page(page, options={})

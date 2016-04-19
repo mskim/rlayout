@@ -155,7 +155,7 @@ DEFAULT_TABLE_STYLE = {
     attr_accessor :body_row_colors
     attr_accessor :column_line_color, :row_spacing
     attr_accessor :proposed_height, :row_height_sum, :overflow, :underflow
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       super
       @column_count       = options.fetch(:column_count, 1)
       @category_level     = options.fetch(:category_level, 0)
@@ -221,10 +221,11 @@ DEFAULT_TABLE_STYLE = {
         row_options[:row_data]    = @table_data[0]
         row_options[:cell_atts]   = @table_style[:head_cell_atts]
         row_options[:column_width]= @column_width_array
+        row_options[:parent]      = self
         if @can_grow
           row_options[:layout_expand]= [:width]
         end
-        r = TableRow.new(self, row_options)
+        r = TableRow.new(row_options)
         @row_height_sum += r.height
       end
       body_cycle = @body_row_colors.length if @body_row_colors
@@ -236,10 +237,11 @@ DEFAULT_TABLE_STYLE = {
         row_options[:row_data]    = row_data
         row_options[:cell_atts]   = @table_style[:body_cell_atts]
         row_options[:column_width]= @column_width_array
+        row_options[:parent]      = self
         if @can_grow
           row_options[:layout_expand]= [:width]
         end
-        r=TableRow.new(self, row_options)
+        r=TableRow.new(row_options)
         @row_height_sum += r.height
       end  
       row_space_sum = (@graphics.length - 1)*@layout_space
@@ -400,11 +402,13 @@ DEFAULT_TABLE_STYLE = {
     end
     
     def th(options={}, &block)
-      @header = TableRow.new(self, options, &block)
+      options[:parent] = self
+      @header = TableRow.new(options, &block)
     end
     
     def tr(options={}, &block)
-      TableRow.new(self, options, &block)
+      options[:parent] = self
+      TableRow.new(options, &block)
     end
     
 
@@ -413,7 +417,7 @@ DEFAULT_TABLE_STYLE = {
   class TableRow < Container
     attr_accessor :row_type, :fit_type, :font
     attr_accessor :column_sytle_array, :column_alignment
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       super
       @klass              = 'TableRow'
       cell_atts           = options[:cell_atts] 
@@ -482,12 +486,12 @@ DEFAULT_TABLE_STYLE = {
       options[:fill_color]        = 'clear'
       options[:stroke_thickness]  = 1
       options[:text_fit_type]     = 'adjust_box_height'
-      
+      options[:parent]            = self
       if @row_type == "head_row"
         options[:stroke_thickness]  = 1 
-        tc = TableCell.new(self, options)
+        tc = TableCell.new(options)
       else
-        tc = TableCell.new(self, options)
+        tc = TableCell.new(options)
       end
       self
     end

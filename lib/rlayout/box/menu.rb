@@ -17,7 +17,7 @@ module RLayout
   
   class Menu < Container
     attr_accessor :column_count, :menu_text, :menu_text_path
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       super
       if options[:menu_text_path]
         unless File.exist?(options[:menu_text_path])
@@ -32,7 +32,7 @@ module RLayout
       rows = menu_text.split("\n")
       @item_rows = []
       rows.each do |row_text|
-        @graphics << LeaderRow.new(nil, row_text:row_text)
+        @graphics << LeaderRow.new(row_text:row_text)
       end
       self
     end
@@ -46,7 +46,7 @@ module RLayout
   class LeaderCell < Text
     attr_accessor :leader_character, :is_leader
     
-    def initialize(parent_graphic, options={})
+    def initialize(options={})
       options[:text_size] = parent_graphic.height - 4
       options[:height] = parent_graphic.height - 2
       @is_leader = options.fetch(:is_leader, false)
@@ -104,7 +104,7 @@ module RLayout
   # Used for TOC, Menu, Jubo
   class LeaderRow < Container
     attr_accessor :row_text
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       options[:height] = 24 unless options[:height]
       # options[:layout_expand] = [:width, :height]
       options[:layout_direction] = "horizontal"
@@ -123,11 +123,11 @@ module RLayout
       cell_text.each_with_index do |text_string, i|
         if i == cell_text.length - 1
           # align right for price
-          LeaderCell.new(self, text_string:text_string, text_alignment: "right")
+          LeaderCell.new(:parent=>self, text_string:text_string, text_alignment: "right")
         else
-          LeaderCell.new(self, text_string:text_string)
+          LeaderCell.new(:parent=>self, text_string:text_string)
         end
-        LeaderCell.new(self, is_leader:true) unless i >= cell_text.length - 1
+        LeaderCell.new(:parent=>self, is_leader:true) unless i >= cell_text.length - 1
       end
     end
     

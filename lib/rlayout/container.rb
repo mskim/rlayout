@@ -7,7 +7,7 @@ module RLayout
     attr_accessor :draw_gutter_stroke, :gutter_stroke 
     attr_accessor :floats, :grid
     
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       @graphics             = []
       @floats               = options.fetch(:floats, [])
       super      
@@ -229,46 +229,47 @@ module RLayout
     end
     
     def create_graphic_of_type(klass, options={})
+      options[:parent] = self
       case klass 
       when "Rectangle"
-        Rectangle.new(self, options)
+        Rectangle.new(options)
       when "Circle"
-        Circle.new(self, options)
+        Circle.new(options)
       when "Text"
-        Text.new(self, options)
+        Text.new(options)
       when "Image"
-        Image.new(self, options)
+        Image.new(options)
       when "Line"
-        Line.new(self, options)
+        Line.new(options)
       when "Container"
-        Container.new(self, options)
+        Container.new(options)
       when "Matrix"
-        Matrix.new(self, options)
+        Matrix.new(options)
       when "ActionBox"
-        ActionBox.new(self, options)
+        ActionBox.new(options)
       when "AudioBox"
-        AudioBox.new(self, options)
+        AudioBox.new(options)
       when "MovieBox"
-        MovieBox.new(self, options)
+        MovieBox.new(options)
       when "SlideBox"
-        SlideBox.new(self, options)
+        SlideBox.new(options)
       when "WebBox"
-        WebBox.new(self, options)
+        WebBox.new(options)
       when "TextRun"
-        TextRun.new(self, options)
+        TextRun.new(options)
       when "TextLine"
-        TextBar.new(self, options)
+        TextBar.new(options)
       when "TextBox"
-        TextBox.new(self, options)
+        TextBox.new(options)
       when "TextColumn"
-        TextColumn.new(self, options)
+        TextColumn.new(options)
       when "ObjectBox"
-        ObjectBox.new(self, options)
+        ObjectBox.new(options)
       when "ObjectColumn"
-        ObjectColumn.new(self, options)
+        ObjectColumn.new(options)
       else 
         puts "Creating Rectangle instead of graphic class named #{klass}!"
-        Rectangle.new(self,options)
+        Rectangle.new(options)
       end            
     end
     
@@ -322,7 +323,7 @@ module RLayout
   
   # Stack is Container with layout_direction set to 'vertical'
   class Stack < Container
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       options[:layout_direction] = "vertical"
       super
       @width = 300 unless options[:width]
@@ -332,7 +333,7 @@ module RLayout
   
   # Bar is Container with layout_direction set to 'horizontal'
   class Bar < Container
-    def initialize(parent_graphic, options={}, &block)
+    def initialize(options={}, &block)
       options[:layout_direction] = "horizontal"
       super
       @width = 300 unless options[:width]
