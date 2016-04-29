@@ -1,5 +1,22 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'create TextToken' do
+  before do
+    @tt = TextToken.new("this")
+  end
+  
+  it 'should create TextToken' do
+    assert @tt.class == TextToken
+  end
+  
+  it 'should have string' do
+    assert @tt.string == 'this'
+    assert @tt.x == 0
+    assert @tt.y == 0
+  end
+end
+
+__END__
 describe 'crate RTextLayoutManager with h_alignment' do
   
   it 'shuld h_alignment left' do
@@ -75,20 +92,4 @@ describe 'create LineFragment' do
   end
 end
 
-describe 'create TextToken' do
-  before do
-    @tt = TextToken.new("this", 0, 0, 100, 20)
-  end
-  
-  it 'should create TextToken' do
-    assert @tt.class == TextToken
-  end
-  
-  it 'should have string' do
-    assert @tt.string == 'this'
-    assert @tt.x      == 0
-    assert @tt.y      == 0
-    assert @tt.width  == 100
-    assert @tt.height == 20
-  end
-end
+

@@ -146,6 +146,7 @@ module RLayout
         return unless graphic.tag
         replace_graphic(graphic)
       end
+      relayout!
       self
     end
     
@@ -160,7 +161,6 @@ module RLayout
           graphic.set_frame(frame_rect) # set_frame triggers content reloay
         end
       end
-      
       @floats.each do |place_folder|
         if g.tag == tag
           index = @graphics.index(place_folder)

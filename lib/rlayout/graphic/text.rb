@@ -7,6 +7,12 @@ module RLayout
 
     def init_text(options)
       #TODO hide instance variables into TextStruct
+      if options[:rich_text]
+        puts "in rich_tech mode"
+        @text_layout_manager = RTextLayoutManager.new(self, options)
+        return
+      end
+      
       if options[:text_string] || options[:text_string_array]
         @text_fit_type = options.fetch(:text_fit_type, 'keep_box_height')
         #TODO merge string if options[:text_string_array]

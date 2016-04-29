@@ -192,7 +192,7 @@ module RLayout
     def page(options={}, &block)
       options[:parent] = self
       options[:paper_size] = @paper_size
-      @pages << Page.new(options, &block)
+      Page.new(options, &block)
     end
 
     def add_page(page, options={})

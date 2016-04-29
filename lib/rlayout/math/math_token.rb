@@ -19,6 +19,7 @@ module RLayout
     
   end
   
+  
   class MathToken < Container
     def initialize(options={})
       @text_string        = options.fetch(:text_string, "")
@@ -51,14 +52,16 @@ module RLayout
   # font_category: English, division_capital_letter, division_lower_letter, 
   #                super_cap, sub_low, math_symbols, symbol, lines, 
   #                
-  class MathToken < Container
+  class MathToken 
+    attr_accessor :x, :y, :width, :height
     attr_accessor :math_hash, :font_category, :font, :size, :style
+    attr_accessor :math_arguments
     def initialize(options={})
-      super
-      @math_hash = options[:math_hash]
-      if @math_hash.class == 'String'
+      if options[:math_arguments]
         # we have simple string
-      else
+        
+        
+      elsif options[:math_hash]
         # we have root that is an other math expression
         # create_math_token(@math_hash)
       end
@@ -75,7 +78,31 @@ module RLayout
       end
       false
     end
-    
+
+    def self.create_math_token_from_string(parent, operator, options={})
+      return unless math_string
+      
+      token = nil
+      case operator
+      when "over", "frac"
+        token = Over.new(options)
+      when 'sqrt'
+        token = Sqrt.new(options)
+      when 'lim'
+        token = Limit.new(options)
+      when 'int'
+        token = Integral.new(options)
+      when 'sum'
+        token = Sum.new(options)
+      when 'sup'
+        token = Sup.new(options)
+      when 'sub'
+        token = Sub.new(options)
+      else
+      end
+      token 
+    end
+
     def self.create_math_token_from_hash(parent, math_hash)
       return unless math_hash
       token = nil
@@ -102,6 +129,7 @@ module RLayout
   end
 
   class Sqrt < MathToken
+    attr_accessor :font_table, :char, :root
     def initialize(options={})
       super
       @height_level   = options.fetch(:height_level, 0)

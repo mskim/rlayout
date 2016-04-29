@@ -6,7 +6,33 @@
 # things after "'" gets ingnored
 # example: when I try to do doesn't
 
+# Photo_page is a page with just photos, no text flow
+# Photo_page has no headers, or footers
+# \photo_page
+# image(local_image: 10.pdf, grid_frame:[0,0,1,1])
+# image(local_image: 11.pdf, grid_frame:[0,1,1,1])
+# \end_photo_page
 
+# image_group is a page with group of images with position, text flows around them.
+# image_group forces for new page, it has heders and footers.
+# \image_group
+# image(local_image: 10.pdf, grid_frame:[0,0,1,1])
+# image(local_image: 11.pdf, grid_frame:[0,1,1,1])
+# \end_image_group
+
+# Inline macros
+# \sub(sub)
+# \sup(super)
+# \footnote(footnote_text)
+# \xref(xref_mark)
+# \index(index_text)
+# \ruby{ruby text}(this with ruby)
+# \dpt(thext with dot)
+# \box(boxed text)
+# \circled(circled text)
+# \framed(framed text)
+# \outlined(outlined text)
+# \double_outlined(double outlined text)
 
 module RLayout
 

@@ -42,8 +42,38 @@ TODO List
 	- # NewsSection.create
 	- # Magazine.create 
 	- redo layout for complex container
-
-2015 2 23
+	- picture_page/image_group
+	- story file tag
+		- inline tag
+			- \sub()
+			- \sup()
+			- \index()
+			- \xref()
+			- \dot()
+			- \ruby()
+			- \box()
+			- \circle()
+			- $$math$$
+			
+		- block tag
+			begin(warning)??
+			end(warning)??
+			begin(table)??
+			end(table)??
+			- \warning
+			- \notice
+			- \table
+			- \picture_page
+			- \image_group
+			
+2015 4 27
+	- fix paragraph snapping space skipping
+	
+2015 4 21
+	- make parent_graphic as options parent
+	- relayout image_fit when relayout!
+	
+2016 2 23
 	- Quiz Maker
 		- add reading text
 		- add answers page
