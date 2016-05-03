@@ -29,7 +29,6 @@ MININUM_LINES_FOR_SPLIT = 2
     attr_accessor  :para_data, :linked
     def initialize(options={})
       text_options = nil
-      puts "$publication_type:#{$publication_type}"
       case $publication_type
       when "magazine"
         @current_style = RLayout::StyleService.shared_style_service.magazine_style
