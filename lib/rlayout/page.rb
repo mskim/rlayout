@@ -345,7 +345,7 @@ module RLayout
     
     def header(options={})
       #TODO
-      Header.new(:paernt=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
+      Header.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
     end
 
     def footer(options={})

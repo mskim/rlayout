@@ -213,7 +213,7 @@ module RLayout
           next if text_column.class != RLayout::TextColumn
           text_column.create_grid_rects unless text_column.grid_rects
           if intersects_rect(float_rect, text_column.frame_rect)
-            text_column.mark_overlapping_grid_rects(float_rect,float.klass)
+            text_column.mark_overlapping_grid_rects(float_rect,float.class)
           end
         end
       end
@@ -400,7 +400,8 @@ module RLayout
       image_options[:height]  = frame_rect[3]
       image_options[:layout_expand]   = nil
       image_options[:is_float]        = true
-      image_options[:parent]
+      image_options[:parent]          = self
+      puts "image_options:#{image_options}"
       @image  = Image.new(image_options)   
     end
     

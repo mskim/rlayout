@@ -106,7 +106,7 @@ module RLayout
       text_rect[2]
     end
 
-    def mark_overlapping_grid_rects(float_rect, float_klass)
+    def mark_overlapping_grid_rects(float_rect, float_class)
       @complex_rect = true
       @grid_rects.each do |grid_rect|
         grid_rect.update_text_area(float_rect)

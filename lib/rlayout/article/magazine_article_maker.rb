@@ -19,6 +19,7 @@ module RLayout
     attr_accessor :output_path
     
     def initialize(options={} ,&block)
+      puts "@article_path:#{@article_path}"
       @article_path = options[:article_path] || options[:project_path]
       @starting_page_number = options.fetch(:starting_page_number, 1)
       @article_path = options[:article_path]
