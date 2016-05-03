@@ -65,9 +65,14 @@ TODO List
 			- \table
 			- \picture_page
 			- \image_group
-			
+
+2015 5 4
+	- custom style_support
+		chapter_style.rb, magazine_style.rb, news_style.rb
+	
 2015 4 27
-	- fix paragraph snapping space skipping
+	- fix paragraph snapping space skipping, column_layout_space = 0
+	- min_y(grid_frame.rect)
 	
 2015 4 21
 	- make parent_graphic as options parent

@@ -81,7 +81,7 @@ module RLayout
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)
       @column_count     = options.fetch(:column_count, 1).to_i
-      @column_layout_space = options.fetch(:column_layout_space, 10)
+      @column_layout_space = options.fetch(:column_layout_space, 0)
       @heading_columns  = options.fetch(:heading_columns, @column_count)
       @floats           = options.fetch(:floats, [])
       @has_side_column  = options.fetch(:has_side_column, false)

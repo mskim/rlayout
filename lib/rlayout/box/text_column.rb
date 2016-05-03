@@ -101,16 +101,16 @@ module RLayout
           if options[:align_to_body_text]
             # align to even grid for body text alignment
             if i.even?
-              return max_y(grid_rect.rect)
+              return grid_rect.rect
             elsif @grid_rects.length > i
               even_rect = @grid_rects[i+1]
-              return max_y(even_rect.rect)
+              return even_rect.rect
             end
           end
-          return max_y(grid_rect.rect)
+          return grid_rect.rect
         end
       end
-      max_y(@grid_rects.last.rect)
+      @grid_rects.last.rect
     end
 
     def text_width
@@ -168,11 +168,14 @@ module RLayout
 
     def place_item(item)
       return if @graphics.include?(item)
+      puts __method__
       @graphics << item
       item.parent_graphic = self
       item.x              = @left_margin + @left_inset
       item.y              = @current_position
       @current_position   += item.height + @layout_space
+      puts "@layout_space:#{@layout_space}"
+      puts "@current_position:#{@current_position}"
       @current_position   = snap_to_grid_rect(@current_position)
       @room               = text_rect[3] - @current_position
     end
