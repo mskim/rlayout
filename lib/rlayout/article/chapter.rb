@@ -53,7 +53,7 @@ module RLayout
       @column_count       = options.fetch(:column_count, 1)
       @toc_on             = options.fetch(:toc_on, false)
       @article_type       = options.fetch(:article_type, "chapter") # magazin_article, news_article
-      @current_style      = RLayout::StyleService.shared_style_service.current_style
+      @current_style      = RLayout::StyleService.shared_style_service.chapter_style
       @heading_columns    = @current_style["heading_columns"][@column_count-1]
       options[:footer]    = true
       options[:header]    = true

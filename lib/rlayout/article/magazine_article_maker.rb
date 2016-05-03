@@ -20,6 +20,7 @@ module RLayout
     
     def initialize(options={} ,&block)
       puts "@article_path:#{@article_path}"
+      $publication_type = "magazine"
       @article_path = options[:article_path] || options[:project_path]
       @starting_page_number = options.fetch(:starting_page_number, 1)
       @article_path = options[:article_path]
@@ -46,9 +47,6 @@ module RLayout
       
       unless File.exist?(@template)
         @template   = "/Users/Shared/SoftwareLab/article_template/magazine.rb"
-      end
-      unless File.exist?(@style_path)
-        @style_path = "/Users/Shared/SoftwareLab/article_template/magazine_style.rb"        
       end
       @document     = eval(File.open(@template,'r'){|f| f.read})
       if @document.is_a?(SyntaxError)

@@ -29,7 +29,18 @@ MININUM_LINES_FOR_SPLIT = 2
     attr_accessor  :para_data, :linked
     def initialize(options={})
       text_options = nil
-      @current_style = RLayout::StyleService.shared_style_service.current_style
+      puts "$publication_type:#{$publication_type}"
+      case $publication_type
+      when "magazine"
+        @current_style = RLayout::StyleService.shared_style_service.magazine_style
+      when "chapter"
+        @current_style = RLayout::StyleService.shared_style_service.chapter_style
+      when "news"
+        @current_style = RLayout::StyleService.shared_style_service.news_style
+      else
+        @current_style = RLayout::StyleService.shared_style_service.current_style
+      end
+      
       if options[:para_data]
         #TODO
         # options[:atts_array] = para_data2atts_array(options[:para_data])
@@ -49,7 +60,6 @@ MININUM_LINES_FOR_SPLIT = 2
       end
       options[:text_fit_type] = 'adjust_box_height'
       super
-      @klass = "Paragraph"
       self
     end
         

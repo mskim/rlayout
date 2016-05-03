@@ -37,21 +37,16 @@ module RLayout
         puts "No @template fount !!!"
         return
       end
-      unless File.exist?(@style_path)
-        @style_path = "/Users/Shared/SoftwareLab/article_template/single_page_style.rb"        
-      end
       @page         = eval(File.open(@template,'r'){|f| f.read})
       unless @page
         puts "No @page created !!!"
         return
       end
         
-      current_style = eval(File.open(@style_path, 'r'){|f| f.read})
       if current_style.is_a?(SyntaxError)
         puts "SyntaxError in #{@style_path} !!!!"
         return
       end
-      RLayout::StyleService.shared_style_service.current_style = current_style
       # puts "current_style:#{current_style}"
       if @story_path && File.exist?(@story_path)
         if @page.kind_of?(RLayout::TextBox)

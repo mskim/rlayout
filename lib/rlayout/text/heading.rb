@@ -35,7 +35,17 @@ module RLayout
     attr_accessor :align_to_body_text
     def initialize(options={}, &block)
       super      
-      @current_style      = RLayout::StyleService.shared_style_service.current_style
+      case $publication_type
+      when "magazine"
+        @current_style = RLayout::StyleService.shared_style_service.magazine_style
+      when "chapter"
+        @current_style = RLayout::StyleService.shared_style_service.chapter_style
+      when "news"
+        @current_style = RLayout::StyleService.shared_style_service.news_style
+      else
+        @current_style = RLayout::StyleService.shared_style_service.current_style
+      end
+
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
       @layout_space       = 3
       if options[:width]

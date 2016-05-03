@@ -22,7 +22,18 @@ module RLayout
       @show_grid_rects = options[:show_grid_rects] || true
       @layout_space = options.fetch(:layout_space, 0)
       @complex_rect = false
-      body_style = StyleService.shared_style_service.current_style['p']
+      case $publication_type
+      when "magazine"
+        @current_style = RLayout::StyleService.shared_style_service.magazine_style
+      when "chapter"
+        @current_style = RLayout::StyleService.shared_style_service.chapter_style
+      when "news"
+        @current_style = RLayout::StyleService.shared_style_service.news_style
+      else
+        @current_style = RLayout::StyleService.shared_style_service.current_style
+      end
+      
+      body_style = @current_style['p']
       line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
       line_height = body_style[:line_height] if body_style[:line_height]
       @body_line_height = (line_height + body_style[:text_line_spacing])
@@ -174,10 +185,13 @@ module RLayout
         if !@grid_rects[@current_index].fully_covered
           if @current_index.odd? && @current_index < (@grid_rects.length - 1)
             # return even numbered grid
-            @current_position = max_y(@grid_rects[@current_index + 1].rect)
+            # ????
+            # @current_position = max_y(@grid_rects[@current_index + 1].rect)
+            @current_position = min_y(@grid_rects[@current_index + 1].rect)
             return
           end
-          @current_position = max_y(@grid_rects[@current_index].rect)
+          #????
+          @current_position = min_y(@grid_rects[@current_index].rect)
           return
         else
           @current_index += 1

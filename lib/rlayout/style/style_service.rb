@@ -41,8 +41,8 @@ DEFAULT_STYLES={
   "h1"      =>{:font => 'Helvetica', :text_size=>70.0, :text_color => 'black'},
   "h2"      =>{:font => 'Helvetica', :text_size=>36.0, :text_color => 'black'},
   "h3"      =>{:font => 'Helvetica', :text_size=>24.0, :text_color => 'black'},
-  "h4"      =>{:font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
-  "h5"      =>{:font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
+  "h4"      =>{:font => 'Helvetica', :text_size=>16.0, :text_color => 'darkGray'},
+  "h5"      =>{:font => 'Helvetica', :text_size=>16.0, :text_color => 'darkGray'},
   "Head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h6"      =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
@@ -69,8 +69,8 @@ MAGAZINE_STYLES={
   "h1"      =>{:font => 'Helvetica', :text_size=>70.0, :text_color => 'black'},
   "h2"      =>{:font => 'Helvetica', :text_size=>36.0, :text_color => 'black'},
   "h3"      =>{:font => 'Helvetica', :text_size=>24.0, :text_color => 'black'},
-  "h4"      =>{:font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
-  "h5"      =>{:font => 'Helvetica', :text_size=>16.0, :text_color => 'black'},
+  "h4"      =>{:font => 'Helvetica', :text_size=>16.0, :text_color => 'darkGray'},
+  "h5"      =>{:font => 'Helvetica', :text_size=>16.0, :text_color => 'darkGray'},
   "Head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h6"      =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
@@ -150,8 +150,23 @@ module RLayout
     attr_accessor :current_style, :default_style, :chapter_style, :news_style, :magazine_style
     def initialize
       @chapter_style  = CHAPTER_STYLES
+      @chapter_style_path = "/Users/Shared/SoftwareLab/article_template/chapter_style.rb"        
+      if File.exist?(@chapter_style_path)
+        @chapter_style_path = eval(File.open(@chapter_style_path,'r'){|f| f.read})
+        return self
+      end
       @news_style     = NEWS_STYLES
+      @news_style_path = "/Users/Shared/SoftwareLab/article_template/chapter_style.rb"        
+      if File.exist?(@news_style_path)
+        @news_style = eval(File.open(@news_style_path,'r'){|f| f.read})
+        return self
+      end
       @magazine_style = MAGAZINE_STYLES
+      @magazine_style_path = "/Users/Shared/SoftwareLab/article_template/magazine_style.rb"        
+      if File.exist?(@magazine_style_path)
+        @magazine_style = eval(File.open(@magazine_style_path,'r'){|f| f.read})
+        return self
+      end
       @default_style  = DEFAULT_STYLES
       @current_style  = default_style
       self

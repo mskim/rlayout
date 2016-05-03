@@ -401,7 +401,6 @@ module RLayout
       image_options[:layout_expand]   = nil
       image_options[:is_float]        = true
       image_options[:parent]          = self
-      puts "image_options:#{image_options}"
       @image  = Image.new(image_options)   
     end
     
