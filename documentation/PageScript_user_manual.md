@@ -9,7 +9,13 @@ PageScript assumes that there are three different tasks done by three different 
 
 1. layout
 	Layout is pre-definded structure for different types of publication, usually by programmers or consultants. Using PageScript Ruby DSL.
-	
+	We will support different languages, 
+		English, 
+		Korean, Chinese, Japanese,
+		Spanish, French, German, Italian, Portuguese
+		Indonesian, Vietnamese, Thai, 
+		Hindu, Arabic, 
+		
 1. style
 	style is changes by the designers for the publication, similar to css
 	
@@ -59,7 +65,7 @@ PageScript serves to merge three resources and output for multiple medium, print
 		polygon
 		star
 		bubble
-	- raotation
+	- rotation
 		rotation
 		rotation_point # center, top_left, bottom_left, top_right, botton_right
 		
@@ -135,9 +141,15 @@ Rectangle.new(width:200, height:500, fill_color: 'red')
 		leading
 		quote
 		author
-		images
+		image
 	- body
-	
+		body
+		head1
+		head2
+		head3
+		image_group
+		image_page
+		
 ### Paragraph
 	- markup
 	- text_string
@@ -156,4 +168,10 @@ Rectangle.new(width:200, height:500, fill_color: 'red')
 	NewspaperArticle
 	NameCard
 	Calendar
+	Mart
+	Poster
 
+### Publications
+	Book
+	Magazine
+	Newspaper
