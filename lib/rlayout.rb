@@ -74,6 +74,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/box/table'
   require File.dirname(__FILE__) + '/rlayout/box/title_box'
   require File.dirname(__FILE__) + '/rlayout/box/menu'
+  require File.dirname(__FILE__) + '/rlayout/box/news_article_box'
 
   require File.dirname(__FILE__) + '/rlayout/math/eqn'
   require File.dirname(__FILE__) + '/rlayout/math/text_token'
@@ -90,10 +91,7 @@ else
 
   require File.dirname(__FILE__) + '/rlayout/article/story'
   require File.dirname(__FILE__) + '/rlayout/article/reader'
-  # require File.dirname(__FILE__) + '/rlayout/article/chapter'
   require File.dirname(__FILE__) + '/rlayout/article/chapter_maker'
-  # require File.dirname(__FILE__) + '/rlayout/article/news_article'
-  # require File.dirname(__FILE__) + '/rlayout/article/news_article_box'
   require File.dirname(__FILE__) + '/rlayout/article/news_article_maker'
   require File.dirname(__FILE__) + '/rlayout/article/news_section_page'
   require File.dirname(__FILE__) + '/rlayout/article/news_heading_maker'

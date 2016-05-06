@@ -1,34 +1,137 @@
 # encoding: utf-8
 
-# ChapterMaker merges Story and Document.
-# Story can come from couple of sources, markdown, adoc, or html(URL blog)
-# Story can be adoc, markdown, or html format.
-# Stories are first converted to para_data format and saved as yaml files. 
+# ChapterMaker merges Story and Document into a  chapter.
+# deprecated **** Story can come from couple of sources, markdown, adoc, or html(URL blog)
+# deprecated **** Story can be .story, adoc, markdown, or html format.
+# Story file format is our own, mixture of adoc, markdown and LaTex.
 
-# ChapterMaker loads template from file, which includes custom Styles .
+# Stories are first converted to para_data format, 
+# It is also converted to Asciidoctor or GHF-markdown for HTML generation. 
+
+# ChapterMaker loads custom template from local folder, or default template from library location. 
+# ChapterMaker loads custom styles from local folder, or default style from library location.
 
 # How to place images in long document?
-# There are two ways of placing images in the long document.
-# One way is to embed image markup in the text. 
-# Image markup can container layout information, such as grid_frame, size, position attributes.
-# Or another ways is to use pre-desinged layout.rb with images boxes.
-# Or the third way is to combine above two, automate it first, auto generate layout.rb file and let designer manually adjust it,
-# For book chapters, first method is used.
-# For short documents, such as magazine article, second choice is used.
+# There are three ways of placing images in the long document.
+# First method is to embed image markup in the text.
+# This will place image in the column along other text paragraphs, 
+# We can set width of image as 1, 1/2, 1/3, 1/4 of column.
+# And text will flow around it.
+# The second way is to use image_group.
+# Image markup shoud containe position information, such as grid_frame, size, position attributes.
+# New page is triggered for this case. pre-desinged layout pattern can also be used.
+# Images are layed on top as floating images allowing text to flow around it.
+# And the third method is to use photo_page, it is similar to image_group, but no text.
+# New page is triggered for photo_page.
+# photo_page is pure photo only page, no text paragraph is layed out, no header, no footer, no page number.
+# pre-desinged layout pattern can be pulled from pattern library or positions can be set manually.
 
-# mark up image with # ## ##
-# # image: filename: "1.jpg", grid_frame: [0,0,1,1], bleed: true
-# ## image: filename: "1.jpg" grid_frame: [0,0,1,1]
-# ### image: filename: "1.jpg"
+# For book chapters, first, sencod and third methods are used.
 
-# each indicate the side of image
+# For short documents, such as magazine article, second choice is used. 
+# And image info in specified in meta-data header or design template by designer.
+
+
 # How to place image caption?
-# have a file that has same name but extension of .caption?
+# File that has same name with extension of .caption?
 # add p write after the # image tag, this should be the caption?
+# Or have the caption text as file name.?
+# or caption info in the image markup?
 
 # Add Image bleeding support
 
 # Inserting Pre-Made PDF Pages in the middle of the pages. 
+
+# new page triggering
+# when we encounter page triggering node, add new page
+#    section_1, photo_page, image_group
+
+
+# LongDocument 
+# LongDocument is made to handle collection of document parts, for long document.
+# Typical LongDocument parts are, title_page, section, photo_page, image_group_page.
+# and pdf_insert.
+
+# pdf_insert is pre-made pdf pages that are inserted in the middle of chapter.
+
+# LongDocument is used for creating books from Asciidoctor content.
+# Asciidoctor content is parsed and broken into parts.
+# Broken parts are handed to LongDocument as parts.
+# LongDocument is also reponsible for generating TOC, index, and x-ref.
+
+# Story file
+# story file should conain minimum markup.
+# I should transform them into Asciidoctor, LqTex, or markdown format.
+# And it shold be simple.
+# First part is meta-data 
+# And followed by block data. 
+# Block data is separated by new empty line.
+#
+
+# meta-data
+# ---
+# yaml format key value pair
+# title: 
+# subtitle:
+# quote:
+# author:
+# ---
+
+# New Page Triggering mark
+# [photo_page]
+# [image_group]
+# [pdf_insert]
+
+# title page marks (in meta-data)
+# title:
+# subtitle:
+# quote:
+# leading:
+# author:
+# description:
+
+# section mark
+# = Section
+# == Section
+# === Section
+# ==== Section
+# ===== Section
+
+# # Section
+# ## Section
+# ### Section
+# #### Section
+# ##### Section
+
+# paragraph mark
+# [p]
+# [sub_p]
+# [subsub_p]
+# [dropcap]
+
+# block mark
+# [warning]
+# [notice]
+# [source, ruby]
+# [image]
+# [table]
+# [math]
+
+# block attributes 
+# :style: my_style1
+# :shape: round_rect
+# example
+# [math]
+# :align: true
+# :number: true
+
+# inline mark
+# _italic_
+# *bold*
+# underline
+# $$math$$
+# ^super^
+# sub
 
 module RLayout
 
@@ -104,6 +207,16 @@ module RLayout
         elsif para[:markup] == 'table'
           #TODO
           @paragraphs << Table.new(para)
+          next
+        elsif para[:markup] == 'photo_page'
+          @paragraphs << PhotoPage.new(layout_info: para)
+          next
+        elsif para[:markup] == 'image_group'
+          @paragraphs << ImageGroupPage.new(layout_info: para)
+          next
+        elsif para[:markup] == 'pdf_insert'
+          @paragraphs << PdfInsert.new(layout_info: para)
+          next
         end
         para_options[:text_string]    = para[:string]
         para_options[:article_type]   = @article_type
@@ -215,6 +328,52 @@ module RLayout
       layout_file = layout_text
       File.open(layout_path, 'w'){|f| f.write layout_file}
     end
+
+    def new_title_page
+      
+    end
+    
   end
 
+  class PhotoPage < Page
+    attr_accessor :layout_info
+    def initialize(options={})
+      @layout_info = options[:layout_info]
+      super
+      self
+    end
+    
+    # page layout is delayer until layout time
+    def layout_page(options={})
+      @document = options[:document]
+    end
+  end
+  
+  class ImageGroupPage < Page
+    attr_accessor :layout_info
+    def initialize(options={})
+      @layout_info = options[:layout_info]
+      super
+      self
+    end
+    # page layout is delayer until layout time
+    def layout_page(options={})
+      @document = options[:document]
+    end
+    
+  end
+  
+  class PdfInsert
+    attr_accessor :layout_info
+    def initialize(options={})
+      @layout_info = options[:layout_info]
+      super
+      self
+    end
+    # page layout is delayer until layout time
+    def layout_page(options={})
+      @document = options[:document]
+    end
+        
+  end
 end

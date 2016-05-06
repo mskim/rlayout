@@ -262,6 +262,21 @@ module RLayout
       column_index = 0
       current_column = @graphics[column_index]
       while @item  = flowing_items.shift do
+        # trigger new page
+        if @item.respond_to(:page_triggering) && @item.page_triggering
+          # start new page for new page triggering paragraph
+          
+        elsif @item.is_a?(PhotoPage)
+          @item.layout_page(parent: self.document)
+          return false
+        elsif @item.is_a?(ImageGroupPage)
+          @item.layout_page(parent: self.document)
+          return false
+        elsif @item.is_a?(PdfInsert)
+          @item.layout_page(parent: self.document)
+          return false
+        end
+        
         if @item.text_layout_manager
           # We have text
           @item.width  = current_column.text_width

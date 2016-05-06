@@ -73,6 +73,30 @@ class Reader
     @unescape_next_line = false
   end
 
+  # by Min Soo Kim
+  # 2015 5 6
+  # return text_blocks_array
+  def text_blocks
+    blocks_array = []
+    block = []
+    @lines.each do |line|
+      # filter out carriage return key, if line has one.
+      filtered_line = line.gsub(/$\r/, "")
+      if filtered_line== ""
+        if block.length > 0
+           blocks_array << block
+           block = []
+        end
+      else
+        block << filtered_line
+      end
+    end
+    if block.length > 0
+      blocks_array << block
+    end
+    blocks_array
+  end
+  
   # Internal: Prepare the lines from the provided data
   #
   # This method strips whitespace from the end of every line of
@@ -544,162 +568,4 @@ class Reader
     line_info
   end
 end
-end
-
-module RLayout
-  class Story
-    def self.read_metadata(path)
-      source = File.open(path, 'r'){|f| f.read}
-      begin
-        if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
-          @metadata = YAML.load(md.to_s)
-        end
-      rescue => e
-        puts "YAML Exception reading #filename: #{e.message}"
-      end
-      if @metadata
-        if @metadata.class == Array
-          #TODO it seem like a bug in motion-yaml
-          # YAML.load(md.to_s) returns Array
-          @metadata = @metadata[0]
-        end
-        starting_heading_level += @metadata['demotion'].to_i if @metadata['demotion']
-      end
-      @metadata
-    end
-        
-    def self.block2para_data(text_block, options={})
-      s=StringScanner.new(text_block[0])
-      # starting_heading_level is 1, h1
-      # if starting_heading_level = 3, h1 => h3
-      #
-      starting_heading_level = options.fetch(:starting_heading_level, 4)
-      markup_stirng = s.scan(/#*\s?/)
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/table/)
-      end
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/image/) 
-      end
-      #TODO img, math, table, admonition, quote, code
-      #TODO don't allow more than h6
-      case markup_stirng
-      when "\# ", "\#"
-        if starting_heading_level > 6
-          markup = "h6"
-        else
-          markup = "h#{starting_heading_level}"
-        end
-      when "\#\# ", "\#\#"
-        if starting_heading_level > 5
-          markup = "h6"
-        else
-          markup = "h#{starting_heading_level + 1}"
-        end
-      when "\#\#\# ", "\#\#\#"
-        if starting_heading_level > 4
-          markup = "h6"
-        else
-          markup = "h#{starting_heading_level + 2}"
-        end
-
-      when "\#\#\#\# ", "\#\#\#\#"
-        if starting_heading_level > 3
-          markup = "h6"
-        else
-          markup = "h#{starting_heading_level + 3}"
-        end
-      when "\#\#\#\#\# ", "\#\#\#\#\#"
-        if starting_heading_level > 2
-          markup = "h6"
-        else
-          markup = "h#{starting_heading_level + 4}"
-        end
-      when "\#\#\#\#\#\# ", "\#\#\#\#\#\#"
-        markup = 'h6'
-      when "table"
-        markup = 'table'
-      when "image"
-        markup = 'image'
-      else
-        markup = 'p'
-      end
-      string = s.scan(/.*/)
-      if markup == "p" && string =~/!\[/
-        image_info = string.match(/\{.*\}/)
-        {:markup =>"img", :local_image=>image_info.to_s}
-      elsif markup == "image" 
-        {:markup =>"image", :local_image=>string.gsub("::", "")}
-      elsif markup == "table"
-        if text_block.length > 1
-          text_block.shift
-          {:markup =>"table", :csv_data=>text_block.join("\n")}
-        else
-          csv_path = string.gsub("::", "")
-          {:markup =>"table", :csv_path=>csv_path}
-        end
-      elsif markup == "image"
-        {:markup =>markup, :string=>string}
-      else
-        {:markup =>markup, :string=>string}
-      end
-    end
-    
-    def self.ascii_yml2para_data(path, options={})
-      yaml = File.open(path, 'r'){|f| f.read}
-      h    = YAML::load(yaml)
-      h
-    end
-    
-    def self.markdown2para_data(path, options={})
-      source = File.open(path, 'r'){|f| f.read}
-      #TODO
-      begin
-        if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
-          @contents = md.post_match
-          @metadata = YAML.load(md.to_s)
-        else
-          @contents = source
-        end
-      rescue => e
-        puts "YAML Exception reading #filename: #{e.message}"
-      end
-      starting_heading_level = options.fetch(:demotion, 4)
-      if @metadata
-        if @metadata.class == Array
-          #TODO it seem like a bug in motion-yaml
-          # YAML.load(md.to_s) returns Array
-          @metadata = @metadata[0]
-        end
-        starting_heading_level += @metadata['demotion'].to_i if @metadata['demotion']
-      end
-      # if we have meta-data, then
-      # take out the top meta-data part from source
-      # Set Document Options
-      # And Create Heading from this
-      
-      reader = RLayout::Reader.new @contents, nil, :starting_heading_level=>starting_heading_level
-      blocks_array = []
-      block = []
-      reader.lines.each do |line|
-        # filter out carriage return key, if line has one.
-        filtered_line = line.gsub(/$\r/, "")
-        if filtered_line== ""
-          if block.length > 0
-             blocks_array << block
-             block = []
-          end
-        else
-          block << filtered_line
-        end
-      end
-      if block.length > 0
-        blocks_array << block
-      end
-      paragraphs = blocks_array.map do |lines_block|
-        Story.block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
-      end
-      {:heading=>@metadata, :paragraphs =>paragraphs}
-    end
-  end
 end

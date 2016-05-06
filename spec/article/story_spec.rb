@@ -2,12 +2,21 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'read markdow table' do
   before do
-    story_path = "/Users/mskim/Development/ruby/gems/rlayout/lib/rlayout/hwpml/sample.md"
+    story_path = "/Users/mskim/Development/ruby/gems/rlayout/sample/story/sample_story.md"
     @story  = Story.markdown2para_data(story_path)
   end
   
   it 'shold create story' do
     assert @story.class == Hash
+  end
+  
+  it 'should return :heading Hash' do
+    assert @story[:heading].class == Hash
+  end
+  
+  it 'should return :heading Hash' do
+    puts @story[:paragraphs]
+    assert @story[:paragraphs].class == Array
   end
 end
 
@@ -30,21 +39,6 @@ describe 'reading story' do
     assert @story[:paragraphs]
   end
 end
-
-
-
-describe 'Story.read_matadata' do
-  before do
-    @path = "/Users/mskim/magazine_article/first_article/2012-12-05-automation-catalog-publication.markdown"
-    @meta_data = Story.read_metadata(@path)
-  end
-
-  it 'should read_metadata from story' do
-    @meta_data.must_be_kind_of Hash
-    puts @meta_data
-  end
-end
-
 
 # require File.dirname(__FILE__) + "/../../article"
 describe 'load stoy' do

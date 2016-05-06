@@ -2,6 +2,14 @@
 #  Created by Min Soo Kim on 12/9/13.
 #  Copyright 2013 SoftwareLab. All rights reserved.
 
+# Story Class is reads and converts marked files to para_data.
+# Story file format is mixture of markdown, Asciidoctor, and our own tags.
+# A subset of Story can be pure markdown for short articles.
+# Full Story format adds some markups that markdown doesn't support.
+# Full Story format adds some markups that Asciidotor doesn't support.
+
+# To generate HTML, Full Story have be coverted to Asciidoctor, or GHF-markdown.
+
 # TODO
 # things after "'" gets ingnored
 # example: when I try to do doesn't
@@ -44,13 +52,6 @@ module RLayout
       @heading     = options.fetch(:heading, story_defaults)
       @published  = heading.fetch(:published, false)
       @paragraphs = options.fetch(:paragraphs,[])
-
-      # if options[:body_markdown]
-      #   # for when it was called from Rails though DRb server
-      #   # without saving body markdown to the file
-      #   @paragraphs = Story.parse_markdown(options[:body_markdown])
-      # end
-
       self
     end
 
@@ -74,7 +75,168 @@ module RLayout
       h[:paragraphs]  = @paragraphs
       h
     end
+    
 
+    #read story file and convert it to para_data format
+    def self.markdown2para_data(path, options={})
+      source = File.open(path, 'r'){|f| f.read}
+      begin
+        if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
+          @contents = md.post_match
+          @metadata = YAML.load(md.to_s)
+        else
+          @contents = source
+        end
+      rescue => e
+        puts "YAML Exception reading #filename: #{e.message}"
+      end
+      starting_heading_level = options.fetch(:demotion, 1)
+      if @metadata
+        if @metadata.class == Array
+          #TODO it seem like a bug in motion-yaml
+          # YAML.load(md.to_s) returns Array
+          @metadata = @metadata[0]
+        end
+        starting_heading_level += @metadata['demotion'].to_i if @metadata['demotion']
+      end
+      # if we have meta-data, then
+      # take out the top meta-data part from source
+      # Set Document Options
+      # And Create Heading from this
+      reader = RLayout::Reader.new @contents, nil
+      paragraphs = reader.text_blocks.map do |lines_block|
+        Story.block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
+      end
+      {:heading=>@metadata, :paragraphs =>paragraphs}
+    end
+
+    #processing a block of parsed text 
+    def self.block2para_data(text_block, options={})
+      s=StringScanner.new(text_block[0])
+      # starting_heading_level is 1, h1
+      # if starting_heading_level = 3, h1 => h3
+      #
+      starting_heading_level = options.fetch(:starting_heading_level, 1)
+      markup_stirng = s.scan(/#*\s?/)
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/=*\s?/)
+      end
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/table/)
+      end
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/image/) 
+      end
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/\[image\]/) 
+      end
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/photo_page/) 
+      end
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/\[photo_page\]/) 
+      end
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/image_group/) 
+      end
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/\[image_group\]/) 
+      end
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/pdf_insert/) 
+      end
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/\[pdf_insert\]/) 
+      end
+      if markup_stirng == "" || markup_stirng.nil?
+        markup_stirng = s.scan(/\[math\]/) 
+      end
+      
+      #TODO img, math, table, admonition, quote, code
+      #TODO don't allow more than h6
+      case markup_stirng
+      when "\# ", "\#", "=", "= "
+        if starting_heading_level > 6
+          markup = "h6"
+        else
+          markup = "h#{starting_heading_level}"
+        end
+      when "\#\# ", "\#\#", "==", "== "
+        if starting_heading_level > 5
+          markup = "h6"
+        else
+          markup = "h#{starting_heading_level + 1}"
+        end
+      when "\#\#\# ", "\#\#\#", "===", "=== "
+        if starting_heading_level > 4
+          markup = "h6"
+        else
+          markup = "h#{starting_heading_level + 2}"
+        end
+      when "\#\#\#\# ", "\#\#\#\#", "====", "==== "
+        if starting_heading_level > 3
+          markup = "h6"
+        else
+          markup = "h#{starting_heading_level + 3}"
+        end
+      when "\#\#\#\#\# ", "\#\#\#\#\#", "=====", "===== "
+        if starting_heading_level > 2
+          markup = "h6"
+        else
+          markup = "h#{starting_heading_level + 4}"
+        end
+      when "\#\#\#\#\#\# ", "\#\#\#\#\#\#", "======", "====== "
+        markup = 'h6'
+      when "table", "[table]"
+        markup = 'table'
+      when "pdf_insert", "[pdf_insert]"
+        markup = 'photo_page'
+      when "photo_page", "[photo_page]"
+        markup = 'photo_page'
+      when "image_group", "[image_group]"
+        markup = 'image_group'
+      when "[image]"
+        markup = 'image'
+      when "[math]"
+        markup = 'math'
+      else
+        markup = 'p'
+      end
+      
+      @string = s.scan(/.*/)
+      if text_block.length > 1
+        @string = ""
+        text_block.each_with_index do |text_line, i|
+          next if i == 0
+          @string += text_line + "\n"
+        end
+      end
+      # string += text_block.join("\n")
+      if markup == "p" && @string =~/!\[/
+        image_info = @string.match(/\{.*\}/)
+        {:markup =>"img", :local_image=>image_info.to_s}
+      # elsif markup == "image" 
+      #   {:markup =>"image", :local_image=>@string.gsub("::", "")}
+      elsif markup == "table"
+        if text_block.length > 1
+          text_block.shift
+          {:markup =>"table", :csv_data=>text_block.join("\n")}
+        else
+          csv_path = @string.gsub("::", "")
+          {:markup =>"table", :csv_path=>csv_path}
+        end
+      # elsif markup == "image"
+      #   {:markup =>markup, :string=>@string}
+      else
+        {:markup =>markup, :string=>@string}
+      end
+    end
+
+    #TODO
+    def to_asciidoctor
+      
+    end
+    
     def to_meta_markdown
       text = @heading.to_yaml + "\n---\n\n"
       @paragraphs.each do |para|
@@ -144,7 +306,7 @@ module RLayout
       }
       Story.new(h)
     end
-    
+            
     def self.get_metadata_from_stroy(story_path)
       contents = File.open(story_path, 'r'){|f| f.read}
       begin
@@ -174,32 +336,6 @@ module RLayout
       new_story = meta_data_yaml + "\n---\n" + @story_markdown
       File.open(story_path, 'w'){|f| f.write new_story}
     end
-    
-    def self.story_from_markdown(markdown_path)
-      unless File.exists?(story_path)
-        puts "Can not find file #{story_path}!!!!"
-        return {}
-      end
-      contents = File.open(markdown_path, 'r'){|f| f.read}
-      begin
-        if (md = contents.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
-          @metadata = YAML.load(md.to_s)
-          @story_markdown = md.post_match
-        end
-      rescue => e
-        puts "YAML Exception reading #filename: #{e.message}"
-      end
-      # convert all keys to symbol
-      demotion_level = 0
-      if @metadata
-      	@metadata = @metadata[0] if @metadata.class == Array
-      	@metadata=Hash[@metadata.map{ |k, v| [k.to_sym, v] }]
-      	demotion_level = @metadata.fetch(:demote, 0).to_i
-      end
-      paragraphs = markdown_to_para_data(@story_markdown, :demotion_level=>demotion_level)
-      @story_hash = {:heading=>@metadata, :paragraphs=>paragraphs}
-    end
-
   end
 
 end

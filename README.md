@@ -66,6 +66,10 @@ TODO List
 			- \picture_page
 			- \image_group
 
+2015 5 5
+	- add long document support
+	- add class LongDocument
+
 2015 5 4
 	- custom style_support
 		chapter_style.rb, magazine_style.rb, news_style.rb

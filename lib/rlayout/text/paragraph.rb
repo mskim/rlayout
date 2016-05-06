@@ -26,7 +26,7 @@ FIT_STYLE_RUN   = 3
 MININUM_LINES_FOR_SPLIT = 2
 
   class Paragraph < Text
-    attr_accessor  :para_data, :linked
+    attr_accessor  :para_data, :linked, :page_triggering
     def initialize(options={})
       text_options = nil
       case $publication_type

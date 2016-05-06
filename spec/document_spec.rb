@@ -1,4 +1,4 @@
-require "/Users/Shared/rlayout/spec_helper"
+require File.dirname(__FILE__) + "/spec_helper"
 
 describe 'shuld save rlayout docment' do
   before do 

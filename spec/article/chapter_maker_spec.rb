@@ -44,7 +44,7 @@ describe 'ChapterMaker sample' do
     @chapter = ChapterMaker.new(template: template, story_path: @path)
   end
   
-  it 'shold create RLayout::Chapter' do
+  it 'shold create RLayout::ChapterMaker' do
     assert @chapter.class == ChapterMaker
   end
   

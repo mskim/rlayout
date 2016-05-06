@@ -4,7 +4,7 @@
 # We have three such classes, Chapter, MagazineArticle, and NewsArticle.
 
 # Chapter:
-#     1. page numbers can grow to arbitrary pages
+#     1. page can grow to arbitrary pages
 #     1. Usually heading is not floating elelment, just graphics layer
 
 # MagazineArticle:
@@ -39,6 +39,7 @@ module RLayout
   #    call main_box.layout_story agoin with (:heading=>nil, :paragraphs=> @paragraphs)
   #  keep going until we have no more leftover paragraphs.
 
+  
   class Chapter < Document
     attr_accessor :story_path, :heading, :paragraphs
     attr_accessor :toc_on, :article_type, :column_count
