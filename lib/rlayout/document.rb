@@ -148,8 +148,7 @@ module RLayout
         @pages = options[:pages]
       elsif options[:page_count]
         options[:page_count].times do
-          page_hash[:parent]  = self
-          Page.new(page_hash)
+          Page.new(parent: self)
         end
       else
         # create single page as default initial page

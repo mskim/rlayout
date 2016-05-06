@@ -263,7 +263,7 @@ module RLayout
       current_column = @graphics[column_index]
       while @item  = flowing_items.shift do
         # trigger new page
-        if @item.respond_to(:page_triggering) && @item.page_triggering
+        if @item.respond_to?(:page_triggering) && @item.page_triggering
           # start new page for new page triggering paragraph
           
         elsif @item.is_a?(PhotoPage)

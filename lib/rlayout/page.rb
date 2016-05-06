@@ -84,6 +84,7 @@ module RLayout
         main_box_options.merge!(options[:text_box_options])
       end
       if options[:text_box]
+        puts "options[:text_box]:#{options[:text_box]}"
         @main_box = TextBox.new(main_box_options) 
       elsif options[:grid_box]
         @main_box = GridBox.new(main_box_options)

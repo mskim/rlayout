@@ -79,7 +79,6 @@ module RLayout
         result = convert_markdown2pdf(m, options)
         options[:starting_page_number] = result.next_chapter_starting_page_number if result
       end
-      
     end
     
     def update_book_tree(options={})

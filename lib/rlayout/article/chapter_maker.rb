@@ -187,11 +187,10 @@ module RLayout
         
     def read_story
       ext = File.extname(@story_path)
-      puts "ext:#{ext}"
-      if ext == ".md" || ext == ".markdown"
+      if ext == ".md" || ext == ".markdown" || ext == ".story"
         @story      = Story.markdown2para_data(@story_path)
-      elsif ext == ".adoc"
-        @story      = Story.adoc2para_data(@story_path)
+      # elsif ext == ".adoc"
+      #   @story      = Story.adoc2para_data(@story_path)
       end
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
@@ -227,6 +226,9 @@ module RLayout
     end
 
     def layout_story
+      puts "starting document...."
+      puts "@document.pages.length:#{@document.pages.length}"
+      
       page_index                = 0
       @first_page               = @document.pages[0]
       @heading[:layout_expand]  = [:width, :height]
@@ -234,24 +236,39 @@ module RLayout
       @first_page.graphics.unshift(heading_object)
       heading_object.parent_graphic = @first_page
       # end
+      unless @first_page.main_box
+        @first_page.main_text
+      end
       @first_page.relayout!
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
       @first_page.main_box.layout_items(@paragraphs)
+      puts "@document.pages.length:#{@document.pages.length}"
       page_index = 1
+      puts "page_index:#{page_index}"
       while @paragraphs.length > 0
         if page_index >= @document.pages.length
           options               = {}
+          options[:parent]      = @document
           options[:footer]      = true
           options[:header]      = true
           options[:text_box]    = true
           options[:page_number] = @starting_page_number + page_index
           options[:column_count]= @document.column_count
-          p=Page.new(@document, options)
+          p=Page.new(options)
+          puts "@document.pages.length:#{@document.pages.length}"
           p.relayout!
           p.main_box.create_column_grid_rects
+          puts "p.main_box:#{p.main_box}"
         end
-        @document.pages[page_index].relayout!
+        puts "page_index:#{page_index}"
+        puts "@document.pages.length:#{@document.pages.length}"
+        puts "@document.pages[page_index].main_box:#{@document.pages[page_index].main_box}"
+        unless @document.pages[page_index].main_box
+          puts "creating main_box..."
+          @document.pages[page_index].main_text
+          @document.pages[page_index].relayout!
+        end
         @document.pages[page_index].main_box.layout_items(@paragraphs)
         page_index += 1
       end
@@ -342,8 +359,8 @@ module RLayout
       super
       self
     end
-    
-    # page layout is delayer until layout time
+    # page layout is delayed until layout time.
+    # document is not known unlit the layout time.
     def layout_page(options={})
       @document = options[:document]
     end
@@ -356,13 +373,18 @@ module RLayout
       super
       self
     end
-    # page layout is delayer until layout time
+    # page layout is delayed until layout time.
+    # document is not known unlit the layout time.
     def layout_page(options={})
       @document = options[:document]
+      #TODO
+      # layout image group
     end
     
   end
   
+  # we are given pdf in the middle of the document
+  # create pages that con
   class PdfInsert
     attr_accessor :layout_info
     def initialize(options={})
@@ -370,9 +392,12 @@ module RLayout
       super
       self
     end
-    # page layout is delayer until layout time
+    # page layout is delayed until layout time.
+    # document is not known unlit the layout time.
     def layout_page(options={})
       @document = options[:document]
+      #TODO
+      # create pages with PDF as Page and insert it to document
     end
         
   end
