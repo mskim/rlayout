@@ -208,13 +208,13 @@ module RLayout
           @paragraphs << Table.new(para)
           next
         elsif para[:markup] == 'photo_page'
-          @paragraphs << PhotoPage.new(layout_info: para)
+          @paragraphs << PhotoPage.new(para)
           next
         elsif para[:markup] == 'image_group'
-          @paragraphs << ImageGroupPage.new(layout_info: para)
+          @paragraphs << ImageGroupPage.new(para)
           next
         elsif para[:markup] == 'pdf_insert'
-          @paragraphs << PdfInsert.new(layout_info: para)
+          @paragraphs << PdfInsert.new(para)
           next
         end
         para_options[:text_string]    = para[:string]
@@ -225,10 +225,7 @@ module RLayout
       end
     end
 
-    def layout_story
-      puts "starting document...."
-      puts "@document.pages.length:#{@document.pages.length}"
-      
+    def layout_story      
       page_index                = 0
       @first_page               = @document.pages[0]
       @heading[:layout_expand]  = [:width, :height]
@@ -243,9 +240,7 @@ module RLayout
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
       @first_page.main_box.layout_items(@paragraphs)
-      puts "@document.pages.length:#{@document.pages.length}"
       page_index = 1
-      puts "page_index:#{page_index}"
       while @paragraphs.length > 0
         if page_index >= @document.pages.length
           options               = {}
@@ -256,16 +251,10 @@ module RLayout
           options[:page_number] = @starting_page_number + page_index
           options[:column_count]= @document.column_count
           p=Page.new(options)
-          puts "@document.pages.length:#{@document.pages.length}"
           p.relayout!
           p.main_box.create_column_grid_rects
-          puts "p.main_box:#{p.main_box}"
         end
-        puts "page_index:#{page_index}"
-        puts "@document.pages.length:#{@document.pages.length}"
-        puts "@document.pages[page_index].main_box:#{@document.pages[page_index].main_box}"
         unless @document.pages[page_index].main_box
-          puts "creating main_box..."
           @document.pages[page_index].main_text
           @document.pages[page_index].relayout!
         end
@@ -352,31 +341,49 @@ module RLayout
     
   end
 
+  class TitlePage < Page
+    
+    
+  end
+  
   class PhotoPage < Page
-    attr_accessor :layout_info
+    attr_accessor :image_group
     def initialize(options={})
-      @layout_info = options[:layout_info]
+      @image_group = options[:image_group]
+      
       super
       self
     end
     # page layout is delayed until layout time.
-    # document is not known unlit the layout time.
+    # document is not known until layout time.
     def layout_page(options={})
       @document = options[:document]
+      adjust_page_size_to_document
+      @image_group  = options[:image_group]
+      @image_group.each do |image_info|
+        float_image(image_info)
+      end
+
     end
+    
   end
   
   class ImageGroupPage < Page
-    attr_accessor :layout_info
+    attr_accessor :image_group
     def initialize(options={})
-      @layout_info = options[:layout_info]
+      options[:text_box] = true
       super
       self
     end
     # page layout is delayed until layout time.
-    # document is not known unlit the layout time.
+    # document is not known until layout time.
     def layout_page(options={})
-      @document = options[:document]
+      @document     = options[:document]
+      adjust_page_size_to_document
+      @image_group  = options[:image_group]
+      @image_group.each do |image_info|
+        float_image(image_info)
+      end
       #TODO
       # layout image group
     end
@@ -388,12 +395,11 @@ module RLayout
   class PdfInsert
     attr_accessor :layout_info
     def initialize(options={})
-      @layout_info = options[:layout_info]
       super
       self
     end
     # page layout is delayed until layout time.
-    # document is not known unlit the layout time.
+    # document is not known until layout time.
     def layout_page(options={})
       @document = options[:document]
       #TODO

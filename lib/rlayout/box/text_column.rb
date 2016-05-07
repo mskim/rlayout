@@ -8,9 +8,12 @@ module RLayout
   # But rather than using bezeier curve, I simulate it using "grid_rects".
   # I am using seris of GridRect class rects to determin the shape of text flowing region.
   # Finer the GridRect, closer it gets to bezier curve. I am using half body_text_height sized rect.
-  # Half of body text size should be suffient for text layout.
+  # Half of body text height should be suffient for text layout.
   # If align_body_text is set to "true", body text are aligned by starting the body paragraph at odd numbered grid.
   # If all body text to even numbered grids, this will horozontally alignment body text across the columns.
+
+  # body_line_height
+  
   class TextColumn < Container
     attr_accessor :current_position, :current_index
     attr_accessor :grid_rects, :body_line_height
@@ -34,7 +37,8 @@ module RLayout
       end
       
       body_style = @current_style['p']
-      line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
+      # line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
+      line_height = body_style[:text_size] # default line_height, set to text_size*1.3
       line_height = body_style[:line_height] if body_style[:line_height]
       @body_line_height = (line_height + body_style[:text_line_spacing])
       @current_position = @top_margin + @top_inset
@@ -168,14 +172,11 @@ module RLayout
 
     def place_item(item)
       return if @graphics.include?(item)
-      puts __method__
       @graphics << item
       item.parent_graphic = self
       item.x              = @left_margin + @left_inset
       item.y              = @current_position
       @current_position   += item.height + @layout_space
-      puts "@layout_space:#{@layout_space}"
-      puts "@current_position:#{@current_position}"
       @current_position   = snap_to_grid_rect(@current_position)
       @room               = text_rect[3] - @current_position
     end

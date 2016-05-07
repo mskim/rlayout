@@ -12,52 +12,25 @@ module RLayout
     def initialize(options={}, &block)
       @parent_graphic = options[:parent] || options[:document]
       @document       = @parent_graphic
+      options[:left_margin]   = layout_default[:left_margin] unless options[:left_margin]
+      options[:top_margin]    = layout_default[:top_margin] unless options[:top_margin]
+      options[:right_margin]  = layout_default[:right_margin] unless options[:right_margin]
+      options[:bottom_margin] = layout_default[:bottom_margin] unless options[:bottom_margin]
       if @document
-        options[:width]   = @document.width
-        options[:height]  = @document.height        
+        options[:width]         = @document.width
+        options[:height]        = @document.height        
+        options[:left_margin]   = @document.left_margin
+        options[:top_margin]    = @document.top_margin 
+        options[:right_margin]  = @document.right_margin 
+        options[:bottom_margin] = @document.bottom_margin 
       elsif options[:paper_size] && options[:paper_size] != "custom"
-        options[:width] = SIZES[options[:paper_size]][0]
-        options[:height] = SIZES[options[:paper_size]][1]
+        options[:width]   = SIZES[options[:paper_size]][0]
+        options[:height]  = SIZES[options[:paper_size]][1]
       else
-        if options[:width]
-        elsif !@parent_graphic.nil? && @parent_graphic.width
-            options[:width]  = @parent_graphic.width
-        else
-          options[:width]  = page_defaults[:width]
-        end
-        if options[:height]
-        elsif @parent_graphic && @parent_graphic.height
-          options[:height]  = @parent_graphic.height
-        else
-          options[:height]  = page_defaults[:height]
-        end
+        options[:width]   = page_defaults[:width] unless options[:width]
+        options[:height]  = page_defaults[:height] unless options[:height]
       end
-      
-      if options[:left_margin]
-      elsif @parent_graphic && @parent_graphic.left_margin
-        options[:left_margin]  = @parent_graphic.left_margin
-      else
-        options[:left_margin]  = layout_default[:left_margin]
-      end
-      if options[:right_margin]
-      elsif @parent_graphic && @parent_graphic.right_margin
-        options[:right_margin] = @parent_graphic.right_margin
-      else
-        options[:right_margin] = layout_default[:right_margin]
-      end
-
-      if options[:top_margin]
-      elsif @parent_graphic && @parent_graphic.top_margin
-        options[:top_margin] = @parent_graphic.top_margin
-      else
-        options[:top_margin] = layout_default[:top_margin]
-      end
-      if options[:bottom_margin]
-      elsif @parent_graphic && @parent_graphic.bottom_margin
-        options[:bottom_margin] = @parent_graphic.bottom_margin
-      else
-        options[:bottom_margin] = layout_default[:bottom_margin]
-      end
+ 
       @parent_graphic.pages << self if  @parent_graphic && !@parent_graphic.pages.include?(self)
       super
       @page_number = options.fetch(:page_number, 1)
@@ -103,6 +76,15 @@ module RLayout
       return true unless @document
       return true if @document.pages.first == self
       false
+    end
+    
+    def adjust_page_size_to_document      
+      @width          = @document.width
+      @height         = @document.height
+      @left_margin    = @document.left_margin
+      @top_margin     = @document.top_margin
+      @right_margin   = @document.right_margin
+      @bottom_margin  = @document.bottom_margin
     end
     
     def is_left_page?

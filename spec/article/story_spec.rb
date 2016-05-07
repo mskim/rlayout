@@ -15,7 +15,6 @@ describe 'read markdow table' do
   end
   
   it 'should return :heading Hash' do
-    puts @story[:paragraphs]
     assert @story[:paragraphs].class == Array
   end
 end
