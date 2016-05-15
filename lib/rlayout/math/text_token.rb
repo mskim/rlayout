@@ -2,19 +2,19 @@
 # How text is layed out?
 # 1. Tokens are created
 # 2. For simple container
-#    Tokens are divided into lines, by separating it with width of text_container
+#    Tokens are divided into lines, by separating it with width of text_column
 #    We can have simple container or complex one.
 #     Tokens are uniform Height?
 #       align them
 #     different height
-#       ask for proosed rect to RLineFragment
+#       ask text_column for proosed rect for LineFragment
 #
 # 3. For complex container
 
 # TextToken
 # TextToken consists of text string with uniform attributes, a same text run.
 # TextToken does not contain space character. Space charcter is implemented as gap between tokens.
-# RLineFragments is made up of TextTokens, ImageToken, MathToken etc....
+# LineFragments is made up of TextTokens, ImageToken, MathToken etc....
 # When paragraph is created, TextTokenAtts is created for default att value for all TextTokena and they all point ot it.
 # Whenever there is differnce TextTokenAtts in the paragraph, new TextTokenAtts is created and different TextToken ponts to that one.
 
@@ -22,10 +22,16 @@ module RLayout
     
   class TextToken
     attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
-    def initialize(string, atts, options={})
-      @att_string = NSAttributedString.alloc.initWithString(string, attributes: atts)
+    attr_accessor :string
+    def initialize(string, options={})
+      if RUBY_ENGINE == "rubymotion"
+        @att_string = NSAttributedString.alloc.initWithString(string, attributes: options[:atts])
+      end
+      @string = string
       @x      = 0
       @y      = 0
+      @width  = 30
+      @height = 20
       self
     end
     
@@ -62,44 +68,42 @@ module RLayout
   end
 
   
-  class	RLineFragment < Container
-    attr_accessor :text_layout_manager, :tokens
-    attr_accessor :line_tokens
+  class	LineFragment < Container
+    attr_accessor :tokens, :line_type #first_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent
     attr_accessor :x, :y, :width, :height, :total_token_width
-  	def	initialize(text_layout_manager, tokens, options={})
-  	  @text_layout_manager = text_layout_manager
-  	  @text_container = @text_layout_manager.text_container
+  	def	initialize(options={})
+  	  super
       # @tokens           = @text_layout_manager.tokens
-  	  @tokens           = tokens
-  	  @space_width      = @text_layout_manager.token_space_width
-  	  @width            = options[:width]
-  	  @left_indent      = options.fetch(:left_indernt, 0)
+  	  @tokens           = options[:tokens]
+  	  @space_width      = options.fetch(:space_width, 5)
+  	  @width            = options.fetch(:width, 300)
+  	  @left_indent      = options.fetch(:width, 10)
   	  @right_indent     = options.fetch(:right_indent, 0)
-  	  layout_tokens
+  		align_tokens
   		self
   	end
-
-    def layout_tokens
-
-      align_tokens
+    
+    def token_width_sum
+      @tokens.map{|t| t.width}.reduce(0, :+)
     end
     
 	  def align_tokens
-      @total_token_width -= @space_width if @line_tokens.length > 0
+	    @total_token_width = token_width_sum
+      @total_token_width -= @space_width if @tokens.length > 0
       room = @width - @total_token_width      
-      case @text_layout_manager.para_style.h_alignment
+      case @parent_graphic.para_style[:h_alignment]
       when 'left'
       when 'center'
-        @line_tokens.map {|t| t.x += room/2.0}
+        @tokens.map {|t| t.x += room/2.0}
       when 'right'
-        @line_tokens.map do |t| 
+        @tokens.map do |t| 
           t.x += room
         end
       when 'justified'
-        just_space = room/(@line_tokens.length - 1)
+        just_space = room/(@tokens.length - 1)
         x = 0
-        @line_tokens.each_with_index do |token, i|
+        @tokens.each_with_index do |token, i|
           token[:x] = x
           x += token[:width] + just_space
         end
@@ -123,83 +127,163 @@ module RLayout
   end
 
   
-  # RichText Layout Mangager
-  # This is custom TextLayoutManager similar to NSTextLayoutManager
-  # It has single textContainer, 
-  # it is doing the line layout.
-
-  # Ii is called from Text Object when options rich_text: true  
-  # I am using it when when doing Math equations and other special effects.
+  # ParagraphNew
+  # This is the new paragraph
+  # This is for long document and Math equations and other special effects.
   
-  class RTextLayoutManager
-    attr_accessor :owner_graphic, :text_container, :lines, :tokens
-    attr_accessor :text_string, :para_style, :font_object, :token_space_width
-    def initialize(owner_graphic, options={})
-      @owner_graphic  = owner_graphic
-      @text_container = RTextContainer.new(self, options)
+  class ParagraphNew < Container
+    attr_accessor :paragraph_type
+    attr_accessor :lines, :tokens, :token_heights_are_eqaul
+    attr_accessor :para_string, :para_style, :font_object, :space_width
+    attr_accessor :starting_grid_index, :grid_count, :space_before_in_grid, :space_after_in_grid
+    attr_accessor :text_column
+    
+    def initialize(options={})
+      super
+      @paragraph_type = 'simple' #drop_cap, drop_cap_image, math, with_image, with_math
       @tokens         = []
       @lines          = []
-      @text_string    = options.fetch(:text_string, "")
+      @starting_grid_index = 0
+      @grid_count     = 2
+      @space_before_in_grid = 0
+      @space_after_in_grid = 0
+      @para_string    = options.fetch(:para_string, "")
       @para_style     = default_para_style
       @para_style     = options[:para_style] if options[:para_style]
+      @space_width    = 3
       create_tokens
-      if @simple_container
-        layout_simple_container
-      else
-        layout_complex_container
-      end
       self
     end    
         
     def create_tokens
       @atts = {}
-      @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size:@para_style[:size])
-      @token_space_width  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
-      @tokens = @text_string.split(" ").collect do |token_string|
-        puts "token_string:#{token_string}"
+      if RUBY_ENGINE == 'rubymotion'
+        @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size:@para_style[:size])
+        @space_width  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
+      end
+      @tokens = @para_string.split(" ").collect do |token_string|
         #TODO special tokens created with functions
         if token_string =~/^_(.*)+_|^\*(.*)+\*/
           #TODO
         else
-          TextToken.new(token_string, @para_style)
+          RLayout::TextToken.new(token_string, @para_style)
+        end
+      end
+      token_heights_are_eqaul = true
+      return unless  @tokens.length > 0
+      tallest_token_height = @tokens.first.height
+      @tokens.each do |token|
+        if token.height > tallest_token_height
+          token_heights_are_eqaul = false
+          return
         end
       end
     end
-    
+        
     def line_count
-      @text_container.lines.length
+      @lines.length
     end
     
+    def layout_paragraph(text_column)
+      @text_column = text_column
+      if text_column.is_simple_column?
+        layout_simple_container
+      else
+        layout_complex_container
+      end
+    end
     
+    # algorithm for laying out paragraph in simple container
+	  # 1. start with rect with width of column and height of para_style
+	  # 2. keep filling up the line_tokens until the width total exceed the width of column
+	  # 3. Each time with new token, check the height change, tallest_token and adjust line height.
+    # 4. Once we run out of the line space,
+	  # 5. create LineFragment with with and height
+	  # 6. clear the line_tokens buffer and set new positions
     def layout_simple_container
-      @total_token_width = 0
+      @column_width     = @text_column.width
+      @body_line_height = @text_column.body_line_height
+      @current_y        = 0
+      @total_token_width= 0
       @line_tokens = []
-      x = @total_token_width
-      while token = @tokens.shift
-        if  (@total_token_width + token.width) < @width
-          @total_token_width += token.width
-          token[:x] = x
+      while @tokens.length > 0
+        token = @tokens.first 
+        if  (@total_token_width + @space_width + token.width) < @column_width
+          @total_token_width += (@space_width + token.width)
+          token = @tokens.shift
           @line_tokens << token
-          x += @total_token_width + @space_width
         else
-          @tokens.unshift(token)
+          options = {parent: self, tokens: @line_tokens, y: @current_y , width: @column_width, height: @body_line_height}
+          line = LineFragment.new(options)
+          @lines << line
+          @current_y += line.height
           @line_tokens = []
-          @lines << RLineFragment.new(self, @line_tokens , width: @width)
+          @total_token_width = 0
         end
       end
-      # handle the left over last line
+      # left over tokens for last line.
       if @line_tokens.length > 0
-        @lines << RLineFragment.new(self, @line_tokens , width: @width)
+        options = {parent: self, tokens: @line_tokens, y: @current_y , width: @column_width, height: @body_line_height}
+        line = LineFragment.new(options)
+        @lines << line
+        @current_y += line.height
       end
+      # set_new_column_y_position and current_grid_index
+      @text_column.advance_y_position(@current_y)
+      puts "after @text_column.current_grid_index:#{@text_column.current_grid_index}"
+      # set y LineFragment y posiions
     end
-	      
+	  
+	  # algorithm for laying out paragraph in complex container
+	  # 1. start with line rect with width of column and height of para_style
+	  # 2. keep filling up the line_tokens until the width total exceed the sugested width
+	  # 3. Each time with new token, check the height change, tallest_token and adjust proposing line height.
+    # 4. call "text_column.sugest_me_a_rect_at" to get line rect
+    # 5. Once we run out of the line space, create LineFragment with sugessted with and height
+	  # 6. clear the line_tokens buffer and set new positions and do it for onthoer line.
 	  def layout_complex_container
-	   
+      @column_width       = @text_column.width
+      @current_grid_index = @text_column.current_grid_index
+      #TODO this should be determined from parastyle
+      @body_line_height = @text_column.body_line_height
+      @current_y        = 0 # local y position, not text_column y position
+      @total_token_width= 0
+      @line_tokens = []
+      while @tokens.length > 0
+        token = @tokens.first 
+        #TODO ingnore token height unless token heihgt is taller that line height
+        tallest_token_height = token.height
+        sugested_rect = @text_column.sugest_me_a_rect_at(@current_grid_index, tallest_token_height)
+        if  (@total_token_width + @space_width + token.width) < sugested_rect.width
+          token = @tokens.shift
+          @line_tokens << token
+          @total_token_width += (@space_width + token.width )
+          tallest_token_height = token.height if token.height > tallest_token_height
+          sugested_rect = @text_column.sugest_me_a_rect_at(@current_y, @total_token_width, tallest_token_height)
+        else
+          options = {parent: self, tokens: @line_tokens, x: sugested_rect[0], y: sugested_rect[1] , width: sugested_rect[2], height: sugested_rect[3]}
+          line = LineFragment.new(options)
+          @lines << line
+          @current_y = max_y(line)
+          @line_tokens = []
+          @total_token_width = 0
+        end
+      end
+      # left over tokens for last line.
+      if @line_tokens.length > 0
+        options = {parent: self, tokens: @line_tokens, x: sugested_rect[0], y: sugested_rect[1] , width: sugested_rect[2], height: sugested_rect[3]}
+        # options = {parent: self, tokens: @line_tokens, y: @current_y , width: @column_width, height: @body_line_height}
+        line = LineFragment.new(options)
+        @lines << line
+        @current_y = max_y(line)
+      end
+      # set_new_column_y_position and current_grid_index
+      @text_column.advance_y_position(@current_y)
+      puts "after @text_column.current_grid_index:#{@text_column.current_grid_index}"      
 	  end
 	  
     def draw_text
-      puts "in draw_text of  RTextLayoutManager"
-      puts "line_count:#{line_count}"
+      puts "in draw_text of  ParagraphNew"
       @lines.each do |line|
         lines.draw_line
       end

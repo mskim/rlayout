@@ -57,7 +57,6 @@ module RLayout
         main_box_options.merge!(options[:text_box_options])
       end
       if options[:text_box]
-        puts "options[:text_box]:#{options[:text_box]}"
         @main_box = TextBox.new(main_box_options) 
       elsif options[:grid_box]
         @main_box = GridBox.new(main_box_options)
@@ -78,13 +77,14 @@ module RLayout
       false
     end
     
-    def adjust_page_size_to_document      
+    def adjust_page_size_to_document    
       @width          = @document.width
       @height         = @document.height
       @left_margin    = @document.left_margin
       @top_margin     = @document.top_margin
       @right_margin   = @document.right_margin
       @bottom_margin  = @document.bottom_margin
+      relayout!
     end
     
     def is_left_page?

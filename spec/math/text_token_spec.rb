@@ -1,8 +1,61 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'create LineFragment' do
+  before do
+    @text_column  = TextColumn.new({})
+    @text_column.create_grid_rects
+    @tm           = ParagraphNew.new(para_string: "this is a test string")
+    @tm.layout_paragraph(@text_column)
+    @line         = @tm.lines.first
+  end
+  
+  it 'should create LineFragment' do
+    assert @line.class == RLayout::LineFragment
+    assert @tm.line_count == 1
+  end
+  
+  it 'should create tokes' do
+    assert @line.tokens.length == 5
+  end
+  
+  it 'should have TextTokens as tokens element' do
+    assert @line.tokens.first.class == TextToken
+    assert @line.tokens.last.class == TextToken
+  end
+  
+  it 'should have LineFragment style' do
+    assert @line.tokens.first.string == "this"
+    assert @line.tokens[1].string == "is"
+    assert @line.tokens[2].string == "a"
+    assert @line.tokens[3].string == "test"
+    assert @line.tokens[4].string == "string"
+  end
+end
+
+__END__
+
+
+describe 'create ParagraphNew' do
+  before do
+    @tm = ParagraphNew.new(para_string: "this is a test string "*5, width: 200, height: 500)
+  end
+  
+  it 'shuld create ParagraphNew' do
+    assert @tm.class == ParagraphNew
+  end
+    
+  it 'should have default para_style' do
+    assert @tm.para_style[:font]        == 'Times'
+    assert @tm.para_style[:size]        == 10
+    assert @tm.para_style[:h_alignment] == "left"
+    assert @tm.para_style[:v_alignment] == "center"
+  end
+end
+
+
 describe 'create TextToken' do
   before do
-    @tt = TextToken.new("this")
+    @tt = TextToken.new("this", {})
   end
   
   it 'should create TextToken' do
@@ -16,80 +69,34 @@ describe 'create TextToken' do
   end
 end
 
-__END__
-describe 'crate RTextLayoutManager with h_alignment' do
+
+describe 'create ParagraphNew with h_alignment' do
   
   it 'shuld h_alignment left' do
-    @tm = RTextLayoutManager.new(text_string: "this is a test string "*5, width: 200, height: 500, h_alignment: "left")
-    assert @tm.para_style.h_alignment == "left"
+    para_style = {h_alignment: "left"}
+    @tm = ParagraphNew.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
+    assert @tm.para_style[:h_alignment] == "left"
   end
   
   it 'shuld h_alignment center' do
-    @tm = RTextLayoutManager.new(text_string: "this is a test string "*5, width: 200, height: 500, h_alignment: "center")
-    assert @tm.para_style.h_alignment == "center"
+    para_style = {h_alignment: "center"}
+    @tm = ParagraphNew.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
+    assert @tm.para_style[:h_alignment] == "center"
   end
   
   it 'shuld h_alignment right' do
-    @tm = RTextLayoutManager.new(text_string: "this is a test string "*5, width: 200, height: 500, h_alignment: "right")
-    assert @tm.para_style.h_alignment == "right"
+    para_style = {h_alignment: "right"}
+    @tm = ParagraphNew.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
+    assert @tm.para_style[:h_alignment] == "right"
   end
   
   it 'shuld h_alignment justified' do
-    @tm = RTextLayoutManager.new(text_string: "this is a test string "*5, width: 200, height: 500, h_alignment: "justified")
-    assert @tm.para_style.h_alignment == "justified"
+    para_style = {h_alignment: "justified"}
+    @tm = ParagraphNew.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
+    assert @tm.para_style[:h_alignment] == "justified"
   end
   
 end
 
-
-describe 'create RTextLayoutManager' do
-  before do
-    @tm = RTextLayoutManager.new(text_string: "this is a test string "*5, width: 200, height: 500)
-  end
-  
-  it 'shuld create RTextLayoutManager' do
-    assert @tm.class == RTextLayoutManager
-  end
-  
-  it 'should create text_container' do
-    @text_container  = @tm.text_container
-    assert @text_container.width    == 200
-    assert @text_container.height   == 500
-    assert @text_container.text_layout_manager == @tm
-  end
-  
-  it 'should have default para_style' do
-    assert @tm.para_style[:font]        == 'Times'
-    assert @tm.para_style[:size]        == 12
-    assert @tm.para_style[:h_alignment] == "left"
-    assert @tm.para_style[:v_alignment] == "center"
-  end
-end
-
-describe 'create LineFragment' do
-  before do
-    @tm = RTextLayoutManager.new(text_string: "this is a test string "*3)
-    @line = @tm.text_container.lines.first
-  end
-  
-  it 'should create LineFragment' do
-    assert @line.class == LineFragment
-    assert @tm.line_count == 1
-  end
-  
-  it 'should create tokes' do
-    assert @line.line_tokens.length == 15
-  end
-  
-  it 'should have TextTokens as line_tokens element' do
-    assert @line.line_tokens.first.class == TextToken
-    assert @line.line_tokens.last.class == TextToken
-  end
-  
-  it 'should have LineFragment style' do
-    assert @line.line_tokens.first.string == "this"
-    assert @line.line_tokens[1].string == "is"
-  end
-end
 
 

@@ -211,7 +211,7 @@ module RLayout
           @paragraphs << PhotoPage.new(para)
           next
         elsif para[:markup] == 'image_group'
-          @paragraphs << ImageGroupPage.new(para)
+          @paragraphs << ImageGroup.new(para)
           next
         elsif para[:markup] == 'pdf_insert'
           @paragraphs << PdfInsert.new(para)
@@ -225,43 +225,68 @@ module RLayout
       end
     end
 
-    def layout_story      
-      page_index                = 0
+    def layout_story     
+      @page_index               = 0
       @first_page               = @document.pages[0]
       @heading[:layout_expand]  = [:width, :height]
       heading_object            = Heading.new(@heading)
       @first_page.graphics.unshift(heading_object)
       heading_object.parent_graphic = @first_page
-      # end
       unless @first_page.main_box
         @first_page.main_text
       end
       @first_page.relayout!
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
+      first_item = @paragraphs.first
+      if first_item.is_a?(ImageGroup) || first_item.is_a?(PhotoPage) || first_item.is_a?(PdfInsert)
+        first_item = @paragraphs.shift
+        first_item.layout_page(document: @document, page_index: @page_index)
+      end
+      puts "@first_page.main_box.graphics[0].room:#{@first_page.main_box.graphics[0].room}"
       @first_page.main_box.layout_items(@paragraphs)
-      page_index = 1
+      @page_index = 1
+      
       while @paragraphs.length > 0
-        if page_index >= @document.pages.length
+        if @page_index >= @document.pages.length
           options               = {}
           options[:parent]      = @document
           options[:footer]      = true
           options[:header]      = true
           options[:text_box]    = true
-          options[:page_number] = @starting_page_number + page_index
+          options[:page_number] = @starting_page_number + @page_index
           options[:column_count]= @document.column_count
           p=Page.new(options)
           p.relayout!
           p.main_box.create_column_grid_rects
         end
-        unless @document.pages[page_index].main_box
-          @document.pages[page_index].main_text
-          @document.pages[page_index].relayout!
+        if @document.pages[@page_index].main_box.nil?
+          @document.pages[@page_index].main_text
+          @document.pages[@page_index].relayout!
         end
-        @document.pages[page_index].main_box.layout_items(@paragraphs)
-        page_index += 1
+        first_item = @paragraphs.first
+        if first_item.is_a?(ImageGroup) || first_item.is_a?(PhotoPage) || first_item.is_a?(PdfInsert)
+          first_item = @paragraphs.shift
+          first_item.layout_page(document: @document, page_index: @page_index)
+        end
+        @document.pages[@page_index].main_box.layout_items(@paragraphs)
+        @page_index += 1
+        
       end
       update_header_and_footer
+      
+      puts "@document.pages.length:#{@document.pages.length}"
+      @document.pages.each do |page|
+        page.main_box.graphics.each do |column|
+          puts "column.class:#{column.class}"
+          puts "column.layout_space:#{column.layout_space}"
+          column.graphics.each do |para|
+            puts "+++++++"
+            puts "para.class:#{para.class}"
+            para.puts_frame
+          end
+        end
+      end
     end
 
     def next_chapter_starting_page_number
@@ -333,24 +358,13 @@ module RLayout
       end
       layout_file = layout_text
       File.open(layout_path, 'w'){|f| f.write layout_file}
-    end
-
-    def new_title_page
-      
-    end
-    
-  end
-
-  class TitlePage < Page
-    
-    
+    end    
   end
   
   class PhotoPage < Page
     attr_accessor :image_group
     def initialize(options={})
       @image_group = options[:image_group]
-      
       super
       self
     end
@@ -363,29 +377,74 @@ module RLayout
       @image_group.each do |image_info|
         float_image(image_info)
       end
-
+      1 # page index
     end
     
   end
   
-  class ImageGroupPage < Page
+  # Challenges with ImageGroup
+  # Image_group puts an image at current page if image group is the first item, text_box.exmpty?==true
+  # else it puts image at the following page, adding page if the page doen't exist. 
+  # for the second case we could get unwanted space between the previous paragraph and next page image.
+  # since we don't know where the exact breaking point is.
+  # We want the folliwing paragraphs to fill into the previous page's space before the image, if we have room.
+
+  # 1. allow_text_jump_over
+  # this is where "allow_text_jump_over" is used
+  # it tells to allow following text to jump over and fill the gap in previous page of the image.
+  
+  # 2. page_offset?? not implemented yet we could do this we multipe image_group
+  # if image is specified with page_offset starting from next page, 
+  # image is place ot offsetting page
+  # This is used to layout image that are certain pages apart.
+	# {local_image: "1.jpg", frame_rect: [0,0,1,1]}
+	# {local_image: "2.jpg", frame_rect: [0,0,1,1], page_offset:1}
+	# {local_image: "3.jpg", frame_rect: [0,0,1,1], page_offset:2}
+	
+	# above will page images in following page 1, 2, 3
+
+  class ImageGroup
     attr_accessor :image_group
     def initialize(options={})
       options[:text_box] = true
+      @image_group = eval(options[:string])
       super
       self
     end
+    
     # page layout is delayed until layout time.
     # document is not known until layout time.
     def layout_page(options={})
       @document     = options[:document]
-      adjust_page_size_to_document
-      @image_group  = options[:image_group]
-      @image_group.each do |image_info|
-        float_image(image_info)
+      @page         = @document.pages[options[:page_index]]
+      @main_box     = @page.main_box
+      if @main_box.empty?
+        # put image group in empty main_box
+      else
+        # go to next page
+        page_index = options[:page_index] + 1
+        # make page, if it is the last page
+        if page_index >= @document.pages.length
+          options               = {}
+          options[:parent]      = @document
+          options[:footer]      = true
+          options[:header]      = true
+          options[:text_box]    = true
+          options[:page_number] = @starting_page_number + @page_index
+          options[:column_count]= @document.column_count
+          p=Page.new(options)
+          p.relayout!
+          p.main_box.create_column_grid_rects
+          @main_box = p.main_box
+        end        
       end
-      #TODO
-      # layout image group
+      # adjust_page_size_to_document 
+      @image_group.each do |image_info|
+        @main_box.float_image(image_info)
+      end
+      @main_box.layout_floats!
+      @main_box.set_overlapping_grid_rect
+      @main_box.update_column_areas
     end
     
   end
@@ -404,6 +463,7 @@ module RLayout
       @document = options[:document]
       #TODO
       # create pages with PDF as Page and insert it to document
+      # return PdfInsert.length
     end
         
   end

@@ -3,27 +3,31 @@ require File.dirname(__FILE__) + "/../spec_helper"
 describe 'TextBox test' do
   before do
     @tb = TextBox.new(column_count: 2, width: 400, height:500)
-    @tb.floats << Image.new(@tb, x:150, width:150, is_float: true)
-    @tb.floats << Image.new(@tb, x:0, y:300, width:300, is_float: true)
+    @tb.floats << Image.new(parent: @tb, x:150, width:150, is_float: true)
+    @tb.floats << Image.new(parent: @tb, x:0, y:300, width:300, is_float: true)
     @tb.create_column_grid_rects
     @tb.set_overlapping_grid_rect
     @column = @tb.graphics.first
     @column2 = @tb.graphics[1]
   end
   
-  # it 'should create path' do
-  #   @column.must_be_kind_of TextColumn
-  # end
-  # 
-  # it 'column should containe grid_rects' do
-  #   @column.grid_rects.must_be_kind_of Array
-  #   @column.grid_rects.length.must_equal 62 
-  # end
-  # 
-  # it 'should set complex_rect' do
-  #   @column.complex_rect.must_equal true
-  #   @column2.complex_rect.must_equal true
-  # end
+  it 'should create path' do
+    @column.must_be_kind_of TextColumn
+  end
+  
+  it 'column should containe grid_rects' do
+    @column.grid_rects.must_be_kind_of Array
+    @column.grid_rects.length.must_equal 55 
+  end
+  
+  it 'should set complex_rect' do
+    @column.complex_rect.must_equal true
+    @column2.complex_rect.must_equal true
+  end
+  
+  it 'should return a sugested rect' do
+    puts @column2.sugest_me_a_rect_at(0, 16.0)
+  end
   # 
   # it 'should return overlapping rects' do
   #   # puts "overlapping_rects"
@@ -39,13 +43,13 @@ describe 'TextBox test' do
   #   @column.overlapping_rects.length.must_equal 13
   # end
   # 
-  it 'should draw path from current position' do
-    puts "@column.current_position:#{@column.current_position}"
-    @pdf_path = File.dirname(__FILE__) + "/output/text_column_grid_path.pdf"
-    @tb.save_pdf(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
-    system("open #{@pdf_path}")
-  end
+  # it 'should draw path from current position' do
+  #   puts "@column.current_position:#{@column.current_position}"
+  #   @pdf_path = File.dirname(__FILE__) + "/output/text_column_grid_path.pdf"
+  #   @tb.save_pdf(@pdf_path)
+  #   File.exists?(@pdf_path).must_equal true
+  #   system("open #{@pdf_path}")
+  # end
 end
 
 __END__

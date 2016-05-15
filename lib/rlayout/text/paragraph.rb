@@ -1,6 +1,10 @@
 module RLayout
 
 # Paragraph
+# type : simple_text_only, drop_cap, with_image, mixed_height
+# Paragaph generates text input to series of tokens.
+
+# Paragraph
 # para_data is ParagraphStruct
 # para_string: this is a string with markdown 
 #    markup: string starting with #, ##, ###, =, ==, ===
@@ -24,7 +28,7 @@ module RLayout
                       
 FIT_STYLE_RUN   = 3
 MININUM_LINES_FOR_SPLIT = 2
-
+  
   class Paragraph < Text
     attr_accessor  :para_data, :linked, :page_triggering
     def initialize(options={})
@@ -267,5 +271,7 @@ MININUM_LINES_FOR_SPLIT = 2
     EOF
     end
   end
+  
 
+  
 end

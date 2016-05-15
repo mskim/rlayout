@@ -14,17 +14,21 @@ module RLayout
 
   # body_line_height
   
+  
   class TextColumn < Container
-    attr_accessor :current_position, :current_index
+    attr_accessor :current_position, :current_grid_index
     attr_accessor :grid_rects, :body_line_height
     attr_accessor :complex_rect, :align_body_text, :show_grid_rects
 
     def initialize(options={}, &block)
+      options[:width]   = 300 unless options[:width]
+      options[:height]  = 500 unless options[:height]
       super
-      @klass = "TextColumn"
       @show_grid_rects = options[:show_grid_rects] || true
-      @layout_space = options.fetch(:layout_space, 0)
+      @layout_space = options.fetch(:column_layout_space, 0)
       @complex_rect = false
+      @current_grid_index = 0
+      @current_style = RLayout::StyleService.shared_style_service.current_style
       case $publication_type
       when "magazine"
         @current_style = RLayout::StyleService.shared_style_service.magazine_style
@@ -35,7 +39,6 @@ module RLayout
       else
         @current_style = RLayout::StyleService.shared_style_service.current_style
       end
-      
       body_style = @current_style['p']
       # line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
       line_height = body_style[:text_size] # default line_height, set to text_size*1.3
@@ -48,7 +51,64 @@ module RLayout
       end
       self
     end
-
+    
+    def is_simple_column?
+      @complex_rect == false
+    end
+    
+    # tells if rest of the column area is simple column
+    def is_rest_of_area_simple?
+      return true if is_simple_column?
+      @grid_rects.each_with_index do |grid, i|
+        next if i < @current_grid_index
+        return false if grid.overlap?
+      end
+      true
+    end
+    
+    # called from paragraph to get the line rect at complex text_column
+    # grid_index and line_height is given 
+    # It should check the grid_rects at the point of interserts
+    # And return a rect, a text_area that is not overlapping with floats.
+    def sugest_me_a_rect_at(grid_index, line_height)
+      grid_count      = line_height/@grid_rects.first.rect[3]
+      int_amount = grid_count.round
+      # puts "grid_count:#{grid_count}"
+      # puts "int_amount:#{int_amount}"
+      # if (grid_count - int_amount) < 0.1
+      #   int_amount
+      # else
+      #   int_amount += 1
+      # end
+      max_starting_x  = 0
+      min_ending_x    = @x + @width
+      if @grid_rects.length >= (grid_index + grid_count)
+        int_amount.times do |i|
+          grid          = @grid_rects[grid_index + i]
+          if grid.fully_covered
+            return [0,0,0,0]
+          end
+          max_starting_x= grid.rect[0] if grid.rect[0] > max_starting_x
+          min_ending_x  = max_x(grid.rect) if max_x(grid.rect) < min_ending_x
+        end
+        return [max_starting_x, 0 , min_ending_x - max_starting_x, line_height]
+      else
+        # not enough grids left to accomodate the height
+        return [0,0,0,0]
+      end
+    end
+    
+    # update current_grid_index after paragraph is placed
+    def advance_current_grid_index_with_y_position(y_amount)
+      grid_avance_count = y_amount/@grid_rects.first.rect[3]
+      int_amount = grid_avance_count.to_i
+      if (grid_avance_count - int_amount) < 0.1
+        @current_grid_index += int_amount
+      else
+        @current_grid_index += int_amount + 1
+      end
+    end
+    
     # create grid_rects after relayou!
     # make sure the grids are created after adjusting the column size for the final layout
     def create_grid_rects(options={})
@@ -184,31 +244,32 @@ module RLayout
     # skip fully_covered_rect and update current_position
     def update_current_position
       return unless @grid_rects
-      @current_index = current_grid_rect_index_at_position(@current_position)
-      while @current_index < @grid_rects.length do
-        if !@grid_rects[@current_index].fully_covered
-          if @current_index.odd? && @current_index < (@grid_rects.length - 1)
+      @current_grid_index = current_grid_rect_index_at_position(@current_position)
+      while @current_grid_index < @grid_rects.length do
+        if !@grid_rects[@current_grid_index].fully_covered
+          if @current_grid_index.odd? && @current_grid_index < (@grid_rects.length - 1)
             # return even numbered grid
             # ????
-            # @current_position = max_y(@grid_rects[@current_index + 1].rect)
-            @current_position = min_y(@grid_rects[@current_index + 1].rect)
+            # @current_position = max_y(@grid_rects[@current_grid_index + 1].rect)
+            @current_position = min_y(@grid_rects[@current_grid_index + 1].rect)
             return
           end
           #????
-          @current_position = min_y(@grid_rects[@current_index].rect)
+          @current_position = min_y(@grid_rects[@current_grid_index].rect)
           return
         else
-          @current_index += 1
+          @current_grid_index += 1
         end
       end
     end
 
   end
 
-  # GridRect has two rectangle,
-  # @rect represents the position of grid_rect in TexBox cordinate.
-  # @rect is used to determine the overlappings with floats, which are in TexBox cordinate.
-  # and @text_area represents non overlapping area for text layout in TextColumn cordinate(local cordinate)
+  
+  # GridRect has two rectangle, rect and text_area
+  # rect represents the position of grid_rect in TexBox cordinate.
+  # rect is used to determine the overlappings with floats, which are in TexBox cordinate.
+  # and text_area represents non overlapping area for text layout in TextColumn cordinate(local cordinate)
   # We have a case where the grid_rect is fully_covered covered by the float.
   # We also have a case where the grid_rect is partially covered on the left or right side
   # We also have a case where it is coverd in the middle, with room at each sides

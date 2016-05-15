@@ -66,6 +66,20 @@ TODO List
 			- \picture_page
 			- \image_group
 
+Add font missing message
+
+2015 5 14
+	- ParagraphNew
+
+2015 5 12
+	- paragraph text line space ???
+	- eliminate empty line between paragraphs
+	
+2015 5 10
+	- ImageGroup
+		page_offset
+		allow_text_jump_over
+
 2015 5 5
 	- add long document support
 	- add class LongDocument
@@ -115,7 +129,7 @@ TODO List
 	- fix memo
 	- fix Line
 	- draw rule add stroke_rule, stroke[:rule]
-	- 
+
 2015 12 5
 	- add MemoArea
 		

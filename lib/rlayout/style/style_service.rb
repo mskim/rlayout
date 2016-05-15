@@ -151,6 +151,7 @@ module RLayout
     def initialize
       @chapter_style  = CHAPTER_STYLES
       @chapter_style_path = "/Users/Shared/SoftwareLab/article_template/chapter_style.rb"        
+      @current_style  = DEFAULT_STYLES
       if File.exist?(@chapter_style_path)
         @chapter_style_path = eval(File.open(@chapter_style_path,'r'){|f| f.read})
         return self
@@ -167,8 +168,6 @@ module RLayout
         @magazine_style = eval(File.open(@magazine_style_path,'r'){|f| f.read})
         return self
       end
-      @default_style  = DEFAULT_STYLES
-      @current_style  = default_style
       self
     end
     

@@ -137,7 +137,11 @@ module RLayout
     def document
       @parent_graphic.document if @parent_graphic
     end
-
+    
+    def empty?
+      @graphics.first.graphics.length == 0
+    end
+    
     def add_to_toc_list(item)
       if is_toc_item?(item)
         document.add_to_toc_list(item)
@@ -263,18 +267,15 @@ module RLayout
       current_column = @graphics[column_index]
       while @item  = flowing_items.shift do
         # trigger new page
-        if @item.respond_to?(:page_triggering) && @item.page_triggering
-          # start new page for new page triggering paragraph
-          
-        elsif @item.is_a?(PhotoPage)
-          @item.layout_page(parent: self.document)
-          return false
-        elsif @item.is_a?(ImageGroupPage)
-          @item.layout_page(parent: self.document)
-          return false
-        elsif @item.is_a?(PdfInsert)
-          @item.layout_page(parent: self.document)
-          return false
+        if @item.is_a?(RLayout::PhotoPage)
+          flowing_items.unshift(@item)
+          return
+        elsif @item.is_a?(RLayout::ImageGroup)
+          flowing_items.unshift(@item)
+          return 
+        elsif @item.is_a?(RLayout::PdfInsert)
+          flowing_items.unshift(@item)
+          return 
         end
         
         if @item.text_layout_manager
@@ -337,7 +338,6 @@ module RLayout
           # given avalable room in column
           # layout rows into room. it can accomodate all rows or overflow         
           @item.layout_rows(current_column.room) 
-          
         elsif @item.class == RLayout::QuizItem
           @item.width  = current_column.text_width
           @item.set_quiz_content
@@ -349,7 +349,6 @@ module RLayout
           @item.width  = current_column.text_width
           @item.height = @item.width
         end
-        
         # if @item.class != Paragraph
         if !@item.is_breakable?
           if current_column.room < @item.height
@@ -398,7 +397,6 @@ module RLayout
             return false
           end
         end
-
       end
       true
     end
@@ -429,14 +427,22 @@ module RLayout
       end
     end
     
+    def update_column_areas
+      @graphics.each do |column|
+        column.update_current_position
+      end
+    end
+    
     def grid_frame_to_frame_rect(grid_frame)
       return [0,0,100,100]          unless @graphics
       return [0,0,100,100]          if grid_frame.nil?
       return [0,0,100,100]          if grid_frame == ""
       grid_frame    = eval(grid_frame) if grid_frame.class == String
       width_val     = grid_frame[2]
+      height_val    = grid_frame[3]
       column_frame  = @graphics.first.frame_rect
       column_width  = column_frame[2]
+      column_height = column_frame[3]
       # when grid_frame[0] is greater than columns
       x             = column_frame[0]
       if grid_frame[0] >= @graphics.length 
@@ -446,7 +452,8 @@ module RLayout
       end
       y             = column_frame[1]
       width         = column_width*width_val + (width_val - 1)*@layout_space
-      height        = width 
+      # height        = width 
+      height        = column_height*height_val + (height_val - 1)*@column_layout_space
       [x,y,width, height]
     end
 
@@ -555,8 +562,6 @@ module RLayout
           return new_rect
         end
       end
-      
-
   end
   
   class TextBoxWithSide < TextBox
