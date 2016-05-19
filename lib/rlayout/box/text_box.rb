@@ -226,8 +226,12 @@ module RLayout
     # layout_items steps
     # 0. Array of flowing_items are passed as parameter.
     # 1. front_most_item is taken out(shift) from flowing_items array,
-    #    and layouted out untill all items are consumed.
-    # 2. layout_text is called for each item. layout_text calles @text_layout_manager.layout_text_lines for line layout.
+    #    and layouted out. It is repeated untill all items are consumed.
+    # 2. ParagraphLongDoc Item's content is layed out in the column with column widht
+    #    For simple and also for complex column, it is layout with avoiding overlapping float.
+    #    @item.layout_paragraph(current_column)
+    
+    # 2. layout_text is called for each Paragraph item. layout_text calles @text_layout_manager.layout_text_lines for line layout.
     #   this is deprecated
     #   I pass two key/values as options, path?(this should be changed to passing grid_rect id) and proposed_height.
     #   "proposed_height" is the height of path, and also the room(avilable space) of current column.
@@ -240,17 +244,6 @@ module RLayout
     #    FLOAT_PATTERNS is looed up. and re do the layout.
     #    if we have room, go on, otherwise go to next page.
     # 
-    # 4. path is contructed by " def path_from_current_position"(deprecated)
-    #   a. if column is simple with no overlapping floats, path is rectange.
-    #   b. if column is complex with overlapping floats, path is constructed from grid_rects, with non-overlapping shapes.
-    #   c. if column is complex and is discontinuous, I need to have multiple path for each of them.
-    #   "path_from_current_position" handles all three cases. It return array of path.
-    #   This is how I hanlde overlappings float on top of the text.
-    #   Rather than using bezier cureve, I am using series of rects to simulate irregular shape.
-    # 4. path is constructed from current position to the bottom of the column.
-    #   If we have a hole in the middle, fully_covered lines, we can still construct a single path including the coverd lines.
-    #   My trick for solving this is to treat fully_covered lines as tall thin 5 point width rect on the right side.
-    #   Those thin rectangles will not be able to containe any text, but able to form continuos path from currnet position to the bottom.
     # 5. place item in the column, if it fits(does not overflow).
     #   placing item sets the y value of item and updates @current_position, and room
     #   if item has text_overflow, paragraph are splited into two, at overflowing location.
@@ -260,28 +253,16 @@ module RLayout
     #   but becase I don't know about next column, whether it is complex colimn.
     #   leave it to the next iteration to take care of it.
     #
-    
     # layout paragraphs into columns
     def layout_items(flowing_items)
       column_index = 0
       current_column = @graphics[column_index]
-      while @item  = flowing_items.shift do
-        # trigger new page
-        if @item.is_a?(RLayout::PhotoPage)
-          flowing_items.unshift(@item)
-          return
-        elsif @item.is_a?(RLayout::ImageGroup)
-          flowing_items.unshift(@item)
-          return 
-        elsif @item.is_a?(RLayout::PdfInsert)
-          flowing_items.unshift(@item)
-          return 
-        end
-        
+      while @item  = flowing_items.shift do        
         if @item.text_layout_manager
           # We have text
           @item.width  = current_column.text_width
           if current_column.room < current_column.body_line_height || current_column.room < @item.text_line_height
+            # not enough room for even a line, no need to layout, go to next column
             column_index +=1
             if column_index < @column_count
               current_column = @graphics[column_index]
@@ -292,15 +273,24 @@ module RLayout
               return false
             end
           end
-          #TODO????
-          # check if current column is simple
-          # text_area_path  = current_column.path_from_current_position
-          # bounding_rect = CGPathGetPathBoundingBox(text_area_path)
-          # current_column.current_position = bounding_rect.origin.y
-          # item.layout_text(:proposed_path=>text_area_path) # item.width:
           @item.layout_text(:proposed_height=>current_column.room) # item.width is set already
           current_column.update_current_position
           #TODO also check for underflow
+        elsif @item.class == RLayout::ParagraphLongDoc
+          # result tells whether is successfully put item in current column
+          # "sucsess", "partial", "none"
+          result = @item.layout_paragraph(current_column)
+          case result
+          when "sucsess"
+            # set_new_column_y_position and current_grid_index
+            current_column.advance_current_grid_index_with_y_position(@current_y)
+            next
+          when "partial"
+            #split and insert second half to array, and move to next column
+          when "none"
+            # insert item to array, and move to next column
+          end
+        
         elsif @item.class == RLayout::Image
           # We have image
           # check if the image is floating image, out of the column
@@ -556,7 +546,7 @@ module RLayout
           new_rect[HEIGHT_VAL] -= float_rect[HEIGHT_VAL]
           return new_rect
         elsif max_y(float_rect) >= max_y(column_rect)
-          # puts "overlapping at the bottom "
+          #puts  "overlapping at the bottom "
           new_rect = column_rect.dup
           new_rect[HEIGHT_VAL] = min_y(float_rect)    
           return new_rect

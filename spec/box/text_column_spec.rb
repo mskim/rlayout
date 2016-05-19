@@ -26,7 +26,7 @@ describe 'TextBox test' do
   end
   
   it 'should return a sugested rect' do
-    puts @column2.sugest_me_a_rect_at(0, 16.0)
+    @column2.sugest_me_a_rect_at(0, 16.0)
   end
   # 
   # it 'should return overlapping rects' do

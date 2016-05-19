@@ -217,11 +217,12 @@ module RLayout
           @paragraphs << PdfInsert.new(para)
           next
         end
-        para_options[:text_string]    = para[:string]
-        para_options[:article_type]   = @article_type
-        para_options[:text_fit]       = FIT_FONT_SIZE
-        para_options[:layout_lines]   = false
-        @paragraphs << Paragraph.new(para_options)
+        # para_options[:text_string]    = para[:string]
+        para_options[:para_string]    = para[:string]
+        # para_options[:article_type]   = @article_type
+        # para_options[:text_fit]       = FIT_FONT_SIZE
+        # para_options[:layout_lines]   = false
+        @paragraphs << ParagraphLongDoc.new(para_options)
       end
     end
 
@@ -271,22 +272,8 @@ module RLayout
         end
         @document.pages[@page_index].main_box.layout_items(@paragraphs)
         @page_index += 1
-        
       end
       update_header_and_footer
-      
-      puts "@document.pages.length:#{@document.pages.length}"
-      @document.pages.each do |page|
-        page.main_box.graphics.each do |column|
-          puts "column.class:#{column.class}"
-          puts "column.layout_space:#{column.layout_space}"
-          column.graphics.each do |para|
-            puts "+++++++"
-            puts "para.class:#{para.class}"
-            para.puts_frame
-          end
-        end
-      end
     end
 
     def next_chapter_starting_page_number

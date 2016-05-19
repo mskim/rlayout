@@ -127,11 +127,11 @@ module RLayout
   end
 
   
-  # ParagraphNew
+  # ParagraphLongDoc
   # This is the new paragraph
   # This is for long document and Math equations and other special effects.
   
-  class ParagraphNew < Container
+  class ParagraphLongDoc < Container
     attr_accessor :paragraph_type
     attr_accessor :lines, :tokens, :token_heights_are_eqaul
     attr_accessor :para_string, :para_style, :font_object, :space_width
@@ -194,7 +194,7 @@ module RLayout
     end
     
     # algorithm for laying out paragraph in simple container
-	  # 1. start with rect with width of column and height of para_style
+	  # 1. start with line rect with width of column and height of para_style
 	  # 2. keep filling up the line_tokens until the width total exceed the width of column
 	  # 3. Each time with new token, check the height change, tallest_token and adjust line height.
     # 4. Once we run out of the line space,
@@ -228,10 +228,14 @@ module RLayout
         @lines << line
         @current_y += line.height
       end
-      # set_new_column_y_position and current_grid_index
-      @text_column.advance_y_position(@current_y)
-      puts "after @text_column.current_grid_index:#{@text_column.current_grid_index}"
       # set y LineFragment y posiions
+      if @text_column.room >= @current_y
+        return "success"
+      elsif @text_column.room >= @body_line_height
+        return "partial"
+      else
+        return "none"
+      end
     end
 	  
 	  # algorithm for laying out paragraph in complex container
@@ -242,6 +246,7 @@ module RLayout
     # 5. Once we run out of the line space, create LineFragment with sugessted with and height
 	  # 6. clear the line_tokens buffer and set new positions and do it for onthoer line.
 	  def layout_complex_container
+      puts __method__
       @column_width       = @text_column.width
       @current_grid_index = @text_column.current_grid_index
       #TODO this should be determined from parastyle
@@ -278,12 +283,21 @@ module RLayout
         @current_y = max_y(line)
       end
       # set_new_column_y_position and current_grid_index
-      @text_column.advance_y_position(@current_y)
-      puts "after @text_column.current_grid_index:#{@text_column.current_grid_index}"      
+      # @text_column.advance_y_position(@current_y)
+      # puts "after @text_column.current_grid_index:#{@text_column.current_grid_index}"      
+	    # set y LineFragment y posiions
+      if @text_column.room >= @current_y
+        return "success"
+      elsif @text_column.room >= @body_line_height
+        return "partial"
+      else
+        return "none"
+      end
+      
 	  end
 	  
     def draw_text
-      puts "in draw_text of  ParagraphNew"
+      puts "in draw_text of  ParagraphLongDoc"
       @lines.each do |line|
         lines.draw_line
       end
