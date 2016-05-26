@@ -68,6 +68,8 @@ FLOAT_NO_PUSH       = 0
 FLOAT_PUSH_RECT     = 1
 FLOAT_PUSH_SHAPE    = 2
 
+# BREAKING_KIND = [RLayout::Paragraph, RLayout::ParagraphLongDoc, RLayout::Table, ]
+
 module RLayout
   class TextBox < Container
     attr_accessor :heading_columns, :quote_box, :grid_size
@@ -77,7 +79,9 @@ module RLayout
     def initialize(options={}, &block)
       @grid_base        = options.fetch(:grid_base, '3x3')
       super
-      @klass            = "TextBox"
+      # @stroke_width = 1
+      # @stroke_color = 'red'
+      # @klass            = "TextBox"
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)
       @column_count     = options.fetch(:column_count, 1).to_i
@@ -229,13 +233,13 @@ module RLayout
     #    and layouted out. It is repeated untill all items are consumed.
     # 2. ParagraphLongDoc Item's content is layed out in the column with column widht
     #    For simple and also for complex column, it is layout with avoiding overlapping float.
-    #    @item.layout_paragraph(current_column)
+    #    @item.layout_lines(current_column)
     
-    # 2. layout_text is called for each Paragraph item. layout_text calles @text_layout_manager.layout_text_lines for line layout.
+    # 2. layout_lines is called for each Paragraph item.layout_lines calles @text_layout_manager.layout_lines for line layout.
     #   this is deprecated
     #   I pass two key/values as options, path?(this should be changed to passing grid_rect id) and proposed_height.
     #   "proposed_height" is the height of path, and also the room(avilable space) of current column.
-    #   @text_layout_manager.layout_text_lines returns actual item height after line layout.
+    #   @text_layout_manager.layout_lines returns actual item height after line layout.
     #   Text overflow is detected by comparing "proposed_height" and returned actual height.
     #   if the result is greater than the prososed_height, text is overflowing.
     #   this is deprecated, I am now using grid_rects for detecting float overlapping.
@@ -257,8 +261,8 @@ module RLayout
     def layout_items(flowing_items)
       column_index = 0
       current_column = @graphics[column_index]
-      while @item  = flowing_items.shift do        
-        if @item.text_layout_manager
+      while @item  = flowing_items.shift do     
+        if @item.is_a?(RLayout::Paragraph) && @item.text_layout_manager
           # We have text
           @item.width  = current_column.text_width
           if current_column.room < current_column.body_line_height || current_column.room < @item.text_line_height
@@ -273,24 +277,18 @@ module RLayout
               return false
             end
           end
-          @item.layout_text(:proposed_height=>current_column.room) # item.width is set already
-          current_column.update_current_position
-          #TODO also check for underflow
+          @item.layout_lines(:proposed_height=>current_column.room) # item.width is set already
         elsif @item.class == RLayout::ParagraphLongDoc
-          # result tells whether is successfully put item in current column
-          # "sucsess", "partial", "none"
-          result = @item.layout_paragraph(current_column)
-          case result
-          when "sucsess"
-            # set_new_column_y_position and current_grid_index
-            current_column.advance_current_grid_index_with_y_position(@current_y)
-            next
-          when "partial"
-            #split and insert second half to array, and move to next column
-          when "none"
-            # insert item to array, and move to next column
-          end
-        
+          @item.layout_lines(current_column)          
+        elsif @item.class == RLayout::Table
+          @item.width  = current_column.text_width
+          @item.create_rows if @item.graphics.length == 0 
+          # given avalable room in column
+          # layout rows into room. it can accomodate all rows or overflow         
+          @item.layout_rows(current_column.room) 
+        elsif @item.class == RLayout::ImageGroup
+          puts "@item.class == RLayout::ImageGroup"
+          next
         elsif @item.class == RLayout::Image
           # We have image
           # check if the image is floating image, out of the column
@@ -322,12 +320,6 @@ module RLayout
               @side_column.graphics <<  @item if @side_column
             end
           end
-        elsif @item.class == RLayout::Table
-          @item.width  = current_column.text_width
-          @item.create_rows if @item.graphics.length == 0 
-          # given avalable room in column
-          # layout rows into room. it can accomodate all rows or overflow         
-          @item.layout_rows(current_column.room) 
         elsif @item.class == RLayout::QuizItem
           @item.width  = current_column.text_width
           @item.set_quiz_content
@@ -339,6 +331,9 @@ module RLayout
           @item.width  = current_column.text_width
           @item.height = @item.width
         end
+        
+        puts "@item.is_breakable?:#{@item.is_breakable?}"
+        # now item is layed out with colum width, place them in the column
         # if @item.class != Paragraph
         if !@item.is_breakable?
           if current_column.room < @item.height
@@ -354,11 +349,14 @@ module RLayout
           else
             # place @item
             current_column.place_item(@item)
+            # current_column.update_current_position
             next
           end
         elsif !@item.overflow? # @item fits in column
+          puts "placing item"
           current_column.place_item(@item)
         elsif @item.respond_to?(:underflow?) && @item.underflow? 
+          puts "item.underflow"
           # @item doesn't even fit a single line all
           # no need to split, go to next column
           column_index +=1
@@ -371,8 +369,9 @@ module RLayout
              return false
            end
         else
-          # case of overflowing 
+          puts  "case of overflowing"
           second_half = @item.split_overflowing_lines
+          puts "second_half.class:#{second_half.class}"
           current_column.place_item(@item)
           column_index +=1
           if column_index < @column_count

@@ -28,7 +28,7 @@
 # XXXXXX no more!!!!! I am using CoreText functions rather than NSText, XXXXXX no more!!!!!
 # CTFrame, CTLine, CTRun, CTToken,
 # For vertical text, and finer controll
-# 1. layout_text_lines:
+# 1. layout_lines:
 #       lays out out lines with att_string and given width
 #       it returns height for the layed out pargaph
 # 2. Split:
@@ -111,12 +111,12 @@ module RLayout
       @att_string.addLayoutManager @layout_manager
       @text_container = NSTextContainer.alloc.initWithContainerSize(NSMakeSize(@owner_graphic.width, @owner_graphic.height))
       @layout_manager.addTextContainer @text_container
-      layout_text_lines(options) unless options[:no_layout]
+      layout_lines(options) unless options[:no_layout]
       self
     end
 
     # line layout using NSText System
-    def layout_text_lines(options={})
+    def layout_lines(options={})
       return 0 unless @att_string
       @text_overflow  = false
       @overflow_line_count = 0
@@ -177,8 +177,8 @@ module RLayout
 
     def set_frame
       # ???
-      # layout_text_lines
-      layout_text_lines()
+      # layout_lines
+      layout_lines()
     end
 
     def replace_string_with(string)

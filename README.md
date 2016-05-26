@@ -66,7 +66,13 @@ TODO List
 			- \picture_page
 			- \image_group
 
-Add font missing message
+		- Add font missing message
+
+2015 5 22
+	- make long document grid_based, based on body grid
+	- ParagraphLongDoc
+		- first_line_indent
+		- head_indent, tail_indent
 
 2015 5 14
 	- ParagraphLongDoc
@@ -330,7 +336,7 @@ Add font missing message
 	
 2015 9 30
 	- fix: fill_color should not be Text background color 
-	- fix: layout_text_lines should have auto adjusting height optional 
+	- fix: layout_lines should have auto adjusting height optional 
 	
 2015 9 28
 	- TextCell vertical fit
@@ -655,7 +661,7 @@ Add font missing message
 			for overflow compare the att_strring with last line range
 
 2015 1 16
-	- use path for layout_text_lines
+	- use path for layout_lines
 	- path_from_current_position
 	- I may not need to set starting_position for complex column,
 		it could be the top, if I implement the path

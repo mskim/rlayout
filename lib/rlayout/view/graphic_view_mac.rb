@@ -57,7 +57,7 @@ class GraphicViewMac < NSView
     @context  = NSGraphicsContext.currentContext
     transform = NSAffineTransform.transform            
     @context.saveGraphicsState
-    transform.translateXBy(graphic.x, yBy:graphic.y)
+    transform.translateXBy(graphic.x, yBy: graphic.y)
     
     if graphic.rotation
       transform.transformPoint(ns_center_point(graphic))

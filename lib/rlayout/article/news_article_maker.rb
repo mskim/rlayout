@@ -48,7 +48,7 @@ module RLayout
         @template_path = Dir.glob("#{@article_path}/*.{rb,script,pgscript}").first
       end
       unless @template_path
-        @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/news_article_style.rb")
+        @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/news_style.rb")
       end
       puts "@template_path:#{@template_path}"
       @news_article_box       = eval(File.open(@template_path,'r'){|f| f.read})

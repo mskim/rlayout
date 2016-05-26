@@ -133,6 +133,12 @@
 # ^super^
 # sub
 
+# class String
+#   def blank?
+#     !include?(/[^[:space:]]/)
+#   end
+# end
+
 module RLayout
 
   class ChapterMaker
@@ -168,7 +174,8 @@ module RLayout
       unless @template_path
         @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/chapter.rb")
       end
-      @document = eval(File.open(@template_path,'r'){|f| f.read})
+      template = File.open(@template_path,'r'){|f| f.read}
+      @document = eval(template)
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return
@@ -196,6 +203,7 @@ module RLayout
       @title      = @heading[:title] || "Untitled"
       @paragraphs =[]
       @story[:paragraphs].each do |para|
+        next if para.nil?
         para_options = {}
         para_options[:markup]         = para[:markup]
         para_options[:layout_expand]  = [:width]
@@ -217,16 +225,27 @@ module RLayout
           @paragraphs << PdfInsert.new(para)
           next
         end
+        # 
+        # if para[:markup].blank?
+        #   puts "empty paragraph"
+        #   next
+        # else
+        # end
+          
         # para_options[:text_string]    = para[:string]
-        para_options[:para_string]    = para[:string]
+        # para_options[:text_string]    = para[:string]
         # para_options[:article_type]   = @article_type
         # para_options[:text_fit]       = FIT_FONT_SIZE
         # para_options[:layout_lines]   = false
-        @paragraphs << ParagraphLongDoc.new(para_options)
+        para_options[:para_string]    = para[:string]
+        if para[:string].nil?
+          puts "we have para[:string].nil?"
+        end
+        @paragraphs << ParagraphLongDoc.new(para_options) unless para[:string].nil?
       end
     end
 
-    def layout_story     
+    def layout_story
       @page_index               = 0
       @first_page               = @document.pages[0]
       @heading[:layout_expand]  = [:width, :height]
@@ -240,11 +259,10 @@ module RLayout
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
       first_item = @paragraphs.first
-      if first_item.is_a?(ImageGroup) || first_item.is_a?(PhotoPage) || first_item.is_a?(PdfInsert)
+      if first_item.is_a?(RLayout::ImageGroup) || first_item.is_a?(RLayout::PhotoPage) || first_item.is_a?(RLayout::PdfInsert)
         first_item = @paragraphs.shift
         first_item.layout_page(document: @document, page_index: @page_index)
       end
-      puts "@first_page.main_box.graphics[0].room:#{@first_page.main_box.graphics[0].room}"
       @first_page.main_box.layout_items(@paragraphs)
       @page_index = 1
       
@@ -266,14 +284,14 @@ module RLayout
           @document.pages[@page_index].relayout!
         end
         first_item = @paragraphs.first
-        if first_item.is_a?(ImageGroup) || first_item.is_a?(PhotoPage) || first_item.is_a?(PdfInsert)
+        if first_item.is_a?(RLayout::ImageGroup) || first_item.is_a?(RLayout::PhotoPage) || first_item.is_a?(RLayout::PdfInsert)
           first_item = @paragraphs.shift
           first_item.layout_page(document: @document, page_index: @page_index)
         end
         @document.pages[@page_index].main_box.layout_items(@paragraphs)
         @page_index += 1
       end
-      update_header_and_footer
+      update_header_and_footer      
     end
 
     def next_chapter_starting_page_number
@@ -358,6 +376,7 @@ module RLayout
     # page layout is delayed until layout time.
     # document is not known until layout time.
     def layout_page(options={})
+      puts __method__
       @document = options[:document]
       adjust_page_size_to_document
       @image_group  = options[:image_group]

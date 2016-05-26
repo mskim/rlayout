@@ -46,8 +46,8 @@ DEFAULT_STYLES={
   "Head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h6"      =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
-  "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :line_height=>13.0, :text_alignment=>'left', :text_first_line_head_indent=>10},
-  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :line_height=>13.0, :text_alignment=>'left', :text_first_line_head_indent=>10},
+  "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'left', :text_first_line_head_indent=>10},
+  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'left', :text_first_line_head_indent=>10},
   "caption" =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
@@ -74,8 +74,8 @@ MAGAZINE_STYLES={
   "Head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
   "h6"      =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black'},
-  "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :line_height=>13.0, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :line_height=>13.0, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+  "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "caption" =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black', :footer_margin=>30},
@@ -110,8 +110,8 @@ CHAPTER_STYLES={
   "head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
   "h6"      =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray", :text_head_indent=>0, :text_tail_indent=>0},
   # "p"       =>{:font => 'SDMyoungjo',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "p"       =>{:font => 'smSSMyungjoP-W30',     :text_size=>10.0, :text_line_spacing=>10, :line_height=>13.0, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :line_height=>13.0, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+  "p"       =>{:font => 'smSSMyungjoP-W30',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "caption" =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black', :footer_margin=>30},
@@ -133,8 +133,8 @@ NEWS_STYLES={
   "h5"      =>{:font => 'Helvetica', :text_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
   "head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
   "h6"      =>{:font => 'Helvetica', :text_size=>10.0, :text_line_spacing=>5, :text_color => 'black'},
-  "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black', :line_height=>13.0},
-  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black', :line_height=>13.0},
+  "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black'},
+  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black'},
   "caption" =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
@@ -148,25 +148,22 @@ BODY_KIND= %w[h5 h6 p heading1 heading2 heading3 body]
 module RLayout
   class StyleService
     attr_accessor :current_style, :default_style, :chapter_style, :news_style, :magazine_style
-    def initialize
+    def initialize      
+      @current_style  = DEFAULT_STYLES
       @chapter_style  = CHAPTER_STYLES
       @chapter_style_path = "/Users/Shared/SoftwareLab/article_template/chapter_style.rb"        
-      @current_style  = DEFAULT_STYLES
       if File.exist?(@chapter_style_path)
-        @chapter_style_path = eval(File.open(@chapter_style_path,'r'){|f| f.read})
-        return self
+        @chapter_style = eval(File.open(@chapter_style_path,'r'){|f| f.read})
       end
       @news_style     = NEWS_STYLES
-      @news_style_path = "/Users/Shared/SoftwareLab/article_template/chapter_style.rb"        
+      @news_style_path = "/Users/Shared/SoftwareLab/article_template/news_style.rb"        
       if File.exist?(@news_style_path)
         @news_style = eval(File.open(@news_style_path,'r'){|f| f.read})
-        return self
       end
       @magazine_style = MAGAZINE_STYLES
       @magazine_style_path = "/Users/Shared/SoftwareLab/article_template/magazine_style.rb"        
       if File.exist?(@magazine_style_path)
         @magazine_style = eval(File.open(@magazine_style_path,'r'){|f| f.read})
-        return self
       end
       self
     end

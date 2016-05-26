@@ -3,6 +3,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 describe 'read markdow table' do
   before do
     story_path = "/Users/mskim/Development/ruby/gems/rlayout/sample/story/sample_story.md"
+    story_path = "/Users/mskim/demo_book/001.chapter.md"
     @story  = Story.markdown2para_data(story_path)
   end
   

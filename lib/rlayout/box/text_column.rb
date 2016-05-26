@@ -23,7 +23,11 @@ module RLayout
     def initialize(options={}, &block)
       options[:width]   = 300 unless options[:width]
       options[:height]  = 500 unless options[:height]
+      
       super
+      @stroke_width = 1
+      @stroke_color = 'red'
+      
       @show_grid_rects = options[:show_grid_rects] || true
       @layout_space = options.fetch(:column_layout_space, 0)
       @complex_rect = false
@@ -42,7 +46,6 @@ module RLayout
       body_style = @current_style['p']
       # line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
       line_height = body_style[:text_size] # default line_height, set to text_size*1.3
-      line_height = body_style[:line_height] if body_style[:line_height]
       @body_line_height = (line_height + body_style[:text_line_spacing])
       @current_position = @top_margin + @top_inset
       @room = text_rect[3] - @current_position
@@ -59,47 +62,55 @@ module RLayout
     # tells if rest of the column area is simple column
     def is_rest_of_area_simple?
       return true if is_simple_column?
+      grid_index = current_grid_rect_index_at_position(@current_position)
       @grid_rects.each_with_index do |grid, i|
-        next if i < @current_grid_index
+        next if i < grid_index
         return false if grid.overlap?
       end
       true
     end
     
-    # called from paragraph to get the line rect at complex text_column
-    # grid_index and line_height is given 
+    # called from paragraph to get the line rect at current_y position of text_column
+    # line_offset and line_height is given 
     # It should check the grid_rects at the point of interserts
     # And return a rect, a text_area that is not overlapping with floats.
-    def sugest_me_a_rect_at(grid_index, line_height)
-      grid_count      = line_height/@grid_rects.first.rect[3]
+    def sugest_me_a_rect_at(line_offset, line_height)
+      grid_index = current_grid_rect_index_at_position(@current_position + line_offset)
+      grid_count = line_height/@grid_rects.first.rect[3]
       int_amount = grid_count.round
-      # puts "grid_count:#{grid_count}"
-      # puts "int_amount:#{int_amount}"
-      # if (grid_count - int_amount) < 0.1
-      #   int_amount
-      # else
-      #   int_amount += 1
-      # end
-      max_starting_x  = 0
-      min_ending_x    = @x + @width
-      if @grid_rects.length >= (grid_index + grid_count)
-        int_amount.times do |i|
-          grid          = @grid_rects[grid_index + i]
-          if grid.fully_covered
-            return [0,0,0,0]
-          end
-          max_starting_x= grid.rect[0] if grid.rect[0] > max_starting_x
-          min_ending_x  = max_x(grid.rect) if max_x(grid.rect) < min_ending_x
-        end
-        return [max_starting_x, 0 , min_ending_x - max_starting_x, line_height]
-      else
-        # not enough grids left to accomodate the height
+      if @grid_rects.length >= (grid_index + int_amount)
+        # no room to accomodate the line
         return [0,0,0,0]
       end
+      max_starting_x  = 0
+      min_ending_x    = @x + @width
+      int_amount.times do |i|
+        grid          = @grid_rects[grid_index + i]
+        if grid.fully_covered
+          return [0,line_height,0,0]
+        end
+        max_starting_x= grid.rect[0] if grid.rect[0] > max_starting_x
+        min_ending_x  = max_x(grid.rect) if max_x(grid.rect) < min_ending_x
+      end
+      return [max_starting_x, 0 , min_ending_x - max_starting_x, line_height]
+    end
+    
+    def place_item(item)
+      return if @graphics.include?(item)
+      @graphics << item
+      item.parent_graphic = self
+      item.x              = @left_margin + @left_inset
+      item.y              = @current_position
+      @current_position   += item.height + @layout_space
+      @current_position   = snap_to_grid_rect(@current_position)
+      @room               = text_rect[3] - @current_position
     end
     
     # update current_grid_index after paragraph is placed
     def advance_current_grid_index_with_y_position(y_amount)
+      unless @grid_rects
+        create_grid_rects
+      end
       grid_avance_count = y_amount/@grid_rects.first.rect[3]
       int_amount = grid_avance_count.to_i
       if (grid_avance_count - int_amount) < 0.1
@@ -147,6 +158,10 @@ module RLayout
 
     def room
       max_y(text_rect) - @current_position
+    end
+
+    def room_in_grid
+      @grid_rects.length - @current_grid_index
     end
 
     def can_fit?(height)
@@ -230,16 +245,6 @@ module RLayout
       max_y(@grid_rects.last.rect)
     end
 
-    def place_item(item)
-      return if @graphics.include?(item)
-      @graphics << item
-      item.parent_graphic = self
-      item.x              = @left_margin + @left_inset
-      item.y              = @current_position
-      @current_position   += item.height + @layout_space
-      @current_position   = snap_to_grid_rect(@current_position)
-      @room               = text_rect[3] - @current_position
-    end
 
     # skip fully_covered_rect and update current_position
     def update_current_position

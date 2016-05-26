@@ -5,7 +5,7 @@ describe 'create LineFragment' do
     @text_column  = TextColumn.new({})
     @text_column.create_grid_rects
     @tm           = ParagraphLongDoc.new(para_string: "this is a test string")
-    @tm.layout_paragraph(@text_column)
+    @tm.layout_lines(@text_column)
     @line         = @tm.lines.first
   end
   

@@ -251,7 +251,10 @@ DEFAULT_TABLE_STYLE = {
       make_cetegory_cells if @category_level > 0
     end
     
-            
+    def layout_lines(column)
+      
+    end
+    
     def layout_rows(proposed_height)
       @proposed_height = proposed_height
       minimum_height = @graphics.first.height + @graphics[1].height + @top_margin + @top_inset

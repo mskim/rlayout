@@ -112,112 +112,64 @@ module RLayout
 
     #processing a block of parsed text 
     def self.block2para_data(text_block, options={})
-      s=StringScanner.new(text_block[0])
+      starting_heading_level = options.fetch(:starting_heading_level, 1)
+      # s=StringScanner.new(text_block[0])
       # starting_heading_level is 1, h1
       # if starting_heading_level = 3, h1 => h3
       #
-      starting_heading_level = options.fetch(:starting_heading_level, 1)
-      markup_stirng = s.scan(/#*\s?/)
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/=*\s?/)
-      end
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/table/)
-      end
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/image/) 
-      end
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/\[image\]/) 
-      end
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/photo_page/) 
-      end
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/\[photo_page\]/) 
-      end
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/image_group/) 
-      end
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/\[image_group\]/) 
-      end
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/pdf_insert/) 
-      end
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/\[pdf_insert\]/) 
-      end
-      if markup_stirng == "" || markup_stirng.nil?
-        markup_stirng = s.scan(/\[math\]/) 
-      end
-      
-      #TODO img, math, table, admonition, quote, code
-      #TODO don't allow more than h6
-      case markup_stirng
-      when "\# ", "\#", "=", "= "
-        if starting_heading_level > 6
-          markup = "h6"
-        else
-          markup = "h#{starting_heading_level}"
-        end
-      when "\#\# ", "\#\#", "==", "== "
-        if starting_heading_level > 5
-          markup = "h6"
-        else
-          markup = "h#{starting_heading_level + 1}"
-        end
-      when "\#\#\# ", "\#\#\#", "===", "=== "
-        if starting_heading_level > 4
-          markup = "h6"
-        else
-          markup = "h#{starting_heading_level + 2}"
-        end
-      when "\#\#\#\# ", "\#\#\#\#", "====", "==== "
-        if starting_heading_level > 3
-          markup = "h6"
-        else
-          markup = "h#{starting_heading_level + 3}"
-        end
-      when "\#\#\#\#\# ", "\#\#\#\#\#", "=====", "===== "
-        if starting_heading_level > 2
-          markup = "h6"
-        else
-          markup = "h#{starting_heading_level + 4}"
-        end
-      when "\#\#\#\#\#\# ", "\#\#\#\#\#\#", "======", "====== "
-        markup = 'h6'
-      when "table", "[table]"
-        markup = 'table'
-      when "pdf_insert", "[pdf_insert]"
-        markup = 'photo_page'
-      when "photo_page", "[photo_page]"
-        markup = 'photo_page'
-      when "image_group", "[image_group]"
-        markup = 'image_group'
-      when "[image]"
-        markup = 'image'
-      when "[math]"
-        markup = 'math'
+      s = text_block[0]
+      if s =~/^#\s?/
+        @markup = "h#{starting_heading_level}"
+        @string = s.sub(/#\s?/, "")
+      elsif s =~/^##\s?/
+        @markup = "h#{1 + starting_heading_level}"
+        @string = s.sub(/##\s?/, "")
+      elsif s =~/^###\s?/
+        @markup = "h#{2 + starting_heading_level}"
+        @string = s.sub(/###\s?/, "")
+      elsif s =~/^####\s?/
+        @markup = "h#{3 + starting_heading_level}"
+        @string = s.sub(/####\s?/, "")
+      elsif s =~/^#####\s?/
+        @markup = "h#{4 + starting_heading_level}"
+        @string = s.sub(/#####\s?/, "")
+      elsif s =~/^######\s?/
+        @markup = "h#{5 + starting_heading_level}"
+        @string = s.sub(/######\s?/, "")
+      elsif s =~/^table\s?/      
+        @markup = "table"
+        @string = s.sub(/table\s?/, "")
+      elsif s =~/^image\s?/      
+        @markup = "image"
+        #TODO multi line?
+        @string = s.sub(/image\s?/, "")
+      elsif s =~/^photo_page\s?/      
+        @markup = "photo_page"
+      elsif s =~/^\[image_group\]\s?/      
+        @markup = "image_group"
+      elsif s =~/^pdf_insert\s?/      
+        @markup = "pdf_insert"
+      elsif s =~/^math\s?/      
+        @markup = "math"
       else
-        markup = 'p'
-      end
-      
-      @string = s.scan(/.*/)
-      if text_block.length > 1
-        @string = ""
-        text_block.each_with_index do |text_line, i|
-          next if i == 0
-          @string += text_line + "\n"
+        @markup = "p"
+        if text_block.length > 0
+          @string = ""
+          text_block.each_with_index do |text_line, i|
+            @string += text_line + "\n"
+          end
         end
       end
+      
+      # 
+      # 
       # string += text_block.join("\n")
-      if markup == "p" && @string =~/!\[/
+      if @markup == "p" && @string =~/!\[/
         image_info = @string.match(/\{.*\}/)
         {:markup =>"img", :local_image=>image_info.to_s}
       # elsif markup == "image" 
       #   {:markup =>"image", :local_image=>@string.gsub("::", "")}
-      elsif markup == "table"
+      elsif @markup == "table"
         if text_block.length > 1
           text_block.shift
           {:markup =>"table", :csv_data=>text_block.join("\n")}
@@ -228,8 +180,8 @@ module RLayout
       # elsif markup == "image"
       #   {:markup =>markup, :string=>@string}
       else
-        {:markup =>markup, :string=>@string}
-      end
+        {:markup =>@markup, :string=>@string}
+      end      
     end
 
     #TODO
