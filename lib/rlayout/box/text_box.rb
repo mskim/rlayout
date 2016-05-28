@@ -142,6 +142,14 @@ module RLayout
       @parent_graphic.document if @parent_graphic
     end
     
+    def page
+      @parent_graphic
+    end
+    
+    def page_index
+      document.pages.index(@parent_graphic) if @parent_graphic
+    end
+    
     def empty?
       @graphics.first.graphics.length == 0
     end
@@ -287,7 +295,15 @@ module RLayout
           # layout rows into room. it can accomodate all rows or overflow         
           @item.layout_rows(current_column.room) 
         elsif @item.class == RLayout::ImageGroup
-          puts "@item.class == RLayout::ImageGroup"
+          @item.layout_page(document: document, page_index: page_index)
+          unless @item.allow_text_jump_over
+            # TODO
+            # go to next 
+            # puts "text jump over not allowed"
+            # go to next page
+          else
+            # puts "text jump over allowed"
+          end
           next
         elsif @item.class == RLayout::Image
           # We have image
@@ -331,32 +347,10 @@ module RLayout
           @item.width  = current_column.text_width
           @item.height = @item.width
         end
-        
-        puts "@item.is_breakable?:#{@item.is_breakable?}"
         # now item is layed out with colum width, place them in the column
         # if @item.class != Paragraph
-        if !@item.is_breakable?
-          if current_column.room < @item.height
-            column_index +=1
-            if column_index < @column_count              
-              current_column = @graphics[column_index]
-              flowing_items.unshift(@item)
-              next
-            else
-              flowing_items.unshift(@item)                            
-              return false
-            end
-          else
-            # place @item
-            current_column.place_item(@item)
-            # current_column.update_current_position
-            next
-          end
-        elsif !@item.overflow? # @item fits in column
-          puts "placing item"
-          current_column.place_item(@item)
-        elsif @item.respond_to?(:underflow?) && @item.underflow? 
-          puts "item.underflow"
+        
+        if @item.respond_to?(:underflow?) && @item.underflow? 
           # @item doesn't even fit a single line all
           # no need to split, go to next column
           column_index +=1
@@ -367,11 +361,13 @@ module RLayout
            else
              flowing_items.unshift(@item)                            
              return false
-           end
-        else
-          puts  "case of overflowing"
+           end        
+        elsif !@item.overflow? && !@item.underflow?
+          
+          # puts "@item.para_string:#{@item.para_string}"
+          current_column.place_item(@item)
+        elsif @item.is_breakable?
           second_half = @item.split_overflowing_lines
-          puts "second_half.class:#{second_half.class}"
           current_column.place_item(@item)
           column_index +=1
           if column_index < @column_count
@@ -384,6 +380,23 @@ module RLayout
             # current_column.relayout!
             flowing_items.unshift(second_half)
             return false
+          end
+        
+        elsif !@item.is_breakable?
+          if current_column.room < @item.height
+            # puts "not breakable and no room ++++++ "
+            column_index +=1
+            if column_index < @column_count              
+              current_column = @graphics[column_index]
+              flowing_items.unshift(@item)
+              # puts "going to next column..."                            
+              next
+            else
+              flowing_items.unshift(@item)
+              # puts "going to next page..."  
+              flowing_items.unshift(@item)
+              return false
+            end
           end
         end
       end
@@ -407,6 +420,7 @@ module RLayout
     end
     
     def float_images(images)
+      puts __method__
       if images.class == Array
         images.each do |image_info|
           float_image(image_info)
@@ -469,7 +483,6 @@ module RLayout
       # float_paistion: "center" 
       def layout_floats!
         return unless @floats
-        
         # reset heading width
         if has_heading? && (@heading_columns != @column_count)
           heading = get_heading

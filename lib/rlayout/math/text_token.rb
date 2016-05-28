@@ -2,25 +2,20 @@
 # We have Text, and Paragraph.
 # Text is for simple text, usually for single page document or Ads.
 # Paragraph is for text that is used in middle to long document.
-# Paragraph has grid_height value, which is multiple of body text grid_height.
-# We want to align them accross the columns.
 
 # How Paragraoh is layed out?
 # 1. Tokens are created
-# 2. For simple container
-#    Tokens are divided into lines, by separating it with width of text_column
-#    We can have simple container or complex one.
-#     Tokens are uniform Height?
-#       align them
-#     different height
-#       ask text_column for proosed rect for LineFragment
-#
-# 3. For complex container
+# 2. We can encounter simple column or complex column
+#    complex column are those who have overlapping floats of various shapes. 
+#    so the text lines could be shorter than the ones in simple column. 
+# 3. We can also encounter tokens are not uniform in height, math tokens for example
 
 # TextToken
 # TextToken consists of text string with uniform attributes, a same text run.
 # TextToken does not contain space character. Space charcter is implemented as gap between tokens.
-# LineFragments is made up of TextTokens, ImageToken, MathToken etc....
+
+# LineFragments
+# LineFragments are made up of TextTokens, ImageToken, MathToken etc....
 # When paragraph is created, TextTokenAtts is created for default att value for all TextTokena and they all point ot it.
 # Whenever there is differnce TextTokenAtts in the paragraph, new TextTokenAtts is created and different TextToken ponts to that one.
 
@@ -170,19 +165,15 @@ module RLayout
   
   class ParagraphLongDoc < Container
     attr_accessor :paragraph_type
-    attr_accessor :tokens, :token_heights_are_eqaul, :left_over_tokens
-    attr_accessor :para_string, :para_style, :font_object, :space_width
-    attr_accessor :text_column, :grid_height
-    attr_accessor :h_alignment, :first_line_indent, :overflow, :underflow
-    
+    attr_accessor :tokens, :token_heights_are_eqaul
+    attr_accessor :para_string, :para_style, :space_width
+    attr_accessor :text_column, :grid_height, :h_alignment, :first_line_indent 
+    attr_accessor :overflow, :underflow, :overflowing_line_index, :linked
+
     def initialize(options={})
-      # options[:fill_color]   = 'green'
-      # options[:stroke_width]   = 5
-      # options[:stroke_color]   = "red"
       super
       @paragraph_type = options.fetch(:paragraph_type, 'simple') #drop_cap, drop_cap_image, math, with_image, with_math
       @para_string    = options.fetch(:para_string, "")
-      puts @para_string
       @para_style     = default_para_style
       @para_style     = @para_style.merge(options[:para_style]) if options[:para_style]
       @h_alignment    = @para_style[:h_alignment]
@@ -191,6 +182,7 @@ module RLayout
       @tail_indent    = @para_style[:tail_indent]
       @space_width    = 3
       @grid_height    = options.fetch(:grid_height, 2)
+      @linked         = false 
       if options[:tokens]
         @tokens       = options[:tokens]
       else
@@ -203,7 +195,6 @@ module RLayout
     def create_tokens
       @atts = {}
       if RUBY_ENGINE == 'rubymotion'
-        puts "@para_style[:font]:#{@para_style[:font]}"
         @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:size])
         @space_width  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
       end
@@ -235,24 +226,31 @@ module RLayout
 
     
     # algorithm for laying out paragraph in simple container
+    # loop until we run out of tokens
 	  # 1. start with line rect with width of column and height of para_style
 	  # 2. keep filling up the line_tokens until the width total exceed the width of column
+    #    for complex column
+    #    call "text_column.sugest_me_a_rect_at" to get line rect at the current grid_rects
+    #    if lien rect is [0,0,0,0] we have no room at that grid_rect area of column
+    #    elsif we get the rect, fill in the tokens in that rect.
+    #
 	  # 3. Each time with new token, check the height change, tallest_token and adjust line height.
     # 4. Once we run out of the line space,
 	  # 5. create LineFragment with width and height
 	  # 6. clear the line_tokens buffer and set new positions
-	  
-	  # algorithm for laying out paragraph in complex container
-	  # 1. start with line rect with width of column and height of para_style
-    # 4. call "text_column.sugest_me_a_rect_at" to get line rect
-    #    if lien rect is [0,0,0,0] we have no room at this column
-    #    elsif we get the rect, fill in the tokens in that rect.
-    # 5. Once we run out of the line space, create LineFragment with sugessted with and height
-	  # 6. clear the line_tokens buffer and set new positions and do it for onthoer line.
+	  # all tokens are layed out even fo underflow, or overflow.
+	  # underflow is when there is no room even for a single line.
+	  # overflow is when there is not enough room to fit all the lines.
+    
     def layout_lines(text_column)
       @text_column      = text_column
+      if @underflow || @linked
+        re_layout_lines(text_column)
+        return
+      end
       @overflow         = false
       @underflow        = false
+      @linked           = false
       @column_width     = @text_column.width
       @width            = @column_width
       @first_line_width = @column_width
@@ -291,46 +289,53 @@ module RLayout
           @line_width = sugest_me_a_rect_at(@current_y, @tallest_token_height)
         end
         
+        # check for space for more tokens
         if  (@total_token_width + @space_width + token.width) < @line_width
+          # we have more space loft 
           @total_token_width += (@space_width + token.width)
           token = @tokens.shift
           @line_tokens << token
         else 
-          options = {para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @current_y , width: @line_width, height: @body_line_height, space_width: @space_width}
+          # line space is full, make line  
+          options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @current_y , width: @line_width, height: @body_line_height, space_width: @space_width}
           line = LineFragment.new(options)
-          if @text_column.room < @current_y
-            # not enough room
-            @overflow = true
-            #add uncommitted line tokens and left over tokens. 
-            @left_over_tokens = line.graphics.select {|t| t}
-            @left_over_tokens += @tokens 
-            return
-          end
-          # add line to paragraph 
-          line.parent_graphic = self
-          @graphics << line
-          @line_tokens = []
           @current_y += line.height
+          if @text_column.room >= @current_y
+          elsif @text_column.room < @current_y
+            if @graphics.length <= 1
+              @underflow  = true
+            elsif @text_column.room < @current_y
+              unless @underflow
+                @overflow = true 
+                @overflowing_line_index = @line_index
+              end
+            end
+          end
+          @line_tokens = []
           @total_token_width = 0
           @line_index += 1
         end
+        @height = @current_y
       end
       # left over tokens for last line.
       if @line_tokens.length > 0
         options = {parent: self, tokens: @line_tokens, x: @line_x, y: @current_y , width: @column_width, height: @body_line_height, space_width: @space_width}
         line = LineFragment.new(options)
         @current_y += line.height
-      end
-      # set y LineFragment y posiions
-      
-      if @text_column.room >= @current_y && @graphics.length > 0
         @height = @current_y
-      else
-        @underflow = true
-        return "none"
       end
+
     end
 	  
+	  # this is called when paragraph is splitted or moved to next column and have to be
+	  # relayed out at the carried over column
+	  # lines are already created, it might have to be layed out to complex column
+	  # or different column width, 
+	  def re_layout_lines(text_column)
+	    @overflow         = false
+      @underflow        = false
+	    @height           = @graphics.map{|line| line.height}.inject(:+)
+	  end
 
     def is_breakable?
       return true  if @graphics.length > 2
@@ -352,12 +357,12 @@ module RLayout
     def split_overflowing_lines
       puts __method__
       second_half_options           = to_hash
-      second_half_options[:tokens]  = @left_over_tokens
-      @left_over_tokens.each do |token|
-        puts token.string
-      end
       second_half_options[:linked]  = true
-      ParagraphLongDoc.new(second_half_options)
+      second_half = ParagraphLongDoc.new(second_half_options)
+      range = @graphcis.length - @overflowing_line_index
+      second_half_lines = @graphcis.slice!(@overflowing_line_index, range)
+      second_half.graphics= second_half_lines
+      second_half
     end
     
 	  def overflow?

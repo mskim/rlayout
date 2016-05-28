@@ -410,9 +410,10 @@ module RLayout
 	# above will page images in following page 1, 2, 3
 
   class ImageGroup
-    attr_accessor :image_group
+    attr_accessor :image_group, :allow_text_jump_over
     def initialize(options={})
-      options[:text_box] = true
+      options[:allow_text_jump_over] = true
+      @allow_text_jump_over = options[:allow_text_jump_over] if options[:allow_text_jump_over]
       @image_group = eval(options[:string])
       super
       self
@@ -422,15 +423,17 @@ module RLayout
     # document is not known until layout time.
     def layout_page(options={})
       @document     = options[:document]
-      @page         = @document.pages[options[:page_index]]
+      @page_index   = options[:page_index]
+      @starting_page_number = options.fetch(:@starting_page_number, 1)
+      @page         = @document.pages[@page_index]
       @main_box     = @page.main_box
       if @main_box.empty?
         # put image group in empty main_box
       else
         # go to next page
-        page_index = options[:page_index] + 1
+        @page_index += 1
         # make page, if it is the last page
-        if page_index >= @document.pages.length
+        if @page_index >= @document.pages.length
           options               = {}
           options[:parent]      = @document
           options[:footer]      = true
@@ -442,7 +445,7 @@ module RLayout
           p.relayout!
           p.main_box.create_column_grid_rects
           @main_box = p.main_box
-        end        
+        end
       end
       # adjust_page_size_to_document 
       @image_group.each do |image_info|

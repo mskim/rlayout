@@ -1,25 +1,26 @@
 module RLayout
 
-  class MathBlock < Container
-
-  end
-  
-  class MathLine < Container
-
-  end
-  
-  class MathLine < Container
-
-  end
-
-  class InLineMath < Container
-    def initialize(options={}, &block)
-      
+  class MathParagraph < ParagraphLongDoc
+    attr_accessor :math_string
+    
+    def initialize(options={})
+      super
+      @math_string = options[:math_string]
+      create_tokens
+      self
     end
     
+    def create_tokens(string)
+      
+    end
   end
   
-  
+  # Math line has numbering and align to = 
+  class MathLine < LineFragment
+    
+    
+  end
+    
   class MathToken < Container
     def initialize(options={})
       @text_string        = options.fetch(:text_string, "")
@@ -28,24 +29,7 @@ module RLayout
       self   
     end
     
-    def parse_text_string(string)
-      
-    end
-    
-    # def frac(nominator, demominator)
-    #   
-    # end
-    # 
-    # def sup(sup_token)
-    #   sup_token.scale = 0.5
-    #   sup_token.origin.y += @height/2
-    # end
-    # 
-    # def sub(sub_token)
-    #   sub_token.scale = 0.5
-    #   sub_token.origin.y -= @height/2
-    # end
-    # 
+
   end
 
   # style: nomal, monospace, bold, italic, bold-italic
@@ -79,7 +63,7 @@ module RLayout
       false
     end
 
-    def self.create_math_token_from_string(parent, operator, options={})
+    def create_tokens
       return unless math_string
       
       token = nil

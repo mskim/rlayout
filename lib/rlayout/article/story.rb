@@ -147,6 +147,15 @@ module RLayout
         @markup = "photo_page"
       elsif s =~/^\[image_group\]\s?/      
         @markup = "image_group"
+        if text_block.length > 0
+          @string = ""
+          text_block.each_with_index do |text_line, i|
+            next if i == 0
+            @string += text_line + "\n"
+          end
+        end
+        return {:markup =>@markup, :string=>@string}
+        
       elsif s =~/^pdf_insert\s?/      
         @markup = "pdf_insert"
       elsif s =~/^math\s?/      
