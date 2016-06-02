@@ -77,11 +77,7 @@ module RLayout
     attr_accessor :column_count, :column_layout_space, :next_link, :previous_link, :align_body_text
     attr_accessor :has_side_column, :left_side_column, :side_column, :draw_gutter_stroke
     def initialize(options={}, &block)
-      @grid_base        = options.fetch(:grid_base, '3x3')
       super
-      # @stroke_width = 1
-      # @stroke_color = 'red'
-      # @klass            = "TextBox"
       @layout_direction = options.fetch(:layout_direction, "horizontal")
       @layout_space     = options.fetch(:layout_space, 10)
       @column_count     = options.fetch(:column_count, 1).to_i
@@ -299,10 +295,10 @@ module RLayout
           unless @item.allow_text_jump_over
             # TODO
             # go to next 
-            # puts "text jump over not allowed"
+            #  "text jump over not allowed"
             # go to next page
           else
-            # puts "text jump over allowed"
+            #  "text jump over allowed"
           end
           next
         elsif @item.class == RLayout::Image
@@ -363,8 +359,7 @@ module RLayout
              return false
            end        
         elsif !@item.overflow? && !@item.underflow?
-          
-          # puts "@item.para_string:#{@item.para_string}"
+          #  "@item.para_string:#{@item.para_string}"
           current_column.place_item(@item)
         elsif @item.is_breakable?
           second_half = @item.split_overflowing_lines
@@ -384,16 +379,16 @@ module RLayout
         
         elsif !@item.is_breakable?
           if current_column.room < @item.height
-            # puts "not breakable and no room ++++++ "
+            #  "not breakable and no room ++++++ "
             column_index +=1
             if column_index < @column_count              
               current_column = @graphics[column_index]
               flowing_items.unshift(@item)
-              # puts "going to next column..."                            
+              #  "going to next column..."                            
               next
             else
               flowing_items.unshift(@item)
-              # puts "going to next page..."  
+              #  "going to next page..."  
               flowing_items.unshift(@item)
               return false
             end
@@ -408,7 +403,7 @@ module RLayout
       image_options = {}
       image_options[:image_path] = "#{options[:image_path]}" if options[:image_path]
       image_options[:image_path] = "#{$ProjectPath}/images/#{options[:local_image]}" if options[:local_image]
-      frame_rect = grid_frame_to_frame_rect(options[:grid_frame]) if options[:grid_frame]
+      frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
       image_options[:x]       = frame_rect[0]
       image_options[:y]       = frame_rect[1]
       image_options[:width]   = frame_rect[2]
@@ -436,7 +431,7 @@ module RLayout
       end
     end
     
-    def grid_frame_to_frame_rect(grid_frame)
+    def grid_frame_to_image_rect(grid_frame)
       return [0,0,100,100]          unless @graphics
       return [0,0,100,100]          if grid_frame.nil?
       return [0,0,100,100]          if grid_frame == ""
@@ -445,19 +440,18 @@ module RLayout
       height_val    = grid_frame[3]
       column_frame  = @graphics.first.frame_rect
       column_width  = column_frame[2]
-      column_height = column_frame[3]
+      column_height = column_frame[3]/@grid_base[1]
       # when grid_frame[0] is greater than columns
-      x             = column_frame[0]
+      frame_x       = column_frame[0]
       if grid_frame[0] >= @graphics.length 
-        x           = @graphics.last.x_max
+        frame_x     = @graphics.last.x_max
       else
-        x           = @graphics[grid_frame[0]].x
+        frame_x     = @graphics[grid_frame[0]].x
       end
-      y             = column_frame[1]
-      width         = column_width*width_val + (width_val - 1)*@layout_space
-      # height        = width 
-      height        = column_height*height_val + (height_val - 1)*@column_layout_space
-      [x,y,width, height]
+      frame_y       = column_frame[1]
+      frame_width   = column_width*width_val + (width_val - 1)*@layout_space
+      frame_height        = column_height*height_val + (height_val - 1)*@column_layout_space
+      [frame_x, frame_y, frame_width, frame_height]
     end
 
       # layout_floats!
@@ -531,10 +525,10 @@ module RLayout
 
       def non_overlapping_area(column_rect, float_rect, min_gap =10)
         if contains_rect(float_rect, column_rect)
-          # puts "float_rect covers the entire column_rect"
+          #  "float_rect covers the entire column_rect"
           return [0,0,0,0]
         elsif min_y(float_rect) <= min_y(column_rect) && max_y(float_rect) >= max_y(column_rect)
-          # puts "hole or block in the middle"
+          #  "hole or block in the middle"
           rects_array = []
           upper_rect = column_rect.dup
           upper_rect.size.height = min_y(float_rect) 
@@ -552,13 +546,13 @@ module RLayout
           # return both rects in array, if both are big enough 
           return rects_array
         elsif min_y(float_rect) <= min_y(column_rect)
-          # puts "overlapping at the top "
+          #  "overlapping at the top "
           new_rect = column_rect.dup
           new_rect[1] = max_y(float_rect)
           new_rect[HEIGHT_VAL] -= float_rect[HEIGHT_VAL]
           return new_rect
         elsif max_y(float_rect) >= max_y(column_rect)
-          #puts  "overlapping at the bottom "
+          #  "overlapping at the bottom "
           new_rect = column_rect.dup
           new_rect[HEIGHT_VAL] = min_y(float_rect)    
           return new_rect
@@ -570,9 +564,7 @@ module RLayout
     def initialize(options={})
       
       self
-    end
-    
-    
+    end    
   end
 
 end

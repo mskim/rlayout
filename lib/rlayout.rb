@@ -72,6 +72,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/box/composite_box'
   
   require File.dirname(__FILE__) + '/rlayout/box/table'
+  require File.dirname(__FILE__) + '/rlayout/box/item_list'
   require File.dirname(__FILE__) + '/rlayout/box/title_box'
   require File.dirname(__FILE__) + '/rlayout/box/menu'
   require File.dirname(__FILE__) + '/rlayout/box/news_article_box'

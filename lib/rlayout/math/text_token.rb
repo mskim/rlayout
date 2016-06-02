@@ -110,6 +110,7 @@ module RLayout
     end
     
 	  def align_tokens
+	    return if @graphics.length == 0
 	    @total_token_width = token_width_sum
       @total_space_width = (@graphics.length - 1)*@space_width if @graphics.length > 0
       room = @width - (@total_token_width + @total_space_width)
@@ -285,23 +286,41 @@ module RLayout
         
         if text_column.is_simple_column? || text_column.is_rest_of_area_simple?
         else
-          puts "we are at complex part of column"
-          @line_width = sugest_me_a_rect_at(@current_y, @tallest_token_height)
+          #  "we are at complex part of column"
+          @line_rectangle = @text_column.sugest_me_a_rect_at(@current_y, @tallest_token_height)
+          if @current_y > @text_column.room
+            #   "we have reached bottom of the column"
+            @line_width = @text_line_width
+            @line_x     = @head_indent
+          elsif @line_width == 0
+            #  "fully covered grid_rects"
+            @text_column.move_current_position_by(@tallest_token_height)
+            next
+          else
+            if @line_rectangle[0] > @head_indent
+              #TODO tail_indent
+              @line_x     = @line_rectangle[0]              
+            else
+              # @head_indent is right of line origin
+              # use head_indent, adjust width as @line_rectangle[2] - (@head_indent - @line_rectangle[0])
+              @line_x     = @head_indent              
+              @line_width = @line_rectangle[2] - (@head_indent - @line_rectangle[0])
+            end
+          end
+          
         end
         
         # check for space for more tokens
         if  (@total_token_width + @space_width + token.width) < @line_width
-          # we have more space loft 
           @total_token_width += (@space_width + token.width)
           token = @tokens.shift
           @line_tokens << token
         else 
-          # line space is full, make line  
           options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @current_y , width: @line_width, height: @body_line_height, space_width: @space_width}
           line = LineFragment.new(options)
           @current_y += line.height
           if @text_column.room >= @current_y
-          elsif @text_column.room < @current_y
+          else  
             if @graphics.length <= 1
               @underflow  = true
             elsif @text_column.room < @current_y
@@ -310,21 +329,19 @@ module RLayout
                 @overflowing_line_index = @line_index
               end
             end
-          end
+          end          
           @line_tokens = []
           @total_token_width = 0
           @line_index += 1
         end
         @height = @current_y
       end
-      # left over tokens for last line.
       if @line_tokens.length > 0
         options = {parent: self, tokens: @line_tokens, x: @line_x, y: @current_y , width: @column_width, height: @body_line_height, space_width: @space_width}
         line = LineFragment.new(options)
         @current_y += line.height
         @height = @current_y
       end
-
     end
 	  
 	  # this is called when paragraph is splitted or moved to next column and have to be
@@ -348,20 +365,27 @@ module RLayout
 
     def to_hash
       h = {}
+      h[:width]  = @width
       h[:paragraph_type]  = @paragraph_type
-      h[:para_string]     = overflowing_string
       h[:para_style]      = @para_style
       h
     end
 
     def split_overflowing_lines
-      puts __method__
       second_half_options           = to_hash
-      second_half_options[:linked]  = true
       second_half = ParagraphLongDoc.new(second_half_options)
-      range = @graphcis.length - @overflowing_line_index
-      second_half_lines = @graphcis.slice!(@overflowing_line_index, range)
+      second_half.linked = true
+      range = @graphics.length - @overflowing_line_index
+      second_half_lines = @graphics.slice!(@overflowing_line_index, range)
       second_half.graphics= second_half_lines
+      y = 0
+      second_half.graphics.each do |line|
+        line.parent_graphic = second_half
+        line.y = y
+        #  "line.line_string:#{line.line_string}"
+        y +=line.height
+      end
+      second_half.height = y
       second_half
     end
     

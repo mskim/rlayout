@@ -95,7 +95,7 @@ module RLayout
     attr_accessor :line_count, :text_size, :linked, :text_line_spacing
     attr_accessor :text_alignment, :text_vertical_alignment, :text_vertical_offset
     attr_accessor :drop_lines, :drop_char, :drop_char_width, :drop_char_height
-    attr_accessor :text_fit_type, :text_overflow, :overflow_line_count
+    attr_accessor :text_fit_type, :text_overflow, :overflow_line_count, :text_underflow
     attr_accessor :text_atts_array, :text_string_array
     attr_reader   :att_string, :layout_manager, :text_container
     
@@ -380,7 +380,7 @@ module RLayout
       last_char_position=range.location + range.length
       if last_char_position < @att_string.length
         # still left over string after right_side_frame
-        @proposed_path     = CGPathCreateMutable()
+        @proposed_path    = CGPathCreateMutable()
         bounds            = CGRectMake(0, @drop_char_height, proposed_width, 1000)
         CGPathAddRect(@proposed_path, nil, bounds)
         @frame            = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), @proposed_path, nil)

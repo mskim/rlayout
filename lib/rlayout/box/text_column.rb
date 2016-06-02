@@ -23,11 +23,7 @@ module RLayout
     def initialize(options={}, &block)
       options[:width]   = 300 unless options[:width]
       options[:height]  = 500 unless options[:height]
-      
       super
-      @stroke_width = 1
-      @stroke_color = 'red'
-      
       @show_grid_rects = options[:show_grid_rects] || true
       @layout_space = options.fetch(:column_layout_space, 0)
       @complex_rect = false
@@ -48,7 +44,7 @@ module RLayout
       line_height = body_style[:text_size] # default line_height, set to text_size*1.3
       @body_line_height = (line_height + body_style[:text_line_spacing])
       @current_position = @top_margin + @top_inset
-      @room = text_rect[3] - @current_position
+      # @room = text_rect[3] - @current_position
       if block
         instance_eval(&block)
       end
@@ -78,9 +74,9 @@ module RLayout
       grid_index = current_grid_rect_index_at_position(@current_position + line_offset)
       grid_count = line_height/@grid_rects.first.rect[3]
       int_amount = grid_count.round
-      if @grid_rects.length >= (grid_index + int_amount)
-        # no room to accomodate the line
-        return [0,0,0,0]
+      grid_rects_count = @grid_rects.length
+      if (grid_index + int_amount) >= grid_rects_count
+        return [0,0,@width,line_height]
       end
       max_starting_x  = 0
       min_ending_x    = @x + @width
@@ -89,10 +85,10 @@ module RLayout
         if grid.fully_covered
           return [0,line_height,0,0]
         end
-        max_starting_x= grid.rect[0] if grid.rect[0] > max_starting_x
+        max_starting_x= grid.rect[0] if grid.rect[0] > max_starting_x        
         min_ending_x  = max_x(grid.rect) if max_x(grid.rect) < min_ending_x
       end
-      return [max_starting_x, 0 , min_ending_x - max_starting_x, line_height]
+      [max_starting_x, 0 , min_ending_x - max_starting_x, line_height]
     end
     
     def place_item(item)
@@ -104,6 +100,10 @@ module RLayout
       @current_position   += item.height + @layout_space
       @current_position   = snap_to_grid_rect(@current_position)
       @room               = text_rect[3] - @current_position
+    end
+    
+    def move_current_position_by(y_amount)
+      @current_position += y_amount
     end
     
     # update current_grid_index after paragraph is placed

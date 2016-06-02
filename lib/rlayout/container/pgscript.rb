@@ -113,6 +113,11 @@ module RLayout
       Table.new(options, &block)
     end
     
+    def item_list(options={}, &block)
+      options[:parent] = self
+      ItemList.new(options, &block)
+    end
+    
     def grid_box(options={}, &block)
       options[:parent] = self
       GridBox.new(options, &block)

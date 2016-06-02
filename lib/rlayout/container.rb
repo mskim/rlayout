@@ -11,7 +11,6 @@ module RLayout
       @graphics             = []
       @floats               = options.fetch(:floats, [])
       super      
-      @klass                = "Container"
       layout_defaults_hash  = auto_layout_defaults
       @layout_direction     = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
       @layout_space         = options.fetch(:layout_space, layout_defaults_hash[:layout_space])       

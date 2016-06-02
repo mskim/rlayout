@@ -19,6 +19,7 @@ module RLayout
     attr_accessor :output_path
     
     def initialize(options={} ,&block)
+      puts "2016 5 30"
       puts "@article_path:#{@article_path}"
       $publication_type = "magazine"
       @article_path = options[:article_path] || options[:project_path]
@@ -56,7 +57,8 @@ module RLayout
       unless @document.kind_of?(RLayout::Document)
         puts "Not a @document kind created !!!"
         return
-      end              
+      end 
+                   
       unless @no_story == true
         read_story
         layout_story
@@ -120,19 +122,25 @@ module RLayout
           @paragraphs << Table.new(para)
           next
         end
-        para_options[:text_string]    = para[:string]
+        para_options[:para_string]    = para[:string]
         para_options[:article_type]   = @article_type
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
-        @paragraphs << Paragraph.new(para_options)
+        @paragraphs << ParagraphLongDoc.new(para_options)
       end
     end
 
     def layout_story
       page_index                = 0
       @first_page               = @document.pages[0]
-      @first_page.main_box.layout_floats!  
+      @first_page.main_box.layout_floats! 
+      # puts "number of floats:#{@first_page.main_box.floats.length}"
+      # @first_page.main_box.floats.each do |float|
+      #   puts "++++ "
+      #   float.puts_frame
+      # end
       @first_page.main_box.set_overlapping_grid_rect
+      @first_page.main_box.update_column_areas
       @first_page.main_box.layout_items(@paragraphs)
       page_index += 1
       # for magazine , do not add pages even if we have overflowing paragraphs
