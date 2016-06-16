@@ -62,7 +62,7 @@ module RLayout
           @paragraphs << Image.new(para_options)
           next
         end
-        para_options[:text_string]    = para[:string]
+        para_options[:para_string]    = para[:string]
         para_options[:layout_expand]  = [:width]
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:article_type]   = "news_article"

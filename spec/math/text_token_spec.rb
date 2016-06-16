@@ -4,7 +4,7 @@ describe 'create LineFragment' do
   before do
     @text_column  = TextColumn.new({})
     @text_column.create_grid_rects
-    @tm           = ParagraphLongDoc.new(para_string: "this is a test string")
+    @tm           = Paragraph.new(para_string: "this is a test string")
     @tm.layout_lines(@text_column)
     @line         = @tm.lines.first
   end
@@ -35,13 +35,13 @@ end
 __END__
 
 
-describe 'create ParagraphLongDoc' do
+describe 'create Paragraph' do
   before do
-    @tm = ParagraphLongDoc.new(para_string: "this is a test string "*5, width: 200, height: 500)
+    @tm = Paragraph.new(para_string: "this is a test string "*5, width: 200, height: 500)
   end
   
-  it 'shuld create ParagraphLongDoc' do
-    assert @tm.class == ParagraphLongDoc
+  it 'shuld create Paragraph' do
+    assert @tm.class == Paragraph
   end
     
   it 'should have default para_style' do
@@ -70,29 +70,29 @@ describe 'create TextToken' do
 end
 
 
-describe 'create ParagraphLongDoc with h_alignment' do
+describe 'create Paragraph with h_alignment' do
   
   it 'shuld h_alignment left' do
     para_style = {h_alignment: "left"}
-    @tm = ParagraphLongDoc.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
+    @tm = Paragraph.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
     assert @tm.para_style[:h_alignment] == "left"
   end
   
   it 'shuld h_alignment center' do
     para_style = {h_alignment: "center"}
-    @tm = ParagraphLongDoc.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
+    @tm = Paragraph.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
     assert @tm.para_style[:h_alignment] == "center"
   end
   
   it 'shuld h_alignment right' do
     para_style = {h_alignment: "right"}
-    @tm = ParagraphLongDoc.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
+    @tm = Paragraph.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
     assert @tm.para_style[:h_alignment] == "right"
   end
   
   it 'shuld h_alignment justified' do
     para_style = {h_alignment: "justified"}
-    @tm = ParagraphLongDoc.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
+    @tm = Paragraph.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
     assert @tm.para_style[:h_alignment] == "justified"
   end
   

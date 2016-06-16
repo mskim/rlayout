@@ -161,11 +161,11 @@ module RLayout
   end
 
   
-  # ParagraphLongDoc
+  # Paragraph
   # This is the new paragraph
   # This is for long document and Math equations and other special effects.
   
-  class ParagraphLongDoc < Container
+  class Paragraph < Container
     attr_accessor :paragraph_type
     attr_accessor :tokens, :token_heights_are_eqaul
     attr_accessor :para_string, :para_style, :space_width
@@ -184,7 +184,7 @@ module RLayout
       @tail_indent    = @para_style[:tail_indent]
       @space_width    = 3
       @grid_height    = options.fetch(:grid_height, 2)
-      @linked         = false 
+      @linked         = options.fetch(:linked, false) 
       if options[:tokens]
         @tokens       = options[:tokens]
       else
@@ -246,13 +246,8 @@ module RLayout
     
     def layout_lines(text_column)
       @text_column      = text_column
-      if @underflow || @linked
-        re_layout_lines(text_column)
-        return
-      end
       @overflow         = false
       @underflow        = false
-      @linked           = false
       @column_width     = @text_column.width
       @width            = @column_width
       @first_line_width = @column_width
@@ -277,15 +272,20 @@ module RLayout
       end
       while @tokens.length > 0
         token = @tokens.first 
-        if @line_index == 0
+        if @line_index == 0 && !@linked
           @line_x     = @first_line_indent
           @line_width = @first_line_width
         else
           @line_width = @text_line_width
           @line_x     = @head_indent
         end
-        
         if text_column.is_simple_column? || text_column.is_rest_of_area_simple?
+          @line_rectangle = [@line_x, @current_y, @line_width, @tallest_token_height]
+          if @current_y > @text_column.room
+            @overflow = true 
+            @overflowing_line_index = @line_index
+            return
+          end
         else
           #  "we are at complex part of column"
           @line_rectangle = @text_column.sugest_me_a_rect_at(@current_y, @tallest_token_height)
@@ -349,11 +349,11 @@ module RLayout
 	  # relayed out at the carried over column
 	  # lines are already created, it might have to be layed out to complex column
 	  # or different column width, 
-	  def re_layout_lines(text_column)
-	    @overflow         = false
-      @underflow        = false
-	    @height           = @graphics.map{|line| line.height}.inject(:+)
-	  end
+    # def re_layout_lines(text_column)
+    #   @overflow         = false
+    #       @underflow        = false
+    #   @height           = @graphics.map{|line| line.height}.inject(:+)
+    # end
 
     def is_breakable?
       return true  if @graphics.length > 2
@@ -369,24 +369,15 @@ module RLayout
       h[:width]  = @width
       h[:paragraph_type]  = @paragraph_type
       h[:para_style]      = @para_style
+      h[:linked]          = true
       h
     end
 
     def split_overflowing_lines
-      second_half_options           = to_hash
-      second_half = ParagraphLongDoc.new(second_half_options)
-      second_half.linked = true
-      range = @graphics.length - @overflowing_line_index
-      second_half_lines = @graphics.slice!(@overflowing_line_index, range)
-      second_half.graphics= second_half_lines
-      y = 0
-      second_half.graphics.each do |line|
-        line.parent_graphic = second_half
-        line.y = y
-        #  "line.line_string:#{line.line_string}"
-        y +=line.height
-      end
-      second_half.height = y
+      second_half_options = to_hash
+      second_half         = Paragraph.new(second_half_options)
+      second_half.tokens = @tokens.map{|x| x}
+      @tokens = []
       second_half
     end
     

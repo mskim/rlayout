@@ -44,10 +44,11 @@ module  RLayout
 
   def convert_to_pt(value)
     if value=~/cm$/
-      return cm2pt(value.sub("cm","").to_i)
+      return cm2pt(value.sub("cm","").to_f)
     elsif value=~/mm$/
-      return mm2pt(value.sub("mm","").to_i)
-    # elsif value=~/inch$/
+      return mm2pt(value.sub("mm","").to_f)
+    elsif value=~/inch$/
+      return inch2pt(value.sub("inch","").to_i)
     end
     value
   end
@@ -70,6 +71,10 @@ module  RLayout
   
   def cm2pt(cm)
     cm * 28.34646
+  end
+  
+  def inch2pt(inch)
+    inch2pt*72.0
   end
   
   def kp2pt(kp)

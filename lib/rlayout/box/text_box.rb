@@ -68,7 +68,7 @@ FLOAT_NO_PUSH       = 0
 FLOAT_PUSH_RECT     = 1
 FLOAT_PUSH_SHAPE    = 2
 
-# BREAKING_KIND = [RLayout::Paragraph, RLayout::ParagraphLongDoc, RLayout::Table, ]
+# BREAKING_KIND = [RLayout::Paragraph, RLayout::Paragraph, RLayout::Table, ]
 
 module RLayout
   class TextBox < Container
@@ -235,7 +235,7 @@ module RLayout
     # 0. Array of flowing_items are passed as parameter.
     # 1. front_most_item is taken out(shift) from flowing_items array,
     #    and layouted out. It is repeated untill all items are consumed.
-    # 2. ParagraphLongDoc Item's content is layed out in the column with column widht
+    # 2. Paragraph Item's content is layed out in the column with column widht
     #    For simple and also for complex column, it is layout with avoiding overlapping float.
     #    @item.layout_lines(current_column)
     
@@ -266,7 +266,7 @@ module RLayout
       column_index = 0
       current_column = @graphics[column_index]
       while @item  = flowing_items.shift do     
-        if @item.is_a?(RLayout::Paragraph) && @item.text_layout_manager
+        if @item.is_a?(RLayout::ParagraphText) && @item.text_layout_manager
           # We have text
           @item.width  = current_column.text_width
           if current_column.room < current_column.body_line_height || current_column.room < @item.text_line_height
@@ -282,7 +282,7 @@ module RLayout
             end
           end
           @item.layout_lines(:proposed_height=>current_column.room) # item.width is set already
-        elsif @item.class == RLayout::ParagraphLongDoc
+        elsif @item.class == RLayout::Paragraph
           @item.layout_lines(current_column)          
         elsif @item.class == RLayout::Table
           @item.width  = current_column.text_width
@@ -361,7 +361,7 @@ module RLayout
         elsif !@item.overflow? && !@item.underflow?
           #  "@item.para_string:#{@item.para_string}"
           current_column.place_item(@item)
-        elsif @item.is_breakable?
+        elsif @item.overflow? && @item.is_breakable?
           second_half = @item.split_overflowing_lines
           current_column.place_item(@item)
           column_index +=1

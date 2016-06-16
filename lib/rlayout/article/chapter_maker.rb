@@ -241,7 +241,7 @@ module RLayout
         if para[:string].nil?
           puts "we have para[:string].nil?"
         end
-        @paragraphs << ParagraphLongDoc.new(para_options) unless para[:string].nil?
+        @paragraphs << Paragraph.new(para_options) unless para[:string].nil?
       end
     end
 

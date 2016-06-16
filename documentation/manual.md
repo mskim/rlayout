@@ -4,7 +4,7 @@
 ## Graphic
 - parent_graphic
 
-### layout
+### Layout Attributes
 Graphic can be placed using x, y, width, height.
 Graphic can also be laid out by parent object using auto_layout.
 
@@ -20,13 +20,13 @@ default value is 1 for all
 
 - layout_space: space between objects when using auto_layout.
 
-### Fill
+### Fill Attributes
 - fill_color
 - fill_type
 - fill_strating_color
 - fill_ending_color
 
-### Stroke
+### Stroke Attributes
 - stroke_width
 - stroke_color
 - stroke_type
@@ -34,25 +34,42 @@ default value is 1 for all
 - stroke_sides
 - stroke_dash
 
-### Shape
+### Shape Attributes
 - rectangle
 - round_rect
 - circle
 - polygon
 
-### Text
+### Text Attributes
 - text_string
 - font
 - text_size
+- text_color
 - text_alignment
 - text_head_indent
 - text_first_line_indent
 - text_tail_indent
 
-### Image
+#### PageScript
+	text("this is a text.", font: "Times", text_size: 12)
+	text("this is a text.", font: "Times", text_size: 12, text_alignment: "center")
+	label("T: 02) 446-6688.", label_text_color: "gray")
+
+### Image Attributes
 - image_path
 - local_image
 - image_fit_type
+	- IMAGE_FIT_TYPE_ORIGINAL       = 0
+	- IMAGE_FIT_TYPE_VERTICAL       = 1
+	- IMAGE_FIT_TYPE_HORIZONTAL     = 2
+	- IMAGE_FIT_TYPE_KEEP_RATIO     = 3
+	- IMAGE_FIT_TYPE_IGNORE_RATIO   = 4
+	- IMAGE_FIT_TYPE_REPEAT_MUTIPLE = 5
+	- IMAGE_CHANGE_BOX_SIZE         = 6 #change box size to fit image source as is at origin
+
+#### PageScript
+	image(image_path: "/Users/somepath/1.jpg", image_fit_type: IMAGE_FIT_TYPE_ORIGINAL)
+	image(image_path: "/Users/somepath/1.jpg", image_fit_type: 1, stroke_width: 1)
 
 ## Container < Graphic
 - graphics
@@ -68,15 +85,16 @@ default value is 1 for all
 ## Table < Container
 ## Header < Container
 ## Footer < Container
+## Paragraph < Container
 
 ## Page < Container
+
+## Story
 
 ## Document
 - paper_size
 - pages
 
-## Story
-## Paragraph
 
 # Publications
 1. rjob
@@ -87,3 +105,31 @@ default value is 1 for all
 1. StepAndRepeat
 1. Calendar
 1. PhotoBook
+
+
+## Color
+### Named Colors
+COLOR_NAMES =%w[black blue brown clear cyan darkGray gray green lightGray magenta orange purple red white yellow]
+	
+### RGB Colors
+	"RGB=100,60,0" "RGB=100,60,0"
+	
+### CMYK Colors
+    "CMYK=100,60,0,20" 
+
+
+## Units
+### point 
+	any integer or float will be treated as point
+	12
+### mm
+	string ending with "cm" will be considered as centimeter
+	"12mm" 
+### cm 
+	string ending with "cm" will be considered as centimeter
+	"12.3cm" 
+### inch 
+	string ending with "inch" will be considered as inch
+	"12inch" 
+
+

@@ -126,7 +126,7 @@ module RLayout
         para_options[:article_type]   = @article_type
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
-        @paragraphs << ParagraphLongDoc.new(para_options)
+        @paragraphs << Paragraph.new(para_options)
       end
     end
 

@@ -1,6 +1,6 @@
 module RLayout
 
-  class MathParagraph < ParagraphLongDoc
+  class MathParagraph < Paragraph
     attr_accessor :math_string
     
     def initialize(options={})

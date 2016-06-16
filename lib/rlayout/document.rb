@@ -98,11 +98,14 @@ module RLayout
         @starts_left= options.fetch(:starts_left, document_defaults[:starts_left])
       end
       
-      if options[:width] && options[:height]
-        @width  = options.fetch(:width, document_defaults[:width])
-        @height = options.fetch(:height, document_defaults[:height])
+      if @paper_size && @paper_size != "custom"
+        @width   = SIZES[options[:paper_size]][0]
+        @height  = SIZES[options[:paper_size]][1]
+      else
+        @width  = options.fetch(:width, page_defaults[:width])
+        @height = options.fetch(:height, page_defaults[:height])
       end
-      
+            
       if @portrait == false
         temp    = @width
         @width  = @height

@@ -152,7 +152,7 @@ Rectangle.new(width:200, height:500, fill_color: 'red')
 		
 ### Paragraph
 	- markup
-	- text_string
+	- para_string
 	
 ### Document
 	- paper_size 	# A4, A3, Tabloid, NAMECARD,

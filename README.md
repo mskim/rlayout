@@ -85,12 +85,12 @@ TODO List
 		
 2015 5 22
 	- make long document grid_based, based on body grid
-	- ParagraphLongDoc
+	- Paragraph
 		- first_line_indent
 		- head_indent, tail_indent
 
 2015 5 14
-	- ParagraphLongDoc
+	- Paragraph
 
 2015 5 12
 	- paragraph text line space ???
