@@ -42,6 +42,12 @@ module RLayout
       Text.new(options)
     end
     
+    def label(string, options={})
+      options[:parent] = self
+      options[:text_string] = string
+      Label.new(options)
+    end
+    
     def text_runs(strings_array, atts_array, options={})
       options[:parent] = self
       options[:text_string_array] = strings_array
@@ -138,7 +144,7 @@ module RLayout
       add_graphic(graphic)
     end
     
-    # place graphic by replacing place holder with same tag
+    # ds graphic by replacing place holder with same tag
     # this is how we use layout template
     # by creating place holder with tag and replacing them with user graphic
     def place(graphic, options={})
@@ -151,7 +157,7 @@ module RLayout
         return unless graphic.tag
         replace_graphic(graphic)
       end
-      relayout!
+      # relayout!
       self
     end
     

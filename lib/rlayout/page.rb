@@ -67,7 +67,6 @@ module RLayout
       if block
         instance_eval(&block)
       end    
-      
       self
     end
     

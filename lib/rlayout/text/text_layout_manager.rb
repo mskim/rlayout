@@ -298,14 +298,15 @@ module RLayout
       @text_color                    = options.fetch(:text_color, "black")
       @text_line_spacing             = options.fetch(:text_line_spacing, 0)
       @text_fit_type                 = options.fetch(:text_fit_type, 0)
-      @text_alignment                = options.fetch(:text_alignment, "center")
+      @text_alignment                = options.fetch(:text_alignment, "left")
       @text_tracking                 = options.fetch(:text_tracking, 0)  if options[:text_tracking ]
       @text_first_line_head_indent   = options.fetch(:text_first_line_head_indent, 0)
       @text_head_indent              = options.fetch(:text_head_indent, 0)
       @text_tail_indent              = options.fetch(:text_tail_indent, 0)
       @text_paragraph_spacing_before = options[:text_paragraph_spacing_before] if options[:text_paragraph_spacing_before]
       @text_paragraph_spacing        = options[:text_paragraph_spacing]        if options[:text_paragraph_spacing]
-      att_string                     = NSMutableAttributedString.alloc.initWithString(@text_string, attributes:make_atts)
+      atts = make_atts
+      att_string                     = NSMutableAttributedString.alloc.initWithString(@text_string, attributes: atts)
       att_string
     end
 

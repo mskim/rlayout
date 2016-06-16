@@ -68,6 +68,7 @@ module RLayout
     def draw
       @att_string.drawAtPoint(NSMakePoint(0,0))
     end
+    
   end
 
   class ImageToken 

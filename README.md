@@ -68,6 +68,21 @@ TODO List
 
 		- Add font missing message
 
+2015 6 
+	- image fit mode 0
+	- puts image at origin and make image size as source size
+	
+2015 6 10
+	- create label
+	- make default alignment as "left", not "center"
+	automaticall set bold for some text followed by :
+	sets "T:" part with bolde text "Helvetical-bold" as defualt
+	or your can set your own font for "label"
+	ex:
+	label("T: 010-445-6688")
+	label("E: some@gmail.com", label_font: gothic-bold)
+	label("M: 010-445-6688", label_text_color: 'gray')
+		
 2015 5 22
 	- make long document grid_based, based on body grid
 	- ParagraphLongDoc

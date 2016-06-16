@@ -39,6 +39,7 @@ IMAGE_FIT_TYPE_HORIZONTAL     = 2
 IMAGE_FIT_TYPE_KEEP_RATIO     = 3
 IMAGE_FIT_TYPE_IGNORE_RATIO   = 4
 IMAGE_FIT_TYPE_REPEAT_MUTIPLE = 5
+IMAGE_CHANGE_BOX_SIZE         = 6 #change box size to fit image source as is at origin
 
 # local_image is used for getting images in project, images in images folder
 # ex. should put images in project.rlayout/images/my_image.jpg
@@ -106,6 +107,8 @@ module RLayout
         fit_keep_ratio 
       when  IMAGE_FIT_TYPE_IGNORE_RATIO
         fit_ignore_ratio
+      when IMAGE_CHANGE_BOX_SIZE
+        fit_by_changing_box_size
       end
     end
     
@@ -209,6 +212,9 @@ module RLayout
       @source_frame = [0,0,0,0]
     end
 
+    def fit_by_changing_box_size
+      puts "fit_by_changing_box_size"
+    end
     
   end
 end

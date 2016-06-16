@@ -12,6 +12,7 @@ module RLayout
       @parent_graphic = options[:parent]
       # if @parent_graphic && @parent_graphic.class.kind_of?(Document)
       #   set_frame(@parent_graphic.layout_rect)
+      @tag              = options[:tag]      
       if @parent_graphic && options[:parent_frame]
         set_frame(@parent_graphic.layout_rect)
       elsif options[:grid_frame] && @parent_graphic && @parent_graphic.grid
@@ -26,7 +27,6 @@ module RLayout
         @height         = options.fetch(:height, graphic_defaults[:height])
       end
       @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))
-      @tag              = options[:tag]
       @auto_save        = options[:auto_save]
       init_layout(options)
       init_fill(options)
@@ -552,7 +552,20 @@ module RLayout
         @text_record.string
       end
     end
-
+    
+    def text_size
+      unless @text_layout_manager
+        return 16.0
+      else
+        @text_layout_manager.text_size
+      end
+    end
+    
+    def setAttributes(atts, range)
+      return unless @text_layout_manager
+      @text_layout_manager.att_string.setAttributes(atts, range: range)
+    end
+    
     def self.sample(options={})
       if options[:number] > 0
         Text.new(text_string: "This is a sample text string"*options[:number])

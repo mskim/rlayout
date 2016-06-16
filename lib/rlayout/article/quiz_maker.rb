@@ -30,7 +30,7 @@
 #
 
 # They are parsed and auto numbers and layouted out as Quiz Sheet PDF with Heading.
-# If correct_answer_page=true is passed, it also creates correct answer sheet page.
+# If @answer_page=true is passed, it also creates correct answer sheet page.
 
 # IncorrectAnswersNoteMaker
 # After quiz is taken,
@@ -100,7 +100,7 @@
 module RLayout
 
   class QuizMaker
-    attr_accessor :project_path, :template_path, :quiz_data_path, :correct_answer_page
+    attr_accessor :project_path, :template_path, :quiz_data_path, :answer_page
     attr_accessor :document, :output_path, :starting_page_number, :column_count
     attr_accessor :layout_style
     def initialize(options={} ,&block)
@@ -109,12 +109,12 @@ module RLayout
         return
       else
         @quiz_data_path = options[:quiz_data_path]
-        @project_path   = File.dirname(@quiz_data_path)
-        $ProjectPath    = @project_path
         unless File.exist?(@quiz_data_path)
           puts "No quiz_data_path doen't exist !!!"
           return
         end
+        @project_path   = File.dirname(@quiz_data_path)
+        $ProjectPath    = @project_path
         if options[:output_path]
           @output_path  = options[:output_path]
         else
@@ -158,7 +158,7 @@ module RLayout
       @quiz_hash  = yaml2quiz_hash(@quiz_data_path)
       @heading    = @quiz_hash[:heading] || {}
       @title      = @heading[:title] || "Untitled"
-      @correct_answer_page = @heading["answer_page"] if @heading["answer_page"]
+      @answer_page= @heading["answer_page"] if @heading["answer_page"]
       # @heading[:stroke_sides] = [1,1,1,1]
       # @heading[:stroke_width] = 1
       @heading              = @heading.merge!(@layout_style[:heading])
@@ -282,7 +282,8 @@ module RLayout
         page_index += 1
       end
       
-      if @correct_answer_page
+      # add answer page
+      if @answer_page
         page_index = @document.pages.length + 1
         options               = {}
         options[:footer]      = true

@@ -22,20 +22,27 @@ module RLayout
       @preview        = options[:preview] if options[:preview]
       $ProjectPath    = options[:project_folder] if options[:project_folder]
       if options[:script]
-        # puts "options[:script]:#{options[:script]}"
         created_object = eval(options[:script])
-        # puts "@output_path:#{@output_path}"
+        unless @output_path
+          if $ProjectPath
+            @output_path = $ProjectPath + "/output.pdf"
+          else
+            puts "output_path not specified!!! "
+            return
+          end
+        end
+        
       elsif options[:script_path]
         unless File.exist?(options[:script_path])
           puts "no file #{options[:script_path]} doesn't exit!!! "
           return
         end
-        $ProjectPath    = File.dirname(options[:script_path]) 
+        $ProjectPath    = File.dirname(options[:script_path]) unless options[:project_folder]
         script = File.open(options[:script_path], 'r'){|f| f.read}
+        created_object = eval(script)
         unless @output_path
           @output_path = File.dirname(options[:script_path]) + "/output.pdf"
         end
-        created_object = eval(script)
       end
       
       if created_object.class == SyntaxError
@@ -56,6 +63,7 @@ module RLayout
       output_options[:jpg]      = @jpg if @jpg
       output_options[:preview]  = @preview if @preview
       # puts "@output_path:#{@output_path}"
+      
       created_object.save_pdf(@output_path, output_options) if created_object.respond_to?(:save_pdf)
       self
     end
