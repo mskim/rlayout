@@ -70,11 +70,6 @@ module RLayout
       self
     end
     
-    def is_first_page?
-      return true unless @document
-      return true if @document.pages.first == self
-      false
-    end
     
     def adjust_page_size_to_document    
       @width          = @document.width
@@ -264,12 +259,17 @@ module RLayout
       h
     end
 
+    def is_first_page?
+      return true unless @document
+      return true if @document.pages.first == self
+      false
+    end
+
     def first_page?
       if @parent_graphic
-        @parent_graphic.pages.index(self) == 0
-      else
-        true
+        return @parent_graphic.pages.index(self) == 0
       end
+      false
     end
 
     def left_page?

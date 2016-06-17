@@ -225,18 +225,6 @@ module RLayout
           @paragraphs << PdfInsert.new(para)
           next
         end
-        # 
-        # if para[:markup].blank?
-        #   puts "empty paragraph"
-        #   next
-        # else
-        # end
-          
-        # para_options[:text_string]    = para[:string]
-        # para_options[:text_string]    = para[:string]
-        # para_options[:article_type]   = @article_type
-        # para_options[:text_fit]       = FIT_FONT_SIZE
-        # para_options[:layout_lines]   = false
         para_options[:para_string]    = para[:string]
         if para[:string].nil?
           puts "we have para[:string].nil?"

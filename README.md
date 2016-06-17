@@ -67,12 +67,19 @@ TODO List
 			- \image_group
 
 		- Add font missing message
-
-2015 6 
+		
+2016 6 17
+	- fix Paragraph layout_lines(text_column) for complex column
+	- fix page numbering in ChapterMaker
+	
+2016 6 16
+	- fix Paragraph layout_lines(text_column)
+	
+2016 6 13
 	- image fit mode 0
 	- puts image at origin and make image size as source size
 	
-2015 6 10
+2016 6 10
 	- create label
 	- make default alignment as "left", not "center"
 	automaticall set bold for some text followed by :
@@ -83,37 +90,37 @@ TODO List
 	label("E: some@gmail.com", label_font: gothic-bold)
 	label("M: 010-445-6688", label_text_color: 'gray')
 		
-2015 5 22
+2016 5 22
 	- make long document grid_based, based on body grid
 	- Paragraph
 		- first_line_indent
 		- head_indent, tail_indent
 
-2015 5 14
+2016 5 14
 	- Paragraph
 
-2015 5 12
+2016 5 12
 	- paragraph text line space ???
 	- eliminate empty line between paragraphs
 	
-2015 5 10
+2016 5 10
 	- ImageGroup
 		page_offset
 		allow_text_jump_over
 
-2015 5 5
+2016 5 5
 	- add long document support
 	- add class LongDocument
 
-2015 5 4
+2016 5 4
 	- custom style_support
 		chapter_style.rb, magazine_style.rb, news_style.rb
 	
-2015 4 27
+2016 4 27
 	- fix paragraph snapping space skipping, column_layout_space = 0
 	- min_y(grid_frame.rect)
 	
-2015 4 21
+2016 4 21
 	- make parent_graphic as options parent
 	- relayout image_fit when relayout!
 	

@@ -267,7 +267,6 @@ module RLayout
       @line_width       = @first_line_width
       if @tokens.length > 0
         token = @tokens.first 
-      #TODO ingnore token height unless token heihgt is taller that line height
         @tallest_token_height = token.height
       end
       while @tokens.length > 0
@@ -281,20 +280,27 @@ module RLayout
         end
         if text_column.is_simple_column? || text_column.is_rest_of_area_simple?
           @line_rectangle = [@line_x, @current_y, @line_width, @tallest_token_height]
-          if @current_y > @text_column.room
-            @overflow = true 
-            @overflowing_line_index = @line_index
+          if @current_y + @line_rectangle[3] > @text_column.room
+            if @graphics.length <= 1
+              @underflow  = true
+            else
+              @overflow = true 
+            end
             return
           end
         else
           #  "we are at complex part of column"
           @line_rectangle = @text_column.sugest_me_a_rect_at(@current_y, @tallest_token_height)
-          if @current_y > @text_column.room
-            #   "we have reached bottom of the column"
-            @line_width = @text_line_width
-            @line_x     = @head_indent
+          if @current_y + @line_rectangle[3] > @text_column.room
+            if @graphics.length <= 1
+              @underflow  = true
+            else
+              @overflow = true 
+            end
+            return
           elsif @line_width == 0
-            #  "fully covered grid_rects"
+            # "fully covered grid_rects"
+            # move move_current_position_by token_heigh
             @text_column.move_current_position_by(@tallest_token_height)
             next
           else
@@ -308,7 +314,6 @@ module RLayout
               @line_width = @line_rectangle[2] - (@head_indent - @line_rectangle[0])
             end
           end
-          
         end
         
         # check for space for more tokens
@@ -320,17 +325,6 @@ module RLayout
           options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @current_y , width: @line_width, height: @body_line_height, space_width: @space_width}
           line = LineFragment.new(options)
           @current_y += line.height
-          if @text_column.room >= @current_y
-          else  
-            if @graphics.length <= 1
-              @underflow  = true
-            elsif @text_column.room < @current_y
-              unless @underflow
-                @overflow = true 
-                @overflowing_line_index = @line_index
-              end
-            end
-          end          
           @line_tokens = []
           @total_token_width = 0
           @line_index += 1
