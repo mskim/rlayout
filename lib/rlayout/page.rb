@@ -70,7 +70,6 @@ module RLayout
       self
     end
     
-    
     def adjust_page_size_to_document    
       @width          = @document.width
       @height         = @document.height

@@ -19,8 +19,7 @@ module RLayout
     attr_accessor :output_path
     
     def initialize(options={} ,&block)
-      puts "2016 5 30"
-      puts "@article_path:#{@article_path}"
+      puts "2016 6 17"
       $publication_type = "magazine"
       @article_path = options[:article_path] || options[:project_path]
       @starting_page_number = options.fetch(:starting_page_number, 1)

@@ -97,15 +97,14 @@ module RLayout
         @double_side= options.fetch(:double_side, document_defaults[:double_side])
         @starts_left= options.fetch(:starts_left, document_defaults[:starts_left])
       end
-      
       if @paper_size && @paper_size != "custom"
-        @width   = SIZES[options[:paper_size]][0]
-        @height  = SIZES[options[:paper_size]][1]
+        @width   = SIZES[@paper_size][0]
+        @height  = SIZES[@paper_size][1]
       else
-        @width  = options.fetch(:width, page_defaults[:width])
-        @height = options.fetch(:height, page_defaults[:height])
+        @paper_size = document_defaults[:paper_size]
+        @width   = SIZES[@paper_size][0]
+        @height  = SIZES[@paper_size][1]
       end
-            
       if @portrait == false
         temp    = @width
         @width  = @height
@@ -165,7 +164,7 @@ module RLayout
 
       if block
         instance_eval(&block)
-      end
+      end      
       self
     end
 
