@@ -2,6 +2,57 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'TextBox test' do
   before do
+template =<<EOF
+# heading is inside of main_text as float.
+# heading column is set to 2.
+RLayout::Document.new(:initial_page=>false) do
+  page do
+    main_text(heading_columns: 3, column_count: 3, grid_base: "3x4") do
+      heading(fill_color: "CMYK=0.1,0,0,0.5,1")
+      float_image(:local_image=> "1.jpg", :grid_frame=> [0,0,1,1])
+      float_image(:local_image=> "2.jpg", :grid_frame=> [0,1,1,1])
+    end
+  end
+  
+  page do
+    main_text(column_count: 3) do
+      float_image(:local_image=> "3.jpg", :grid_frame=> [1,0,2,2])
+    end
+  end
+end
+
+
+EOF
+    @doc          = eval(template)
+    @text_box     = @doc.pages.first.main_box
+    @heading      = @text_box.floats.first
+    @text_box.set_overlapping_grid_rect
+    @text_box.update_column_areas
+    @first_column = @doc.pages.first.main_box.graphics.first
+    @second_column= @doc.pages.first.main_box.graphics[1]
+    @third_column = @doc.pages.first.main_box.graphics[2]
+    puts "@third_column.current_position:#{@second_column.current_position}"
+    puts  "@third_column.is_simple_column?:#{@third_column.is_simple_column?}"
+    puts  "@third_column.is_rest_of_area_simple?:#{@third_column.is_rest_of_area_simple?}"
+    puts  "@third_column.is_simple_column?:#{@third_column.is_simple_column?}"
+    
+  end
+  # it 'shold create Document' do
+  #   assert @doc.class == Document
+  # end
+  # 
+  # it 'shold create TextBox' do
+  #   assert @text_box.class == TextBox
+  # end
+  it 'shold create TextColumn' do
+    assert @second_column.class == TextColumn
+  end
+  
+end
+
+__END__
+describe 'TextBox test' do
+  before do
     @tb = TextBox.new(column_count: 2, width: 400, height:500)
     @tb.floats << Image.new(parent: @tb, x:150, width:150, is_float: true)
     @tb.floats << Image.new(parent: @tb, x:0, y:300, width:300, is_float: true)

@@ -2,7 +2,7 @@ module RLayout
 
   # TextColumn
   # TextColumn is covered with series of "grid_rects".
-  # "grid_rects" are used to determine the shapes of text layout area, to avoid overlapping floats.
+  # "grid_rects" are used to determine the shapes of text layout area, to avoid text from overlapping floats.
   # Complex_rect means column has overlapping graphic and it has non-rectanle shaped region.
   # We need non-rectanglar shaped bezier path to flow text.
   # But rather than using bezeier curve, I simulate it using "grid_rects".
@@ -10,9 +10,11 @@ module RLayout
   # Finer the GridRect, closer it gets to bezier curve. I am using half body_text_height sized rect.
   # Half of body text height should be suffient for text layout.
   # If align_body_text is set to "true", body text are aligned by starting the body paragraph at odd numbered grid.
-  # If all body text to even numbered grids, this will horozontally alignment body text across the columns.
+  # If all body text starts at even numbered grids, this will horozontally alignment body text across the columns.
 
   # body_line_height
+  # line_height = body_style[:text_size] # default line_height, set to text_size*1.3
+  # @body_line_height = (line_height + body_style[:text_line_spacing])
   
   
   class TextColumn < Container
@@ -52,17 +54,17 @@ module RLayout
     end
     
     def is_simple_column?
-      @complex_rect == false
+      @complex_rect == false 
     end
     
     # tells if rest of the column area is simple column
     def is_rest_of_area_simple?
-      return true if is_simple_column?
       grid_index = current_grid_rect_index_at_position(@current_position)
       @grid_rects.each_with_index do |grid, i|
         next if i < grid_index
-        return false if grid.overlap?
+        return false if grid.fully_covered?
       end
+      @complex_rect = false 
       true
     end
     
@@ -83,12 +85,12 @@ module RLayout
       int_amount.times do |i|
         grid          = @grid_rects[grid_index + i]
         if grid.fully_covered
-          return [0,line_height,0,0]
+          return [@width,line_offset,0,line_height]
         end
         max_starting_x= grid.rect[0] if grid.rect[0] > max_starting_x        
         min_ending_x  = max_x(grid.rect) if max_x(grid.rect) < min_ending_x
       end
-      [max_starting_x, 0 , min_ending_x - max_starting_x, line_height]
+      [max_starting_x, line_offset , min_ending_x - max_starting_x, line_height]
     end
     
     def place_item(item)
@@ -192,6 +194,23 @@ module RLayout
       @grid_rects.last.rect
     end
 
+    #TODO it should not start at the half height starting position using options[:align_to_body_text}
+    def current_grid_rect_index_at_position(y_position)
+      return 0 unless @grid_rects
+      # @current_position = @top_margin + @top_inset unless @current_position #@top_margin + @top_inset
+      @grid_rects.each_with_index do |grid_rect, i|
+        if y_position >= min_y(grid_rect.rect) && y_position <= (max_y(grid_rect.rect) + 1) #make sure for flaot rounding
+          # return grid_rect
+          return i
+        end
+      end
+      @grid_rects.length # index is beyond the array range
+    end
+    
+    def column_index
+      @parent_graphic.graphics.index(self)
+    end
+    
     def text_width
       text_rect[2]
     end
@@ -211,18 +230,6 @@ module RLayout
       bounds_rect
     end
 
-    #TODO it should not start at the half height starting position using options[:align_to_body_text}
-    def current_grid_rect_index_at_position(options={})
-      return 0 unless @grid_rects
-      @current_position = @top_margin + @top_inset unless @current_position #@top_margin + @top_inset
-      @grid_rects.each_with_index do |grid_rect, i|
-        if @current_position >= min_y(grid_rect.rect) && @current_position <= (max_y(grid_rect.rect) + 1) #make sure for flaot rounding
-          # return grid_rect
-          return i
-        end
-      end
-      @grid_rects.length # index is beyond the array range
-    end
 
     # snap to grid_rect if the position is very near top snap to top
     # otherwise return bottom position of grid_rect
@@ -253,9 +260,6 @@ module RLayout
       while @current_grid_index < @grid_rects.length do
         if !@grid_rects[@current_grid_index].fully_covered
           if @current_grid_index.odd? && @current_grid_index < (@grid_rects.length - 1)
-            # return even numbered grid
-            # ????
-            # @current_position = max_y(@grid_rects[@current_grid_index + 1].rect)
             @current_position = min_y(@grid_rects[@current_grid_index + 1].rect)
             return
           end
@@ -394,6 +398,10 @@ module RLayout
     end
 
     #TODO
+    def fully_covered?
+      @fully_covered == true
+    end
+    
     def overlap?
       @overlap == true
     end

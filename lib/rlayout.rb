@@ -49,7 +49,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/text_train'
   
   require File.dirname(__FILE__) + '/rlayout/text/heading'
-  require File.dirname(__FILE__) + '/rlayout/text/paragraph'
+  # require File.dirname(__FILE__) + '/rlayout/text/paragraph_text'
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'
   require File.dirname(__FILE__) + '/rlayout/text/font'
   require File.dirname(__FILE__) + '/rlayout/text/label'

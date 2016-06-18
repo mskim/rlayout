@@ -160,7 +160,6 @@ module RLayout
   
   end
 
-  
   # Paragraph
   # This is the new paragraph
   # This is for long document and Math equations and other special effects.
@@ -170,7 +169,7 @@ module RLayout
     attr_accessor :tokens, :token_heights_are_eqaul
     attr_accessor :para_string, :para_style, :space_width
     attr_accessor :text_column, :grid_height, :h_alignment, :first_line_indent 
-    attr_accessor :overflow, :underflow, :overflowing_line_index, :linked
+    attr_accessor :overflow, :underflow, :overflowing_line_index, :linked, :line_y_offset
 
     def initialize(options={})
       super
@@ -225,7 +224,6 @@ module RLayout
     def line_count
       @graphics.length
     end
-
     
     # algorithm for laying out paragraph in simple container
     # loop until we run out of tokens
@@ -259,7 +257,7 @@ module RLayout
         @text_line_width  = @column_width - @head_indent - @tail_indent 
       end
       @body_line_height = @text_column.body_line_height
-      @current_y        = 0
+      @line_y_offset    = 0
       @total_token_width= 0
       @line_tokens      = []
       @line_index       = 0
@@ -278,9 +276,10 @@ module RLayout
           @line_width = @text_line_width
           @line_x     = @head_indent
         end
+        
         if text_column.is_simple_column? || text_column.is_rest_of_area_simple?
-          @line_rectangle = [@line_x, @current_y, @line_width, @tallest_token_height]
-          if @current_y + @line_rectangle[3] > @text_column.room
+          @line_rectangle = [@line_x, @line_y_offset, @line_width, @tallest_token_height]
+          if @line_y_offset + @line_rectangle[3] > @text_column.room
             if @graphics.length <= 1
               @underflow  = true
             else
@@ -289,21 +288,22 @@ module RLayout
             return
           end
         else
-          #  "we are at complex part of column"
-          @line_rectangle = @text_column.sugest_me_a_rect_at(@current_y, @tallest_token_height)
-          if @current_y + @line_rectangle[3] > @text_column.room
+          @line_rectangle = @text_column.sugest_me_a_rect_at(@line_y_offset, @tallest_token_height)
+          if @line_y_offset + @line_rectangle[3] > @text_column.room
             if @graphics.length <= 1
               @underflow  = true
             else
               @overflow = true 
             end
+            puts "text_column.column_index:#{text_column.column_index}"
+            puts "reached bottom of column"
             return
-          elsif @line_width == 0
-            # "fully covered grid_rects"
+          elsif @line_rectangle[2] == 0
             # move move_current_position_by token_heigh
             @text_column.move_current_position_by(@tallest_token_height)
+            @line_y_offset += @tallest_token_height
             next
-          else
+          else            
             if @line_rectangle[0] > @head_indent
               #TODO tail_indent
               @line_x     = @line_rectangle[0]              
@@ -322,20 +322,20 @@ module RLayout
           token = @tokens.shift
           @line_tokens << token
         else 
-          options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @current_y , width: @line_width, height: @body_line_height, space_width: @space_width}
+          options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @line_width, height: @line_rectangle[3], space_width: @space_width}
           line = LineFragment.new(options)
-          @current_y += line.height
+          @line_y_offset += line.height
           @line_tokens = []
           @total_token_width = 0
           @line_index += 1
         end
-        @height = @current_y
+        @height = @line_y_offset
       end
       if @line_tokens.length > 0
-        options = {parent: self, tokens: @line_tokens, x: @line_x, y: @current_y , width: @column_width, height: @body_line_height, space_width: @space_width}
-        line = LineFragment.new(options)
-        @current_y += line.height
-        @height = @current_y
+        options = {parent: self, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @column_width, height: @body_line_height, space_width: @space_width}
+        line    = LineFragment.new(options)
+        @line_y_offset += line.height
+        @height = @line_y_offset
       end
     end
 	  

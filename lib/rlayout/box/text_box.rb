@@ -36,7 +36,6 @@
   # FLOAT_PATTERNS is used as lookup table.
   # FLOAT_PATTERNS has a key representing profile, and float frames as value.
 
-  
   # side_column
   # side_column is used when we have flowing images along side paragraphs
   # side_column can be place on the right or left side of TextBox
@@ -478,11 +477,11 @@ module RLayout
       def layout_floats!
         return unless @floats
         # reset heading width
+        @occupied_rects =[]
         if has_heading? && (@heading_columns != @column_count)
           heading = get_heading
           heading.width = width_of_columns(@heading_columns)
         end
-        @occupied_rects =[]
         #TODO position bottom bottom_occupied_rects
         # middle occupied rect shoul
         @middle_occupied_rects = []
@@ -493,9 +492,9 @@ module RLayout
           if i==0
             @occupied_rects << float.frame_rect
           elsif intersects_with_occupied_rects?(@occupied_rects, @float_rect)
-                # move to some place  
-                move_float_to_unoccupied_area(@occupied_rects,float)
-                @occupied_rects << @float_rect
+                # move to some place
+                move_float_to_unoccupied_area(@occupied_rects, float)
+                @occupied_rects << float.frame_rect
           else
             @occupied_rects << @float_rect
           end
@@ -518,7 +517,7 @@ module RLayout
       def move_float_to_unoccupied_area(occupied_arry, float)
         occupied_arry.each do |occupied_rect|
           if intersects_rect(occupied_rect, float.frame_rect)
-            float.y = max_y(occupied_rect)           
+            float.y = max_y(occupied_rect) + 5          
           end
         end
       end

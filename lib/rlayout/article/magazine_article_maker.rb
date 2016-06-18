@@ -86,10 +86,12 @@ module RLayout
       if @document.pages[0].has_heading?
         @document.pages[0].get_heading.set_heading_content(@heading)
         @document.pages[0].relayout!
-      elsif @document.pages[0].main_box.floats.length == 0
-        @document.pages[0].main_box.floats << Heading.new(@heading)
-      elsif @document.pages[0].main_box.has_heading?
-        @document.pages[0].main_box.get_heading.set_heading_content(@heading)
+      elsif @document.pages[0].main_box
+        if @document.pages[0].main_box.floats.length == 0
+          @document.pages[0].main_box.floats << Heading.new(@heading)
+        elsif @document.pages[0].main_box.has_heading?
+          @document.pages[0].main_box.get_heading.set_heading_content(@heading)
+        end
       end
       @paragraphs =[]
       @story[:paragraphs].each do |para|
@@ -131,16 +133,12 @@ module RLayout
 
     def layout_story
       page_index                = 0
-      @first_page               = @document.pages[0]
-      @first_page.main_box.layout_floats! 
-      # puts "number of floats:#{@first_page.main_box.floats.length}"
-      # @first_page.main_box.floats.each do |float|
-      #   puts "++++ "
-      #   float.puts_frame
-      # end
-      @first_page.main_box.set_overlapping_grid_rect
-      @first_page.main_box.update_column_areas
-      @first_page.main_box.layout_items(@paragraphs)
+      @document.pages.each do |page|
+        page.main_box.layout_floats!
+        page.main_box.set_overlapping_grid_rect
+        page.main_box.update_column_areas
+      end
+      @document.pages.first.main_box.layout_items(@paragraphs)
       page_index += 1
       # for magazine , do not add pages even if we have overflowing paragraphs
       while @paragraphs.length > 0 && page_index < @document.pages.length
