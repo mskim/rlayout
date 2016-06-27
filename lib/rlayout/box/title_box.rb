@@ -25,15 +25,18 @@ module RLayout
   # end
   
   # This is a box with Head title
-  # title_shape: rectangular, round_rect, circular
+  # title_shape: rectangular, round_rect, circular, greater_sign
   # frame_type:  solid, double
-  # class TitledBox < Container
-  #   attr_accessor :title, :body, :column_count
-  #   attr_accessor :title_shape, :frame_type
-  #   
-  #   
-  #   
-  # end
+  class BoxWithTitle < Container
+    attr_accessor :title, :title_shape, :frame_type
+    
+    def initialize(options={})
+      @title        = options.fetch(:title, " ")
+      @title_shape  = options.fetch(:title_shape, "rectangle")
+      @frame_type   = options.fetch(:frame_type, "solid")
+      self
+    end
+  end
   # 
 
 end

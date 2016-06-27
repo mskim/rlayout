@@ -373,13 +373,17 @@ module RLayout
     end
 
     def expand_width?
-      return false unless @layout_expand && @layout_expand.class == Array
-      @layout_expand.include?(:width)
+      return false unless @layout_expand
+      return true if @layout_expand == :width
+      return true if @layout_expand.class == Array && @layout_expand.include?(:width)
+      false
     end
 
     def expand_height?
-      return false unless @layout_expand && @layout_expand.class == Array
-      @layout_expand.include?(:height)
+      return false unless @layout_expand
+      return true if @layout_expand == :height
+      return true if @layout_expand.class == Array && @layout_expand.include?(:height)
+      false
     end
 
 

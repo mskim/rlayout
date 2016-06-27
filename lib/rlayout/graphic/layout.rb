@@ -33,9 +33,17 @@ module RLayout
       
       @layout_direction = options.fetch(:layout_direction, layout_default[:layout_direction])
       @layout_member    = options.fetch(:layout_member, layout_default[:layout_member])
-      @layout_expand    = options.fetch(:layout_expand, layout_default[:layout_expand])
       @layout_length    = options.fetch(:layout_length, layout_default[:layout_length])
-      @layout_alignment = 
+      @layout_alignment = "left"
+      if @parent_graphic && @parent_graphic.stack
+        if @parent_graphic.layout_direction == 'vertical'
+          @layout_expand = :width
+        else
+          @layout_expand = :height
+        end
+      else
+        @layout_expand    = options.fetch(:layout_expand, layout_default[:layout_expand])
+      end
       # convert unit to point if they are in cm or mm
       @x              = convert_to_pt(@x)           if @x.class == String
       @y              = convert_to_pt(@y)           if @y.class == String

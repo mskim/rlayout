@@ -1,8 +1,9 @@
 
+
 module RLayout
   
   class Container < Graphic
-    attr_accessor :layout_direction, :layout_space, :layout_align
+    attr_accessor :layout_direction, :layout_space, :layout_align, :stack
     attr_accessor :grid_base, :grid_width, :grid_height, :grid_frame, :grid_h_gutter, :grid_v_gutter, :lines_in_grid         
     attr_accessor :draw_gutter_stroke, :gutter_stroke 
     attr_accessor :floats, :grid
@@ -10,6 +11,7 @@ module RLayout
     def initialize(options={}, &block)
       @graphics             = []
       @floats               = options.fetch(:floats, [])
+      @stack                = options[:stack] if options[:stack]
       super      
       layout_defaults_hash  = auto_layout_defaults
       @layout_direction     = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
@@ -28,19 +30,42 @@ module RLayout
       if options[:floats]
         create_floats(options[:floats])
       end
-      # Container should not process block, when called by subclass as super method.
-      # Process block only when block was called from class itself.
+      
       if self.class == Container
         if block
           instance_eval(&block)
         end     
-      end     
+      end   
+      
+      # stack mode
+      # graphics layout_expand should be set as :width for vertival and :height for horizontal
+      # and height should be set as sum of graphics heights.
+      # This will prevent graphics from being strached vertically in vertical mode, and other wise in horozontal mode
+      # if @stack
+      #   puts "@stack#{@stack}"
+      #   puts "@graphics.length#{@graphics.length}"
+      #   puts "@layout_direction#{@layout_direction}"
+      #   if @layout_direction == 'vertical'
+      #     @graphics.each {|g| g.layout_expand = :width}
+      #   else
+      #     @graphics.each {|g| g.layout_expand = :height}
+      #   end
+      #   @graphics.each do |g| 
+      #     puts g.layout_expand.class
+      #     puts g.layout_expand
+      #   end
+      # end
+      # Container should not process block, when called by subclass as super method.
+      # This results in calling block multiple times.
+      # Process block only when block was called from class itself.
+        
       self
     end
     
     def auto_layout_defaults
       h = {}
       h[:layout_direction]  = "vertical"
+      h[:stack]             = false
       h[:layout_space]      = 0
       h[:layout_align]      = "top"
       h[:grid_base]         = [3,3]

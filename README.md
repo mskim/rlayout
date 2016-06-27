@@ -67,7 +67,10 @@ TODO List
 			- \image_group
 
 		- Add font missing message
-		
+
+2016 6 25
+	- add :stack for  stack mode
+	
 2016 6 17
 	- fix Paragraph layout_lines(text_column) for complex column
 	- fix page numbering in ChapterMaker
