@@ -27,16 +27,30 @@ module RLayout
   # This is a box with Head title
   # title_shape: rectangular, round_rect, circular, greater_sign
   # frame_type:  solid, double
-  class BoxWithTitle < Container
-    attr_accessor :title, :title_shape, :frame_type
+  class ContainerWithTitle < Container
+    attr_accessor :title_text, :title_shape, :title_position
     
     def initialize(options={})
       @title        = options.fetch(:title, " ")
       @title_shape  = options.fetch(:title_shape, "rectangle")
       @frame_type   = options.fetch(:frame_type, "solid")
+      create_title_
+      super
+      options[:parent] = self
+      TitleTop.new(options)
       self
     end
   end
   # 
-
+  class TitleTop < Graphic
+    attr_accessor :title_text, :title_shape, :title_position
+    def initialize(options={})
+      @title_text       = options.fetch(:title_text, "Example")
+      @title_shape      = options.fetch(:title_shape, "rectangle")
+      @title_position   = options.fetch(:title_position, "center")
+      
+      
+      self
+    end    
+  end
 end
