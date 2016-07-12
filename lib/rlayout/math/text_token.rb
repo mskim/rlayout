@@ -14,6 +14,10 @@
 # TextToken consists of text string with uniform attributes, a same text run.
 # TextToken does not contain space character. Space charcter is implemented as gap between tokens.
 
+# LatexToken
+#
+#
+ 
 # LineFragments
 # LineFragments are made up of TextTokens, ImageToken, MathToken etc....
 # When paragraph is created, TextTokenAtts is created for default att value for all TextTokena and they all point ot it.

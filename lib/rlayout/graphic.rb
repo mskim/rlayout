@@ -6,7 +6,8 @@ module RLayout
     attr_accessor :graphics, :fixtures, :floats, :grid_frame
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
-    attr_accessor :frame_image, :shadow, :rotation
+    attr_accessor :frame_image, :shadow, :rotation 
+    attr_accessor :overflow, :underflow
 
     def initialize(options={}, &block)
       @parent_graphic = options[:parent]
@@ -28,6 +29,8 @@ module RLayout
       end
       @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))
       @auto_save        = options[:auto_save]
+      @overflow         = false
+      @underflow        = false
       init_layout(options)
       init_fill(options)
       init_stroke(options)
@@ -125,7 +128,15 @@ module RLayout
       h.merge!(@image_record.to_hash)  if @image_record
       h
     end
+    
+    def overflow?
+      @overflow == true
+    end
 
+    def underflow?
+      @underflow == true
+    end
+	      
     def tag=(new_tag)
       @tag = new_tag
       self

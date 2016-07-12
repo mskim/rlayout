@@ -231,11 +231,4 @@ module RLayout
     end
   end
 
-
-
-  class Banner < Heading
-    attr_accessor :place, :when, :organization, :image
-    attr_accessor :category, :width, :height, :direction
-  end
-
 end

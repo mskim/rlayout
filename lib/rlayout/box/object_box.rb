@@ -1,4 +1,12 @@
 
+# Use TextBox!!!
+
+# ObjectBox
+# ObjectBox is similar to TextBox. It has columns and something flows along columns.
+# The difference is that flowing items are not Paragraphs, but some item, usually pre-layed out item. It is not broken, so the columns.
+# Primary usage is for Quiz layout, and catalog.
+
+
 # data_folder
 #    data.csv
 #    images
@@ -11,30 +19,9 @@
 # images
 
 module RLayout
-	class ObjectBox < ImageBox
-	  attr_accessor :cell_type, :data_path, :template_path
-	  def initialize(options={})
-	    @image_group_path = options.fetch(:image_group_path, "#{$ProjectPath}/images")
-	    @template_path    = "#{$ProjectPath}/template"
-	    @data_path        = "#{$ProjectPath}/data"
-	    unless File.exist?(@data_path)
-	      puts "No data_path exists!!!"
-	      return
-	    end
-	    unless File.exist?(@template_path)
-	      puts "No template_path exists!!!"
-	      return
-	    end
-	    generate_cell_images
-	    super
-	        	    
-	    self
-	  end
-	  
-	  def generate_cell_images
-	    
-	  end
-	  
+	class ObjectBox < Container
+    
+	  	  
 	end
 
 end

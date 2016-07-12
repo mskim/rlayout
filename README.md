@@ -68,6 +68,13 @@ TODO List
 
 		- Add font missing message
 
+2016 7 5
+	- ItemChapterMaker
+		- header with Image
+		- side_column
+		- ItemContainer
+		- numbering
+		
 2016 6 25
 	- add :stack for  stack mode
 	

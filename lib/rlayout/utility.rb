@@ -47,6 +47,8 @@ module  RLayout
       return cm2pt(value.sub("cm","").to_f)
     elsif value=~/mm$/
       return mm2pt(value.sub("mm","").to_f)
+    elsif value=~/m$/
+      return meter2pt(value.sub("m","").to_f)
     elsif value=~/inch$/
       return inch2pt(value.sub("inch","").to_i)
     end
@@ -71,6 +73,10 @@ module  RLayout
   
   def cm2pt(cm)
     cm * 28.34646
+  end
+  
+  def meter2pt(m)
+    m * 2800.34646
   end
   
   def inch2pt(inch)

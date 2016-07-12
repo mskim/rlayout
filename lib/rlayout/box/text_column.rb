@@ -99,7 +99,8 @@ module RLayout
       item.parent_graphic = self
       item.x              = @left_margin + @left_inset
       item.y              = @current_position
-      @current_position   += item.height + @layout_space
+      @current_position   += item.height 
+      @current_position   += @layout_space  if @layout_space
       @current_position   = snap_to_grid_rect(@current_position)
       @room               = text_rect[3] - @current_position
     end

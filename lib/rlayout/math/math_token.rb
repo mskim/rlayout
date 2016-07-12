@@ -21,16 +21,6 @@ module RLayout
     
   end
     
-  class MathToken < Container
-    def initialize(options={})
-      @text_string        = options.fetch(:text_string, "")
-      @type               = options.fetch(:type, "math")
-      parse_text_string
-      self   
-    end
-    
-
-  end
 
   # style: nomal, monospace, bold, italic, bold-italic
   # font_category: English, division_capital_letter, division_lower_letter, 

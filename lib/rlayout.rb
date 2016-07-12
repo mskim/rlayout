@@ -49,7 +49,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/text_train'
   
   require File.dirname(__FILE__) + '/rlayout/text/heading'
-  # require File.dirname(__FILE__) + '/rlayout/text/paragraph_text'
+  require File.dirname(__FILE__) + '/rlayout/text/paragraph_text'
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'
   require File.dirname(__FILE__) + '/rlayout/text/font'
   require File.dirname(__FILE__) + '/rlayout/text/label'
@@ -81,6 +81,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/math/eqn'
   require File.dirname(__FILE__) + '/rlayout/math/text_token'
   require File.dirname(__FILE__) + '/rlayout/math/math_token'
+  require File.dirname(__FILE__) + '/rlayout/math/latex_math'
 
   require File.dirname(__FILE__) + '/rlayout/page'
   require File.dirname(__FILE__) + '/rlayout/page/page_fixtures'
@@ -94,6 +95,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/article/story'
   require File.dirname(__FILE__) + '/rlayout/article/reader'
   require File.dirname(__FILE__) + '/rlayout/article/chapter_maker'
+  require File.dirname(__FILE__) + '/rlayout/article/item_chapter_maker'
   require File.dirname(__FILE__) + '/rlayout/article/news_article_maker'
   require File.dirname(__FILE__) + '/rlayout/article/news_section_page'
   require File.dirname(__FILE__) + '/rlayout/article/news_heading_maker'
@@ -113,6 +115,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/calendar'
   require File.dirname(__FILE__) + '/rlayout/publication/marathon_tag'
   require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
+  require File.dirname(__FILE__) + '/rlayout/publication/banner'
   
 end
 

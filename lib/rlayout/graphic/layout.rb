@@ -35,7 +35,7 @@ module RLayout
       @layout_member    = options.fetch(:layout_member, layout_default[:layout_member])
       @layout_length    = options.fetch(:layout_length, layout_default[:layout_length])
       @layout_alignment = "left"
-      if @parent_graphic && @parent_graphic.stack
+      if @parent_graphic && @parent_graphic.respond_to?(:stack) && @parent_graphic.stack
         if @parent_graphic.layout_direction == 'vertical'
           @layout_expand = :width
         else

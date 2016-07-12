@@ -121,7 +121,7 @@ module RLayout
       if options[:preview]
         @preview = options[:preview]
       end
-      
+      @column_count = options.fetch(:column_count, 1)
       @left_margin= options.fetch(:left_margin, document_defaults[:left_margin])
       @top_margin = options.fetch(:top_margin, document_defaults[:top_margin])
       @right_margin = options.fetch(:right_margin, document_defaults[:right_margin])
@@ -147,7 +147,8 @@ module RLayout
         @pages = options[:pages]
       elsif options[:page_count]
         options[:page_count].times do
-          Page.new(parent: self)
+          options[:parent]  = self
+          Page.new(options)
         end
       else
         # create single page as default initial page
