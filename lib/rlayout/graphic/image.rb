@@ -132,13 +132,13 @@ module RLayout
         # mid_x = NSMidX(@image_frame)
         # mid_y = NSMidY(@image_frame)
         if frame
-          @source_frame = graphic_rect.dup
+          @source_frame = frame_rect.dup
         else
           @source_frame = NSZeroRect
           return
         end
-        @source_frame.origin.x = @image_frame.size.width/2.0 - graphic_rect.size.width/2.0
-        @source_frame.origin.y = @image_frame.size.height/2.0 - graphic_rect.size.height/2.0
+        @source_frame.origin.x = @image_frame.size.width/2.0 - frame_rect.size.width/2.0
+        @source_frame.origin.y = @image_frame.size.height/2.0 - frame_rect.size.height/2.0
       else
         
       end

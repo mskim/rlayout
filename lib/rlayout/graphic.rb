@@ -141,6 +141,7 @@ module RLayout
       @tag = new_tag
       self
     end
+    
 
     # difference between to_hash and to_data:
     # to_hash does not save values, if they are equal to default
@@ -288,10 +289,12 @@ module RLayout
       
     end
     
+    # def graphic_rect
+    #   [@x,@y,@width,@height]
+    # end
+    
     def frame_rect
       [@x,@y,@width,@height]
-      # [@x+@left_margin, @y+@top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
-      
     end
 
     def bounds_rect
@@ -552,14 +555,25 @@ module RLayout
       @text_layout_manager.fit_text_to_box  if @text_layout_manager
     end
   end
-
+    
   class Text < Graphic
     def initialize(options={})
       super
-      @klass = "Text"
       self
     end
-        
+    
+    def to_pgscript
+      if text_string && text_string.length > 0
+        variables = "\"#{text_string}\", text_size: #{text_size}, x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}"
+        #TODO
+        # variables += ", #{@text_color}" unless @text_color == "black"
+        variables += ", tag: \"#{@tag}\"" if @tag 
+        "   text(#{variables})\n"
+      else
+        " "
+      end
+    end
+    
     def text_string
       if @text_layout_manager
         @text_layout_manager.att_string.string
@@ -590,6 +604,15 @@ module RLayout
     end
   end
 
+  class Quote < Text
+    def initialize(options={})
+      options[:text_string] = "“ #{options[:text_string]} ”" if options[:text_string]
+      options[:text_size]   = 24 unless options[:text_size]
+      super
+      self
+    end
+  end
+
   class TableCell < Text
     # lookup table style and applied the table_cell style
     attr_accessor :h_span, :v_span, :text_direction
@@ -598,13 +621,16 @@ module RLayout
       super
       self
     end
-    
   end
   
   class Rectangle < Graphic
     def initialize(options={})
       super
       self
+    end
+    
+    def to_pgscript
+      "   rectangle(x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height})\n"
     end
   end
 
@@ -630,10 +656,16 @@ module RLayout
       end
       self
     end
+    
     def frame_rect
       [@x,@y,@width,@height]
     end
     
+    def to_pgscript
+      variables = "x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}, image_path: \"#{@image_path}\""
+      variables += ", tag: \"#{@tag}\"" if @tag 
+      "   image(#{variables})\n"
+    end
   end
 
   class Circle < Graphic
@@ -641,6 +673,10 @@ module RLayout
       super
       update_shape
       self
+    end
+    
+    def to_pgscript
+      "   circle(x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height})\n"
     end
     
     def update_shape
@@ -659,7 +695,6 @@ module RLayout
     def update_shape
       @shape = EllipseStruct.new((@x+@width)/2, (@y + @height)/2, @width/2, @height/2)
     end
-
   end
 
   class RoundRect < Graphic
@@ -685,6 +720,5 @@ module RLayout
       super
       self
     end
-    
   end
 end

@@ -180,10 +180,26 @@ module RLayout
     end
   end
   
+  # Paragraph with DropImage
+  class DropImageParagraph < Container
+    attr_accessor :icon_object, :text_column
+    
+    
+  end
+  
+  class Admonition < Container
+    attr_accessor :icon_object, :icon_column, :text_column
+    
+    def initialize(options={}, &block)
+      
+      self
+    end  
+    
+  end
+  
   # number type, style
   # 1. number
   # a. alphbet
-  
   # choice type 
   # 1. number
   # a. alphbet

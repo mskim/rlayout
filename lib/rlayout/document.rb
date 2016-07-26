@@ -144,7 +144,7 @@ module RLayout
           Page.new(page_hash)
         end
       elsif options[:page_objects]
-        @pages = options[:pages]
+        @pages = options[:page_objects]
       elsif options[:page_count]
         options[:page_count].times do
           options[:parent]  = self
@@ -199,7 +199,6 @@ module RLayout
         page.parent_graphic = self
         @pages << page
       elsif page.class == Array
-        puts "adding Array of pages" 
         page.each do |p|
           add_page(p)
         end
@@ -320,14 +319,23 @@ module RLayout
       File.open(path, 'w'){|f| f.write toc_element.to_yaml}
     end
     
-    def pages_layout_file
-      ""
+    def to_pgscript
+      layout = ""
+      @pages.each do |page|
+        layout +=page.to_pgscript
+      end
+      layout
     end
     
     def save_document_layout(options={})
-      doc_layout_file= "RLayout::Document.new(paper_size: #{@paper_size})\n"
-      doc_layout_file+= pages_layout_file
+      doc_variables = "width: #{@width}, height: #{@height}"
+      # doc_variables += ", "
+      doc_layout_file= "RLayout::Document.new(#{doc_variables}) do\n"
+      doc_layout_file+= to_pgscript
       doc_layout_file+= "end"
+      if options[:output_path]
+        File.open(options[:output_path], 'w'){|f| f.write doc_layout_file}
+      end
     end
   end
 

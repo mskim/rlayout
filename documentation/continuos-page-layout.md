@@ -19,7 +19,7 @@ Similar to continuous integration development process, continuous page layout pr
 	5 per new company setup 
 		5 per design repo setup and testing
 	1 per 100 member/month
-	
+
 	namecard server
 	500/50 (1000)
 	1000/100
@@ -27,7 +27,7 @@ Similar to continuous integration development process, continuous page layout pr
 ### GitMagazine
 	50 for training and setup
 	50 per company design 10 article design
-	20 /month
+	20/month
 	
 ### Git-BookDesign
 	Typesets Beautiful Book from GitBook, LeanPub, ePub, and online book content

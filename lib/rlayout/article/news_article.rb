@@ -52,7 +52,7 @@ module RLayout
         @story_frame_index=  story_number.to_i - 1  
         @images_dir       = File.dirname(@story_path) + "/images"
         # read story
-        story               = Story.markdown2para_data(@story_path)
+        story               = Story.new(@story_path).markdown2para_data
         @heading_options    = story[:heading]
         @images             = story[:heading]['images']  if  story[:heading]['images']
         @paragraphs         = []

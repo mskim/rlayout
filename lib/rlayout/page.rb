@@ -32,8 +32,8 @@ module RLayout
         options[:width]   = SIZES[options[:paper_size]][0]
         options[:height]  = SIZES[options[:paper_size]][1]
       else
-        options[:width]   = page_defaults[:width] unless options[:width]
-        options[:height]  = page_defaults[:height] unless options[:height]
+        options[:width]   = options.fetch(:width, page_defaults[:width])
+        options[:height]  = options.fetch(:height, page_defaults[:height])
       end
       @parent_graphic.pages << self if  @parent_graphic && !@parent_graphic.pages.include?(self)
       super
@@ -86,6 +86,32 @@ module RLayout
     
     def is_left_page?
       @left_page
+    end
+    
+    def to_pgscript
+pgscript =<<EOF
+  page do
+#{floats_pgscript}
+#{graphics_pgscript}
+  end
+EOF
+      pgscript
+    end
+    
+    def floats_pgscript
+      script = ""
+      @floats.each do |g|
+        script +=g.to_pgscript
+      end
+      script
+    end
+    
+    def graphics_pgscript
+      script = ""
+      @graphics.each do |g|
+        script +=g.to_pgscript
+      end
+      script
     end
     
     # layout_content! should be called to layout out content

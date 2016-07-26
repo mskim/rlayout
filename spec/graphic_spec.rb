@@ -1,6 +1,16 @@
 require File.dirname(__FILE__) + "/spec_helper"
 
+describe ' convert string to color' do
+  before do
+    color_string = "FF0000"
+    @color = color_from_hex(color_string)
+  end
+  it 'shuld convert hex color' do
+    assert_equal @color, "rgba(1.0,0.0,0.0,1)"
+  end
+end
 
+__END__
 describe 'draw rotation' do
   before do
     

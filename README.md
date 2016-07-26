@@ -42,7 +42,7 @@ TODO List
 	- # NewsSection.create
 	- # Magazine.create 
 	- redo layout for complex container
-	- picture_page/image_group
+	- picture_page/image_group/floats
 	- story file tag
 		- inline tag
 			- \sub()
@@ -65,9 +65,32 @@ TODO List
 			- \table
 			- \picture_page
 			- \image_group
-
+			- \floats
 		- Add font missing message
 
+2016 7 20
+
+2016 7 15
+	- add hex color #FF0022
+	- make styles similar to css
+		- text_align
+		- rgb(r,g,b)
+		- rgba(r,g,b,a)
+		- border, radius
+
+2016 7 15
+	- hex color
+	- Quote, Leading, style
+	
+2016 7 13
+	- floats_layout 
+	change ImageGroup to FloatsLayout
+	[floats]
+		image grid_frame
+		quote grid_frame
+		allow_text_jump_over
+	[picture_page]
+	
 2016 7 5
 	- ItemChapterMaker
 		- header with Image

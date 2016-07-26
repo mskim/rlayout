@@ -2,6 +2,35 @@
 module  RLayout
   module_function
   
+  def round_rect_to_three(rect)
+    new_rect = rect.dup
+    new_rect.origin.x.round(3)
+    new_rect.origin.y.round(3)
+    new_rect.size.width.round(3)
+    new_rect.size.height.round(3)
+    new_rect
+  end
+  
+  def nsrect2array(ns_rect)
+     [ns_rect.origin.x,ns_rect.origin.y,ns_rect.size.width,ns_rect.size.height]
+  end
+  
+  def nsrect2string(ns_rect)
+    nsrect2array(ns_rect).to_s
+  end
+  
+  def array2nsrect(array)
+    NSRect.new(NSPoint.new(array[0],array[1]), NSSize.new(array[2],array[3]))
+  end
+  
+  def nspoint2array(ns_point)
+    [ns_point.x, ns_point.y]
+  end
+  
+  def array2nspoint(array)
+    NSPoint.new(array[0],array[1])
+  end
+  
   def min_x(rect)
     rect[0]
   end
@@ -41,7 +70,33 @@ module  RLayout
   def intersects_rect(rect_1, rect_2)
     intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
   end
-
+  
+  def union_rect(rect_1, rect_2)
+    x = min_x(rect_1) < min_x(rect_2) ? min_x(rect_1) : min_x(rect_2)
+    y = min_y(rect_1) < min_y(rect_2) ? min_y(rect_1) : min_y(rect_2)
+    bigger_x = max_x(rect_1) > max_x(rect_2) ? max_x(rect_1) : max_x(rect_2)
+    width = bigger_x - x
+    bigger_y = max_y(rect_1) > max_y(rect_2) ? max_y(rect_1) : max_y(rect_2)
+    height = bigger_y - y
+    [x,y,width,height]
+  end
+  
+  def union_rects(rects_array)
+    union = rects_array.shift
+    rects_array.each do |r|
+      union = union_rect(union, r)
+    end
+    union
+  end
+  
+  def union_graphic_rects(graphics_array)
+    rects_array = []
+    graphics_array.each do |g|
+      rects_array << g.frame_rect
+    end
+    union_rects(rects_array)
+  end
+  
   def convert_to_pt(value)
     if value=~/cm$/
       return cm2pt(value.sub("cm","").to_f)
@@ -86,6 +141,175 @@ module  RLayout
   def kp2pt(kp)
     kp / 1.44
   end   
+
+
+  def random_color
+    COLOR_LIST.keys.sample
+  end
+  # color2rgb('lightGray)
+  # => [0, 61, 61]
+  # color2rgb('orange)
+  # => [0, 250, 80]
+  def color2rgb(name)
+    unless COLOR_LIST[upcase_first_letter(name)]
+      return hex2rgb(COLOR_LIST['Black'])
+    end
+    hex2rgb(COLOR_LIST[upcase_first_letter(name)])
+  end
+  
+  # color2rgb('lightGray)
+  # => #D3D3D3
+  # color2rgb('orange)
+  # => #FFA500
+  def color2hex(name)
+    unless COLOR_LIST[upcase_first_letter(name)]
+      return COLOR_LIST['Black']
+    end
+    COLOR_LIST[upcase_first_letter(name)]
+  end
+  
+  def rgb2hex(rgb)
+    rgb.map { |e| "%02x" % e }.join
+  end
+
+  # Converts hex string into RGB value array:
+  #
+  #  hex2rgb("ff7808")
+  #  => [255, 120, 8]
+  #
+  def hex2rgb(hex)
+    r,g,b = hex[0..1], hex[2..3], hex[4..5]
+    [r,g,b].map { |e| e.to_i(16) }
+  end
+  
+  def upcase_first_letter(name)
+    name[0] = name[0].upcase
+    name
+  end
+  
+  def convert_to_nscolor(color)
+    return color_from_string(color) if color.class == String
+    color
+  end
+  
+  
+  def color_from_string(color_string)
+    if color_string == nil
+      return NSColor.whiteColor
+    end
+
+    if color_string==""
+      return NSColor.whiteColor
+    end
+
+    if COLOR_NAMES.include?(color_string)
+      return color_from_name(color_string)
+    end
+    
+    if color_string =~ /^#/
+      return color_from_hex(color_string)
+    end
+    # TODO
+    # elsif color_string=~/^#   for hex color
+    # RGB=
+    ### RGB Colors
+    #	"RGB=100,60,0" "RGB=100,60,0"
+    # rgb(100,60,0)
+    ### CMYK Colors
+    #    "CMYK=100,60,0,20" 
+    # cmyk(100,60,0,20)
+    color_array=color_string.split("=")
+    color_kind=color_array[0]
+    color_values=color_array[1].split(",")
+    if color_kind=~/RGB/
+        @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
+    elsif color_kind=~/CMYK/
+        @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
+    elsif color_kind=~/NSCalibratedWhiteColorSpace/
+        @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
+    elsif color_kind=~/NSCalibratedBlackColorSpace/
+        @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)
+    else
+        @color = GraphicRecord.color_from_name(color_string)
+    end
+    @color
+  end
+
+  def color_from_name(name)
+    case name
+    when "black"
+      return NSColor.blackColor
+    when "blue"
+      return NSColor.blueColor
+    when "brown"
+      return NSColor.brownColor
+    when "clear"
+      return NSColor.clearColor
+    when "cyan"
+      return NSColor.cyanColor
+    when "dark_gray", "darkGray"
+      return NSColor.darkGrayColor
+    when "gray"
+      return NSColor.grayColor
+    when "green"
+      return NSColor.greenColor
+    when "light_gray", "lightGray"
+      return NSColor.lightGrayColor
+    when "magenta"
+      return NSColor.magentaColor
+    when "orange"
+      return NSColor.orangeColor
+    when "purple"
+      return NSColor.purpleColor
+    when "red"
+      return NSColor.redColor
+    when "white"
+      return NSColor.whiteColor
+    when "yellow"
+      return NSColor.yellowColor
+    else
+      return NSColor.whiteColor
+    end
+  end
+  
+  def rgb_color(r,g,b)
+    rgba_color(r,g,b,1)
+  end
+
+  # @return [UIcolor]
+  def rgba_color(r,g,b,a)
+    r,g,b = [r,g,b].map { |i| i / 255.0}
+    if a > 1.0
+      a = a / 255.0
+    end
+    if RUBY_ENGINE =="rubymotion"
+      NSColor.colorWithDeviceRed(r, green: g, blue: b, alpha: a)
+    else
+      "rgba(#{r},#{g},#{b},#{a})"
+    end
+  end
+
+  def color_from_hex(color_string)
+    hex_color = color_string.gsub("#", "")
+    case hex_color.size
+      when 3
+        colors = hex_color.scan(%r{[0-9A-Fa-f]}).map!{ |el| (el * 2).to_i(16) }
+      when 6
+        colors = hex_color.scan(%r<[0-9A-Fa-f]{2}>).map!{ |el| el.to_i(16) }
+      when 8
+        colors = hex_color.scan(%r<[0-9A-Fa-f]{2}>).map!{ |el| el.to_i(16) }
+      else
+        raise ArgumentError
+    end
+    if colors.size == 3
+      rgb_color(colors[0], colors[1], colors[2])
+    elsif colors.size == 4
+      rgba_color(colors[1], colors[2], colors[3], colors[0])
+    else
+      raise ArgumentError
+    end
+  end
+
 
   def parse_csv(csv_path)
     unless File.exists?(csv_path)
@@ -177,10 +401,5 @@ module  RLayout
     end
   end
   
-  class IWorksOpener
-    
-    
-  end
 end
-
 

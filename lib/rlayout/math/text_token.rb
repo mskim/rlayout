@@ -229,7 +229,7 @@ module RLayout
       @graphics.length
     end
     
-    # algorithm for laying out paragraph in simple container
+    # algorithm for laying out paragraph in simple and complex container
     # loop until we run out of tokens
 	  # 1. start with line rect with width of column and height of para_style
 	  # 2. keep filling up the line_tokens until the width total exceed the width of column
@@ -402,6 +402,40 @@ module RLayout
       default
     end
   end
+  
+  class DropParagraph < Paragraph
+    attr_accessor :image_object, :cap_object, :title, :subtitle, :body
+    def initialize(options={}, &block)
+      super
+      
+      self
+    end
+    
+    def layout_lines
+      
+    end
+  end
+  
+  # ComboParagraph can have DropCap, DropImage, head, body
+  class ComboParagraph < Paragraph
+    attr_accessor :image_object, :cap_object, :title, :subtitle, :body
+    
+    def initialize(options={}, &block)
+      super
+      add_title_tokens
+      self
+    end
+    
+  end
+  
+  def add_title_tokens
+    
+  end
+  
+  def layout_lines
+    
+  end
+  
 end
 
 SMAMPLE_PARA =<<EOF

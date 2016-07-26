@@ -245,10 +245,12 @@ module RLayout
     def make_att_string_from_option(options)
       if options[:text_string_array] && options[:text_atts_array]
         make_att_string_with_string_and_atts_array(options[:text_string_array], options[:text_atts_array])        
+      # if we are give pre-make NSAttributedString, use it
+      elsif options[:ns_attributed_string]
+        options[:ns_attributed_string]
       # elsif has_inline_elements?(options[:text_string])
       #TODO implement inline element, italic, bold, underline, sub, super, emphasis(color)
       # if it exists, make it into text_string_array, and text_atts_array
-      
       else
         make_att_string(options)
       end

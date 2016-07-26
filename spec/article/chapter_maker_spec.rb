@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + "/../spec_helper"
+# require File.dirname(__FILE__) + "/../../lib/rlayout/article/chapter_maker.rb"
 
 describe 'ChapterMaker layout image' do
   before do

@@ -289,7 +289,7 @@ module RLayout
           # given avalable room in column
           # layout rows into room. it can accomodate all rows or overflow         
           @item.layout_rows(current_column.room) 
-        elsif @item.class == RLayout::ImageGroup
+        elsif @item.class == RLayout::FloatsLayout
           @item.layout_page(document: document, page_index: page_index)
           unless @item.allow_text_jump_over
             # TODO
@@ -411,8 +411,34 @@ module RLayout
       true
     end
     
+    def float_leading(options={})
+      leading_options = {}
+      frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
+      leading_options[:x]       = frame_rect[0]
+      leading_options[:y]       = frame_rect[1]
+      leading_options[:width]   = frame_rect[2]
+      leading_options[:height]  = frame_rect[3]
+      leading_options[:layout_expand]   = nil
+      leading_options[:is_float]        = true
+      leading_options[:parent]          = self
+      Text.new(leading_options)
+    end
+
+    def float_quote(options={})
+      quote_options = options.dup
+      frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
+      quote_options[:x]       = frame_rect[0]
+      quote_options[:y]       = frame_rect[1]
+      quote_options[:width]   = frame_rect[2]
+      quote_options[:height]  = frame_rect[3]
+      quote_options[:layout_expand]   = nil
+      quote_options[:is_float]        = true
+      quote_options[:parent]          = self
+      Quote.new(quote_options)
+    end
+    
     # place imaegs that are in the head of the story as floats
-    def float_image(options)
+    def float_image(options={})
       image_options = {}
       image_options[:image_path] = "#{options[:image_path]}" if options[:image_path]
       image_options[:image_path] = "#{$ProjectPath}/images/#{options[:local_image]}" if options[:local_image]
@@ -428,7 +454,6 @@ module RLayout
     end
     
     def float_images(images)
-      puts __method__
       if images.class == Array
         images.each do |image_info|
           float_image(image_info)

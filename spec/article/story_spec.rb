@@ -2,21 +2,40 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'read markdow table' do
   before do
-    story_path = "/Users/mskim/Development/ruby/gems/rlayout/sample/story/sample_story.md"
-    story_path = "/Users/mskim/demo_book/001.chapter.md"
-    @story  = Story.markdown2para_data(story_path)
+    story_path  = "/Users/mskim/Development/ruby/gems/rlayout/sample/story/sample_story.md"
+    story_path  = "/Users/mskim/demo_book/001.chapter.md"
+    @html       = "/Users/mskim/demo_book/001.chapter.html"
+    @adoc       = "/Users/mskim/demo_book/001.chapter.html"
+    @story      = Story.new(story_path)
+    @para_data  = @story.markdown2para_data
+    @asciidoctor= @story.to_html
   end
-  
-  it 'shold create story' do
-    assert @story.class == Hash
-  end
+  # 
+  # it 'shold create story' do
+  #   assert @story.class == Story
+  # end
+  # 
+  # it 'shold create story' do
+  #   assert @para_data.class == Hash
+  # end
   
   it 'should return :heading Hash' do
-    assert @story[:heading].class == Hash
+    assert @para_data[:heading].class == Hash
   end
   
+  # it 'should return :paragraphs Array' do
+  #   assert @para_data[:paragraphs].class == Array
+  # end
+
   it 'should return :heading Hash' do
-    assert @story[:paragraphs].class == Array
+    puts @asciidoctor
+    assert @asciidoctor.class == String
+  end
+  
+  it 'should create html' do
+    assert File.exist?(@adoc) == true
+    assert File.exist?(@html) == true
+    system "open #{@html}"
   end
 end
 

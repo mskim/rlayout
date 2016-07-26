@@ -195,7 +195,7 @@ module RLayout
     def read_story
       ext = File.extname(@story_path)
       if ext == ".md" || ext == ".markdown" || ext == ".story"
-        @story      = Story.markdown2para_data(@story_path)
+        @story  = Story.new(@story_path).markdown2para_data
       # elsif ext == ".adoc"
       #   @story      = Story.adoc2para_data(@story_path)
       end
@@ -207,7 +207,7 @@ module RLayout
         para_options = {}
         para_options[:markup]         = para[:markup]
         para_options[:layout_expand]  = [:width]
-        if para[:markup] == 'img'
+        if para[:markup] == 'img' && para[:string]
           para_options.merge!(eval(para[:string]))
           @paragraphs << Image.new(para_options)
           next
@@ -218,8 +218,8 @@ module RLayout
         elsif para[:markup] == 'photo_page'
           @paragraphs << PhotoPage.new(para)
           next
-        elsif para[:markup] == 'image_group'
-          @paragraphs << ImageGroup.new(para)
+        elsif para[:markup] == 'floats_layer'
+          @paragraphs << FloatsLayout.new(para)
           next
         elsif para[:markup] == 'pdf_insert'
           @paragraphs << PdfInsert.new(para)
@@ -247,7 +247,7 @@ module RLayout
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
       first_item = @paragraphs.first
-      if first_item.is_a?(RLayout::ImageGroup) || first_item.is_a?(RLayout::PhotoPage) || first_item.is_a?(RLayout::PdfInsert)
+      if first_item.is_a?(RLayout::FloatsLayout) || first_item.is_a?(RLayout::PhotoPage) || first_item.is_a?(RLayout::PdfInsert)
         first_item = @paragraphs.shift
         first_item.layout_page(document: @document, page_index: @page_index)
       end
@@ -272,7 +272,7 @@ module RLayout
           @document.pages[@page_index].relayout!
         end
         first_item = @paragraphs.first
-        if first_item.is_a?(RLayout::ImageGroup) || first_item.is_a?(RLayout::PhotoPage) || first_item.is_a?(RLayout::PdfInsert)
+        if first_item.is_a?(RLayout::FloatsLayout) || first_item.is_a?(RLayout::PhotoPage) || first_item.is_a?(RLayout::PdfInsert)
           first_item = @paragraphs.shift
           first_item.layout_page(document: @document, page_index: @page_index)
         end
@@ -376,8 +376,8 @@ module RLayout
     
   end
   
-  # Challenges with ImageGroup
-  # Image_group puts an image at current page if image group is the first item, text_box.exmpty?==true
+  # Challenges with FloatsLayout
+  # FloatsLayout puts group of floats(an image, quote, etc..) at current page if image group is the first item, text_box.exmpty?==true
   # else it puts image at the following page, adding page if the page doen't exist. 
   # for the second case we could get unwanted space between the previous paragraph and next page image.
   # since we don't know where the exact breaking point is.
@@ -394,19 +394,22 @@ module RLayout
 	# {local_image: "1.jpg", frame_rect: [0,0,1,1]}
 	# {local_image: "2.jpg", frame_rect: [0,0,1,1], page_offset:1}
 	# {local_image: "3.jpg", frame_rect: [0,0,1,1], page_offset:2}
+	# {quote: "Our time is too short for fighting", frame_rect: [0,0,1,1], page_offset:2}
 	
 	# above will page images in following page 1, 2, 3
-
-  class ImageGroup
-    attr_accessor :image_group, :allow_text_jump_over
+  class FloatsLayout
+    attr_accessor :floats, :allow_text_jump_over
     def initialize(options={})
       options[:allow_text_jump_over] = true
       @allow_text_jump_over = options[:allow_text_jump_over] if options[:allow_text_jump_over]
-      @image_group = eval(options[:string])
+      @floats               = make_floats(options[:string])
       super
       self
     end
     
+    def make_floats(string)
+      puts "floats_string:#{string}"
+    end
     # page layout is delayed until layout time.
     # document is not known until layout time.
     def layout_page(options={})

@@ -48,6 +48,11 @@ module RLayout
       Label.new(options)
     end
     
+    def quote(string, options={})
+      options[:parent] = self
+      Quote.new(options)
+    end
+    
     def text_runs(strings_array, atts_array, options={})
       options[:parent] = self
       options[:text_string_array] = strings_array
@@ -182,7 +187,25 @@ module RLayout
         end
       end
     end
-
+    
+    # group graphics that intersects give rect
+    # and return with new Container which rect is union of all intersection graphics
+    def group_graphics(rect)
+      intersecting_graphics = []
+      @graphics.each do |g|
+        intersecting_graphics << g if untersects_rect(rect, g.rectange)
+      end
+      uninon_rect = union_graphic_rects(intersecting_graphics)
+      new_container = Container.new(x: uninon_rect[0], y: uninon_rect[1], width: uninon_rect[2], height: uninon_rect[3])
+      intersecting_graphics.each do |int_graphic|
+        int_graphic.x -=  new_container.x
+        int_graphic.y -=  new_container.y
+        int_graphic.graphics << @graphics.delete(g)
+      end
+      new_container.parent_parent:self
+      @graphics << new_container
+    end
+    
     def split(number=2, options={})
       @layout_direction = options.fetch(:layout_direction, "vertical")
       if options[:layout_space]

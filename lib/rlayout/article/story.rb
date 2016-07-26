@@ -2,13 +2,14 @@
 #  Created by Min Soo Kim on 12/9/13.
 #  Copyright 2013 SoftwareLab. All rights reserved.
 
-# Story Class is reads and converts marked files to para_data.
+# Story Class reads and converts markdown with meta-data heading, files to para_data.
+# para_data file is then converted to Asciidoctor 
+# Asciidoctor file is used to create html using asciidocor cli.
+
 # Story file format is mixture of markdown, Asciidoctor, and our own tags.
 # A subset of Story can be pure markdown for short articles.
 # Full Story format adds some markups that markdown doesn't support.
 # Full Story format adds some markups that Asciidotor doesn't support.
-
-# To generate HTML, Full Story have be coverted to Asciidoctor, or GHF-markdown.
 
 # TODO
 # things after "'" gets ingnored
@@ -21,8 +22,8 @@
 # image(local_image: 11.pdf, grid_frame:[0,1,1,1])
 # \end_photo_page
 
-# image_group is a page with group of images with position, text flows around them.
-# image_group forces for new page, it has heders and footers.
+# floats_layout is a page with group of images with position, text flows around them.
+# floats_layout forces for new page, it has heders and footers.
 # \image_group
 # image(local_image: 10.pdf, grid_frame:[0,0,1,1])
 # image(local_image: 11.pdf, grid_frame:[0,1,1,1])
@@ -41,20 +42,26 @@
 # \framed(framed text)
 # \outlined(outlined text)
 # \double_outlined(double outlined text)
+# \color(rgb(r,g,b), text)
+# \ruby, \ruby_under
 
 module RLayout
 
   class Story
-    attr_accessor :title, :author, :type, :date, :status, :categories, :published, :commnets
-    attr_accessor :subtitle, :leading, :heading, :paragraphs
-
-    def initialize(options={})
-      @heading     = options.fetch(:heading, story_defaults)
-      @published  = heading.fetch(:published, false)
-      @paragraphs = options.fetch(:paragraphs,[])
+    attr_accessor :path, :para_data, :adoc, :options
+    def initialize(path, options={})
+      @path       = path
+      @options    = options
       self
     end
-
+    
+    def self.sample
+      @heading    = options.fetch(:heading, story_defaults)
+      @published  = heading.fetch(:published, false)
+      @paragraphs = options.fetch(:paragraphs,[])
+      {:heading=>@metadata, :paragraphs =>paragraphs}
+    end
+    
     def story_defaults
       h={}
       h[:title]     = 'Untitled Story '
@@ -76,9 +83,73 @@ module RLayout
       h
     end
     
+    def to_html
+      para_data_to_asciidoctor
+      ext = File.extname(@path)
+      adoc_path = @path.gsub(ext, ".adoc")
+      folder_path = File.dirname(@path)
+      File.open(adoc_path, 'w'){|f| f.write @adoc}
+      system("cd #{folder_path} && asciidoctor #{adoc_path}")
+    end
+        
+    def para_data_to_asciidoctor
+      @para_data  = markdown2para_data(@options) unless @para_data
+      heading     = @para_data[:heading]
+      paragraphs  = @para_data[:paragraphs]
+      # convert heading to asciidoctor title and preamble
+      @adoc = ""
+      if heading[:title]
+        @adoc += "= " + heading[:title] + "\n"
+      end
+      if heading['title']
+        @adoc += "= " + heading['title'] + "\n"
+      end
+      if heading[:author]
+        @adoc += heading[:author] + "\n\n"
+      end
+      if heading['author']
+        @adoc += heading['author'] + "\n\n"
+      else
+        @adoc += "\n"
+      end
+      
+      if heading[:leading]
+        @adoc += "[.lead] " + heading[:leading] + "\n\n"
+      end
+      if heading[:quote]
+        @adoc += "[.quote] " + heading[:quote] + "\n\n"
+      end
+      if heading[:subtitle]
+        @adoc += "== " + heading[:subtitle] + "\n\n"
+      end
+      # convert paragraphs to asciidoctor blocks
+      paragraphs.each do |para|
+        case para[:markup]
+        when 'p'
+          @adoc +=para[:string] + "\n\n"
+        when 'h1'
+          @adoc +="= " + para[:string] + "\n\n"
+        when 'h2'
+          @adoc +="== " + para[:string] + "\n\n"
+        when 'h3'
+          @adoc +="=== " + para[:string] + "\n\n"
+        when 'h4'
+          @adoc +="==== " + para[:string] + "\n\n"
+        when 'h5'
+          @adoc +="===== " + para[:string] + "\n\n"
+        when 'h6'
+          @adoc +="====== " + para[:string] + "\n\n"
+        when 'image'
+        when 'table'
+        when 'warning'
+        when 'source' , 'code'
+        end
+      end
+      @adoc
+    end
 
     #read story file and convert it to para_data format
-    def self.markdown2para_data(path, options={})
+    def markdown2para_data(options={})
       source = File.open(path, 'r'){|f| f.read}
       begin
         if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
@@ -105,13 +176,14 @@ module RLayout
       # And Create Heading from this
       reader = RLayout::Reader.new @contents, nil
       paragraphs = reader.text_blocks.map do |lines_block|
-        Story.block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
+        block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
       end
-      {:heading=>@metadata, :paragraphs =>paragraphs}
+      @para_data = {:heading=>@metadata, :paragraphs =>paragraphs}
+      # {:heading=>@metadata, :paragraphs =>paragraphs}
     end
 
     #processing a block of parsed text 
-    def self.block2para_data(text_block, options={})
+    def block2para_data(text_block, options={})
       starting_heading_level = options.fetch(:starting_heading_level, 1)
       # s=StringScanner.new(text_block[0])
       # starting_heading_level is 1, h1
@@ -169,7 +241,6 @@ module RLayout
           end
         end
       end
-      
       # 
       # 
       # string += text_block.join("\n")

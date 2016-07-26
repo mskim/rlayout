@@ -68,7 +68,7 @@ module RLayout
     end
     
     def read_story
-      @story = Story.markdown2para_data(@story_path)
+      @story = Story.new(@story_path).markdown2para_data
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
       if @heading !={}

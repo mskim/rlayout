@@ -53,7 +53,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'
   require File.dirname(__FILE__) + '/rlayout/text/font'
   require File.dirname(__FILE__) + '/rlayout/text/label'
-  # require File.dirname(__FILE__) + '/rlayout/text/text_layout_ruby'
+  require File.dirname(__FILE__) + '/rlayout/text/head'
 
   require File.dirname(__FILE__) + '/rlayout/style/style_service'
   require File.dirname(__FILE__) + '/rlayout/style/grid_layout'
@@ -116,6 +116,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/marathon_tag'
   require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
   require File.dirname(__FILE__) + '/rlayout/publication/banner'
+  
+  require File.dirname(__FILE__) + '/rlayout/mlayout/mdocument'
   
 end
 

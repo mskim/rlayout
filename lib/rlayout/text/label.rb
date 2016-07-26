@@ -17,11 +17,12 @@ module RLayout
       @label_text   = @text_string.match(LabelTextRegex).to_s
       @label_length = @label_text.length
       @label_font   = options.fetch(:label_font, "Helvetica")
+      @label_text_size    = options.fetch(:label_text_size, @text_size*0.8)
       @label_text_color   = options[:label_text_color] if options[:label_text_color]
       atts          = {}
       if RUBY_ENGINE == 'rubymotion'
         range                                 = NSMakeRange(0, @label_length)
-        atts[NSFontAttributeName]             = NSFont.fontWithName(@label_font, size: text_size)
+        atts[NSFontAttributeName]             = NSFont.fontWithName(@label_font, size: @label_text_size)
         if @label_text_color
           @label_text_color = RLayout::convert_to_nscolor(@label_text_color)    unless @text_color.class == NSColor
           atts[NSForegroundColorAttributeName]  = @label_text_color 
