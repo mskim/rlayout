@@ -218,8 +218,8 @@ module RLayout
         elsif para[:markup] == 'photo_page'
           @paragraphs << PhotoPage.new(para)
           next
-        elsif para[:markup] == 'floats_layer'
-          @paragraphs << FloatsLayout.new(para)
+        elsif para[:markup] == 'float_group'
+          @paragraphs << FloatGroup.new(para)
           next
         elsif para[:markup] == 'pdf_insert'
           @paragraphs << PdfInsert.new(para)
@@ -247,7 +247,7 @@ module RLayout
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
       first_item = @paragraphs.first
-      if first_item.is_a?(RLayout::FloatsLayout) || first_item.is_a?(RLayout::PhotoPage) || first_item.is_a?(RLayout::PdfInsert)
+      if first_item.is_a?(RLayout::FloatGroup) || first_item.is_a?(RLayout::PhotoPage) || first_item.is_a?(RLayout::PdfInsert)
         first_item = @paragraphs.shift
         first_item.layout_page(document: @document, page_index: @page_index)
       end
@@ -272,7 +272,7 @@ module RLayout
           @document.pages[@page_index].relayout!
         end
         first_item = @paragraphs.first
-        if first_item.is_a?(RLayout::FloatsLayout) || first_item.is_a?(RLayout::PhotoPage) || first_item.is_a?(RLayout::PdfInsert)
+        if first_item.is_a?(RLayout::FloatGroup) || first_item.is_a?(RLayout::PhotoPage) || first_item.is_a?(RLayout::PdfInsert)
           first_item = @paragraphs.shift
           first_item.layout_page(document: @document, page_index: @page_index)
         end
@@ -376,8 +376,8 @@ module RLayout
     
   end
   
-  # Challenges with FloatsLayout
-  # FloatsLayout puts group of floats(an image, quote, etc..) at current page if image group is the first item, text_box.exmpty?==true
+  # Challenges with FloatGroup
+  # FloatGroup puts group of floats(an image, quote, etc..) at current page if image group is the first item, text_box.exmpty?==true
   # else it puts image at the following page, adding page if the page doen't exist. 
   # for the second case we could get unwanted space between the previous paragraph and next page image.
   # since we don't know where the exact breaking point is.
@@ -395,9 +395,9 @@ module RLayout
 	# {local_image: "2.jpg", frame_rect: [0,0,1,1], page_offset:1}
 	# {local_image: "3.jpg", frame_rect: [0,0,1,1], page_offset:2}
 	# {quote: "Our time is too short for fighting", frame_rect: [0,0,1,1], page_offset:2}
-	
 	# above will page images in following page 1, 2, 3
-  class FloatsLayout
+
+  class FloatGroup
     attr_accessor :floats, :allow_text_jump_over
     def initialize(options={})
       options[:allow_text_jump_over] = true

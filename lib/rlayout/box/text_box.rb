@@ -289,7 +289,7 @@ module RLayout
           # given avalable room in column
           # layout rows into room. it can accomodate all rows or overflow         
           @item.layout_rows(current_column.room) 
-        elsif @item.class == RLayout::FloatsLayout
+        elsif @item.class == RLayout::FloatGroup
           @item.layout_page(document: document, page_index: page_index)
           unless @item.allow_text_jump_over
             # TODO

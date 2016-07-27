@@ -119,16 +119,22 @@ module RLayout
           @output_path  = options[:output_path]
         else
           ext           = File.extname(@quiz_data_path)
-          @output_path  = @quiz_data_path.gsub(ext, ".pdf")
+          @output_path  = @project_path + "/output.pdf"
         end
       end
       if options[:template_path]
-        unless File.exist?(options[:template_path])
+        if File.exist?(options[:template_path])
+          @template_path = options[:template_path]
+        else
           puts "Template #{options[:template_path]} doesn't exist!!!"
           return
         end
+      else
+        @template_path = Dir.glob("#{@project_path}/*.rb").first
+        unless @template_path
+          @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/quiz.rb")
+        end
       end
-      @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/quiz.rb")
       template = File.open(@template_path,'r'){|f| f.read}
       @document = eval(template)
       if @document.is_a?(SyntaxError)
@@ -150,7 +156,8 @@ module RLayout
       @starting_page_number = options.fetch(:starting_page_number,1)
       read_quiz_items
       layout_quiz_items 
-      @document.save_pdf(@output_path) unless options[:no_output] 
+      output_options = {:preview=>true}
+      @document.save_pdf(@output_path, output_options)
       self
     end
         
@@ -190,6 +197,7 @@ module RLayout
           yaml = YAML::load(lines_block)
           q    = yaml['q']
           yaml['q'] = "#{q_index+1}. " + q if q
+          #TODO get rid of QuizItemMaker
           result = QuizItemMaker.new(yaml)
           item_array << result.quiz_item
           @answer_item << Text.new(markup: "p", text_string: "#{q_index + 1}). #{result.answer_hash[:ans].to_s}   \r\nExplanation: \r\n#{result.answer_hash[:exp]}")
@@ -231,7 +239,8 @@ module RLayout
         options[:text_box]    = true
         options[:text_box_options]    = @layout_style[:text_box]
         options[:page_number] = @starting_page_number
-        p=Page.new(@document, options)
+        options[:parent]      = @document
+        p=Page.new(options)
         p.relayout!
         p.main_box.create_column_grid_rects
       end
@@ -241,7 +250,8 @@ module RLayout
         heading.set_heading_content(@heading)
       else
         # place heading at the front most
-        heading = Heading.new(@first_page, @heading)
+        @heading[:parent] = @first_page
+        heading = Heading.new(@heading)
         @first_page.graphics.unshift(@first_page.graphics.pop)
       end
       @first_page.layout_space              = @main_layout_space
@@ -273,7 +283,8 @@ module RLayout
           options[:text_box]    = true
           options[:text_box_options]    = @layout_style[:text_box]
           options[:page_number] = @starting_page_number + page_index
-          p=Page.new(@document, options)
+          options[:parent]      = @document
+          p=Page.new(options)
           p.relayout!
           p.main_box.create_column_grid_rects
         end
@@ -292,12 +303,14 @@ module RLayout
         options[:text_box_options]    = @layout_style[:text_box]
         options[:text_box_options][:column_count] = 4
         options[:page_number] = @starting_page_number + page_index
-        p = Page.new(@document, options)
+        options[:parent]      = @document
+        p = Page.new(options)
         p.relayout!
         p.main_box.create_column_grid_rects
         answer_heading = {}
         answer_heading[:title] = "Answers"
-        heading = Heading.new(p, answer_heading)
+        answer_heading[:parent] = p
+        heading = Heading.new(answer_heading)
         p.graphics.unshift(p.graphics.pop)
         p.relayout!
         p.main_box.create_column_grid_rects
@@ -311,7 +324,8 @@ module RLayout
             options[:text_box_options]    = @layout_style[:text_box]
             options[:text_box_options][:column_count] = 4
             options[:page_number] = @starting_page_number + page_index
-            p=Page.new(@document, options)
+            options[:parent]      = @document
+            p=Page.new(options)
             p.relayout!
             p.main_box.create_column_grid_rects
           end
@@ -410,6 +424,8 @@ module RLayout
   end
   # num_atts, q_atts, cap_atts,  
   # cell_atts, choice_indent, choice_gutter
+  
+  #TODO get rid of QuizItemMaker
   
   class QuizItem < Container
     attr_accessor :q_object, :row1_object, :row2_object

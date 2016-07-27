@@ -68,8 +68,11 @@ TODO List
 			- \floats
 		- Add font missing message
 
-2016 7 20
-
+2016 7 27
+	- move read_story to Story
+	- refactor from ChapterMaker, MagazineArticleMaker
+	- Create ItemList, something similar to Story but handles itmes
+	
 2016 7 15
 	- add hex color #FF0022
 	- make styles similar to css
@@ -83,8 +86,8 @@ TODO List
 	- Quote, Leading, style
 	
 2016 7 13
-	- floats_layout 
-	change ImageGroup to FloatsLayout
+	- float_group 
+	change ImageGroup to FloatGroup
 	[floats]
 		image grid_frame
 		quote grid_frame

@@ -22,8 +22,8 @@
 # image(local_image: 11.pdf, grid_frame:[0,1,1,1])
 # \end_photo_page
 
-# floats_layout is a page with group of images with position, text flows around them.
-# floats_layout forces for new page, it has heders and footers.
+# float_group is group of floats with position, text flows around them.
+# float_group forces for new page, it has heders and footers.
 # \image_group
 # image(local_image: 10.pdf, grid_frame:[0,0,1,1])
 # image(local_image: 11.pdf, grid_frame:[0,1,1,1])
@@ -218,7 +218,7 @@ module RLayout
       elsif s =~/^photo_page\s?/      
         @markup = "photo_page"
       elsif s =~/^\[image_group\]\s?/      
-        @markup = "image_group"
+        @markup = "float_group" #image_group, changed to include other graphics
         if text_block.length > 0
           @string = ""
           text_block.each_with_index do |text_line, i|

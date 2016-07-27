@@ -95,14 +95,15 @@ else
   require File.dirname(__FILE__) + '/rlayout/article/story'
   require File.dirname(__FILE__) + '/rlayout/article/reader'
   require File.dirname(__FILE__) + '/rlayout/article/chapter_maker'
-  require File.dirname(__FILE__) + '/rlayout/article/item_chapter_maker'
   require File.dirname(__FILE__) + '/rlayout/article/news_article_maker'
   require File.dirname(__FILE__) + '/rlayout/article/news_section_page'
   require File.dirname(__FILE__) + '/rlayout/article/news_heading_maker'
   require File.dirname(__FILE__) + '/rlayout/article/magazine_article_maker'
   require File.dirname(__FILE__) + '/rlayout/article/single_page_maker'
   require File.dirname(__FILE__) + '/rlayout/article/rjob'
-  require File.dirname(__FILE__) + '/rlayout/article/quiz_maker'
+  
+  require File.dirname(__FILE__) + '/rlayout/item/item_chapter_maker'
+  require File.dirname(__FILE__) + '/rlayout/item/quiz_maker'
   
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/dorok'
