@@ -118,7 +118,6 @@ module RLayout
         if options[:output_path]
           @output_path  = options[:output_path]
         else
-          ext           = File.extname(@quiz_data_path)
           @output_path  = @project_path + "/output.pdf"
         end
       end
@@ -142,7 +141,6 @@ module RLayout
         return
       end
       # raise "SyntaxError in #{@template_path} !!!!" if @document.is_a?(SyntaxError)
-      
       unless @document.kind_of?(RLayout::Document)
         puts "Not a @document kind created !!!"
         return
@@ -166,8 +164,6 @@ module RLayout
       @heading    = @quiz_hash[:heading] || {}
       @title      = @heading[:title] || "Untitled"
       @answer_page= @heading["answer_page"] if @heading["answer_page"]
-      # @heading[:stroke_sides] = [1,1,1,1]
-      # @heading[:stroke_width] = 1
       @heading              = @heading.merge!(@layout_style[:heading])
       @main_layout_space    = @layout_style[:heading][:heading_space_after] || 20
       @column_count         = @layout_style[:text_box][:column_count] || 2
@@ -197,10 +193,9 @@ module RLayout
           yaml = YAML::load(lines_block)
           q    = yaml['q']
           yaml['q'] = "#{q_index+1}. " + q if q
+          @answer_item << Text.new(markup: "p", text_string: "#{q_index + 1}). #{yaml.delete("ans").to_s}   \r\nExplanation: \r\n#{yaml.delete('exp')}")
           #TODO get rid of QuizItemMaker
-          result = QuizItemMaker.new(yaml)
-          item_array << result.quiz_item
-          @answer_item << Text.new(markup: "p", text_string: "#{q_index + 1}). #{result.answer_hash[:ans].to_s}   \r\nExplanation: \r\n#{result.answer_hash[:exp]}")
+          item_array << QuizItem.new(yaml)
           q_index += 1
         end
       end
@@ -224,7 +219,6 @@ module RLayout
           @metadata = @metadata[0]
         end
       end
-      
       h = {}
       h[:heading]     = @metadata if @metadata
       h[:quiz_items]  = parse_quiz_items(@contents)
@@ -371,6 +365,18 @@ module RLayout
     end
   end
   
+  class QuizRefText < Text
+    attr_accessor :saved_options
+    def initialize(options={})
+      @saved_options = options
+    end
+    
+    def set_content
+      options = @saved_options
+      super 
+    end
+  end
+  
   # number type, style
   # 1. number
   # a. alphbet
@@ -383,16 +389,22 @@ module RLayout
   # choice style
   #  1. , circle, ( )
   
-  class QuizItemMaker
-    attr_accessor :quiz_item, :quiz_style, :answer_hash
-    def initialize(options={})
-      @number     = options.fetch('number', "1")
-      @question   = options.fetch('q', {text_string: "Some question goes here? "})
-      @image      = options.fetch('img', nil)
-      @cap        = options.fetch('cap', nil)
+  #TODO get rid of QuizItemMaker
+  
+  class QuizItem < Container
+    attr_accessor :q_object, :row1_object, :row2_object
+    attr_accessor :img_object, :data, :processed
+    def initialize(options={}, &block)
+      @processed = false
+      @data = {}
+      @data[:delayed_layout] = true
+      @data[:num] = options.fetch('number', "1")
+      @data[:q]   = options.fetch('q', {text_string: "Some question goes here? "})
+      @data[:img] = options.fetch('img', nil)
+      @data[:cap] = options.fetch('cap', nil)  
       @choice_1   = options.fetch(1, "choice1")
       @choice_1   = "1. " + @choice_1
-      @choice_2   = options.fetch(2, "choice2")
+      @choice_2   = options.fetch(2, "choice1")
       @choice_2   = "2. " + @choice_2
       @choice_3   = options.fetch(3, "choice3")
       @choice_3   = "3. " + @choice_3
@@ -400,55 +412,22 @@ module RLayout
       @choice_4   = "4. " + @choice_4
       @choice_5   = options.fetch(5, nil)
       @choice_5   = "5. " + @choice_5 if @choice_5
-      @ans        = options.fetch('ans', nil)
-      @exp        = options.fetch('exp', nil)
-      item_options = {}
-      item_options[:delayed_layout] = true
-      item_options[:num]  = @number
-      item_options[:q]    = @question
-      item_options[:img]  = @image
-      item_options[:cap]  = @cap      
-      item_options[:row1] = {row_data: [@choice_1, @choice_2], cell_atts: $quiz_item_style[:choice_style]}
-      item_options[:row2] = {row_data: [@choice_3, @choice_4], cell_atts: $quiz_item_style[:choice_style]}
-      item_options[:layout_expand] = [:width]
-      @quiz_item  = QuizItem.new(item_options)
-      @answer_hash = {}
-      @answer_hash[:ans]  = @ans
-      @answer_hash[:exp]  = @exp
-      self   
-    end
-  end
-  
-  class QuizRefText < Text
-    
-  end
-  # num_atts, q_atts, cap_atts,  
-  # cell_atts, choice_indent, choice_gutter
-  
-  #TODO get rid of QuizItemMaker
-  
-  class QuizItem < Container
-    attr_accessor :q_object, :row1_object, :row2_object
-    attr_accessor :img_object, :data, :processed
-    def initialize(options={}, &block)
-      @data           = options
+      @data[:row1] = {row_data: [@choice_1, @choice_2], cell_atts: $quiz_item_style[:choice_style]}
+      @data[:row2] = {row_data: [@choice_3, @choice_4], cell_atts: $quiz_item_style[:choice_style]}
+      @data[:layout_expand] = [:width]
       @layout_space   = 2
       @layout_expand  = options.fetch(:layout_expand,[:width])
       super
-      @processed       = false
-      unless options[:delayed_layout]
-        set_quiz_content
-      end
       self
     end
     
     def set_quiz_content
-      return if @processed
+      quiz_width = @width - @left_margin - @right_margin
       @layout_space = $quiz_item_style[:layout_space] || 10
       if @data[:q]
-        text_options = $quiz_item_style[:q_style]
-        text_options[:width] = @width - @left_margin - @right_margin
-        @q_object = text(@data[:q], text_options)
+        q_options = $quiz_item_style[:q_style].dup
+        q_options[:width] = quiz_width
+        @q_object = text(@data[:q], q_options)        
       end
       if @data[:img]
         @img_object = image(@data[:img])
@@ -469,7 +448,7 @@ module RLayout
         @data[:row2][:left_margin] = row_indent
         @data[:parent]        = self
         @row2_object          = TableRow.new(@data[:row2])
-        @row1_object.relayout!        
+        @row2_object.relayout!        
       end
             
       height_sum = 0

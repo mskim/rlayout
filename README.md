@@ -68,9 +68,14 @@ TODO List
 			- \floats
 		- Add font missing message
 
+2016 7 28
+	- fix QuizItem
+	- parse QuizItem, using both markdown and hash
+	- fix cli, to take local path, not absolute path
+	 
 2016 7 27
-	- move read_story to Story
-	- refactor from ChapterMaker, MagazineArticleMaker
+	- move read_story to Story and 
+	  refactor from ChapterMaker, MagazineArticleMaker
 	- Create ItemList, something similar to Story but handles itmes
 	
 2016 7 15

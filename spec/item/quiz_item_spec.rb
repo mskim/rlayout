@@ -1,21 +1,26 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+RUBY_DEP_GEM_SILENCE_WARNINGS=1
 
 describe 'create QuizMaker' do
   before do
-    @output_path = "/Users/mskim/quiz/sample_quiz.pdf"
-    @quiz_sample = <<-EOF
-@output_path = "/Users/mskim/quiz/sample_quiz.pdf"
-@quiz_data = "/Users/mskim/quiz/sample_quiz.yml"
-RLayout::QuizMaker.new(quiz_data_path: @quiz_data)
-
-EOF
-    system "echo '#{@quiz_sample}' | /Applications/rjob.app/Contents/MacOS/rjob"  
+    @output_path  = "/Users/mskim/quiz/sample_quiz.pdf"
+    @quiz_data    = "/Users/mskim/quiz/sample_quiz.md"
+    @make         = QuizMaker.new(quiz_data_path: @quiz_data)
+#     @quiz_sample = <<-EOF
+# @output_path = "/Users/mskim/quiz/sample_quiz.pdf"
+# @quiz_data = "/Users/mskim/quiz/sample_quiz.yml"
+# RLayout::QuizMaker.new(quiz_data_path: @quiz_data)
+# 
+# EOF
+#     system "echo '#{@quiz_sample}' | /Applications/rjob.app/Contents/MacOS/rjob"  
   end
-  
-  it 'should save quiz sheet' do
-    assert File.exist?(@output_path)
+  it 'should create QuizMaker' do
+    assert @make.class == QuizMaker
   end
+  # it 'should save quiz sheet' do
+  #   assert File.exist?(@output_path)
+  # end
 end
 
 __END__

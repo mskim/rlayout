@@ -347,13 +347,24 @@ module RLayout
         elsif @item.class == RLayout::QuizItem
           @item.width  = current_column.text_width
           @item.set_quiz_content
+          if current_column.room < @item.height
+            @item.underflow = true 
+          end
         elsif @item.class == RLayout::QuizRefText # GeeMoon
           @item.width  = current_column.text_width
+          if current_column.room < @item.height
+            @item.underflow = true 
+          end
+          item.set_content
           # @item.height = @item.width
           #TODO layout text
         else
           @item.width  = current_column.text_width
           @item.height = @item.width
+          if current_column.room < @item.height
+            @item.underflow = true 
+          end
+          
         end
         # now item is layed out with colum width, place them in the column
         # if @item.class != Paragraph
