@@ -2,21 +2,21 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 RUBY_DEP_GEM_SILENCE_WARNINGS=1
 
-describe 'create QuizMaker' do
+describe 'create QuizChapterMaker' do
   before do
     @output_path  = "/Users/mskim/quiz/sample_quiz.pdf"
     @quiz_data    = "/Users/mskim/quiz/sample_quiz.md"
-    @make         = QuizMaker.new(quiz_data_path: @quiz_data)
+    @make         = QuizChapterMaker.new(quiz_data_path: @quiz_data)
 #     @quiz_sample = <<-EOF
 # @output_path = "/Users/mskim/quiz/sample_quiz.pdf"
 # @quiz_data = "/Users/mskim/quiz/sample_quiz.yml"
-# RLayout::QuizMaker.new(quiz_data_path: @quiz_data)
+# RLayout::QuizChapterMaker.new(quiz_data_path: @quiz_data)
 # 
 # EOF
 #     system "echo '#{@quiz_sample}' | /Applications/rjob.app/Contents/MacOS/rjob"  
   end
-  it 'should create QuizMaker' do
-    assert @make.class == QuizMaker
+  it 'should create QuizChapterMaker' do
+    assert @make.class == QuizChapterMaker
   end
   # it 'should save quiz sheet' do
   #   assert File.exist?(@output_path)
@@ -27,15 +27,15 @@ __END__
 
 
 
-describe 'create QuizMaker' do
+describe 'create QuizChapterMaker' do
   before do
     @path       = "~/quiz/sample_quiz.yml"
-    @quiz_maker = QuizMaker.new(quiz_data_path: File.expand_path(@path))
+    @quiz_maker = QuizChapterMaker.new(quiz_data_path: File.expand_path(@path))
     @text_box   = @quiz_maker.document.pages.first.main_box
   end
   
-  # it 'shuld create QuizMaker' do
-  #   assert @quiz_maker.class == QuizMaker
+  # it 'shuld create QuizChapterMaker' do
+  #   assert @quiz_maker.class == QuizChapterMaker
   # end
   # 
   # it 'shuld create docment' do

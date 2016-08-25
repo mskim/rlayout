@@ -137,11 +137,13 @@ class GraphicViewMac < NSView
 
   def save_pdf(pdf_path, options={})
     pdf = pdf_data
+    # save PDFDocument ?
+    pdf_doc = PDFDocument.alloc.initWithData(pdf_data)
+    
     unless options[:pdf] == false
-      pdf.writeToFile(pdf_path, atomically:false) 
+      pdf_doc.writeToFile(pdf_path, atomically:false) 
     end 
-      
-    if options[:jpg]
+    if options[:jpg] || options[:preview]
       compression = options[:compression] || 0.5
       compression = compression.to_f
       image       = NSImage.alloc.initWithData pdf
@@ -152,12 +154,18 @@ class GraphicViewMac < NSView
       imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
       jpg_path    = pdf_path.sub(".pdf", ".jpg")
       # puts "imageData.class:#{imageData}.class"
-      imageData.writeToFile(jpg_path, atomically:false)      
+      if options[:jpg]
+        imageData.writeToFile(jpg_path, atomically:false)      
+      end
+      
+      if options[:preview]
+        preview_folder_path = File.dirname(pdf_path) + "/preview"
+        system "mkdir -p #{preview_folder_path}" unless File.directory?(preview_folder_path)
+        preview_path = preview_folder_path + "/page_001.jpg"
+        imageData.writeToFile(preview_path, atomically:false)      
+      end
     end
     
-    if options[:thumb]
-      #TODO
-    end
   end
 
   def save_jpg(path)
@@ -165,7 +173,7 @@ class GraphicViewMac < NSView
     tiffdata = image.TIFFRepresentation
     tiffdata.writeToFile path, atomically:false
   end
-
+    
   def pdf_data
       dataWithPDFInsideRect(bounds)
   end

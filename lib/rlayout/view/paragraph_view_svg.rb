@@ -1,7 +1,7 @@
 
 module RLayout
   
-  class ParagraphText < Text
+  class Paragraph < Container
 
     def to_svg
       svg

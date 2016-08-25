@@ -19,9 +19,9 @@ module RLayout
       fill_options={}
       fill_type= 1
       fill_type= @dictionary['Fill'].to_i if @dictionary['Fill']
-      fill_options[:fill_type]=fill_type 
-      fill_options[:fill_color]=color_from_string(@dictionary['CO1']) if @dictionary['CO1']
-      fill_options[:fill_other_color]=color_from_string(@dictionary['CO2']) if @dictionary['CO2']
+      fill_options[:fill_type]        = fill_type 
+      fill_options[:fill_color]       = RLayout::Graphic.color_from_string(@dictionary['CO1']) if @dictionary['CO1']
+      fill_options[:fill_other_color] = RLayout::Graphic.color_from_string(@dictionary['CO2']) if @dictionary['CO2']
       fill_options
     end
     
@@ -30,7 +30,6 @@ module RLayout
   
   class MGLineRecord
     attr_accessor :dictionary
-  
     def initialize(dictionary)
       @dictionary=dictionary
       self
@@ -38,22 +37,21 @@ module RLayout
   
     # rather than creating line_record, return line_options hash , so line_record can be create at SMGraphic 
     def line_options
-       
       line_options={}
-      line_options[:line_width]=@dictionary['Width'].to_f if @dictionary['Width']
+      line_options[:line_width]     = @dictionary['Width'].to_f if @dictionary['Width']
       #{"Dash"=>"{{3, 3}, {3, 0}}", "Width"=>"2.00"}
-      line_options[:dash]=@dictionary['Dash'].gsub("{","").gsub("}","").split(',') if @dictionary['Dash']
+      line_options[:dash]           = @dictionary['Dash'].gsub("{","").gsub("}","").split(',') if @dictionary['Dash']
       if @dictionary['Arrow']
         # start_arrow, :end_point, :end_arrow
-        line_options[:start_arrow]=@dictionary['Arrow']['StartArrow'] if @dictionary['Arrow']['ArrowHead']
-        line_options[:EndArrow]=@dictionary['Arrow']['EndArrow'] if @dictionary['Arrow']['EndArrow']
+        line_options[:start_arrow]  = @dictionary['Arrow']['StartArrow'] if @dictionary['Arrow']['ArrowHead']
+        line_options[:EndArrow]     = @dictionary['Arrow']['EndArrow'] if @dictionary['Arrow']['EndArrow']
       # Arrow =                             {
       #     ArrowHead = "1.0";
       #     EndArrow = "star_s";
       #     StartArrow = arrow1;
       # };
       end
-      line_options[:line_color]=color_from_string(@dictionary['LC']) if @dictionary['LC']
+      line_options[:line_color]     = RLayout::Graphic.color_from_string(@dictionary['LC']) if @dictionary['LC']
       line_options
       
     end
@@ -103,6 +101,7 @@ module RLayout
        #{text_runs}
       </div>
 EOF
+      html
     end
     
     # to_smgraphic
@@ -113,8 +112,8 @@ EOF
       bleed_x=options[:bleed_x] if options[:bleed_x]
       bleed_y=0
       bleed_y=options[:bleed_y] if options[:bleed_y]
-      bleed_x-=0.929188  #this seems to have creeped 
-      bleed_y-=0.00039  #this seems to have creeped 
+      # bleed_x-=0.929188  #this seems to have creeped 
+      # bleed_y-=0.00039  #this seems to have creeped 
       sm_graphic=nil
       @hash={}
       @hash[:inset]=0
@@ -122,40 +121,46 @@ EOF
       @hash[:frame]=NSRectFromString(@dictionary['Bounds'])
       @hash[:frame].origin.x-=bleed_x
       @hash[:frame].origin.y-=bleed_y  
+      # 2016 8 9 mskim
+      @hash[:x]       = @hash[:frame].origin.x.round(3)
+      @hash[:y]       = @hash[:frame].origin.y.round(3)
+      @hash[:width]   = @hash[:frame].size.width.round(3)
+      @hash[:height]  = @hash[:frame].size.height.round(3)
+      
       @hash[:line_options]=MGLineRecord.new(@dictionary['Frame']).line_options if @dictionary['Frame'] 
       @hash[:fill_options]=MGFillRecord.new(@dictionary['Fill']).fill_options if @dictionary['Fill']
       @hash[:shape_record]=@dictionary['Shape'] if @dictionary['Shape']
       @hash[:tag]         =@dictionary['Name']  if @dictionary['Name']
       @hash[:auto_layout]=nil
       @hash[:unique_id]=@dictionary['Number']   if  @dictionary['Number']              
-      case @dictionary['Class']
+      case @dictionary['Class']        
       when 'SMPageObject'
         sm_graphic= SMPage.new(@hash)
       when 'SMRectangle'
-       if @dictionary['Article'] 
-         @hash[:prev_link]=@dictionary['Article']['BeforeBox'] if @dictionary['Article']['BeforeBox']
-         @hash[:next_link]=@dictionary['Article']['AfterBox']  if @dictionary['Article']['AfterBox']
-         if @dictionary['GraphicContainer']
-           @hash[:columns]=@dictionary['GraphicContainer']["Column"].to_i if @dictionary['GraphicContainer']["Column"]
-           # @hash[:width]=@dictionary['GraphicContainer']["Cell"][0].to_f if @dictionary['GraphicContainer']["Cell"]
-           @hash[:gutter]=NSSizeFromString(@dictionary['GraphicContainer']["Inter"]).width if @dictionary['GraphicContainer']["Inter"]
-         end
-         @hash[:ns_attributed_string]=MArticleRecord.new(@dictionary['Article'],@paragraph_style_manager).att_string
-         # @hash[:m_article_dictionary]=@dictionary['Article']
-         # puts "++++ :#{@dictionary['Name']}" if @dictionary['Name']
-         # puts "@hash[:ns_attributed_string].class:#{@hash[:ns_attributed_string].class}"
-         sm_graphic= Text.new(@hash)
-       else
-         sm_graphic= Rectangle.new(@hash)
-       end
+        if @dictionary['Article'] 
+          @hash[:prev_link]=@dictionary['Article']['BeforeBox'] if @dictionary['Article']['BeforeBox']
+          @hash[:next_link]=@dictionary['Article']['AfterBox']  if @dictionary['Article']['AfterBox']
+          if @dictionary['GraphicContainer']
+            @hash[:columns]=@dictionary['GraphicContainer']["Column"].to_i if @dictionary['GraphicContainer']["Column"]
+            # @hash[:width]=@dictionary['GraphicContainer']["Cell"][0].to_f if @dictionary['GraphicContainer']["Cell"]
+            @hash[:gutter]=NSSizeFromString(@dictionary['GraphicContainer']["Inter"]).width if @dictionary['GraphicContainer']["Inter"]
+          end
+          @hash[:ns_attributed_string]=MArticleRecord.new(@dictionary['Article'],@paragraph_style_manager).att_string
+          # @hash[:m_article_dictionary]=@dictionary['Article']
+          # puts "++++ :#{@dictionary['Name']}" if @dictionary['Name']
+          # puts "@hash[:ns_attributed_string].class:#{@hash[:ns_attributed_string].class}"
+          sm_graphic= Text.new(@hash)
+        else
+          sm_graphic= Rectangle.new(@hash)
+        end
       when 'SMImage'
         if @dictionary['Image']
-          @hash[:image_path] =@dictionary['Image']['Path'].to_s           
-          @hash[:local_image] =@document_path + "/" + @dictionary['Image']['PFN'].to_s if @dictionary['Image']['PFN']       
-          @hash[:image_frame]=NSRectFromString(@dictionary['Image']['Frame'])
+          @hash[:image_path]  = @dictionary['Image']['Path'].to_s           
+          @hash[:local_image] = @document_path + "/" + @dictionary['Image']['PFN'].to_s if @dictionary['Image']['PFN']       
+          @hash[:image_frame] = NSRectFromString(@dictionary['Image']['Frame'])
             # @hash[:image]=image
-         end
-         sm_graphic= Image.new(@hash)          
+        end
+        sm_graphic= Image.new(@hash)          
       # when 'SMTable'
       # when 'SMMath'
       when 'SMCircle'

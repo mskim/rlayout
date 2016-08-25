@@ -44,16 +44,16 @@ module RLayout
   class MArticleRecord
     attr_accessor :dictionary, :attributes_array, :text_string, :att_string, :containers, :paragraph_style_manager    
     def initialize(dictionary, paragraph_style_manager)
-      @dictionary=dictionary
+      @dictionary = dictionary
       @paragraph_style_manager=paragraph_style_manager
-      @containers=[]
+      @containers = []
       @dictionary['Containers'].each do |rect_string|
-        @containers<< NSRectFromString(rect_string)
+        @containers << NSRectFromString(rect_string)
       end
       
       if @dictionary['Unicode']
           @text_string = NSString.alloc.initWithData(@dictionary['Unicode'], encoding:NSUnicodeStringEncoding)
-          @att_string=attributedString_from_dictionary(@dictionary['Attribute'])
+          @att_string  = attributedString_from_dictionary(@dictionary['Attribute'])
       else
         # puts "No @dictionary['Unicode']"
       end
@@ -135,16 +135,14 @@ EOF
     end
     
     def attributedString_from_dictionary(marticle_record)
-      location=0
-      puts "@text_string:#{@text_string}"
-      puts "@text_string.length:#{@text_string.length}"
-      att_string=NSMutableAttributedString.alloc.initWithString(@text_string, :atts=>{})
+      location    = 0
+      att_string  = NSMutableAttributedString.alloc.initWithString(@text_string, :atts=>{})
       marticle_record.each do |attributes|
-        matts=attributes['Attrs']
-        len=attributes['Len'].to_i
-        range=NSMakeRange(location,len)
-        @atts={}
-      
+        matts   = attributes['Attrs']
+        len     = attributes['Len'].to_i - 1
+        range   = NSMakeRange(location,len)
+        @atts   = {}
+        
         if matts['P_S']
           @atts=@paragraph_style_manager.atts_for_style_named(matts['P_S'])
         elsif matts['USN']
@@ -152,45 +150,46 @@ EOF
           # puts "encoded_text:#{encoded_text}"
           @atts=@paragraph_style_manager.atts_for_style_named(encoded_text)
         end
-
+        
         if matts['NSParagraphStyle']
           @atts=get_attrubutes_from_nsparagraphStyle(matts['NSParagraphStyle'])
         end
+        
         
         if matts['FontName']
           @fontSize=matts['FontSize'].to_f
           @atts[NSFontAttributeName] = NSFont.fontWithName(matts['FontName'], size:@fontSize)
           if matts['Track']
             @atts[NSKernAttributeName] = matts['Track'].to_f*@fontSize/160
-            # puts "@atts[NSKernAttributeName]:#{@atts[NSKernAttributeName]}"
-            # puts "in attributedString_from_dictionary"
           end
+
           if matts['FontScale']
             @font_scale=matts['FontScale'].to_f
             unless @font_scale == 100.0
               width=@fontSize*@font_scale/100
               fmatrix=[width,0,0,@fontSize,0,0]
-              @atts[NSFontAttributeName] = NSFont.fontWithName(matts['FontName'], matrix:fmatrix)
+              #TODO make proper matrix
+              # @atts[NSFontAttributeName] = NSFont.fontWithName(matts['FontName'], matrix:fmatrix)
+              @atts[NSFontAttributeName] = NSFont.fontWithName(matts['FontName'], size: width)
             end
-          end          
+          end   
         end
-        
+               
        # if given font is not installed
        if @atts[NSFontAttributeName].nil?
-         if matts['FontName']
-           @font_name=matts['FontName'] if matts['FontName'] 
-         else
-           @font_name="Times-Roman"
-         end
-         
-         if @font_size.nil?
-           if matts['FontSize']
-             @font_size=matts['FontSize'].to_f 
-           else
-             @font_size=12
-           end
-         end
-         @atts[NSFontAttributeName]= NSFont.fontWithName(@font_name, :size=>@font_size) 
+          if matts['FontName']
+            @font_name=matts['FontName'] if matts['FontName'] 
+          else
+            @font_name="Times-Roman"
+          end
+          if @font_size.nil?
+            if matts['FontSize']
+              @font_size=matts['FontSize'].to_f 
+            else
+              @font_size=12
+            end
+          end
+          @atts[NSFontAttributeName]= NSFont.fontWithName(@font_name, :size=>@font_size) 
        end
        
        # if the value was not set, use default values
@@ -207,10 +206,11 @@ EOF
            @atts[NSForegroundColorAttributeName]= NSColor.blackColor 
          end
        end
+       
        #TODO what is the relation between 'Len','Unicode' and NSString
        # eventhough 'Len = 1', ns_string length is 0 and the range exception 
-       # when I try to set the attributes  
-       if att_string.string.length > 0
+       # when I try to set the attributes
+       if att_string.string.length > 1
          att_string.setAttributes(@atts, range:range)
        end
        location+=len
@@ -255,7 +255,7 @@ EOF
       elsif color_kind=~/NSCalibratedBlackColorSpace/
           @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)
       else
-          @color = GraphicRecord.color_from_name(color_string)
+          @color = Graphic.color_from_name(color_string)
       end
       @color
     end

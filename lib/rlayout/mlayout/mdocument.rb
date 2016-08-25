@@ -1,8 +1,10 @@
 
-# MDocument handles MLayout2 documents, read, create, modify, and save
-# We have two groups of classes, one group of classes starting with no prefix and the other starting with M prefix. 
-# no starting cleass represents the new Ruby based format.
-# M represents the old MLayout NSDictionary format
+# MDocument handles MLayout2 documents, 
+#   read, create, modify, and save
+# We have two groups of classes, 
+# M prefixed classes represents the old MLayout NSDictionary format
+# no prefixed class represents the new Ruby based format.
+
 module RLayout
   
   class MSpread
@@ -272,36 +274,48 @@ EOF
       File.open(r_path, 'w') {|f| f.write r_layout}
     end
     
-    # Convert to smdocument from MLayout2.0 Document
+    # Convert MLayout2.0 Document to RLayout::Document  
     def self.to_rlayout(path)
-      @smdocument_hash=MDocument.new(path).smdocument_hash
-      document=Document.new(@smdocument_hash)
-      ext = File.extname(path)
-      rlayout_foler = path.gsub(ext, ".rlayout")
+      @smdocument_hash  = MDocument.new(path).smdocument_hash
+      document          = Document.new(@smdocument_hash)
+      ext               = File.extname(path)
+      rlayout_foler     = path.gsub(ext, "")
       system "mkdir #{rlayout_foler}" unless File.directory?(rlayout_foler)
-      rlayout_path = rlayout_foler + "/layout.rb"
+      rlayout_path      = rlayout_foler + "/layout.rb"
       document.save_document_layout(output_path: rlayout_path)
     end
     
-    # convert from smdocument to MLayout2.0 Document
+    # Extract only those tagged graphics from MLayout2.0 Document to RLayout::Document 
+    # And generate PDF of variables removed  MLayout2.0 Document
+    # Genrated PDF will be used as a backgrpund image, for non-variable parts.
+    # This will be used for creating design templates from existing MLayout2 documents.
+    def self.to_rlayout_template
+      # 1. parse mlayout file
+      # 2. look for graphics with tags
+      # 3. extract it 
+      # 4. create rlayout of extracted with tag
+      # 5. delete tagged from Hash
+      # 6. generate PDF without the tagged
+      #
+    end
 
     def parse_mfile 
       mdictionary_path=@document_path + '/m.layout'
-      mdictionary=NSDictionary.dictionaryWithContentsOfFile(mdictionary_path)
-      size_string=mdictionary['PaperSize'].to_s
-      s=size_string.gsub("{","").gsub!("}","")
-      size_array=s.split(",")
-      @width=size_array[0].to_f
-      @height=size_array[1].to_f
+      mdictionary   = NSDictionary.dictionaryWithContentsOfFile(mdictionary_path)
+      size_string   = mdictionary['PaperSize'].to_s
+      s             = size_string.gsub("{","").gsub!("}","")
+      size_array    = s.split(",")
+      @width        = size_array[0].to_f
+      @height       = size_array[1].to_f
       @paragraph_styles=mdictionary['ParagraphStyle']
-      @double_side=mdictionary['PageInfo']['Spread']
-      @bleed_x=mdictionary['PageInfo']['Bleed'].to_f
-      @bleed_y=mdictionary['PageInfo']['BleedV'].to_f
-      @paper_size=mdictionary['PageInfo']['PaperSize'].split("()")[0]
-      @page_number=mdictionary['PageInfo']['pageNumber']
+      @double_side  = mdictionary['PageInfo']['Spread']
+      @bleed_x      = mdictionary['PageInfo']['Bleed'].to_f
+      @bleed_y      = mdictionary['PageInfo']['BleedV'].to_f
+      @paper_size   = mdictionary['PageInfo']['PaperSize'].split("()")[0]
+      @page_number  = mdictionary['PageInfo']['pageNumber']
       @auto_page_append=mdictionary['PageInfo']['AutoPageAppend']
-      spreads=mdictionary['Pages']
-      spread_list=[]
+      spreads       = mdictionary['Pages']
+      # spread_list=[]
       for spread in spreads do
         mspread=MSpread.new(self,spread)
         @spread_list<<mspread

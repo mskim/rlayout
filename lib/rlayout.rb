@@ -49,10 +49,11 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/text_train'
   
   require File.dirname(__FILE__) + '/rlayout/text/heading'
-  require File.dirname(__FILE__) + '/rlayout/text/paragraph_text'
+  require File.dirname(__FILE__) + '/rlayout/text/paragraph_ns_text'
+  require File.dirname(__FILE__) + '/rlayout/math/paragraph'
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'
   require File.dirname(__FILE__) + '/rlayout/text/font'
-  require File.dirname(__FILE__) + '/rlayout/text/label'
+  require File.dirname(__FILE__) + '/rlayout/text/text_train'
   require File.dirname(__FILE__) + '/rlayout/text/head'
 
   require File.dirname(__FILE__) + '/rlayout/style/style_service'
@@ -79,7 +80,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/box/news_article_box'
 
   require File.dirname(__FILE__) + '/rlayout/math/eqn'
-  require File.dirname(__FILE__) + '/rlayout/math/text_token'
   require File.dirname(__FILE__) + '/rlayout/math/math_token'
   require File.dirname(__FILE__) + '/rlayout/math/latex_math'
 
@@ -101,9 +101,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/article/magazine_article_maker'
   require File.dirname(__FILE__) + '/rlayout/article/single_page_maker'
   require File.dirname(__FILE__) + '/rlayout/article/rjob'
-  
-  require File.dirname(__FILE__) + '/rlayout/item/item_chapter_maker'
-  require File.dirname(__FILE__) + '/rlayout/item/quiz_maker'
+  require File.dirname(__FILE__) + '/rlayout/article/item_chapter_maker'
+  require File.dirname(__FILE__) + '/rlayout/article/quiz_chapter_maker'
   
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/dorok'

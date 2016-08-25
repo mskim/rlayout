@@ -422,7 +422,6 @@ DEFAULT_TABLE_STYLE = {
     attr_accessor :column_sytle_array, :column_alignment
     def initialize(options={}, &block)
       super
-      @klass              = 'TableRow'
       cell_atts           = options[:cell_atts] 
       @row_data           = options[:row_data]
       @row_type           = options.fetch(:row_type, "body_row")

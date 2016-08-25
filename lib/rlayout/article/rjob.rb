@@ -30,8 +30,7 @@ module RLayout
             puts "output_path not specified!!! "
             return
           end
-        end
-        
+        end        
       elsif options[:script_path]
         unless File.exist?(options[:script_path])
           puts "no file #{options[:script_path]} doesn't exit!!! "
@@ -44,7 +43,6 @@ module RLayout
           @output_path = File.dirname(options[:script_path]) + "/output.pdf"
         end
       end
-      
       if created_object.class == SyntaxError
         puts "eval SyntaxError !!!!"
         puts "created_object.inspect:#{created_object.inspect}"

@@ -2,7 +2,7 @@
 
 Wouldn't it be great if we had something like Ruby On Rails for Publishing?
 
-design new my_magazine --template=times_clone
+design new my_magazine --template=times
 
 it creates bunch of folders and templates for writing markdown files, images to fill-in
 
@@ -12,7 +12,7 @@ rake pdf
 
 ```
 
-then voala! 
+then voila! 
 
 You have pdf version of the magazine
 

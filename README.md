@@ -68,6 +68,84 @@ TODO List
 			- \floats
 		- Add font missing message
 
+		- document 
+			- chapter color
+				each chapter can have chapter color
+			- start_left, had_cover_spread
+				user pre-designed-chapter_cover_spread
+			- end_on_right_page
+				if the document ends in left page, add a page 
+				for following chapter to start at the left page
+				
+		- QuizBank
+		
+		- report_maker
+			- cover
+			- intro
+			- toc
+			- chapter
+			- chapter
+			- index
+			- glossary
+		- put templates under rubymotion app/resouces/
+		
+		
+2016 8 25
+	- move templates to rubymotion.app/resouces
+	- create new book with given template
+		book new my_book template=paperback
+		book new my_quiz template=quiz_book
+		book new my_magazine template=ourtown_magzine
+		
+	- change Book chapter cli to Chapter
+	- fix Rakefile tasks in book folder
+	- 2r bug when generating font with scale matrix
+	- QuizItem
+		QuizItem.sample(200)
+
+			
+	- create FlipBook
+	
+	- floats_group
+	
+	- asciidoctor to active_record
+		- asciidoctor add on markup
+			class Node
+				node_type
+				name
+				parent
+				text
+				attributes
+			
+2016 8 22
+	- fix layout bug paragraph after space
+	- generate doc_info.yml for each book documents
+		doc_info[:toc]
+		doc_info[:index]
+	- add document type in header
+		cover, toc, forward, dedication, chapter, index, appendix, glossary
+		memo, calendar, pdf_inserts
+	- and merge doc_info[:toc] into project/front_matter/toc/doc_info.yml
+	- add custom markups to adoc file
+	- add forced layout to Rakefile 
+	
+2016 7 29
+	- parse adoc quiz format
+		. question
+		.. choice
+		image::drawing1-3.jpg[figure]
+		== 3
+		=== this is why
+	
+	- parse markdown quiz format
+		1. question
+		 	1. choice
+		image::drawing1-3.jpg[figure]
+		## 3
+		### this is why
+	
+	- TextTrain, TextStack, EShape, label
+	
 2016 7 28
 	- fix QuizItem
 	- parse QuizItem, using both markdown and hash
@@ -357,7 +435,7 @@ TODO List
 	- 'keep_box_height', 'fit_text_to_box', 'adjust_box_height'    
 	
 2015 10 12
-	- QuizMaker
+	- QuizChapterMaker
 	- fix multi column bug
 	
 2015 10 7

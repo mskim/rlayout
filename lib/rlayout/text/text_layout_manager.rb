@@ -76,7 +76,6 @@ FIT_TO_BOX      = 1   # change font size to fit text into box
 
 # 'fit_text_to_box'
 # 'adjust_box_height'
-# 'keep_box_height'    
 
 #overflow or vertical adjustment
 
@@ -211,7 +210,7 @@ module RLayout
       atts[NSForegroundColorAttributeName]  = @text_color
       if @guguri_width && @guguri_width < 0
         atts[NSStrokeWidthAttributeName] = atts_hash[:guguri_width] #0, -2,-5,-10
-        atts[NSStrokeColorAttributeName]=GraphicRecord.color_from_string(attributes[:guguri_color])
+        atts[NSStrokeColorAttributeName]=Graphic.color_from_string(attributes[:guguri_color])
       end
       if @text_tracking
         atts[NSKernAttributeName] = @text_tracking

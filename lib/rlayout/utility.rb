@@ -230,7 +230,7 @@ module  RLayout
     elsif color_kind=~/NSCalibratedBlackColorSpace/
         @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)
     else
-        @color = GraphicRecord.color_from_name(color_string)
+        @color = color_from_name(color_string)
     end
     @color
   end

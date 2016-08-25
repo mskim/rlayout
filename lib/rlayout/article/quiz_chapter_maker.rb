@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-# QuizMaker is tool chain for creating Quiz, Answer Sheet, and IncorrectAnswesNote.
+# QuizChapterMaker is tool chain for creating Quiz, Answer Sheet, and IncorrectAnswesNote.
 # Quiz items are created unsing markdown with metadata.
 # Each Question is marked as ## and separated by \n\n.
 # Each choice is marked as ordered list.
@@ -98,28 +98,33 @@
 # 1. It is usually two questions per page, with lots of room for writting.
 
 module RLayout
-
-  class QuizMaker
+  
+  # QuizChapterMaker
+  class QuizChapterMaker
     attr_accessor :project_path, :template_path, :quiz_data_path, :answer_page
     attr_accessor :document, :output_path, :starting_page_number, :column_count
     attr_accessor :layout_style
     def initialize(options={} ,&block)
-      unless options[:quiz_data_path]
-        puts "No quiz_data_path !!!"
-        return
-      else
+      puts "options:#{options}"
+      if options[:project_path]
+        @project_path   = options[:project_path]
+        @quiz_data_path = Dir.glob("#{@project_path}/*.{md,adoc,yml").first
+      elsif options[:quiz_data_path]
         @quiz_data_path = options[:quiz_data_path]
-        unless File.exist?(@quiz_data_path)
-          puts "No quiz_data_path doen't exist !!!"
-          return
-        end
         @project_path   = File.dirname(@quiz_data_path)
-        $ProjectPath    = @project_path
-        if options[:output_path]
-          @output_path  = options[:output_path]
-        else
-          @output_path  = @project_path + "/output.pdf"
-        end
+      else
+        puts "No quiz_data_path given !!!"
+        return
+      end
+      $ProjectPath    = @project_path
+      unless File.exist?(@quiz_data_path)
+        puts "quiz_data_path doen't exist !!!"
+        return
+      end
+      if options[:output_path]
+        @output_path  = options[:output_path]
+      else
+        @output_path  = @project_path + "/output.pdf"
       end
       if options[:template_path]
         if File.exist?(options[:template_path])
@@ -160,7 +165,7 @@ module RLayout
     end
         
     def read_quiz_items
-      @quiz_hash  = yaml2quiz_hash(@quiz_data_path)
+      @quiz_hash  = read_metadata
       @heading    = @quiz_hash[:heading] || {}
       @title      = @heading[:title] || "Untitled"
       @answer_page= @heading["answer_page"] if @heading["answer_page"]
@@ -175,35 +180,56 @@ module RLayout
     end
     
     # quiz item in markdown 
-    def parse_quiz_markdown(content)
+    def parse_quiz_markdown(lines_block)
       
     end
     
-    # quiz item in yaml 
-    def parse_quiz_items(content)
-      blocks_array= content.split("\n\n")
-      item_array = []
-      @answer_item = []
-      q_index = 0
-      blocks_array.each do |lines_block|
-        if lines_block =~/t:/   # this is for reading text
-          lines_block_text = lines_block.sub("t: ","")
-          item_array << Text.new(markup: "body", text_string: lines_block_text, stroke_width: 1)
-        else
-          yaml = YAML::load(lines_block)
-          q    = yaml['q']
-          yaml['q'] = "#{q_index+1}. " + q if q
-          @answer_item << Text.new(markup: "p", text_string: "#{q_index + 1}). #{yaml.delete("ans").to_s}   \r\nExplanation: \r\n#{yaml.delete('exp')}")
-          #TODO get rid of QuizItemMaker
-          item_array << QuizItem.new(yaml)
-          q_index += 1
-        end
-      end
-      item_array
+    # quiz item in asciidoctor 
+    def parse_quiz_adoc(lines_block)
+      
     end
     
-    def yaml2quiz_hash(path)
-      source = File.open(path, 'r'){|f| f.read}
+    # quiz item in yml 
+    def parse_quiz_yml(lines_block)
+      # TODO this need to be changed to markdown parsing
+      block_text = lines_block.join("\n")
+      if block_text =~/t:/   # this is for reading text
+        lines_block_text = block_text.sub("t: ","")
+        @item_array << QuizRefText.new(markup: "body", text_string: lines_block_text, stroke_width: 1, no_layout: true)
+      else
+        yaml = YAML::load(block_text)
+        q    = yaml['q']
+        yaml['q'] = "#{q_index+1}. " + q if q
+        @answer_item <<  QuizAnsText.new(markup: "p", text_string: "#{q_index + 1}). #{yaml.delete("ans").to_s}   \r\nExplanation: \r\n#{yaml.delete('exp')}", no_layout: true)
+        @item_array << QuizItem.new(yaml)
+        @q_index += 1
+      end
+    end
+    
+    
+    # quiz item in yaml 
+    def parse_quiz_data(content, type)
+      @item_array   = []
+      @answer_item  = []
+      reader        = RLayout::Reader.new content, nil      
+      @q_index      = 0
+      reader.text_blocks.each do |lines_block|
+        case type
+        when 'md','markdown'
+          parse_quiz_markdown(lines_block)
+        when 'adoc'
+          parse_quiz_adoc(lines_block)
+        when 'yml'
+          parse_quiz_yml(lines_block)
+        else
+          parse_quiz_adoc(lines_block)
+        end
+      end
+      @item_array
+    end
+    
+    def read_metadata
+      source = File.open(@quiz_data_path, 'r'){|f| f.read}
       begin
          if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
            @contents = md.post_match
@@ -221,11 +247,13 @@ module RLayout
       end
       h = {}
       h[:heading]     = @metadata if @metadata
-      h[:quiz_items]  = parse_quiz_items(@contents)
+      h[:quiz_items]  = parse_quiz_data(@contents, File.extname(@quiz_data_path))
       h
     end
     
     def layout_quiz_items
+      puts __method__
+      puts "@quiz_items.length:#{@quiz_items.length}"
       if @document.pages.length == 0
         options               = {}
         options[:footer]      = true
@@ -365,15 +393,31 @@ module RLayout
     end
   end
   
-  class QuizRefText < Text
-    attr_accessor :saved_options
+  class QuizAnsText < Text
     def initialize(options={})
-      @saved_options = options
+      options[:text_fit_type] = 'adjust_box_height'
+      options[:layout_expand] = [:width]
+      super 
+      self
     end
     
     def set_content
-      options = @saved_options
+      @text_layout_manager.layout_lines(text_fit_type: 'adjust_box_height') if @text_layout_manager
+      self
+    end
+    
+  end
+  
+  class QuizRefText < Text
+    def initialize(options={})
+      options[:layout_expand] = [:width]
       super 
+      self
+    end
+    
+    def set_content
+      @text_layout_manager.layout_lines(text_fit_type: 'adjust_box_height') if @text_layout_manager
+      self
     end
   end
   
@@ -388,9 +432,7 @@ module RLayout
   # a. alphbet
   # choice style
   #  1. , circle, ( )
-  
-  #TODO get rid of QuizItemMaker
-  
+    
   class QuizItem < Container
     attr_accessor :q_object, :row1_object, :row2_object
     attr_accessor :img_object, :data, :processed
@@ -437,8 +479,9 @@ module RLayout
         row_indent            = $quiz_item_style[:q_style][:text_head_indent] || 20
         @data[:row1][:width]  = @width - row_indent - @left_margin - @right_margin
         @data[:row1][:left_margin] = row_indent
-        @data[:parent]        = self
         @row1_object          = TableRow.new(@data[:row1])
+        @row1_object.parent_graphic = self
+        @graphics << @row1_object unless @graphics.include?(@row1_object)
         @row1_object.relayout!
       end
       
@@ -446,8 +489,9 @@ module RLayout
         row_indent            = $quiz_item_style[:q_style][:text_head_indent] || 20
         @data[:row2][:width]  = @width - row_indent - @left_margin - @right_margin
         @data[:row2][:left_margin] = row_indent
-        @data[:parent]        = self
         @row2_object          = TableRow.new(@data[:row2])
+        @row2_object.parent_graphic = self
+        @graphics << @row2_object unless @graphics.include?(@row2_object)
         @row2_object.relayout!        
       end
             
@@ -489,6 +533,22 @@ module RLayout
     def to_hash
       super
     end
+    
+    # generate count nimber of quiz_item
+    # return single quiz_item if count is 1
+    # return array of quiz_items if count > 1
+    def sample(count=1)
+      if count == 1
+        return QuizItem.new
+      else
+        items_array = []
+        count.times do 
+          items_array << QuizItem.new
+        end
+        return items_array
+      end
+    end
+    
   end
   
   # IncorrectAnswersNoteMaker

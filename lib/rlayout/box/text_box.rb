@@ -265,7 +265,7 @@ module RLayout
       column_index = 0
       current_column = @graphics[column_index]
       while @item  = flowing_items.shift do
-        if @item.is_a?(RLayout::ParagraphText) && @item.text_layout_manager
+        if @item.is_a?(RLayout::ParagraphNSText) && @item.text_layout_manager
           # We have text
           @item.width  = current_column.text_width
           if current_column.room < current_column.body_line_height || current_column.room < @item.text_line_height
@@ -346,18 +346,18 @@ module RLayout
           end
         elsif @item.class == RLayout::QuizItem
           @item.width  = current_column.text_width
-          @item.set_quiz_content
           if current_column.room < @item.height
             @item.underflow = true 
+          else
+            @item.set_quiz_content
           end
-        elsif @item.class == RLayout::QuizRefText # GeeMoon
+        elsif @item.class == RLayout::QuizRefText || @item.class == RLayout::QuizAnsText
           @item.width  = current_column.text_width
           if current_column.room < @item.height
             @item.underflow = true 
+          else            
+            @item.set_content
           end
-          item.set_content
-          # @item.height = @item.width
-          #TODO layout text
         else
           @item.width  = current_column.text_width
           @item.height = @item.width

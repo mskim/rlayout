@@ -1,6 +1,6 @@
-# Continuos Page Layout
+# Continuous Page Layout
 
-Continuous Integration (CI) is a software development practice where members of a team integrate their work as frequently as possible to reduce integration problems and code conflicts. Every push to a source code repository is verified by an automated build and a test suite to detect errors as quickly as possible. A good CI tool also has a good notification system which effectively notifies all the team members about conflicts and issues with their code.
+"Continuous Integration (CI) is a software development practice where members of a team integrate their work as frequently as possible to reduce integration problems and code conflicts. Every push to a source code repository is verified by an automated build and a test suite to detect errors as quickly as possible. A good CI tool also has a good notification system which effectively notifies all the team members about conflicts and issues with their code."
 
 Similar to continuous integration development process, continuous page layout process updates page layout whenever contents or design elements are changed.
 

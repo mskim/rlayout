@@ -17,7 +17,7 @@
 # This will place image in the column along other text paragraphs, 
 # We can set width of image as 1, 1/2, 1/3, 1/4 of column.
 # And text will flow around it.
-# The second way is to use image_group.
+# The second way is to use flot_layer.
 # Image markup shoud containe position information, such as grid_frame, size, position attributes.
 # New page is triggered for this case. pre-desinged layout pattern can also be used.
 # Images are layed on top as floating images allowing text to flow around it.
@@ -26,10 +26,10 @@
 # photo_page is pure photo only page, no text paragraph is layed out, no header, no footer, no page number.
 # pre-desinged layout pattern can be pulled from pattern library or positions can be set manually.
 
-# For book chapters, first, sencod and third methods are used.
-
-# For short documents, such as magazine article, second choice is used. 
+# For short documents, such as magazine article, desinger can place image in rlayout file. 
 # And image info in specified in meta-data header or design template by designer.
+
+# For book chapters, first, sencod and third methods are used.
 
 
 # How to place image caption?
@@ -144,7 +144,7 @@ module RLayout
   class ChapterMaker
     attr_accessor :project_path, :template_path, :story_path
     attr_accessor :document, :output_path, :starting_page_number, :column_count
-
+    attr_accessor :doc_info, :toc_content
     def initialize(options={} ,&block)
       @project_path = options[:project_path] || options[:article_path]
       if @project_path
@@ -189,6 +189,9 @@ module RLayout
       layout_story
       output_options = {:preview=>true}
       @document.save_pdf(@output_path,output_options) unless options[:no_output] 
+      @doc_info = {}
+      @doc_info[:page_count] = @document.pages.length
+      save_toc
       self
     end
         
@@ -200,7 +203,8 @@ module RLayout
       #   @story      = Story.adoc2para_data(@story_path)
       end
       @heading    = @story[:heading] || {}
-      @title      = @heading[:title] || "Untitled"
+      @title      = @heading[:title] || @heading['title'] || "Untitled"
+      @toc_content= "## #{@title}\t0\n"
       @paragraphs =[]
       @story[:paragraphs].each do |para|
         next if para.nil?
@@ -288,8 +292,10 @@ module RLayout
       @starting_page_number + @page_view_count
     end
 
-    def save_toc(path)
-
+    def save_toc
+      toc_path = @project_path + "/doc_info.yml"
+      @doc_info[:toc] = @toc_content
+      File.open(toc_path, 'w'){|f| f.write @doc_info.to_yaml}
     end
     
     def update_header_and_footer

@@ -1,6 +1,6 @@
 # markright
 
-markdifferent, markit
+markdifferent, markit, markup, mu, differnt_mark_down, dmd
 
 mixture of markdown and adoc
 

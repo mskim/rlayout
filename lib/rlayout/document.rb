@@ -295,12 +295,6 @@ module RLayout
       File.open(path, 'w'){|f| f.write to_hash.to_yaml}
     end
     
-    # def save_pdf_doc(options={})
-    #   @ns_view = DocumentViewMac.new(self)
-    #   options[:jpg] = @jpg if @jpg
-    #   @page_view_count = @ns_view.save_pdf(@pdf_path, options)
-    # end
-    
     def pdf_document
       @document_view ||= DocumentViewMac.new(self)
       @document_view.pdf_document

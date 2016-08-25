@@ -336,7 +336,8 @@ module RLayout
         @height = @line_y_offset
       end
       if @line_tokens.length > 0
-        options = {parent: self, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @column_width, height: @body_line_height, space_width: @space_width}
+        options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @line_width, height: @line_rectangle[3], space_width: @space_width}
+        # options = {parent: self, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @column_width, height: @body_line_height, space_width: @space_width}
         line    = LineFragment.new(options)
         @line_y_offset += line.height
         @height = @line_y_offset
@@ -345,7 +346,7 @@ module RLayout
 	  
 	  # this is called when paragraph is splitted or moved to next column and have to be
 	  # relayed out at the carried over column
-	  # lines are already created, it might have to be layed out to complex column
+	  # lines are already created, it might have to be layed out for complex column
 	  # or different column width, 
     # def re_layout_lines(text_column)
     #   @overflow         = false
@@ -358,10 +359,6 @@ module RLayout
       false
     end
 
-    def get_leftover_tokens
-
-    end
-
     def to_hash
       h = {}
       h[:width]  = @width
@@ -370,7 +367,9 @@ module RLayout
       h[:linked]          = true
       h
     end
-
+    
+    # split current paragraph into two at overflowing line
+    # return newly created second half Paragraph
     def split_overflowing_lines
       second_half_options = to_hash
       second_half         = Paragraph.new(second_half_options)
@@ -379,14 +378,16 @@ module RLayout
       second_half
     end
     
+    # overflow is when we have breakable paragraph and partial lines are layout at current column. 
 	  def overflow?
 	    @overflow == true
 	  end
 	  
+	  # underflow is when none of the lines can fit into a given column at the position
+	  # We move it to the item to the next column 
 	  def underflow?
 	    @underflow == true
 	  end
-	  
 	  
     def default_para_style
       default               = {}

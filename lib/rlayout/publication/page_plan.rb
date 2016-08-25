@@ -73,12 +73,12 @@ module RLayout
       7.chapter Porche 916
       cover3
       cover4
-      ---
+      
       EOF
 
       page_plan_path = @project_path + "/page_plan.yml"
       case @publication_type
-      when "Chapter"
+      when "Book"
         File.open(page_plan_path, 'w'){|f| f.write SAMPLE_CHAPTER_PLAN}
       when "Magazine"
         File.open(page_plan_path, 'w'){|f| f.write SAMPLE_MAGAZINE_PLAN}
@@ -86,8 +86,15 @@ module RLayout
         File.open(page_plan_path, 'w'){|f| f.write SAMPLE_CHAPTER_PLAN}
       end
     end
-    
-
   end
-  
+
+  class Signature
+  	attr_accessor :page_count, :template
+	
+  end
+
+  class PagePlaceHolder
+  	attr_accessor :page_count, :page_type
+  end
+
 end

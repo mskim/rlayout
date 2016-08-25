@@ -5,7 +5,7 @@ describe 'converting from .mlayoutP file to rlayout' do
     before do
       @mlayout_path='/Users/mskim/AdItem/template.mlayoutP'
       system("/Applications/m2r.app/Contents/MacOS/m2r #{@mlayout_path}")
-      @document_path='/Users/mskim/AdItem/template.rlayout'
+      @document_path='/Users/mskim/AdItem/template'
     end
     it 'should create save ' do
       # @mdocument.m2r

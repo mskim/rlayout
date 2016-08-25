@@ -65,6 +65,7 @@ PageScript serves to merge three resources and output for multiple medium, print
 		polygon
 		star
 		bubble
+		
 	- rotation
 		rotation
 		rotation_point # center, top_left, bottom_left, top_right, botton_right
@@ -120,10 +121,14 @@ Rectangle.new(width:200, height:500, fill_color: 'red')
 	- SideBar
 	- SideBox
 	- Page
-	
+
+### TextBox
+	- columns
+	- side_column
+
 ### Page
 	- Heading
-	- TextBox
+	- TextBox(main_box)
 	- Header
 	- Footer
 	- SideBar
@@ -143,13 +148,20 @@ Rectangle.new(width:200, height:500, fill_color: 'red')
 		author
 		image
 	- body
-		body
+		body, p
 		head1
 		head2
 		head3
-		image_group
+		image
+		table
+		math_block
+		float_group
 		image_page
+		pdf_insert
 		
+### Text
+	- text_fit_type # 'fit_text_to_box', 'adjust_box_height'
+	
 ### Paragraph
 	- markup
 	- para_string
@@ -163,15 +175,22 @@ Rectangle.new(width:200, height:500, fill_color: 'red')
 	- pages
 
 ### Document Subclass
-	Chapter
-	MagazineArticle
-	NewspaperArticle
-	NameCard
-	Calendar
-	Mart
-	Poster
+	- Chapter
+	- MagazineArticle
+	- NameCard
+	- Calendar
+	- Quiz
+	
+### Page Sublcass
+	- NewspaperArticle
+	- Poster
 
+### Composite Sublcass
+	- NewspaperSection
+	- Mart
+	
 ### Publications
-	Book
-	Magazine
-	Newspaper
+	- Book
+	- Magazine
+	- Newspaper
+	
