@@ -48,10 +48,11 @@
 module RLayout
 
   class Story
-    attr_accessor :path, :para_data, :adoc, :options
+    attr_accessor :path, :para_data, :adoc, :options, :remote_options
     def initialize(path, options={})
-      @path       = path
-      @options    = options
+      @path           = path
+      @options        = options
+      @remote_options = @options.fetch(:remote_options, nil)
       self
     end
     
@@ -147,7 +148,16 @@ module RLayout
       end
       @adoc
     end
-
+    
+    def remote_paragraphs
+      reader = RLayout::RemoteReader.new @remote_options
+      paragraphs = reader.text_blocks.map do |lines_block|
+        block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
+      end
+      @para_data = {:heading=>@metadata, :paragraphs =>paragraphs}
+      
+    end
+    
     #read story file and convert it to para_data format
     def markdown2para_data(options={})
       source = File.open(path, 'r'){|f| f.read}

@@ -68,8 +68,8 @@ class GraphicViewMac < NSView
     transform.concat
     draw_fill(graphic)            if graphic.fill
     draw_grid_rects(graphic)      if graphic.class == RLayout::TextColumn
-    draw_text(graphic)            if graphic.text_record || graphic.text_layout_manager
     draw_image(graphic)           if graphic.image_record
+    draw_text(graphic)            if graphic.text_record || graphic.text_layout_manager
     draw_stroke(graphic)          if graphic.stroke
     # shadow was drawen for image itself and the frame
     # I only want frame to be shadowed 

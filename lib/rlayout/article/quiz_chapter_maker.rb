@@ -165,6 +165,7 @@ module RLayout
     end
         
     def read_quiz_items
+      puts __method__
       @quiz_hash  = read_metadata
       @heading    = @quiz_hash[:heading] || {}
       @title      = @heading[:title] || "Untitled"
@@ -199,8 +200,8 @@ module RLayout
       else
         yaml = YAML::load(block_text)
         q    = yaml['q']
-        yaml['q'] = "#{q_index+1}. " + q if q
-        @answer_item <<  QuizAnsText.new(markup: "p", text_string: "#{q_index + 1}). #{yaml.delete("ans").to_s}   \r\nExplanation: \r\n#{yaml.delete('exp')}", no_layout: true)
+        yaml['q'] = "#{@q_index+1}. " + q if q
+        @answer_item <<  QuizAnsText.new(markup: "p", text_string: "#{@q_index + 1}). #{yaml.delete("ans").to_s}   \r\nExplanation: \r\n#{yaml.delete('exp')}", no_layout: true)
         @item_array << QuizItem.new(yaml)
         @q_index += 1
       end
@@ -209,26 +210,30 @@ module RLayout
     
     # quiz item in yaml 
     def parse_quiz_data(content, type)
+      puts __method__
       @item_array   = []
       @answer_item  = []
       reader        = RLayout::Reader.new content, nil      
       @q_index      = 0
       reader.text_blocks.each do |lines_block|
-        case type
-        when 'md','markdown'
-          parse_quiz_markdown(lines_block)
-        when 'adoc'
-          parse_quiz_adoc(lines_block)
-        when 'yml'
-          parse_quiz_yml(lines_block)
-        else
-          parse_quiz_adoc(lines_block)
-        end
+        parse_quiz_yml(lines_block)
+        
+        # case type
+        # when 'md','markdown'
+        #   parse_quiz_markdown(lines_block)
+        # when 'adoc'
+        #   parse_quiz_adoc(lines_block)
+        # when 'yml'
+        #   parse_quiz_yml(lines_block)
+        # else
+        #   parse_quiz_adoc(lines_block)
+        # end
       end
       @item_array
     end
     
     def read_metadata
+      puts __method__
       source = File.open(@quiz_data_path, 'r'){|f| f.read}
       begin
          if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
@@ -247,7 +252,9 @@ module RLayout
       end
       h = {}
       h[:heading]     = @metadata if @metadata
-      h[:quiz_items]  = parse_quiz_data(@contents, File.extname(@quiz_data_path))
+      #TODO
+      h[:quiz_items]  = parse_quiz_data(@contents, "md")
+      # h[:quiz_items]  = parse_quiz_data(@contents, File.extname(@quiz_data_path))
       h
     end
     

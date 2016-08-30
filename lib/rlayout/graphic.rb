@@ -562,16 +562,9 @@ module RLayout
       self
     end
     
-    def to_pgscript
-      if text_string && text_string.length > 0
-        variables = "\"#{text_string}\", text_size: #{text_size}, x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}"
-        #TODO
-        # variables += ", #{@text_color}" unless @text_color == "black"
-        variables += ", tag: \"#{@tag}\"" if @tag 
-        "   text(#{variables})\n"
-      else
-        " "
-      end
+    def set_text(text_string)
+      return unless @text_layout_manager
+      @text_layout_manager.set_text_string
     end
     
     def text_string
@@ -593,6 +586,18 @@ module RLayout
     def setAttributes(atts, range)
       return unless @text_layout_manager
       @text_layout_manager.att_string.setAttributes(atts, range: range)
+    end
+    
+    def to_pgscript
+      if text_string && text_string.length > 0
+        variables = "\"#{text_string}\", text_size: #{text_size}, x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}"
+        #TODO
+        # variables += ", #{@text_color}" unless @text_color == "black"
+        variables += ", tag: \"#{@tag}\"" if @tag 
+        "   text(#{variables})\n"
+      else
+        " "
+      end
     end
     
     def self.sample(options={})

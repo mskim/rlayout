@@ -2,6 +2,11 @@
 if defined?(Motion::Project::Config) 
   Motion::Project::App.setup do |app|
     Dir.glob(File.join(File.dirname(__FILE__), 'rlayout/**/*.rb')).each do |file|
+      # excluded .rb files under experiment folder from compiling
+      if file =~ /experiment/
+        puts "excluded #{file}" 
+        next
+      end
       app.files.unshift(file)
     end
   end
@@ -26,7 +31,7 @@ else
   # require 'xmlsimple'
   # require 'mini_magick'
   
-  # require "rlayout/version"
+  require "rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
   require File.dirname(__FILE__) + '/rlayout/graphic/color'
   require File.dirname(__FILE__) + '/rlayout/graphic/graphic_struct'
@@ -50,11 +55,11 @@ else
   
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph_ns_text'
-  require File.dirname(__FILE__) + '/rlayout/math/paragraph'
+  require File.dirname(__FILE__) + '/rlayout/text/paragraph'
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'
   require File.dirname(__FILE__) + '/rlayout/text/font'
   require File.dirname(__FILE__) + '/rlayout/text/text_train'
-  require File.dirname(__FILE__) + '/rlayout/text/head'
+  require File.dirname(__FILE__) + '/rlayout/text/title_text'
 
   require File.dirname(__FILE__) + '/rlayout/style/style_service'
   require File.dirname(__FILE__) + '/rlayout/style/grid_layout'
@@ -91,9 +96,10 @@ else
   require File.dirname(__FILE__) + '/rlayout/document'
   require File.dirname(__FILE__) + '/rlayout/view/document_view_svg'
   require File.dirname(__FILE__) + '/rlayout/document_variables_extend'
+  require File.dirname(__FILE__) + '/rlayout/story/story'
+  require File.dirname(__FILE__) + '/rlayout/story/reader'
+  require File.dirname(__FILE__) + '/rlayout/story/remote_reader'
 
-  require File.dirname(__FILE__) + '/rlayout/article/story'
-  require File.dirname(__FILE__) + '/rlayout/article/reader'
   require File.dirname(__FILE__) + '/rlayout/article/chapter_maker'
   require File.dirname(__FILE__) + '/rlayout/article/news_article_maker'
   require File.dirname(__FILE__) + '/rlayout/article/news_section_page'

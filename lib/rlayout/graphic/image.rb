@@ -52,7 +52,6 @@ module RLayout
       @image_record  = options.fetch(:image_record,nil)
       unless options[:image_path]
         if options[:local_image] && $ProjectPath
-          puts " in image $ProjectPath:#{$ProjectPath}"
           options[:image_path] = $ProjectPath + "/images/" + options[:local_image]
         else
           return 

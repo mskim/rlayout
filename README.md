@@ -45,15 +45,35 @@ TODO List
 	- picture_page/image_group/floats
 	- story file tag
 		- inline tag
-			- \sub()
-			- \sup()
-			- \index()
-			- \xref()
-			- \dot()
-			- \ruby()
-			- \box()
-			- \circle()
+			inline tag starts with def_name()
+			this is converted to ruby method call with name
+			and arguements and options 
+			arguments are chained Token or String
+			return values are token, so it can be chained
+			- def_sub(base, sub)
+			- def_sup(base, sup)
+			- def_index()
+			- def_footnote()
+			- def_xref()
+			- def_dot()
+			- def_ruby()
+			- def_box()
+			- def_round()
+			- def_circle(1)
+			
+			- def_undertag(this, s) # undertag
+			
+			- 
+			UTag
+			[This] is the some text
+			______ __
+			s      v 
+
+			def_ut([This], s, style: bold) \ut(is)(v)
+			
 			- $$math$$
+			- $$\over{1}{2}$$
+			- $$\qurt{1}{2})
 			
 		- block tag
 			begin(warning)??
@@ -88,7 +108,29 @@ TODO List
 			- index
 			- glossary
 		- put templates under rubymotion app/resouces/
+
+2016 8 28
+	- TitleText
+		- set_text
+			text_layout_manager 
+				- set_text_string
+		- set_image_path
+		- set_local_image
+
+2016 8 28
+	- remote_reader
+
+2016 8 26
+	- pdf to flipbook
+	- fix collect_flipbook_data
+		- put images by chapter
+2016 8 26
+	- create FlipBook
+		- side toc 
+		- make it jump to chapter
+		- create hollow template
 		
+	- floats_group
 		
 2016 8 25
 	- move templates to rubymotion.app/resouces
@@ -102,11 +144,7 @@ TODO List
 	- 2r bug when generating font with scale matrix
 	- QuizItem
 		QuizItem.sample(200)
-
 			
-	- create FlipBook
-	
-	- floats_group
 	
 	- asciidoctor to active_record
 		- asciidoctor add on markup
