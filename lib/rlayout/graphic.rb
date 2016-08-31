@@ -71,6 +71,25 @@ module RLayout
       }
     end
     
+    def get_stroke_rect
+      if RUBY_ENGINE == "rubymotion"
+        # for TextToken, use attstring rect instead of Graphic frame
+        r = NSMakeRect(@x,@y,@width,@height)
+        
+        if @line_position == 1 #LINE_POSITION_MIDDLE 
+          return r
+        elsif @line_position == 2 
+          #LINE_POSITION_OUTSIDE) 
+          return NSInsetRect(r, - @stroke[:thickness]/2.0, - @stroke[:thickness]/2.0)
+        else 
+          # LINE_POSITION_INSIDE        
+          return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
+        end
+      else
+        puts "get_stroke_rect for ruby mode"
+      end
+    end
+    
     def update_shape
       @shape = RectStruct.new(@x,@y,@width,@height)
     end

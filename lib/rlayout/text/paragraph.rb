@@ -8,12 +8,39 @@
 # 2. We can encounter simple column or complex column
 #    complex column are those who have overlapping floats of various shapes. 
 #    so the text lines could be shorter than the ones in simple column. 
-# 3. We can also encounter tokens are not uniform in height, math tokens for example
+# 3. We can also encounter tokens are not uniform in heights, math tokens for example
 
 # TextToken
 # TextToken consists of text string with uniform attributes, a same text run.
 # TextToken does not contain space character. Space charcter is implemented as gap between tokens.
 
+# Special Tokens
+# Special Tokens are those tokens with complex shapes, 
+# such as Ruby, UnderlineTag, InlineMultipleChoice ...
+# Special tokens make it easy to create them by entering those definitions,
+# they are called as def_name('first', 'second', options={}) in the middle of text.
+
+# And special tokens styles are pre-defined.
+# @ruby_style     = {
+#   top_color: 'red'
+#   top_align: 'center'
+#   top_size:  '20%'
+# }
+
+# @ruby_style1    ={}
+# @undertag_style ={
+#   under_line_color: 'black'
+#   under_text_color: 'gray'
+#   under_align: 'center'
+#   under_size:  '80%'
+# }
+
+# @choice_style   ={
+#   number_type: 'numeric'
+#   number_effect: 'circle'
+#   chioce_style: 'underline'
+# }
+# 
 # LatexToken
 #
 #
@@ -22,12 +49,13 @@
 # LineFragments are made up of TextTokens, ImageToken, MathToken etc....
 # When paragraph is created, TextTokenAtts is created for default att value for all TextTokena and they all point ot it.
 # Whenever there is differnce TextTokenAtts in the paragraph, new TextTokenAtts is created and different TextToken ponts to that one.
+DefRegex = /(def_.*?\(.*?\))/
 
 module RLayout
     
   class TextToken < Graphic
     attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
-    attr_accessor :string, :atts
+    attr_accessor :string, :atts, :stroke
     def initialize(options={})
       options[:layout_expand]  = nil
       if RUBY_ENGINE == "rubymotion"
@@ -69,8 +97,43 @@ module RLayout
       }
     end
     
-    def draw
+    # TextToken don't have TextLayoutManager, they just have @att_string
+    def draw_text
       @att_string.drawAtPoint(NSMakePoint(0,0))
+    end
+    
+    # TODO use graphic draw by redefineing getLineRect for different class
+    # draw TextToken stroke 
+    def draw_stroke
+      if RUBY_ENGINE == "rubymotion"
+        rect = NSMakeRect(0,0,@att_string.size.width, @att_string.size.height)
+        rect = NSInsetRect(rect, -1, -1)
+        path = NSBezierPath.bezierPathWithRect(rect)
+        path.setLineWidth(@stroke[:thickness])
+        path.stroke 
+      else
+        puts "draw_stroke in Ruby mode"
+      end
+    end
+    
+    def get_stroke_rect
+      if RUBY_ENGINE == "rubymotion"
+        # for TextToken, use attstring rect instead of Graphic frame
+        r = NSMakeRect(0,0,@att_string.size.width, @att_string.size.height)
+        r = NSInsetRect(r, -1, -1)
+        
+        if @line_position == 1 #LINE_POSITION_MIDDLE 
+          return r
+        elsif @line_position == 2 
+          #LINE_POSITION_OUTSIDE) 
+          return NSInsetRect(r, - @stroke[:thickness]/2.0, - @stroke[:thickness]/2.0)
+        else 
+          # LINE_POSITION_INSIDE        
+          return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
+        end
+      else
+        puts "get_stroke_rect for ruby mode"
+      end
     end
     
   end
@@ -196,23 +259,42 @@ module RLayout
       end
       self
     end    
-        
+    
+    def create_special_tokens
+      # split paragraph with def_name(ar)
+      split_array = @para_string.split(DefRegex)
+      split_array.each do |line|
+        if line =~/def_/
+          # line with special tokens
+          line.sub!("def_", "")
+          eval(line)
+        else
+          # line text with just nonal text tokens
+          create_text_tokens(line)
+        end
+      end      
+    end
+    
+    def create_text_tokens(para_string)
+      @tokens += para_string.split(" ").collect do |token_string|
+        @para_style[:text_string] = token_string
+        @para_style.delete(:parent) if @para_style[:parent]
+        RLayout::TextToken.new(@para_style)
+      end
+    end
+    
     def create_tokens
       @atts = {}
       if RUBY_ENGINE == 'rubymotion'
         @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:size])
         @space_width  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
+        @para_style[:atts] = @atts
       end
-      @tokens = @para_string.split(" ").collect do |token_string|
+      if @para_string =~DefRegex
         #TODO special tokens created with functions
-        if token_string =~/^_(.*)+_|^\*(.*)+\*/
-          #TODO
-        else
-          @para_style[:text_string] = token_string
-          @para_style.delete(:parent) if @para_style[:parent]
-          @para_style[:atts] = @atts
-          RLayout::TextToken.new(@para_style)
-        end
+        create_special_tokens
+      else
+        create_text_tokens(@para_string)
       end
       token_heights_are_eqaul = true
       return unless  @tokens.length > 0

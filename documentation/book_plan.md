@@ -7,7 +7,7 @@ spread sheet is as following.
 Each document/sub-document are rlayout project.
 Each document/sub-document can be updated automatically.
 Some document/sub-document can pull the data from outside souce.
-Document can place sub-documents in the middle of the document using pdf_page_insert.
+Document can place sub-documents in the middle of the document using pdf_page_insertte.
 
 example paperback:
 

@@ -1,11 +1,12 @@
 
 class GraphicViewMac < NSView
-  attr_accessor :stroke, :line_position
+  attr_accessor :stroke, :line_position, :stroke_rect
   def draw_stroke(graphic)
     draw_gutter_stroke(graphic) if graphic.respond_to?(:gutter_stroke) && graphic.draw_gutter_stroke
     return if graphic.stroke[:thickness].nil?
     return if graphic.stroke[:thickness] == 0 
     @stroke = graphic.stroke
+    @stroke_rect = graphic.get_stroke_rect
     @line_position = 1
     r = ns_bounds_rect(graphic)
     drawLine(r, withTrap:0)
@@ -80,17 +81,17 @@ class GraphicViewMac < NSView
     path.stroke 
   end
   
-  def getStrokeRect(r)
-    if @line_position == 1 #LINE_POSITION_MIDDLE 
-      return r
-    elsif @line_position == 2 
-      #LINE_POSITION_OUTSIDE) 
-      return NSInsetRect(r, - @stroke[:thickness]/2.0, - @stroke[:thickness]/2.0)
-    else 
-      # LINE_POSITION_INSIDE        
-      return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
-    end
-  end
+  # def getStrokeRect(r)
+  #   if @line_position == 1 #LINE_POSITION_MIDDLE 
+  #     return r
+  #   elsif @line_position == 2 
+  #     #LINE_POSITION_OUTSIDE) 
+  #     return NSInsetRect(r, - @stroke[:thickness]/2.0, - @stroke[:thickness]/2.0)
+  #   else 
+  #     # LINE_POSITION_INSIDE        
+  #     return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
+  #   end
+  # end
 
   def linePathWithRect(r)
     path = NSBezierPath.bezierPathWithRect(r)
@@ -113,7 +114,8 @@ class GraphicViewMac < NSView
       trap = 0
     end
     # clipLine = false
-    rect = getStrokeRect(rect)    
+    # rect = getStrokeRect(rect)    
+    rect = @stroke_rect
     @stroke[:color]  = convert_to_nscolor(@stroke[:color])    unless @stroke[:color].class == NSColor  
     @stroke[:color].set
 
@@ -193,9 +195,9 @@ class GraphicViewMac < NSView
     end
   end
 
-  def draw_line(r)
-    drawLine(r, withTrap:0)
-    drawArrow if @start_arrow && @owner_graphic
-  end
+  # def draw_line(r)
+  #   drawLine(r, graphic, withTrap:0)
+  #   drawArrow if @start_arrow && @owner_graphic
+  # end
   
 end
