@@ -439,10 +439,11 @@ module RLayout
   # a. alphbet
   # choice style
   #  1. , circle, ( )
-    
+  
+  # this is default QuizItem with question and miltiple choice answers
   class QuizItem < Container
     attr_accessor :q_object, :row1_object, :row2_object
-    attr_accessor :img_object, :data, :processed
+    attr_accessor :img_object, :data, :processed, :type # multiple choice, inline_choice
     def initialize(options={}, &block)
       @processed = false
       @data = {}
@@ -539,6 +540,18 @@ module RLayout
     
     def to_hash
       super
+    end
+    
+    def self.with_yaml(yaml_data)
+      
+    end
+    
+    def self.with_md(markdown)
+      
+    end
+    
+    def self.with_adoc(adoc)
+      
     end
     
     # generate count nimber of quiz_item

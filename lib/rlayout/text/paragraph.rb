@@ -1,7 +1,9 @@
 
-# We have Text, and Paragraph.
-# Text is for simple text, usually for single page document or Ads.
-# Paragraph is for text that is used in middle to long document.
+# Text and Paragraph are used for handling text.
+# Text is used for simple text, usually for single page document or Ads.
+# Text uses NSTextSystem
+# Paragraph is used in middle to long document.
+# Paragraph uses our own text system.
 
 # How Paragraoh is layed out?
 # 1. Tokens are created
@@ -10,141 +12,20 @@
 #    so the text lines could be shorter than the ones in simple column. 
 # 3. We can also encounter tokens are not uniform in heights, math tokens for example
 
-# TextToken
-# TextToken consists of text string with uniform attributes, a same text run.
-# TextToken does not contain space character. Space charcter is implemented as gap between tokens.
-
-# Special Tokens
-# Special Tokens are those tokens with complex shapes, 
-# such as Ruby, UnderlineTag, InlineMultipleChoice ...
-# Special tokens make it easy to create them by entering those definitions,
-# they are called as def_name('first', 'second', options={}) in the middle of text.
-
-# And special tokens styles are pre-defined.
-# @ruby_style     = {
-#   top_color: 'red'
-#   top_align: 'center'
-#   top_size:  '20%'
-# }
-
-# @ruby_style1    ={}
-# @undertag_style ={
-#   under_line_color: 'black'
-#   under_text_color: 'gray'
-#   under_align: 'center'
-#   under_size:  '80%'
-# }
-
-# @choice_style   ={
-#   number_type: 'numeric'
-#   number_effect: 'circle'
-#   chioce_style: 'underline'
-# }
-# 
-# LatexToken
-#
-#
  
 # LineFragments
 # LineFragments are made up of TextTokens, ImageToken, MathToken etc....
 # When paragraph is created, TextTokenAtts is created for default att value for all TextTokena and they all point ot it.
 # Whenever there is differnce TextTokenAtts in the paragraph, new TextTokenAtts is created and different TextToken ponts to that one.
 DefRegex = /(def_.*?\(.*?\))/
+# example 
+#   def_box('boxed_text')
+#   def_ruby('base_text', 'top_text')
+#   def_undertag('base_text', 'under_text')
 
 module RLayout
     
-  class TextToken < Graphic
-    attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
-    attr_accessor :string, :atts, :stroke
-    def initialize(options={})
-      options[:layout_expand]  = nil
-      if RUBY_ENGINE == "rubymotion"
-        @atts           = default_atts
-        @atts           = @atts.merge(options[:atts]) if options[:atts]
-        @att_string     = NSAttributedString.alloc.initWithString(options[:text_string], attributes: options[:atts])
-        options[:width] = @att_string.size.width
-      else
-        @width  = 30
-      end
-      super
-      @string = options[:text_string]
-      @x      = 0
-      @y      = 0
-      @height = 20
-      self
-    end
-    
-    def size
-      @att_string.size
-    end
-    
-    def origin
-      NSMakePoint(@x,@y)
-    end
-            
-    def svg
-      # TODO <text font-size=\"#{text_size}\"
-      s = ""
-      if string !=nil && string != ""
-        s += "<text font-size=\"#{@text_size}\" x=\"#{x}\" y=\"#{y + height*0.8}\">#{string}</text>\n"
-      end
-      s
-    end
-    
-    def default_atts
-      {
-        NSFontAttributeName => NSFont.fontWithName("Times", size:10.0),
-      }
-    end
-    
-    # TextToken don't have TextLayoutManager, they just have @att_string
-    def draw_text
-      @att_string.drawAtPoint(NSMakePoint(0,0))
-    end
-    
-    # TODO use graphic draw by redefineing getLineRect for different class
-    # draw TextToken stroke 
-    def draw_stroke
-      if RUBY_ENGINE == "rubymotion"
-        rect = NSMakeRect(0,0,@att_string.size.width, @att_string.size.height)
-        rect = NSInsetRect(rect, -1, -1)
-        path = NSBezierPath.bezierPathWithRect(rect)
-        path.setLineWidth(@stroke[:thickness])
-        path.stroke 
-      else
-        puts "draw_stroke in Ruby mode"
-      end
-    end
-    
-    def get_stroke_rect
-      if RUBY_ENGINE == "rubymotion"
-        # for TextToken, use attstring rect instead of Graphic frame
-        r = NSMakeRect(0,0,@att_string.size.width, @att_string.size.height)
-        r = NSInsetRect(r, -1, -1)
-        
-        if @line_position == 1 #LINE_POSITION_MIDDLE 
-          return r
-        elsif @line_position == 2 
-          #LINE_POSITION_OUTSIDE) 
-          return NSInsetRect(r, - @stroke[:thickness]/2.0, - @stroke[:thickness]/2.0)
-        else 
-          # LINE_POSITION_INSIDE        
-          return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
-        end
-      else
-        puts "get_stroke_rect for ruby mode"
-      end
-    end
-    
-  end
 
-  class ImageToken 
-    attr_accessor :image_path, :x,:y, :width, :height, :image_path
-    def initialize(image_path, options={})
-      @image_path = image_path
-      self   
-    end 
-  end
   
   class	LineFragment < Container
     attr_accessor :line_type #first_line, drop_cap, drop_cap_side
@@ -259,6 +140,21 @@ module RLayout
       end
       self
     end    
+    
+    def box(text, options={})
+      para_style = @para_style.dup
+      para_style[:text_string] = text
+      para_style[:stroke_width] = 0.5
+      @tokens << TextToken.new(para_style)
+    end
+    
+    def round(text, options={})
+      para_style = @para_style.dup
+      para_style[:text_string] = text
+      para_style[:stroke_width] = 0.5
+      para_style[:shape]        = "round"
+      @tokens << TextToken.new(para_style)
+    end
     
     def create_special_tokens
       # split paragraph with def_name(ar)

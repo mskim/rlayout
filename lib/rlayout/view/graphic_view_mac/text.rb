@@ -1,6 +1,5 @@
 
 class GraphicViewMac < NSView
-  
   # draw only proposed_line
   def draw_text(graphic)
     if graphic.is_a?(RLayout::TextToken)

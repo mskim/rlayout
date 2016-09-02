@@ -60,9 +60,17 @@ TODO List
 			- def_box()
 			- def_round()
 			- def_circle(1)
-			
 			- def_undertag(this, s) # undertag
-			
+			{{graphic 'text' fill_color: 'red', text_color: 'yellow'}}
+			{{emp 'text'}}
+			{{emp2 'text'}}
+			{{emp3 'text'}}
+			{{box 'text'}}
+			{{round 'text'}}
+			{{circle '1'}}
+			{{underline 'choice one'}}
+			{{ruby 'text', 'some'}}
+			{{undertag 'this', 's'}}
 			- 
 			UTag
 			[This] is the some text
@@ -109,6 +117,14 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2016 9 1
+	- LeaderToken
+	- EnglishQuizItem 
+	- quiz item path/to/quiz_item.yaml
+	
+	- question erb
+		{{qnum <%= qnum %>}} <%= qcontent %>
+		
 2016 8 28
 	- TitleText
 		- set_text

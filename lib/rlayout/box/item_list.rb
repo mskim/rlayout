@@ -1,4 +1,5 @@
 
+# This was done for a billing printing company.
 # ItemList is used for billing letter printing
 # Where there is a already designed backgroud and table, 
 # and we just want to puts the text on top of the table as 

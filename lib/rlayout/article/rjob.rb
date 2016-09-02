@@ -1,7 +1,7 @@
 
 
 # Rjob works as command line tool.
-# echo 'script' | rjob 
+# echo 'script' | rjob // disabled!!!
 # Script should declare @output_path and @jpg as instance variable
 
 # sample_script.rb
@@ -55,13 +55,9 @@ module RLayout
       unless @jpg
         @jpg         = created_object.jpg       if created_object.respond_to?(:jpg)
       end
-      # puts "created_object.class:#{created_object.class}"
-      # puts "created_object.respond_to?(:save_pdf):#{created_object.respond_to?(:save_pdf)}"
       output_options            = {}
       output_options[:jpg]      = @jpg if @jpg
       output_options[:preview]  = @preview if @preview
-      # puts "@output_path:#{@output_path}"
-      
       created_object.save_pdf(@output_path, output_options) if created_object.respond_to?(:save_pdf)
       self
     end

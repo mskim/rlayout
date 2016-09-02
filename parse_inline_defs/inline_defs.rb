@@ -2,50 +2,7 @@ InlineDefRx = /(def_.*?\(.*?\))/
 
 
 module RLayout
-  class RubyToken
-    attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
-    attr_accessor :top_att_string, :top_x,:top_y, :top_width, :top_height, :tracking, :scale
-    def initalize(options={})
-      
-      self
-    end
-    
-    def draw
-      @att_string.drawAtPoint(NSMakePoint(0,0))
-      @top_att_string.drawAtPoint(NSMakePoint(top_x,top_y))
-    end
-    
-  end
-  
-  class UndertagToken
-    attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
-    attr_accessor :bottom_att_string, :bottom_x,:bottom_y, :width, :bottom_height, :bottom_tracking, :bottom_scale
-    
-    def initalize(options={})
-      
-      self
-    end
 
-    def draw
-      @att_string.drawAtPoint(NSMakePoint(0,0))
-      @top_att_string.drawAtPoint(NSMakePoint(top_x,top_y))
-    end
-    
-  end
-  
-  class ChoiceToken
-    attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
-    attr_accessor :choice_number, :choice_text
-    def initalize(options={})
-      
-      self
-    end
-    
-    def draw
-      @att_string.drawAtPoint(NSMakePoint(0,0))
-    end
-  end
-  
   class ImageToken 
     attr_accessor :image_path, :x,:y, :width, :height, :image_path
     def initialize(image_path, options={})
