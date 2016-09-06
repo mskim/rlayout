@@ -1,12 +1,20 @@
+# when options[:text_string] is passed, it creates TextLayoutManager
+# when options[:string] is passed, it by passes creating TextLayoutManager
+# So, to call text that implements our own. pass string, not text_string
+
 module RLayout
 
   class Graphic
     attr_accessor :text_markup, :text_direction, :text_string, :text_color, :text_size, :text_line_spacing, :font
     attr_accessor :text_fit_type, :text_alignment, :text_tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
-    attr_accessor :text_layout_manager
+    attr_accessor :text_layout_manager, :has_text
 
     def init_text(options)
-      
+      if options[:string]
+        @has_text = true
+      else
+        @has_text = false
+      end
       if options[:text_string] || options[:text_string_array] || options[:ns_attributed_string]
         @text_fit_type = options.fetch(:text_fit_type, 'keep_box_height')
         #TODO merge string if options[:text_string_array]

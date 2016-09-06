@@ -117,14 +117,29 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2016 9 5
+	- fix yaml with csv
+\\	- Prefix
+		{prefix: "Chapter:#{number}"}
+	- label::
+	- ordered list
+		.
+		..
+		...
+	- unordered list
+		*
+		**
+		***
+	- custom style
+		## word ##		emp1
+		### word ###	emp2
+	 
+
 2016 9 1
 	- LeaderToken
 	- EnglishQuizItem 
 	- quiz item path/to/quiz_item.yaml
 	
-	- question erb
-		{{qnum <%= qnum %>}} <%= qcontent %>
-		
 2016 8 28
 	- TitleText
 		- set_text

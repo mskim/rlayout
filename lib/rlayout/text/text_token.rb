@@ -40,20 +40,22 @@
 #
 #
 module RLayout
+  
   class TextToken < Graphic
     attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
-    attr_accessor :string, :atts, :stroke
+    attr_accessor :string, :atts, :stroke, :has_text
     def initialize(options={})
-      options[:layout_expand]  = nil
+      @string = options[:string]
+      options[:layout_expand]   = nil
+      @has_text                 = true
       if RUBY_ENGINE == "rubymotion"
         @atts           = default_atts
         @atts           = @atts.merge(options[:atts]) if options[:atts]
-        @att_string     = NSAttributedString.alloc.initWithString(options[:text_string], attributes: options[:atts])
+        @att_string     = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
         options[:width] = @att_string.size.width
       else
         # TODO fix get string with from Rfont
         @width  = 30
-        @string = options[:text_string]
       end
       super
       @x      = 0
@@ -124,7 +126,44 @@ module RLayout
       end
     end
   end
-
+  
+  # LeaderToken fills the gap with leader chars
+  class LeaderToken < Graphic
+    attr_accessor :leader_char, :string, :has_text
+    def initialize(options={}) 
+      options[:layout_expand]   = nil
+      @leader_char  = options.fetch(:leader_char,'.')
+      # @string       = @leader_char
+      super
+      @has_text     = true
+      @string       = "."
+      @margin        = 2
+      if RUBY_ENGINE == "rubymotion"
+        @atts       = default_atts
+        @atts       = @atts.merge(options[:atts]) if options[:atts]
+        @att_string = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
+        count       = ((@width - @margin*2)/@att_string.size.width).to_i
+        @string *=count
+        @att_string = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
+      else
+        # TODO fix get string with from Rfont
+        @width  = 30
+      end
+      @height = 20
+      self
+    end
+    
+    def default_atts
+      {
+        NSFontAttributeName => NSFont.fontWithName("Times", size:10.0),
+      }
+    end
+    
+    def draw_text
+      @att_string.drawAtPoint(NSMakePoint(0,0))
+    end
+  end
+  
   class ImageToken < Graphic
     attr_accessor :image_path, :x,:y, :width, :height, :image_path
     def initialize(image_path, options={})

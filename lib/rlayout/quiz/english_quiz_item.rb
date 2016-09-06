@@ -18,7 +18,7 @@ module RLayout
       @layout_direction = "horizontal"
       @layout_expand    = :width
       number_options    = $quiz_item_style[:num_style].dup
-      @num_object       = text(options[:num].to_s, number_options) 
+      @num_object       = text(options[:num].to_s.rjust(3,"0"), number_options) 
       q_options         = $quiz_item_style[:q_style].dup
       @q_object         = text(options[:q], q_options)
       relayout!  
@@ -32,43 +32,38 @@ module RLayout
     attr_accessor :q_line, :choice_text_object, :table_object, :quiz_width
     attr_accessor :data, :processed, :type # multiple choice, inline_choice
     def initialize(options={}, &block)
-      @quiz_width             = options[:quiz_width] if options[:quiz_width]
       @processed              = false
       @data                   = {}
       @data[:delayed_layout]  = true
-      @data[:num]             = options.fetch(:num, "001")
-      @data[:q]               = options.fetch(:q, "Some question goes here? ")
-      @data[:choice_text]     = options.fetch(:choice_text, ChoiceTextSample)
-      @data[:table]           = options.fetch(:table)
+      # @data[:num]             = options.fetch(:num, "001")
+      # @data[:q]               = options.fetch(:q, "Some question goes here? ")
+      # @data[:choice_text]     = options.fetch(:choice_text, ChoiceTextSample)
+      # @data[:choice_text]     = options.fetch(:choice_text)
       @data[:layout_expand]   = [:width]
       @layout_space           = 2
       @layout_expand          = options.fetch(:layout_expand,[:width])
       super
+      # todo why @width value changes to 100 in super
+      @width                  = options[:quiz_width] if options[:quiz_width]
       self
     end
     
     def set_quiz_content(options={})
-      @width          = options[:width] if options[:width]
-      @width          = @width - @left_margin - @right_margin
+      options = Hash[options.map{ |k, v| [k.to_sym, v] }]
       @data[:num]     = options.fetch(:num, "021")
       @data[:q]       = options.fetch(:q, "Some question goes here? ")
       @data[:choice_text] = options.fetch(:choice_text, ChoiceTextSample)
-      @data[:table]   = options.fetch(:table)
+      @data[:choice_table]= options.fetch(:choice_table, nil)
       @layout_space   = $quiz_item_style[:layout_space] || 10
-      puts "@data[:num]:#{@data[:num]}"
       @q_line         = NumberParagraph.new(parent: self, width: @width, num: @data[:num], q: @data[:q])
-      
       if @data[:choice_text]
         choice_text_style         = $quiz_item_style[:choice_style].dup
         choice_text_style[:width] = @width
         @choice_text_object       = text(@data[:choice_text], choice_text_style)        
       end
-      
-      # if data[:table]
-      #   table_style         = $quiz_item_style[:table_style].dup
-      #   table_style[:width] = @quiz_width
-      #   @table_object       = table(@data[:q], table_style)        
-      # end
+      if data[:choice_table]
+        @table_object       = RLayout::SimpleTable.new(parent:self, width: @width, csv: @data[:choice_table])
+      end
       
       height_sum = 0   
       if @q_line
@@ -104,32 +99,6 @@ module RLayout
     def to_hash
       super
     end
-    
-    def self.with_yaml(yaml_data)
-      
-    end
-    
-    def self.with_md(markdown)
-      
-    end
-    
-    def self.with_adoc(adoc)
-      
-    end
-    
-    # generate count nimber of english_quiz_item
-    # return single english_quiz_item if count is 1
-    # return array of english_quiz_items if count > 1
-    def self.sample(count=1)
-      if count == 1
-        return EnglishQuizItem.new(table: TableSample, choice_text: ChoiceTextSample)
-      else
-        items_array = []
-        count.times do |i|
-          items_array << EnglishQuizItem.new(num: i.to_s.rjust(3,'0'))
-        end
-        return items_array
-      end
-    end
+        
   end  
 end

@@ -46,7 +46,7 @@ module RLayout
     
     def process_text_tokens(text_string)
       @tokens += text_string.split(" ").collect do |token_string|
-        @para_style[:text_string] = token_string
+        @para_style[:string] = token_string
         @para_style.delete(:parent) if @para_style[:parent]
         @para_style[:atts] = @atts
         RLayout::TextToken.new(@para_style)

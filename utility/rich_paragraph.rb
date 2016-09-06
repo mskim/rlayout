@@ -210,26 +210,27 @@ module RLayout
   # in Text case it is word
   # Token can also be math element or image
   
-  class TextToken < Text 
-        
-    # keep attributes that are diffrent from paragraph only
-    attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
-    def initialize(options={}, &block)
-      super      
-      @klass = "TextToken"
-      @layout_expand = []
-      # @text_string  = options[:text_string]      
-      self
-    end
-    
-    def layout_length
-      @width
-    end
-        
-    #TODO
-    def hyphenate
-      
-    end    
-  end
-  
+  # class TextToken < Text 
+  #       
+  #   # keep attributes that are diffrent from paragraph only
+  #   attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
+  #   def initialize(options={}, &block)
+  #     puts "init Rich TextToken"
+  #     super      
+  #     @klass = "TextToken"
+  #     @layout_expand = []
+  #     # @text_string  = options[:text_string]      
+  #     self
+  #   end
+  #   
+  #   def layout_length
+  #     @width
+  #   end
+  #       
+  #   #TODO
+  #   def hyphenate
+  #     
+  #   end    
+  # end
+  # 
 end
