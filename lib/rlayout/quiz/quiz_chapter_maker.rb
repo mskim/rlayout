@@ -105,10 +105,10 @@ module RLayout
     attr_accessor :document, :output_path, :starting_page_number, :column_count
     attr_accessor :layout_style
     def initialize(options={} ,&block)
-      puts "options:#{options}"
       if options[:project_path]
         @project_path   = options[:project_path]
-        @quiz_data_path = Dir.glob("#{@project_path}/*.{md,adoc,yml").first
+        puts Dir.glob("#{@project_path}/*.txt")
+        @quiz_data_path = Dir.glob("#{@project_path}/*.{md,adoc,yml}").first
       elsif options[:quiz_data_path]
         @quiz_data_path = options[:quiz_data_path]
         @project_path   = File.dirname(@quiz_data_path)

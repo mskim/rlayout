@@ -178,7 +178,6 @@ module RLayout
         @item_hash              = Hash[@item_hash.map{ |k, v| [k.to_sym, v] }]
         # TODO it seem to work only after this, can't figure it out!!!!
         @item_hash[:choice_table]= @item_hash[:choice_table].gsub(/\}$/, "")
-        # end
         @q_object   = eval(english_quiz_templeate)
         @q_object.set_quiz_content(@item_hash)
         ext         = File.extname(@quiz_item_path)

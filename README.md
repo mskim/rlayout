@@ -118,7 +118,7 @@ TODO List
 		- put templates under rubymotion app/resouces/
 
 2016 9 5
-	- fix yaml with csv
+	- fix yaml | with csv
 \\	- Prefix
 		{prefix: "Chapter:#{number}"}
 	- label::

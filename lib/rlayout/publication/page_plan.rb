@@ -3,9 +3,6 @@
 module RLayout
   
   # BookAssembler assembles each documents in the page plan to a single book.
-  # 
-
-  
   # PagePlan is used for planing publication
   # PagePlan is also used to collect the document template for articles.
   # There are several speciall sections such as, toc, ad, cover, index
