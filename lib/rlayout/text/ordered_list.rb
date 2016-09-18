@@ -14,6 +14,7 @@ module RLayout
     attr_accessor :current_order, :ordering_char_types, :text_block
     def initialize(options={})
       super
+      #TODO this fails if number goes beyond 9
       @ordering_char_types  = options.fetch(:ordering_char_types, %w[1 a A])
       @text_block           = options[:text_block]
       parse_list_items
@@ -21,6 +22,7 @@ module RLayout
     end
     
     def parse_list_items
+      #TODO this fails if items depth goes beyond 3
       @current_order  = [0,0,0]
       if @text_block.class == Array
         @list_text = @text_block
@@ -118,9 +120,12 @@ module RLayout
     attr_accessor :order, :level, :indent
     def initialize(options={})
       super
-      @order = options[:order]
-      @level = options[:level]
-      @head_indent = @level*20
+      @indent             = options.fetch(:indent, 15)
+      @order              = options[:order]
+      @level              = options[:level]
+      @h_alignment        = "left"
+      @first_line_indent  = @level*@indent
+      @head_indent        = @first_line_indent + @indent
       self
     end
     
