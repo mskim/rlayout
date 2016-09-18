@@ -45,7 +45,7 @@ module RLayout
     attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
     attr_accessor :string, :atts, :stroke, :has_text
     def initialize(options={})
-      @string = options[:string]
+      @string                   = options[:string]
       options[:layout_expand]   = nil
       @has_text                 = true
       if RUBY_ENGINE == "rubymotion"
@@ -127,6 +127,16 @@ module RLayout
     end
   end
   
+  class TabToken < Graphic
+    attr_accessor :tab_type  #left, right, center, decimal
+    def initialize(options={})
+      super
+      @tab_type = "left"
+      @width    = 20
+      self
+    end
+  end
+  
   # LeaderToken fills the gap with leader chars
   class LeaderToken < Graphic
     attr_accessor :leader_char, :string, :has_text
@@ -190,13 +200,5 @@ module RLayout
     end
   end
   
-  class ChoiceToken < Graphic
-    attr_accessor :number_att_string, :choice_att_string
-    def initalize(options={})
-      
-      self
-    end
-
-  end  
   
 end

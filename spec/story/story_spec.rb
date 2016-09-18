@@ -5,7 +5,7 @@ describe 'read markdow table' do
     story_path  = "/Users/mskim/Development/ruby/gems/rlayout/sample/story/sample_story.md"
     story_path  = "/Users/mskim/demo_book/001.chapter.md"
     @html       = "/Users/mskim/demo_book/001.chapter.html"
-    @adoc       = "/Users/mskim/demo_book/001.chapter.html"
+    @adoc       = "/Users/mskim/demo_book/001.chapter.adoc"
     @story      = Story.new(story_path)
     @para_data  = @story.markdown2para_data
     @asciidoctor= @story.to_html

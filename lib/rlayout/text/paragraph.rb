@@ -23,94 +23,25 @@ DefRegex = /(def_.*?\(.*?\))/
 #   def_ruby('base_text', 'top_text')
 #   def_undertag('base_text', 'under_text')
 
+
 module RLayout
     
-
-  
-  class	LineFragment < Container
-    attr_accessor :line_type #first_line, drop_cap, drop_cap_side
-    attr_accessor :left_indent, :right_indent, :para_style
-    attr_accessor :x, :y, :width, :height, :total_token_width
-  	def	initialize(options={})
-      # options[:stroke_color]     = 'red'
-      options[:layout_direction] = 'horizontal'
-  	  super
-      # @tokens         = @text_layout_manager.tokens
-  	  @graphics         = options[:tokens]
-  	  @space_width      = options.fetch(:space_width, 5.0)
-  	  @stroke_width     = 1
-  	  @width            = options.fetch(:width, 300)
-      # @left_indent      = options.fetch(:width, 10)
-      # @right_indent     = options.fetch(:right_indent, 0)
-  	  @para_style       = options[:para_style]
-  	  @graphics.each do |token|
-        token.parent_graphic = self
-      end   
-  		align_tokens
-  		self
-  	end
-    
-    def token_width_sum
-      @graphics.map{|t| t.width}.reduce(0, :+)
-    end
-    
-    def rect
-      [@x, @y, @width, @height]
-    end
-    
-	  def align_tokens
-	    return if @graphics.length == 0
-	    @total_token_width = token_width_sum
-      @total_space_width = (@graphics.length - 1)*@space_width if @graphics.length > 0
-      room = @width - (@total_token_width + @total_space_width)
-      x = 0
-      @graphics.each do |token|
-        token.x = x
-        x += token.width + @space_width
-      end
-      
-      case @para_style
-      when 'left'
-      when 'center'
-        @graphics.map {|t| t.x += room/2.0}
-      when 'right'
-        @graphics.map do |t| 
-          t.x += room
-        end
-      when 'justified'
-        just_space = room/(@graphics.length - 1)
-        x = 0
-        @graphics.each_with_index do |token, i|
-          token[:x] = x
-          x += token[:width] + just_space
-        end
-      else
-        
-      end
-      
-	  end
-    
-    def line_string
-      string = ""
-      @graphics.each do |token|
-        string += token.string
-      end
-      string
-    end
-    
-    # def tallest_token
-    #  
-    # end
-	  
-    # def room
-    #       @width - @left_indent - @right_indent
-    # end
-  
-  end
-
   # Paragraph
-  # This is the new paragraph
-  # This is for long document and Math equations and other special effects.
+  # This is Paragraph for long document and Math equations and other special effects.
+  
+  #TODO
+  # tab stop
+  # implementing paragraph with tab
+  # if para_string.include?("\t")
+  # tab_group = para_string.split("\t")
+  # tokens = []
+  # tab_group.each do |sub_string|
+  #    tokens << create_tokens(sub_string)
+  #    tokens << TabToken.new
+  # end
+  # tokens.pop #pop the last TabToken
+  
+  # tab Token
   
   class Paragraph < Container
     attr_accessor :paragraph_type
@@ -120,8 +51,9 @@ module RLayout
     attr_accessor :overflow, :underflow, :overflowing_line_index, :linked, :line_y_offset
 
     def initialize(options={})
-      super
-      @paragraph_type = options.fetch(:paragraph_type, 'simple') #drop_cap, drop_cap_image, math, with_image, with_math
+      super      
+      #simple, drop_cap, drop_cap_image, math, with_image, with_math
+      @paragraph_type = options.fetch(:paragraph_type, 'simple') 
       @para_string    = options.fetch(:para_string, "")
       @para_style     = default_para_style
       @para_style     = @para_style.merge(options[:para_style]) if options[:para_style]
@@ -129,7 +61,7 @@ module RLayout
       @first_line_indent = @para_style[:first_line_indent]
       @head_indent    = @para_style[:head_indent]
       @tail_indent    = @para_style[:tail_indent]
-      @space_width    = 3
+      @space_width    = @para_style[:space_width]
       @grid_height    = options.fetch(:grid_height, 2)
       @linked         = options.fetch(:linked, false) 
       if options[:tokens]
@@ -173,6 +105,7 @@ module RLayout
     end
     
     def create_text_tokens(para_string)
+      # parse for tab first
       @tokens += para_string.split(" ").collect do |token_string|
         @para_style[:string] = token_string
         @para_style.delete(:parent) if @para_style[:parent]
@@ -368,10 +301,14 @@ module RLayout
 	    @underflow == true
 	  end
 	  
+	  def default_tab_stops
+	   
+	  end
     def default_para_style
       default               = {}
       default[:font]        = "smSSMyungjoP-W30"
       default[:size]        = 10
+      default[:space_width] = 4
       default[:color]       = "black"
       default[:style]       = "plain"
       default[:h_alignment] = "left"
@@ -379,9 +316,93 @@ module RLayout
       default[:first_line_indent] = 20
       default[:head_indent] = 3
       default[:tail_indent] = 3
+      default[:tab_stops] = [['left', 20], ['left', 40], ['left', 60],['left', 80]]
       default
     end
   end
+
+  
+  class	LineFragment < Container
+    attr_accessor :line_type #first_line, drop_cap, drop_cap_side
+    attr_accessor :left_indent, :right_indent, :para_style
+    attr_accessor :x, :y, :width, :height, :total_token_width
+  	def	initialize(options={})
+      # options[:stroke_color]     = 'red'
+      options[:layout_direction] = 'horizontal'
+  	  super
+      # @tokens         = @text_layout_manager.tokens
+  	  @graphics         = options[:tokens]
+  	  @space_width      = options.fetch(:space_width, 5.0)
+  	  @stroke_width     = 1
+  	  @width            = options.fetch(:width, 300)
+      # @left_indent      = options.fetch(:width, 10)
+      # @right_indent     = options.fetch(:right_indent, 0)
+  	  @para_style       = options[:para_style]
+  	  @graphics.each do |token|
+        token.parent_graphic = self
+      end   
+  		align_tokens
+  		self
+  	end
+    
+    def token_width_sum
+      @graphics.map{|t| t.width}.reduce(0, :+)
+    end
+    
+    def rect
+      [@x, @y, @width, @height]
+    end
+    
+	  def align_tokens
+	    return if @graphics.length == 0
+	    @total_token_width = token_width_sum
+      @total_space_width = (@graphics.length - 1)*@space_width if @graphics.length > 0
+      room = @width - (@total_token_width + @total_space_width)
+      x = 0
+      @graphics.each do |token|
+        token.x = x
+        x += token.width + @space_width
+      end
+      
+      case @para_style
+      when 'left'
+      when 'center'
+        @graphics.map {|t| t.x += room/2.0}
+      when 'right'
+        @graphics.map do |t| 
+          t.x += room
+        end
+      when 'justified'
+        just_space = room/(@graphics.length - 1)
+        x = 0
+        @graphics.each_with_index do |token, i|
+          token[:x] = x
+          x += token[:width] + just_space
+        end
+      else
+        
+      end
+      
+	  end
+    
+    def line_string
+      string = ""
+      @graphics.each do |token|
+        string += token.string
+      end
+      string
+    end
+    
+    # def tallest_token
+    #  
+    # end
+	  
+    # def room
+    #       @width - @left_indent - @right_indent
+    # end
+  
+  end
+
   
   class DropParagraph < Paragraph
     attr_accessor :image_object, :cap_object, :title, :subtitle, :body
@@ -417,6 +438,7 @@ module RLayout
   end
   
 end
+
 
 SMAMPLE_PARA =<<EOF
 

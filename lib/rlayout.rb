@@ -55,6 +55,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/text/font'
   require File.dirname(__FILE__) + '/rlayout/text/text_train'
   require File.dirname(__FILE__) + '/rlayout/text/title_text'
+  require File.dirname(__FILE__) + '/rlayout/text/ordered_list'
 
   require File.dirname(__FILE__) + '/rlayout/style/style_service'
   require File.dirname(__FILE__) + '/rlayout/style/grid_layout'

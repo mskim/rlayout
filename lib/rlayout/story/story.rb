@@ -200,25 +200,34 @@ module RLayout
       # if starting_heading_level = 3, h1 => h3
       #
       s = text_block[0]
-      if s =~/^#\s?/
+      if s =~/^#\s?/ || s =~/^=\s?/
         @markup = "h#{starting_heading_level}"
         @string = s.sub(/#\s?/, "")
-      elsif s =~/^##\s?/
+      elsif s =~/^##\s?/ || s =~/^==\s?/
         @markup = "h#{1 + starting_heading_level}"
         @string = s.sub(/##\s?/, "")
-      elsif s =~/^###\s?/
+      elsif s =~/^###\s?/ || s =~/^===\s?/
         @markup = "h#{2 + starting_heading_level}"
         @string = s.sub(/###\s?/, "")
-      elsif s =~/^####\s?/
+      elsif s =~/^####\s?/ || s =~/^====\s?/
         @markup = "h#{3 + starting_heading_level}"
         @string = s.sub(/####\s?/, "")
-      elsif s =~/^#####\s?/
+      elsif s =~/^#####\s?/ || s =~/^=====\s?/
         @markup = "h#{4 + starting_heading_level}"
         @string = s.sub(/#####\s?/, "")
-      elsif s =~/^######\s?/
+      elsif s =~/^######\s?/ || s =~/^======\s?/
         @markup = "h#{5 + starting_heading_level}"
         @string = s.sub(/######\s?/, "")
-      elsif s =~/^table\s?/      
+      
+      # label some:: some more text
+      elsif s =~/^\.\s?/
+        # ordered list li1
+        {:markup =>"ordered_list", :list=>text_block}
+      elsif s =~/^\*\s?/
+        # unordered list uli1
+        {:markup =>"unordered_list", :list=>text_block}
+      elsif s =~/^table\s?/   
+        # parse block   
         @markup = "table"
         @string = s.sub(/table\s?/, "")
       elsif s =~/^image\s?/      
@@ -236,7 +245,7 @@ module RLayout
             @string += text_line + "\n"
           end
         end
-        return {:markup =>@markup, :string=>@string}
+        # return {:markup =>@markup, :string=>@string}
         
       elsif s =~/^pdf_insert\s?/      
         @markup = "pdf_insert"
