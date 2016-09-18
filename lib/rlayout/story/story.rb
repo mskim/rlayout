@@ -218,14 +218,13 @@ module RLayout
       elsif s =~/^######\s?/ || s =~/^======\s?/
         @markup = "h#{5 + starting_heading_level}"
         @string = s.sub(/######\s?/, "")
-      
       # label some:: some more text
       elsif s =~/^\.\s?/
         # ordered list li1
-        {:markup =>"ordered_list", :list=>text_block}
+        return {:markup =>"ordered_list", :text_block=>text_block}
       elsif s =~/^\*\s?/
         # unordered list uli1
-        {:markup =>"unordered_list", :list=>text_block}
+        return {:markup =>"unordered_list", :text_block=>text_block}
       elsif s =~/^table\s?/   
         # parse block   
         @markup = "table"

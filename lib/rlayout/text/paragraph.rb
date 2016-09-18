@@ -301,9 +301,6 @@ module RLayout
 	    @underflow == true
 	  end
 	  
-	  def default_tab_stops
-	   
-	  end
     def default_para_style
       default               = {}
       default[:font]        = "smSSMyungjoP-W30"

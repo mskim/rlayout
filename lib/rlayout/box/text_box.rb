@@ -281,7 +281,17 @@ module RLayout
             end
           end
           @item.layout_lines(:proposed_height=>current_column.room) # item.width is set already
-        elsif @item.class == RLayout::Paragraph
+        elsif @item.is_a?(RLayout::OrderedList) || @item.is_a?(RLayout::UnorderedList) 
+          # for List block insert list items to flowing_items
+
+          while @item.graphics.length > 0
+            list_item = @item.graphics.pop
+            flowing_items.unshift(list_item)
+          end
+          next
+        elsif @item.is_a?(RLayout::OrderedListItem) || @item.is_a?(RLayout::UnorderedListItem)
+          @item.layout_lines(current_column)          
+        elsif @item.is_a?(RLayout::Paragraph)
           @item.layout_lines(current_column)          
         elsif @item.class == RLayout::Table
           @item.width  = current_column.text_width

@@ -195,7 +195,7 @@ module RLayout
       self
     end
         
-    def read_story
+    def read_story      
       ext = File.extname(@story_path)
       if ext == ".md" || ext == ".markdown" || ext == ".story"
         @story  = Story.new(@story_path).markdown2para_data
@@ -227,6 +227,12 @@ module RLayout
           next
         elsif para[:markup] == 'pdf_insert'
           @paragraphs << PdfInsert.new(para)
+          next
+        elsif para[:markup] == 'ordered_list'
+          @paragraphs << OrderedList.new(text_block: para[:text_block])
+          next
+        elsif para[:markup] == 'unordered_list'
+          @paragraphs << UnorderedList.new(text_block: para[:text_block])
           next
         end
         para_options[:para_string]    = para[:string]
@@ -370,7 +376,6 @@ module RLayout
     # page layout is delayed until layout time.
     # document is not known until layout time.
     def layout_page(options={})
-      puts __method__
       @document = options[:document]
       adjust_page_size_to_document
       @image_group  = options[:image_group]

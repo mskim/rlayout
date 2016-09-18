@@ -22,8 +22,12 @@ module RLayout
     
     def parse_list_items
       @current_order  = [0,0,0]
-      list_text       = @text_block.split("\n")
-      list_text.each do |list|
+      if @text_block.class == Array
+        @list_text = @text_block
+      elsif @text_block.class == String
+        @list_text = @text_block.split("\n")
+      end
+      @list_text.each do |list|
         case list
         when /^\.\s/
           ordering_char = (@ordering_char_types[0].ord + @current_order[0]).chr
@@ -55,8 +59,13 @@ module RLayout
     attr_accessor :order, :level, :indent
     def initialize(options={})
       super
-      @order = options[:order]
-      @level = options[:level]
+      #TODO make @indent relative to font size
+      @indent             = options.fetch(:indent, 15)
+      @order              = options[:order]
+      @level              = options[:level]
+      @h_alignment        = "left"
+      @first_line_indent  = @level*@indent
+      @head_indent        = @first_line_indent + @indent
       self
     end
   end
@@ -67,15 +76,18 @@ module RLayout
       super
       @ordering_char_types  = options.fetch(:ordering_char_types, %w[* + -])
       @text_block           = options[:text_block]
-      @text_block           = options[:text_block]
       parse_list_items
       self
     end
     
     def parse_list_items
       @current_order  = [0,0,0]
-      list_text       = @text_block.split("\n")
-      list_text.each do |list|
+      if @text_block.class == Array
+        @list_text = @text_block
+      elsif @text_block.class == String
+        @list_text = @text_block.split("\n")
+      end
+      @list_text.each do |list|
         case list
         when /^\*\s/
           ordering_char = @ordering_char_types[0]
@@ -108,6 +120,7 @@ module RLayout
       super
       @order = options[:order]
       @level = options[:level]
+      @head_indent = @level*20
       self
     end
     
