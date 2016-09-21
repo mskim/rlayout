@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-# ChapterMaker merges Story and Document into a  chapter.
+# ChapterMaker combines Story and Document into a  chapter.
 # deprecated **** Story can come from couple of sources, markdown, adoc, or html(URL blog)
 # deprecated **** Story can be .story, adoc, markdown, or html format.
 # Story file format is our own, mixture of adoc, markdown and LaTex.
@@ -17,12 +17,9 @@
 # This will place image in the column along other text paragraphs, 
 # We can set width of image as 1, 1/2, 1/3, 1/4 of column.
 # And text will flow around it.
-# The second way is to use flot_layer.
-# Image markup shoud containe position information, such as grid_frame, size, position attributes.
-# New page is triggered for this case. pre-desinged layout pattern can also be used.
-# Images are layed on top as floating images allowing text to flow around it.
-# And the third method is to use photo_page, it is similar to image_group, but no text.
-# New page is triggered for photo_page.
+# The second way is to use float_group.
+# float_group markup shoud containe position information, such as grid_frame, size, position attributes. New page is triggered. pre-desinged layout pattern can also be used. Images and floats are layed on top as floats allowing text to flow around it.
+# And the third method is to use photo_page, it is similar to image_group, but no text flowing. New page is triggered for photo_page.
 # photo_page is pure photo only page, no text paragraph is layed out, no header, no footer, no page number.
 # pre-desinged layout pattern can be pulled from pattern library or positions can be set manually.
 
@@ -30,7 +27,6 @@
 # And image info in specified in meta-data header or design template by designer.
 
 # For book chapters, first, sencod and third methods are used.
-
 
 # How to place image caption?
 # File that has same name with extension of .caption?
@@ -60,9 +56,10 @@
 # LongDocument is also reponsible for generating TOC, index, and x-ref.
 
 # Story file
-# story file should conain minimum markup.
+# story files are markuped text, with markdown or asciidoctor syntax.
+# I am adding some of my own markups to asciidoctor adoc with extension.
 # I should transform them into Asciidoctor, LqTex, or markdown format.
-# And it shold be simple.
+# And it should be simple.
 # First part is meta-data 
 # And followed by block data. 
 # Block data is separated by new empty line.
@@ -366,116 +363,6 @@ module RLayout
     end    
   end
   
-  class PhotoPage < Page
-    attr_accessor :image_group
-    def initialize(options={})
-      @image_group = options[:image_group]
-      super
-      self
-    end
-    # page layout is delayed until layout time.
-    # document is not known until layout time.
-    def layout_page(options={})
-      @document = options[:document]
-      adjust_page_size_to_document
-      @image_group  = options[:image_group]
-      @image_group.each do |image_info|
-        float_image(image_info)
-      end
-      1 # page index
-    end
-    
-  end
-  
-  # Challenges with FloatGroup
-  # FloatGroup puts group of floats(an image, quote, etc..) at current page if image group is the first item, text_box.exmpty?==true
-  # else it puts image at the following page, adding page if the page doen't exist. 
-  # for the second case we could get unwanted space between the previous paragraph and next page image.
-  # since we don't know where the exact breaking point is.
-  # We want the folliwing paragraphs to fill into the previous page's space before the image, if we have room.
 
-  # 1. allow_text_jump_over
-  # this is where "allow_text_jump_over" is used
-  # it tells to allow following text to jump over and fill the gap in previous page of the image.
-  
-  # 2. page_offset?? not implemented yet we could do this we multipe image_group
-  # if image is specified with page_offset starting from next page, 
-  # image is place ot offsetting page
-  # This is used to layout image that are certain pages apart.
-	# {local_image: "1.jpg", frame_rect: [0,0,1,1]}
-	# {local_image: "2.jpg", frame_rect: [0,0,1,1], page_offset:1}
-	# {local_image: "3.jpg", frame_rect: [0,0,1,1], page_offset:2}
-	# {quote: "Our time is too short for fighting", frame_rect: [0,0,1,1], page_offset:2}
-	# above will page images in following page 1, 2, 3
 
-  class FloatGroup
-    attr_accessor :floats, :allow_text_jump_over
-    def initialize(options={})
-      options[:allow_text_jump_over] = true
-      @allow_text_jump_over = options[:allow_text_jump_over] if options[:allow_text_jump_over]
-      @floats               = make_floats(options[:string])
-      super
-      self
-    end
-    
-    def make_floats(string)
-      puts "floats_string:#{string}"
-    end
-    # page layout is delayed until layout time.
-    # document is not known until layout time.
-    def layout_page(options={})
-      @document     = options[:document]
-      @page_index   = options[:page_index]
-      @starting_page_number = options.fetch(:@starting_page_number, 1)
-      @page         = @document.pages[@page_index]
-      @main_box     = @page.main_box
-      if @main_box.empty?
-        # put image group in empty main_box
-      else
-        # go to next page
-        @page_index += 1
-        # make page, if it is the last page
-        if @page_index >= @document.pages.length
-          options               = {}
-          options[:parent]      = @document
-          options[:footer]      = true
-          options[:header]      = true
-          options[:text_box]    = true
-          options[:page_number] = @starting_page_number + @page_index
-          options[:column_count]= @document.column_count
-          p=Page.new(options)
-          p.relayout!
-          p.main_box.create_column_grid_rects
-          @main_box = p.main_box
-        end
-      end
-      # adjust_page_size_to_document 
-      @image_group.each do |image_info|
-        @main_box.float_image(image_info)
-      end
-      @main_box.layout_floats!
-      @main_box.set_overlapping_grid_rect
-      @main_box.update_column_areas
-    end
-    
-  end
-  
-  # we are given pdf in the middle of the document
-  # create pages that con
-  class PdfInsert
-    attr_accessor :layout_info
-    def initialize(options={})
-      super
-      self
-    end
-    # page layout is delayed until layout time.
-    # document is not known until layout time.
-    def layout_page(options={})
-      @document = options[:document]
-      #TODO
-      # create pages with PDF as Page and insert it to document
-      # return PdfInsert.length
-    end
-        
-  end
 end

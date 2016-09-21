@@ -25,7 +25,7 @@ else
   require 'erb'
   require 'base64'
     
-  require "rlayout/version"
+  require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
   require File.dirname(__FILE__) + '/rlayout/graphic/color'
   require File.dirname(__FILE__) + '/rlayout/graphic/graphic_struct'
@@ -48,6 +48,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/text_train'
   
   require File.dirname(__FILE__) + '/rlayout/text/heading'
+  require File.dirname(__FILE__) + '/rlayout/text/heading_container'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph_ns_text'
   require File.dirname(__FILE__) + '/rlayout/text/text_token'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
@@ -103,6 +104,7 @@ else
    require File.dirname(__FILE__) + '/rlayout/story/remote_reader'
    
    require File.dirname(__FILE__) + '/rlayout/article/chapter_maker'
+   require File.dirname(__FILE__) + '/rlayout/article/float_group'
    require File.dirname(__FILE__) + '/rlayout/article/news_article_maker'
    require File.dirname(__FILE__) + '/rlayout/article/news_section_page'
    require File.dirname(__FILE__) + '/rlayout/article/news_heading_maker'

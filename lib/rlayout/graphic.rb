@@ -582,8 +582,12 @@ module RLayout
     end
     
     def set_text(text_string)
-      return unless @text_layout_manager
-      @text_layout_manager.set_text_string
+      if RUBY_ENGINE == "rubymotion"
+        return unless @text_layout_manager
+        @text_layout_manager.set_text_string
+      else
+        @text_record.string = text_string
+      end
     end
     
     def text_string
@@ -661,9 +665,6 @@ module RLayout
   class Image < Graphic
     attr_accessor :caption , :bleed
     def initialize(options={})  
-      if options[:grid_frame]
-        @grid_frame = options[:grid_frame]
-      end
       if options[:caption]
         @caption = options[:caption]
       end
@@ -671,7 +672,9 @@ module RLayout
         @bleed = options[:bleed]
       end
       super
-      
+      if options[:local_image]
+        @local_image = options[:local_image]
+      end
       if options[:image_path]
         @image_path   = options[:image_path]
         @image_record = ImageStruct.new(options[:image_path])

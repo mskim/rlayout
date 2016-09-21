@@ -45,6 +45,7 @@ module RLayout
       end      
       @fixtures = []
       @floats   = []
+      
       main_box_options                = {}
       main_box_options[:x]            = @left_margin
       main_box_options[:y]            = @top_margin
@@ -67,7 +68,6 @@ module RLayout
       elsif options[:composite_box]
         @main_box = CompositeBox.new(main_box_options)
       end
-      
       if block
         instance_eval(&block)
       end    

@@ -1,5 +1,6 @@
 
 # PageScript Verbs
+#  number
 #  title
 #  subtitle
 #  leading
@@ -7,7 +8,11 @@
 
 
 # Todo
-# 2013 12 17
+# 2016 9 20
+#  support pre-made pdf image as options[:image]
+#  support background pdf image as options[:background]
+
+# 2014 12 17
 # 1. Use TextRun and TextLine instead of Text
 # 2. Create Banner Class
 
@@ -31,11 +36,11 @@ module RLayout
   # This way, parent can shrink or expand heading and maintain each elements's height propotion.
   # heading height should be multiles of body text height
   class Heading < Container
-    attr_accessor :title_object, :subtitle_object, :leading_object, :author_object
+    attr_accessor :number_object, :title_object, :subtitle_object, :leading_object, :author_object
     attr_accessor :align_to_body_text
     def initialize(options={}, &block)
       super      
-      case $publication_type
+      case $publication_type        
       when "magazine"
         @current_style = RLayout::StyleService.shared_style_service.magazine_style
       when "chapter"
@@ -71,6 +76,23 @@ module RLayout
     end
     
     def set_heading_content(options)
+      if options[:image_only]
+        # place image, change size, width, or height as instructed
+        # This is when pre-made Heading is provided as pdf file using other app.
+         
+        return
+      end
+      
+      if options[:background]
+        # place image in the background, change size, width, or height as instructed
+      end
+      
+      # if options[:number]
+      #   @number_object = title(options[:title], options)
+      # elsif options["number"]
+      #   @number_object = title(options["number"], options)
+      # end
+        
       if options[:title]
         @title_object = title(options[:title], options)
       elsif options["title"]

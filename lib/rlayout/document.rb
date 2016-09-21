@@ -76,6 +76,7 @@ module RLayout
     attr_accessor :header_rule, :footer_rule, :gim
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_accessor :pdf_path, :jpg, :preview, :column_count, :layout_style
+    attr_accessor :page_headings
     def initialize(options={}, &block)
       @pages      = []
       @title      = "untitled"
@@ -155,17 +156,16 @@ module RLayout
         options[:parent]  = self
         Page.new(options)
       end
-      
+      @page_headings = options.fetch(:page_headings,[])
       @column_count = options.fetch(:column_count, 1)
       RLayout::StyleService.shared_style_service.current_style = options.fetch(:current_style, DEFAULT_STYLES)
       if @toc_on
         # save_toc elements for this document
         @toc_elements = []
       end
-
       if block
         instance_eval(&block)
-      end      
+      end  
       self
     end
 

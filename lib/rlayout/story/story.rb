@@ -235,17 +235,9 @@ module RLayout
         @string = s.sub(/image\s?/, "")
       elsif s =~/^photo_page\s?/      
         @markup = "photo_page"
-      elsif s =~/^\[image_group\]\s?/      
-        @markup = "float_group" #image_group, changed to include other graphics
-        if text_block.length > 0
-          @string = ""
-          text_block.each_with_index do |text_line, i|
-            next if i == 0
-            @string += text_line + "\n"
-          end
-        end
-        # return {:markup =>@markup, :string=>@string}
-        
+      elsif s =~/^\[float_group\]\s?/      
+        #float_group, changed to include other graphics
+        return {:markup =>"float_group", :text_block=>text_block}        
       elsif s =~/^pdf_insert\s?/      
         @markup = "pdf_insert"
       elsif s =~/^math\s?/      

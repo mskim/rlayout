@@ -184,6 +184,7 @@ module RLayout
     
     
     def add_graphic(graphic)
+      @graphics = [] unless @graphics
       if graphic.is_a?(Array)
         graphic.each do |item|
           item.parent_graphic = self

@@ -283,7 +283,6 @@ module RLayout
           @item.layout_lines(:proposed_height=>current_column.room) # item.width is set already
         elsif @item.is_a?(RLayout::OrderedList) || @item.is_a?(RLayout::UnorderedList) 
           # for List block insert list items to flowing_items
-
           while @item.graphics.length > 0
             list_item = @item.graphics.pop
             flowing_items.unshift(list_item)
@@ -463,15 +462,16 @@ module RLayout
       image_options = {}
       image_options[:image_path] = "#{options[:image_path]}" if options[:image_path]
       image_options[:image_path] = "#{$ProjectPath}/images/#{options[:local_image]}" if options[:local_image]
-      frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
+      frame_rect              = grid_frame_to_image_rect([0,0,1,1])
+      frame_rect              = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
       image_options[:x]       = frame_rect[0]
       image_options[:y]       = frame_rect[1]
       image_options[:width]   = frame_rect[2]
       image_options[:height]  = frame_rect[3]
       image_options[:layout_expand]   = nil
-      image_options[:is_float]        = true
-      image_options[:parent]          = self
-      @image  = Image.new(image_options)   
+      image_options[:is_float]= true
+      image_options[:parent]  = self
+      @image                  = Image.new(image_options)   
     end
     
     def float_images(images)

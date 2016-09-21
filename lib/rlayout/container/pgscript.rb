@@ -119,6 +119,11 @@ module RLayout
       Heading.new(options, &block)
     end
     
+    def heading_container(options={}, &block)
+      options[:parent] = self
+      HeadingContainer.new(options, &block)
+    end
+    
     def table(options={}, &block)
       options[:parent] = self
       Table.new(options, &block)

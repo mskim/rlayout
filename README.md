@@ -117,6 +117,23 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2016 9 21
+	- add pass page_headings options to document
+	- this will allow custom heading support
+	- add HeadingContainer for complex Heading
+	- add SpreadDocument, a two page document with Heading in each page.
+	
+2016 9 19
+	- heading with background image
+	- floats
+	- remote story
+	- remote item
+	  QuizBank with collections(images or json)
+	  REST API that can receive item collection from remote server.
+	
+2016 9 18
+	- implement OrderedList, UnorderedList
+
 2016 9 5
 	- fix yaml | with csv
 \\	- Prefix
@@ -161,7 +178,6 @@ TODO List
 		- make it jump to chapter
 		- create hollow template
 		
-	- floats_group
 		
 2016 8 25
 	- move templates to rubymotion.app/resouces
@@ -292,7 +308,7 @@ TODO List
 	- eliminate empty line between paragraphs
 	
 2016 5 10
-	- ImageGroup
+	- FloatGroup
 		page_offset
 		allow_text_jump_over
 
@@ -516,7 +532,7 @@ TODO List
 	
 2015 10 6
 	- fit_text_to_box
-	- ImageGroup
+	- FloatGroup
 	
 2015 10 5
 	- Table category cell font size

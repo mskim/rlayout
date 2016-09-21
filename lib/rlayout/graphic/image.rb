@@ -45,15 +45,18 @@ IMAGE_CHANGE_BOX_SIZE         = 6 #change box size to fit image source as is at 
 # ex. should put images in project.rlayout/images/my_image.jpg
 module RLayout
   class Graphic
-    attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :source_frame
+    attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :source_frame, :local_image
     
     def init_image(options)
       #TODO why is image_object is used instead of @image_record??
       @image_record  = options.fetch(:image_record,nil)
       unless options[:image_path]
         if options[:local_image] && $ProjectPath
-          options[:image_path] = $ProjectPath + "/images/" + options[:local_image]
+          @local_image          = options[:local_image]
+          options[:image_path]  = $ProjectPath + "/images/" + options[:local_image]
         else
+        # elsif options[:local_image]
+        #   @local_image          = options[:local_image]
           return 
         end
       end
