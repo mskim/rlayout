@@ -192,10 +192,18 @@ EOF
       }
     end
     
+    def add_heading(heading_object)
+      @heading_object = heading_object
+      @heading_object.parent_graphic = self
+      @graphics << @heading_object
+    end
     # does current text_box include Heading in floats
     def has_heading?
       @graphics.each do |g|
-        return true if g.class == RLayout::Heading
+        if g.class == RLayout::Heading || g.class == RLayout::HeadingContainer
+          @heading_object = g unless @heading_object
+          return true 
+        end
       end
       false
     end
@@ -336,7 +344,7 @@ EOF
     ########### PageScritp Verbs #############
     def text_box(options={}, &block)
       options[:parent] = self
-      TextBox.new(options)
+      @main_box = TextBox.new(options) unless @main_box
     end
 
     def table(options={}, &block)

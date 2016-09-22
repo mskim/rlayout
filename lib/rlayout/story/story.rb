@@ -191,37 +191,81 @@ module RLayout
       @para_data = {:heading=>@metadata, :paragraphs =>paragraphs}
       # {:heading=>@metadata, :paragraphs =>paragraphs}
     end
-
+    
+    # markdown2section_data 
+    # it parses metadata heading
+    # it puts paragraphs by sections in an array, each array starting with section head para
+    # stroy[:heading]
+    # section_para = stroy[:section_para_data]
+    # section_para[0]     # title paragraphs
+    # section_para[1]     # first section paragraphs
+    def markdown2section_data(options={})
+      starting_heading_level = options.fetch(:demotion, 1)
+      source = File.open(path, 'r'){|f| f.read}
+      begin
+        if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
+          @contents = md.post_match
+          @metadata = YAML.load(md.to_s)
+        else
+          @contents = source
+        end
+      rescue => e
+        puts "YAML Exception reading #filename: #{e.message}"
+      end
+      @section_para_data    = []
+      @current_section      = []
+      section_number        = 0
+      reader = RLayout::Reader.new @contents, nil
+      reader.text_blocks.each do |lines_block|  
+        para = block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
+        if para[:markup] == "h2"
+          @current_section << para
+          @section_para_data << @current_section
+          @current_section  = []
+          section_number    += 1
+        else
+          @current_section << para
+        end
+      end
+      @section_para_data << @current_section if @current_section.length > 0      
+      # return 
+      {:heading=>@metadata, :sections_paragraph =>@section_para_data}
+      
+    end
+    
     #processing a block of parsed text 
     def block2para_data(text_block, options={})
       starting_heading_level = options.fetch(:starting_heading_level, 1)
-      # s=StringScanner.new(text_block[0])
-      # starting_heading_level is 1, h1
-      # if starting_heading_level = 3, h1 => h3
-      #
+      s = text_block.shift if text_block[0] =~ /(?>^\s*\n)+/
       s = text_block[0]
-      if s =~/^#\s?/ || s =~/^=\s?/
+      if s =~/^#\s/ || s =~/^=\s/
         @markup = "h#{starting_heading_level}"
+        s = text_block.join("\n")
         @string = s.sub(/#\s?/, "")
       elsif s =~/^##\s?/ || s =~/^==\s?/
         @markup = "h#{1 + starting_heading_level}"
+        s = text_block.join("\n")
         @string = s.sub(/##\s?/, "")
-      elsif s =~/^###\s?/ || s =~/^===\s?/
+      elsif s =~/^###\s/ || s =~/^===\s/
         @markup = "h#{2 + starting_heading_level}"
         @string = s.sub(/###\s?/, "")
-      elsif s =~/^####\s?/ || s =~/^====\s?/
+      elsif s =~/^####\s/ || s =~/^====\s/
         @markup = "h#{3 + starting_heading_level}"
         @string = s.sub(/####\s?/, "")
-      elsif s =~/^#####\s?/ || s =~/^=====\s?/
+      elsif s =~/^#####\s/ || s =~/^=====\s/
         @markup = "h#{4 + starting_heading_level}"
         @string = s.sub(/#####\s?/, "")
-      elsif s =~/^######\s?/ || s =~/^======\s?/
+      elsif s =~/^######\s/ || s =~/^======\s/
         @markup = "h#{5 + starting_heading_level}"
-        @string = s.sub(/######\s?/, "")
+        @string = s.sub(/######\s/, "")
       # label some:: some more text
       elsif s =~/^\.\s?/
         # ordered list li1
         return {:markup =>"ordered_list", :text_block=>text_block}
+      elsif s =~/^[0-9]\.\s/
+        return {:markup =>"ordered_section", :text_block=>text_block}
+      elsif s =~/^[A-Z]\s/
+        return {:markup =>"ordered_upper_alpha_list", :text_block=>text_block}
       elsif s =~/^\*\s?/
         # unordered list uli1
         return {:markup =>"unordered_list", :text_block=>text_block}

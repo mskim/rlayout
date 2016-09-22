@@ -181,8 +181,9 @@ module RLayout
     end
     
     # TODO
-    def set_text_string
-      
+    def set_text_string(string)
+      range = NSMakeRange(0, @att_string.length)
+      @att_string.replaceCharactersInRange(range, withString: string)
     end
     
     def replace_string_with(string)
@@ -215,7 +216,8 @@ module RLayout
       atts[NSForegroundColorAttributeName]  = @text_color
       if @guguri_width && @guguri_width < 0
         atts[NSStrokeWidthAttributeName] = atts_hash[:guguri_width] #0, -2,-5,-10
-        atts[NSStrokeColorAttributeName]=Graphic.color_from_string(attributes[:guguri_color])
+        atts[NSStrokeColorAttributeName]=color_from_string(attributes[:guguri_color])
+        #atts[NSStrokeColorAttributeName]=Graphic.color_from_string(attributes[:guguri_color])
       end
       if @text_tracking
         atts[NSKernAttributeName] = @text_tracking

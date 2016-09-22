@@ -56,7 +56,7 @@ module RLayout
       @paragraph_type = options.fetch(:paragraph_type, 'simple') 
       @para_string    = options.fetch(:para_string, "")
       @para_style     = default_para_style
-      @para_style     = @para_style.merge(options[:para_style]) if options[:para_style]
+      @para_style     = @para_style.merge(options) #if options[:para_style]
       @h_alignment    = @para_style[:h_alignment]
       @first_line_indent = @para_style[:first_line_indent]
       @head_indent    = @para_style[:head_indent]
@@ -116,7 +116,7 @@ module RLayout
     def create_tokens
       @atts = {}
       if RUBY_ENGINE == 'rubymotion'
-        @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:size])
+        @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:text_size])
         @space_width  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
         @para_style[:atts] = @atts
       end
@@ -304,7 +304,7 @@ module RLayout
     def default_para_style
       default               = {}
       default[:font]        = "smSSMyungjoP-W30"
-      default[:size]        = 10
+      default[:text_size]        = 10
       default[:space_width] = 4
       default[:color]       = "black"
       default[:style]       = "plain"

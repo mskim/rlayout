@@ -116,7 +116,35 @@ TODO List
 			- index
 			- glossary
 		- put templates under rubymotion app/resouces/
+		
+2016 9 22
+	- markup2heading key_map
+	- style_run
+	# runs are separated by \t
+	# color_run: ["brown", "black"]
+	# size_run: [0, 5] add point size to current size
+	# size_run: [0, 10%] add % point size to current size
+	
+	# key_map: ["number", "title", "subtitle", "leading"] defined in style of h1
+	# = 03
+	# Some title
+	# some subtitle
+	# leading text here
+	
+	# above markup and map will be converted to 
+	# h ={number: "03", title: "Some title", subtitle: "some subtitle", leading: "leading text here"}
+	# document.pages[1].heading.set_content(h)
+	# above will set the content of HeadingContainer 
 
+	# ["title", "subtitle"] defined in style of h2
+	# == Some title
+	# Answer in page 2
+	
+	# ["title", "subtitle"] defined in style of h2 options can be add at the last line
+	# == Some title
+	# Answer in page 2
+	# {allow_multiple_page: true}
+		
 2016 9 21
 	- add pass page_headings options to document
 	- this will allow custom heading support

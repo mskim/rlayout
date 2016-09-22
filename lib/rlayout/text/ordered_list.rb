@@ -10,6 +10,7 @@ module RLayout
   
   # ordering_char_types=  %w[1 a A] #[number, lower_alphabet, upper_alphabet]
   # optional array can be passed with custom  
+  # TODO this is adoc style do it for markdown as well
   class OrderedList < Container
     attr_accessor :current_order, :ordering_char_types, :text_block
     def initialize(options={})
@@ -54,7 +55,7 @@ module RLayout
         end
       end
     end
-        
+
   end
   
   class OrderedListItem < Paragraph
@@ -71,6 +72,82 @@ module RLayout
       self
     end
   end
+  
+  class OrderedSection < Container
+    attr_accessor :current_order, :ordering_char_types, :text_block
+    def initialize(options={})
+      super
+      @ordering_char_types  = options.fetch(:ordering_char_types, %w[A 1 a])
+      @text_block           = options[:text_block]
+      parse_list_items
+      self
+    end    
+    
+    def parse_list_items
+      #TODO this fails if items depth goes beyond 2
+      @current_order  = [0,0]
+      if @text_block.class == Array
+        @list_text = @text_block
+      elsif @text_block.class == String
+        @list_text = @text_block.split("\n")
+      end
+      @list_text.each do |list|
+        case list
+        when /^[0-9]\.\s/
+          # ordering_char = (@ordering_char_types[0].ord + @current_order[0]).chr
+          para_string = list
+          OrderedListItem.new(parent: self, para_string: para_string, level: 0, order: @current_order[0], text_size: 12, text_color: "blue")
+        when /^\s?\w\s/
+          # ordering_char = (@ordering_char_types[1].ord + @current_order[1]).chr
+          # ordering_char = "\t" + ordering_char + ". "
+          # para_string = list.sub(/^\.\.\s/ , ordering_char)
+          para_string = list
+          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], fill_color: "yellow", text_size: 9) ##f5af3a
+        else
+          para_string = list
+          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], fill_color: "orange", text_size: 9)
+        end
+      end
+    end    
+    
+  end
+  
+  class UpperAlphaList < Container
+    attr_accessor :current_order, :ordering_char_types, :text_block
+    def initialize(options={})
+      super
+      @ordering_char_types  = options.fetch(:ordering_char_types, %w[A 1 a])
+      @text_block           = options[:text_block]
+      parse_list_items
+      self
+    end
+    
+    def parse_list_items
+      #TODO this fails if items depth goes beyond 2
+      @current_order  = [0,0]
+      if @text_block.class == Array
+        @list_text = @text_block
+      elsif @text_block.class == String
+        @list_text = @text_block.split("\n")
+      end
+      @list_text.each do |list|
+        case list
+        when /^[A-Z]\s/
+          # ordering_char = (@ordering_char_types[0].ord + @current_order[0]).chr
+          # para_string = list.sub(/^\./ , ordering_char)
+          para_string = list
+          OrderedListItem.new(parent: self, para_string: para_string, level: 0, order: @current_order[0])
+        when /^\d\s/
+          # ordering_char = (@ordering_char_types[1].ord + @current_order[1]).chr
+          # ordering_char = "\t" + ordering_char + ". "
+          # para_string = list.sub(/^\.\.\s/ , ordering_char)
+          para_string = list
+          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1])
+        end
+      end
+    end
+  end
+  
   
   class UnorderedList < Container    
     attr_accessor :current_order, :ordering_char_types, :text_block

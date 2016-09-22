@@ -54,6 +54,7 @@ module RLayout
   
   
   def color_from_string(color_string)
+    puts "color_from_string in Color.rb"
     if color_string == nil
       return NSColor.whiteColor
     end
@@ -143,6 +144,7 @@ module RLayout
       a = a / 255.0
     end
     if RUBY_ENGINE =="rubymotion"
+      puts "creating NSColor+++++++++"
       NSColor.colorWithDeviceRed(r, green: g, blue: b, alpha: a)
     else
       "rgba(#{r},#{g},#{b},#{a})"

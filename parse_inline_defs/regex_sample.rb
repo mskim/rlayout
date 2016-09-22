@@ -1,4 +1,3 @@
-# require 'strscan'
 string = "this is a test def_ruby('root', 'some', ruby_color: 'red') more text def_undertag('one', 'two')"
 
 # result =  string.scan(/def_(.*?)\((.*?)\)/)

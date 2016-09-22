@@ -437,6 +437,7 @@ module RLayout
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path, options)
       elsif RUBY_ENGINE == 'ruby' 
+        puts "In Graphic"
         puts "RUBY_ENGINE:#{RUBY_ENGINE}"
       end
     end
@@ -491,13 +492,6 @@ module RLayout
       path
     end
 
-    # # convert any color to NSColor
-    # def self.convert_to_nscolor(color)
-    #   return self.color_from_string(color) if color.class == String
-    #   color
-    # 
-    # end
-
 
     def self.color_from_name(name)
       case name
@@ -535,40 +529,43 @@ module RLayout
         return NSColor.whiteColor
       end
     end
-
-
-
-    def self.color_from_string(color_string)
-      if color_string == nil
-        return NSColor.whiteColor
-      end
-
-      if color_string==""
-        return NSColor.whiteColor
-      end
-
-      if COLOR_NAMES.include?(color_string)
-        return self.color_from_name(color_string)
-      end
-      # TODO
-      # elsif color_string=~/^#   for hex color
-
-      color_array=color_string.split("=")
-      color_kind=color_array[0]
-      color_values=color_array[1].split(",")
-      if color_kind=~/RGB/
-          @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
-      elsif color_kind=~/CMYK/
-          @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
-      elsif color_kind=~/NSCalibratedWhiteColorSpace/
-          @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
-      elsif color_kind=~/NSCalibratedBlackColorSpace/
-          @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)
-      else
-          @color = self.color_from_name(color_string)
-      end
-      @color
-    end
+    # 
+    # def self.color_from_string(color_string)
+    #   if color_string == nil
+    #     return NSColor.whiteColor
+    #   end
+    # 
+    #   if color_string==""
+    #     return NSColor.whiteColor
+    #   end
+    # 
+    #   if COLOR_NAMES.include?(color_string)
+    #     return self.color_from_name(color_string)
+    #   end
+    #   
+    #   if color_string =~ /^#/
+    #     return color_from_hex(color_string)
+    #   end
+    #   
+    #   # TODO
+    #   # elsif color_string=~/^#   for hex color
+    # 
+    #   color_array=color_string.split("=")
+    #   color_kind=color_array[0]
+    #   color_values=color_array[1].split(",")
+    #   if color_kind=~/RGB/
+    #       @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
+    #   elsif color_kind=~/CMYK/
+    #       @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
+    #   elsif color_kind=~/NSCalibratedWhiteColorSpace/
+    #       @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
+    #   elsif color_kind=~/NSCalibratedBlackColorSpace/
+    #       @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)
+    #   else
+    #       @color = self.color_from_name(color_string)
+    #   end
+    #   @color
+    # end
 
     def fit_text_to_box
       @text_layout_manager.fit_text_to_box  if @text_layout_manager
@@ -584,7 +581,7 @@ module RLayout
     def set_text(text_string)
       if RUBY_ENGINE == "rubymotion"
         return unless @text_layout_manager
-        @text_layout_manager.set_text_string
+        @text_layout_manager.set_text_string(text_string)
       else
         @text_record.string = text_string
       end

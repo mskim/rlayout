@@ -104,6 +104,7 @@ else
    require File.dirname(__FILE__) + '/rlayout/story/remote_reader'
    
    require File.dirname(__FILE__) + '/rlayout/article/chapter_maker'
+   require File.dirname(__FILE__) + '/rlayout/article/spread_chapter'
    require File.dirname(__FILE__) + '/rlayout/article/float_group'
    require File.dirname(__FILE__) + '/rlayout/article/news_article_maker'
    require File.dirname(__FILE__) + '/rlayout/article/news_section_page'
