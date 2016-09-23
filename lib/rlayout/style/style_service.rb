@@ -1,4 +1,10 @@
 
+# How does styles work?
+# StyleService is a singleton class object that stays around be be accessed globally by and graphics.
+# StyleService has current_style instance_variable which can be set for differnt publications, 
+# such as chapter, magazine_article, newspaper, or default.
+# We can set current_style of StyleService with custom styles at load time. This allows us to apply custom styles for different job. current_style Hash is merge with custom style.
+
 # Style should be defined as constants
 # DEFAULT_STYLES
 # custom styles should be defined in CUSTOM_STYLE and merged with DEFAULT_STYLES of its kind
@@ -28,15 +34,10 @@ DEFAULT_STYLES={
   "main"=> {
     :column_count=>2,
   },
-  "Title"   =>{:font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
   "title"   =>{:font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
-  "SubTitle"=>{:font => 'Times',     :text_size=>20.0, :text_color => 'black'},
   "subtitle"=>{:font => 'Times',     :text_size=>20.0, :text_color => 'black'},
-  "Author"  =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_alignment=>'right'},
   "author"  =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'black', :text_alignment=>'right'},
-  "Lead"    =>{:font => 'Helvetica', :text_size=>18.0, :text_color => 'gray'},
   "lead"    =>{:font => 'Helvetica', :text_size=>18.0, :text_color => 'gray'},
-  "Leading" =>{:font => 'Times',     :text_size=>18.0, :text_color => 'gray'},
   "leading" =>{:font => 'Times',     :text_size=>18.0, :text_color => 'gray'},
   "h1"      =>{:font => 'Helvetica', :text_size=>70.0, :text_color => 'black'},
   "h2"      =>{:font => 'Helvetica', :text_size=>36.0, :text_color => 'black'},
@@ -52,19 +53,22 @@ DEFAULT_STYLES={
   "header"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "page_number" =>{:font => 'Times', :text_size=>10.0, :text_color => 'black'},
+  "ordered_list"      =>"h5",
+  "unordered_list"    =>"h5",
+  "ordered_section"   =>"h5",
+  "upper_alpha_list"  =>"h5",
+  "ordered_list_item" => "p",
+  "unordered_list_item" => "p",
+  
 }
+
 
 MAGAZINE_STYLES={
   "heading_columns" => [1,2,2,2,3,4,4],
-  "Title"   =>{:font => 'Times',     :text_size=>24.0, :text_color => 'yellow', :text_alignment=>'center'},
   "title"   =>{:font => 'Times',     :text_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
-  "SubTitle"=>{:font => 'Times',     :text_size=>20.0, :text_color => 'black'},
   "subtitle"=>{:font => 'Times',     :text_size=>20.0, :text_color => 'black'},
-  "Author"  =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
   "author"  =>{:font => 'Helvetica', :text_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
-  "Lead"    =>{:font => 'Helvetica', :text_size=>24.0, :text_color => 'black'},
   "lead"    =>{:font => 'Helvetica', :text_size=>24.0, :text_color => 'black'},
-  "Leading" =>{:font => 'Times',     :text_size=>24.0, :text_color => 'black'},
   "leading" =>{:font => 'Times',     :text_size=>24.0, :text_color => 'black'},
   "h1"      =>{:font => 'Helvetica', :text_size=>70.0, :text_color => 'black'},
   "h2"      =>{:font => 'Helvetica', :text_size=>36.0, :text_color => 'black'},
@@ -116,6 +120,12 @@ CHAPTER_STYLES={
   "header"  =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black', :footer_margin=>30},
   "page_number" =>{:font => 'Times', :text_size=>10.0, :text_color => 'black'},
+  "ordered_list"      =>"h5",
+  "unordered_list"    =>"h5",
+  "ordered_section"   =>"h5",
+  "upper_alpha_list"  =>"h5",
+  "ordered_list_item" => "p",
+  "unordered_list_item" => "p",
 }
 
 NEWS_STYLES={
@@ -139,11 +149,17 @@ NEWS_STYLES={
   "header"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "page_number" =>{:font => 'Times', :text_size=>10.0, :text_color => 'black'},
-  "grid_size" => [147.22, 131.98],
+  "ordered_list"      =>"h5",
+  "unordered_list"    =>"h5",
+  "ordered_section"   =>"h5",
+  "upper_alpha_list"  =>"h5",
+  "ordered_list_item" => "p",
+  "unordered_list_item" => "p",
 }
 
-HEADING_KIND= %w[h1 h2 h3 h4 title subtitle author lead]
-BODY_KIND= %w[h5 h6 p heading1 heading2 heading3 body]
+HEADING_KIND  = %w[h1 h2 h3 h4 title subtitle author lead]
+BODY_KIND     = %w[h5 h6 p heading1 heading2 heading3 body]
+LIST_KIND     = %w[ordered_list ordered_list_item unordered_list unordered_list_item ordered_section upper_alpha_list]
 
 module RLayout
   class StyleService

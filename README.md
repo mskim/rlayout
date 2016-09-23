@@ -120,15 +120,20 @@ TODO List
 2016 9 23
 	- fix Hex Color
 	- fix new line
-	- background color 
-	- Custom Style Support for  List
+	- background color in Paragraph
+	- Custom Style Support for List
 	
 	- HeadingContainer
 		We need a mechanism to replace Heading Template with markup text.
-		- set_tag_map sets :markup_to_tag_map 
+		since markup do not have keys, we need to idetify which maps to which tag,
+		this is where @markup_to_tag_map comes in as pre-defined keys, 
+		hash = Hash(@markup_to_tag_map.zip markup_lines)
+		we use this hash to look for tag and replace it with value.
+		
+		- set_tag_map sets :markup_to_tag_map to HeadingContainer
 		an array of key symbols in order of markup input sequence
 		it is used to replace HeadingContainer content with markup.
-		it acts as a map.
+		
 	- OrderedList
 	- UnrrderedList
 	- OrderedSection

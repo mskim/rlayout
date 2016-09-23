@@ -1,4 +1,9 @@
 
+# SectionChapter is a special chapter composed of section pages
+# It is used in document composed of pages with section headings.
+# Sections are seperated by section mark "## " /^##\d\s/
+# markdown2section_data is called to parse and collect para data by sections, each headed with heading Hash. markdown2section_data returns an array with data for each section. First element of those array contains Heading element.
+
 # SpreadChapter is a chapter made of Spread, two pages
 # we want to make sure that they remain as two page document.
 # Story is given with a format with two page content
@@ -113,7 +118,7 @@ module RLayout
           para_options = {}
           para_options[:markup]         = para[:markup]
           para_options[:layout_expand]  = [:width]
-          if para[:markup] == 'h1'
+          if para[:markup]    == 'h1'
             current_section_paragraph << para
           elsif para[:markup] == 'h2'
             current_section_paragraph << para
@@ -153,8 +158,8 @@ module RLayout
       if heading = @first_page.has_heading?
         @first_page_heading = @first_page.heading_object        
       else
-        @heading[:layout_expand]  = [:width, :height]
-        heading_object            = Heading.new(@heading)
+        @heading[:layout_expand] = [:width, :height]
+        heading_object           = Heading.new(@heading)
         @first_page.graphics.unshift(heading_object)
         heading_object.parent_graphic = @first_page
       end
@@ -175,14 +180,12 @@ module RLayout
       end
       @first_page.main_box.layout_items(first_section_paragraph)
       @sections_paragraph.shift
-
       # now go for the second page
       @page_index = 1
       @sections_paragraph.each  do |section_paragraphs|
         if section_paragraphs.first.class == Hash
           heading = section_paragraphs.shift
           # layout heading
-          
         end
         while section_paragraphs.length > 0
           if @page_index >= @document.pages.length

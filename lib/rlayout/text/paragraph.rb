@@ -43,8 +43,9 @@ module RLayout
   
   # tab Token
   
+  #TODO add markup, read styles from StyleService
   class Paragraph < Container
-    attr_accessor :paragraph_type
+    attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
     attr_accessor :para_string, :para_style, :space_width
     attr_accessor :text_column, :grid_height, :h_alignment, :first_line_indent 
@@ -53,7 +54,7 @@ module RLayout
     def initialize(options={})
       super      
       #simple, drop_cap, drop_cap_image, math, with_image, with_math
-      @paragraph_type = options.fetch(:paragraph_type, 'simple') 
+      @markup         = options.fetch(:markup, 'p') 
       @para_string    = options.fetch(:para_string, "")
       @para_style     = default_para_style
       @para_style     = @para_style.merge(options) #if options[:para_style]
@@ -274,7 +275,7 @@ module RLayout
     def to_hash
       h = {}
       h[:width]  = @width
-      h[:paragraph_type]  = @paragraph_type
+      h[:markup]  = @markup
       h[:para_style]      = @para_style
       h[:linked]          = true
       h
@@ -301,6 +302,7 @@ module RLayout
 	    @underflow == true
 	  end
 	  
+	  # I should read it from StyleService
     def default_para_style
       default               = {}
       default[:font]        = "smSSMyungjoP-W30"
