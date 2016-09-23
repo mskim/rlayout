@@ -151,9 +151,7 @@ module RLayout
       @page_index               = 0
       @first_page               = @document.pages[0]
       if heading = @first_page.has_heading?
-        @first_page_heading = @first_page.heading_object
-        @tag_order = @first_page_heading.line_to_tag_order.map{|e| e.to_sym}
-        
+        @first_page_heading = @first_page.heading_object        
       else
         @heading[:layout_expand]  = [:width, :height]
         heading_object            = Heading.new(@heading)
@@ -168,7 +166,7 @@ module RLayout
       @first_page.main_box.set_overlapping_grid_rect
       first_section_paragraph = @sections_paragraph.first
       first_item = first_section_paragraph.first
-      if first_item.is_a?(Hash)
+      if first_item.is_a?(Hash) && @first_page_heading
         @first_page_heading.set_content(first_item)
         first_item = first_section_paragraph.shift
       elsif first_item.is_a?(RLayout::FloatGroup)

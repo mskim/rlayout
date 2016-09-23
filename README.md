@@ -116,7 +116,24 @@ TODO List
 			- index
 			- glossary
 		- put templates under rubymotion app/resouces/
-		
+
+2016 9 23
+	- fix Hex Color
+	- fix new line
+	- background color 
+	- Custom Style Support for  List
+	
+	- HeadingContainer
+		We need a mechanism to replace Heading Template with markup text.
+		- set_tag_map sets :markup_to_tag_map 
+		an array of key symbols in order of markup input sequence
+		it is used to replace HeadingContainer content with markup.
+		it acts as a map.
+	- OrderedList
+	- UnrrderedList
+	- OrderedSection
+	- UpperAlphaList
+	
 2016 9 22
 	- markup2heading key_map
 	- style_run

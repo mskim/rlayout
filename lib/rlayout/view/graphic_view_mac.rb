@@ -198,7 +198,8 @@ class GraphicViewMac < NSView
     elsif color_string=~/^#/   #for hex color
       string = color_string[1..5] 
       color_values = hex2rgb(string)
-      return NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:1.0)
+      color_values.map!{|v| v/1000.0}
+      return NSColor.colorWithCalibratedRed(color_values[0], green:color_values[1], blue:color_values[2], alpha:1.0)
     end
     color_array=color_string.split("=")
     color_kind=color_array[0]

@@ -7,7 +7,7 @@
 module RLayout
 
 	class HeadingContainer < Container
-	  attr_accessor :line_to_tag_order
+	  attr_accessor :markup_to_tag_map
 	  def initialize(options={}, &block)
 	    options[:layout_expand] = :width unless options[:layout_expand]
 	    super
@@ -17,16 +17,16 @@ module RLayout
 	    self
 	  end
     
-    def set_tag_order(tag_order_array)      
-      @line_to_tag_order = tag_order_array.map{|e| e.to_sym}
+    def set_tag_map(tag_order_array)      
+      @markup_to_tag_map = tag_order_array.map{|e| e.to_sym}
     end
 	  # look for graphics with same tag as content_hash element
 	  # and replace the content with new one.
 	  def set_content(first_item)
 	    v = first_item[:string].split("\n")
-      content_hash = Hash[@line_to_tag_order.zip v]
+      content_hash = Hash[@markup_to_tag_map.zip v]
       @graphics.each do |graphic|
-        if graphic.tag && @line_to_tag_order.include?(graphic.tag.to_sym)
+        if graphic.tag && @markup_to_tag_map.include?(graphic.tag.to_sym)
           if graphic.is_a?(Text)
             graphic.set_text(content_hash[graphic.tag.to_sym])
           elsif graphic.is_a?(Image)
