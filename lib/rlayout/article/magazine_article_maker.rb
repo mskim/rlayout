@@ -95,39 +95,32 @@ module RLayout
       end
       @paragraphs =[]
       @story[:paragraphs].each do |para|
-        para_options = {}
-        para_options[:markup]         = para[:markup]
-        para_options[:layout_expand]  = [:width]
+        para[:layout_expand]  = [:width]
         if para[:markup] == 'img'
           # support ![] syntex
           source = para[:local_image]
-          para_options[:caption]        = para[:caption]
-          para_options[:bottom_margin]  = 10
-          para_options[:bottom_inset]   = 10
-          para_options[:image_path] = @images_dir + "/#{source}"
-          @paragraphs << Image.new(para_options)
-          next
+          para[:bottom_margin]  = 10
+          para[:bottom_inset]   = 10
+          para[:image_path] = @images_dir + "/#{source}"
+          @paragraphs << Image.new(para)
         elsif para[:markup] == 'image'
           source = para[:local_image]
-          # para_options[:caption]        = para[:caption]
-          para_options[:bottom_margin]  = 10
-          para_options[:bottom_inset]   = 10
-          para_options[:image_path] = @images_dir + "/#{source}"
-          @paragraphs << Image.new(para_options)
-          next
+          para[:bottom_margin]  = 10
+          para[:bottom_inset]   = 10
+          para[:image_path] = @images_dir + "/#{source}"
+          @paragraphs << Image.new(para)
         elsif para[:markup] == 'table'
           para[:layout_expand]  = [:width]
           if para[:csv_path]
             para[:csv_path] = @tables_dir + "/#{para[:csv_path]}"
           end
           @paragraphs << Table.new(para)
-          next
+        else
+          para[:article_type]   = @article_type
+          para[:text_fit]       = FIT_FONT_SIZE
+          para[:layout_lines]   = false
+          @paragraphs << Paragraph.new(para)
         end
-        para_options[:para_string]    = para[:string]
-        para_options[:article_type]   = @article_type
-        para_options[:text_fit]       = FIT_FONT_SIZE
-        para_options[:layout_lines]   = false
-        @paragraphs << Paragraph.new(para_options)
       end
     end
 

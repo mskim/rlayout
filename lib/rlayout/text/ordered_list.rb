@@ -1,6 +1,6 @@
 module RLayout
   
-  
+  #eed0c0
   # OrderedList is created with given block of ordered list item text block
   # TODO
   # Indenting, tab, first_line_indent, head_indent
@@ -62,6 +62,8 @@ module RLayout
     attr_accessor :order, :level, :indent
     def initialize(options={})
       super
+      @para_style = default_para_style
+      @fill[:color] = @para_style[:fill_color] if @para_style[:fill_color]
       #TODO make @indent relative to font size
       @indent             = options.fetch(:indent, 15)
       @order              = options[:order]
@@ -71,12 +73,41 @@ module RLayout
       @head_indent        = @first_line_indent + @indent
       self
     end
+    # I should read it from StyleService
+    def default_para_style   
+      default               = {}
+      default[:fill_color]  = "clear"
+      default[:font]        = "smSSMyungjoP-W30"
+      default[:text_size]   = 10
+      default[:space_width] = 4
+      default[:color]       = "black"
+      default[:style]       = "plain"
+      default[:h_alignment] = "left"
+      default[:v_alignment] = "center"
+      default[:first_line_indent] = 20
+      default[:head_indent] = 3
+      default[:tail_indent] = 3      
+      default[:tab_stops]   = [['left', 20], ['left', 40], ['left', 60],['left', 80]]
+      style = RLayout::StyleService.shared_style_service.current_style[@markup]
+            
+      if style.class == String
+        # this is when a style is refering to other style
+        style = RLayout::StyleService.shared_style_service.current_style[style]
+      end
+      if style
+        default.merge! style 
+      else
+      end       
+      default
+    end
+      
   end
   
   class OrderedSection < Paragraph
     attr_accessor :current_order, :ordering_char_types, :text_block
     def initialize(options={})
       super      
+      @fill[:fill_color] = @para_style[:fill_color] if @para_style[:fill_color]
       @ordering_char_types  = options.fetch(:ordering_char_types, %w[A 1 a])
       @text_block           = options[:text_block]
       parse_list_items
@@ -91,25 +122,22 @@ module RLayout
       elsif @text_block.class == String
         @list_text = @text_block.split("\n")
       end
-      @list_text.each do |list|
+      @list_text.each_with_index do |list, i|
         case list
         when /^[0-9]\.\s/
           # ordering_char = (@ordering_char_types[0].ord + @current_order[0]).chr
           para_string = list
           OrderedListItem.new(parent: self, para_string: para_string, level: 0, order: @current_order[0], markup: "ordered_section")
-        when /^\s?\w\s/
-          # ordering_char = (@ordering_char_types[1].ord + @current_order[1]).chr
-          # ordering_char = "\t" + ordering_char + ". "
-          # para_string = list.sub(/^\.\.\s/ , ordering_char)
-          para_string = list
-          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_list_item") ##f5af3a
         else
           para_string = list
-          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_list_item")
+          if i == 1
+            OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_section_item")
+          else
+            OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_section_item2")
+          end
         end
       end
     end    
-    
   end
   
   class UpperAlphaList < Paragraph
@@ -142,7 +170,7 @@ module RLayout
           # ordering_char = "\t" + ordering_char + ". "
           # para_string = list.sub(/^\.\.\s/ , ordering_char)
           para_string = list
-          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_list_item")
+          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "upper_alpha_list_item")
         end
       end
     end

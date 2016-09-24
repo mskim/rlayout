@@ -290,7 +290,6 @@ module  RLayout
   end
 
   def color_from_hex(color_string)
-    puts "color_from_hex of utility"
     hex_color = color_string.gsub("#", "")
     case hex_color.size
       when 3

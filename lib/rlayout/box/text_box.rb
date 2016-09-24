@@ -265,7 +265,6 @@ module RLayout
       column_index = 0
       current_column = @graphics[column_index]
       while @item  = flowing_items.shift do
-        puts "@item.class:#{@item.class}"
         if @item.is_a?(Hash)
           puts "@item+++++++++++ :#{@item}"
           next
@@ -274,7 +273,6 @@ module RLayout
           # for List block insert list items to flowing_items
           while @item.graphics.length > 0
             list_item = @item.graphics.pop
-            puts "in list_item.para_string:#{list_item.para_string}"
             # puts "list_item.para_string:#{list_item.para_string}"
             flowing_items.unshift(list_item)
           end

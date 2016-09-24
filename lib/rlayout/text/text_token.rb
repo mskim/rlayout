@@ -40,6 +40,7 @@
 #
 #
 module RLayout
+  # token fill_color is set by optins[:token_color] or it is set to clear
   
   class TextToken < Graphic
     attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
@@ -57,6 +58,7 @@ module RLayout
         # TODO fix get string with from Rfont
         @width  = 30
       end
+      options[:fill_color] = options.fetch(:token_color, 'clear')
       super
       @x      = 0
       @y      = 0

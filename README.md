@@ -118,13 +118,20 @@ TODO List
 		- put templates under rubymotion app/resouces/
 
 2015 9 25
-	- style_run
-	A problem: There are many cases where we have mixed styles in a paragraph. Text could be separated by \t 
-	And for each segment style_run is used to address this. 
+	- Paragraph fill_color
+		all line_fill_color = "Clear"
+		all tokne_fill_color = "Clear"
+		make token colors as "clear", make line fill_as
+	- space_before, space_after in layout_lines
 	
+	- style_run
+	A problem: There are many cases where we have mixed styles in a
+	paragraph. Text could be separated by \t 
+	And for each segment style_run is used to address this. 
 	defined in styles, it is a run 
+	
 2016 9 24
-	in documnet template load current_style with options[:current_style]
+	in document template load current_style with options[:current_style]
 	options[:current_style]   = text_style
 	options[:layout_style]    = @layout_style
 	RLayout::Document.new(options)

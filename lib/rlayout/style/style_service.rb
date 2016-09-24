@@ -149,12 +149,12 @@ NEWS_STYLES={
   "header"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "page_number" =>{:font => 'Times', :text_size=>10.0, :text_color => 'black'},
-  "ordered_list"      =>"h5",
-  "unordered_list"    =>"h5",
-  "ordered_section"   =>"h5",
-  "upper_alpha_list"  =>"h5",
-  "ordered_list_item" => "p",
-  "unordered_list_item" => "p",
+  "ordered_list"  =>{:font => 'Helvetica', :text_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "unordered_list"=>{:font => 'Helvetica', :text_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "ordered_section" =>{:font => 'Helvetica', :text_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "upper_alpha_list"=>{:font => 'Helvetica', :text_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "ordered_list_item"=>{:font => 'Helvetica', :text_size=>0.0, :text_line_spacing=>5, :text_color => 'black'},
+  "unordered_list_item"=>{:font => 'Helvetica', :text_size=>0.0, :text_line_spacing=>5, :text_color => 'black'},
 }
 
 HEADING_KIND  = %w[h1 h2 h3 h4 title subtitle author lead]

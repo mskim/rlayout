@@ -23,6 +23,7 @@ module RLayout
         @fill                   = FillStruct.new('white')
         @fill[:color]           = options[:fill_color]        if options[:fill_color]
       end
+
     end
   end
 end

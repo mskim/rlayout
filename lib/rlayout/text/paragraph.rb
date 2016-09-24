@@ -44,8 +44,8 @@ module RLayout
   class Paragraph < Container
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
-    attr_accessor :para_string, :para_style, :space_width
-    attr_accessor :text_column, :grid_height, :h_alignment, :first_line_indent 
+    attr_accessor :para_string, :para_style
+    attr_accessor :text_column, :grid_height 
     attr_accessor :overflow, :underflow, :overflowing_line_index, :linked, :line_y_offset
 
     def initialize(options={})
@@ -54,11 +54,6 @@ module RLayout
       @markup         = options.fetch(:markup, 'p') 
       @para_string    = options.fetch(:para_string, "")
       @para_style     = default_para_style
-      @para_style     = @para_style.merge(options[:para_style]) if options[:para_style]
-      @h_alignment    = @para_style[:h_alignment]
-      @first_line_indent = @para_style[:first_line_indent]
-      @head_indent    = @para_style[:head_indent]
-      @tail_indent    = @para_style[:tail_indent]
       @space_width    = @para_style[:space_width]
       @grid_height    = options.fetch(:grid_height, 2)
       @linked         = options.fetch(:linked, false) 
@@ -115,7 +110,7 @@ module RLayout
       @atts = {}
       if RUBY_ENGINE == 'rubymotion'
         @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:text_size])
-        @space_width  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
+        @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
         @para_style[:atts] = @atts
       end
       if @para_string =~DefRegex
@@ -164,14 +159,17 @@ module RLayout
       @width            = @column_width
       @first_line_width = @column_width
       @text_line_width  = @column_width
-      if @h_alignment == "left" || @h_alignment == "justified"
-        @first_line_width = @column_width - @first_line_indent - @tail_indent
+      if @para_style[:h_alignment] == "left" || @para_style[:h_alignment] == "justified"
+        @first_line_width = @column_width - @para_style[:first_line_indent] - @para_style[:tail_indent]
       else
-        @first_line_width = @column_width - @head_indent - @tail_indent
-        @text_line_width  = @column_width - @head_indent - @tail_indent 
+        @first_line_width = @column_width - @para_style[:head_indent] - @para_style[:tail_indent]
+        @text_line_width  = @column_width - @para_style[:head_indent] - @para_style[:tail_indent] 
       end
       @body_line_height = @text_column.body_line_height
       @line_y_offset    = 0
+      if @para_style[:space_before]
+        @line_y_offset  = @para_style[:space_before]
+      end
       @total_token_width= 0
       @line_tokens      = []
       @line_index       = 0
@@ -184,11 +182,11 @@ module RLayout
       while @tokens.length > 0
         token = @tokens.first 
         if @line_index == 0 && !@linked
-          @line_x     = @first_line_indent
+          @line_x     = @para_style[:first_line_indent]
           @line_width = @first_line_width
         else
           @line_width = @text_line_width
-          @line_x     = @head_indent
+          @line_x     = @para_style[:head_indent]
         end
         
         if text_column.is_simple_column? || text_column.is_rest_of_area_simple?
@@ -218,25 +216,25 @@ module RLayout
             @line_y_offset += @tallest_token_height
             next
           else            
-            if @line_rectangle[0] > @head_indent
+            if @line_rectangle[0] > @para_style[:head_indent]
               #TODO tail_indent
               @line_x     = @line_rectangle[0]              
             else
-              # @head_indent is right of line origin
-              # use head_indent, adjust width as @line_rectangle[2] - (@head_indent - @line_rectangle[0])
-              @line_x     = @head_indent              
-              @line_width = @line_rectangle[2] - (@head_indent - @line_rectangle[0])
+              # @para_style[:head_indent] is right of line origin
+              # use head_indent, adjust width as @line_rectangle[2] - (@para_style[:head_indent] - @line_rectangle[0])
+              @line_x     = @para_style[:head_indent]              
+              @line_width = @line_rectangle[2] - (@para_style[:head_indent] - @line_rectangle[0])
             end
           end
         end
         
         # check for space for more tokens
-        if  (@total_token_width + @space_width + token.width) < @line_width
-          @total_token_width += (@space_width + token.width)
+        if  (@total_token_width + @para_style[:space_width] + token.width) < @line_width
+          @total_token_width += (@para_style[:space_width] + token.width)
           token = @tokens.shift
           @line_tokens << token
         else 
-          options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @line_width, height: @line_rectangle[3], space_width: @space_width}
+          options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @line_width, height: @line_rectangle[3], space_width: @para_style[:space_width]}
           line = LineFragment.new(options)
           @line_y_offset += line.height
           @line_tokens = []
@@ -246,11 +244,15 @@ module RLayout
         @height = @line_y_offset
       end
       if @line_tokens.length > 0
-        options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @line_width, height: @line_rectangle[3], space_width: @space_width}
-        # options = {parent: self, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @column_width, height: @body_line_height, space_width: @space_width}
+        options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @line_width, height: @line_rectangle[3], space_width: @para_style[:space_width]}
+        # options = {parent: self, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @column_width, height: @body_line_height, space_width: @para_style[:space_width]}
         line    = LineFragment.new(options)
         @line_y_offset += line.height
-        @height = @line_y_offset
+        if @para_style[:space_after]
+          @height = @line_y_offset + @para_style[:space_after]
+        else
+          @height = @line_y_offset
+        end
       end
     end
 	  
@@ -303,7 +305,7 @@ module RLayout
     def default_para_style      
       default               = {}
       default[:font]        = "smSSMyungjoP-W30"
-      default[:text_size]        = 10
+      default[:text_size]   = 10
       default[:space_width] = 4
       default[:color]       = "black"
       default[:style]       = "plain"
@@ -312,28 +314,36 @@ module RLayout
       default[:first_line_indent] = 20
       default[:head_indent] = 3
       default[:tail_indent] = 3
+      default[:space_before]= 0
+      default[:space_after] = 0
       default[:tab_stops]   = [['left', 20], ['left', 40], ['left', 60],['left', 80]]
       style = RLayout::StyleService.shared_style_service.current_style[@markup]
       if style.class == String
         # this is when a style is refering to other style
         style = RLayout::StyleService.shared_style_service.current_style[style]
       end
+      
       if style
-        default.merge style 
+        default.merge! style 
       else
-      end
+      end      
+      # if @markup == "ordered_section_item2"
+      #   puts "ordered_section_item2"
+      #   puts "style:#{style}"
+      # end
       default
     end
   end
 
-  
+  # line fill_color is set by optins[:line_color] or it is set to clear
   class	LineFragment < Container
     attr_accessor :line_type #first_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent, :para_style
     attr_accessor :x, :y, :width, :height, :total_token_width
   	def	initialize(options={})
-      # options[:stroke_color]     = 'red'
-      options[:layout_direction] = 'horizontal'
+      # options[:stroke_color]    = 'red'
+      options[:layout_direction]  = 'horizontal'
+      options[:fill_color]        = options.fetch(:line_color, 'clear')
   	  super
       # @tokens         = @text_layout_manager.tokens
   	  @graphics         = options[:tokens]

@@ -1,32 +1,3 @@
-=begin
-- (id)shadeColor:(NSColor *)color shade:(float)s {
-    NSString *space = [color colorSpaceName];
-    if(s == 1) return color;
-    if([space isEqualToString:SMDeviceSpotColorSpace]) {
-  float c, m, y, k;
-  NSString *colorName;
-  NSColor *screenColor = [(SMSpotColor *)color screenColor];
-  [screenColor getCyan:&c magenta:&m yellow:&y black:&k alpha:NULL];
-  colorName = [color colorNameComponent];
-  color = [SMSpotColor colorWithSpotCyan:c magenta:m yellow:y black:k alpha:1.0 name:colorName];
-  [(SMSpotColor *)color setShade:s];
-  return color;
-    }
-    else if(tocmyk || [space isEqualToString:NSDeviceCMYKColorSpace]) {
-  float c, m, y, k, a;
-  [[color colorUsingColorSpaceName:NSDeviceCMYKColorSpace] getCyan:&c magenta:&m yellow:&y black:&k alpha:&a];
-  return [NSColor colorWithDeviceCyan:c*s magenta:m*s yellow:y*s black:k*s alpha:a];
-    } else if([space isEqualToString:NSCalibratedWhiteColorSpace] || [space isEqualToString:NSDeviceWhiteColorSpace]) {
-  float w = (1.0 - [color whiteComponent]) * s;
-  return [NSColor colorWithCalibratedWhite:w alpha:[color alphaComponent]];
-    } else {
-  float r, g, b, a;
-  s = 1.0 - s;
-  [color getRed:&r green:&g blue:&b alpha:&a];
-  return [NSColor colorWithCalibratedRed:r + (1.0 - r)*s green:g + (1.0-g)*s blue:b+(1.0 - b)*s alpha:a];
-    }
-}
-=end
 
 #shape
 RECTANGLE   = 0

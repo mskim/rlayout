@@ -161,7 +161,7 @@ module RLayout
       @column_count = options.fetch(:column_count, 1)
       if proposed_style = options[:current_style]
         if proposed_style.is_a?(Hash) && proposed_style != {}
-          RLayout::StyleService.shared_style_service.current_style.merge proposed_style
+          RLayout::StyleService.shared_style_service.current_style.merge! proposed_style
         end 
       end
       
