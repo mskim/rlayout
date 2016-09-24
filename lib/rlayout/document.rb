@@ -159,7 +159,12 @@ module RLayout
       end
       @page_headings = options.fetch(:page_headings,[])
       @column_count = options.fetch(:column_count, 1)
-      RLayout::StyleService.shared_style_service.current_style = options.fetch(:current_style, DEFAULT_STYLES)
+      if proposed_style = options[:current_style]
+        if proposed_style.is_a?(Hash) && proposed_style != {}
+          RLayout::StyleService.shared_style_service.current_style.merge proposed_style
+        end 
+      end
+      
       if @toc_on
         # save_toc elements for this document
         @toc_elements = []

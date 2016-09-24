@@ -194,7 +194,6 @@ module  RLayout
   
   
   def color_from_string(color_string)
-    puts "color from string of utility"
     if color_string == nil
       return NSColor.whiteColor
     end

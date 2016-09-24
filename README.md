@@ -117,6 +117,18 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2015 9 25
+	- style_run
+	A problem: There are many cases where we have mixed styles in a paragraph. Text could be separated by \t 
+	And for each segment style_run is used to address this. 
+	
+	defined in styles, it is a run 
+2016 9 24
+	in documnet template load current_style with options[:current_style]
+	options[:current_style]   = text_style
+	options[:layout_style]    = @layout_style
+	RLayout::Document.new(options)
+	
 2016 9 23
 	- fix Hex Color
 	- fix new line
@@ -124,15 +136,14 @@ TODO List
 	- Custom Style Support for List
 	
 	- HeadingContainer
-		We need a mechanism to replace Heading Template with markup text.
-		since markup do not have keys, we need to idetify which maps to which tag,
-		this is where @markup_to_tag_map comes in as pre-defined keys, 
-		hash = Hash(@markup_to_tag_map.zip markup_lines)
-		we use this hash to look for tag and replace it with value.
+		We need a mechanism to replace Heading Template text with markup text.
+		since markups do not have keys, we need to idetify which maps to which tag,
+		this is where @tag_list comes in as pre-defined keys, 
+		hash = Hash(@tag_list.zip markup_lines)
+		we use this hash to look for tags and replace it with values.
 		
-		- set_tag_map sets :markup_to_tag_map to HeadingContainer
-		an array of key symbols in order of markup input sequence
-		it is used to replace HeadingContainer content with markup.
+		- set_tag_list sets :tag_list to HeadingContainer
+			it converts String tags to Symbol tags 
 		
 	- OrderedList
 	- UnrrderedList

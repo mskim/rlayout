@@ -1,8 +1,8 @@
 
-# Text and Paragraph are used for handling text.
-# Text is used for simple text, usually for single page document or Ads.
+# For text handling, Text and Paragraph are used 
+# Text Object is used for simple text, usually for single page document or Ads.
 # Text uses NSTextSystem
-# Paragraph is used in middle to long document.
+# Paragraph Object is used in middle to long document.
 # Paragraph uses our own text system.
 
 # How Paragraoh is layed out?
@@ -25,10 +25,7 @@ DefRegex = /(def_.*?\(.*?\))/
 
 
 module RLayout
-    
-  # Paragraph
-  # This is Paragraph for long document and Math equations and other special effects.
-  
+
   #TODO
   # tab stop
   # implementing paragraph with tab
@@ -57,7 +54,7 @@ module RLayout
       @markup         = options.fetch(:markup, 'p') 
       @para_string    = options.fetch(:para_string, "")
       @para_style     = default_para_style
-      @para_style     = @para_style.merge(options) #if options[:para_style]
+      @para_style     = @para_style.merge(options[:para_style]) if options[:para_style]
       @h_alignment    = @para_style[:h_alignment]
       @first_line_indent = @para_style[:first_line_indent]
       @head_indent    = @para_style[:head_indent]
@@ -303,7 +300,7 @@ module RLayout
 	  end
 	  
 	  # I should read it from StyleService
-    def default_para_style
+    def default_para_style      
       default               = {}
       default[:font]        = "smSSMyungjoP-W30"
       default[:text_size]        = 10
@@ -315,7 +312,16 @@ module RLayout
       default[:first_line_indent] = 20
       default[:head_indent] = 3
       default[:tail_indent] = 3
-      default[:tab_stops] = [['left', 20], ['left', 40], ['left', 60],['left', 80]]
+      default[:tab_stops]   = [['left', 20], ['left', 40], ['left', 60],['left', 80]]
+      style = RLayout::StyleService.shared_style_service.current_style[@markup]
+      if style.class == String
+        # this is when a style is refering to other style
+        style = RLayout::StyleService.shared_style_service.current_style[style]
+      end
+      if style
+        default.merge style 
+      else
+      end
       default
     end
   end

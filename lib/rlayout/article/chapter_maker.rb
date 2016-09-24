@@ -205,38 +205,25 @@ module RLayout
       @paragraphs =[]
       @story[:paragraphs].each do |para|
         next if para.nil?
-        para_options = {}
-        para_options[:markup]         = para[:markup]
-        para_options[:layout_expand]  = [:width]
+        para[:layout_expand]  = [:width]
         if para[:markup] == 'img' && para[:string]
-          para_options.merge!(eval(para[:string]))
+          para.merge! eval(para.delete(:string))
           @paragraphs << Image.new(para_options)
-          next
         elsif para[:markup] == 'table'
-          #TODO
           @paragraphs << Table.new(para)
-          next
         elsif para[:markup] == 'photo_page'
           @paragraphs << PhotoPage.new(para)
-          next
         elsif para[:markup] == 'float_group'
           @paragraphs << FloatGroup.new(para)
-          next
         elsif para[:markup] == 'pdf_insert'
           @paragraphs << PdfInsert.new(para)
-          next
         elsif para[:markup] == 'ordered_list'
-          @paragraphs << OrderedList.new(text_block: para[:text_block])
-          next
+          @paragraphs << OrderedList.new(para)
         elsif para[:markup] == 'unordered_list'
-          @paragraphs << UnorderedList.new(text_block: para[:text_block])
-          next
+          @paragraphs << UnorderedList.new(para)
+        else
+          @paragraphs << Paragraph.new(para) 
         end
-        para_options[:para_string]    = para[:string]
-        if para[:string].nil?
-          puts "we have para[:string].nil?"
-        end
-        @paragraphs << Paragraph.new(para_options) unless para[:string].nil?
       end
     end
 

@@ -11,7 +11,7 @@ module RLayout
   # ordering_char_types=  %w[1 a A] #[number, lower_alphabet, upper_alphabet]
   # optional array can be passed with custom  
   # TODO this is adoc style do it for markdown as well
-  class OrderedList < Container
+  class OrderedList < Paragraph
     attr_accessor :current_order, :ordering_char_types, :text_block
     def initialize(options={})
       super
@@ -73,10 +73,10 @@ module RLayout
     end
   end
   
-  class OrderedSection < Container
+  class OrderedSection < Paragraph
     attr_accessor :current_order, :ordering_char_types, :text_block
     def initialize(options={})
-      super
+      super      
       @ordering_char_types  = options.fetch(:ordering_char_types, %w[A 1 a])
       @text_block           = options[:text_block]
       parse_list_items
@@ -96,23 +96,23 @@ module RLayout
         when /^[0-9]\.\s/
           # ordering_char = (@ordering_char_types[0].ord + @current_order[0]).chr
           para_string = list
-          OrderedListItem.new(parent: self, para_string: para_string, level: 0, order: @current_order[0], text_size: 12, text_color: "blue")
+          OrderedListItem.new(parent: self, para_string: para_string, level: 0, order: @current_order[0], markup: "ordered_section")
         when /^\s?\w\s/
           # ordering_char = (@ordering_char_types[1].ord + @current_order[1]).chr
           # ordering_char = "\t" + ordering_char + ". "
           # para_string = list.sub(/^\.\.\s/ , ordering_char)
           para_string = list
-          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], fill_color: "yellow", text_size: 9) ##f5af3a
+          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_list_item") ##f5af3a
         else
           para_string = list
-          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], fill_color: "orange", text_size: 9)
+          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_list_item")
         end
       end
     end    
     
   end
   
-  class UpperAlphaList < Container
+  class UpperAlphaList < Paragraph
     attr_accessor :current_order, :ordering_char_types, :text_block
     def initialize(options={})
       super
@@ -136,20 +136,20 @@ module RLayout
           # ordering_char = (@ordering_char_types[0].ord + @current_order[0]).chr
           # para_string = list.sub(/^\./ , ordering_char)
           para_string = list
-          OrderedListItem.new(parent: self, para_string: para_string, level: 0, order: @current_order[0])
+          OrderedListItem.new(parent: self, para_string: para_string, level: 0, order: @current_order[0], markup: "upper_alpha_list")
         when /^\d\s/
           # ordering_char = (@ordering_char_types[1].ord + @current_order[1]).chr
           # ordering_char = "\t" + ordering_char + ". "
           # para_string = list.sub(/^\.\.\s/ , ordering_char)
           para_string = list
-          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1])
+          OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_list_item")
         end
       end
     end
   end
   
   
-  class UnorderedList < Container    
+  class UnorderedList < Paragraph    
     attr_accessor :current_order, :ordering_char_types, :text_block
     def initialize(options={})
       super
@@ -171,7 +171,7 @@ module RLayout
         when /^\*\s/
           ordering_char = @ordering_char_types[0]
           para_string = list.sub(/^\*/ , ordering_char)
-          UnorderedListItem.new(parent: self, para_string: para_string, level: 0, order: @current_order[0])
+          UnorderedListItem.new(parent: self, para_string: para_string, level: 0, order: @current_order[0], markup: "unordered_list_item")
           @current_order[0] += 1
           @current_order[1] = 0
           @current_order[2] = 0
@@ -179,14 +179,14 @@ module RLayout
           ordering_char = @ordering_char_types[1]
           ordering_char = "\t" + ordering_char
           para_string = list.sub(/^\*\*/ , ordering_char)
-          UnorderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1])
+          UnorderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "unordered_list_item")
           @current_order[1] += 1
           @current_order[2] = 0
         when /^\*\*\*\s/
           ordering_char = @ordering_char_types[2]
           ordering_char = "\t\t" + ordering_char
           para_string = list.sub(/^\*\*\*/ , ordering_char)
-          UnorderedListItem.new(parent: self, para_string: para_string, level: 2,  order: @current_order[2])
+          UnorderedListItem.new(parent: self, para_string: para_string, level: 2,  order: @current_order[2], markup: "unordered_list_item")
           @current_order[2] += 1
         end
       end

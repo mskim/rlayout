@@ -115,37 +115,28 @@ module RLayout
         current_section_paragraph = []
         section.each do |para|
           next if para.nil?
-          para_options = {}
-          para_options[:markup]         = para[:markup]
-          para_options[:layout_expand]  = [:width]
+          para[:layout_expand]  = [:width]
           if para[:markup]    == 'h1'
             current_section_paragraph << para
           elsif para[:markup] == 'h2'
             current_section_paragraph << para
           elsif para[:markup] == 'img' && para[:string]
-            para_options.merge!(eval(para[:string]))
-            current_section_paragraph << Image.new(para_options)
+            para.merge! eval(para.delete(:string))            
+            current_section_paragraph << Image.new(para)
           elsif para[:markup] == 'table'
             current_section_paragraph << Table.new(para)
           elsif para[:markup] == 'float_group'
             current_section_paragraph << FloatGroup.new(para)
           elsif para[:markup] == 'ordered_list'
-            current_section_paragraph << OrderedList.new(text_block: para[:text_block])
+            current_section_paragraph << OrderedList.new(para)
           elsif para[:markup] == 'ordered_section'
-            current_section_paragraph << OrderedSection.new(text_block: para[:text_block])
+            current_section_paragraph << OrderedSection.new(para)
           elsif para[:markup] == 'ordered_upper_alpha_list'
-              current_section_paragraph << UpperAlphaList.new(text_block: para[:text_block])
+              current_section_paragraph << UpperAlphaList.new(para)
           elsif para[:markup] == 'unordered_list'
-            current_section_paragraph << UnorderedList.new(text_block: para[:text_block])
-
+            current_section_paragraph << UnorderedList.new(para)
           else
-            para_options[:para_string] = para[:string]
-            if para[:string].nil?
-              para_options[:para_string] = ""
-              current_section_paragraph <<  Paragraph.new(para_options)
-            else
-              current_section_paragraph << Paragraph.new(para_options)
-            end
+            current_section_paragraph << Paragraph.new(para) 
           end
         end
         @sections_paragraph << current_section_paragraph

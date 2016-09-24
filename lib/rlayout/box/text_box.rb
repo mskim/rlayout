@@ -265,10 +265,20 @@ module RLayout
       column_index = 0
       current_column = @graphics[column_index]
       while @item  = flowing_items.shift do
+        puts "@item.class:#{@item.class}"
         if @item.is_a?(Hash)
           puts "@item+++++++++++ :#{@item}"
           next
-          # look for page heading and set content
+        # look for page heading and set content
+        elsif @item.is_a?(RLayout::OrderedList) || @item.is_a?(RLayout::UnorderedList) || @item.is_a?(RLayout::OrderedSection) || @item.is_a?(RLayout::UpperAlphaList)
+          # for List block insert list items to flowing_items
+          while @item.graphics.length > 0
+            list_item = @item.graphics.pop
+            puts "in list_item.para_string:#{list_item.para_string}"
+            # puts "list_item.para_string:#{list_item.para_string}"
+            flowing_items.unshift(list_item)
+          end
+          next
         elsif @item.is_a?(RLayout::Paragraph)
           @item.layout_lines(current_column)          
         elsif @item.is_a?(RLayout::ParagraphNSText) && @item.text_layout_manager
@@ -287,18 +297,7 @@ module RLayout
             end
           end
           @item.layout_lines(:proposed_height=>current_column.room) # item.width is set already
-        elsif @item.is_a?(RLayout::OrderedList) || @item.is_a?(RLayout::UnorderedList) || @item.is_a?(RLayout::OrderedSection) || @item.is_a?(RLayout::UpperAlphaList)
-          # for List block insert list items to flowing_items
-          while @item.graphics.length > 0
-            list_item = @item.graphics.pop
-            # puts "list_item.para_string:#{list_item.para_string}"
-            flowing_items.unshift(list_item)
-            # puts "++++++ flowing_items.first.class:#{flowing_items.first.class}"
-          end
-          next
-        elsif @item.is_a?(RLayout::OrderedListItem) || @item.is_a?(RLayout::UnorderedListItem)
-          puts "in OrderedListItem @item.para_string:#{@item.para_string}"
-          @item.layout_lines(current_column)          
+ 
         elsif @item.class == RLayout::Table
           @item.width  = current_column.text_width
           @item.create_rows if @item.graphics.length == 0 
