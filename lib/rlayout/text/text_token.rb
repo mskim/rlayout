@@ -11,9 +11,9 @@
 
 # Special Tokens 
 # Special Tokens are those tokens with complex shapes or special text effects,
-# such as Ruby, UnderlineTag, InlineMultipleChoice ...
+# such as Ruby, ReversedRuby, InlineMultipleChoice ...
 # Special tokens are created from markup,
-# markup has form of  def_name('first', 'second', options={}).
+# markup has form of  {{def_name 'first', 'second', options={})}}
 
 # Special token styles can be pre-defined and can be assigned at run time.
 # This make it convient to switch from one design to other.
@@ -54,15 +54,34 @@ module RLayout
         @atts           = @atts.merge(options[:atts]) if options[:atts]
         @att_string     = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
         options[:width] = @att_string.size.width
+        options[:height]= @att_string.size.height*2
       else
         # TODO fix get string with from Rfont
         @width  = 30
+        @height = 20
       end
       options[:fill_color] = options.fetch(:token_color, 'clear')
+      # options[:stroke_width] = 1
       super
-      @x      = 0
-      @y      = 0
-      @height = 20
+      if RUBY_ENGINE == "rubymotion"
+        @width  = @att_string.size.width
+        @height = @att_string.size.height
+        if options[:text_line_spacing]
+          @height += options[:text_line_spacing] 
+        else
+          @height += 10
+        end
+        # if @tag == "base" || @tag == "bottom"
+        #   puts "options[:text_color]:#{options[:text_color]}"
+        #   puts "@tag:#{@tag}"
+        #   puts "@string:#{@string}"
+        #   puts @att_string.attributesAtIndex(0, effectiveRange:nil)      
+        # end
+        
+      end
+      # @x      = 0
+      # @y      = 0
+      # @height = 20
       self
     end
     
@@ -184,23 +203,98 @@ module RLayout
     end 
   end
 
-  
-  class RubyToken < Container
-    attr_accessor :base_token, :top_token
-    def initalize(options={})
-      
-      self
-    end
-  end
-  
-  class UndertagToken < Container
-    attr_accessor :base_token, :bottom_token
+  class SubscriptToken < TextToken
+    # reduce size and shift y position
+    # options[:atts]
+    def initialize(options={})
     
-    def initalize(options={})
+    end
+  end
+  
+  class SubperscriptToken < TextToken
+    # reduce size and shift y position
+    def initialize(options={})
+    
+    end
+  end
+  
+  # Special Tokens 
+  # Special Tokens are those tokens with complex shapes or special text effects,
+  # such as Ruby, ReversedRuby, InlineMultipleChoice ...
+  # Special tokens are created from markup,
+  # markup has form of  {{def_name 'first', 'second', options={})}}
+  
+  # markup has form of  {{ruby 'base', 'top', options={})}}
+  class RubyToken < Container
+    attr_accessor :base_tokeb, :top_token, :size_ratio
+    def initialize(options={})
+      super
+      @size_ratio         = options.fetch(:size_ratio, 0.5) 
+      base_style          = options[:para_style]
+      base_style[:string] = options[:base]
+      base_style[:parent] = self
+      base_style[:tag]    = "base"
       
+      @base_token         = TextToken.new(base_style)
+      # make the top_token with size 0.5 text
+      top_style           = options[:para_style]
+      top_style[:text_size]= top_style[:text_size]*@size_ratio
+      top_style[:string]  = options[:top]
+      top_style[:parent]  = self
+      top_style[:tag]        = "top"
+      @top_token          = TextToken.new(top_style)
+      @graphics.reverse
+      # increase the height by 0.5
+      relayout!
       self
     end
   end
   
+  # markup has form of  {{r-ruby 'base', 'bottom', options={})}}
+  class ReverseRubyToken < Container
+    attr_accessor :base_token, :bottom_token, :size_ratio, :base_style, :bottom_style
+    def initialize(options={})
+      options[:fill_color] = "clear"
+      super      
+      # make the top_token with size 0.5 text
+      @size_ratio         = options.fetch(:size_ratio, 0.5) 
+      @base_style          = options[:para_style].dup
+      @bottom_style        = options[:para_style].dup
+
+      @base_style[:string] = options[:base]
+      @base_style[:parent] = self
+      if RUBY_ENGINE == "rubymotion"
+        @base_style[:atts][NSForegroundColorAttributeName]  =  NSColor.blackColor        
+      else
+        @base_style[:text_color]= "blue"
+      end
+      
+      @base_style[:tag]    = "base"
+      @base_style[:stroke_sides]    = [0,0,0,1]
+      @base_style[:stroke_color]    = "blue"
+      @base_style[:stroke_width]    = 0.5
+      @base_token             = TextToken.new(@base_style)
+      @bottom_style[:text_size]= @base_style[:text_size]*@size_ratio
+      # if RUBY_ENGINE == "rubymotion"
+      #   @bottom_style[:atts][NSForegroundColorAttributeName]  =  NSColor.blueColor        
+      # else
+      #   @bottom_style[:text_color]= "blue"
+      # end
+      @bottom_style[:string]   = options[:bottom]
+      @bottom_style[:parent]   = self
+      @bottom_style[:width]    = @base_token.width
+      @bottom_style[:height]   = 10
+      @bottom_style[:text_alignment] = "center"
+      @bottom_style[:tag]      = "bottom"
+      @bottom_style[:x]        = (@base_token.width - 5)/2.0
+      @bottom_style[:y]        = 12
+      @bottom_token            = TextToken.new(@bottom_style)
+      @height = 25
+      @width = @base_token.width
+      # relayout!
+      self
+    end
+  end
   
+
 end

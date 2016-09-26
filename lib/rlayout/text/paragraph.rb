@@ -18,6 +18,29 @@
 # When paragraph is created, TextTokenAtts is created for default att value for all TextTokena and they all point ot it.
 # Whenever there is differnce TextTokenAtts in the paragraph, new TextTokenAtts is created and different TextToken ponts to that one.
 DefRegex = /(def_.*?\(.*?\))/
+
+# Emphasis Handling
+# inline emphasis are handled using double curl {{content}}, or single curl {content}
+# We want the emphasis mark to be simple as possible for writers.
+# So, we limit the emphasis markup to those two only, and how it is implement is left to designer, not to the writer. It means designer need to provide custom style at the run time for effected para styles.
+# There are two types of emphasis, emphasis text effect and special layout.
+# For text effect, such as italic, bold, boxed, underline, hidden_text, emphasis we can modify the @token_style to get the effect. So designer need to provide paragraph_styles paragraph style as hash.
+# For special layout tokens, such as ruby, reverse ruby,  we have to do some layout modification. In this case, desinger needs to proved the function name of the emphasis, such as ruby, reverse_ruby, icon: name . in custom paragraph style. as default[:double_emphasis]  = "reverse_ruby"
+
+#  
+# {{base text}{top text}}
+# {{base text}{top text}}
+# 
+
+INLINE_SINGLE_CURL = /(\{.*?\})/
+INLINE_DOUBLE_CURL = /(\{\{.*?\}\})/m
+RUBY_ARGUMENT_DIVIDER   = /\}(\s)*?\{/
+  
+# String#split
+# if we use String#split with match, we get the match as an Array eleemnt
+
+# {{ruby sting, uppper}}
+
 # example 
 #   def_box('boxed_text')
 #   def_ruby('base_text', 'top_text')
@@ -82,19 +105,99 @@ module RLayout
       @tokens << TextToken.new(para_style)
     end
     
-    def create_special_tokens
-      # split paragraph with def_name(ar)
-      split_array = @para_string.split(DefRegex)
+    def create_double_curl_tokens(para_string)
+      split_array = para_string.split(INLINE_DOUBLE_CURL)
+      # splited array contains double curl content
       split_array.each do |line|
-        if line =~/def_/
-          # line with special tokens
-          line.sub!("def_", "")
-          eval(line)
+        if line =~INLINE_DOUBLE_CURL
+          line.sub!("{{", "").sub!("}}", "")
+          if line=~RUBY_ARGUMENT_DIVIDER
+            # when no custm style is defined, just use normal style
+            # when no custm style is defined, just use normal style
+            # @para_style[:string] = line.sub("{{", "").sub("}}", "")
+            # create_special_token(@para_style[:double_emphasis], line)
+            create_special_token('reverse_ruby', line)
+          elsif @para_style[:double_emphasis].is_a?(Hash)
+            emp = @para_style[:double_emphasis]
+            empasised_style = @para_style.dup.merge emp
+            empasised_style.delete(:double_emphasis)
+            empasised_style[:string] = line
+            empasised_style.delete(:parent) if empasised_style[:parent]
+            @tokens << RLayout::TextToken.new(empasised_style)
+          else
+            @para_style[:string] = line
+            @para_style.delete(:parent) if empasised_style[:parent]
+            @tokens << RLayout::TextToken.new(@para_style)
+          end
+          # elsif @para_style[:double_emphasis].is_a?(String)
+            # create_special_token(@para_style[:double_emphasis], line)
+        elsif  line =~INLINE_SINGLE_CURL
+          # some of the split line contains single curl
+          create_single_curl_tokens(line)
         else
-          # line text with just nonal text tokens
+          # line text with just noral text tokens
           create_text_tokens(line)
         end
       end      
+    end
+    
+    def create_single_curl_tokens(para_string)
+      para_string.chomp!
+      para_string.sub!(/^\s*/, "")
+      split_array = para_string.split(INLINE_SINGLE_CURL)
+      split_array.each do |line|
+        if line =~INLINE_SINGLE_CURL
+          line.sub!("{", "").sub!("}", "")
+          if @para_style[:single_emphasis].is_a?(Hash)
+            # this is a style emphasis
+            emp = @para_style[:single_emphasis]
+            empasised_style = @para_style.dup.merge emp
+            empasised_style[:string] = line
+            empasised_style.delete(:single_emphasis)
+            @tokens << RLayout::TextToken.new(empasised_style)
+          # elsif @para_style[:single_emphasis].is_a?(String)
+          #   create_special_token(@para_style[:single_emphasis], line)
+          else
+            # when no custom style is defined, just use normal style
+            @para_style[:string] = line
+            @tokens << RLayout::TextToken.new(@para_style)
+          end
+        else
+          # line text with just noral text tokens
+          if line.empty? || line == " " or line == "\n"
+            # puts "line is emptuy"
+          else
+            create_text_tokens(line)
+          end
+        end
+      end
+    end
+    
+    def create_special_token(token_type, line_text)
+      arg = line_text.split(RUBY_ARGUMENT_DIVIDER)
+      case token_type
+      when "ruby"
+        options = {}
+        options[:base]  = arg[1]
+        options[:top]   = arg[2]
+        options[:para_style] = @para_style
+        @tokens << RLayout::RubyToken.new(options)
+      when "reverse_ruby"
+        options = {}
+        options[:base]  = arg[0]
+        options[:bottom]= arg[1]
+        options[:para_style] = @para_style
+        @tokens << RLayout::ReverseRubyToken.new(options)
+      when "image"
+        options = {}
+        options[:local_image]  = arg[1]     
+        @tokens << RLayout::ReverseRubyToken.new(options)
+      else
+        #TODO supply more special tokens 
+        options = {}
+        options[:string]  = arg[9]
+        @tokens << RLayout::TextToken.new(options)
+      end
     end
     
     def create_text_tokens(para_string)
@@ -103,7 +206,7 @@ module RLayout
         @para_style[:string] = token_string
         @para_style.delete(:parent) if @para_style[:parent]
         RLayout::TextToken.new(@para_style)
-      end
+      end      
     end
     
     def create_tokens
@@ -111,11 +214,23 @@ module RLayout
       if RUBY_ENGINE == 'rubymotion'
         @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:text_size])
         @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
+        if @para_style[:text_color] && @para_style[:text_color].class == NSColor
+          @atts[NSForegroundColorAttributeName] = @para_style[:text_color]
+        end
         @para_style[:atts] = @atts
       end
-      if @para_string =~DefRegex
-        #TODO special tokens created with functions
-        create_special_tokens
+      # check if we have any special token mark {{something}} or {something}
+      # first check for double curl, single curl
+      # if double curl is found, split para string with double curl fist
+      # and do it recursively with split strings
+      
+      # do we have any doulbe curl?
+      if @para_string =~INLINE_DOUBLE_CURL
+        create_double_curl_tokens(@para_string)
+      # no doulbe curl, do we have any single curl?
+      elsif @para_string =~INLINE_SINGLE_CURL
+        create_single_curl_tokens(@para_string)
+      # no curls found, so create_text_tokens
       else
         create_text_tokens(@para_string)
       end
@@ -316,6 +431,8 @@ module RLayout
       default[:tail_indent] = 3
       default[:space_before]= 0
       default[:space_after] = 0
+      default[:double_emphasis]  = {stroke_sides: [1,1,1,1], stroke_thickness: 0.5}
+      default[:single_emphasis]  = {stroke_sides: [0,1,0,1], stroke_thickness: 0.5}
       default[:tab_stops]   = [['left', 20], ['left', 40], ['left', 60],['left', 80]]
       style = RLayout::StyleService.shared_style_service.current_style[@markup]
       if style.class == String
@@ -327,10 +444,6 @@ module RLayout
         default.merge! style 
       else
       end      
-      # if @markup == "ordered_section_item2"
-      #   puts "ordered_section_item2"
-      #   puts "style:#{style}"
-      # end
       default
     end
   end

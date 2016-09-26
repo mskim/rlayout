@@ -117,18 +117,31 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
-2015 9 25
+2016 9 26
+	- rakefile for book, rakefile for chapters, rake update 
+	- manual adjustment
+		- </br> for manual adjusting space_before and space after
+		- </page> for manual adjusting space_before and space after
+		- \n for manual new line
+		- <<text><color>>
+			
+	- implement box, underline token
+	- fix text_color for Paragraph
+	- style_run
+	A problem: There are many cases where we have mixed styles in a
+	paragraph. Text could be separated by \t 
+	And for each segment style_run is used to address this. 
+	defined in styles, it is a run 
+	
+2016 9 25
+	- implement ruby and reverse ruby RubyToken
+
 	- Paragraph fill_color
 		all line_fill_color = "Clear"
 		all tokne_fill_color = "Clear"
 		make token colors as "clear", make line fill_as
 	- space_before, space_after in layout_lines
 	
-	- style_run
-	A problem: There are many cases where we have mixed styles in a
-	paragraph. Text could be separated by \t 
-	And for each segment style_run is used to address this. 
-	defined in styles, it is a run 
 	
 2016 9 24
 	in document template load current_style with options[:current_style]

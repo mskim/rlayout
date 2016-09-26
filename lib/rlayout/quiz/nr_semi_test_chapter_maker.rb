@@ -72,7 +72,7 @@ module RLayout
   
 	class NRSemiTestChapterMaker
     attr_accessor :project_path, :quiz_data, :layout_rb, :output_path
-    attr_accessor :text_data, :title, :quiz_data
+    attr_accessor :text_data, :title, :quiz_data, :heading
     def initialize(options={})
       if options[:project_path]
         @project_path = options[:project_path]
@@ -103,8 +103,15 @@ module RLayout
       @quiz_data    = []
       blocks = @text_data.split("\n\n")
       # first parse title
-      if blocks.first =~ /^=/
-        @title = blocks.shift
+      puts "blocks.first:#{blocks.first}"
+      if blocks.first =~ /^=/ || /^==/
+        head_block = blocks.shift
+        head_block = head_block.split("\n")
+        puts "head_block:#{head_block}"
+        puts "head_block[0]:#{head_block[1]}"
+        @heading = {}
+        @heading[:title] = head_block[1]
+        puts "++++ @heading:#{@heading}"
       end
       blocks.each do |block|
         @quiz_data << ENQuizParser.new(block).quiz_hash
@@ -112,7 +119,7 @@ module RLayout
     end
     
     def layout_quiz_items
-      puts "@quiz_items.length:#{@quiz_items.length}"
+      # puts "@quiz_items.length:#{@quiz_items.length}"
       if @document.pages.length == 0
         options               = {}
         options[:footer]      = true
@@ -131,9 +138,10 @@ module RLayout
         heading.set_heading_content(@heading)
       else
         # place heading at the front most
-        @heading[:parent] = @first_page
         heading = Heading.new(@heading)
-        @first_page.graphics.unshift(@first_page.graphics.pop)
+        heading[:parent] = @first_page
+        puts "++++++ heading:#{@heading}"
+        @first_page.graphics.unshift(heading)
       end
       @first_page.layout_space              = @main_layout_space
       @first_page.main_box.layout_length    = @text_box_layout_length

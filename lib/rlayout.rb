@@ -85,7 +85,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/quiz/english_quiz_item_maker'
   require File.dirname(__FILE__) + '/rlayout/quiz/quiz_chapter_maker'
   require File.dirname(__FILE__) + '/rlayout/quiz/simple_table'
-  require File.dirname(__FILE__) + '/rlayout/quiz/nr_semi_test'
+  require File.dirname(__FILE__) + '/rlayout/quiz/nr_semi_test_chapter_maker'
 
   require File.dirname(__FILE__) + '/rlayout/math/eqn'
    require File.dirname(__FILE__) + '/rlayout/math/math_token'
