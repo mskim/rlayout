@@ -357,12 +357,12 @@ module RLayout
             end
             # check for overflow underflow
           end
-        elsif @item.class == RLayout::QuizItem
+        elsif @item.is_a?(RLayout::QuizItem) || @item.is_a?(EnglishQuizItem)
           @item.width  = current_column.text_width
           if current_column.room < @item.height
             @item.underflow = true 
           else
-            @item.set_quiz_content
+            @item.set_content
           end
         elsif @item.class == RLayout::QuizRefText || @item.class == RLayout::QuizAnsText
           @item.width  = current_column.text_width

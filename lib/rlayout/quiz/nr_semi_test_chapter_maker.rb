@@ -1,4 +1,6 @@
 
+# Story, QuizContent, ItemContent
+
 # QuizItemParts
 # :num, :q, :m_choice, :choice_text, :choice_table, :image, :ans, :exp
 # :ref_text
@@ -13,14 +15,44 @@ end
 
 module RLayout
   
-  class ENQuizItem < Container
-    attr_reader :num, :q, :choice_text, :word_definition, :choice_table
+  # QuizContent consists of parser, template, and list of quiz_item_hash.
+  # This will make it possible to handle differnt types of QuizItems
+  # By providing a parser, template. and text_data
+  # QuizItems is used for layout.
+  
+  class QuizContent
+    attr_reader :parser, :template, :quiz_items
+    def initialize(parser, template)
+      @parser     = parser
+      @template   = template
+      @quiz_items = []
+      self
+    end
+    
+    def call(text_block)
+      content_hash = @parser.call(text_block)
+      if content_hash
+        @quiz_items << @template.dup.set_content(content_hash)
+        true
+      else
+        # error message
+        return "error"
+      end
+    end
+  end
+  
+  class ENQuizItemTemplate < Container
+    attr_accessor :tag_list
+    attr_accessor :ans, :exp, :index_page, :answer_page
     def initialize(options={})
-      
+      @tag_list =  [:num, :q, :choice_text, :word_definition, :choice_table]
       
       self
     end
     
+    def self.parser
+      ENQuizParser
+    end
   end
   
   class ENQuizParser
@@ -56,7 +88,9 @@ module RLayout
     def parse_choice_table
       return if @buffer.eos?
       @s = @buffer.rest
-      if !(@s == "")
+      if @s =~/^\t/
+        @quiz_hash[:choice_table] = ENQuizParser.convert_tsv_to_csv(@s)
+      elsif !(@s == "")
         @quiz_hash[:choice_table] = @s 
       end
     end
@@ -68,11 +102,30 @@ module RLayout
       parse_word_definition
       parse_choice_table
     end
+    
+    def self.convert_tsv_to_csv(text_block)
+        # convert tab seperated values to csv text
+      lines = text_block.split("\n")
+      removed = []
+      lines.each.with_index do |line, i|
+        if i == 0
+          line = line.gsub(/\t/, ",,")
+          removed << line
+        else
+          #line = line.gsub(/······/, ",")
+          line = line.gsub(/·+/, ",")
+          line = line.gsub(/\W/, ",")
+          line = line.gsub(/,+/, ",,")
+          removed << line
+        end    
+      end
+      removed.join("\n")
+    end
   end
   
 	class NRSemiTestChapterMaker
-    attr_accessor :project_path, :quiz_data, :layout_rb, :output_path
-    attr_accessor :text_data, :title, :quiz_data, :heading
+    attr_accessor :project_path, :quiz_items, :layout_rb, :output_path
+    attr_accessor :text_data, :title, :heading
     def initialize(options={})
       if options[:project_path]
         @project_path = options[:project_path]
@@ -99,22 +152,23 @@ module RLayout
     end
     
     def read_quiz_items
+      # read metadata and find out which type of quiz the content is made of
+      # also find out regex for the quiz content parsing.
+      # This way we are generalizing the module to hanlde different kins of Quizs by setting the kind.
+      # use the fitting parser and QuizItem kind.
       @text_data   = File.open(@text_data_path, 'r'){|f| f.read}  
-      @quiz_data    = []
+      @quiz_items    = []
       blocks = @text_data.split("\n\n")
       # first parse title
-      puts "blocks.first:#{blocks.first}"
-      if blocks.first =~ /^=/ || /^==/
+      if blocks.first =~ /^=/ || blocks.first =~/^==/
         head_block = blocks.shift
         head_block = head_block.split("\n")
-        puts "head_block:#{head_block}"
-        puts "head_block[0]:#{head_block[1]}"
-        @heading = {}
-        @heading[:title] = head_block[1]
-        puts "++++ @heading:#{@heading}"
+        head_block.shift if head_block.first.empty?
+        head_block = head_block.join("\n")
+        @heading = {:string=> head_block}
       end
       blocks.each do |block|
-        @quiz_data << ENQuizParser.new(block).quiz_hash
+        @quiz_items << EnglishQuizItem.new(ENQuizParser.new(block).quiz_hash)
       end
     end
     
@@ -134,8 +188,8 @@ module RLayout
       end
       page_index                = 0
       @first_page               = @document.pages[0]
-      if heading = @first_page.get_heading?
-        heading.set_heading_content(@heading)
+      if heading = @first_page.has_heading?  
+        @first_page.heading_object.set_content(@heading)        
       else
         # place heading at the front most
         heading = Heading.new(@heading)
@@ -147,8 +201,8 @@ module RLayout
       @first_page.main_box.layout_length    = @text_box_layout_length
       @first_page.main_box.layout_space     = @column_gutter 
       @first_page.main_box.draw_gutter_stroke= @draw_gutter_stroke 
-      @first_page.main_box.graphics.each{|col| col.layout_space = @column_layout_space}
-      @first_page.relayout!
+      # @first_page.main_box.graphics.each{|col| col.layout_space = @column_layout_space}
+      # @first_page.relayout!
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
       @first_page.main_box.layout_items(@quiz_items)
@@ -259,10 +313,12 @@ module RLayout
       h
     end    
 	end
+	
+	module_function
+	
 end
 
 __END__
-text =<<EOF
 
 == Semi Test 3
 

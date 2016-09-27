@@ -37,7 +37,7 @@ module RLayout
         if (vertical ? graphic.expand_height? : graphic.expand_width?)
           expandable_graphics += 1
           have_expanding_child = true
-          layout_length_sum +=graphic.layout_length          
+          layout_length_sum +=graphic.layout_length  || 1        
         else
           expandable_length -= vertical ? graphic.height : graphic.width
           non_expanding_length_sum += vertical ? graphic.height : graphic.width
@@ -50,7 +50,7 @@ module RLayout
       @layout_space    = 0 if @layout_space.nil?
       if spacing_number > 0
         expandable_length -= spacing_number*@layout_space if @layout_space
-        if layout_length_sum ==0
+        if layout_length_sum == 0
           unit_size    = expandable_length
         else
           unit_size    = expandable_length/layout_length_sum.to_f
@@ -74,14 +74,13 @@ module RLayout
          @layout_space = room/spacing_number.to_f if spacing_number !=0
        end
       end
-      ###### testing
       # This is the second pass
       @graphics.each do |graphic|
         next if !graphic.layout_member || graphic.layout_expand.nil?                  
         graphic_frame  = graphic.frame_rect              
         # adjust size
-        
         if (vertical ? graphic.expand_height? : graphic.expand_width?)
+          graphic.layout_length = 1 unless graphic.layout_length
           if spacing_number == 0
             graphic_dimension = expandable_length
           else
@@ -99,11 +98,11 @@ module RLayout
           if vertical            
             graphic_frame[1] = current_position             
             current_position += graphic_dimension + @layout_space
-            current_position += graphic.bottom_margin + graphic.top_margin #if graphic.bottom_margin && graphic.top_margin 
+            current_position += graphic.bottom_margin + graphic.top_margin 
           else
             graphic_frame[0] = current_position
             current_position += graphic_dimension + @layout_space
-            current_position += graphic.left_margin + graphic.right_margin #if graphic.left_margin && graphic.right_margin
+            current_position += graphic.left_margin + graphic.right_margin 
           end
         else
           # for non-expanding 

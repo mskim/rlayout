@@ -15,11 +15,13 @@ module RLayout
     attr_accessor :num_object, :q_object
     def initialize(options={}, &block)
       super
+      @quiz_item_style = 
+ RLayout::StyleService.shared_style_service.quiz_item_style
       @layout_direction = "horizontal"
       @layout_expand    = :width
-      number_options    = $quiz_item_style[:num_style].dup
+      number_options    = @quiz_item_style[:num_style].dup
       @num_object       = text(options[:num].to_s.rjust(3,"0"), number_options) 
-      q_options         = $quiz_item_style[:q_style].dup
+      q_options         = @quiz_item_style[:q_style].dup
       @q_object         = text(options[:q], q_options)
       relayout!  
       @height           = @q_object.height + 4  
@@ -48,16 +50,18 @@ module RLayout
       self
     end
     
-    def set_quiz_content(options={})
+    def set_content(options={})
       options = Hash[options.map{ |k, v| [k.to_sym, v] }]
       @data[:num]     = options.fetch(:num, "021")
       @data[:q]       = options.fetch(:q, "Some question goes here? ")
       @data[:choice_text] = options.fetch(:choice_text, ChoiceTextSample)
       @data[:choice_table]= options.fetch(:choice_table, nil)
-      @layout_space   = $quiz_item_style[:layout_space] || 10
+      @quiz_item_style = 
+ RLayout::StyleService.shared_style_service.quiz_item_style
+      @layout_space   = @quiz_item_style[:layout_space] || 10
       @q_line         = NumberParagraph.new(parent: self, width: @width, num: @data[:num], q: @data[:q])
       if @data[:choice_text]
-        choice_text_style         = $quiz_item_style[:choice_style].dup
+        choice_text_style         = @quiz_item_style[:choice_style].dup
         choice_text_style[:width] = @width
         @choice_text_object       = text(@data[:choice_text], choice_text_style)        
       end

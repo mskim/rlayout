@@ -179,7 +179,7 @@ module RLayout
         # TODO it seem to work only after this, can't figure it out!!!!
         @item_hash[:choice_table]= @item_hash[:choice_table].gsub(/\}$/, "")
         @q_object   = eval(english_quiz_templeate)
-        @q_object.set_quiz_content(@item_hash)
+        @q_object.set_content(@item_hash)
         ext         = File.extname(@quiz_item_path)
         output_path = @quiz_item_path.sub(/#{ext}$/, ".pdf")
         @q_object.save_pdf(output_path, jpg:true)

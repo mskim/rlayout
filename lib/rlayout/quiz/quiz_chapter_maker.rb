@@ -471,7 +471,7 @@ module RLayout
       self
     end
     
-    def set_quiz_content
+    def set_content
       quiz_width = @width - @left_margin - @right_margin
       @layout_space = $quiz_item_style[:layout_space] || 10
       if @data[:q]

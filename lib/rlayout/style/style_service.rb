@@ -163,7 +163,7 @@ LIST_KIND     = %w[ordered_list ordered_list_item unordered_list unordered_list_
 
 module RLayout
   class StyleService
-    attr_accessor :current_style, :default_style, :chapter_style, :news_style, :magazine_style
+    attr_accessor :current_style, :default_style, :chapter_style, :news_style, :magazine_style, :quiz_item_style
     def initialize      
       @current_style  = DEFAULT_STYLES
       @chapter_style  = CHAPTER_STYLES
@@ -180,6 +180,10 @@ module RLayout
       @magazine_style_path = "/Users/Shared/SoftwareLab/article_template/magazine_style.rb"        
       if File.exist?(@magazine_style_path)
         @magazine_style = eval(File.open(@magazine_style_path,'r'){|f| f.read})
+      end
+      @quiz_style_path = "/Users/Shared/SoftwareLab/article_template/quiz_style.rb"        
+      if File.exist?(@quiz_style_path)
+        @quiz_item_style = eval(File.open(@quiz_style_path,'r'){|f| f.read})
       end
       self
     end

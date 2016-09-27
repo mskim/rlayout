@@ -98,7 +98,9 @@ module RLayout
       else
         @column_align_array = make_column_align_array
       end
+      # head row
       SimpleTableRow.new(parent: self, width: @width, height: 20, head_row: true, items: @header_array, column_width_array: @column_width_array, column_align_array: @column_align_array)
+      # body rows
       csv.each do |row|
         SimpleTableRow.new(parent: self, width: @width, height: 20, items: row, column_width_array: @column_width_array, column_align_array: @column_align_array)
       end
