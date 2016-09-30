@@ -1,0 +1,44 @@
+
+Object hierarchy
+
+1. Record
+	Layout, Stroke, Fill, Shape, Image, Text
+1. Graphic
+
+1. Container
+	Grid, Float, direction,
+	
+1. Box
+
+1. Page
+
+1. Document
+
+1. Rjob, Article, Chapter, 
+	adds, content
+
+1. ItemChapter, QuizChapter
+	linked to DB
+	
+	
+__________________
+	
+1.	page
+		- page with no fixtures
+   	first_chapter_page
+		- has heading, header, footer, text_box
+	chapter_page
+		- has header, footer, text_box
+		
+Rjob.new
+	Default page = 1
+Article.new
+	Default page = 2
+Chapter.new
+	Default page = 2
+	first_chapter_page, chapter_page
+ItemChapter
+	Default page = 2
+QuizChapter
+	Default page = 2
+

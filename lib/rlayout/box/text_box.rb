@@ -214,7 +214,13 @@ module RLayout
         end
       end
     end
-        
+    
+    def justify_items
+      @graphics.each do |column|
+        column.justify_items
+      end
+    end
+    
     # set text_column's overlapping grid_rect area
     # this method is called after float is added and relayout!
     def set_overlapping_grid_rect
@@ -266,8 +272,11 @@ module RLayout
       current_column = @graphics[column_index]
       while @item  = flowing_items.shift do
         if @item.is_a?(Hash)
-          puts "@item+++++++++++ :#{@item}"
-          next
+          #TODO this is messy!!!
+          if @item[:markup]
+            puts "@item+++++++++++ :#{@item}"
+            next
+          end
         # look for page heading and set content
         elsif @item.is_a?(RLayout::OrderedList) || @item.is_a?(RLayout::UnorderedList) || @item.is_a?(RLayout::OrderedSection) || @item.is_a?(RLayout::UpperAlphaList)
           # for List block insert list items to flowing_items
@@ -356,8 +365,17 @@ module RLayout
               end
             end
             # check for overflow underflow
+          end    
+        elsif @item.is_a?(EnglishQuizItem)
+          unless  @item.q_line
+            # this is un-layouted out EnglishQuizItem
+            @item.layout_content(width: current_column.width)
           end
-        elsif @item.is_a?(RLayout::QuizItem) || @item.is_a?(EnglishQuizItem)
+          if current_column.room < @item.height
+            @item.overflow = true 
+          end
+                
+        elsif @item.is_a?(RLayout::QuizItem) 
           @item.width  = current_column.text_width
           if current_column.room < @item.height
             @item.underflow = true 
@@ -372,14 +390,11 @@ module RLayout
             @item.set_content
           end
         else
-          puts " ************ at the end @item.class"
-          puts " @item.class:#{@item.class}"
           @item.width  = current_column.text_width
           @item.height = @item.width
           if current_column.room < @item.height
             @item.underflow = true 
           end
-          
         end
         # now item is layed out with colum width, place them in the column
         # if @item.class != Paragraph
@@ -421,11 +436,11 @@ module RLayout
             column_index +=1
             if column_index < @column_count              
               current_column = @graphics[column_index]
+              @item.overflow = false # clear oveflow flag
               flowing_items.unshift(@item)
-              #  "going to next column..."                            
+              flowing_items.unshift(@item)
               next
             else
-              flowing_items.unshift(@item)
               #  "going to next page..."  
               flowing_items.unshift(@item)
               return false

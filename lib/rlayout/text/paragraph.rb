@@ -17,7 +17,6 @@
 # LineFragments are made up of TextTokens, ImageToken, MathToken etc....
 # When paragraph is created, TextTokenAtts is created for default att value for all TextTokena and they all point ot it.
 # Whenever there is differnce TextTokenAtts in the paragraph, new TextTokenAtts is created and different TextToken ponts to that one.
-DefRegex = /(def_.*?\(.*?\))/
 
 # Emphasis Handling
 # inline emphasis are handled using double curl {{content}}, or single curl {content}
@@ -31,6 +30,7 @@ DefRegex = /(def_.*?\(.*?\))/
 # {{base text}{top text}}
 # {{base text}{top text}}
 # 
+DefRegex = /(def_.*?\(.*?\))/
 
 INLINE_SINGLE_CURL = /(\{.*?\})/
 INLINE_DOUBLE_CURL = /(\{\{.*?\}\})/m
@@ -63,13 +63,19 @@ module RLayout
   
   # tab Token
   
-  #TODO add markup, read styles from StyleService
+  #TODO read styles from StyleService
+  
+  # we use three different string types in opions
+  # text_string for NSText
+  # string          Token
+  # para_string     For Paragraph, para_string is passed to Tokens as string
+  # so the text drawing take place only when option is text_string and string
   class Paragraph < Container
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
     attr_accessor :para_string, :para_style
     attr_accessor :text_column, :grid_height 
-    attr_accessor :overflow, :underflow, :overflowing_line_index, :linked, :line_y_offset
+    attr_accessor :overflow, :underflow, :linked, :line_y_offset
 
     def initialize(options={})
       super      
@@ -85,6 +91,9 @@ module RLayout
       else
         @tokens       = []
         create_tokens   
+      end
+      if options[:layout_lines]
+        layout_lines(@width)
       end
       self
     end    
@@ -121,8 +130,10 @@ module RLayout
             emp = @para_style[:double_emphasis]
             empasised_style = @para_style.dup.merge emp
             empasised_style.delete(:double_emphasis)
-            empasised_style[:string] = line
+            empasised_style[:string]        = line
             empasised_style.delete(:parent) if empasised_style[:parent]
+            empasised_style[:left_margin]   = 2 # box left side margin
+            empasised_style[:right_margin]  = 2 # box right side margin
             @tokens << RLayout::TextToken.new(empasised_style)
           else
             @para_style[:string] = line
@@ -189,9 +200,10 @@ module RLayout
         options[:para_style] = @para_style
         @tokens << RLayout::ReverseRubyToken.new(options)
       when "image"
+        # handle image token
         options = {}
         options[:local_image]  = arg[1]     
-        @tokens << RLayout::ReverseRubyToken.new(options)
+        @tokens << RLayout::ImageToken.new(options)
       else
         #TODO supply more special tokens 
         options = {}
@@ -434,9 +446,14 @@ module RLayout
       default[:double_emphasis]  = {stroke_sides: [1,1,1,1], stroke_thickness: 0.5}
       default[:single_emphasis]  = {stroke_sides: [0,1,0,1], stroke_thickness: 0.5}
       default[:tab_stops]   = [['left', 20], ['left', 40], ['left', 60],['left', 80]]
+      default[:post_order_indent]       = 15 # A.  space after oringing some text
+      default[:first_para_top_margin]   = 0
+      default[:last_para_bottom_margin] = 0
+      default[:sub_para_indent]         = 0
+      
       style = RLayout::StyleService.shared_style_service.current_style[@markup]
       if style.class == String
-        # this is when a style is refering to other style
+        # this is when a style is refering to other style by name
         style = RLayout::StyleService.shared_style_service.current_style[style]
       end
       
@@ -450,9 +467,10 @@ module RLayout
 
   # line fill_color is set by optins[:line_color] or it is set to clear
   class	LineFragment < Container
-    attr_accessor :line_type #first_line, drop_cap, drop_cap_side
+    attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent, :para_style
     attr_accessor :x, :y, :width, :height, :total_token_width
+    
   	def	initialize(options={})
       # options[:stroke_color]    = 'red'
       options[:layout_direction]  = 'horizontal'
@@ -565,13 +583,10 @@ module RLayout
     
   end
   
+  def ParagraphParser
+    attr_accessor :kind, :regex_string, :sub_paragraphs
+    
+  end
+  
 end
 
-
-SMAMPLE_PARA =<<EOF
-
-\drop(T)his \color("black","is black") colored text in the middle of para.
-\bold(This is :) bold text at the \italic(begining) of line.
-\cmyk([30,30,0,0], colored) text $\frac({x+2}{y\sup2 + xy})$
-
-EOF

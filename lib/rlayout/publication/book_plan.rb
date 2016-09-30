@@ -1,9 +1,59 @@
+# BookPlan
+# BookPlan is  a tooi for creating book.
+# BookPlan uses csv file as input and creates folders from it.
+# csv file also containe information about types of documents,  so pre-made templates can be copied from library.
+# it also has page count for document,so that toc can be created and starting page numbers for each documents.
 
-# BookPlan is  a tooi for creating structures book folder for book.
-# it uses csv file as input and creates folders from it.
-# csv files containe information about types of documents
-# A typical csv headers are
-# part, document, subdocument, type, page, item, color
+# How BookPlan Works
+# 
+# 1. Create BookPlan worksheet with Spreadsheet.
+# 
+# Headers are 
+# Part, Document, SubDocument, Template, Page, Color
+# 
+# 2. THose spreadsheet file is converted into a folders as following.
+#
+# Book
+#   Front
+#     cover
+#     preface
+#     toc
+#   Body
+#     Chapter
+#       photo_page
+#     Chpater
+#       Illustrated_Page
+#     Chpater
+#     Chpater
+#     
+#   Rear
+#     index
+# 
+# 3. After creating folders, template files are also copied from library
+
+# Template
+# Template indicates type of document
+# pre-made folders are copied into working space.
+# 
+# Page
+# Page indicates how many pages the document should occupy.
+# 
+# From these information TOC is  
+# 
+# Metadata section of text file gets update by BookPlan
+# 
+# ---
+# book_title: "Title of the book"
+# document_title: "Title of chapter"
+# starting_page: 34
+# page_count: 4
+# ---
+# 
+# # Title of Chapter
+# 
+# ## Section Title
+# 
+# body text 
 
 module RLayout
   
@@ -23,7 +73,6 @@ module RLayout
         return        
       end
       @template_path = options.fetch(:project_path,"/Users/Shared/SoftwareLab/document_template")
-      
       parse_csv
       self
     end
@@ -48,6 +97,7 @@ module RLayout
       row.map{|e| e[1].gsub(" ","_") if e[1]}
     end
     
+    # part, document, subdocument, type, page, item, color
     def create_document_template(row)
       part_folder = @project_path + "/#{row.first[1]}"
       FileUtils.mkdir_p(part_folder) unless File.directory?(part_folder)
@@ -69,6 +119,8 @@ module RLayout
         system("cp -R #{source}/* #{sub_document_path}/")
       end
     end
+
+
   end
   
   

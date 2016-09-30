@@ -72,6 +72,10 @@
 # subtitle:
 # quote:
 # author:
+# book_title:
+# chapter_title:
+# strting_page:
+# page_count:
 # ---
 
 # New Page Triggering mark
@@ -87,18 +91,19 @@
 # author:
 # description:
 
-# section mark
-# = Section
-# == Section
-# === Section
-# ==== Section
-# ===== Section
 
 # # Section
 # ## Section
 # ### Section
 # #### Section
 # ##### Section
+
+# section mark
+# = Section
+# == Section
+# === Section
+# ==== Section
+# ===== Section
 
 # paragraph mark
 # [p]
@@ -129,6 +134,9 @@
 # $$math$$
 # ^super^
 # sub
+# {{box}}
+# {{base}{ruby}}
+# {{base}{reverse_ruby}}
 
 # class String
 #   def blank?
@@ -206,8 +214,8 @@ module RLayout
       @story[:paragraphs].each do |para|
         next if para.nil?
         para[:layout_expand]  = [:width]
-        if para[:markup] == 'img' && para[:string]
-          para.merge! eval(para.delete(:string))
+        if para[:markup] == 'img' && para[:para_string]
+          para.merge! eval(para.delete(:para_string))
           @paragraphs << Image.new(para_options)
         elsif para[:markup] == 'table'
           @paragraphs << Table.new(para)

@@ -4,6 +4,7 @@ describe 'create NRSemiTestChapterMaker' do
   before do
     @path       = '/Users/mskim/demo_english_parts/semi_test'
     @path = "/Users/mskim/demo_book_plan/PART1_어법/03_가주어와_가목적어/어법_Semi_Test_01"
+    @path = "/Users/mskim/Development/rails_rlayout/tree/public/1/6/10/11"
     @q_chapter  = NRSemiTestChapterMaker.new(project_path: @path)
   end
   

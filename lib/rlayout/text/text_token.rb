@@ -64,7 +64,9 @@ module RLayout
       # options[:stroke_width] = 1
       super
       if RUBY_ENGINE == "rubymotion"
-        @width  = @att_string.size.width
+        # add give some space to left and right of the token if we are boxing it.
+        @width  = @att_string.size.width + @left_margin + @right_margin
+        @x      = @left_margin
         @height = @att_string.size.height
         if options[:text_line_spacing]
           @height += options[:text_line_spacing] 
@@ -103,6 +105,7 @@ module RLayout
     end
     
     def default_atts
+      #TODO add color
       {
         NSFontAttributeName => NSFont.fontWithName("Times", size:10.0),
       }

@@ -271,8 +271,5 @@ MININUM_LINES_FOR_SPLIT = 2
       </div>
     EOF
     end
-  end
-  
-
-  
+  end  
 end

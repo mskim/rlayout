@@ -314,12 +314,12 @@ module RLayout
       # elsif markup == "image"
       #   {:markup =>markup, :string=>@string}
       else
-        {:markup =>@markup, :string=>@string}
+        {:markup =>@markup, :para_string=>@string}
       end      
     end
 
     #TODO
-    def to_asciidoctor
+    def to_asciidoctorpa
       
     end
     

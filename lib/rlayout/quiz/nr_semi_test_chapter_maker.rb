@@ -8,146 +8,58 @@
 # Workflow
 # There could be several different situations to work on Quiz chapter.
 # One would be a situation where someone creates chapter text quiz_chapter.txt or quiz items could be editted individuall on the Rails app.
-   
+
+#TODO
+# make iniial page 1
+# vertical justify items
 unless RUBY_ENGINE == "rubymotion"
   require 'strscan'
 end
 
 module RLayout
   
-  # QuizContent consists of parser, template, and list of quiz_item_hash.
-  # This will make it possible to handle differnt types of QuizItems
-  # By providing a parser, template. and text_data
-  # QuizItems is used for layout.
-  
-  class QuizContent
-    attr_reader :parser, :template, :quiz_items
-    def initialize(parser, template)
-      @parser     = parser
-      @template   = template
-      @quiz_items = []
-      self
-    end
-    
-    def call(text_block)
-      content_hash = @parser.call(text_block)
-      if content_hash
-        @quiz_items << @template.dup.set_content(content_hash)
-        true
-      else
-        # error message
-        return "error"
-      end
-    end
-  end
-  
-  class ENQuizItemTemplate < Container
-    attr_accessor :tag_list
-    attr_accessor :ans, :exp, :index_page, :answer_page
-    def initialize(options={})
-      @tag_list =  [:num, :q, :choice_text, :word_definition, :choice_table]
-      
-      self
-    end
-    
-    def self.parser
-      ENQuizParser
-    end
-  end
-  
-  class ENQuizParser
-    attr_reader :buffer, :quiz_hash
-    def initialize(test_text)
-      @buffer = StringScanner.new(test_text)
-      @quiz_hash = {}
-      parse
-      self
-    end
-    
-    def skip_spaces
-      @buffer.skip(/\s+/)
-    end
-        
-    def parse_question
-      q_line = @buffer.scan_until(/\n/)
-      @quiz_hash[:num]  = q_line.split("\t").first
-      @quiz_hash[:q]    = q_line.split("\t")[1]
-    end
-    
-    def parse_choice_text
-      @quiz_hash[:choice_text] = @buffer.scan_until(/\n/)
-    end
-    
-    def parse_word_definition
-      if @buffer.peek(1) == "*"
-        str = @buffer.scan_until(/\n/)
-        @quiz_hash[:word_definition] = str
-      end
-    end
-        
-    def parse_choice_table
-      return if @buffer.eos?
-      @s = @buffer.rest
-      if @s =~/^\t/
-        @quiz_hash[:choice_table] = ENQuizParser.convert_tsv_to_csv(@s)
-      elsif !(@s == "")
-        @quiz_hash[:choice_table] = @s 
-      end
-    end
-    
-    def parse
-      skip_spaces unless @buffer.bol?
-      parse_question
-      parse_choice_text
-      parse_word_definition
-      parse_choice_table
-    end
-    
-    def self.convert_tsv_to_csv(text_block)
-        # convert tab seperated values to csv text
-      lines = text_block.split("\n")
-      removed = []
-      lines.each.with_index do |line, i|
-        if i == 0
-          line = line.gsub(/\t/, ",,")
-          removed << line
-        else
-          #line = line.gsub(/······/, ",")
-          line = line.gsub(/·+/, ",")
-          line = line.gsub(/\W/, ",")
-          line = line.gsub(/,+/, ",,")
-          removed << line
-        end    
-      end
-      removed.join("\n")
-    end
-  end
-  
+
 	class NRSemiTestChapterMaker
     attr_accessor :project_path, :quiz_items, :layout_rb, :output_path
-    attr_accessor :text_data, :title, :heading
+    attr_accessor :text_data, :title, :heading 
+    attr_reader :column_count, :starting_page_number
+    
     def initialize(options={})
       if options[:project_path]
         @project_path = options[:project_path]
+        $project_path = @project_path
         @layout_rb    = @project_path + "/layout.rb"
-        @text_data_path = Dir.glob("#{@project_path}/*.{yml,txt}").first
+        @text_data_path = Dir.glob("#{@project_path}/*.{md,txt}").first
         unless File.exist?(@text_data_path)
-          puts "@text_data;#{@text_data}"
           return
         end
       else
         puts "No project path !!!"
         return
       end
+      @column_count         = options.fetch(:column_count, 2)
+      @starting_page_number = options.fetch(:starting_page_number, 1)
       template = File.open(@layout_rb,'r'){|f| f.read}
       @document = eval(template)
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return
       end
-      
       read_quiz_items
       layout_quiz_items
+      
+      output_options = {:preview=>true}
+      if options[:output_path]
+        @output_path = options[:output_path]
+      else
+        @output_path = @project_path + "/output.pdf"
+      end
+      @document.save_pdf(@output_path,output_options) unless options[:no_output] 
+      #TODO save info
+      # @doc_info = {}
+      # @doc_info[:page_count] = @document.pages.length
+      # save_toc
+      
       self
     end
     
@@ -156,9 +68,18 @@ module RLayout
       # also find out regex for the quiz content parsing.
       # This way we are generalizing the module to hanlde different kins of Quizs by setting the kind.
       # use the fitting parser and QuizItem kind.
-      @text_data   = File.open(@text_data_path, 'r'){|f| f.read}  
-      @quiz_items    = []
+      @text_data    = File.open(@text_data_path, 'r'){|f| f.read} 
+      # puts "@text_data:#{@text_data.dump}"
+       
+      @quiz_items   = []
       blocks = @text_data.split("\n\n")
+      if blocks.length >= 1
+        blocks_using_rn = @text_data.split("\r\n\r\n")
+      end
+      if blocks_using_rn.length > blocks.length
+        blocks = blocks_using_rn
+      end
+      puts "blocks.length:#{blocks.length}"
       # first parse title
       if blocks.first =~ /^=/ || blocks.first =~/^==/
         head_block = blocks.shift
@@ -168,7 +89,7 @@ module RLayout
         @heading = {:string=> head_block}
       end
       blocks.each do |block|
-        @quiz_items << EnglishQuizItem.new(ENQuizParser.new(block).quiz_hash)
+        @quiz_items << EnglishQuizItem.new(text_block: block)
       end
     end
     
@@ -179,7 +100,7 @@ module RLayout
         options[:footer]      = true
         options[:header]      = true
         options[:text_box]    = true
-        options[:text_box_options]    = @layout_style[:text_box]
+        options[:column_count]= @column_count
         options[:page_number] = @starting_page_number
         options[:parent]      = @document
         p=Page.new(options)
@@ -189,42 +110,21 @@ module RLayout
       page_index                = 0
       @first_page               = @document.pages[0]
       if heading = @first_page.has_heading?  
-        @first_page.heading_object.set_content(@heading)        
+        @first_page.heading_object.set_content(@heading) 
       else
         # place heading at the front most
         heading = Heading.new(@heading)
         heading[:parent] = @first_page
-        puts "++++++ heading:#{@heading}"
         @first_page.graphics.unshift(heading)
       end
-      @first_page.layout_space              = @main_layout_space
-      @first_page.main_box.layout_length    = @text_box_layout_length
-      @first_page.main_box.layout_space     = @column_gutter 
-      @first_page.main_box.draw_gutter_stroke= @draw_gutter_stroke 
-      # @first_page.main_box.graphics.each{|col| col.layout_space = @column_layout_space}
-      # @first_page.relayout!
-      @first_page.main_box.create_column_grid_rects
-      @first_page.main_box.set_overlapping_grid_rect
-      @first_page.main_box.layout_items(@quiz_items)
-      if @document.pages[1]
-        @second_page  = @document.pages[1] 
-        @second_page.layout_space              = @main_layout_space
-        @second_page.main_box.layout_length    = @text_box_layout_length
-        @second_page.main_box.layout_space     = @column_gutter 
-        @second_page.main_box.draw_gutter_stroke= @draw_gutter_stroke 
-        @second_page.main_box.graphics.each{|col| col.layout_space = @column_layout_space}
-        @second_page.relayout!
-        @second_page.main_box.create_column_grid_rects
-        @second_page.main_box.set_overlapping_grid_rect      
-      end
-      page_index = 1
+      page_index = 0
       while @quiz_items.length > 0
         if page_index >= @document.pages.length
           options               = {}
           options[:footer]      = true
           options[:header]      = true
           options[:text_box]    = true
-          options[:text_box_options]    = @layout_style[:text_box]
+          options[:column_count]= @column_count
           options[:page_number] = @starting_page_number + page_index
           options[:parent]      = @document
           p=Page.new(options)
@@ -233,6 +133,7 @@ module RLayout
         end
         @document.pages[page_index].relayout!
         @document.pages[page_index].main_box.layout_items(@quiz_items)
+        @document.pages[page_index].main_box.justify_items
         page_index += 1
       end
       
@@ -313,9 +214,7 @@ module RLayout
       h
     end    
 	end
-	
-	module_function
-	
+		
 end
 
 __END__

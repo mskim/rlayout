@@ -117,6 +117,41 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2016 9 30
+	- fix paragraph color support
+	- box token width
+	- heading \n
+	- heading background image
+	- sub_para_left_indent_
+	- first_para_top_indent
+	- last_para_bottom_indent
+	
+	- create cocoa_text cli tool for supporting font and width for mri
+	
+	- create meta-data 
+		- footer
+	
+2016 9 29
+	- HeadingContainer
+	
+	- designer_pargraph
+		- has starting marker for parsing
+			A. B. 1. a. ii.
+		- has_sub_paragraphs
+		- has_layout_file
+		- group_margin
+		
+	- typo fine controll
+		- Line Space, Space Before, Space After
+		- Order indent 
+		- Head indent 
+		- Line indent for background color
+	
+2016 9 28
+	- vertically justify items
+	- Web based editing, flipbook
+	- Rakefile
+	
 2016 9 26
 	- rakefile for book, rakefile for chapters, rake update 
 	- manual adjustment

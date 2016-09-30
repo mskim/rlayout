@@ -54,14 +54,17 @@ module RLayout
     attr_accessor :items, :head_row, :has_head_column, :column_width_array, :column_align_array
     def initialize(options={})
       super
+      @quiz_item_style = 
+      RLayout::StyleService.shared_style_service.quiz_item_style
+      
       @layout_direction   = "horizontal"
       @layout_expand      = :width
       @items              = options[:items]
       @head_row           = options.fetch(:head_row, false)
-      @column_width_array = $quiz_item_style[:column_width_array]
-      @column_align_array = $quiz_item_style[:column_align_array]
-      @table_head_style   = $quiz_item_style[:table_head_style].dup
-      @table_body_style   = $quiz_item_style[:table_body_style].dup
+      @column_width_array = @quiz_item_style[:column_width_array]
+      @column_align_array = @quiz_item_style[:column_align_array]
+      @table_head_style   = @quiz_item_style[:table_head_style].dup
+      @table_body_style   = @quiz_item_style[:table_body_style].dup
       @items.each_with_index do |item, i|
         if @head_row
           token = TextToken.new(string: item, atts: @table_head_style, layout_expand: :width)
@@ -86,8 +89,13 @@ module RLayout
       @csv_text           = options[:csv]
       @has_heading        = options.fetch(:has_heading, true)
       @has_head_column    = options.fetch(:has_head_column, false)
-      csv                 = MotionCSV.parse(@csv_text)
-      @header_array       = csv.headers
+      if RUBY_ENGINE == 'rubymotion'
+        @csv                 = MotionCSV.parse(@csv_text)
+      else
+        @csv                 = CSV.parse(@csv_text, headers: true)
+        @header_array       = @csv.headers
+      end
+      @header_array       = @csv.headers
       if options[:column_width_array]
         @column_width_array = options[:column_width_array]
       else
@@ -101,7 +109,7 @@ module RLayout
       # head row
       SimpleTableRow.new(parent: self, width: @width, height: 20, head_row: true, items: @header_array, column_width_array: @column_width_array, column_align_array: @column_align_array)
       # body rows
-      csv.each do |row|
+      @csv.each do |row|
         SimpleTableRow.new(parent: self, width: @width, height: 20, items: row, column_width_array: @column_width_array, column_align_array: @column_align_array)
       end
       layout_items

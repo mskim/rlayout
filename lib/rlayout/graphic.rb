@@ -437,7 +437,6 @@ module RLayout
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path, options)
       elsif RUBY_ENGINE == 'ruby' 
-        puts "In Graphic"
         puts "RUBY_ENGINE:#{RUBY_ENGINE}"
       end
     end
