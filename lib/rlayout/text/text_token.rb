@@ -73,6 +73,7 @@ module RLayout
         else
           @height += 10
         end
+        
         # if @tag == "base" || @tag == "bottom"
         #   puts "options[:text_color]:#{options[:text_color]}"
         #   puts "@tag:#{@tag}"
@@ -113,27 +114,15 @@ module RLayout
     
     # TextToken don't have TextLayoutManager, they just have @att_string
     def draw_text
-      @att_string.drawAtPoint(NSMakePoint(0,0))
-    end
-    
-    # TODO use graphic draw by redefineing getLineRect for different class
-    # draw TextToken stroke 
-    def draw_stroke
-      if RUBY_ENGINE == "rubymotion"
-        rect = NSMakeRect(0,0,@att_string.size.width, @att_string.size.height)
-        rect = NSInsetRect(rect, -1, -1)
-        path = NSBezierPath.bezierPathWithRect(rect)
-        path.setLineWidth(@stroke[:thickness])
-        path.stroke 
-      else
-        puts "draw_stroke in Ruby mode"
-      end
+      @att_string.drawAtPoint(NSMakePoint(@left_margin,0))
     end
     
     def get_stroke_rect
       if RUBY_ENGINE == "rubymotion"
+        stroke_width = @att_string.size.width + @left_margin + @right_margin
+        
         # for TextToken, use attstring rect instead of Graphic frame
-        r = NSMakeRect(0,0,@att_string.size.width, @att_string.size.height)
+        r = NSMakeRect(0,0,stroke_width, @att_string.size.height)
         r = NSInsetRect(r, -1, -1)
         
         if @line_position == 1 #LINE_POSITION_MIDDLE 

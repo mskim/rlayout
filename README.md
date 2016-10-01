@@ -118,9 +118,11 @@ TODO List
 		- put templates under rubymotion app/resouces/
 
 2016 9 30
-	- fix paragraph color support
 	- box token width
-	- heading \n
+	- fix ChapterMaker bug para[:string] to para[:para_string]
+	
+	- fix paragraph color support
+	- heading \n by forcing relayout
 	- heading background image
 	- sub_para_left_indent_
 	- first_para_top_indent

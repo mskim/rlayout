@@ -24,7 +24,7 @@ module RLayout
 	  # look for graphic with same tag as content_hash key
 	  # and replace the graphic content with the content_hash value.
 	  def set_content(first_item)
-	    v = first_item[:string].split("\n")      
+	    v = first_item[:para_string].split("\n")      
       content_hash = Hash[@tag_list.zip v]
       @graphics.each do |graphic|
         if graphic.tag && @tag_list.include?(graphic.tag.to_sym)

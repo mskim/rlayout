@@ -132,8 +132,8 @@ module RLayout
             empasised_style.delete(:double_emphasis)
             empasised_style[:string]        = line
             empasised_style.delete(:parent) if empasised_style[:parent]
-            empasised_style[:left_margin]   = 2 # box left side margin
-            empasised_style[:right_margin]  = 2 # box right side margin
+            empasised_style[:left_margin]   = 3 # box left side margin
+            empasised_style[:right_margin]  = 3 # box right side margin
             @tokens << RLayout::TextToken.new(empasised_style)
           else
             @para_style[:string] = line
