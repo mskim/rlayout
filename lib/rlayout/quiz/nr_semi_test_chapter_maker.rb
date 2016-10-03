@@ -66,11 +66,9 @@ module RLayout
     def read_quiz_items
       # read metadata and find out which type of quiz the content is made of
       # also find out regex for the quiz content parsing.
-      # This way we are generalizing the module to hanlde different kins of Quizs by setting the kind.
+      # This way can generalize it to hanlde different types of Quizes.
       # use the fitting parser and QuizItem kind.
-      @text_data    = File.open(@text_data_path, 'r'){|f| f.read} 
-      # puts "@text_data:#{@text_data.dump}"
-       
+      @text_data    = File.open(@text_data_path, 'r'){|f| f.read}        
       @quiz_items   = []
       blocks = @text_data.split("\n\n")
       if blocks.length >= 1
@@ -79,7 +77,6 @@ module RLayout
       if blocks_using_rn.length > blocks.length
         blocks = blocks_using_rn
       end
-      puts "blocks.length:#{blocks.length}"
       # first parse title
       if blocks.first =~ /^=/ || blocks.first =~/^==/
         head_block = blocks.shift
@@ -107,8 +104,8 @@ module RLayout
         p.relayout!
         p.main_box.create_column_grid_rects
       end
-      page_index                = 0
-      @first_page               = @document.pages[0]
+      page_index              = 0
+      @first_page             = @document.pages[0]
       if heading = @first_page.has_heading?  
         @first_page.heading_object.set_content(@heading) 
       else

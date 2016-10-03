@@ -1,30 +1,34 @@
 
 # For text handling, Text and Paragraph are used 
 # Text Object is used for simple text, usually for single page document or Ads.
-# Text uses NSTextSystem
+# Text uses NSTextSystem, 
+# Text is also used in Heading, HeadingContainer, where several short texts are used.
 # Paragraph Object is used in middle to long document.
 # Paragraph uses our own text system.
 
 # How Paragraoh is layed out?
-# 1. Tokens are created
-# 2. We can encounter simple column or complex column
+# 1. Tokens are created with given para_style.
+# 2. Paragraphs can be layed out the initail time if we know the width of the column to be,
+#    but most of the we do not know where the paragraph will be layed out. So, layout_lines(width)
+#    is called at the time of layout. 
+# 3. We can encounter simple column or complex column
 #    complex column are those who have overlapping floats of various shapes. 
 #    so the text lines could be shorter than the ones in simple column. 
-# 3. We can also encounter tokens are not uniform in heights, math tokens for example
+# 3. We can also encounter tokens that are not uniform in heights, math tokens for example
 
  
 # LineFragments
 # LineFragments are made up of TextTokens, ImageToken, MathToken etc....
-# When paragraph is created, TextTokenAtts is created for default att value for all TextTokena and they all point ot it.
+# When paragraph is created, TextTokenAtts is created for default att value for all TextTokena and they are all created using it as default.
 # Whenever there is differnce TextTokenAtts in the paragraph, new TextTokenAtts is created and different TextToken ponts to that one.
 
 # Emphasis Handling
 # inline emphasis are handled using double curl {{content}}, or single curl {content}
-# We want the emphasis mark to be simple as possible for writers.
+# We want the emphasis mark to be simple as possible for writers. This is work in process, it might change as we go!!!!
 # So, we limit the emphasis markup to those two only, and how it is implement is left to designer, not to the writer. It means designer need to provide custom style at the run time for effected para styles.
-# There are two types of emphasis, emphasis text effect and special layout.
+# There are two types of emphasis,  "text effect" and "special layout".
 # For text effect, such as italic, bold, boxed, underline, hidden_text, emphasis we can modify the @token_style to get the effect. So designer need to provide paragraph_styles paragraph style as hash.
-# For special layout tokens, such as ruby, reverse ruby,  we have to do some layout modification. In this case, desinger needs to proved the function name of the emphasis, such as ruby, reverse_ruby, icon: name . in custom paragraph style. as default[:double_emphasis]  = "reverse_ruby"
+# For special layout tokens, such as ruby, reverse ruby,  we have to do some layout modification. In this case, desinger needs to proved the function name of the emphasis, such as ruby, reverse_ruby, icon: name . in custom paragraph style. as para_style[:double_emphasis]  = "reverse_ruby"
 
 #  
 # {{base text}{top text}}
@@ -37,15 +41,24 @@ INLINE_DOUBLE_CURL = /(\{\{.*?\}\})/m
 RUBY_ARGUMENT_DIVIDER   = /\}(\s)*?\{/
   
 # String#split
-# if we use String#split with match, we get the match as an Array eleemnt
+# if we use String#split with match, we get the match as an Array eleemnt. I find it very useful.
+# I am using it to parse the inline style empasis and inline special empasis.
 
 # {{ruby sting, uppper}}
 
-# example 
+# I am still toying with differnce syntexes to make it easy to work
+# candidate 1
 #   def_box('boxed_text')
 #   def_ruby('base_text', 'top_text')
 #   def_undertag('base_text', 'under_text')
 
+# candidate 2
+#   {style empases}
+#   {{boxed_text}}
+#   {{base_text}{top_text}} 
+#   for each document meaning of {{}} and {} are specified by designer
+#   to make writers not to be concered with design aspect
+#   writers should not be memprizing many many markups, just two or three.
 
 module RLayout
 
@@ -62,18 +75,30 @@ module RLayout
   # tokens.pop #pop the last TabToken
   
   # tab Token
-  
-  #TODO read styles from StyleService
-  
+    
   # we use three different string types in opions
   # text_string for NSText
   # string          Token
   # para_string     For Paragraph, para_string is passed to Tokens as string
   # so the text drawing take place only when option is text_string and string
+  
+  # list_styles option items are used in list type paragraphs, such as
+  # OrderedList, UnordersList, OrderedSection, UpperAlpaList
+  # they all have prefix of ":list_*" , 
+  # it is filtered using "filter_list_options(options)" and saved in @list_style
+  # @list_style is passed into Tokens as Graphic options.
+
+  # I will be using this "prefix filtering" convension through out rlayout.
+  # text_color => color of Text
+  # fill_color => color of Fill
+  # line_color => color of Line
+  # list_fill_color => fill_color of NumberToken
+  # list_line_color => line_color of NumberToken
+  
   class Paragraph < Container
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
-    attr_accessor :para_string, :para_style
+    attr_accessor :para_string, :para_style, :list_style
     attr_accessor :text_column, :grid_height 
     attr_accessor :overflow, :underflow, :linked, :line_y_offset
 
@@ -82,7 +107,13 @@ module RLayout
       #simple, drop_cap, drop_cap_image, math, with_image, with_math
       @markup         = options.fetch(:markup, 'p') 
       @para_string    = options.fetch(:para_string, "")
-      @para_style     = default_para_style
+      make_para_style
+      if  is_list_kind?
+        puts "++++++"
+        puts "self.class:#{self.class}"
+        puts "@para_style:#{@para_style}"
+        puts "@markup:#{@markup}"
+      end
       @space_width    = @para_style[:space_width]
       @grid_height    = options.fetch(:grid_height, 2)
       @linked         = options.fetch(:linked, false) 
@@ -225,12 +256,22 @@ module RLayout
       @atts = {}
       if RUBY_ENGINE == 'rubymotion'
         @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:text_size])
-        @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
-        if @para_style[:text_color] && @para_style[:text_color].class == NSColor
-          @atts[NSForegroundColorAttributeName] = @para_style[:text_color]
+        if @para_style[:text_color]
+          text_color    = RLayout::convert_to_nscolor(@para_style[:text_color]) unless (@para_style[:text_color]) == NSColor
+          @atts[NSForegroundColorAttributeName] = text_color
         end
+        atts[NSKernAttributeName]             = text_tracking if text_tracking
+        @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
+        
         @para_style[:atts] = @atts
+         
       end
+      
+      # check if Paragraph is list kind
+      if is_list_kind?
+        puts "#{self.class} is a list kind..."
+      end
+      
       # check if we have any special token mark {{something}} or {something}
       # first check for double curl, single curl
       # if double curl is found, split para string with double curl fist
@@ -259,6 +300,11 @@ module RLayout
         
     def line_count
       @graphics.length
+    end
+    
+    def is_list_kind?
+      list_kind = [OrderedList, OrderedListItem, UnorderedList, UnorderedListItem, OrderedSection, UpperAlphaList]
+      list_kind.include?(self.class)
     end
     
     # algorithm for laying out paragraph in simple and complex container
@@ -429,27 +475,25 @@ module RLayout
 	  end
 	  
 	  # I should read it from StyleService
-    def default_para_style      
-      default               = {}
-      default[:font]        = "smSSMyungjoP-W30"
-      default[:text_size]   = 10
-      default[:space_width] = 4
-      default[:color]       = "black"
-      default[:style]       = "plain"
-      default[:h_alignment] = "left"
-      default[:v_alignment] = "center"
-      default[:first_line_indent] = 20
-      default[:head_indent] = 3
-      default[:tail_indent] = 3
-      default[:space_before]= 0
-      default[:space_after] = 0
-      default[:double_emphasis]  = {stroke_sides: [1,1,1,1], stroke_thickness: 0.5}
-      default[:single_emphasis]  = {stroke_sides: [0,1,0,1], stroke_thickness: 0.5}
-      default[:tab_stops]   = [['left', 20], ['left', 40], ['left', 60],['left', 80]]
-      default[:post_order_indent]       = 15 # A.  space after oringing some text
-      default[:first_para_top_margin]   = 0
-      default[:last_para_bottom_margin] = 0
-      default[:sub_para_indent]         = 0
+	  # list_* are for list item order token attributes
+    def make_para_style      
+      h                           = {}
+      h[:font]                    = "smSSMyungjoP-W30"
+      h[:text_size]               = 10
+      h[:space_width]             = 4
+      h[:text_color]              = "black"
+      h[:fill_color]              = "white"
+      h[:text_style]              = "plain"
+      h[:h_alignment]             = "left"
+      h[:v_alignment]             = "center"
+      h[:first_line_indent]       = 20
+      h[:head_indent]             = 3
+      h[:tail_indent]             = 3
+      h[:space_before]            = 0
+      h[:space_after]             = 0
+      h[:tab_stops]               = [['left', 20], ['left', 40], ['left', 60],['left', 80]]
+      h[:double_emphasis]         = {stroke_sides: [1,1,1,1], stroke_thickness: 0.5}
+      h[:single_emphasis]         = {stroke_sides: [0,1,0,1], stroke_thickness: 0.5}
       
       style = RLayout::StyleService.shared_style_service.current_style[@markup]
       if style.class == String
@@ -458,11 +502,50 @@ module RLayout
       end
       
       if style
-        default.merge! style 
-      else
-      end      
-      default
+        h.merge! style 
+      end
+      # puts the list style in @list_style
+      h[:list_font]               = h[:font]
+      h[:list_text_color]         = h[:text_color]
+      h[:list_text_size]          = h[:text_size]
+      h[:list_to_text_space]      = h[:text_size]*2 # space between num token and stating text
+      h[:list_text_indent]        = h[:text_size]*4 # x to stating text, independent of num token
+                                                    # also sets the head indent of rest of lines
+                                                    # tab effect for all lines without tab 
+      h[:list_child_indent]       = h[:list_text_size]*4
+      
+      
+      @para_style = h
     end
+    
+    def filter_list_options(h)
+      list_only = Hash[h.select{|k,v| [k, v] if k=~/^list_/}]
+      Hash[list_only.collect{|k,v| [k.to_s.sub("list_","").to_sym, v]}]
+    end
+    
+    # NSString *NSFontAttributeName;
+    # NSString *NSParagraphStyleAttributeName;
+    # NSString *NSForegroundColorAttributeName;
+    # NSString *NSUnderlineStyleAttributeName;
+    # NSString *NSSuperscriptAttributeName;
+    # NSString *NSBackgroundColorAttributeName;
+    # NSString *NSAttachmentAttributeName;
+    # NSString *NSLigatureAttributeName;
+    # NSString *NSBaselineOffsetAttributeName;
+    # NSString *NSKernAttributeName;
+    # NSString *NSLinkAttributeName;
+    # NSString *NSStrokeWidthAttributeName;
+    # NSString *NSStrokeColorAttributeName;
+    # NSString *NSUnderlineColorAttributeName;
+    # NSString *NSStrikethroughStyleAttributeName;
+    # NSString *NSStrikethroughColorAttributeName;
+    # NSString *NSShadowAttributeName;
+    # NSString *NSObliquenessAttributeName;
+    # NSString *NSExpansionAttributeName;
+    # NSString *NSCursorAttributeName;
+    # NSString *NSToolTipAttributeName;
+    # NSString *NSMarkedClauseSegmentAttributeName;
+
   end
 
   # line fill_color is set by optins[:line_color] or it is set to clear
@@ -578,15 +661,6 @@ module RLayout
   def add_title_tokens
     
   end
-  
-  def layout_lines
     
-  end
-  
-  def ParagraphParser
-    attr_accessor :kind, :regex_string, :sub_paragraphs
-    
-  end
-  
 end
 

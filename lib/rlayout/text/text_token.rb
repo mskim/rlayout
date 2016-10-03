@@ -44,14 +44,18 @@ module RLayout
   
   class TextToken < Graphic
     attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
-    attr_accessor :string, :atts, :stroke, :has_text
+    attr_accessor :string, :atts, :stroke, :has_text, :token_type # number, empasis, special
     def initialize(options={})
       @string                   = options[:string]
       options[:layout_expand]   = nil
       @has_text                 = true
       if RUBY_ENGINE == "rubymotion"
-        @atts           = default_atts
-        @atts           = @atts.merge(options[:atts]) if options[:atts]
+        if options[:atts]
+          @atts = options[:atts]
+        else
+          @atts       = default_atts
+        end
+
         @att_string     = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
         options[:width] = @att_string.size.width
         options[:height]= @att_string.size.height*2
@@ -73,18 +77,7 @@ module RLayout
         else
           @height += 10
         end
-        
-        # if @tag == "base" || @tag == "bottom"
-        #   puts "options[:text_color]:#{options[:text_color]}"
-        #   puts "@tag:#{@tag}"
-        #   puts "@string:#{@string}"
-        #   puts @att_string.attributesAtIndex(0, effectiveRange:nil)      
-        # end
-        
       end
-      # @x      = 0
-      # @y      = 0
-      # @height = 20
       self
     end
     
@@ -103,6 +96,12 @@ module RLayout
         s += "<text font-size=\"#{@text_size}\" x=\"#{x}\" y=\"#{y + height*0.8}\">#{string}</text>\n"
       end
       s
+    end
+    
+    def ns_atts_from_style
+      {
+        NSFontAttributeName => NSFont.fontWithName("Times", size:10.0),
+      }
     end
     
     def default_atts
@@ -140,6 +139,31 @@ module RLayout
     end
   end
   
+  #number, 
+  #lower_alphabet, 
+  #lower_alphabet, 
+  #roman, 
+  #korean_radical, 
+  #koreand_ga_na_da
+  class NumberToken < TextToken
+    attr_accessor :number_type  
+    
+    def initialize(options={})
+      options[:font]          = options[:list_font] if options[:list_font]
+      options[:text_size]     = options[:list_text_size] if options[:list_text_size]
+      options[:text_color]    = options[:list_text_color] if options[:list_text_color]
+      options[:fill_color]    = options[:list_fill_color] if options[:list_fill_color]
+      options[:stroke_width]  = options[:list_stroke_width] if options[:list_stroke_width]
+      options[:stroke_color]  = options[:list_stroke_color] if options[:list_stroke_color]
+      # TODO i should refactor this using /^list_/
+      super
+      
+      self
+    end
+    
+    
+  end
+  
   class TabToken < Graphic
     attr_accessor :tab_type  #left, right, center, decimal
     def initialize(options={})
@@ -162,8 +186,11 @@ module RLayout
       @string       = "."
       @margin        = 2
       if RUBY_ENGINE == "rubymotion"
-        @atts       = default_atts
-        @atts       = @atts.merge(options[:atts]) if options[:atts]
+        if options[:atts]
+          @atts       = options[:atts] 
+        else
+          @atts       = default_atts
+        end
         @att_string = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
         count       = ((@width - @margin*2)/@att_string.size.width).to_i
         @string *=count

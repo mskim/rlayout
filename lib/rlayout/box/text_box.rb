@@ -272,9 +272,10 @@ module RLayout
       current_column = @graphics[column_index]
       while @item  = flowing_items.shift do
         if @item.is_a?(Hash)
-          #TODO this is messy!!!
+          #TODO add hash content to Heading
           if @item[:markup]
-            puts "@item+++++++++++ :#{@item}"
+            
+            # puts "@item+++++++++++ :#{@item}"
             next
           end
         # look for page heading and set content

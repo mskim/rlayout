@@ -49,6 +49,8 @@ module RLayout
   end
   
   def convert_to_nscolor(color)
+    puts __method__
+    puts "in color color:#{color}"
     return color_from_string(color) if color.class == String
     color
   end

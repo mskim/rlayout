@@ -1,20 +1,38 @@
 module RLayout
   
-  #eed0c0
-  # OrderedList is created with given block of ordered list item text block
-  # TODO
-  # Indenting, tab, first_line_indent, head_indent
-  # set head_indent = num + space
-  # next level_1_indent = first_line head_indent
-  # next level_2_indent = level_1_indent
+  # List Objects OrderedList, UnorderdList, OrderedSection, and UpperAlphList are 
+  # block "unbrella" paragraphs, similar to Table 
+  # They are kind of Paragraphs that wrap the actual Paragraphs.
+  # When they are layed out, It is not layed out, but its graphics are.
+  # Its graphics are created as OrderedListItem or UnorderdListItem.
+  # OrderedListItem, UnorderdListItem is set with markup that corrensponds to the style being allyied. @list_style is applied to those listItems.
   
+  # @list_style containes 
+  # h[:list_font]               = h[:font]
+  # h[:list_text_color]         = h[:text_color]
+  # h[:list_text_size]          = h[:text_size]
+  # h[:list_to_text_space]      = h[:text_size]*2 # space between num token and stating text
+  # h[:list_text_indent]        = h[:text_size]*4 # x to stating text, independent of num token
+  #                                               # also sets the head indent of rest of lines
+  #                                               # tab effect for all lines without tab 
+  # h[:list_child_indent]       = h[:list_text_size]*4
+  # h[:list_first_child_top_margin]   = 0
+  # h[:lsit_last_child_bottom_margin] = 0
+  # 
+  #
   # ordering_char_types=  %w[1 a A] #[number, lower_alphabet, upper_alphabet]
   # optional array can be passed with custom  
   # TODO this is adoc style do it for markdown as well
+  
+  
   class OrderedList < Paragraph
     attr_accessor :current_order, :ordering_char_types, :text_block
+    attr_accessor :list_style
+    # we have @list_style from Paragraph
+    
     def initialize(options={})
       super
+      @list_style = filter_list_options(@para_style)
       #TODO this fails if number goes beyond 9
       @ordering_char_types  = options.fetch(:ordering_char_types, %w[1 a A])
       @text_block           = options[:text_block]
@@ -55,15 +73,15 @@ module RLayout
         end
       end
     end
-
   end
   
   class OrderedListItem < Paragraph
     attr_accessor :order, :level, :indent
+    attr_accessor :list_style
+    # we have @list_style from Paragraph
     def initialize(options={})
       super
-      @para_style = default_para_style
-      @fill[:color] = @para_style[:fill_color] if @para_style[:fill_color]
+      @list_style = filter_list_options(@para_style)
       #TODO make @indent relative to font size
       @indent             = options.fetch(:indent, 15)
       @order              = options[:order]
@@ -73,41 +91,19 @@ module RLayout
       @head_indent        = @first_line_indent + @indent
       self
     end
-    # I should read it from StyleService
-    def default_para_style   
-      default               = {}
-      default[:fill_color]  = "clear"
-      default[:font]        = "smSSMyungjoP-W30"
-      default[:text_size]   = 10
-      default[:space_width] = 4
-      default[:color]       = "black"
-      default[:style]       = "plain"
-      default[:h_alignment] = "left"
-      default[:v_alignment] = "center"
-      default[:first_line_indent] = 20
-      default[:head_indent] = 3
-      default[:tail_indent] = 3      
-      default[:tab_stops]   = [['left', 20], ['left', 40], ['left', 60],['left', 80]]
-      style = RLayout::StyleService.shared_style_service.current_style[@markup]
-            
-      if style.class == String
-        # this is when a style is refering to other style
-        style = RLayout::StyleService.shared_style_service.current_style[style]
-      end
-      if style
-        default.merge! style 
-      else
-      end       
-      default
-    end
-      
+    # I should read it from StyleService      
   end
+  
   
   class OrderedSection < Paragraph
     attr_accessor :current_order, :ordering_char_types, :text_block
+    attr_accessor :list_style
+    
     def initialize(options={})
-      super      
-      @fill[:fill_color] = @para_style[:fill_color] if @para_style[:fill_color]
+      super   
+      # token is not created yet since the text is passed as text_block, not para_string.
+      # OrderedSection acts as umbrella Paragraph, so not text layout takes place
+      @list_style = filter_list_options(@para_style)
       @ordering_char_types  = options.fetch(:ordering_char_types, %w[A 1 a])
       @text_block           = options[:text_block]
       parse_list_items
@@ -142,8 +138,11 @@ module RLayout
   
   class UpperAlphaList < Paragraph
     attr_accessor :current_order, :ordering_char_types, :text_block
+    attr_accessor :list_style 
+
     def initialize(options={})
       super
+      @list_style = filter_list_options(@para_style)
       @ordering_char_types  = options.fetch(:ordering_char_types, %w[A 1 a])
       @text_block           = options[:text_block]
       parse_list_items
@@ -176,11 +175,13 @@ module RLayout
     end
   end
   
-  
   class UnorderedList < Paragraph    
     attr_accessor :current_order, :ordering_char_types, :text_block
+    attr_accessor :list_style 
+    
     def initialize(options={})
       super
+      @list_style = filter_list_options(@para_style)
       @ordering_char_types  = options.fetch(:ordering_char_types, %w[* + -])
       @text_block           = options[:text_block]
       parse_list_items
@@ -223,8 +224,11 @@ module RLayout
   
   class UnorderedListItem < Paragraph
     attr_accessor :order, :level, :indent
+    attr_accessor :list_style
+    
     def initialize(options={})
       super
+      @list_style         = filter_list_options(@para_style)
       @indent             = options.fetch(:indent, 15)
       @order              = options[:order]
       @level              = options[:level]
