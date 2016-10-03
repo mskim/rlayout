@@ -103,17 +103,13 @@ module RLayout
     attr_accessor :overflow, :underflow, :linked, :line_y_offset
 
     def initialize(options={})
-      super      
+      super   
       #simple, drop_cap, drop_cap_image, math, with_image, with_math
       @markup         = options.fetch(:markup, 'p') 
       @para_string    = options.fetch(:para_string, "")
       make_para_style
-      if  is_list_kind?
-        puts "++++++"
-        puts "self.class:#{self.class}"
-        puts "@para_style:#{@para_style}"
-        puts "@markup:#{@markup}"
-      end
+      # super doen't set @para_style values
+      @fill.color     = @para_style[:fill_color]   
       @space_width    = @para_style[:space_width]
       @grid_height    = options.fetch(:grid_height, 2)
       @linked         = options.fetch(:linked, false) 
@@ -267,10 +263,6 @@ module RLayout
          
       end
       
-      # check if Paragraph is list kind
-      if is_list_kind?
-        puts "#{self.class} is a list kind..."
-      end
       
       # check if we have any special token mark {{something}} or {something}
       # first check for double curl, single curl
@@ -302,10 +294,6 @@ module RLayout
       @graphics.length
     end
     
-    def is_list_kind?
-      list_kind = [OrderedList, OrderedListItem, UnorderedList, UnorderedListItem, OrderedSection, UpperAlphaList]
-      list_kind.include?(self.class)
-    end
     
     # algorithm for laying out paragraph in simple and complex container
     # loop until we run out of tokens
@@ -503,18 +491,7 @@ module RLayout
       
       if style
         h.merge! style 
-      end
-      # puts the list style in @list_style
-      h[:list_font]               = h[:font]
-      h[:list_text_color]         = h[:text_color]
-      h[:list_text_size]          = h[:text_size]
-      h[:list_to_text_space]      = h[:text_size]*2 # space between num token and stating text
-      h[:list_text_indent]        = h[:text_size]*4 # x to stating text, independent of num token
-                                                    # also sets the head indent of rest of lines
-                                                    # tab effect for all lines without tab 
-      h[:list_child_indent]       = h[:list_text_size]*4
-      
-      
+      end      
       @para_style = h
     end
     
@@ -587,13 +564,13 @@ module RLayout
 	    @total_token_width = token_width_sum
       @total_space_width = (@graphics.length - 1)*@space_width if @graphics.length > 0
       room = @width - (@total_token_width + @total_space_width)
-      x = 0
+      x = 0.0
       @graphics.each do |token|
         token.x = x
-        x += token.width + @space_width
+        x += token.width + @space_width        
       end
       
-      case @para_style
+      case @para_style[:text_alignment]
       when 'left'
       when 'center'
         @graphics.map {|t| t.x += room/2.0}

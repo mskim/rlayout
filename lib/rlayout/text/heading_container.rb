@@ -27,7 +27,6 @@ module RLayout
 	    content = first_item[:para_string] || first_item[:string]
 	    return unless content
 	    content.sub!(/^=*\s/, "")
-	    puts "content:#{content}"
 	    v = content.split("\n")      
       content_hash = Hash[@tag_list.zip v]
       @graphics.each do |graphic|

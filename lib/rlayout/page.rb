@@ -228,7 +228,6 @@ EOF
           options[:footer][:text_string] = options[:footer][:first_page_text]
           @footer_object = footer(options[:footer])
         end
-
       elsif left_page?
         if options[:header] && header_rule[:left_page] && !header_rule[:first_page_only]
           options[:header][:text_string] = options[:header][:left_page_text]
@@ -238,6 +237,7 @@ EOF
           options[:footer][:text_string] = options[:footer][:left_page_text]
           @footer_object = footer(options[:footer])
         end
+        
       else
         if options[:header] && header_rule[:right_page] && !header_rule[:first_page_only]
           options[:header][:text_string] = options[:header][:right_page_text]
@@ -247,6 +247,7 @@ EOF
           options[:footer][:text_string] = options[:footer][:right_page_text]
           @footer_object = footer(options[:footer])
         end
+        
       end
     end
 

@@ -119,21 +119,33 @@ TODO List
 		
 2016 10 3
 	- List
-	- OrderedList
-	
+	- OrderedList 
+		fill_color
+		indent
+		space_before, after
+		
+		\n and checkmark
+		page_number
+		
+	- demo pre
+		fill in the data
+		rake 
+		  bookplan
+		  document folder, subdocument folder
+		web flipbook
+		ace integration
+		PDF download
+		Question Bank
+		
 2016 10 1
   # list_* are list related attributes
-    h[:list_font]               = h[:font]
-    h[:list_text_color]         = h[:text_color]
-    h[:list_fill_color]         = "clear"
-    h[:list_text_size]          = h[:text_size]
-	h[:list_to_text_space]      = h[:text_size]*2 # space between num_token and stating text
-	h[:list_text_indent]        = h[:text_size]*4 # x to stating text, independent of num_token
-											      # also sets the head indent of rest of lines
-											      # tab effect for all lines without tab 
-    h[:list_child_indent]       = h[:list_text_size]*4
-    h[:list_first_child_top_margin]   = 0
-    h[:lsit_last_child_bottom_margin] = 0
+  # add list_style to para_style
+	list_style => {
+		:font=>"Times", 
+		:text_color=>"Blue", 
+		:text_size=>16, 
+		:text_indent=>30
+	}
     
 2016 9 30
 	- box token left_margin, right_margin
@@ -143,11 +155,6 @@ TODO List
 	
 	- list_style
 		list_type 				# list types are number, lower_alaph, upper_alph, korean_raical, koran_ga_na_da,  roman
-		list_font 				# font for ordering token such as, 1,a,A
-		list_text_size				# sizefor ordering token such as, 1,a,A
-		list_fill_color
-		list_text_indent		# offset from beginning of the line to post_oder text
-		list_chidren_indent		# indeent for children (left_margin)
 	
 	- heading\n by forcing relayout
 	- heading background image

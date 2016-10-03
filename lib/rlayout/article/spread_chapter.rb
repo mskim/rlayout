@@ -38,6 +38,7 @@ module RLayout
     
   class SpreadChapter < ChapterMaker
 	  attr_accessor :first_page, :second_page, :h1_heading_object, :h2_heading_object, :sections_paragraph
+	  attr_reader :book_title, :title
     def initialize(options={} ,&block)
       @project_path = options[:project_path] || options[:article_path]
       if @project_path
@@ -108,7 +109,10 @@ module RLayout
       #   @story      = Story.adoc2para_data(@story_path)
       end
       @heading    = @story[:heading] || {}
-      @title      = @heading[:title] || @heading['title'] || "Untitled"
+      # moption-yaml return Array unlike YAML
+      @heading = @heading[0] if @heading.class == Array
+      @book_title     = @heading[:book_title] || @heading['book_title'] || "Untitled"
+      @title  = @heading[:title] || @heading['title'] || "Untitled"
       @toc_content= "## #{@title}\t0\n"
       @sections_paragraph = []
       @story[:sections_paragraph].each do |section|
@@ -207,6 +211,39 @@ module RLayout
       update_header_and_footer
     end
 
+    def update_header_and_footer
+      header= {}
+      header[:first_page_text]  = "| #{@book_title} |" if @book_title
+      header[:left_page_text]   = "| #{@book_title} |" if @book_title
+      header[:right_page_text]  = @title if @title
+      footer= {}
+      footer[:first_page_text]  = @book_title if @book_title
+      footer[:left_page_text]   = @book_title if @book_title
+      footer[:right_page_text]  = @title if @title
+      options = {
+        :header => header,
+        :footer => footer,
+      }
+      @document.header_rule = header_rule
+      @document.footer_rule = footer_rule
+      @document.pages.each {|page| page.update_header_and_footer(options)}
+    end
+    
+    def header_rule
+      {
+        :first_page_only  => true,
+        :left_page        => false,
+        :right_page       => false,
+      }
+    end
+
+    def footer_rule
+      h ={}
+      h[:first_page]      = true
+      h[:left_page]       = true
+      h[:right_page]      = true
+      h
+    end
   end
   
 

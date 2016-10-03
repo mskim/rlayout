@@ -98,10 +98,19 @@ module RLayout
       s
     end
     
-    def ns_atts_from_style
-      {
-        NSFontAttributeName => NSFont.fontWithName("Times", size:10.0),
-      }
+    def ns_atts_from_style(style)
+      atts = {}
+      atts[NSFontAttributeName] = NSFont.fontWithName("Times", size:10.0)
+      if style[:font] && style[:text_size]
+        atts[NSFontAttributeName] = NSFont.fontWithName(style[:font], size: style[:text_size])
+      end
+      if style[:text_color]
+        #TODO fix this
+        # I have color_from_string as module_function, but getting error
+        # so, I am calling Graphic.color_from_string 
+        atts[NSForegroundColorAttributeName] = Graphic.color_from_string(style[:text_color]) 
+      end
+      atts
     end
     
     def default_atts
@@ -149,27 +158,23 @@ module RLayout
     attr_accessor :number_type  
     
     def initialize(options={})
-      options[:font]          = options[:list_font] if options[:list_font]
-      options[:text_size]     = options[:list_text_size] if options[:list_text_size]
-      options[:text_color]    = options[:list_text_color] if options[:list_text_color]
-      options[:fill_color]    = options[:list_fill_color] if options[:list_fill_color]
-      options[:stroke_width]  = options[:list_stroke_width] if options[:list_stroke_width]
-      options[:stroke_color]  = options[:list_stroke_color] if options[:list_stroke_color]
       # TODO i should refactor this using /^list_/
+      if RUBY_ENGINE == 'rubymotion'
+        options[:atts] = ns_atts_from_style(options)
+      end      
       super
       
       self
-    end
-    
-    
+    end    
   end
   
+  # TabToken servers as place holder 
   class TabToken < Graphic
     attr_accessor :tab_type  #left, right, center, decimal
     def initialize(options={})
       super
       @tab_type = "left"
-      @width    = 20
+      @width    = options.fetch(:width, 20)
       self
     end
   end

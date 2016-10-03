@@ -76,17 +76,57 @@ module RLayout
   class OrderedListItem < Paragraph
     attr_accessor :order, :level, :indent
     attr_accessor :list_style
-    # we have @list_style from Paragraph
     def initialize(options={})
       super
-      @list_style = filter_list_options(@para_style)
+      # set first and last line space
+      if options[:is_first_item]
+        @para_style[:space_before]= @para_style[:first_item_space_before] if @para_style[:first_item_space_before]
+      elsif options[:is_last_item]
+        @para_style[:space_after] = @para_style[:last_item_space_after] if @para_style[:last_item_space_after]
+      end
+      
       #TODO make @indent relative to font size
       @indent             = options.fetch(:indent, 15)
-      @order              = options[:order]
-      @level              = options[:level]
+      @order              = options.fetch(:order,1)
+      @level              = options.fetch(:level,0)
       @h_alignment        = "left"
-      @first_line_indent  = @level*@indent
+      if @para_style[:first_line_indent]
+        @first_line_indent  = @para_style[:first_line_indent]
+      else
+        @first_line_indent  = @level*@indent
+      end
       @head_indent        = @first_line_indent + @indent
+      # puts the list style in @list_style
+      # @list_style[:font]
+      # @list_style[:text_size]
+      # @list_style[:text_color]
+      # @list_style[:text_indent]
+      
+      # When we need to create list with graphical Number, 
+      # number attributea are passed in @para_stye[:list_style]
+      # make first token into NumberToken and insert a TabToken into tokens
+      # tab_token.width = list_text_indent - number_token.width
+      # and for the rest of the lines, head_indent is set same as list_text_indent
+      
+      # 
+      @list_style = @para_style[:list_style].dup if @para_style[:list_style]
+      if @list_style
+        first_token           = @tokens.shift
+        # text_indent is space from first_line_indent to start of text string after the number
+        text_indent           = @list_style.fetch(:text_indent, 30)
+        options               = @para_style.dup
+        options[:string]      = first_token.string
+        options.merge!(@list_style)
+        number_token          = NumberToken.new(options)
+        tab_token_width       = text_indent - number_token.width
+        tab_token             = TabToken.new(width: tab_token_width)   
+        @tokens.unshift(tab_token)
+        @tokens.unshift(number_token)
+        #TODO this is a quick fix, I should implement tob stop.
+        @para_style[:head_indent] = para_style[:first_line_indent] + text_indent +   @para_style[:space_width]*2
+      end
+
+
       self
     end
     # I should read it from StyleService      
@@ -125,7 +165,13 @@ module RLayout
           if i == 1
             OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_section_item")
           else
-            OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_section_item2")
+            if i== 2 
+              OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_section_item2", is_first_item: true)
+            elsif list == @list_text.last
+              OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_section_item2", is_last_item: true)
+            else
+              OrderedListItem.new(parent: self, para_string: para_string, level: 1,  order: @current_order[1], markup: "ordered_section_item2")
+            end
           end
         end
       end

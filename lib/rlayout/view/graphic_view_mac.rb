@@ -149,7 +149,8 @@ class GraphicViewMac < NSView
       dataWithPDFInsideRect(bounds)
   end
   
-  def convert_to_nscolor(color)    
+  def convert_to_nscolor(color) 
+
     return color_from_string(color) if color.class == String
     color
   end
