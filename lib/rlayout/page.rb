@@ -37,12 +37,13 @@ module RLayout
       end
       @parent_graphic.pages << self if  @parent_graphic && !@parent_graphic.pages.include?(self)
       super
-      @page_number = options.fetch(:page_number, 1)
-      if @parent_graphic && @parent_graphic.double_side
-        @left_page  = @page_number.even?
-      else
-        @left_page  = true
-      end      
+      @page_number = @parent_graphic.pages.index(self) + @parent_graphic.starting_page_number
+      @page_number = options[:page_number] if options[:page_number]
+      # if @parent_graphic && @parent_graphic.double_side
+      @left_page  = @page_number.even?
+      # else
+      #   @left_page  = false
+      # end      
       @fixtures = []
       @floats   = []
       
@@ -369,8 +370,8 @@ EOF
     end
 
     def footer(options={})
-      #TODO
       Footer.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
+      
     end
 
     def side_bar(options={})

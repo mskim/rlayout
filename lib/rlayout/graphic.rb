@@ -41,7 +41,8 @@ module RLayout
       init_image(options)
       if @parent_graphic
         if options[:is_float]
-          @parent_graphic.floats << self if @parent_graphic && @parent_graphic.floats && !@parent_graphic.floats.include?(self)
+          @parent_graphic.floats << self if @parent_graphic.floats && !@parent_graphic.floats.include?(self)
+          
           # init_float(options)
         elsif options[:is_fixture]
           #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics

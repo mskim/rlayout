@@ -134,9 +134,9 @@ module RLayout
           @starts_left = false
         end
       elsif @starts_left
-        @starting_page_number = 1
-      else
         @starting_page_number = 2
+      else
+        @starting_page_number = 1
       end
       if options[:initial_page] == false        
         # do not create any page

@@ -80,7 +80,8 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
-      @starting_page_number = options.fetch(:starting_page_number,1)
+      @starting_page_number = options.fetch(:starting_page_number,2)
+      @document.starting_page_number = @starting_page_number
       read_story
       layout_story
       output_options = {:preview=>true}
@@ -231,7 +232,6 @@ module RLayout
     
     def header_rule
       {
-        :first_page_only  => true,
         :left_page        => false,
         :right_page       => false,
       }
