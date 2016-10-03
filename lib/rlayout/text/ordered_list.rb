@@ -25,14 +25,12 @@ module RLayout
   # TODO this is adoc style do it for markdown as well
   
   
-  class OrderedList < Paragraph
+  class OrderedList < Container
     attr_accessor :current_order, :ordering_char_types, :text_block
-    attr_accessor :list_style
     # we have @list_style from Paragraph
     
     def initialize(options={})
       super
-      @list_style = filter_list_options(@para_style)
       #TODO this fails if number goes beyond 9
       @ordering_char_types  = options.fetch(:ordering_char_types, %w[1 a A])
       @text_block           = options[:text_block]
@@ -95,15 +93,13 @@ module RLayout
   end
   
   
-  class OrderedSection < Paragraph
+  class OrderedSection < Container
     attr_accessor :current_order, :ordering_char_types, :text_block
-    attr_accessor :list_style
     
     def initialize(options={})
       super   
       # token is not created yet since the text is passed as text_block, not para_string.
       # OrderedSection acts as umbrella Paragraph, so not text layout takes place
-      @list_style = filter_list_options(@para_style)
       @ordering_char_types  = options.fetch(:ordering_char_types, %w[A 1 a])
       @text_block           = options[:text_block]
       parse_list_items
@@ -136,13 +132,11 @@ module RLayout
     end    
   end
   
-  class UpperAlphaList < Paragraph
+  class UpperAlphaList < Container
     attr_accessor :current_order, :ordering_char_types, :text_block
-    attr_accessor :list_style 
 
     def initialize(options={})
       super
-      @list_style = filter_list_options(@para_style)
       @ordering_char_types  = options.fetch(:ordering_char_types, %w[A 1 a])
       @text_block           = options[:text_block]
       parse_list_items
@@ -175,13 +169,11 @@ module RLayout
     end
   end
   
-  class UnorderedList < Paragraph    
+  class UnorderedList < Container    
     attr_accessor :current_order, :ordering_char_types, :text_block
-    attr_accessor :list_style 
     
     def initialize(options={})
       super
-      @list_style = filter_list_options(@para_style)
       @ordering_char_types  = options.fetch(:ordering_char_types, %w[* + -])
       @text_block           = options[:text_block]
       parse_list_items
