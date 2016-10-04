@@ -155,16 +155,16 @@ module RLayout
             create_special_token('reverse_ruby', line)
           elsif @para_style[:double_emphasis].is_a?(Hash)
             emp = @para_style[:double_emphasis]
-            empasised_style = @para_style.dup.merge emp
-            empasised_style.delete(:double_emphasis)
-            empasised_style[:string]        = line
-            empasised_style.delete(:parent) if empasised_style[:parent]
-            empasised_style[:left_margin]   = 3 # box left side margin
-            empasised_style[:right_margin]  = 3 # box right side margin
-            @tokens << RLayout::TextToken.new(empasised_style)
+            emphasized_style = @para_style.dup.merge emp
+            emphasized_style.delete(:double_emphasis)
+            emphasized_style[:string]        = line
+            emphasized_style.delete(:parent) if emphasized_style[:parent]
+            emphasized_style[:left_margin]   = 3 # box left side margin
+            emphasized_style[:right_margin]  = 3 # box right side margin
+            @tokens << RLayout::TextToken.new(emphasized_style)
           else
             @para_style[:string] = line
-            @para_style.delete(:parent) if empasised_style[:parent]
+            @para_style.delete(:parent) if emphasized_style[:parent]
             @tokens << RLayout::TextToken.new(@para_style)
           end
           # elsif @para_style[:double_emphasis].is_a?(String)
@@ -187,16 +187,14 @@ module RLayout
         if line =~INLINE_SINGLE_CURL
           line.sub!("{", "").sub!("}", "")
           if @para_style[:single_emphasis].is_a?(Hash)
-            # this is a style emphasis
+            # single emphasis style is specified
             emp = @para_style[:single_emphasis]
-            empasised_style = @para_style.dup.merge emp
-            empasised_style[:string] = line
-            empasised_style.delete(:single_emphasis)
-            @tokens << RLayout::TextToken.new(empasised_style)
-          # elsif @para_style[:single_emphasis].is_a?(String)
-          #   create_special_token(@para_style[:single_emphasis], line)
+            emphasized_style = @para_style.dup.merge emp
+            emphasized_style[:string] = line
+            emphasized_style.delete(:single_emphasis)
+            @tokens << RLayout::TextToken.new(emphasized_style)
           else
-            # when no custom style is defined, just use normal style
+            # when no style is defined, just use normal style
             @para_style[:string] = line
             @tokens << RLayout::TextToken.new(@para_style)
           end
@@ -535,6 +533,7 @@ module RLayout
       # options[:stroke_color]    = 'red'
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
+      options[:stroke_width]      = 1
   	  super
       # @tokens         = @text_layout_manager.tokens
   	  @graphics         = options[:tokens]

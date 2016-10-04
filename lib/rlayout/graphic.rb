@@ -578,6 +578,20 @@ module RLayout
       self
     end
     
+    def set_attributed_string(new_att_string)
+      return unless @text_layout_manager
+      @text_layout_manager.setAttributedString(new_att_string)
+    end
+    
+    def set_text_string(text_string)
+      if RUBY_ENGINE == "rubymotion"
+        return unless @text_layout_manager
+        @text_layout_manager.set_text_string(text_string)
+      else
+        @text_record.string = text_string
+      end
+    end
+      
     def set_text(text_string)
       if RUBY_ENGINE == "rubymotion"
         return unless @text_layout_manager

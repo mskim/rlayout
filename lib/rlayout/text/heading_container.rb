@@ -27,12 +27,16 @@ module RLayout
 	    content = first_item[:para_string] || first_item[:string]
 	    return unless content
 	    content.sub!(/^=*\s/, "")
-	    v = content.split("\n")      
+	    v = content.split("\n")  
+	    #TODO fix this 
+      # v.map{|e| e.gsub("\\n", "\n").gsub("\\u{2611}", "\u{2611}")}
+      # puts "v;#{v}"
       content_hash = Hash[@tag_list.zip v]
+      # puts "content_hash:#{content_hash}"
       @graphics.each do |graphic|
         if graphic.tag && @tag_list.include?(graphic.tag.to_sym)
           if graphic.is_a?(Text)
-            graphic.set_text(content_hash[graphic.tag.to_sym])
+            graphic.set_text_string(content_hash[graphic.tag.to_sym])
           elsif graphic.is_a?(Image)
             if graphic.local_image
               graphic.local_image = content_hash[graphic.tag.to_sym]

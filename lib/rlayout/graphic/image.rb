@@ -50,6 +50,8 @@ module RLayout
     def init_image(options)
       #TODO why is image_object is used instead of @image_record??
       @image_record  = options.fetch(:image_record,nil)
+      # puts "in init image :#{options[:local_image]}"
+      # puts "$ProjectPath :#{$ProjectPath}"
       unless options[:image_path]
         if options[:local_image] && $ProjectPath
           @local_image          = options[:local_image]

@@ -116,7 +116,14 @@ TODO List
 			- index
 			- glossary
 		- put templates under rubymotion app/resouces/
-		
+
+2016 10 5
+	- fix list justification
+	- add emphasis style to "p"
+	- headingContainer variable line
+	- markdown to html view
+	- fix Rakefie tree   
+	
 2016 10 3
 	- List
 	- OrderedList 
@@ -128,17 +135,23 @@ TODO List
 		page_number
 		
 	- demo pre
-		fill in the data
 		rake 
-		  bookplan
 		  document folder, subdocument folder
+		  bookplan
+		fill in the data
+		  rails rake copy templates
 		web flipbook
 		ace integration
 		PDF download
 		Question Bank
-		
+
+2016 10 3 
+	- footer
+
 2016 10 1
-  # list_* are list related attributes
+	- list style paragraph with graphical numbering
+	- v align center
+	 
   # add list_style to para_style
 	list_style => {
 		:font=>"Times", 

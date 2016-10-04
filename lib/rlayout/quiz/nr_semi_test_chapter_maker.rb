@@ -27,7 +27,7 @@ module RLayout
     def initialize(options={})
       if options[:project_path]
         @project_path = options[:project_path]
-        $project_path = @project_path
+        $ProjectPath = @project_path
         @layout_rb    = @project_path + "/layout.rb"
         @text_data_path = Dir.glob("#{@project_path}/*.{md,txt}").first
         unless File.exist?(@text_data_path)
@@ -45,6 +45,7 @@ module RLayout
         puts "SyntaxError in #{@template_path} !!!!"
         return
       end
+      first_page = @document.pages.first
       read_quiz_items
       layout_quiz_items
       
