@@ -119,6 +119,8 @@ module RLayout
         @tokens       = []
         create_tokens   
       end
+      # layout_lines is called when Paragraph is actually placed in the column
+      # do not call layout_lines at initialization stage, unless requested.
       if options[:layout_lines]
         layout_lines(@width)
       end
@@ -320,6 +322,8 @@ module RLayout
       @text_line_width  = @column_width
       if @para_style[:h_alignment] == "left" || @para_style[:h_alignment] == "justified"
         @first_line_width = @column_width - @para_style[:first_line_indent] - @para_style[:tail_indent]
+        @text_line_width  = @column_width - @para_style[:head_indent] - @para_style[:tail_indent] 
+        
       else
         @first_line_width = @column_width - @para_style[:head_indent] - @para_style[:tail_indent]
         @text_line_width  = @column_width - @para_style[:head_indent] - @para_style[:tail_indent] 
@@ -344,10 +348,11 @@ module RLayout
           @line_x     = @para_style[:first_line_indent]
           @line_width = @first_line_width
         else
-          @line_width = @text_line_width
           @line_x     = @para_style[:head_indent]
+          @line_width = @text_line_width
         end
         
+        # make @line_rectangle for LineFragment
         if text_column.is_simple_column? || text_column.is_rest_of_area_simple?
           @line_rectangle = [@line_x, @line_y_offset, @line_width, @tallest_token_height]
           if @line_y_offset + @line_rectangle[3] > @text_column.room
@@ -386,12 +391,10 @@ module RLayout
             end
           end
         end
-        
         # check for space for more tokens
         if  (@total_token_width + @para_style[:space_width] + token.width) < @line_width
           @total_token_width += (@para_style[:space_width] + token.width)
-          token = @tokens.shift
-          @line_tokens << token
+          @line_tokens << @tokens.shift
         else 
           options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @line_width, height: @line_rectangle[3], space_width: @para_style[:space_width]}
           line = LineFragment.new(options)
@@ -402,17 +405,17 @@ module RLayout
         end
         @height = @line_y_offset
       end
+      # make LineFragment for last line
       if @line_tokens.length > 0
         options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @line_width, height: @line_rectangle[3], space_width: @para_style[:space_width]}
-        # options = {parent: self, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @column_width, height: @body_line_height, space_width: @para_style[:space_width]}
         line    = LineFragment.new(options)
         @line_y_offset += line.height
-        if @para_style[:space_after]
-          @height = @line_y_offset + @para_style[:space_after]
-        else
-          @height = @line_y_offset
-        end
+        @height = @line_y_offset
       end
+      if @para_style[:space_after]
+        @height = @line_y_offset + @para_style[:space_after]
+      end
+      
     end
 	  
 	  # this is called when paragraph is splitted or moved to next column and have to be
@@ -533,7 +536,9 @@ module RLayout
       # options[:stroke_color]    = 'red'
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
-      options[:stroke_width]      = 1
+      # options[:stroke_width]      = 1
+      #TODO
+      # line frame are drawn with offset value, they don't align with tokens
   	  super
       # @tokens         = @text_layout_manager.tokens
   	  @graphics         = options[:tokens]
