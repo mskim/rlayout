@@ -52,6 +52,10 @@ module RLayout
       @image_record  = options.fetch(:image_record,nil)
       # puts "in init image :#{options[:local_image]}"
       # puts "$ProjectPath :#{$ProjectPath}"
+      if self.class == "ImageToken"
+        puts "+++++++ in init of Image"
+        puts options[:image_path]
+      end
       unless options[:image_path]
         if options[:local_image] && $ProjectPath
           @local_image          = options[:local_image]
@@ -68,6 +72,7 @@ module RLayout
       unless File.exists?(@image_path)
         @image_path = "/Users/Shared/SoftwareLab/images/dummy.jpg"
       end
+      @image_path
       #TODO Get rid of this and do it for MRI
       if RUBY_ENGINE == 'rubymotion'
         @image_object     =NSImage.alloc.initByReferencingFile(@image_path)

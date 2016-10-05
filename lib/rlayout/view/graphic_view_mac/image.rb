@@ -2,7 +2,7 @@
 class GraphicViewMac < NSView
 
   def draw_image(graphic)      
-    return unless graphic.image_object    
+    return unless graphic.image_object
     r = graphic.layout_rect
     @graphic_bounds = NSMakeRect(r[0],r[1],r[2],r[3]) 
     if graphic.image_fit_type == IMAGE_FIT_TYPE_IGNORE_RATIO 

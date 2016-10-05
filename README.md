@@ -119,10 +119,10 @@ TODO List
 
 2016 10 5
 	- fix list justification
+	- Add ImageToken
+	
 	- add emphasis style to "p"
 	- headingContainer variable line
-	- markdown to html view
-	- fix Rakefie tree   
 	
 2016 10 3
 	- List

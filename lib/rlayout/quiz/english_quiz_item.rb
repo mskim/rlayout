@@ -59,7 +59,9 @@ module RLayout
       if @content[:choice_text]
         choice_text_style         = @quiz_item_style[:choice_style].dup
         choice_text_style[:width] = @width
-        @choice_text_object       = text(@content[:choice_text], choice_text_style)        
+        @choice_text_object       = text(@content[:choice_text], choice_text_style)
+        #TODO
+        # @choice_text_object       = Paragraph.new(parent: self, layout_lines:true, para_string: @content[:choice_text], custom_style: choice_text_style)
       end
       if @content[:choice_table]
         @table_object       = RLayout::SimpleTable.new(parent:self, width: @width, csv: @content[:choice_table])
@@ -153,7 +155,6 @@ module RLayout
 EOF
       #TODO I am just using sample table data
       # since the data is not cosistent
-
       return @quiz_hash[:choice_table] = table
       @s = @buffer.rest
       if @s =~/^\t/

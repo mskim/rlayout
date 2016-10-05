@@ -274,7 +274,14 @@ module RLayout
     end
     
     def justify_items(options={})
-      height_sum  = @graphics.collect{|g| g.height}.reduce(:+)
+      @graphics.each do |g|
+        puts g.class
+      end
+      height_sum = 0
+      # height_sum  = @graphics.collect{|g| g.height}.reduce(:+)
+      @graphics.each do |g|
+        height_sum=+ g.height if g
+      end
       room        = @height - height_sum
       margin      = 0
       # if room < 10

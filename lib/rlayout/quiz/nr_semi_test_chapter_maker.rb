@@ -87,6 +87,7 @@ module RLayout
         @heading = {:string=> head_block}
       end
       blocks.each do |block|
+        puts "block ++++++ :#{block}"
         @quiz_items << EnglishQuizItem.new(text_block: block)
       end
     end

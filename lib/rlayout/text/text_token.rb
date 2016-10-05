@@ -221,8 +221,20 @@ module RLayout
   
   class ImageToken < Graphic
     attr_accessor :image_path, :x,:y, :width, :height, :image_path
-    def initialize(image_path, options={})
-      @image_path = image_path
+    def initialize(options={})
+      image_name            = options[:image_name]
+      image_folder          = "/Users/Shared/SoftwareLab/image_icon"
+      image_path  = Dir.glob("#{image_folder}/#{image_name}.*").first
+      unless image_path
+        image_path = image_folder + "/#{image_name}.pdf"
+      end
+      options[:image_path] = image_path
+      #TODO fix this!!!
+      options[:y]           = 3
+      options[:width]       = 20
+      options[:height]      = 9
+      options[:image_record]= ImageStruct.new(options[:image_path])
+      super
       self   
     end 
   end
