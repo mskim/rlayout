@@ -15,9 +15,19 @@ module RLayout
   # check if they are upto date and don't redo it.
   class PDFChapter
     attr_accessor :project_path, :merge, :original_pdf_files
-    attr_accessor :pdf_path, :pdf_doc, :page_count, :jpg, :preview
+    attr_accessor :pdf_path, :pdf_doc, :page_count, :jpg, :preview, :first_page_only
     
     def initialize(options={})
+      if options[:first_page]
+        @first_page_only= true
+        @jpg            = true
+        @preview        = false
+        @doc_info       = false
+      else
+        @jpg            = options.fetch(:jpg, true)
+        @preview        = options.fetch(:preview, true)
+        @doc_info       = options.fetch(:doc_info, true)
+      end
       if options[:project_path]
         @project_path = options[:project_path]
         @original_pdf_files = Dir.glob("#{@project_path}/*.pdf")
@@ -26,17 +36,14 @@ module RLayout
           return
         end
         options.delete(:project_path)
-        @pdf_path = project_path + "/output.pdf"        
+        @pdf_path = project_path + "/output.pdf" 
         @pdf_doc  = merge_pdf_files
       elsif options[:pdf_path]
         @pdf_path     = options[:pdf_path]
         @project_path = File.dirname(@pdf_path)
         url           = NSURL.fileURLWithPath @pdf_path
-        @pdfdoc       = PDFDocument.alloc.initWithURL url
+        @pdf_doc      = PDFDocument.alloc.initWithURL url
       end
-      @jpg            = options.fetch(:jpg, true)
-      @preview        = options.fetch(:preview, true)
-      @doc_info       = options.fetch(:doc_info, true)
       unless RUBY_ENGINE == 'rubymotion'
         puts "in Ruby mode"
         return
@@ -91,6 +98,7 @@ module RLayout
         #generate new preview folder
         system("mkdir -p #{@preview_path}")
       end
+      @page_count = 1 if @first_page_only
       @page_count.times do |i|
         page        = @pdf_doc.pageAtIndex i
         pdfdata     = page.dataRepresentation
@@ -102,10 +110,20 @@ module RLayout
         if @preview
           jpg_path  = @preview_path + "/page_#{(i+1).to_s.rjust(3,'0')}.jpg"
         else
-          jpg_path  = @pdf_path.sub(".pdf", "_#{(i+1).to_s.rjust(3,'0')}.jpg")
+          if @first_page_only
+            jpg_path  = @pdf_path.sub(".pdf", ".jpg")
+          else
+            jpg_path  = @pdf_path.sub(".pdf", "_#{(i+1).to_s.rjust(3,'0')}.jpg")
+          end
         end
         imageData.writeToFile(jpg_path, atomically:false)
       end      
+    end
+        
+    def self.first_page_only_for_folder(folder)
+      Dir.glob("#{folder}/*.pdf").each do |pdf|
+        PDFChapter.new(pdf_path: pdf, first_page: true)
+      end
     end
   end
   
