@@ -274,9 +274,6 @@ module RLayout
     end
     
     def justify_items(options={})
-      @graphics.each do |g|
-        puts g.class
-      end
       height_sum = 0
       # height_sum  = @graphics.collect{|g| g.height}.reduce(:+)
       @graphics.each do |g|
@@ -284,18 +281,6 @@ module RLayout
       end
       room        = @height - height_sum
       margin      = 0
-      # if room < 10
-      #   margin      = 0    
-      # elsif room > 300
-      #   # puts "room > 300"
-      #   margin      = 100        
-      # elsif room > 200
-      #   # puts "room > 200"
-      #   margin      = 50        
-      # elsif room > 100
-      #   # puts "room > 100"
-      #   margin      = 20        
-      # end
       space       = (@height - height_sum - margin*2)/(@graphics.length - 1)
       y = 0
       @graphics.each do |g|

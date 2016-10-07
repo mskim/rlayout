@@ -129,6 +129,8 @@ module RLayout
 
     def parse_question
       q_line = @buffer.scan_until(/\n/)
+      #TODO skip empty lines
+      puts "qline:#{qline}"
       @quiz_hash[:num]  = q_line.split("\t").first
       @quiz_hash[:q]    = q_line.split("\t")[1]
     end

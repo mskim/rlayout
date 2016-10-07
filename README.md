@@ -117,6 +117,17 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2016 10 7
+	- Rakefile file dependency on either md or layout.rb, not both
+	
+2016 10 5
+	- PDFChapter
+		merge pdf files in given folder and archive original files
+		actual task is then passed to PDFFile for PDF file processing
+	- PDFFile
+		process single PDF file.
+		generate jpg, preview, doc_info 
+		
 2016 10 5
 	- fix list justification
 	- Add ImageToken

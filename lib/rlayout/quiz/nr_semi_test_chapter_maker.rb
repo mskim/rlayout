@@ -1,3 +1,4 @@
+# encoding utf-8
 
 # Story, QuizContent, ItemContent
 
@@ -30,7 +31,8 @@ module RLayout
         $ProjectPath = @project_path
         @layout_rb    = @project_path + "/layout.rb"
         @text_data_path = Dir.glob("#{@project_path}/*.{md,txt}").first
-        unless File.exist?(@text_data_path)
+        if  !@text_data_path || !File.exist?(@text_data_path)
+          puts "no text data found!! "
           return
         end
       else
@@ -69,7 +71,8 @@ module RLayout
       # also find out regex for the quiz content parsing.
       # This way can generalize it to hanlde different types of Quizes.
       # use the fitting parser and QuizItem kind.
-      @text_data    = File.open(@text_data_path, 'r'){|f| f.read}        
+      @text_data    = File.open(@text_data_path, 'r'){|f| f.read}  
+      puts "@text_data:#{@text_data}"      
       @quiz_items   = []
       blocks = @text_data.split("\n\n")
       if blocks.length >= 1
@@ -79,7 +82,7 @@ module RLayout
         blocks = blocks_using_rn
       end
       # first parse title
-      if blocks.first =~ /^=/ || blocks.first =~/^==/
+      if blocks.first =~ /^=*\s/ || blocks.first =~/^#*\s/
         head_block = blocks.shift
         head_block = head_block.split("\n")
         head_block.shift if head_block.first.empty?
@@ -87,7 +90,6 @@ module RLayout
         @heading = {:string=> head_block}
       end
       blocks.each do |block|
-        puts "block ++++++ :#{block}"
         @quiz_items << EnglishQuizItem.new(text_block: block)
       end
     end

@@ -46,13 +46,12 @@
 # \ruby, \ruby_under
 
 module RLayout
-
+  
   class Story
-    attr_accessor :path, :para_data, :adoc, :options, :remote_options
+    attr_accessor :path, :para_data, :adoc, :options
     def initialize(path, options={})
       @path           = path
       @options        = options
-      @remote_options = @options.fetch(:remote_options, nil)
       self
     end
     
@@ -422,6 +421,16 @@ module RLayout
       new_story = meta_data_yaml + "\n---\n" + @story_markdown
       File.open(story_path, 'w'){|f| f.write new_story}
     end
+  end
+
+  class RemoteStory < Story
+    attr_accessor :remote_options
+    def initialize(path, options={})
+      super
+      @remote_options = @options.fetch(:remote_options, nil)
+      self
+    end
+    
   end
 
 end

@@ -157,7 +157,7 @@ module RLayout
       elsif options[:story_path]
         @story_path = options[:story_path]
         unless File.exist?(@story_path)
-          puts "No story_path doen't exist !!!"
+          puts "No story found at #{@story_path} !!!"
           return
         end
         @project_path = File.dirname(@story_path)

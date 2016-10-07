@@ -26,7 +26,8 @@ module RLayout
 	  def set_content(first_item)
 	    content = first_item[:para_string] || first_item[:string]
 	    return unless content
-	    content.sub!(/^=*\s/, "")
+	    content.sub!(/^=*\s/, "") if content=~/^=*\s/
+	    content.sub!(/^#*\s/, "") if content=~/^#*\s/
 	    v = content.split("\n")  
 	    #TODO fix this 
       # v.map{|e| e.gsub("\\n", "\n").gsub("\\u{2611}", "\u{2611}")}
