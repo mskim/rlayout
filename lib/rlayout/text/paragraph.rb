@@ -501,6 +501,42 @@ module RLayout
       Hash[list_only.collect{|k,v| [k.to_s.sub("list_","").to_sym, v]}]
     end
     
+    def attributes_of_attributed_string(att_str)
+      att_run_array=[]
+      range = Pointer.new(NSRange.type)
+      i=0
+      string = att_str.string
+      puts "att_str.string:#{att_str.string}"
+      while i < att_str.string.length do
+        attrDict = att_str.attributesAtIndex  i, effectiveRange:range
+        length=range[0].length
+        i += length
+        att_hash={}
+        starting_index = range[0].location
+        ending_index = starting_index + (range[0].length - 1)
+        puts "[starting_index..ending_index]:#{[starting_index..ending_index]}"
+        puts att_hash[:string] = string[starting_index..ending_index]  
+        att_hash[:paragraph_style]=attrDict[NSParagraphStyleAttributeName]  if attrDict[NSParagraphStyleAttributeName] 
+        if attrDict[NSFontAttributeName]
+          att_hash[:font]=attrDict[NSFontAttributeName].fontName     
+          att_hash[:size]= attrDict[NSFontAttributeName].pointSize.round(2)     
+          # att_hash[:color]= attrDict[NSForegroundColorAttributeName].color     
+        end
+        att_hash[:tracking]       = attrDict[NSKernAttributeName]            if attrDict[NSKernAttributeName]
+        att_hash[:strike]         = attrDict[NSStrikethroughStyleAttributeName] if attrDict[NSStrikethroughStyleAttributeName]
+        att_hash[:baseline_offset]= attrDict[NSBaselineOffsetAttributeName]       if attrDict[NSBaselineOffsetAttributeName]
+        att_hash[:styles]= []
+        att_hash[:styles]<<:italic                                    if attrDict[NSObliquenessAttributeName]
+        att_hash[:styles]<<:bold                                      if attrDict[NSObliquenessAttributeName]
+        att_hash[:styles]<< :underline                                if attrDict[NSUnderlineStyleAttributeName]
+        att_hash[:styles]<< :superscript                              if attrDict[NSSuperscriptAttributeName]
+        
+        # is there no subscript?
+        # att_hash[:styles]<< :suberscript  if attrDict[NSSubscriptAttributeName]
+        att_run_array <<  att_hash
+      end 
+      att_run_array
+    end
     # NSString *NSFontAttributeName;
     # NSString *NSParagraphStyleAttributeName;
     # NSString *NSForegroundColorAttributeName;

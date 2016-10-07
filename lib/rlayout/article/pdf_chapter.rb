@@ -2,29 +2,30 @@
 module RLayout
   
   # PDFChapter
-  # processes pdf files in project folder.
-  # It takes care of multiple pdf files by merging and backup originals
-  # default option is to merge pdf file and save it as outout.pdf, 
-  # -merge=false prevents it from merging them
-  # -jpg:false prevents it from creating jpg, them
-  # -preview:false prevents it from creating preview folder
-  # -doc_info=false prevents it from saving doc_info
+  # processes pdf files in project folder to chapter format.
+  # It takes care of multiple PDF files by merging and backup originals
+  # default is to merge pdf file and save it as single file called outout.pdf, 
+  #              create images in preview folder with page_001.jpg, page_002.jpg ...
+  #              and create doc_info file with page_count, and other PDF informations
+  # -jpg:true    generate jpg of first page only
+  #              no preview folder nor doc_info is saved in this mode
+  #              images are save with same name as pdf with .jpg extension
   
-  #TODO Split 
-  # IF output.pdf exists, and options is to generate preview
-  # check if they are upto date and don't redo it.
+  # pdf_chapter split path/to/pdf/file
+  #             split PDF files into single page PDF's in pdf_name_single_page
+  #
+  
   class PDFChapter
     attr_accessor :project_path, :merge, :original_pdf_files
-    attr_accessor :pdf_path, :pdf_doc, :page_count, :jpg, :preview, :first_page_only
+    attr_accessor :pdf_path, :pdf_doc, :page_count, :jpg, :preview
     
     def initialize(options={})
-      if options[:first_page]
-        @first_page_only= true
+      if options[:jpg]
         @jpg            = true
         @preview        = false
         @doc_info       = false
       else
-        @jpg            = options.fetch(:jpg, true)
+        @jpg            = false
         @preview        = options.fetch(:preview, true)
         @doc_info       = options.fetch(:doc_info, true)
       end
@@ -49,7 +50,7 @@ module RLayout
         return
       end
       @page_count     = @pdf_doc.pageCount
-      save_jpg        if @jpg
+      save_image        if @jpg || @preview
       save_doc_info   if @doc_info
       self
       
@@ -64,9 +65,9 @@ module RLayout
         puts "in Ruby mode"
         return
       end
+
       merged_pdf = PDFDocument.new
       @original_pdf_files.each do |path|
-        # next if path =~ /output.pdf/
         url = NSURL.fileURLWithPath path
         pdf_chapter = PDFDocument.alloc.initWithURL url
         pdf_chapter.pageCount.times do |i|
@@ -75,6 +76,8 @@ module RLayout
           page=PDFDocument.alloc.initWithData(pdf_data).pageAtIndex(0)
           merged_pdf.insertPage(page, atIndex: merged_pdf.pageCount)
         end
+        # output.pdf is backed up overiding existing output.pdf backed up 
+        # backup output.pdf is always the previous version
         system("mv #{path} #{pdf_backup}/")
       end
       merged_pdf.writeToFile(@pdf_path)
@@ -87,7 +90,7 @@ module RLayout
       File.open(info_path, 'w'){|f| f.write h.to_yaml}
     end
     
-    def save_jpg
+    def save_image
       if @preview
         @preview_path = File.dirname(@pdf_path) + "/preview"
         if File.directory?(@preview_path)
@@ -98,7 +101,7 @@ module RLayout
         #generate new preview folder
         system("mkdir -p #{@preview_path}")
       end
-      @page_count = 1 if @first_page_only
+      @page_count = 1 if @jpg
       @page_count.times do |i|
         page        = @pdf_doc.pageAtIndex i
         pdfdata     = page.dataRepresentation
@@ -110,19 +113,35 @@ module RLayout
         if @preview
           jpg_path  = @preview_path + "/page_#{(i+1).to_s.rjust(3,'0')}.jpg"
         else
-          if @first_page_only
-            jpg_path  = @pdf_path.sub(".pdf", ".jpg")
-          else
-            jpg_path  = @pdf_path.sub(".pdf", "_#{(i+1).to_s.rjust(3,'0')}.jpg")
-          end
+          jpg_path  = @pdf_path.sub(".pdf", ".jpg")
         end
         imageData.writeToFile(jpg_path, atomically:false)
       end      
     end
         
-    def self.first_page_only_for_folder(folder)
+    def self.jpg_for_folder(folder)
       Dir.glob("#{folder}/*.pdf").each do |pdf|
-        PDFChapter.new(pdf_path: pdf, first_page: true)
+        PDFChapter.new(pdf_path: pdf, jpg: true)
+      end
+    end
+    
+    def self.split_pdf(pdf_path)
+      project_path = File.dirname(pdf_path)
+      base_name    = File.basename(pdf_path,".pdf")
+      url           = NSURL.fileURLWithPath pdf_path
+      pdf_doc      = PDFDocument.alloc.initWithURL url
+      if pdf_doc.pageCount == 1
+        puts "single page pdf..."
+        return
+      end
+      single_page_folder = project_path + "/#{base_name}_single_page"
+      system("mkdir -p #{single_page_folder}") unless File.directory?(single_page_folder)   
+      pdf_doc.pageCount.times do |i|
+        page = pdf_doc.pageAtIndex i
+        single_page_pdf = PDFDocument.new
+        single_page_pdf.insertPage(page, atIndex: 0)
+        output_path = single_page_folder + "/page_#{(i+1).to_s.rjust(3,'0')}.pdf"
+        single_page_pdf.writeToFile(output_path)
       end
     end
   end
