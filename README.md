@@ -117,6 +117,18 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2016 10 12
+	- add TOCChapter
+	- fix left_margin
+	- custom toc_chapter_style support
+	
+	- Cover, Forward, Preface, Colophone
+	- PhotoChapter
+	
+	- FakerBook
+		title
+		author
+		
 2016 10 11
 	- chapter
 		- filename_output:true will output pdf with filename.pdf

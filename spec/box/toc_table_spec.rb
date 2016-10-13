@@ -6,12 +6,15 @@ describe 'create TOCChapter' do
     @tt = TOCChapter.new(project_path: path)
     @document=@tt.document
     @page     = @document.pages.first
-    @last_row = @page.graphics.last.graphics[1]
-    @left     = @last_row.graphics.first
+    @toc_table = @page.graphics.last
+    @toc_last_row = @page.graphics.last.graphics.last
   end
     
   it 'should create TocTable' do
     assert @tt.class == TOCChapter
+    assert @toc_table.graphics.length == 13
+    assert @toc_table.graphics.last.class == TocTableRow
+    assert @toc_last_row.graphics.length == 3
   end
 end
 
