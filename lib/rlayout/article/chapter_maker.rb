@@ -148,8 +148,9 @@ module RLayout
 
   class ChapterMaker
     attr_accessor :project_path, :template_path, :story_path
-    attr_accessor :document, :output_path, :starting_page_number, :column_count
+    attr_accessor :document, :output_path, :column_count
     attr_accessor :doc_info, :toc_content
+    attr_reader :book_title, :title, :starting_page_number,
     def initialize(options={} ,&block)
       @project_path = options[:project_path] || options[:article_path]
       if @project_path
@@ -166,9 +167,11 @@ module RLayout
       
       if options[:output_path]
         @output_path = options[:output_path]
-      else
+      elsif options[:filename_output]
         ext = File.extname(@story_path)
         @output_path = @story_path.gsub(ext, ".pdf")
+      else
+        @output_path = @project_path + "/output.pdf"
       end
       
       if options[:template_path] && File.exist?(options[:template_path])
@@ -177,7 +180,7 @@ module RLayout
         @template_path = Dir.glob("#{@project_path}/*.{rb,script,pgscript}").first
       end
       unless @template_path
-        @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/chapter.rb")
+        @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/document_template/chapter/layout.rb")
       end
       template = File.open(@template_path,'r'){|f| f.read}
       @document = eval(template)
@@ -208,6 +211,7 @@ module RLayout
       #   @story      = Story.adoc2para_data(@story_path)
       end
       @heading    = @story[:heading] || {}
+      @book_title = @heading[:book_title] || @heading['book_title'] || "Untitled"
       @title      = @heading[:title] || @heading['title'] || "Untitled"
       @toc_content= "## #{@title}\t0\n"
       @paragraphs =[]
@@ -263,7 +267,7 @@ module RLayout
           options[:footer]      = true
           options[:header]      = true
           options[:text_box]    = true
-          options[:page_number] = @starting_page_number + @page_index
+          # options[:page_number] = @starting_page_number + @page_index
           options[:column_count]= @document.column_count
           p=Page.new(options)
           p.relayout!

@@ -5,9 +5,9 @@ class MenuMaker
     @project_path = options[:project_path]
     @template     = Dir.glob("#{@project_path}/**.rb").first
     @menu_csv     = Dir.glob("#{@project_path}/**.csv").first
-    
     self
   end
+  
   def layout_content!
     if @column_count > 1
       @item_rows.slice(@column_count) do |coulumn_group|

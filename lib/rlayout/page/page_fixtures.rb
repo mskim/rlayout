@@ -12,17 +12,21 @@ module RLayout
     
     def initialize(options={})
       options[:text_size] = 8 unless options[:text_size]
-      options[:font] = 'Helvetica' unless options[:text_size]
+      options[:font]    = 'Helvetica' unless options[:text_size]
       options[:text_string] = "" if options[:text_string].nil?
-      options[:y]       = 50 - 8  #TODO
+      if @parent_graphic
+        options[:y]       = @parent_graphic.top_margin - options[:height]  
+      else
+        options[:y]       = 30 - options[:text_size]  
+      end    
       options[:width]   = 300
       options[:height]  = 20
-      @parent_graphic = options[:parent]
+      @parent_graphic   = options[:parent]
       if @parent_graphic.left_page?
-        options[:x]      = @parent_graphic.left_margin
+        options[:x]     = @parent_graphic.left_margin
         options[:text_alignment] = 'left'
       else
-        options[:x] = @parent_graphic.width - options[:width] - @parent_graphic.left_margin - @parent_graphic.left_inset
+        options[:x]     = @parent_graphic.width - options[:width] - @parent_graphic.left_margin - @parent_graphic.left_inset
         options[:text_alignment] = 'right'
       end
       super
@@ -31,7 +35,7 @@ module RLayout
   end
   
   class Footer < Text
-    attr_accessor :chpater_front, :left, :right         # what_pages_to_display, 
+    attr_accessor :chpater_front, :left, :right       
     attr_accessor :position                             # sides, middle
     attr_accessor :left_side_string, :right_side_string # what to display, 
     attr_accessor :post_string, :page_number
@@ -44,7 +48,7 @@ module RLayout
       options[:width]     = 300
       options[:height]    = 20
       options[:text_string] = "" if options[:text_string].nil?
-      options[:y]         = @parent_graphic.height - @parent_graphic.bottom_margin - options[:height]      
+      options[:y]         = @parent_graphic.height - @parent_graphic.bottom_margin + 4     
       @page_number        = @parent_graphic.page_number
       @pre_string         = options.fetch(:pre_string, "-")
       @post_string        = options.fetch(:post_string, "-")

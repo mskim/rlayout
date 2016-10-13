@@ -55,20 +55,21 @@ module RLayout
         else
           @atts       = default_atts
         end
-
         @att_string     = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
         options[:width] = @att_string.size.width
         options[:height]= @att_string.size.height*2
       else
         # TODO fix get string with from Rfont
-        @width  = 30
-        @height = 20
+        size = options[:text_size] || 10
+        size = RFont.string_size(@string, options[:font], size)
+        options[:width]  = size[0]
+        options[:height] = size[1]
       end
       options[:fill_color] = options.fetch(:token_color, 'clear')
       # options[:stroke_width] = 1
       super
       if RUBY_ENGINE == "rubymotion"
-        # add give some space to left and right of the token if we are boxing it.
+        # add some margin to left and right of the token.
         @width  = @att_string.size.width + @left_margin + @right_margin
         @x      = @left_margin
         @height = @att_string.size.height
@@ -122,17 +123,16 @@ module RLayout
     
     # TextToken don't have TextLayoutManager, they just have @att_string
     def draw_text
+      # drawing view origin is at @x,@y
       @att_string.drawAtPoint(NSMakePoint(@left_margin,0))
     end
     
     def get_stroke_rect
       if RUBY_ENGINE == "rubymotion"
         stroke_width = @att_string.size.width + @left_margin + @right_margin
-        
         # for TextToken, use attstring rect instead of Graphic frame
         r = NSMakeRect(0,0,stroke_width, @att_string.size.height)
         r = NSInsetRect(r, -1, -1)
-        
         if @line_position == 1 #LINE_POSITION_MIDDLE 
           return r
         elsif @line_position == 2 
@@ -185,24 +185,22 @@ module RLayout
     def initialize(options={}) 
       options[:layout_expand]   = nil
       @leader_char  = options.fetch(:leader_char,'.')
-      # @string       = @leader_char
       super
       @has_text     = true
       @string       = "."
-      @margin        = 2
+      @margin       = 2
       if RUBY_ENGINE == "rubymotion"
         if options[:atts]
-          @atts       = options[:atts] 
+          @atts     = options[:atts] 
         else
-          @atts       = default_atts
+          @atts     = default_atts
         end
         @att_string = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
         count       = ((@width - @margin*2)/@att_string.size.width).to_i
-        @string *=count
+        @string     *=count
         @att_string = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
       else
         # TODO fix get string with from Rfont
-        @width  = 30
       end
       @height = 20
       self

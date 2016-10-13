@@ -100,7 +100,7 @@ module RLayout
     attr_accessor :tokens, :token_heights_are_eqaul
     attr_accessor :para_string, :para_style, :list_style
     attr_accessor :text_column, :grid_height 
-    attr_accessor :overflow, :underflow, :linked, :line_y_offset
+    attr_accessor :overflow, :underflow, :linked, :line_y_offset, :body_line_height
 
     def initialize(options={})
       super   
@@ -122,8 +122,12 @@ module RLayout
       # layout_lines is called when Paragraph is actually placed in the column
       # do not call layout_lines at initialization stage, unless requested.
       if options[:layout_lines]
-        layout_lines(@width)
+        @body_line_height = 30
+        layout_lines(self)
+        puts "para layout_lines @height:#{@height}"
+        
       end
+      
       self
     end    
     
@@ -143,7 +147,7 @@ module RLayout
       @tokens << TextToken.new(para_style)
     end
     
-    def create_double_curl_tokens(para_string)
+    def create_tokens_with_double_curl(para_string)
       split_array = para_string.split(INLINE_DOUBLE_CURL)
       # splited array contains double curl content
       split_array.each do |line|
@@ -173,7 +177,7 @@ module RLayout
             # create_special_token(@para_style[:double_emphasis], line)
         elsif  line =~INLINE_SINGLE_CURL
           # some of the split line contains single curl
-          create_single_curl_tokens(line)
+          create_tokens_with_single_curl(line)
         else
           # line text with just noral text tokens
           create_text_tokens(line)
@@ -181,7 +185,7 @@ module RLayout
       end      
     end
     
-    def create_single_curl_tokens(para_string)
+    def create_tokens_with_single_curl(para_string)
       para_string.chomp!
       para_string.sub!(/^\s*/, "")
       split_array = para_string.split(INLINE_SINGLE_CURL)
@@ -258,11 +262,8 @@ module RLayout
         end
         atts[NSKernAttributeName]             = text_tracking if text_tracking
         @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
-        
         @para_style[:atts] = @atts
-         
       end
-      
       
       # check if we have any special token mark {{something}} or {something}
       # first check for double curl, single curl
@@ -271,10 +272,10 @@ module RLayout
       
       # do we have any doulbe curl?
       if @para_string =~INLINE_DOUBLE_CURL
-        create_double_curl_tokens(@para_string)
+        create_tokens_with_double_curl(@para_string)
       # no doulbe curl, do we have any single curl?
       elsif @para_string =~INLINE_SINGLE_CURL
-        create_single_curl_tokens(@para_string)
+        create_tokens_with_single_curl(@para_string)
       # no curls found, so create_text_tokens
       else
         create_text_tokens(@para_string)
@@ -489,10 +490,9 @@ module RLayout
         # this is when a style is refering to other style by name
         style = RLayout::StyleService.shared_style_service.current_style[style]
       end
-      
       if style
         h.merge! style 
-      end      
+      end     
       @para_style = h
     end
     
@@ -618,13 +618,17 @@ module RLayout
         @graphics.map do |t| 
           t.x += room
         end
-      when 'justified'
-        just_space = room/(@graphics.length - 1)
-        x = 0
-        @graphics.each_with_index do |token, i|
-          token[:x] = x
-          x += token[:width] + just_space
-        end
+      #TODO
+      # when 'justified' 
+      #   if is_last_line?
+      #   else
+      #     just_space = room/(@graphics.length - 1)
+      #     x = 0
+      #     @graphics.each_with_index do |token, i|
+      #       token.x = x
+      #       x += token.width + just_space
+      #     end
+      #   end
       else
         
       end

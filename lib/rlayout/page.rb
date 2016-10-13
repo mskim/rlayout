@@ -64,6 +64,8 @@ module RLayout
       end
       if options[:text_box]
         @main_box = TextBox.new(main_box_options) 
+      elsif options[:toc_table]
+        @main_box = TocTable.new(main_box_options) 
       elsif options[:grid_box]
         @main_box = GridBox.new(main_box_options)
       elsif options[:composite_box]
@@ -348,7 +350,12 @@ EOF
       options[:parent] = self
       @main_box = TextBox.new(options) unless @main_box
     end
-
+    
+    def toc_table(options={}, &block)
+      options[:parent] = self
+      @main_box = TocTable.new(options) unless @main_box
+    end
+    
     def table(options={}, &block)
       options[:parent] = self
       Table.new(options, &block)

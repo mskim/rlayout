@@ -16,21 +16,28 @@ end
 module RLayout
   
   class RFont
-    attr_accessor :font_name, :size, :width_table
+    attr_accessor :font_name, :size, :width_table, :font_info
     def initialize(font_name, size, options={})
-      @font_name  = font_name
-      @size       = size 
-      @width_table= FONT_WIDTH_TABLE[font_name][:width_array]
+      @font_name    = font_name
+      @size         = size 
+      unless FONT_WIDTH_TABLE.keys.include?(font_name)
+        @font_info  = FONT_WIDTH_TABLE["Times"]
+        @width_table= @font_info[:width_array]
+      else
+        @font_info  = FONT_WIDTH_TABLE[font_name]
+        @width_table= font_info[:width_array]
+      end
       self
     end
     
+
     def string_size(text_string)
-      w = text_string.width_with_font(FONT_WIDTH_TABLE[@font_name][:width_array],@size)
-      # puts FONT_WIDTH_TABLE[@font_name][:acender]
-      #  puts FONT_WIDTH_TABLE[@font_name][:descender]
+      w = text_string.width_with_font(@width_table,@size)
+      # puts @width_table[:acender]
+      #  puts @width_table[@font_name][:descender]
       
       #TODO h is too big !!!!!!! something is wrong
-      h = (FONT_WIDTH_TABLE[@font_name][:acender] + FONT_WIDTH_TABLE[@font_name][:descender])/@size
+      h = (@font_info[:acender] + @font_info[:descender])/@size
       # char_width = 0
       # text_string.split("").each do |c|
       #   char_width += @width_table[c.ord]
@@ -40,11 +47,10 @@ module RLayout
     end
     
     def space_char_width
-      width_table = FONT_WIDTH_TABLE[@font_name][:width_array]
-      width_table[" ".ord]*@size/1000
+      @width_table[" ".ord]*@size/1000
     end
     
-    def self.string_size(font_name, size, string)
+    def self.string_size(string, font_name, size)
       RFont.new(font_name, size).string_size(string)
     end
   end
@@ -52,11 +58,23 @@ module RLayout
 end
 
 __END__
+
+
+# font_utile
+
+## 1. list all installed fonts
+
+## 2. create font table with given font name in Shared 
+	font_width_table
+		font_name.yml
+		Times.yml
+		Helvetica.yml
+
 puts RLayout::RFont.string_size("Times", 16, "One")
 
 f= RLayout::RFont.new("Times",16)
 puts f.string_size("This is a string")
-# puts "This is a string".width_with_font(FONT_WIDTH_TABLE["Times"][:width_array],16)
+# puts "This is a string".width_with_font(width_table_with[:width_array],16)
 # puts rfont = RLayout::RFont.new("Times",16)
 # puts rfont.string_size("This is string")
 # puts rfont.string_size("This is string which has more text")
@@ -81,15 +99,6 @@ if RUBY_ENGINE == "macruby"
 
 end
 
-
-def make_font_with_table(font_object, string)
-  atts={}
-  atts[NSFontAttributeName] = font_object #NSFont.fontWithName(font, size:1000)
-  att_string=NSMutableAttributedString.alloc.initWithString(string, attributes:atts)
-  att_string.size if att_string
-end
-
-
 def get_font_info(font_name)
   font_object = NSFont.fontWithName(font_name, size:1000)
   unless font_object
@@ -100,7 +109,11 @@ def get_font_info(font_name)
   width_array = []
   (0..255).each do |i|
     # puts i.chr
-    width_array << make_font_with_table(font_object, i.chr).width
+    atts={}
+    atts[NSFontAttributeName] = font_object #NSFont.fontWithName(font, size:1000)
+    att_string=NSMutableAttributedString.alloc.initWithString(string, attributes:atts)
+    #TODO att_string.nil?
+    width_array << att_string.size.width.round(2)
   end
   info = {}
   info[:acender]    = font_object.ascender

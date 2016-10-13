@@ -138,7 +138,6 @@ module RLayout
       column_align_array = []
       if row_count == 1
         return column_align_array << 'center'
-        
       end
       if row_count == 2
         column_align_array << 'center'
@@ -156,10 +155,8 @@ module RLayout
         column_align_array << 'left'
         column_align_array << 'left'
         column_align_array << 'right'
-         
         return column_align_array
       end
-      
       if @has_head_column
         column_align_array << 'right'
         column_align_array << 'left'

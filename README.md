@@ -117,6 +117,13 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2016 10 11
+	- chapter
+		- filename_output:true will output pdf with filename.pdf
+		  otherwise output.pdf
+		- fix footer
+		- justify
+		
 2016 10 7
 	- Rakefile file dependency on either md or layout.rb, not both
 	

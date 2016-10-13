@@ -241,19 +241,19 @@ module RLayout
         @markup = "h#{starting_heading_level}"
         s = text_block.join("\n")
         @string = s.sub(/#\s?/, "")
-      elsif s =~/^##\s?/ || s =~/^==\s?/
+      elsif s =~/^##\s/ || s =~/^==\s/
         @markup = "h#{1 + starting_heading_level}"
         s = text_block.join("\n")
-        @string = s.sub(/##\s?/, "")
+        @string = s.sub(/##\s/, "")
       elsif s =~/^###\s/ || s =~/^===\s/
         @markup = "h#{2 + starting_heading_level}"
-        @string = s.sub(/###\s?/, "")
+        @string = s.sub(/^###\s/, "")
       elsif s =~/^####\s/ || s =~/^====\s/
         @markup = "h#{3 + starting_heading_level}"
-        @string = s.sub(/####\s?/, "")
+        @string = s.sub(/####\s/, "")
       elsif s =~/^#####\s/ || s =~/^=====\s/
         @markup = "h#{4 + starting_heading_level}"
-        @string = s.sub(/#####\s?/, "")
+        @string = s.sub(/#####\s/, "")
       elsif s =~/^######\s/ || s =~/^======\s/
         @markup = "h#{5 + starting_heading_level}"
         @string = s.sub(/######\s/, "")
