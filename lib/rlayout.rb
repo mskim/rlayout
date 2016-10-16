@@ -24,7 +24,7 @@ else
   require 'csv'
   require 'erb'
   require 'base64'
-    
+  
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
   require File.dirname(__FILE__) + '/rlayout/graphic/color'

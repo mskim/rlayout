@@ -2,8 +2,8 @@
 
 ## History
 
-1. DTP and WYSIWIG
-1. Quark Xpress
+1. DTP and WYSIWYG
+1. QuarkXpress
 1. InDesign
 1. HTML
 1. ePub
@@ -12,7 +12,7 @@
 
 1. Use of plain text, avoid Word or Hangul
 1. multiple format outputs from same source
-1. Markdown
+1. Markdown/adoc
 
 ## Collaboration
 1. Version Control
@@ -29,6 +29,10 @@
 ## Hangul to InDesign Converter
 
 Hangul to InDesign(hwpml to icml)
+
+## Parsing saved txt
+It turns out that parsing from saved text either from InDesing, or Hangul could be much simpler that trying to convert the fomat from IDML or HWPML.
+
 
 ## DesignScript
 

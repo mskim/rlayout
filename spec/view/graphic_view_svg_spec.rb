@@ -1,5 +1,23 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'parse SVG text ' do
+  before do
+    @svg_text =<<SVG
+<svg height="210" width="500">
+  <polygon points="200,10 250,190 160,210" style="fill:lime;stroke:purple;stroke-width:1" />
+</svg>
+SVG
+    @h  = Graphic.from_svg(@svg_text)
+    puts @h
+    @svg_path = "/Users/Shared/rlayout/output/graphic_test.svg"
+  end
+  
+  it 'parse svg text' do
+    @h.must_be_kind_of Graphic
+  end
+end
+
+__END__
 describe 'create Graphic svg ' do
   before do
     @g = Graphic.new(:x=>200, :y=>400, :fill_color=>"blue")

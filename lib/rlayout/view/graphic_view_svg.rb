@@ -1,14 +1,20 @@
+require 'xmlsimple'
+require 'pp'
+require 'json'
 
 module RLayout  
   class Graphic
-    def leading
-      
+    def self.parse_svg(svg_text, options={})
+      hash = XmlSimple.xml_in svg_text
+      hash = JSON.parse(hash.to_json, symbolize_names: true)
+      hash
     end
     
-    def ascender
-      @font_size
+    def self.from_svg(svg_text, options={})
+      h = parse_svg(svg_text)
+      Graphic.new(h)
     end
-        
+    
     def to_svg
       if @parent_graphic
         return svg
@@ -33,7 +39,7 @@ module RLayout
       if @fill.class == FillStruct
         "style=\"fill:#{@fill.to_svg};#{@stroke.to_svg}\""
       elsif @fill.class == LinearGradient
-        s = <<-E1
+        s =<<E1
               <defs>
                 <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
@@ -42,11 +48,11 @@ module RLayout
               </defs>
               "style=\"fill:\"url(#grad1)\";#{@stroke.to_svg}\""
       
-        E1
+E1
         
-      else @fill.class == RadialGradient
+      elsif @fill.class == RadialGradient
         
-        s2 = <<-EOF.gsub(/^\s*/, "")
+        s2 =<<EOF.gsub(/^\s*/, "")
               <defs>
               <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
@@ -55,7 +61,7 @@ module RLayout
               </defs>
               "style=\"fill:\"url(#grad1)\";#{@stroke.to_svg}\""
       
-        EOF
+EOF
 
       end
     end

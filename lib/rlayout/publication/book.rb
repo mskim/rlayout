@@ -1,7 +1,66 @@
 # encoding: utf-8
 
-# book new name --template==spring
-# rake create chapters
+
+# Creating a book
+# 1. book new sample_book --template==spring
+#     this creates a folder 
+# 2. cd sample_book
+#     there will be a file called book_info.yml
+#     And a folder called source
+#     put text source files in source folder
+#     # source
+#        1.chapter.md
+#        1.chapter/
+#           photo1.jpg
+#           photo2.jpg
+#        2.chapter.md
+#        3.chapter.md
+#        4.chapter.md
+#        5.chapter.md
+#        6.chapter.md
+
+#     and edit book_info.yml
+#     comment out item if you wish to include it.
+#       example: forward is commented out, include it by uncommenting it.
+#     book_info.yml
+#        title: sample_book
+#        author: author_name
+#        template: spring
+#        cover: true
+#        preface: true
+#        #forward: true
+#        toc: true
+#        # colophone: true
+#        index: true
+#        # appendix: true
+
+# 3. create_document
+#     this will create folders for documents and copy templates
+#     it will link sources into folders
+#     so it will be ready to create a book.
+#     front
+#        cover
+#        toc
+#     body
+#        001_chapter
+#          layout.rb
+#          1.chapter.md (linked file from source)
+#          images (linked file from source)
+#        002_chapter
+#        003_chapter
+#        004_chapter
+#        005_chapter
+#     rear
+#        index
+
+# 4. rake
+#        This generates PDF, preview, and doc_info.yml
+
+# 5. rake pdf_book
+#        This will merge all PDF files into a book.
+# 6. rake web_site
+#        This will generate HTML version of the book.
+
 # rake update pdf 
 # rake publish pdf_book
 # rake publish web_site
