@@ -257,7 +257,6 @@ module RLayout
   # such as Ruby, ReversedRuby, InlineMultipleChoice ...
   # Special tokens are created from markup,
   # markup has form of  {{def_name 'first', 'second', options={})}}
-  
   # markup has form of  {{ruby 'base', 'top', options={})}}
   class RubyToken < Container
     attr_accessor :base_tokeb, :top_token, :size_ratio
@@ -268,7 +267,6 @@ module RLayout
       base_style[:string] = options[:base]
       base_style[:parent] = self
       base_style[:tag]    = "base"
-      
       @base_token         = TextToken.new(base_style)
       # make the top_token with size 0.5 text
       top_style           = options[:para_style]
@@ -322,9 +320,13 @@ module RLayout
       @bottom_style[:tag]      = "bottom"
       @bottom_style[:x]        = (@base_token.width - 5)/2.0
       @bottom_style[:y]        = 12
+      @bottom_style[:fill_color]= 'clear'
       @bottom_token            = TextToken.new(@bottom_style)
-      @height = 25
-      @width = @base_token.width
+      # token = TextToken.new(string: item, atts: @table_head_style, layout_expand: :width)
+      TextCell.new(parent: self, width: @base_token.width, height: @bottom_style[:height], token: @bottom_token, h_alignment: "center", atts: @bottom_style, fill_color: 'clear')
+      
+      @height                  = 25
+      @width                   = @base_token.width
       # relayout!
       self
     end

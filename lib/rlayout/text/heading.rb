@@ -1,3 +1,20 @@
+# What is Heading
+# Heading is used in Articles and Chapters.
+# Heading consists of title, subtile, leading, author
+
+# We have two Heading handling classes, Heading and HeadingContainer
+# Heading grows box in vertical direction, usually used in Chapter, and Article Heading.
+# HeadingContainer is pre-designed template with fixed layout position
+# It is used mostly in StudyAide Book Heading, and Newspaper Heading.
+
+# Layout Heading
+# 1. get heading box width from page by calling "drawing_area"
+# 1. get the text height of each heading elements
+# 1. create each element with expand=>[:width, :height]
+# 1. set set layout_length as height, so that their height is proportional to height
+# 1. set Heading expand =>:width
+# 1. adjust heigth to heigth sum of heading elements
+# when we call relayout! it will have grown to sum of its parts and layed outed out with height propotionally adjusted as each ones heigth.
 
 # PageScript Verbs
 #  number
@@ -6,9 +23,9 @@
 #  leading
 #  author
 
-
 # Todo
 # 2016 9 20
+# HeadingContainer
 #  support pre-made pdf image as options[:image]
 #  support background pdf image as options[:background]
 
@@ -16,16 +33,7 @@
 # 1. Use TextRun and TextLine instead of Text
 # 2. Create Banner Class
 
-# What is Heading
-# Heading consists of title, subtile, leading, author
-# Heading is used in Article.
 
-# Layout Heading
-# 1. get heading box width from page by calling "drawing_area"
-# 1. get the text height of each heading elements
-# 1. create each element with expand=>[:width, :height]
-# 1. set set layout_length as height, so that their height is proportional to height
-# 1. set Heading expand =>:width
 
 module RLayout
 
@@ -72,6 +80,10 @@ module RLayout
       #TODO
       options.delete(:stroke_width)
       set_heading_content(options)
+      if block
+        instance_eval(&block)
+      end    
+      
       self
     end
     
@@ -135,6 +147,7 @@ module RLayout
         @height           = mutiple_height
       end
       relayout!
+      self
     end
     
     # create container with template and replace variavle data to get our heaing
@@ -199,7 +212,10 @@ module RLayout
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts                        = options.merge(atts)
       atts[:parent]               = self
-      @title_object               = Text.new(atts)
+      # @title_object               = Text.new(atts)
+      Text.new(atts)
+      @title_object               = @graphics.last
+      
       @title_object.layout_length = @title_object.height
       @title_object
     end

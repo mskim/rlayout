@@ -1,4 +1,7 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require 'minitest/autorun'
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '../..', 'lib')
+require 'rlayout/text/font'
+include RLayout
 
 describe 'create RFont' do
   before do

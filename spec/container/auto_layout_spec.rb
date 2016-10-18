@@ -1,4 +1,8 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require 'minitest/autorun'
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '../..', 'lib')
+require 'rlayout/graphic'
+require 'rlayout/container'
+include RLayout
 
 describe 'testing container creation' do
   before do
@@ -16,11 +20,10 @@ describe 'testing container creation' do
   it 'should save svg' do
     @container.save_svg(@svg_path)
     File.exists?(@svg_path).must_equal true
-    system "open #{@svg_path}"
+    # system "open #{@svg_path}"
   end
 end
 
-__END__
 
 describe 'testing container creation' do
   before do
@@ -48,7 +51,7 @@ describe 'testing container creation' do
   it 'should save svg' do
     @container.save_svg(@svg_path)
     File.exists?(@svg_path).must_equal true
-    system "open #{@svg_path}"
+    # system "open #{@svg_path}"
   end
     
   it 'should create container' do
@@ -93,7 +96,7 @@ describe 'has_expanding_child no' do
   it 'should save svg' do
     @svg_path = "/Users/Shared/rlayout/output/auto_layout_relayout_test.svg"
     @con.save_svg(@svg_path)
-    system("open #{@svg_path}")
+    # system("open #{@svg_path}")
   end
   
   # it 'should save yml' do

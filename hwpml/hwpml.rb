@@ -13,6 +13,7 @@ require 'yaml'
 # actul data is stored at the end in the TAIL BINDATASTORAGE as  BINDATA with Id = "1"
 # encoded in base64 and compress in which form?
 
+# TODO detect math 
 module RLayout
 	class Hwpml
 	  attr_accessor :path, :output_path, :doc, :hwpml
@@ -261,6 +262,21 @@ module RLayout
           
             when "SECDEF"
               # puts "secdef"
+            when "EQUATION"
+              puts "+++ we have EQUATION +++++++ "
+              # puts grand_child
+              grand_child.children.each do |part|
+                puts "+++++++"
+                puts "part.name:#{part.name}"
+                if part.name == "SCRIPT"
+                  puts part
+                end
+                text = "\n[eqn]\n"
+                text.gsub!(/<script>|<\/script>/, "")              
+                text += grand_child.text
+                text += "\n[/eqn]\n"
+                @story += text if text
+              end
             else
               # puts "something else"
             end
@@ -276,12 +292,3 @@ module RLayout
 	end  
 end
 
-
-@path         = "/Users/mskim/Development/hwp/ms.hml"
-@style_path   = "/Users/mskim/Development/hwp/ms/style.yml"
-@output_path  = "/Users/mskim/Development/hwp/ms" 
-@tables_path  = "/Users/mskim/Development/hwp/ms/tables" 
-
-@path         = "/Users/mskim/Development/hwp/section_test1.hml"
-@hwp  = RLayout::Hwpml.new(@path)
-@hwp.save_markdown

@@ -1,26 +1,21 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require 'minitest/autorun'
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '../..', 'lib')
+require 'rlayout/graphic'
+require 'rlayout/container'
+require 'rlayout/text/heading_container'
+include RLayout
 
 describe 'testing HeadingContainer creation' do
   before do
-    @doc = RLayout::Document.new(:initial_page=>false) do
-      page(layout_space: 10) do
-        heading_container(fill_color: "orange", title: "This is title") 
-        main_text(column_count: 3) do
-          float_image(:local_image=> "1.jpg", :grid_frame=> [0,0,1,1])
-          float_image(:local_image=> "2.jpg", :grid_frame=> [0,1,1,1])
-        end
-        relayout!
-      end
+    @cont = RLayout::Container.new do
+      heading_container(fill_color: "orange", title: "This is title") 
     end
-    
-    @first_page = @doc.pages.first
-    @heading = @first_page.graphics.first
+    @heading = @cont.graphics.first
   end
   
   it 'should create HeadingContainer' do
-    assert @heading.class == HeadingContainer
+    @heading.class.must_equal HeadingContainer
   end
-
 end
 
 describe 'testing heading creation' do
@@ -40,11 +35,11 @@ describe 'testing heading creation' do
   
   it 'should create HeadingContainer Items' do
     assert @heading_c.graphics.length == 5
-    assert @heading_c.graphics[0].local_image == "heading_bg.pdf"
-    assert @heading_c.graphics[1].text_string == "04"
-    assert @heading_c.graphics[2].text_string == "Some Text"
+    assert @heading_c.graphics[0].local_image == "title_bg.pdf"
+    assert @heading_c.graphics[1].text_string == "01"
+    assert @heading_c.graphics[2].text_string == "Some\r text"
     assert @heading_c.graphics[3].text_string == "subtitle text"
-    assert @heading_c.graphics[4].text_string == "leading text "*3
+    assert @heading_c.graphics[4].text_string == "주어가 길거나 문장이 복잡할 때에는 본동사를 먼저 찾고 이에 해당하는 주어를 찾는다. 이때, 동사 자리에 분사나 부정사가 잘못 들어가 있지는 않은지 확인한다."
   end
   
 end

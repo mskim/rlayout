@@ -1,18 +1,14 @@
-#
-# 
 #  Created by Min Soo Kim on 9/1/2013.
 #  Copyright 2013 SoftwareLab. All rights reserved.
 
 # Grid
-# In Container, we have two layout modes, "stack(auto_layout)" and grid.
-#  
-#  In stack mode, 
-#     1. have layout_direction of vertical or horizontal, for adding and aligning children graphics. 
-#     1. Graphic's size and positions are auto adjusted.
-
-#  In grid based mode, 
+#  There are two layout modes, auto_layout and grid mode.
+#  grid is used to divide layout areaa into a grid.
+#
+#  In grid mode, 
 #   grid[col,row]:  number of columns and rows in its own view
 #   grid_cells:     array of grid cells in following hash format
+#   example cell:
 #   cell =  {
 #       column: 3,
 #       row: 3,
@@ -28,27 +24,27 @@
 #  show_grid:          boolean whether to show or hide grid
 #  show_text_line:     boolean whether to show or hide body text lines
 #
-#  Usually grid mode is used at page level, and auto_layout mode are used in Containers.
+#  Usually grid mode is used at page level, 
+#  and auto_layout mode are used in Containers.
 #  when options hash contains :grid, mode become grid mode.
 #  ex. Portait Page will have 3 x 3 grid system
 #      Newpaper at 7 x 12 and some article with auto_layout mode.
 #  And with each types of publication, we can set the grid system to fit the needs.
 
 
-
 module  RLayout
   
   class Container < Graphic
     attr_accessor :grid_base, :gutter, :v_gutter, :grid_cells, :grid_color, :show_grid
-
+    attr_accessor :grid_frame #[x,y, width, height] frame in grid unit of parent_graphic's grid
+    
     def init_grid(options)
-      @grid_cells   = []
       @grid_frame     = options.fetch(:grid_frame,[0,0,3,3])
       if options[:grid_base]
         if options[:grid_base].class == String && options[:grid_base] =~/x/
           @grid_base    = options[:grid_base].split("x").map{|e| e.to_i}
         elsif options[:grid_base].class == Array
-          @grid_frame   = options[:grid_base]
+          @grid_base   = options[:grid_base]
         end
       end
       @grid_color     = options.fetch(:grid_color, 'blue')       
@@ -60,10 +56,10 @@ module  RLayout
     
     def update_grid
       return unless @grid_base
-      return unless @grid_frame
       @grid_width   = (@width - @left_margin - @right_margin - (@grid_base[0]-1)*@gutter)/@grid_base[0]
       @grid_height  = (@height - @top_margin - @bottom_margin - (@grid_base[1]-1)*@v_gutter)/@grid_base[1]
-      @grid         = GridStruct.new(@grid_frame, @grid_width, @grid_height, @gutter, @v_gutter)
+      @grid         = GridStruct.new(@grid_base, @grid_width, @grid_height, @gutter, @v_gutter)
+      update_grid_cells
     end
     
     def update_grid_cells

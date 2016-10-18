@@ -117,6 +117,10 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2016 10 18
+	- rearrange test
+		so that it only loads what is needed
+		
 2016 10 12
 	- add TOCChapter
 	- fix left_margin

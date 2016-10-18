@@ -1,50 +1,17 @@
-require File.dirname(__FILE__) + "/../spec_helper"
-
-describe 'add text_box to page' do
-  before do
-    @page = Page.new(nil) do
-      text_box()
-    end
-    @page.relayout!
-  end
-  
-  it 'should create Page with TextBox' do
-    assert @page.class == Page
-  end
-  
-  it 'should create Page with TextBox' do
-    assert @page.graphics.first.class == TextBox
-    assert @page.graphics.first.column_count == 3
-  end
-  
-  it 'should relayout in the block' do
-    assert @page.graphics.first.width == 500
-  end
-end
-
-describe 'pgscritp for Page ' do
-  before do
-  @page = RLayout::Page.new(nil) do
-      rect(fill_color: "red")
-      rect(fill_color: "blue")
-      relayout!
-    end
-  end
-  
-  it 'should have two graphics' do
-    @page.graphics.length.must_equal 2
-  end
-end
+require 'minitest/autorun'
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '../..', 'lib')
+require 'rlayout/graphic'
+require 'rlayout/container'
+include RLayout
 
 describe 'pgscritp for Container ' do
   before do
-    @container = RLayout::Container.new(nil) do
+    @container = RLayout::Container.new() do
       rect(fill_color: "red")
       rect(fill_color: "blue")
       relayout!
     end
   end
-  
   
   it 'should have two graphics' do
     @container.graphics.length.must_equal 2
@@ -77,13 +44,10 @@ describe 'processing from raw text ' do
   
   it 'should apply option values' do
     @container.graphics.first.fill.color.must_equal 'white'
-    # @container.graphics.first.height.must_equal 26
-    # @container.graphics[1].height.must_equal 26
-    # @container.graphics[1].fill_color.must_equal 'white'
+    @container.graphics.first.height.must_equal 260
+    @container.graphics[1].fill.color.must_equal 'blue'
   end
-  
 end
-
 
 describe 'testing container split-v' do
   before do
@@ -114,16 +78,15 @@ describe 'testing container split-v' do
   end
   
   it 'should save' do
-    svg_path = "/Users/Shared/rlayout/output/container_pgscript_split-v.svg"
-    pdf_path = "/Users/Shared/rlayout/output/container_pgscript_split-v.pdf"
-    @container.save_svg(svg_path)
-    @container.save_pdf(pdf_path)
+    @svg_path = "/Users/Shared/rlayout/output/container_pgscript_split-v.svg"
+    @container.save_svg(@svg_path)
+    File.exist?(@svg_path)
   end
 end
 
 describe 'testing container split-h' do
   before do
-    @container = Container.new(nil) do
+    @container = Container.new() do
       split_h(3, :fill_color=>"gray", :layout_space=>10)
     end
   end
@@ -142,9 +105,7 @@ describe 'testing container split-h' do
   
   it 'should save' do
     svg_path = "/Users/Shared/rlayout/output/container_pgscript_split-h.svg"
-    pdf_path = "/Users/Shared/rlayout/output/container_pgscript_split-h.pdf"
     @container.save_svg(svg_path)
-    @container.save_pdf(pdf_path)
   end
 end
 

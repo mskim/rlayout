@@ -1,14 +1,17 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require 'minitest/autorun'
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '../..', 'lib')
+require 'rlayout/graphic'
+include RLayout
 
 describe 'color struct' do
   before do
     @c= ColorStruct.new('blue')
   end
   it 'should crete color' do
-    assert @c['name'] == 'blue'
+    @c['name'].must_equal 'blue'
   end
   it 'should create random color' do
-    assert COLOR_NAMES.include?(@c.sample) ==true
+    COLOR_NAMES.include?(@c.sample).must_equal true
   end
 end
 
@@ -18,11 +21,11 @@ describe 'cmyk color struct' do
   end
   
   it 'should test cmyk' do
-    assert @cmyk[:c] == 100
+    @cmyk[:c].must_equal 100
   end
   
   it 'should have alpha of nil' do
-    assert @cmyk[:a] == nil
+    @cmyk[:a].must_equal nil
   end
 end
 
@@ -32,11 +35,11 @@ describe 'rgb color struct' do
   end
   
   it 'should test grb red' do
-    assert @rgb[:r] == 50
+    @rgb[:r].must_equal 50
   end
   
   it 'test test grb alpha' do
-    assert @rgb[:a] == 30
+    @rgb[:a].must_equal 30
   end
 end
 
@@ -46,7 +49,7 @@ describe 'fill struct' do
   end
   
   it 'should test LinearGradient starting_color' do
-    assert @fill[:color] == 'black'
+    @fill[:color].must_equal 'black'
   end
 end
 
@@ -56,15 +59,15 @@ describe 'LinearGradient struct' do
   end
   
   it 'should test LinearGradient starting_color' do
-    assert @lg[:starting_color] == 'black'
+    @lg[:starting_color].must_equal 'black'
   end
   
   it 'test LinearGradient ending_color' do
-    assert @lg[:ending_color] == 'white'
+    @lg[:ending_color].must_equal 'white'
   end
   
   it 'test LinearGradient steps' do
-    assert @lg[:steps] == 10
+    @lg[:steps].must_equal 10
   end
 end
 
@@ -73,16 +76,16 @@ describe 'RadialGradient struct' do
     @lg = RadialGradient.new('black', 'white', 'center', 5)
   end
   it 'should test RadialGradient starting_color' do
-    assert @lg[:starting_color] == 'black'
+    @lg[:starting_color].must_equal 'black'
   end
   it 'test RadialGradient ending_color' do
-    assert @lg[:ending_color] == 'white'
+    @lg[:ending_color].must_equal 'white'
   end
   it 'test RadialGradient center' do
-    assert @lg[:center] == 'center'
+    @lg[:center].must_equal 'center'
   end
   it 'test RadialGradient center' do
-    assert @lg[:steps] == 5
+    @lg[:steps].must_equal 5
   end
 end
 
@@ -91,16 +94,16 @@ describe 'StrokeStruct struct' do
     @s= StrokeStruct.new('black', 2, [2,1,3,4])
   end
   it 'test StrokeStruct color' do
-    assert @s[:color] == 'black'
+    @s[:color].must_equal 'black'
   end
   it 'test StrokeStruct thickness' do
-    assert @s[:thickness] == 2
+    @s[:thickness].must_equal 2
   end
   it 'test StrokeStruct dash' do
-    assert @s[:dash] == [2,1,3,4]
+    @s[:dash].must_equal [2,1,3,4]
   end
   it 'test StrokeStruct type' do
-    assert @s[:type] == nil
+    @s[:type].must_equal nil
   end
 end
 
@@ -110,16 +113,16 @@ describe 'RectStruct struct' do
     @s= RectStruct.new(0, 1, 300, 400)
   end
   it 'test RectStruct x' do
-    assert @s[:x] == 0
+    @s[:x].must_equal 0
   end
   it 'test RectStruct top' do
-    assert @s[:y] == 1
+    @s[:y].must_equal 1
   end
   it 'test RectStruct right' do
-    assert @s[:width] == 300
+    @s[:width].must_equal 300
   end
   it 'test RectStruct bottom' do
-    assert @s[:height] == 400
+    @s[:height].must_equal 400
   end
   
 end
@@ -129,22 +132,22 @@ describe 'RoundRectStruct struct' do
     @s= RoundRectStruct.new(0, 1, 300, 400, 10,10)
   end
   it 'test RoundRectStruct x' do
-    assert @s[:x] == 0
+    @s[:x].must_equal 0
   end
   it 'test RoundRectStruct top' do
-    assert @s[:y] == 1
+    @s[:y].must_equal 1
   end
   it 'test RoundRectStruct width' do
-    assert @s[:width] == 300
+    @s[:width].must_equal 300
   end
   it 'test RoundRectStruct height' do
-    assert @s[:height] == 400
+    @s[:height].must_equal 400
   end
   it 'test RoundRectStruct cx' do
-    assert @s[:rx] == 10
+    @s[:rx].must_equal 10
   end
   it 'test RoundRectStruct cy' do
-    assert @s[:ry] == 10
+    @s[:ry].must_equal 10
   end
 end
 
@@ -154,13 +157,13 @@ describe 'CircleStruct struct' do
     @s= CircleStruct.new(20, 20, 300)
   end
   it 'test CircleStruct cx' do
-    assert @s[:cx] == 20
+    @s[:cx].must_equal 20
   end
   it 'test CircleStruct cy' do
-    assert @s[:cy] == 20
+    @s[:cy].must_equal 20
   end
   it 'test CircleStruct cy' do
-    assert @s[:r] == 300
+    @s[:r].must_equal 300
   end
 end
 
@@ -170,16 +173,16 @@ describe 'EllipseStruct struct' do
     @s= EllipseStruct.new(500, 200, 300,200)
   end
   it 'test EllipseStruct cx' do
-    assert @s[:cx] == 500
+    @s[:cx].must_equal 500
   end
   it 'test EllipseStruct cy' do
-    assert @s[:cy] == 200
+    @s[:cy].must_equal 200
   end
   it 'test EllipseStruct rx' do
-    assert @s[:rx] == 300
+    @s[:rx].must_equal 300
   end
   it 'test EllipseStruct ry' do
-    assert @s[:ry] == 200
+    @s[:ry].must_equal 200
   end
 end
 
@@ -188,16 +191,16 @@ describe 'LineStruct struct' do
     @s= LineStruct.new(500, 200, 300,200)
   end
   it 'test LineStruct cx' do
-    assert @s[:x1] == 500
+    @s[:x1].must_equal 500
   end
   it 'test LineStruct cy' do
-    assert @s[:y1] == 200
+    @s[:y1].must_equal 200
   end
   it 'test LineStruct rx' do
-    assert @s[:x2] == 300
+    @s[:x2].must_equal 300
   end
   it 'test LineStruct ry' do
-    assert @s[:y2] == 200
+    @s[:y2].must_equal 200
   end
 end
 
@@ -206,10 +209,10 @@ describe 'PoligonStruct struct' do
     @s= PoligonStruct.new([500, 200, 300,200])
   end
   it 'test PoligonStruct points' do
-    assert @s[:points] == [500, 200, 300,200]
+    @s[:points].must_equal [500, 200, 300,200]
   end
   it 'test PoligonStruct style' do
-    assert @s[:style] == nil
+    @s[:style].must_equal nil
   end
 end
 
@@ -218,9 +221,9 @@ describe 'TextStruct struct' do
     @t= TextStruct.new('This is a string')
   end
   it 'should crete TextStruct' do
-    assert @t['string'] == 'This is a string'
-    assert @t['color'] == nil
-    assert @t.members.first == :string
+    @t['string'].must_equal 'This is a string'
+    @t['color'].must_equal nil
+    @t.members.first.must_equal :string
   end
 
 end
@@ -230,8 +233,8 @@ describe 'ImageStruct struct' do
     @i= ImageStruct.new('my/image/path.jpg')
   end
   it 'should crete ImageStruct' do
-    assert @i['image_path'] == 'my/image/path.jpg'
-    assert @i['fit_type'] == nil
+    @i['image_path'].must_equal 'my/image/path.jpg'
+    @i['fit_type'].must_equal nil
   end
 
 end

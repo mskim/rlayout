@@ -7,7 +7,7 @@ class String
     (self.length).times do |i|
       # puts self[i]
       # puts width_table[self[i].ord]
-      char_width_sum += width_table[self[i].ord]
+      char_width_sum += width_table[self[i].ord] if width_table[self[i].ord]
     end
     char_width_sum*font_size/1000
   end

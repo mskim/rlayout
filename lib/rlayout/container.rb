@@ -1,3 +1,8 @@
+if RUBY_ENGINE != 'rubymotion'
+  require File.dirname(__FILE__) + '/container/auto_layout'
+  require File.dirname(__FILE__) + '/container/grid'
+  require File.dirname(__FILE__) + '/container/pgscript'
+end
 
 module RLayout
   
@@ -11,7 +16,7 @@ module RLayout
       @graphics             = []
       @floats               = options.fetch(:floats, [])
       @stack                = options[:stack] if options[:stack]
-      super      
+      super            
       layout_defaults_hash  = auto_layout_defaults
       @layout_direction     = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])       
       @layout_space         = options.fetch(:layout_space, layout_defaults_hash[:layout_space])       

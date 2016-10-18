@@ -1,0 +1,30 @@
+
+# Object hierarchy
+
+1. Record
+	Layout, Stroke, Fill, Shape, Image, Text
+	
+1. Graphic
+
+1. Container
+	Grid, Float, direction,
+	
+1. Box
+
+1. Text_Container
+
+1. Page
+
+1. Story
+
+1. Style
+
+1. Document
+
+1. Rjob, Article, Chapter, 
+
+1. ItemChapter, QuizChapter, PDFChapter, PhotoChapter, TocChapter
+	linked to DB
+	
+	
+

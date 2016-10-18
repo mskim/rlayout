@@ -1,11 +1,15 @@
-
+require "minitest/autorun"
+require File.dirname(__FILE__) + '/hwpml'
 @path         = "/Users/mskim/Development/hwp/ms.hml"
 @style_path   = "/Users/mskim/Development/hwp/ms/style.yml"
 @output_path  = "/Users/mskim/Development/hwp/ms" 
 @tables_path  = "/Users/mskim/Development/hwp/ms/tables" 
 @path         = "/Users/mskim/Development/hwp/section_test1.hml"
-@hwp  = Hwpml.new(@path)
-@hwp.save
+@path         = "/Users/mskim/Development/hwp/math_sample.hml"
+
+
+@hwp  = RLayout::Hwpml.new(@path)
+@hwp.save_markdown
 
 
 __END__

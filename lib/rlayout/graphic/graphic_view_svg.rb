@@ -1,6 +1,8 @@
-require 'xmlsimple'
-require 'pp'
-require 'json'
+if RUBY_ENGINE != 'rubymotion'
+  require 'xmlsimple'
+  require 'pp'
+  require 'json'
+end
 
 module RLayout  
   class Graphic

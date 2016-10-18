@@ -1,15 +1,14 @@
 # encoding: utf-8
 
+# ChapterMaker 
 # ChapterMaker combines Story and Document into a  chapter.
-# deprecated **** Story can come from couple of sources, markdown, adoc, or html(URL blog)
+# Story can come from couple of sources, markdown, adoc, or html(URL blog)
 # deprecated **** Story can be .story, adoc, markdown, or html format.
 # Story file format is our own, mixture of adoc, markdown and LaTex.
-
 # Stories are first converted to para_data format, 
 # It is also converted to Asciidoctor or GHF-markdown for HTML generation. 
-
-# ChapterMaker loads custom template from local folder, or default template from library location. 
-# ChapterMaker loads custom styles from local folder, or default style from library location.
+# ChapterMaker first look for template in local folder, 
+# if it is not found, takes default template from library location. 
 
 # How to place images in long document?
 # There are three ways of placing images in the long document.
@@ -164,7 +163,6 @@ module RLayout
         @project_path = File.dirname(@story_path)
       end
       $ProjectPath  = @project_path
-      
       if options[:output_path]
         @output_path = options[:output_path]
       elsif options[:filename_output]
@@ -173,7 +171,6 @@ module RLayout
       else
         @output_path = @project_path + "/output.pdf"
       end
-      
       if options[:template_path] && File.exist?(options[:template_path])
         @template_path = options[:template_path]
       else

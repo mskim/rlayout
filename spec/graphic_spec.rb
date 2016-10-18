@@ -1,4 +1,7 @@
-require File.dirname(__FILE__) + "/spec_helper"
+require 'minitest/autorun'
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+require 'rlayout/graphic'
+include RLayout
 
 describe ' convert string to color' do
   before do
@@ -6,91 +9,50 @@ describe ' convert string to color' do
     @color = color_from_hex(color_string)
   end
   it 'shuld convert hex color' do
-    assert_equal @color, "rgba(1.0,0.0,0.0,1)"
-  end
-end
-
-__END__
-describe 'draw rotation' do
-  before do
-    
-    @page = <<-EOF 
-    @output_path = "/Users/Shared/rlayout/output/graphic/shadow_sample.pdf"
-    p = RLayout::Page.new(layout_space: 5) do
-      rectangle(fill_color: "red", layout_length: 2)
-      rectangle(fill_color: "yellow")
-      rectangle(fill_color: "blue")
-    end
-    p.relayout!
-    p
-    EOF
-    
-  end
-  
-  it 'should save using rjob, and savegraphic with pdf' do
-    @output_path = "/Users/Shared/rlayout/output/graphic/shadow_sample.pdf"
-    system("echo '#{@page}' | /Applications/rjob.app/Contents/MacOS/rjob")
-    assert File.exist?(@output_path)
-  end
-end
-
-__END__
-
-describe 'draw shodow' do
-  before do
-    
-    @page = <<-EOF 
-    @output_path = "/Users/Shared/rlayout/output/graphic/shadow_sample.pdf"
-    RLayout::Page.new(nil) do
-      rectangle(x: 100, y:200, fill_color: "red", shadow: true, shadow_color: "darkGray")
-    end
-    EOF
-    
-  end
-  
-  it 'should save using rjob, and savegraphic with pdf' do
-    @output_path = "/Users/Shared/rlayout/output/graphic/shadow_sample.pdf"
-    system("echo '#{@page}' | /Applications/rjob.app/Contents/MacOS/rjob")
-    assert File.exist?(@output_path)
+    @color.must_equal "rgba(1.0,0.0,0.0,1)"
   end
 end
 
 describe 'create Graphic ' do
   before do
-    @g = Graphic.new(:fill_color=>"blue")
+    @g = Graphic.new(parent:nil, :fill_color=>"blue")
   end
+  
   it 'should create Graphic' do
-    assert @g.class == Rectangle
+    @g.class.must_equal Graphic
   end
   
   it 'should not have fill' do    
-    assert @g.fill.class == FillStruct
-    assert @g.fill.color == 'blue'
+    @g.fill.class.must_equal FillStruct
+    @g.fill.color.must_equal 'blue'
   end
   
   it 'should create rect shape' do    
-    assert @g.shape.class == RectStruct
+    @g.shape.class.must_equal RectStruct
   end
-
+  
   it 'should have stroke' do    
-    assert @g.stroke.class == StrokeStruct
-    assert @g.stroke.color == 'black'
-    assert @g.stroke.thickness == 0
+    @g.stroke.class.must_equal StrokeStruct
+    @g.stroke.color.must_equal 'black'
+    @g.stroke.thickness.must_equal 0
   end
+  
   it 'should not have image_record' do    
-    assert @g.image_record == nil
+    @g.image_record.must_equal nil
   end
+  
   it 'should not have text_record' do    
-    assert @g.text_record == nil
+    @g.text_record.must_equal nil
   end
 end
+
 
 describe 'LinearFill ' do
   before do
     @g = Graphic.new(:fill_type=>'gradiation', :fill_color=>"blue")
   end
   it 'should create LinearFill' do
-    assert @g.fill.class == LinearGradient
+    @g.fill.class.must_equal LinearGradient
   end
 end
 
@@ -99,34 +61,32 @@ describe 'RadialFill ' do
     @g = Graphic.new(:starting_color=>"blue", :ending_color=>'red', :fill_type=>"radial")
   end
   it 'should create LinearFill' do
-    assert @g.fill.class == RadialGradient
+    @g.fill.class.must_equal RadialGradient
   end
 end
-
 
 describe 'create Circle' do
   before do
     @c = Circle.new(:width=>200, :height=>200)
   end
   it 'should create Circle' do
-    assert @c.class == Circle
+    @c.class.must_equal Circle
   end
   it 'should create CircleStruct shape' do
-    assert @c.shape.class   == CircleStruct
-    assert @c.shape.r       == 100
-    assert @c.shape.cx      == 100
-    assert @c.shape.cy      == 100
+    @c.shape.class.must_equal CircleStruct
+    @c.shape.r.must_equal 100
+    @c.shape.cx.must_equal 100
+    @c.shape.cy.must_equal 100
   end
   it 'should have fill' do    
-    assert @c.fill.class == FillStruct
-    assert @c.fill.color == 'white'
+    @c.fill.class.must_equal FillStruct
+    @c.fill.color.must_equal 'white'
   end
   it 'should have stroke' do    
-    assert @c.stroke.class == StrokeStruct
-    assert @c.stroke.color == 'black'
-    assert @c.stroke.thickness == 0
+    @c.stroke.class.must_equal StrokeStruct
+    @c.stroke.color.must_equal 'black'
+    @c.stroke.thickness.must_equal 0
   end
-  
 end
 
 describe 'create Ellipse' do
@@ -134,33 +94,36 @@ describe 'create Ellipse' do
     @c = Ellipse.new(:width=>100, :height=>200, :fill_color=>"orange")
   end
   it 'should create Ellipse' do
-    assert @c.class == Ellipse
+    @c.class.must_equal Ellipse
   end
   
   it 'should create EllipseStruct shape' do
-    assert @c.shape.class   == EllipseStruct
-    assert @c.shape.rx      == 50
-    assert @c.shape.ry      == 100
+    @c.shape.class.must_equal EllipseStruct
+    @c.shape.rx.must_equal 50
+    @c.shape.ry.must_equal 100
   end
+  
   it 'should have fill' do    
-    assert @c.fill.class == FillStruct
-    assert @c.fill.color == 'orange'
+    @c.fill.class.must_equal FillStruct
+    @c.fill.color.must_equal 'orange'
   end
+  
   it 'should have stroke' do    
-    assert @c.stroke.class == StrokeStruct
-    assert @c.stroke.color == 'black'
-    assert @c.stroke.thickness == 0
+    @c.stroke.class.must_equal StrokeStruct
+    @c.stroke.color.must_equal 'black'
+    @c.stroke.thickness.must_equal 0
   end
+  
   it 'should have stroke' do    
-    assert @c.stroke.class == StrokeStruct
-    assert @c.stroke.color == 'black'
-    assert @c.stroke.thickness == 0
+    @c.stroke.class.must_equal StrokeStruct
+    @c.stroke.color.must_equal 'black'
+    @c.stroke.thickness.must_equal 0
   end
   
   it 'should save' do
     @path = "/Users/Shared/rlayout/output/graphic_color_test.svg"
     @c.save_svg(@path)
-    system "open #{@path}"
+    # system "open #{@path}"
   end
   
 end
@@ -170,22 +133,22 @@ describe 'create RoundRect' do
     @c = RoundRect.new(:width=>100, :height=>200)
   end
   it 'should create RoundRect' do
-    assert @c.class == RoundRect
+    @c.class.must_equal RoundRect
   end
   
   it 'should create RoundRectStruct shape' do
-    assert @c.shape.class   == RoundRectStruct
-    assert @c.shape.rx      == 10.0
-    assert @c.shape.ry      == 10.0
+    @c.shape.class.must_equal RoundRectStruct
+    @c.shape.rx.must_equal 10.0
+    @c.shape.ry.must_equal 10.0
   end
   it 'should have fill' do    
-    assert @c.fill.class == FillStruct
-    assert @c.fill.color == 'white'
+    @c.fill.class.must_equal FillStruct
+    @c.fill.color.must_equal 'white'
   end
   it 'should have stroke' do    
-    assert @c.stroke.class == StrokeStruct
-    assert @c.stroke.color == 'black'
-    assert @c.stroke.thickness == 0
+    @c.stroke.class.must_equal StrokeStruct
+    @c.stroke.color.must_equal 'black'
+    @c.stroke.thickness.must_equal 0
   end
 end
 
@@ -194,23 +157,23 @@ describe 'create Image' do
     @c = Image.new(:image_path=> "my_image_path.jpg", :width=>100, :height=>200)
   end
   it 'should create Image' do
-    assert @c.klass       == "Image"
-    assert @c.image_path  == "my_image_path.jpg"
+    @c.class.must_equal Image
+    @c.image_path.must_equal "my_image_path.jpg"
   end
   
   it 'should create Image shape' do
-    assert @c.shape.class     == RectStruct
-    assert @c.shape.width     == 100
-    assert @c.shape.height    == 200
+    @c.shape.class.must_equal RectStruct
+    @c.shape.width.must_equal 100
+    @c.shape.height.must_equal 200
   end
   it 'should have fill' do    
-    assert @c.fill.class == FillStruct
-    assert @c.fill.color == 'white'
+    @c.fill.class.must_equal FillStruct
+    @c.fill.color.must_equal 'white'
   end
   it 'should have stroke' do    
-    assert @c.stroke.class == StrokeStruct
-    assert @c.stroke.color == 'black'
-    assert @c.stroke.thickness == 0
+    @c.stroke.class.must_equal StrokeStruct
+    @c.stroke.color.must_equal 'black'
+    @c.stroke.thickness.must_equal 0
   end
 end
 
@@ -219,26 +182,26 @@ describe 'create Text' do
     @c = Text.new(:text_string=> "This is my text string.", :width=>100, :height=>200)
   end
   it 'should create Text' do
-    assert @c.klass       == "Text"
+    @c.class.must_equal Text
   end
   it 'should create text_record' do
   
-    assert @c.text_record.string  == "This is my text string."
+    @c.text_record.string.must_equal "This is my text string."
   end
   
   it 'should create Text shape' do
-    assert @c.shape.class     == RectStruct
-    assert @c.shape.width     == 100
-    assert @c.shape.height    == 200
+    @c.shape.class.must_equal RectStruct
+    @c.shape.width.must_equal 100
+    @c.shape.height.must_equal 200
   end
   it 'should have fill' do    
-    assert @c.fill.class == FillStruct
-    assert @c.fill.color == 'white'
+    @c.fill.class.must_equal FillStruct
+    @c.fill.color.must_equal 'white'
   end
   it 'should have stroke' do    
-    assert @c.stroke.class == StrokeStruct
-    assert @c.stroke.color == 'black'
-    assert @c.stroke.thickness == 0
+    @c.stroke.class.must_equal StrokeStruct
+    @c.stroke.color.must_equal 'black'
+    @c.stroke.thickness.must_equal 0
   end
 end
 
@@ -251,37 +214,8 @@ describe 'generate random graphics' do
   it 'should create Graphic' do
     @g.must_be_kind_of Array
   end
-  
-  it 'should save random grapics' do    
-    p = Page.new(nil)
-    p.add_graphic(@g)
-    p.save_svg(@path)
-    system "open #{@path}"
-  end
 end
 
-__END__
-
-describe ' Graphic from Hash ' do
-  before do
-    h = {
-      :klass => "Container",
-      :fill_color=> 'red',
-      :graphics => [
-        {:klass => "Rectangle", :fill_color=> 'blue'},
-        {:klass => "Rectangle", :fill_color=> 'green'},
-        ]
-    }
-    @t = Container.new(h)
-  end
-    
-  it 'should save Rectangle from hash' do
-    @pdf_path = "/Users/Shared/rlayout/output/graphic_from_hash.pdf"
-    @t.save_pdf(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
-    system("open #{@pdf_path}")
-  end
-end
 
 describe 'testing Text ' do
   before do
@@ -290,16 +224,13 @@ describe 'testing Text ' do
   
   it 'should create heading' do
     @t.must_be_kind_of Text
-    @t.text_size.must_equal 24
+    @t.text_record.size.must_equal 24
   end
   
   it 'should save Text' do
     @svg_path = "/Users/Shared/rlayout/output/text_test.svg"
-    @pdf_path = "/Users/Shared/rlayout/output/texxt_test.pdf"
-    # @t.save_svg(@svg_path)
-    # File.exists?(@svg_path).must_equal true
-    @t.save_pdf(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
+    @t.save_svg(@svg_path)
+    File.exists?(@svg_path).must_equal true
   end
   
 end

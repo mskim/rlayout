@@ -1,3 +1,17 @@
+if RUBY_ENGINE != 'rubymotion'
+  require File.dirname(__FILE__) + "/graphic/color"
+  require File.dirname(__FILE__) + "/graphic/fill"
+  require File.dirname(__FILE__) + "/graphic/graphic_struct"
+  require File.dirname(__FILE__) + "/graphic/graphic_view_svg"
+  require File.dirname(__FILE__) + "/graphic/image"
+  require File.dirname(__FILE__) + "/graphic/layout"
+  require File.dirname(__FILE__) + "/graphic/node_tree"
+  require File.dirname(__FILE__) + "/graphic/rotation"
+  require File.dirname(__FILE__) + "/graphic/shadow"
+  require File.dirname(__FILE__) + "/graphic/shape"
+  require File.dirname(__FILE__) + "/graphic/stroke"
+  require File.dirname(__FILE__) + "/graphic/text"
+end
 
 module RLayout
 
@@ -39,21 +53,20 @@ module RLayout
       init_rotation(options)  if options[:rotation] || options[:rotation_content]
       init_text(options)
       init_image(options)
+        
       if @parent_graphic
-        if options[:is_float]
+        if @parent_graphic.kind_of?(Document)
+          @parent_graphic.pages << self if  !parent_graphic.pages.include?(self)
+        elsif options[:is_float]
           @parent_graphic.floats << self if @parent_graphic.floats && !@parent_graphic.floats.include?(self)
-          
           # init_float(options)
         elsif options[:is_fixture]
           #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics
           @parent_graphic.fixtures << self if !@parent_graphic.fixtures.include?(self)
-        elsif  @parent_graphic && @parent_graphic.kind_of?(RLayout::Document)
-          @parent_graphic.pages << self  if @parent_graphic.pages && !@parent_graphic.pages.include?(self)
         elsif @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
           @parent_graphic.graphics << self
         end
       end
-      
       self
     end
         
@@ -190,7 +203,7 @@ module RLayout
     end
 
     def random_klass
-      KLASS_NAMES.sample
+      CLASS_NAMES.sample
     end
 
     def random_text
@@ -277,7 +290,7 @@ module RLayout
           # puts File.exists?(path)
           data[:image_path] = File.dirname(__FILE__) + "/../../spec/image/1.jpg"
         end
-        samples << Graphic.klass_of(nil,klass_name, data)
+        samples << Graphic.klass_of(klass_name, data)
       end
       samples
     end
@@ -432,7 +445,11 @@ module RLayout
       end
       s
     end
-
+    
+    def save_svg(path)
+      File.open(path, 'w'){|f| f.write to_svg}
+    end
+    
     def save_pdf(path, options={})
       if RUBY_ENGINE == 'rubymotion'
         @ns_view ||= GraphicViewMac.from_graphic(self)

@@ -159,6 +159,9 @@ module RLayout
             # @para_style[:string] = line.sub("{{", "").sub("}}", "")
             # create_special_token(@para_style[:double_emphasis], line)
             create_special_token('reverse_ruby', line)
+          elsif line=~/^@/
+            line.sub!(/^@/, "")
+            create_special_token('image', line)
           elsif @para_style[:double_emphasis].is_a?(Hash)
             emp = @para_style[:double_emphasis]
             emphasized_style = @para_style.dup.merge emp
@@ -216,24 +219,24 @@ module RLayout
     end
     
     def create_special_token(token_type, line_text)
-      arg = line_text.split(RUBY_ARGUMENT_DIVIDER)
       case token_type
       when "ruby"
+        arg = line_text.split(RUBY_ARGUMENT_DIVIDER)
         options = {}
         options[:base]  = arg[1]
         options[:top]   = arg[2]
         options[:para_style] = @para_style
         @tokens << RLayout::RubyToken.new(options)
       when "reverse_ruby"
+        arg = line_text.split(RUBY_ARGUMENT_DIVIDER)
         options = {}
         options[:base]  = arg[0]
         options[:bottom]= arg[1]
         options[:para_style] = @para_style
         @tokens << RLayout::ReverseRubyToken.new(options)
       when "image"
-        # handle image token
         options = {}
-        options[:local_image]  = arg[1]     
+        options[:image_name]  = line_text
         @tokens << RLayout::ImageToken.new(options)
       else
         #TODO supply more special tokens 
