@@ -195,17 +195,20 @@ module RLayout
   # NewspaperSection are composed of many articles.
   # NewspaperSection can have one heading or none, depending on the setion type
   # Once the layout out of the section is set,
-  # each article is layouted independently by the reporter who is working on the article.
+  # each article is layouted independently by the reporter 
+  #  who is working on the article.
   # each article is produced as PDF and mergerd with rest of the articles.
-  # If section layout changes, each reporteds will have to adjust their articles to fit new new layout.
+  # If section layout changes, each reporteds will have to 
+  #  adjust their articles to fit new new layout.
 
   class NewspaperSection
-    attr_accessor :issue, :section_path, :issue_numner, :date, :publication, :issue, :section_name, :output_path
-    attr_accessor :has_heading, :paper_size
-    attr_accessor :section_config, :articles_info, :story_frames, :grid_key, :grid_width, :grid_height, :number_of_stories
+    attr_accessor :issue, :section_path, :issue_numner, :date, :publication, :issue,           
+                  :section_name, :output_path, :has_heading, :paper_size,
+                  :section_config, :articles_info, :story_frames, :grid_key, 
+                  :grid_width, :grid_height, :number_of_stories
 
-    def initialize(issue, options={}, &block)
-      @issue          = issue
+    def initialize(options={}, &block)
+      @issue          = options[:issue] if options[:issue]
       @section_path   = options[:section_path] if options[:section_path]
       @section_name   = options[:section_name] || "untitled"
       @output_path    = @section_path + "/section.pdf"
@@ -303,9 +306,9 @@ module RLayout
     # YAML kit also reads 1. as 1.0 and 0 as 0.0, so be careful!!!! need to convert it to_i after reading.
     def make_section_config
       info ={}
-      info['publication'] = @issue.publication_name || "OurTimes"
-      info['issue']       = @issue.issue_number       || '100-100'
-      info['date']        = @issue.issue_date         || '2015-4-5'
+      info['publication'] = @issue && @issue.publication_name || "OurTimes"
+      info['issue']       = @issue && @issue.issue_number       || '100-100'
+      info['date']        = @issue && @issue.issue_date         || '2015-4-5'
       info['section_name']= @section_name || "untitled"
       info['has_heading'] = @has_heading
       info['grid_key']    = @grid_key

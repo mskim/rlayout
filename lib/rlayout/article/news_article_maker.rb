@@ -51,7 +51,8 @@ module RLayout
         @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/news_style.rb")
       end
       puts "@template_path:#{@template_path}"
-      @news_article_box       = eval(File.open(@template_path,'r'){|f| f.read})
+      puts template = File.open(@template_path,'r'){|f| f.read}
+      @news_article_box       = eval(template)
       if @news_article_box.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return

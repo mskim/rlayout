@@ -38,14 +38,14 @@ EOF
     
   end
   # it 'shold create Document' do
-  #   assert @doc.class == Document
+  #   @doc.class.must_equal Document
   # end
   # 
   # it 'shold create TextBox' do
-  #   assert @text_box.class == TextBox
+  #   @text_box.class.must_equal TextBox
   # end
   it 'shold create TextColumn' do
-    assert @second_column.class == TextColumn
+    @second_column.class.must_equal TextColumn
   end
   
 end

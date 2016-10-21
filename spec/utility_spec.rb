@@ -51,7 +51,7 @@ describe "should return union_graphic_rects" do
   end
   
   it 'should return union_rects ' do
-    assert_equal @union_rect, [0,0,300,300]
+    @union_rect.must_equal [0,0,300,300]
   end
 end
 

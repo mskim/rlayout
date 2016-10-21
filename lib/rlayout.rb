@@ -33,14 +33,20 @@ else
   
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/heading_container'
+  require File.dirname(__FILE__) + '/rlayout/text/paragraph'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph_ns_text'
   require File.dirname(__FILE__) + '/rlayout/text/text_token'
-  require File.dirname(__FILE__) + '/rlayout/text/paragraph'
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'
   require File.dirname(__FILE__) + '/rlayout/text/font'
   require File.dirname(__FILE__) + '/rlayout/text/text_train'
   require File.dirname(__FILE__) + '/rlayout/text/title_text'
   require File.dirname(__FILE__) + '/rlayout/text/ordered_list'
+  require File.dirname(__FILE__) + '/rlayout/text/text_column'
+  require File.dirname(__FILE__) + '/rlayout/text/text_box'
+
+  require File.dirname(__FILE__) + '/rlayout/table/simple_table'
+  require File.dirname(__FILE__) + '/rlayout/table/table'
+  require File.dirname(__FILE__) + '/rlayout/table/toc_table'
 
   require File.dirname(__FILE__) + '/rlayout/container_extended/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container_extended/place_item'
@@ -53,16 +59,12 @@ else
   require File.dirname(__FILE__) + '/rlayout/box/box_ad_box'
   require File.dirname(__FILE__) + '/rlayout/box/image_box'
   require File.dirname(__FILE__) + '/rlayout/box/object_box'
-  require File.dirname(__FILE__) + '/rlayout/box/text_column'
-  require File.dirname(__FILE__) + '/rlayout/box/text_box'
   require File.dirname(__FILE__) + '/rlayout/box/grid_box'
   require File.dirname(__FILE__) + '/rlayout/box/composite_box'
-  require File.dirname(__FILE__) + '/rlayout/box/table'
   require File.dirname(__FILE__) + '/rlayout/box/item_list'
   require File.dirname(__FILE__) + '/rlayout/box/title_box'
   require File.dirname(__FILE__) + '/rlayout/box/news_article_box'
   require File.dirname(__FILE__) + '/rlayout/box/menu'
-  require File.dirname(__FILE__) + '/rlayout/box/toc_table'
 
   require File.dirname(__FILE__) + '/rlayout/math/eqn'
   require File.dirname(__FILE__) + '/rlayout/math/math_token'
@@ -79,6 +81,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/story/story'
   require File.dirname(__FILE__) + '/rlayout/story/reader'
   require File.dirname(__FILE__) + '/rlayout/story/remote_reader'
+
 
   require File.dirname(__FILE__) + '/rlayout/article/pdf_chapter'
   require File.dirname(__FILE__) + '/rlayout/article/chapter_maker'
@@ -110,7 +113,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/quiz/english_quiz_item'
   require File.dirname(__FILE__) + '/rlayout/quiz/english_quiz_item_maker'
   require File.dirname(__FILE__) + '/rlayout/quiz/quiz_chapter_maker'
-  require File.dirname(__FILE__) + '/rlayout/quiz/simple_table'
   require File.dirname(__FILE__) + '/rlayout/quiz/nr_semi_test_chapter_maker'
 
   require File.dirname(__FILE__) + '/rlayout/mlayout/mdocument'
