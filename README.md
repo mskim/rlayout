@@ -117,11 +117,13 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
-2016 10 21
+2016 10 23
 	- cover art
+	- chapter
+	
+2016 10 21
 	- fix text_box layout_item line overlapping in second page
 	- rlayout_core
-	- chapter
 	- article
 	- rjob
 	
