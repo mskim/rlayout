@@ -3,10 +3,11 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'ChapterMaker layout image' do
   before do
-    template  = "/Users/Shared/SoftwareLab/article_template/chapter.rb"
-    story     = "/Users/mskim/magazine_article/sample.markdown"
-    story_path= "/Users/mskim/book/sample_book/1.chapter/sample.md"
-    @doc      = ChapterMaker.new(story_path: story_path)
+    template    = "/Users/Shared/SoftwareLab/article_template/chapter.rb"
+    story       = "/Users/mskim/magazine_article/sample.markdown"
+    story_path  = "/Users/mskim/book/sample_book/1.chapter/sample.md"
+    project_path = "/Users/mskim/Development/rails_rlayout/tree/public/1/7/9"
+    @doc        = ChapterMaker.new(project_path: project_path)
   end
   
   it 'should create ChapterMaker' do

@@ -1,29 +1,38 @@
 # encoding: utf-8
 
-# ChapterMaker 
+# ChapterMaker
 # ChapterMaker combines Story and Document into a  chapter.
 # Story can come from couple of sources, markdown, adoc, or html(URL blog)
 # deprecated **** Story can be .story, adoc, markdown, or html format.
 # Story file format is our own, mixture of adoc, markdown and LaTex.
-# Stories are first converted to para_data format, 
+# Stories are first converted to para_data format,
 # It is also converted to Asciidoctor or GHF-markdown for HTML generation. 
-# ChapterMaker first look for template in local folder, 
-# if it is not found, takes default template from library location. 
+# ChapterMaker first look for template in local folder,
+# if it is not found, takes default template from library location.
 
 # How to place images in long document?
 # There are three ways of placing images in the long document.
 # First method is to embed image markup in the text.
-# This will place image in the column along other text paragraphs, 
+# This will place image in the column along other text paragraphs,
 # We can set width of image as 1, 1/2, 1/3, 1/4 of column.
 # And text will flow around it.
 # The second way is to use float_group.
-# float_group markup shoud containe position information, such as grid_frame, size, position attributes. New page is triggered. pre-desinged layout pattern can also be used. Images and floats are layed on top as floats allowing text to flow around it.
-# And the third method is to use photo_page, it is similar to image_group, but no text flowing. New page is triggered for photo_page.
-# photo_page is pure photo only page, no text paragraph is layed out, no header, no footer, no page number.
-# pre-desinged layout pattern can be pulled from pattern library or positions can be set manually.
+# float_group markup shoud containe position information, 
+# such as grid_frame, size, position attributes. 
+# New page is triggered. pre-desinged layout pattern can also be used. 
+# Images and floats are layed on top as floats allowing text to flow around it.
+# And the third method is to use photo_page, 
+# it is similar to image_group, but no text flowing. 
+# New page is triggered for photo_page.
+# photo_page is pure photo only page, no text paragraph is layed out,
+# no header, no footer, no page number.
+# pre-desinged layout pattern can be pulled from pattern library
+# or positions can be set manually.
 
-# For short documents, such as magazine article, desinger can place image in rlayout file. 
-# And image info in specified in meta-data header or design template by designer.
+# For short documents, such as magazine article,
+# desinger can place image in rlayout file.
+# And image info in specified in meta-data header
+# or design template by designer.
 
 # For book chapters, first, sencod and third methods are used.
 
@@ -149,7 +158,8 @@ module RLayout
     attr_accessor :project_path, :template_path, :story_path
     attr_accessor :document, :output_path, :column_count
     attr_accessor :doc_info, :toc_content
-    attr_reader :book_title, :title, :starting_page_number,
+    attr_reader :book_title, :title, :starting_page_number
+    
     def initialize(options={} ,&block)
       @project_path = options[:project_path] || options[:article_path]
       if @project_path
@@ -177,9 +187,9 @@ module RLayout
         @template_path = Dir.glob("#{@project_path}/*.{rb,script,pgscript}").first
       end
       unless @template_path
-        @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/document_template/chapter/layout.rb")
+        @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/document_template/paperback/chapter/layout.rb")
       end
-      template = File.open(@template_path,'r'){|f| f.read}
+      template = File.open(@template_path,'r') { |f| f.read}
       @document = eval(template)
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
@@ -192,7 +202,7 @@ module RLayout
       @starting_page_number = options.fetch(:starting_page_number,1)
       read_story
       layout_story
-      output_options = {:preview=>true}
+      output_options = {preview: true}
       @document.save_pdf(@output_path,output_options) unless options[:no_output] 
       @doc_info = {}
       @doc_info[:page_count] = @document.pages.length
@@ -204,17 +214,17 @@ module RLayout
       ext = File.extname(@story_path)
       if ext == ".md" || ext == ".markdown" || ext == ".story"
         @story  = Story.new(@story_path).markdown2para_data
-      # elsif ext == ".adoc"
-      #   @story      = Story.adoc2para_data(@story_path)
+        # elsif ext == ".adoc"
+        # @story      = Story.adoc2para_data(@story_path)
       end
-      @heading    = @story[:heading] || {}
-      @book_title = @heading[:book_title] || @heading['book_title'] || "Untitled"
-      @title      = @heading[:title] || @heading['title'] || "Untitled"
-      @toc_content= "## #{@title}\t0\n"
-      @paragraphs =[]
+      @heading      = @story[:heading] || {}
+      @book_title   = @heading[:book_title] || @heading['book_title'] || "Untitled"
+      @title        = @heading[:title] || @heading['title'] || "Untitled"
+      @toc_content  = "## #{@title}\t0\n"
+      @paragraphs   = []
       @story[:paragraphs].each do |para|
         next if para.nil?
-        para[:layout_expand]  = [:width]
+        para[:layout_expand] = [:width]
         if para[:markup] == 'img' && para[:para_string]
           para.merge! eval(para.delete(:para_string))
           @paragraphs << Image.new(para_options)
@@ -250,10 +260,12 @@ module RLayout
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
       first_item = @paragraphs.first
-      if first_item.is_a?(RLayout::FloatGroup) || first_item.is_a?(RLayout::PhotoPage) || first_item.is_a?(RLayout::PdfInsert)
+      #TODO
+      if first_item.is_a?(FloatGroup) # || first_item.is_a?(PdfInsert)
         first_item = @paragraphs.shift
         first_item.layout_page(document: @document, page_index: @page_index)
       end
+
       @first_page.main_box.layout_items(@paragraphs)
       @page_index = 1
       
@@ -264,8 +276,7 @@ module RLayout
           options[:footer]      = true
           options[:header]      = true
           options[:text_box]    = true
-          # options[:page_number] = @starting_page_number + @page_index
-          options[:column_count]= @document.column_count
+          options[:column_count] = @document.column_count
           p=Page.new(options)
           p.relayout!
           p.main_box.create_column_grid_rects
@@ -275,7 +286,7 @@ module RLayout
           @document.pages[@page_index].relayout!
         end
         first_item = @paragraphs.first
-        if first_item.is_a?(RLayout::FloatGroup) || first_item.is_a?(RLayout::PhotoPage) || first_item.is_a?(RLayout::PdfInsert)
+        if first_item.is_a?(FloatGroup) # || first_item.is_a?(PdfInsert)
           first_item = @paragraphs.shift
           first_item.layout_page(document: @document, page_index: @page_index)
         end
@@ -286,7 +297,7 @@ module RLayout
     end
 
     def next_chapter_starting_page_number
-      @starting_page_number=1 if @starting_page_number.nil?
+      @starting_page_number = 1 if @starting_page_number.nil?
       @page_view_count = 0   if @page_view_count.nil?
       @starting_page_number + @page_view_count
     end
@@ -294,37 +305,37 @@ module RLayout
     def save_toc
       toc_path = @project_path + "/doc_info.yml"
       @doc_info[:toc] = @toc_content
-      File.open(toc_path, 'w'){|f| f.write @doc_info.to_yaml}
+      File.open(toc_path, 'w') { |f| f.write @doc_info.to_yaml}
     end
     
     def update_header_and_footer
-      header= {}
+      header = {}
       header[:first_page_text]  = "| #{@book_title} |" if @book_title
       header[:left_page_text]   = "| #{@book_title} |" if @book_title
       header[:right_page_text]  = @title if @title
-      footer= {}
+      footer = {}
       footer[:first_page_text]  = @book_title if @book_title
       footer[:left_page_text]   = @book_title if @book_title
       footer[:right_page_text]  = @title if @title
       options = {
-        :header => header,
-        :footer => footer,
+        header: header,
+        footer: footer
       }
       @document.header_rule = header_rule
       @document.footer_rule = footer_rule
-      @document.pages.each {|page| page.update_header_and_footer(options)}
+      @document.pages.each { |page| page.update_header_and_footer(options)}
     end
     
     def header_rule
       {
-        :first_page_only  => true,
-        :left_page        => false,
-        :right_page       => false,
+        first_page_only: true,
+        left_page: false,
+        right_page: false
       }
     end
 
     def footer_rule
-      h ={}
+      h = {}
       h[:first_page]      = true
       h[:left_page]       = true
       h[:right_page]      = true
@@ -333,7 +344,7 @@ module RLayout
     # generate layout.rb file with script in each page
     # for manual image adjusting
     def generate_layout
-      @page_content = ""
+      @page_content = ''
       layout_text = <<-EOF.gsub(/^\s*/, "")
       RLayout::Document.new do
         #{@page_content}
@@ -348,17 +359,14 @@ module RLayout
       EOF
       @document.pages.each_with_index do |page, i|
         @page_number = i + 1
-        @image_layout = ""
+        @image_layout = ''
         page.floats.each do |float|
           @image_layout += float.to_script
         end
         @page_content += page_text
       end
       layout_file = layout_text
-      File.open(layout_path, 'w'){|f| f.write layout_file}
-    end    
+      File.open(layout_path, 'w') { |f| f.write layout_file }
+    end
   end
-  
-
-
 end

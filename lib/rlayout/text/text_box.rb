@@ -73,8 +73,11 @@ module RLayout
   class TextBox < Container
     attr_accessor :heading_columns, :quote_box, :grid_size
     attr_accessor :starting_item_index, :ending_item_index
-    attr_accessor :column_count, :column_layout_space, :next_link, :previous_link, :align_body_text
-    attr_accessor :has_side_column, :left_side_column, :side_column, :draw_gutter_stroke
+    attr_accessor :column_count, :column_layout_space
+    attr_accessor :next_link, :previous_link, :align_body_text
+    attr_accessor :has_side_column, :left_side_column, :side_column
+    attr_accessor :draw_gutter_stroke
+    
     def initialize(options={}, &block)
       super
       @layout_direction = options.fetch(:layout_direction, "horizontal")
@@ -111,7 +114,8 @@ module RLayout
       if @has_side_column
         @column_count = 2
         if @left_side_column
-          @side_column = TextColumn.new(:parent=>self, layout_length: 1, fill_color: 'lightGray')
+          @side_column = 
+          TextColumn.new(:parent=>self, layout_length: 1, fill_color: 'lightGray')
           TextColumn.new(:parent=>self, layout_length: 3)
         else
           TextColumn.new(:parent=>self, layout_length: 3)
@@ -274,8 +278,6 @@ module RLayout
         if @item.is_a?(Hash)
           #TODO add hash content to Heading
           if @item[:markup]
-            
-            # puts "@item+++++++++++ :#{@item}"
             next
           end
         # look for page heading and set content
@@ -283,12 +285,11 @@ module RLayout
           # for List block insert list items to flowing_items
           while @item.graphics.length > 0
             list_item = @item.graphics.pop
-            # puts "list_item.para_string:#{list_item.para_string}"
             flowing_items.unshift(list_item)
           end
           next
         elsif @item.is_a?(RLayout::Paragraph)
-          @item.layout_lines(current_column)          
+          @item.layout_lines(current_column)
         elsif @item.is_a?(RLayout::ParagraphNSText) && @item.text_layout_manager
           # We have text
           @item.width  = current_column.text_width
@@ -400,25 +401,33 @@ module RLayout
         # now item is layed out with colum width, place them in the column
         # if @item.class != Paragraph
         
-        if @item.respond_to?(:underflow?) && @item.underflow? 
+        if @item.respond_to?(:underflow?) && @item.underflow?
+          
           # @item doesn't even fit a single line all
           # no need to split, go to next column
           column_index +=1
           @item.underflow = false
-           if column_index < @column_count              
-             current_column = @graphics[column_index]
-             flowing_items.unshift(@item)
-             next
-           else
-             flowing_items.unshift(@item)                            
-             return false
-           end        
-        elsif !@item.overflow? && !@item.underflow?
+          if column_index < @column_count              
+            current_column = @graphics[column_index]
+            flowing_items.unshift(@item)
+            next
+          else
+            # "going to next page....................."
+            flowing_items.unshift(@item)                            
+            return false
+          end        
+        elsif !@item.overflow? && !@item.underflow?  
           current_column.place_item(@item)
         elsif @item.overflow? && @item.is_breakable?
-          second_half = @item.split_overflowing_lines
-          current_column.place_item(@item)
+          if @item.linked
+            # @item is alread splited once so force fit to column
+            current_column.place_item(@item)
+          else
+            second_half = @item.split_overflowing_lines
+            current_column.place_item(@item)
+          end
           column_index +=1
+          
           if column_index < @column_count
             current_column = @graphics[column_index]
             flowing_items.unshift(second_half)
@@ -431,7 +440,7 @@ module RLayout
             return false
           end
         
-        elsif !@item.is_breakable?
+        elsif !@item.is_breakable?          
           if current_column.room < @item.height
             #  "not breakable and no room ++++++ "
             column_index +=1

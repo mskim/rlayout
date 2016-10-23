@@ -101,7 +101,7 @@ module RLayout
     attr_accessor :para_string, :para_style, :list_style
     attr_accessor :text_column, :grid_height 
     attr_accessor :overflow, :underflow, :linked, :line_y_offset, :body_line_height
-
+    attr_accessor :linked
     def initialize(options={})
       super   
       #simple, drop_cap, drop_cap_image, math, with_image, with_math
@@ -114,7 +114,18 @@ module RLayout
       @grid_height    = options.fetch(:grid_height, 2)
       @linked         = options.fetch(:linked, false) 
       if options[:tokens]
-        @tokens       = options[:tokens]
+        # this is when Paragraph has been splited into two
+        # left over tokens are passed in options[:tokens]
+        # so, no need to re-create tokens.
+        @tokens         = options[:tokens]
+        @token_strings  = @tokens.map { |t| t.string}
+        @para_string    = @token_strings.join(" ")
+        puts "+++++++++++ @para_string:#{@para_string}"
+        @tokens.each do |t|
+          puts t.string
+          puts t.width
+          puts t.height
+        end
       else
         @tokens       = []
         create_tokens   
@@ -123,11 +134,8 @@ module RLayout
       # do not call layout_lines at initialization stage, unless requested.
       if options[:layout_lines]
         @body_line_height = 30
-        layout_lines(self)
-        puts "para layout_lines @height:#{@height}"
-        
+        layout_lines(self)        
       end
-      
       self
     end    
     
@@ -255,6 +263,12 @@ module RLayout
       end      
     end
     
+    # before we create any text_tokens, 
+    # check if we have any special token mark {{something}} or {something}
+    # first check for double curl, single curl
+    # if double curl is found, split para string with double curl fist
+    # and do it recursively with split strings
+    # and call create_text_tokens for regular string segmnet
     def create_tokens
       @atts = {}
       if RUBY_ENGINE == 'rubymotion'
@@ -267,12 +281,7 @@ module RLayout
         @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
         @para_style[:atts] = @atts
       end
-      
-      # check if we have any special token mark {{something}} or {something}
-      # first check for double curl, single curl
-      # if double curl is found, split para string with double curl fist
-      # and do it recursively with split strings
-      
+
       # do we have any doulbe curl?
       if @para_string =~INLINE_DOUBLE_CURL
         create_tokens_with_double_curl(@para_string)
@@ -297,7 +306,6 @@ module RLayout
     def line_count
       @graphics.length
     end
-    
     
     # algorithm for laying out paragraph in simple and complex container
     # loop until we run out of tokens
@@ -355,19 +363,29 @@ module RLayout
           @line_x     = @para_style[:head_indent]
           @line_width = @text_line_width
         end
-        
         # make @line_rectangle for LineFragment
         if text_column.is_simple_column? || text_column.is_rest_of_area_simple?
+          # simple column
           @line_rectangle = [@line_x, @line_y_offset, @line_width, @tallest_token_height]
           if @line_y_offset + @line_rectangle[3] > @text_column.room
             if @graphics.length <= 1
               @underflow  = true
+              if @graphics.length == 1
+                line = @graphics.first
+                commited_tokens = line.graphics.dup
+                @tokens.unshift(commited_tokens).flatten!
+                @graphics = [] #clear LineFragment created for this column
+              else
+                @tokens.unshif(@line_tokens).flatten!
+              end
             else
-              @overflow = true 
+              @overflow   = true 
             end
+            @height     = @line_y_offset
             return
           end
         else
+          # complex column
           @line_rectangle = @text_column.sugest_me_a_rect_at(@line_y_offset, @tallest_token_height)
           if @line_y_offset + @line_rectangle[3] > @text_column.room
             if @graphics.length <= 1
@@ -406,9 +424,10 @@ module RLayout
           @line_tokens = []
           @total_token_width = 0
           @line_index += 1
+          @height = @line_y_offset
         end
-        @height = @line_y_offset
       end
+      
       # make LineFragment for last line
       if @line_tokens.length > 0
         options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @line_width, height: @line_rectangle[3], space_width: @para_style[:space_width]}
@@ -439,8 +458,8 @@ module RLayout
 
     def to_hash
       h = {}
-      h[:width]  = @width
-      h[:markup]  = @markup
+      h[:width]           = @width
+      h[:markup]          = @markup
       h[:para_style]      = @para_style
       h[:linked]          = true
       h
@@ -448,15 +467,21 @@ module RLayout
     
     # split current paragraph into two at overflowing line
     # return newly created second half Paragraph
+    # steps
+    # 1. create second_half paragraph with options saved from to_hash
+    # 1. move left over tokens to second_half_options[:tokens]
+    # 1. clear tokens from first_half
     def split_overflowing_lines
-      second_half_options = to_hash
-      second_half         = Paragraph.new(second_half_options)
-      second_half.tokens = @tokens.map{|x| x}
-      @tokens = []
+      second_half_options           = to_hash
+      second_half_options[:tokens]  = @tokens.dup
+      @tokens                       = []
+      second_half                   = Paragraph.new(second_half_options)
+      second_half.linked            = true
       second_half
     end
     
-    # overflow is when we have breakable paragraph and partial lines are layout at current column. 
+    # overflow is when we have breakable paragraph 
+    # and partial lines are layout at current column. 
 	  def overflow?
 	    @overflow == true
 	  end
