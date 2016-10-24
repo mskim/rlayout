@@ -120,7 +120,6 @@ module RLayout
         @tokens         = options[:tokens]
         @token_strings  = @tokens.map { |t| t.string}
         @para_string    = @token_strings.join(" ")
-        puts "+++++++++++ @para_string:#{@para_string}"
         @tokens.each do |t|
           puts t.string
           puts t.width

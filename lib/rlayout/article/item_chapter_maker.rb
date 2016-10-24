@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-# ItemChapterMaker is tool chain for creating chapter with pre-layed out items in PDF, 
+# ItemChapter is tool chain for creating chapter with pre-layed out items in PDF, 
 # Quiz Bank Items, Study Aide Items, catalog items.
 # Each items can be edit in distributted manner and assembled as chapter on the fly.
 # This is very useful for items that are edited and assembled on the fly.
@@ -30,7 +30,7 @@
 
 module RLayout
 
-  class ItemChapterMaker
+  class ItemChapter
     attr_accessor :project_path, :config_hash, :template_path, :items
     attr_accessor :document, :output_path, :starting_page_number, :column_count
     attr_accessor :layout_style

@@ -1,13 +1,13 @@
 # encoding: utf-8
 
-# ChapterMaker
-# ChapterMaker combines Story and Document into a  chapter.
+# Chapter
+# Chapter combines Story and Document into a  chapter.
 # Story can come from couple of sources, markdown, adoc, or html(URL blog)
 # deprecated **** Story can be .story, adoc, markdown, or html format.
 # Story file format is our own, mixture of adoc, markdown and LaTex.
 # Stories are first converted to para_data format,
 # It is also converted to Asciidoctor or GHF-markdown for HTML generation. 
-# ChapterMaker first look for template in local folder,
+# Chapter first look for template in local folder,
 # if it is not found, takes default template from library location.
 
 # How to place images in long document?
@@ -154,7 +154,7 @@
 
 module RLayout
 
-  class ChapterMaker
+  class Chapter
     attr_accessor :project_path, :template_path, :story_path
     attr_accessor :document, :output_path, :column_count
     attr_accessor :doc_info, :toc_content

@@ -1,6 +1,23 @@
 
 require File.dirname(__FILE__) + "/../spec_helper"
 
+describe 'create  TextToken' do
+  before do
+    @text_string    = "This is number of differently labeled segments we use vary."
+    @para           = Paragraph.new(para_string: @text_string, markup: "p")
+    @para.tokens.each do |t|
+      puts t.string.dump
+      puts t.width
+    end
+  end
+  
+  it 'should create right number of tokens' do
+    @para.tokens.length.must_equal 10
+  end
+
+end
+
+__END__
 describe 'create special TextToken' do
   before do
     @text_string    = "1	{The} number of differently labeled segments we use vary."

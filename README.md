@@ -118,6 +118,8 @@ TODO List
 		- put templates under rubymotion app/resouces/
 
 2016 10 23
+	- fix bug in MRI RFont String width calculation bug
+	- rename ChapterMaker to Chapter
 	- cover art
 	- chapter
 	

@@ -60,8 +60,8 @@ module RLayout
         options[:height]= @att_string.size.height*2
       else
         # TODO fix get string with from Rfont
-        size = options[:text_size] || 10
-        size = RFont.string_size(@string, options[:font], size)
+        text_size = options[:text_size] || 10
+        size = RFont.string_size(@string, options[:font], text_size)
         options[:width]  = size[0]
         options[:height] = size[1]
       end

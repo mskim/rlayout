@@ -1,31 +1,30 @@
 require File.dirname(__FILE__) + "/../spec_helper"
 # require File.dirname(__FILE__) + "/../../lib/rlayout/article/chapter_maker.rb"
 
-describe 'ChapterMaker layout image' do
+describe 'Chapter' do
   before do
-    template    = "/Users/Shared/SoftwareLab/article_template/chapter.rb"
-    story       = "/Users/mskim/magazine_article/sample.markdown"
-    story_path  = "/Users/mskim/book/sample_book/1.chapter/sample.md"
-    project_path = "/Users/mskim/Development/rails_rlayout/tree/public/1/7/9"
-    @doc        = ChapterMaker.new(project_path: project_path)
+    story         = "/Users/mskim/magazine_article/sample.markdown"
+    story_path    = "/Users/mskim/book/sample_book/1.chapter/sample.md"
+    project_path  = "/Users/mskim/Development/rails_rlayout/tree/public/1/7/9"
+    @doc          = Chapter.new(project_path: project_path)
   end
   
-  it 'should create ChapterMaker' do
-    assert @doc.class == ChapterMaker
+  it 'should create Chapter' do
+    assert @doc.class == Chapter
   end
   
 end
 
 __END__
-describe 'creaet document with ChapterMaker' do
+describe 'creaet document with Chapter' do
   before do
     template ="/Users/Shared/SoftwareLab/article_template/chapter.rb"
     story="/Users/mskim/magazine/how-to-creaete-soochup.markdown"    
-    @doc = ChapterMaker.new(template: template, story_path: story)
+    @doc = Chapter.new(template: template, story_path: story)
   end
   
-  it 'should create ChapterMaker' do
-    assert @doc.class == ChapterMaker
+  it 'should create Chapter' do
+    assert @doc.class == Chapter
   end
     
   # it 'should have value' do
@@ -38,16 +37,16 @@ describe 'creaet document with ChapterMaker' do
   
 end
 
-describe 'ChapterMaker sample' do
+describe 'Chapter sample' do
   before do
     template ="/Users/Shared/SoftwareLab/article_template/chapter.rb"
     
     @path = "/Users/mskim/book/pastor/001.chapter.markdown"
-    @chapter = ChapterMaker.new(template: template, story_path: @path)
+    @chapter = Chapter.new(template: template, story_path: @path)
   end
   
-  it 'shold create RLayout::ChapterMaker' do
-    assert @chapter.class == ChapterMaker
+  it 'shold create RLayout::Chapter' do
+    assert @chapter.class == Chapter
   end
   
   # it 'should save pdf' do

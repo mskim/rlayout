@@ -36,7 +36,7 @@
 #    
 module RLayout
     
-  class SpreadChapter < ChapterMaker
+  class SpreadChapter < Chapter
 	  attr_accessor :first_page, :second_page, :h1_heading_object, :h2_heading_object, :sections_paragraph
 	  attr_reader :book_title, :title
     def initialize(options={} ,&block)

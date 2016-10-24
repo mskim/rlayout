@@ -5,9 +5,9 @@ describe 'create page' do
   before do
     @path = "/Users/Shared/SoftwareLab/document_template/chapter"
     options = {project_path: @path}
-    @chapter_maker = RLayout::ChapterMaker.new(options)
+    @chapter = RLayout::Chapter.new(options)
   end
-  it 'should create ChapterMaker' do
-     assert @chapter_maker.class ==  ChapterMaker
+  it 'should create Chapter' do
+     assert @chapter.class ==  Chapter
    end
 end

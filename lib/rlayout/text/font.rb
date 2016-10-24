@@ -7,7 +7,7 @@ class String
     (self.length).times do |i|
       # if the char is a unicode make the width same as font_size
       if self[i].ord <= 256
-        char_width_sum += width_table[self[i].ord]*font_size/100.0 if width_table[self[i].ord]
+        char_width_sum += width_table[self[i].ord]*font_size/1000.0 if width_table[self[i].ord]
       else
         char_width_sum += font_size
       end
@@ -36,14 +36,7 @@ module RLayout
 
     def string_size(text_string)
       w = text_string.width_with_font(@width_table,@size)
-      # puts @width_table[:acender]
-      #  puts @width_table[@font_name][:descender]
       h = @size
-      # char_width = 0
-      # text_string.split("").each do |c|
-      #   char_width += @width_table[c.ord]
-      # end
-      # char_width/1000*@size
       [w,h]
     end
     
