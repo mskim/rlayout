@@ -35,9 +35,16 @@ module RLayout
         options[:width]   = options.fetch(:width, page_defaults[:width])
         options[:height]  = options.fetch(:height, page_defaults[:height])
       end
-      @parent_graphic.pages << self if  @parent_graphic && !@parent_graphic.pages.include?(self)
+      
+      if  @parent_graphic && !@parent_graphic.pages.include?(self)
+        @parent_graphic.pages << self 
+      end
       super
-      @page_number = @parent_graphic.pages.index(self) + @parent_graphic.starting_page_number
+      if  @parent_graphic
+        @page_number = @parent_graphic.pages.index(self) + @parent_graphic.starting_page_number
+      else
+        @page_number = 1
+      end
       @page_number = options[:page_number] if options[:page_number]
       # if @parent_graphic && @parent_graphic.double_side
       @left_page  = @page_number.even?

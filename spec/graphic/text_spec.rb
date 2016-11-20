@@ -9,15 +9,12 @@ describe 'text_drawing test' do
     @path = "/Users/Shared/rlayout/output/text_drawing_test.svg"
   end
   
-  it 'should create Image object' do
+  it 'should create Text object' do
     @text.must_be_kind_of Text
   end
   
-  it 'shuld have attribute of image_path' do
-    @text.image_path.must_equal @image_path
-  end
   
-  it 'should draw image' do
+  it 'should draw text' do
     @text.save_svg(@path)
     File.exist?(@path).must_equal true
     # system("open #{@path}")

@@ -2,7 +2,7 @@
 
 
 # Creating a book
-# 1. book new sample_book --template==spring
+# 1. book new sample_book 
 #     this creates a folder 
 # 2. cd sample_book
 #     there will be a file called book_info.yml
@@ -70,7 +70,6 @@ module RLayout
   class Book
     attr_accessor :project_path, :starting_page
     def initialize(project_path, options={})
-      puts "project_path:#{project_path}"
       @project_path  = project_path
       unless File.exists?(@project_path)
         system("mkdir -p #{@project_path}") 
@@ -81,6 +80,8 @@ module RLayout
       self
     end
     
+    #TODO update template
+    # fix Rakefile, add cover, toc, forward, dedication
     def copy_template(options={})
       puts __method__
       source = options.fetch(:template,"/Users/Shared/SoftwareLab/book")
@@ -175,9 +176,7 @@ EOF
       content += parse_chapter_toc
       content += parse_rear_matter_toc
       toc_path = @project_path + "/front_matter/01_toc/toc.md"
-      puts "toc_path:#{toc_path}"
       File.open(toc_path, 'w'){|f| f.write content}
-      puts "after save..."
     end
     
     #update markdown files metadata starting_page:

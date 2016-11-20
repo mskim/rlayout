@@ -2,11 +2,10 @@
 # create name_card folder for each organizations
 # each folder should have following
 # data.csv
-# layout.erb
-# layout/
-# pdf/
 # images
-# qr_code
+# layout.erb
+# output/
+# qr_code * if qr_code is used
 # Rakefile
 
 module RLayout
@@ -24,7 +23,7 @@ module RLayout
     
     def copy_template
       name_card_template = "/Users/Shared/SoftwareLab/namecard_template"
-      system("cp -r #{name_card_template} #{@folder_path}/")
+      system("cp -r #{name_card_template}/ #{@folder_path}/")
     end
     
   end

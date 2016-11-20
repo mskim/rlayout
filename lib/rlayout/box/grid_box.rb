@@ -1,6 +1,5 @@
-# GridBox is different from TextBox.
-# Instead of TextColumns, GridBox has GridCells. 
-# Items are placed at each cell locations.
+# GridBox is used to display items in grid.
+# Ww could have different number of items. and our task is to create grid cells that can accomodate those items.
 
 # GirdCell Structure
 # [column, row, [x,y,width, height]]

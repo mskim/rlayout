@@ -117,11 +117,22 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2016 11 21
+	- fix stroke bug
+
+2016 11 2
+	- fix label text_size*0.8 bug
+	
 2016 10 23
 	- fix bug in MRI RFont String width calculation bug
 	- rename ChapterMaker to Chapter
 	- cover art
 	- chapter
+	- update Book
+	- add Cover, TOC, Forward, Dedication template
+	- update Rakefile to update toc, update starting page_number
+	- generate Flipbook
+	- add pdf_insert, float_group
 	
 2016 10 21
 	- fix text_box layout_item line overlapping in second page
