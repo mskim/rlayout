@@ -16,9 +16,6 @@ module RLayout
   class RJob
     attr_accessor :output_path, :jpg, :preview, :created_object
     def initialize(options={})
-      puts "init rjob...."
-      puts "options:#{options}"
-      puts "options.keys:#{options.keys}"
       @created_object  = nil
       @output_path    = options[:output_path] if options[:output_path]
       @jpg            = options[:jpg] if options[:jpg]
@@ -41,9 +38,7 @@ module RLayout
         end
         $ProjectPath    = File.dirname(options[:script_path]) unless options[:project_folder]
         script = File.open(options[:script_path], 'r'){|f| f.read}
-        puts "before eval(options[:script])"
         @created_object = eval(script)
-        puts "after eval(options[:script])"
         unless @output_path
           @output_path = File.dirname(options[:script_path]) + "/output.pdf"
         end

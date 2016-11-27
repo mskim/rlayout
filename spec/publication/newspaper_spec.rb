@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'create Newspaper' do
   before do
-    @newspaper = Newspaper.new(name: "HerTimes")
+    @newspaper = Newspaper.new(name: "AnSanTimes")
   end
 
   it ' should create Newspaper' do

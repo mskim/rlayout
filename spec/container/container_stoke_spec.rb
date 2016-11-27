@@ -8,12 +8,12 @@ include RLayout
 
 describe 'container_stroke_drawing test' do
   before do
-    @g = Container.new(stroke_width: 1, x: 200, y:200, width: 300, height: 500, fill_color: 'red') do
-      rectangle(stroke_width: 1, fill_color: 'yellow')
-      container(stroke_width: 1, fill_color: 'white', layout_direction: 'horizontal') do
-        rectangle(stroke_width: 1, fill_color: 'red')
-        rectangle(stroke_width: 1, fill_color: 'gray')
-        rectangle(stroke_width: 1, fill_color: 'orange')
+    @g = Container.new(stroke_width: 1, x: 200, y:200, width: 300, height: 500, fill_color: 'gray', margin: 30) do
+      rectangle(stroke_width: 2, fill_color: 'yellow')
+      container(stroke_width: 2, fill_color: 'white', layout_direction: 'horizontal') do
+        rectangle(stroke_width: 2, fill_color: 'red')
+        rectangle(stroke_width: 2, fill_color: 'gray')
+        rectangle(stroke_width: 2, fill_color: 'orange')
       end
       rectangle(stroke_width: 1, fill_color: 'darkGray')
       relayout!

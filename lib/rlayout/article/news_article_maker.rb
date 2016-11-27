@@ -15,20 +15,20 @@ module RLayout
 
   class NewsArticleMaker
     attr_accessor :article_path, :template, :story_path, :image_path
-    attr_accessor :news_article_box, :style, :output_path
+    attr_accessor :news_article_box, :style, :output_path, :project_path
 
     def initialize(options={} ,&block)
-      @article_path = options[:project_path] || options[:article_path]
-      if @article_path
-        @story_path = Dir.glob("#{@article_path}/*.{md,markdown}").first
-      elsif options[:story_path]
-        @story_path = options[:story_path]
+      @story_path = options[:story_path]
+      if @story_path
         unless File.exist?(@story_path)
           puts "No story_path doen't exist !!!"
           return
         end
-        @article_path = File.dirname(@story_path)
+      else
+        puts "No story_path given !!!"
+        return
       end
+      @article_path = File.dirname(@story_path)
       $ProjectPath  = @article_path
       if options[:image_path]
         @image_path = options[:image_path]
@@ -50,14 +50,12 @@ module RLayout
       unless @template_path
         @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/news_style.rb")
       end
-      puts "@template_path:#{@template_path}"
-      puts template = File.open(@template_path,'r'){|f| f.read}
+      template = File.open(@template_path,'r'){|f| f.read}
       @news_article_box       = eval(template)
       if @news_article_box.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return
       end
-
       read_story
       layout_story
       if RUBY_ENGINE =="rubymotion"
@@ -69,7 +67,7 @@ module RLayout
     end
     
     def read_story
-      @story = Story.new(@story_path).markdown2para_data
+      @story      = Story.new(@story_path).markdown2para_data
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
       if @heading !={}
@@ -93,7 +91,7 @@ module RLayout
           @paragraphs << Image.new(para_options)
           next
         end
-        para_options[:para_string]    = para[:string]
+        para_options[:para_string]    = para[:para_string]
         para_options[:article_type]   = "news_article"
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false

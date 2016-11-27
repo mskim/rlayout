@@ -159,7 +159,7 @@ module RLayout
     
     #read story file and convert it to para_data format
     def markdown2para_data(options={})
-      source = File.open(path, 'r'){|f| f.read}
+      source = File.open(@path, 'r'){|f| f.read}
       begin
         if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
           @contents = md.post_match

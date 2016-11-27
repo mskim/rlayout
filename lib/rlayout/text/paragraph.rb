@@ -120,11 +120,11 @@ module RLayout
         @tokens         = options[:tokens]
         @token_strings  = @tokens.map { |t| t.string}
         @para_string    = @token_strings.join(" ")
-        @tokens.each do |t|
-          puts t.string
-          puts t.width
-          puts t.height
-        end
+        # @tokens.each do |t|
+        #   puts t.string
+        #   puts t.width
+        #   puts t.height
+        # end
       else
         @tokens       = []
         create_tokens   
@@ -375,7 +375,7 @@ module RLayout
                 @tokens.unshift(commited_tokens).flatten!
                 @graphics = [] #clear LineFragment created for this column
               else
-                @tokens.unshif(@line_tokens).flatten!
+                @tokens.unshift(@line_tokens).flatten!
               end
             else
               @overflow   = true 

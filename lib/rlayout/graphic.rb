@@ -88,7 +88,8 @@ module RLayout
     def get_stroke_rect
       if RUBY_ENGINE == "rubymotion"
         # for TextToken, use attstring rect instead of Graphic frame
-        r = NSMakeRect(@x,@y,@width,@height)
+        # r = NSMakeRect(@x,@y,@width,@height)
+        r = NSMakeRect(@left_margin,@top_margin,@width,@height)
         
         if @line_position == 1 #LINE_POSITION_MIDDLE 
           return r

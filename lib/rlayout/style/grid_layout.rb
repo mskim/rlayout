@@ -1,4 +1,23 @@
 
+NEWS_PAPER_DEFAULTS = {
+  name: "Ourtown News",
+  period: "daily",
+  skip_day: ["Saturday", "Sunday"],
+  paper_size: "A2"
+}
+
+NEW_SECTION_DEFAULTS = {
+  :width        => 1190.55,
+  :height       => 1683.78,
+  :grid         => [7, 12],
+  :lines_in_grid=> 10,
+  :gutter       => 10,
+  :left_margin  => 50,
+  :top_margin   => 50,
+  :right_margin => 50,
+  :bottom_margin=> 50,
+}
+
 HEADING_COLUMNS_TABLE = {
   1 => 1,
   2 => 2,
@@ -46,23 +65,6 @@ GRID_PATTERNS = {
   "7x12/6_2"=>[[0, 0, 7, 6], [0, 6, 4, 3], [0, 3, 2, 3], [2, 3, 2, 3], [4, 6, 3, 3], [4, 3, 3, 3]],
   "7x12/7"=>[[0, 0, 7, 1], [0, 1, 4, 2], [4, 1, 3, 4], [0, 3, 4, 2], [0, 5, 4, 2], [4, 5, 3, 2], [0, 7, 7, 5]]}
   
-NEWS_PAPER_DEFAULTS = {
-  name: "Ourtown News",
-  period: "daily",
-  paper_size: "A2"
-}
-
-NEW_SECTION_DEFAULTS = {
-  :width        => 1190.55,
-  :height       => 1683.78,
-  :grid         => [7, 12],
-  :lines_in_grid=> 10,
-  :gutter       => 10,
-  :left_margin  => 50,
-  :top_margin   => 50,
-  :right_margin => 50,
-  :bottom_margin=> 50,
-}
 
 
 module RLayout

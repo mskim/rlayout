@@ -32,10 +32,10 @@
 
   task :pdf => source_files.ext(".pdf")
   rule ".pdf" => ".md" do |t|
-    sh "/Applications/newsman.app/Contents/MacOS/newsman news_article #{File.dirname(t.source)}"
+    sh "/Applications/newsman.app/Contents/MacOS/newsman news_article #{t.source}"
   end
   rule ".pdf" => ".markdown" do |t|
-    sh "/Applications/newsman.app/Contents/MacOS/newsman news_article ##{File.dirname(t.source)}"
+    sh "/Applications/newsman.app/Contents/MacOS/newsman news_article ##{t.source}"
   end
 
   file 'section.pdf' => source_files.ext(".pdf") do |t|
@@ -162,8 +162,8 @@ module RLayout
     attr_accessor :publication_path, :issue_date, :issue_number, :issue_path
     def initialize(publication_path, options={})
       @publication_path = publication_path
-      @issue_date  = options.fetch(:issue_date, "2015-4-5")
-      @issue_path = @publication_path + "/" + @issue_date
+      @issue_date       = options.fetch(:issue_date, "2015-4-5")
+      @issue_path       = @publication_path + "/" + @issue_date
       create_sections
       self
     end

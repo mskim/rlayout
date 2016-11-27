@@ -117,9 +117,13 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2016 11 22
+	- news_heading
+	- multiple_story_article
+
 2016 11 21
 	- fix stroke bug
-
+	
 2016 11 2
 	- fix label text_size*0.8 bug
 	
