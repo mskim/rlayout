@@ -5,7 +5,7 @@
 # Rails Server with Sinatra
 # Each user has working clone of Git Repository
 # It pulls changes from Git Repository when notified by the webhook event
-# runs update and pushed changes back to Git Repository 
+# runs update and pushed changes back to Git Repository
 
 # Client
 # installs Rubygem Newsman
@@ -16,11 +16,11 @@
 # nesman new name --template==spring
 
 # rake create new_issue data
-# rake update pdf 
+# rake update pdf
 # rake publish pdf_issue
 # rake publish web_site
 
-# For rake process that requires server, it 
+# For rake process that requires server, it
 #  pushes the content to the server
 #  lays out the content and downloads it pulls back the result
 
@@ -82,14 +82,74 @@ SECTION_HTML =<<EOF
 
 EOF
 
+AD_SIZE_TABLE=<<EOF
+name,column_count,grid_width,grid_height
+2단-통,5,5,2
+2단-통,6,6,2
+2단-통,7,7,2
+3단-통,5,5,3
+3단-통,6,6,3
+3단-통,7,7,3
+4단-통,5,5,4
+4단-통,6,6,4
+4단-통,7,7,4
+5단-16,6,3,5
+5단-통,5,5,5
+5단-통,6,6,5
+5단-통,7,7,5
+5단-프릿지,6,12,5
+5단-프릿지,7,14,5
+6단-통,5,5,6
+6단-통,6,6,6
+6단-통,7,7,6
+6단-프릿지,6,12,6
+6단-프릿지,7,14,6
+7단-15,7,3,7
+7단-27,7,4,7
+7단-36,7,5,7
+7단-프릿지,6,12,7
+7단-프릿지,7,14,7
+7.5단-통,6,6,7.5
+7.5단-통,7,7,7.5
+7.5단-프릿지,6,12,7.5
+7.5단-프릿지,7,14,7.5
+8단-15,7,3,8
+8단-27,7,4,8
+8단-프릿지,6,12,8
+8단-프릿지,7,14,8
+10단-통,5,5,10
+10단-통,6,6,10
+10단-통,7,7,10
+10단-프릿지,6,12,10
+10단-프릿지,7,14,10
+15단-10,7,2,15
+15단-12,6,2,15
+15단-15,7,3,15
+15단-18,6,3,15
+15단-전면,6,6,15
+15단-전면,7,7,15
+15단-양면,6,6,15
+15단-양면,7,7,15
+EOF
+
+DEFAULT_AD_PLAN =<<EOF
+
+
+
+
+EOF
+
 module RLayout
 
   class Newspaper
-    attr_accessor :name, :publication_path, :sections
-    attr_accessor :grid_base, :grid_width, :grid_height, :lines_in_grid, :gutter
+    attr_accessor :name, :publication_path, :sections,
+                  :grid_base, :grid_width, :grid_height,
+                  :lines_in_grid, :gutter
+
     def initialize(options={}, &block)
-      # system("mkdir -p #{publication_path}") unless File.exists?(publication_path)
+      puts "init Newspaper"
       @name         = options.fetch(:name,"OurTimes")
+      @name         = @name.gsub(" ","_")
       @path         = options.fetch(:path, "/Users/Shared/Newspaper")
       @publication_path = "#{@path}/#{@name}"
       @paper_size   = options.fetch(:paper_size,"A2")
@@ -108,27 +168,34 @@ module RLayout
       @grid_width   = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
       @grid_height  = (@height - @top_margin - @bottom_margin)/@grid_base[1]
       setup
-      
+
       if block
         instance_eval(&block)
       end
       self
     end
-    
+
     def setup
+      puts __method__
       system "mkdir -p #{@publication_path}" unless File.exist?(@publication_path)
       save_config_file
+      save_ad_plan
     end
-    
+
     def save_config_file
       config_path = @publication_path + "/config.yml"
       File.open(config_path, 'w'){|f| f.write publication_info.to_yaml}
     end
-    
+
+    def save_ad_plan
+      @default_ad_plan_path = @publication_path + "/ad_plan.csv"
+      File.open(@default_ad_plan_path, 'w'){|f| f.write DEFAULT_AD_PLAN}
+    end
+
     def create_new_issue(options={})
       NewspaperIssue.new(@publication_path, options)
     end
-    
+
     def publication_info
       info = {}
       info['name']        = @name
@@ -159,19 +226,84 @@ module RLayout
   end
 
   class NewspaperIssue
-    attr_accessor :publication_path, :issue_date, :issue_number, :issue_path
+    attr_accessor :publication_path, :issue_date,
+                  :issue_number, :issue_path, :ad_plan, :ad_plan_path
     def initialize(publication_path, options={})
+      puts "init of NewspaperIssue"
       @publication_path = publication_path
+      puts "@publication_path:#{@publication_path}"
       @issue_date       = options.fetch(:issue_date, "2015-4-5")
       @issue_path       = @publication_path + "/" + @issue_date
-      create_sections
+      @default_ad_plan_path = @publication_path + 'ad_plan.csv'
+      @ad_plan_path         = @issue_path + '/ad_plan.csv'
+      system("mkdir -p #{@issue_path}")  unless File.directory?(@issue_path)
+      unless File.exist?(@ad_plan_path)
+        if File.exist?(@default_ad_plan_path)
+          #copy ad_plan from publication template
+          system("cp #{@default_ad_plan_path} #{@ad_plan_path}")
+        else
+          File.open(@ad_plan_path, 'w'){|f| f.write DEFAULT_AD_PLAN}
+        end
+      end
+      if options[:create_sections]
+        if File.exist?(@ad_plan_path)
+          create_sections_with_ad_plan
+        else
+          create_sections
+        end
+      end
       self
     end
-    
+
     def publication_name
       File.basename(@publication_path)
     end
-    
+
+    def profile
+      grid_base = "7x15"  unless grid_base
+      box_count = 4       unless box_count
+      ad_type.gsub!(" ", "-")
+      p = ""
+      p += "#{ad_type}"
+      p += "/#{grid_base}"
+      p += "_H"                       if has_heading
+      p += "/#{box_count}"
+      p
+    end
+
+    # this is called if we have ad_plan
+    # ad_plan is passed as spread pair, two facing pages 1_24, 2_23, ....
+    def create_sections_with_ad_plan
+      @ad_plan_csv = File.open(@ad_plan_path, 'r'){|f| f.read}
+      rows  = CSV.parse(@ad_plan_csv)
+      rows.shift
+      rows.each_with_index do |row, i|
+        spread              = row[0]
+        page_array          = spread.split("_")
+        first_page_number   = page_array[0]
+        facing_page_number  = page_array[1]
+        color = false
+        color = true        if row[1] =~/[Cc]olor/
+        first_ad_type       = row[2].gsub(" ", "-")
+        first_advertiser    = row[3]
+        first_article_count = row[4]
+        if i == 0
+          first_template    = @section_template_path + "#{first_ad_type}/#{first_grid_base}"
+        else
+
+        end
+        # create first section
+        first_page_path     = @issue_path + "/#{first_page_number}"
+        system("mkdir -p #{first_page_path}")
+        facing_ad_type      = row[5].gsub(" ", "-")
+        facing_advertiser   = row[6]
+        facing_article_count= row[7]
+        facing_page_path    = @issue_path + "/#{facing_page_number}"
+        system("mkdir -p #{facing_page_path}")
+      end
+    end
+
+    # this is called if we have no ad_plan
     def create_sections
       publication_config = File.open(@publication_path + "/config.yml", 'r'){|f| f.read}
       @publication_info = YAML::load(publication_config)
@@ -187,24 +319,24 @@ module RLayout
         news_section.update_section
       end
     end
-    
+
   end
 
-  
+
   # NewspaperSection is a sinlge page of a Newspaper
   # NewspaperSection are composed of many articles.
   # NewspaperSection can have one heading or none, depending on the setion type
   # Once the layout out of the section is set,
-  # each article is layouted independently by the reporter 
+  # each article is layouted independently by the reporter
   #  who is working on the article.
   # each article is produced as PDF and mergerd with rest of the articles.
-  # If section layout changes, each reporteds will have to 
+  # If section layout changes, each reporteds will have to
   #  adjust their articles to fit new new layout.
 
   class NewspaperSection
-    attr_accessor :issue, :section_path, :issue_numner, :date, :publication, :issue,           
+    attr_accessor :issue, :section_path, :issue_numner, :date, :publication, :issue,
                   :section_name, :output_path, :has_heading, :paper_size,
-                  :section_config, :articles_info, :story_frames, :grid_key, 
+                  :section_config, :articles_info, :story_frames, :grid_key,
                   :grid_width, :grid_height, :number_of_stories
 
     def initialize(options={}, &block)
@@ -212,7 +344,7 @@ module RLayout
       @section_path   = options[:section_path] if options[:section_path]
       @section_name   = options[:section_name] || "untitled"
       @output_path    = @section_path + "/section.pdf"
-      @output_path    = options[:output_path]   if options[:output_path]      
+      @output_path    = options[:output_path]   if options[:output_path]
       @paper_size     = options.fetch(:paper_size,"A2")
       @width          = SIZES[@paper_size][0]
       @height         = SIZES[@paper_size][1]
@@ -228,7 +360,7 @@ module RLayout
       @grid_base      = options.fetch(:grid_base, [7, 12])
       @grid_base      = @grid_base.map {|e| e.to_i}
       @has_heading    = options[:has_heading] || false
-      @number_of_stories = options.fetch(:number_of_stories, 5).to_i  
+      @number_of_stories = options.fetch(:number_of_stories, 5).to_i
       @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
       @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
       @grid_key       = "#{@grid_base.join("x")}"
@@ -238,10 +370,10 @@ module RLayout
       unless @story_frames
         #TODO used some precentive default story_frames
         puts "no @story_frames for #{@grid_key}!!!"
-      end 
-      
+      end
+
       if options['grid_key']
-        @grid_key     = options['grid_key'] 
+        @grid_key     = options['grid_key']
         @story_frames = GRID_PATTERNS[@grid_key]
         @has_heading  = grid_key.split("/")[1]=~/^H/ ? true : false
       end
@@ -253,19 +385,18 @@ module RLayout
       section_rake_path = @section_path + "/Rakefile"
       File.open(section_rake_path, 'w'){|f| f.write SECTION_RAKE_FILE} unless File.exist?(section_rake_path)
       system("mkdir -p #{@section_path + "/images"}")
-      @number_of_stories = @story_frames.length      
-      
+      @number_of_stories = @story_frames.length
+
       if @has_heading
         @number_of_stories -= 1
       end
       @number_of_stories.times do |i|
           create_story(i)
-          make_story_layout(i)        
+          make_story_layout(i)
       end
-      
       self
     end
-    
+
     def create_story(story_index)
       story_project_path =  @section_path + "/#{story_index + 1}"
       system("mkdir #{story_project_path}") unless File.directory?(story_project_path)
@@ -275,7 +406,7 @@ module RLayout
       images_path = story_project_path + "/images"
       system("mkdir #{images_path}") unless File.directory?(images_path)
     end
-    
+
     def make_story_layout(story_index)
       article_path  = @section_path + "/#{story_index + 1}"
       images        = Dir.glob("#{article_path}/images/*.{jpg,pdf,tiff}")
@@ -292,8 +423,8 @@ module RLayout
       # ERB doesn' seem to work in rubymotion
       # erb           = ::ERB.new(SAMPLE_ARTICLE_LATOUT)
       File.open(layout_path, 'w'){|f| f.write layout_content}
-    end 
-    
+    end
+
     # TODO if Rubymotion YAML kit is fixed the symbol issue in YAML kit, fix it
     # Each section folder has config.yml.
     # config.yml contains information about the section.
@@ -323,7 +454,7 @@ module RLayout
       info['gutter']       = @gutter
       info
     end
-    
+
     # change grid_key value in cofig.yml
     def change_section_layout(path, grid_key)
       config_path = path + "/config.yml"
@@ -334,8 +465,7 @@ module RLayout
       File.open(config_path, 'w'){|f| f.write @section_config.to_yaml}
       section.update_section_layout
     end
-    
-    
+
     # grid_key has changed, so update section story files according to new layout
     # and regenerate all stroies to new layout
     # regenerate section.pdf and section.jpg
@@ -347,7 +477,7 @@ module RLayout
       @has_heading = @grid_key.split("/")[0] =~/H$/ ? true : false
       @story_frames = GRID_PATTERNS[@grid_key]
       @number_of_stories = @story_frames.length
-      # update config 
+      # update config
       section_config_path = @section_path + "/config.yml"
       section_config = make_section_config
       File.open(section_config_path, 'w'){|f| f.write section_config.to_yaml}
@@ -368,28 +498,28 @@ module RLayout
       puts "generating section pdf..."
       update_section
     end
-    
+
     # Run rake to update pdf files in section folder
     def update_section
       system ("cd #{@section_path} && rake")
     end
-          	    
+
     def make_story_options(story_index)
-      story_frame_index = story_index.to_i      
+      story_frame_index = story_index.to_i
       options = {}
-      options[:grid_frame]         = @section_config['story_frames'][story_frame_index]
-      options[:grid_frame]         = eval(options[:grid_frame]) if options[:grid_frame].class == String
-      options[:grid_frame]         = options[:grid_frame].map {|e| e.to_i}
-      options[:gutter]             = @section_config['gutter'] || 10
-      options[:v_gutter]           = @section_config['gutter'] || 0
-      options[:column_count]       = options[:grid_frame][2]
-      options[:grid_width]         = @section_config['grid_size'][0]
-      options[:grid_height]        = @section_config['grid_size'][1]
-      options[:width]              = options[:grid_width] * options[:grid_frame][2] + (options[:grid_frame][2] - 1)*options[:gutter]
-      options[:height]             = options[:grid_height] * options[:grid_frame][3]+ (options[:grid_frame][3] - 1)*options[:v_gutter]
+      options[:grid_frame]  = @section_config['story_frames'][story_frame_index]
+      options[:grid_frame]  = eval(options[:grid_frame]) if options[:grid_frame].class == String
+      options[:grid_frame]  = options[:grid_frame].map {|e| e.to_i}
+      options[:gutter]      = @section_config['gutter'] || 10
+      options[:v_gutter]    = @section_config['gutter'] || 0
+      options[:column_count]= options[:grid_frame][2]
+      options[:grid_width]  = @section_config['grid_size'][0]
+      options[:grid_height] = @section_config['grid_size'][1]
+      options[:width]       = options[:grid_width] * options[:grid_frame][2] + (options[:grid_frame][2] - 1)*options[:gutter]
+      options[:height]      = options[:grid_height] * options[:grid_frame][3] + (options[:grid_frame][3] - 1)*options[:v_gutter]
       options
     end
-    
+
     def read_story_config(section_config_path, story_index)
         config = YAML::load(File.open(section_config_path, 'r'){|f| f.read})
         # YamlKit in Rubymotion saves true as 1 and reads as 1.0
@@ -398,29 +528,27 @@ module RLayout
           story_frame_index += 1
         end
         options = {}
-        options[:grid_frame]         = config['story_frames'][story_frame_index]
-        options[:grid_frame]         = eval(options[:grid_frame]) if options[:grid_frame].class == String
-        puts "options:#{options}"
-        puts "options[:grid_frame]:#{options[:grid_frame]}"
-        options[:grid_frame]         = options[:grid_frame].map {|e| e.to_i}
-        options[:grid_base]          = [options[:grid_frame][2],options[:grid_frame][3]]
-        options[:gutter]             = config['gutter'] || 10
-        options[:v_gutter]           = config['gutter'] || 0
-        options[:column_count]       = options[:grid_frame][2]
-        options[:grid_width]         = config['grid_size'][0]
-        options[:grid_height]        = config['grid_size'][1]
-        options[:x]                  = 0
-        options[:y]                  = 0
-        options[:width]              = options[:grid_width] * options[:grid_frame][2] + (options[:grid_frame][2] - 1)*options[:gutter]
-        options[:height]             = options[:grid_height] * options[:grid_frame][3]+ (options[:grid_frame][3] - 1)*options[:v_gutter]
-        options      
-    end  
-      
+        options[:grid_frame]  = config['story_frames'][story_frame_index]
+        options[:grid_frame]  = eval(options[:grid_frame]) if options[:grid_frame].class == String
+        options[:grid_frame]  = options[:grid_frame].map {|e| e.to_i}
+        options[:grid_base]   = [options[:grid_frame][2],options[:grid_frame][3]]
+        options[:gutter]      = config['gutter'] || 10
+        options[:v_gutter]    = config['gutter'] || 0
+        options[:column_count]= options[:grid_frame][2]
+        options[:grid_width]  = config['grid_size'][0]
+        options[:grid_height] = config['grid_size'][1]
+        options[:x]           = 0
+        options[:y]           = 0
+        options[:width]       = options[:grid_width] * options[:grid_frame][2] + (options[:grid_frame][2] - 1)*options[:gutter]
+        options[:height]      = options[:grid_height] * options[:grid_frame][3]+ (options[:grid_frame][3] - 1)*options[:v_gutter]
+        options
+    end
+
     def copy_heading_pdf
       @heading_sample = "/Users/Shared/SoftwareLab/news_heading/OurTimes/heading_#{@grid_key.split("x")[0]}.pdf"
       system("cp #{@heading_sample} #{@section_path}/heading.pdf") #unless File.exist?(@heading_sample)
     end
-    
+
     def merge_article_pdf(options={})
       @output_path = options[:output_path] if options[:output_path]
       #TODO update page fixtures
@@ -428,7 +556,7 @@ module RLayout
         info[:parent] = self
 	      Image.new(info)
 	    end
-	          
+
       if @output_path
         save_pdf(@output_path, options)
       else

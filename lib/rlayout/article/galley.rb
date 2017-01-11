@@ -15,8 +15,6 @@ module RLayout
       heading = @story.heading
       body    = @story.body
       body.each do |para|
-        
-        
       end
 
     end

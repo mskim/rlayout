@@ -1,5 +1,5 @@
 if RUBY_ENGINE != 'rubymotion'
-  require 'xmlsimple'
+  # require 'xmlsimple'
   require 'pp'
   require 'json'
 end

@@ -2,15 +2,34 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe 'create Newspaper' do
   before do
-    @newspaper = Newspaper.new(name: "AnSanTimes")
+    @newspaper = Newspaper.new(name: "Naeil2", create_sections: true)
   end
 
   it ' should create Newspaper' do
     @newspaper.must_be_kind_of Newspaper
   end
-  
+
+  # it 'should create new issue' do
+  #   @newspaper.create_new_issue(issue_date: "2015-4-18", create_sections: true)
+  #   issue_path = "/Users/Shared/Newspaper/Naeil/2015-4-18"
+  #   File.exist?(issue_path).must_equal true
+  # end
+end
+
+__END__
+describe 'create Newspaper' do
+  before do
+    @newspaper = Newspaper.new(name: "Naeil")
+  end
+
+  it ' should create Newspaper' do
+    @newspaper.must_be_kind_of Newspaper
+  end
+
   it 'should create new issue' do
     @newspaper.create_new_issue(:issue_date =>"2015-4-18")
+    issue_path = "/Users/Shared/Newspaper/Naeil/2015-4-18"
+    File.exist?(issue_path).must_equal true
   end
 end
 
@@ -22,7 +41,7 @@ describe 'change section layout' do
     @path = '/Users/Shared/Newspaper/OurTimes/2015-4-16/culture'
     @section = RLayout::NewspaperSection.change_section_layout(@path, grid_key: "7x12/6")
   end
-  
+
   it 'should change section' do
     @section
   end
@@ -33,12 +52,12 @@ describe 'update NewsArticle metadata' do
   before do
     @path = '/Users/Shared/Newspaper/OurTimes/2015-4-16/culture/2.story.md'
   end
-  
+
   it 'should update metada of story' do
     metadata = {'grid_frame' =>[0,0,1,1]}
     Story.update_metadata(@path, metadata)
   end
-  
+
 end
 
 
@@ -50,7 +69,7 @@ describe 'create sample news_page with heading' do
     @section = NewspaperSection.new(:section_path=>@section_path, :has_heading=> true)
     @section.create
   end
-  
+
   it 'should create heading.pdf' do
     File.exist?(@section_path + "/heading.pdf").must_equal true
   end
@@ -62,29 +81,29 @@ end
 #     @section = NewspaperSection.new(:section_path=>@section_path)
 #     @section.create
 #   end
-  
+
   # it 'should save NewspaperSection ' do
   #   @section.must_be_kind_of NewspaperSection
   # end
-  # 
+  #
   # it 'should set correct section_path' do
   #   @section.section_path.must_equal @section_path
   # end
-  # 
+  #
   # it 'should set width ' do
   #   @section.paper_size.must_equal "A2"
   # end
-  # 
+  #
   # it 'should create sample_articles' do
   #   File.exist?(@section_path + "/1.story.md")
   # end
   # it 'should create heading.pdf' do
   #   File.exist?(@section_path + "/heading.pdf")
   # end
-  
-  
-  # 
-  
+
+
+  #
+
   # it 'should merge articles' do
   #   puts @section.grid_map
   #   @section.merge_article_pdf

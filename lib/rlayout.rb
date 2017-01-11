@@ -1,10 +1,10 @@
 # if RUBY_ENGINE == 'rubymotion'
-if defined?(Motion::Project::Config) 
+if defined?(Motion::Project::Config)
   Motion::Project::App.setup do |app|
     Dir.glob(File.join(File.dirname(__FILE__), 'rlayout/**/*.rb')).each do |file|
       # excluded .rb files under experiment folder from compiling
       if file =~ /experiment/
-        puts "excluded #{file}" 
+        puts "excluded #{file}"
         next
       end
       app.files.unshift(file)
@@ -17,20 +17,21 @@ elsif RUBY_ENGINE == "opal"
   # require files for Opal
   #
 else
+  puts "loading pry +++++++++++++++++"
   # puts RUBY_ENGINE
-  require 'pry'
+  # require 'pry'
   require 'strscan'
   require 'yaml'
   require 'csv'
   require 'erb'
   require 'base64'
-  
+
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
   require File.dirname(__FILE__) + '/rlayout/graphic'
   require File.dirname(__FILE__) + '/rlayout/container'
-  
-  
+
+
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/heading_container'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
@@ -55,7 +56,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/style/style_service'
   require File.dirname(__FILE__) + '/rlayout/style/grid_layout'
   require File.dirname(__FILE__) + '/rlayout/style/image_layout'
-  
+
   require File.dirname(__FILE__) + '/rlayout/box/box_ad_box'
   require File.dirname(__FILE__) + '/rlayout/box/image_box'
   require File.dirname(__FILE__) + '/rlayout/box/object_box'
@@ -74,7 +75,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/page/page_fixtures'
   require File.dirname(__FILE__) + '/rlayout/page/composite_page'
   require File.dirname(__FILE__) + '/rlayout/page/page_variables_extend'
-   
+
   require File.dirname(__FILE__) + '/rlayout/document'
   require File.dirname(__FILE__) + '/rlayout/view/document_view_svg'
   require File.dirname(__FILE__) + '/rlayout/document_variables_extend'
@@ -116,6 +117,9 @@ else
   require File.dirname(__FILE__) + '/rlayout/quiz/nr_semi_test_chapter_maker'
 
   require File.dirname(__FILE__) + '/rlayout/mlayout/mdocument'
+
+  puts "finish laoding +++++++++++++++++"
+
 end
 
 module RLayout
