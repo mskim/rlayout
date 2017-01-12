@@ -89,6 +89,7 @@ module RLayout
       @has_side_column  = options.fetch(:has_side_column, false)
       @left_side_column = options.fetch(:left_side_column, false)
       @item_space       = options.fetch(:item_space, 30)
+      @grid_size        = options[:grid_size]
       create_columns
       if options[:column_grid]
         create_column_grid_rects
@@ -493,7 +494,6 @@ module RLayout
       image_options[:image_path] = "#{options[:image_path]}" if options[:image_path]
       image_options[:image_path] = "#{$ProjectPath}/images/#{options[:local_image]}" if options[:local_image]
       frame_rect              = grid_frame_to_image_rect([0,0,1,1])
-      puts "+++++++++++ options[:grid_frame]:#{options[:grid_frame]}"
       frame_rect              = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
       image_options[:x]       = frame_rect[0]
       image_options[:y]       = frame_rect[1]
@@ -522,25 +522,22 @@ module RLayout
     end
 
     def grid_frame_to_image_rect(grid_frame)
-      return [0,0,100,100]          unless @graphics
-      return [0,0,100,100]          if grid_frame.nil?
-      return [0,0,100,100]          if grid_frame == ""
-      grid_frame    = eval(grid_frame) if grid_frame.class == String
-      width_val     = grid_frame[2]
-      height_val    = grid_frame[3]
-      column_frame  = @graphics.first.frame_rect
-      column_width  = column_frame[2]
-      column_height = column_frame[3]/@grid_base[1]
+      return [0,0,100,100]    unless @graphics
+      return [0,0,100,100]    if grid_frame.nil?
+      return [0,0,100,100]    if grid_frame == ""
+      return [0,0,100,100]    if grid_frame == []
+      grid_frame          = eval(grid_frame) if grid_frame.class == String
+      column_frame        = @graphics.first.frame_rect
       # when grid_frame[0] is greater than columns
-      frame_x       = column_frame[0]
+      frame_x             = column_frame[0]
       if grid_frame[0] >= @graphics.length
-        frame_x     = @graphics.last.x_max
+        frame_x           = @graphics.last.x_max
       else
-        frame_x     = @graphics[grid_frame[0]].x
+        frame_x           = @grid_size[0]*grid_frame[0]
       end
-      frame_y       = column_frame[1]
-      frame_width   = column_width*width_val + (width_val - 1)*@layout_space
-      frame_height        = column_height*height_val + (height_val - 1)*@column_layout_space
+      frame_y             = @grid_size[1]*grid_frame[1]
+      frame_width         = @grid_size[0]*grid_frame[2] + (grid_frame[2] - 1)*@layout_space
+      frame_height        = @grid_size[1]*grid_frame[3] + (grid_frame[3] - 1)*@column_layout_space
       [frame_x, frame_y, frame_width, frame_height]
     end
 

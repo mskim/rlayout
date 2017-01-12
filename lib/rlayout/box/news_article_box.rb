@@ -29,6 +29,7 @@ module RLayout
         options[:column_count]= options[:grid_frame][2]
         @grid_width           = options.fetch(:grid_width, 200)
         @grid_height          = options.fetch(:grid_height, 200)
+        options[:grid_size]   = [@grid_width , @grid_height]
         options[:gutter]      = 10 unless options[:gutter]
         options[:v_gutter]    = 0 unless options[:v_gutter]
         options[:width]       = options[:grid_frame][2]*options[:grid_width] + (options[:grid_frame][2] - 1)*options[:gutter]
@@ -39,8 +40,6 @@ module RLayout
       options[:top_margin]    = 5 unless options[:top_margin]
       options[:right_margin]  = 5 unless options[:right_margin]
       options[:bottom_margin] = 5 unless options[:bottom_margin]
-
-
       super
       self
     end
