@@ -533,7 +533,8 @@ module RLayout
       if grid_frame[0] >= @graphics.length
         frame_x           = @graphics.last.x_max
       else
-        frame_x           = @grid_size[0]*grid_frame[0]
+        # frame_x           = @grid_size[0]*grid_frame[0]
+        frame_x           = @grid_size[0]*grid_frame[0] + (grid_frame[0])*@layout_space
       end
       frame_y             = @grid_size[1]*grid_frame[1]
       frame_width         = @grid_size[0]*grid_frame[2] + (grid_frame[2] - 1)*@layout_space
