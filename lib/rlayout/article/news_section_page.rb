@@ -1,16 +1,16 @@
 module RLayout
-  
-  
+
+
   class NewspaperSectionPage < Page
     attr_accessor :section_path, :section_name, :output_path
     attr_accessor :has_heading, :heading_info, :paper_size
     attr_accessor :story_frames, :grid_key, :grid_width, :grid_height, :number_of_stories
-    
+
     def initialize(options={}, &block)
       super
       @section_path   = options[:section_path] if options[:section_path]
       @output_path    = @section_path + "/section.pdf"
-      @output_path    = options[:output_path]   if options[:output_path]  
+      @output_path    = options[:output_path]   if options[:output_path]
       @paper_size     = options.fetch(:paper_size,"A2")
       @width          = SIZES[@paper_size][0]
       @height         = SIZES[@paper_size][1]
@@ -27,7 +27,7 @@ module RLayout
       @grid_base      = options.fetch(:grid_base, [7, 12])
       @grid_base      = @grid_base.map {|e| e.to_i}
       @has_heading    = options[:has_heading] || false
-      @number_of_stories = options.fetch(:number_of_stories, 5).to_i  
+      @number_of_stories = options.fetch(:number_of_stories, 5).to_i
       @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
       @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
       @grid_key       = "#{@grid_base.join("x")}"
@@ -39,7 +39,7 @@ module RLayout
         section_config = File.open(config_path, 'r'){|f| f.read}
         section_config = YAML::load(section_config)
         @section_name   = section_config['section_name'] || "untitled"
-        @output_path    = section_config['output_path']   if section_config['output_path']      
+        @output_path    = section_config['output_path']   if section_config['output_path']
         @width          = section_config['width'] if section_config['width']
         @height         = section_config['height'] if section_config['height']
         @gutter         = section_config['gutter'] if section_config['gutter']
@@ -57,15 +57,15 @@ module RLayout
         @grid_key       = section_config['grid_key'] if section_config['grid_key']
         @story_frames   = section_config['story_frames']
       end
-      
+
       unless @story_frames
         #TODO used some precentive default story_frames
         puts "no @story_frames for #{@grid_key}!!!"
-      end 
-      @number_of_stories = @story_frames.length      
+      end
+      @number_of_stories = @story_frames.length
       self
     end
-    
+
     def make_articles_info
       @article_info = []
       @story_frames.each_with_index do |grid_frame, i|
@@ -89,12 +89,12 @@ module RLayout
       end
       @article_info
     end
-    
+
     def self.section_pdf(options)
       section_page = self.open(options)
       section_page.merge_article_pdf(options)
     end
-    
+
     def self.open(options={})
       config_path     = options[:section_path] + "/config.yml"
       config          = File.open(config_path, 'r'){|f| f.read}
@@ -102,7 +102,7 @@ module RLayout
       section_options.merge!(options)
       NewspaperSectionPage.new(section_options)
     end
-    
+
     def merge_article_pdf(options={})
       @output_path = options[:output_path] if options[:output_path]
       #TODO update page fixtures
@@ -117,7 +117,7 @@ module RLayout
       end
       self
     end
-    
+
   end
-  
+
 end

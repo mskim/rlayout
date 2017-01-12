@@ -5,13 +5,13 @@
   # TextBox can be linked to other TextBoxs, "next_link" and "previous_link" points to them.
   # ObjectBox, a sister class, handls other types of objects, such as
   # flowing product items, Images, BoxAds, Directory elements, quiz items or any other graphic objects other than paragraphs,
-  # Both of the class support flowing item protocol, namely "set_width_and_adjust_height", 
+  # Both of the class support flowing item protocol, namely "set_width_and_adjust_height",
   # to adjust flowing items into different size columns.
   # They also support :breakable?, which tells whether the flowing item can be broken into parts.
   # Breakable item should split itself into two or more parts, it brakes with  orphan/widow consideration.
   # Currently, Paragraph can be broken up into two parts at the oveflowing column.
   # Another example of breakable flowing object is Table.
-  
+
   # TextColumn
   # TextColumn is columns used in TextBox.
   # TextColumn has line_grids.
@@ -21,16 +21,16 @@
   # By have Line_grids of half the height of body text. This is good enough for text wrapping.
   # Line_grids are also useed for vertically aligning text across differnt columns.
   # We can force non-body paragraphs to spnap to line-grids.
-  
+
   # TextBox adds another layer called "floats", (Containers also have floats)
   # Floats sit on top layer and pushes out text content underneath it.
   # Typocal floats are Heading, Image, Quates, SideBox
   # Each float has its weight(float on top or push down), starting_posion, starting_column, width_in_column
   # Floats can be layed out with rules, or pre-design templates with profile.
   # Floats default layout method is using Grid.
-  
-  # float_layout 
-  # float_layout markup is used to trigger a pre-definded float pattern for a page. 
+
+  # float_layout
+  # float_layout markup is used to trigger a pre-definded float pattern for a page.
   # float_layout starts new page, so float_layout should be used at the begining of the page.
   # float_layout should have FLOAT_PATTERNS key and image_paths.
   # FLOAT_PATTERNS is used as lookup table.
@@ -39,29 +39,29 @@
   # side_column
   # side_column is used when we have flowing images along side paragraphs
   # side_column can be place on the right or left side of TextBox
-  
+
   #TODO
   # 1. text box with overlapping floats on top, sometimes fully covered with hole in the middle of the column.
   # 1. flowing image alone the text. attached Math block, inline math
   # 1. Image that are floating and bleeding at the edge.
   # 1. Dropcap suppoert. Dropcap Image
   # 1. side_column
-  
+
   # align_body_text
   # If align_body_text is on, start body paragraphs on even numbered grid_rects only.
   # so that body texts are horozontally aligned, across the columns
   # We have grid_rects with height 1/2 of body text height.
-  
+
   # laying out running float images
   # This is when we have images that are larger than the column width and floating.
   # We need to sit them, rearrange floats, and adjust other items
-  
+
   # add text_path option, for importing marddown text at the time.
-  
+
   # side_column image markup??
   # ![] {}
   # side_column text markup??
-  # ![] 
+  # ![]
 
 FLOAT_NO_PUSH       = 0
 FLOAT_PUSH_RECT     = 1
@@ -77,7 +77,7 @@ module RLayout
     attr_accessor :next_link, :previous_link, :align_body_text
     attr_accessor :has_side_column, :left_side_column, :side_column
     attr_accessor :draw_gutter_stroke
-    
+
     def initialize(options={}, &block)
       super
       @layout_direction = options.fetch(:layout_direction, "horizontal")
@@ -93,28 +93,28 @@ module RLayout
       if options[:column_grid]
         create_column_grid_rects
       end
-      
+
       if block
         instance_eval(&block)
-      end    
+      end
       if @floats.length > 0
-        layout_floats! 
-        set_overlapping_grid_rect    
+        layout_floats!
+        set_overlapping_grid_rect
       end
       self
     end
-    
+
     def modify(&block)
       if block
         instance_eval(&block)
       end
     end
-    
+
     def create_columns
       if @has_side_column
         @column_count = 2
         if @left_side_column
-          @side_column = 
+          @side_column =
           TextColumn.new(:parent=>self, layout_length: 1, fill_color: 'lightGray')
           TextColumn.new(:parent=>self, layout_length: 3)
         else
@@ -140,39 +140,39 @@ module RLayout
     def document
       @parent_graphic.document if @parent_graphic
     end
-    
+
     def page
       @parent_graphic
     end
-    
+
     def page_index
       document.pages.index(@parent_graphic) if @parent_graphic
     end
-    
+
     def empty?
       @graphics.first.graphics.length == 0
     end
-    
+
     def add_to_toc_list(item)
       if is_toc_item?(item)
         document.add_to_toc_list(item)
       end
     end
-    
+
     def heading(options={})
       options[:is_float]  = true
       options[:parent]    = self
-      if @heading_columns != @column_count  
+      if @heading_columns != @column_count
         options[:width] = width_of_columns(@heading_columns)
-      end  
+      end
       h = Heading.new(options)
       unless h== @floats.first
         # make heading as first one in floats
         h = @floats.pop
         @floats.unshift(h)
-      end      
+      end
     end
-    
+
     # does current text_box include Heading in floats
     def has_heading?
       @floats.each do |float|
@@ -180,30 +180,30 @@ module RLayout
       end
       false
     end
-    
+
     def get_heading
       @floats.each do |float|
         return float if float.class == RLayout::Heading
       end
       nil
     end
-    
+
     def has_leading_box?
       @floats.each do |float|
         return true if float.tag == "leading"
       end
       false
     end
-    
+
     def has_quote_box?
       @floats.each do |float|
         return true if float.tag == "quote"
       end
       false
     end
-    
+
     # sum of width columns width including gaps
-    def width_of_columns(columns)      
+    def width_of_columns(columns)
       return 0 if columns==0
       if columns <= @graphics.length
         return @graphics[columns - 1].x_max - @graphics.first.x
@@ -218,13 +218,13 @@ module RLayout
         end
       end
     end
-    
+
     def justify_items
       @graphics.each do |column|
         column.justify_items
       end
     end
-    
+
     # set text_column's overlapping grid_rect area
     # this method is called after float is added and relayout!
     def set_overlapping_grid_rect
@@ -247,7 +247,7 @@ module RLayout
     # 2. Paragraph Item's content is layed out in the column with column widht
     #    For simple and also for complex column, it is layout with avoiding overlapping float.
     #    @item.layout_lines(current_column)
-    
+
     # 2. layout_lines is called for each Paragraph item.layout_lines calles @text_layout_manager.layout_lines for line layout.
     #   this is deprecated
     #   I pass two key/values as options, path?(this should be changed to passing grid_rect id) and proposed_height.
@@ -256,11 +256,11 @@ module RLayout
     #   Text overflow is detected by comparing "proposed_height" and returned actual height.
     #   if the result is greater than the prososed_height, text is overflowing.
     #   this is deprecated, I am now using grid_rects for detecting float overlapping.
-    
+
     # 3. When we encounter floats, such as images or side_box,
     #    FLOAT_PATTERNS is looed up. and re do the layout.
     #    if we have room, go on, otherwise go to next page.
-    # 
+    #
     # 5. place item in the column, if it fits(does not overflow).
     #   placing item sets the y value of item and updates @current_position, and room
     #   if item has text_overflow, paragraph are splited into two, at overflowing location.
@@ -306,18 +306,18 @@ module RLayout
             end
           end
           @item.layout_lines(:proposed_height=>current_column.room) # item.width is set already
- 
+
         elsif @item.class == RLayout::Table
           @item.width  = current_column.text_width
-          @item.create_rows if @item.graphics.length == 0 
+          @item.create_rows if @item.graphics.length == 0
           # given avalable room in column
-          # layout rows into room. it can accomodate all rows or overflow         
-          @item.layout_rows(current_column.room) 
+          # layout rows into room. it can accomodate all rows or overflow
+          @item.layout_rows(current_column.room)
         elsif @item.class == RLayout::FloatGroup
           @item.layout_page(document: document, page_index: page_index)
           unless @item.allow_text_jump_over
             # TODO
-            # go to next 
+            # go to next
             #  "text jump over not allowed"
             # go to next page
           else
@@ -330,11 +330,11 @@ module RLayout
           @item.layout_expand  = [:width]
           # if item is image, height should be proportional to image_object ratio, not frame width height ratio
           @item.height = @item.image_object_height_to_width_ratio*@item.width
-          @item.arrange_item            
+          @item.arrange_item
           if current_column.room < @item.height
-            @item.underflow = true 
+            @item.underflow = true
           end
-          
+
         elsif @item.class == RLayout::Image
           # We have image
           # check if the image is floating image, out of the column
@@ -344,7 +344,7 @@ module RLayout
             @item.x      += @gutter*(@item.grid_frame[0]-1) if @item.grid_frame[0] > 1
             @item.width  = current_column.width * @item.grid_frame[2] + @gutter*(@item.grid_frame[2]-1)
             grid_height = @height/@grid_base[1].to_f
-            @item.y      = grid_height * @item.grid_frame[1]              
+            @item.y      = grid_height * @item.grid_frame[1]
             @item.height = grid_height * @item.grid_frame[3]
             if @item.bleed
               #TODO do bleeding on the edges
@@ -357,66 +357,66 @@ module RLayout
             @item.layout_expand  = [:width]
             # if item is image, height should be proportional to image_object ratio, not frame width height ratio
             @item.height = @item.image_object_height_to_width_ratio*@item.width
-            @item.apply_fit_type            
+            @item.apply_fit_type
             if @has_side_column
               #TODO set y position
               @side_column.graphics <<  @item if @side_column
             else
               if current_column.room < @item.height
-                @item.underflow = true 
+                @item.underflow = true
               end
             end
             # check for overflow underflow
-          end    
+          end
         elsif @item.is_a?(EnglishQuizItem)
           unless  @item.q_line
             # this is un-layouted out EnglishQuizItem
             @item.layout_content(width: current_column.width)
           end
           if current_column.room < @item.height
-            @item.overflow = true 
+            @item.overflow = true
           end
-                
-        elsif @item.is_a?(RLayout::QuizItem) 
+
+        elsif @item.is_a?(RLayout::QuizItem)
           @item.width  = current_column.text_width
           if current_column.room < @item.height
-            @item.underflow = true 
+            @item.underflow = true
           else
             @item.set_content
           end
         elsif @item.class == RLayout::QuizRefText || @item.class == RLayout::QuizAnsText
           @item.width  = current_column.text_width
           if current_column.room < @item.height
-            @item.underflow = true 
-          else            
+            @item.underflow = true
+          else
             @item.set_content
           end
         else
           @item.width  = current_column.text_width
           @item.height = @item.width
           if current_column.room < @item.height
-            @item.underflow = true 
+            @item.underflow = true
           end
         end
         # now item is layed out with colum width, place them in the column
         # if @item.class != Paragraph
-        
+
         if @item.respond_to?(:underflow?) && @item.underflow?
-          
+
           # @item doesn't even fit a single line all
           # no need to split, go to next column
           column_index +=1
           @item.underflow = false
-          if column_index < @column_count              
+          if column_index < @column_count
             current_column = @graphics[column_index]
             flowing_items.unshift(@item)
             next
           else
             # "going to next page....................."
-            flowing_items.unshift(@item)                            
+            flowing_items.unshift(@item)
             return false
-          end        
-        elsif !@item.overflow? && !@item.underflow?  
+          end
+        elsif !@item.overflow? && !@item.underflow?
           current_column.place_item(@item)
         elsif @item.overflow? && @item.is_breakable?
           if @item.linked
@@ -427,7 +427,7 @@ module RLayout
             current_column.place_item(@item)
           end
           column_index +=1
-          
+
           if column_index < @column_count
             current_column = @graphics[column_index]
             flowing_items.unshift(second_half)
@@ -439,19 +439,19 @@ module RLayout
             flowing_items.unshift(second_half)
             return false
           end
-        
-        elsif !@item.is_breakable?          
+
+        elsif !@item.is_breakable?
           if current_column.room < @item.height
             #  "not breakable and no room ++++++ "
             column_index +=1
-            if column_index < @column_count              
+            if column_index < @column_count
               current_column = @graphics[column_index]
               @item.overflow = false # clear oveflow flag
               flowing_items.unshift(@item)
               flowing_items.unshift(@item)
               next
             else
-              #  "going to next page..."  
+              #  "going to next page..."
               flowing_items.unshift(@item)
               return false
             end
@@ -460,7 +460,7 @@ module RLayout
       end
       true
     end
-    
+
     def float_leading(options={})
       leading_options = {}
       frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
@@ -486,13 +486,14 @@ module RLayout
       quote_options[:parent]          = self
       Quote.new(quote_options)
     end
-    
+
     # place imaegs that are in the head of the story as floats
     def float_image(options={})
       image_options = {}
       image_options[:image_path] = "#{options[:image_path]}" if options[:image_path]
       image_options[:image_path] = "#{$ProjectPath}/images/#{options[:local_image]}" if options[:local_image]
       frame_rect              = grid_frame_to_image_rect([0,0,1,1])
+      puts "+++++++++++ options[:grid_frame]:#{options[:grid_frame]}"
       frame_rect              = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
       image_options[:x]       = frame_rect[0]
       image_options[:y]       = frame_rect[1]
@@ -501,9 +502,9 @@ module RLayout
       image_options[:layout_expand]   = nil
       image_options[:is_float]= true
       image_options[:parent]  = self
-      @image                  = Image.new(image_options)   
+      @image                  = Image.new(image_options)
     end
-    
+
     def float_images(images)
       if images.class == Array
         images.each do |image_info|
@@ -513,13 +514,13 @@ module RLayout
         float_image(images)
       end
     end
-    
+
     def update_column_areas
       @graphics.each do |column|
         column.update_current_position
       end
     end
-    
+
     def grid_frame_to_image_rect(grid_frame)
       return [0,0,100,100]          unless @graphics
       return [0,0,100,100]          if grid_frame.nil?
@@ -532,7 +533,7 @@ module RLayout
       column_height = column_frame[3]/@grid_base[1]
       # when grid_frame[0] is greater than columns
       frame_x       = column_frame[0]
-      if grid_frame[0] >= @graphics.length 
+      if grid_frame[0] >= @graphics.length
         frame_x     = @graphics.last.x_max
       else
         frame_x     = @graphics[grid_frame[0]].x
@@ -558,12 +559,12 @@ module RLayout
       # Floats are layed out in order of @floats array from top to bottom.
       # If starting location is occupies, following float is placed below the position of pre-occupied one.
       # Floats can also move up from the bottom, it moves up with top down.
-      # Floats string at the bottom of the TextBox, should pass float_bottom:true 
+      # Floats string at the bottom of the TextBox, should pass float_bottom:true
       # If float_bleed:true, it bleeds at the location, top, bottom and side
       # TODO centered floats
       # For Leading, Quotes or Image, should implement cented float
       # It is common for Centered floats to have width slightly larger than column width on each side.
-      # float_paistion: "center" 
+      # float_paistion: "center"
       def layout_floats!
         return unless @floats
         # reset heading width
@@ -602,12 +603,12 @@ module RLayout
         false
       end
 
-      # if float is overlapping, move float to unoccupied area 
+      # if float is overlapping, move float to unoccupied area
       # by moving float to the bottom of the overlapping float.
       def move_float_to_unoccupied_area(occupied_arry, float)
         occupied_arry.each do |occupied_rect|
           if intersects_rect(occupied_rect, float.frame_rect)
-            float.y = max_y(occupied_rect) + 5          
+            float.y = max_y(occupied_rect) + 5
           end
         end
       end
@@ -620,19 +621,19 @@ module RLayout
           #  "hole or block in the middle"
           rects_array = []
           upper_rect = column_rect.dup
-          upper_rect.size.height = min_y(float_rect) 
-          # return only if rect height is larger than minimun   
+          upper_rect.size.height = min_y(float_rect)
+          # return only if rect height is larger than minimun
           rects_array << upper_rect if  upper_rect.size.height > min_gap
           lower_rect = column_rect.dup
           lower_rect.origin.y = max_y(float_rect)
           lower_rect.size.height -= max_y(float_rect)
-          # return only if rect height is larger than minimun   
+          # return only if rect height is larger than minimun
           rects_array << lower_rect if  lower_rect.size.height > min_gap
-          # return [0,0,0,0] if none of them are big enough 
+          # return [0,0,0,0] if none of them are big enough
           return [0,0,0,0] if rects_array.length == 0
-          # return single rect rather than the Array, if one of them is big enough 
+          # return single rect rather than the Array, if one of them is big enough
           return rects_array[0] if rects_array.length == 1
-          # return both rects in array, if both are big enough 
+          # return both rects in array, if both are big enough
           return rects_array
         elsif min_y(float_rect) <= min_y(column_rect)
           #  "overlapping at the top "
@@ -643,17 +644,17 @@ module RLayout
         elsif max_y(float_rect) >= max_y(column_rect)
           #  "overlapping at the bottom "
           new_rect = column_rect.dup
-          new_rect[HEIGHT_VAL] = min_y(float_rect)    
+          new_rect[HEIGHT_VAL] = min_y(float_rect)
           return new_rect
         end
       end
   end
-  
+
   class TextBoxWithSide < TextBox
     def initialize(options={})
-      
+
       self
-    end    
+    end
   end
 
 end
@@ -669,39 +670,39 @@ FLOAT_PATTERNS = {
   "1/A1/7" => [[]],
   "1/A1/8" => [[]],
   "1/A1/9" => [[]],
-    
+
   "2/A1_B1/1" => [[],[]],
   "2/A1_B1/2" => [[],[]],
   "2/A1_B1/3" => [[],[]],
-  
+
   "2/A1_C1/1" => [[],[]],
   "2/A1_C1/2" => [[],[]],
   "2/A1_C1/3" => [[],[]],
-  
+
   "2/B2/1" => [[],[]],
   "2/B2/2" => [[],[]],
   "2/B2/3" => [[],[]],
-  
+
   "2/C2/1" => [[],[]],
   "2/C2/2" => [[],[]],
   "2/C2/3" => [[],[]],
-  
+
   "3/A1_B2/1" => [[],[],[]],
   "3/A1_B2/2" => [[],[],[]],
   "3/A1_B2/3" => [[],[],[]],
-  
+
   "3/A1_B2_C1/1" => [[],[],[]],
   "3/A1_B2_C1/2" => [[],[],[]],
   "3/A1_B2_C1/3" => [[],[],[]],
-  
+
   "4/A1_B3/1" => [[],[],[],[]],
   "4/A1_B3/2" => [[],[],[],[]],
   "4/A1_B3/3" => [[],[],[],[]],
-  
+
   "4/A1_B1_C2/1" => [[],[],[],[]],
   "4/A1_B1_C2/2" => [[],[],[],[]],
   "4/A1_B1_c2/3" => [[],[],[],[]],
-  
+
   "4/A1_B2_C1/1" => [[],[],[],[]],
   "4/A1_B2_C1/2" => [[],[],[],[]],
   "4/A1_B2_C1/3" => [[],[],[],[]],

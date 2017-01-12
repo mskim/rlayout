@@ -3,20 +3,27 @@
 # NewsPlan uses csv file as input and creates issue structure from it.
 
 # How NewsPlan Works
+# 양면,같러,면이름,광고크기,광고주,가사박스
+# 1,같러,1면,5단통-6,삼성전자_2016_12,4
+# ,,8면,5단통,LG전자_2016_12,3
+# 2,흑백,2면,없음,,5
+# ,,7면,5단통,현대자동차_2016_12,4
+# 3,같러,3면,5단통,포스코_2016_12,4
+# ,,6면,5단통,KT_2016_12,4
+# 4,흑백,4면,5단통,애플컴퓨터_2016_12,4
+# ,,5면,전면,CJ_2016_12,0
 #
 # 1. Create NewsPlan worksheet with Spreadsheet.
 #
-# section,  type,    size,  name,     title
-# Current   article, l,     mskim,
-#           article, m,     mskim,
-#           article, m      jklee,
-#           ad,      5x7,   samsung,
-#           ad,      2x5,   lg
-# Economy   article, l,     mskim,
-#           article, m,     mskim,
-#           article, m      jklee,
-#           ad,      5x7,   samsung,
-#           ad,      2x5,   lg
+# spread, color, page_name, ad_size, number_of_stories, advertiser
+#   1-8,  color, Current,   5x7-6,    4,           , Samsung
+#         color, Business,  5x7-7,    4,           , LG
+#   2-7,  bw,    Culture,   5x7-6,    4,           , Hyungdai
+#         bw,    Sports,    5x7-6,    4,           , Naver
+#   3-6,  bw,    Technology,5x7-6,    4,           , Apple
+#         bw,    Travel,    5x7-6,    4,           , SK
+#   4-5,  color, Food,      5x7-6,    4,           , KT
+#         color, Health,    5x7-6,    4,           , Hynix
 
 #
 #
@@ -67,8 +74,7 @@ module RLayout
     attr_accessor :project_path, :csv_text, :csv, :template_path
 
     def initialize(project_path, options={})
-      puts @project_path = project_path
-
+      @project_path = project_path
       @csv_path     = Dir.glob("#{@project_path}/*.csv").first
       puts @csv_path
       if options[:csv]

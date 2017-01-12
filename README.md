@@ -10,11 +10,11 @@ TODO List
 		- para_data2atts_array
 		- atts_array with TextStruct
 	- line type, line arrow, line_sides
-	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides), 
+	- Dagger(rect,depth,sides), Ribbon(rect,depth,sides),
 	- CorneredRect(rect,corners, shapes)
 	- support Opal
 	- add bgcolor, deco_large, deco_medium, deco_small,
-	- warning, example, 
+	- warning, example,
 	- title_box, grid_box
 	- convert markdown to story
 	- convert ascidoctor to story
@@ -26,28 +26,28 @@ TODO List
 	- Korean localization
 		- title, subtitle, author, lead, quote
 		- heading, text_box
-		- header, footer 
+		- header, footer
 		- table, image, warning, example,
 	- text format(use Asciidoctor/Markdown)
-		- italic 
+		- italic
 		- bold
 		- underline, strike-through, super, sub
 		- custom emp(color)
 	- QuickLook options: save QuickLook/Preview.pdf for preview
 	- starts_at # new_page, new_text_box, new_column
 	- put include RLayout so that users don't have to type RLayout::
-	- Use easy to use name for layout file, such as 
+	- Use easy to use name for layout file, such as
 	- # Chapter.create
 	- # News.create
 	- # NewsSection.create
-	- # Magazine.create 
+	- # Magazine.create
 	- redo layout for complex container
 	- picture_page/image_group/floats
 	- story file tag
 		- inline tag
 			inline tag starts with def_name()
 			this is converted to ruby method call with name
-			and arguements and options 
+			and arguements and options
 			arguments are chained Token or String
 			return values are token, so it can be chained
 			- def_sub(base, sub)
@@ -71,18 +71,18 @@ TODO List
 			{{underline 'choice one'}}
 			{{ruby 'text', 'some'}}
 			{{undertag 'this', 's'}}
-			- 
+			-
 			UTag
 			[This] is the some text
 			______ __
-			s      v 
+			s      v
 
 			def_ut([This], s, style: bold) \ut(is)(v)
-			
+
 			- $$math$$
 			- $$\over{1}{2}$$
 			- $$\qurt{1}{2})
-			
+
 		- block tag
 			begin(warning)??
 			end(warning)??
@@ -96,17 +96,17 @@ TODO List
 			- \floats
 		- Add font missing message
 
-		- document 
+		- document
 			- chapter color
 				each chapter can have chapter color
 			- start_left, had_cover_spread
 				user pre-designed-chapter_cover_spread
 			- end_on_right_page
-				if the document ends in left page, add a page 
+				if the document ends in left page, add a page
 				for following chapter to start at the left page
-				
+
 		- QuizBank
-		
+
 		- report_maker
 			- cover
 			- intro
@@ -117,16 +117,23 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017 1 12
+	- add image crop
+	- add image caption
+	- line
+	- jump_to_box
+	- 5_dan_tong_6x15_h_4
+
 2016 11 22
 	- news_heading
 	- multiple_story_article
 
 2016 11 21
 	- fix stroke bug
-	
+
 2016 11 2
 	- fix label text_size*0.8 bug
-	
+
 2016 10 23
 	- fix bug in MRI RFont String width calculation bug
 	- rename ChapterMaker to Chapter
@@ -137,69 +144,69 @@ TODO List
 	- update Rakefile to update toc, update starting page_number
 	- generate Flipbook
 	- add pdf_insert, float_group
-	
+
 2016 10 21
 	- fix text_box layout_item line overlapping in second page
 	- rlayout_core
 	- article
 	- rjob
-	
+
 2016 10 19
 	- fix newsman
-	
+
 2016 10 18
 	- rearrange test
 		so that it only loads what is needed
-		
+
 2016 10 12
 	- add TOCChapter
 	- fix left_margin
 	- custom toc_chapter_style support
-	
+
 	- Cover, Forward, Preface, Colophone
 	- PhotoChapter
-	
+
 	- FakerBook
 		title
 		author
-		
+
 2016 10 11
 	- chapter
 		- filename_output:true will output pdf with filename.pdf
 		  otherwise output.pdf
 		- fix footer
 		- justify
-		
+
 2016 10 7
 	- Rakefile file dependency on either md or layout.rb, not both
-	
+
 2016 10 5
 	- PDFChapter
 		merge pdf files in given folder and archive original files
 		actual task is then passed to PDFFile for PDF file processing
 	- PDFFile
 		process single PDF file.
-		generate jpg, preview, doc_info 
-		
+		generate jpg, preview, doc_info
+
 2016 10 5
 	- fix list justification
 	- Add ImageToken
-	
+
 	- add emphasis style to "p"
 	- headingContainer variable line
-	
+
 2016 10 3
 	- List
-	- OrderedList 
+	- OrderedList
 		fill_color
 		indent
 		space_before, after
-		
+
 		\n and checkmark
 		page_number
-		
+
 	- demo pre
-		rake 
+		rake
 		  document folder, subdocument folder
 		  bookplan
 		fill in the data
@@ -209,79 +216,79 @@ TODO List
 		PDF download
 		Question Bank
 
-2016 10 3 
+2016 10 3
 	- footer
 
 2016 10 1
 	- list style paragraph with graphical numbering
 	- v align center
-	 
+
   # add list_style to para_style
 	list_style => {
-		:font=>"Times", 
-		:text_color=>"Blue", 
-		:text_size=>16, 
+		:font=>"Times",
+		:text_color=>"Blue",
+		:text_size=>16,
 		:text_indent=>30
 	}
-    
+
 2016 9 30
 	- box token left_margin, right_margin
 	- fix ChapterMaker bug para[:string] to para[:para_string]
 	- fix paragraph color support
 	- space_before, space_after
-	
+
 	- list_style
 		list_type 				# list types are number, lower_alaph, upper_alph, korean_raical, koran_ga_na_da,  roman
-	
+
 	- heading\n by forcing relayout
 	- heading background image
 	- sub_para_left_indent
 	- first_para_top_margin
 	- last_para_bottom_margin
-	
-	
+
+
 	- create cocoa_text cli tool for supporting font and width for mri
-	
-	- create meta-data 
+
+	- create meta-data
 		- footer
-	
+
 2016 9 29
 	- HeadingContainer
-	
+
 	- designer_pargraph
 		- has starting marker for parsing
 			A. B. 1. a. ii.
 		- has_sub_paragraphs
 		- has_layout_file
 		- group_margin
-		
+
 	- typo fine controll
 		- Line Space, Space Before, Space After
-		- Order indent 
-		- Head indent 
+		- Order indent
+		- Head indent
 		- Line indent for background color
-	
+
 2016 9 28
 	- vertically justify items
 	- Web based editing, flipbook
 	- Rakefile
-	
+
 2016 9 26
-	- rakefile for book, rakefile for chapters, rake update 
+	- rakefile for book, rakefile for chapters, rake update
 	- manual adjustment
 		- </br> for manual adjusting space_before and space after
 		- </page> for manual adjusting space_before and space after
 		- \n for manual new line
 		- <<text><color>>
-			
+
 	- implement box, underline token
 	- fix text_color for Paragraph
 	- style_run
 	A problem: There are many cases where we have mixed styles in a
-	paragraph. Text could be separated by \t 
-	And for each segment style_run is used to address this. 
-	defined in styles, it is a run 
-	
+	paragraph. Text could be separated by \t
+	And for each segment style_run is used to address this.
+	defined in styles, it is a run
+
 2016 9 25
 	- implement ruby and reverse ruby RubyToken
 
@@ -290,35 +297,35 @@ TODO List
 		all tokne_fill_color = "Clear"
 		make token colors as "clear", make line fill_as
 	- space_before, space_after in layout_lines
-	
-	
+
+
 2016 9 24
 	in document template load current_style with options[:current_style]
 	options[:current_style]   = text_style
 	options[:layout_style]    = @layout_style
 	RLayout::Document.new(options)
-	
+
 2016 9 23
 	- fix Hex Color
 	- fix new line
 	- background color in Paragraph
 	- Custom Style Support for List
-	
+
 	- HeadingContainer
 		We need a mechanism to replace Heading Template text with markup text.
 		since markups do not have keys, we need to idetify which maps to which tag,
-		this is where @tag_list comes in as pre-defined keys, 
+		this is where @tag_list comes in as pre-defined keys,
 		hash = Hash(@tag_list.zip markup_lines)
 		we use this hash to look for tags and replace it with values.
-		
+
 		- set_tag_list sets :tag_list to HeadingContainer
-			it converts String tags to Symbol tags 
-		
+			it converts String tags to Symbol tags
+
 	- OrderedList
 	- UnrrderedList
 	- OrderedSection
 	- UpperAlphaList
-	
+
 2016 9 22
 	- markup2heading key_map
 	- style_run
@@ -326,33 +333,33 @@ TODO List
 	# color_run: ["brown", "black"]
 	# size_run: [0, 5] add point size to current size
 	# size_run: [0, 10%] add % point size to current size
-	
+
 	# key_map: ["number", "title", "subtitle", "leading"] defined in style of h1
 	# = 03
 	# Some title
 	# some subtitle
 	# leading text here
-	
-	# above markup and map will be converted to 
+
+	# above markup and map will be converted to
 	# h ={number: "03", title: "Some title", subtitle: "some subtitle", leading: "leading text here"}
 	# document.pages[1].heading.set_content(h)
-	# above will set the content of HeadingContainer 
+	# above will set the content of HeadingContainer
 
 	# ["title", "subtitle"] defined in style of h2
 	# == Some title
 	# Answer in page 2
-	
+
 	# ["title", "subtitle"] defined in style of h2 options can be add at the last line
 	# == Some title
 	# Answer in page 2
 	# {allow_multiple_page: true}
-		
+
 2016 9 21
 	- add pass page_headings options to document
 	- this will allow custom heading support
 	- add HeadingContainer for complex Heading
 	- add SpreadDocument, a two page document with Heading in each page.
-	
+
 2016 9 19
 	- heading with background image
 	- floats
@@ -360,7 +367,7 @@ TODO List
 	- remote item
 	  QuizBank with collections(images or json)
 	  REST API that can receive item collection from remote server.
-	
+
 2016 9 18
 	- implement OrderedList, UnorderedList
 
@@ -380,17 +387,17 @@ TODO List
 	- custom style
 		## word ##		emp1
 		### word ###	emp2
-	 
+
 
 2016 9 1
 	- LeaderToken
-	- EnglishQuizItem 
+	- EnglishQuizItem
 	- quiz item path/to/quiz_item.yaml
-	
+
 2016 8 28
 	- TitleText
 		- set_text
-			text_layout_manager 
+			text_layout_manager
 				- set_text_string
 		- set_image_path
 		- set_local_image
@@ -404,25 +411,25 @@ TODO List
 		- put images by chapter
 2016 8 26
 	- create FlipBook
-		- side toc 
+		- side toc
 		- make it jump to chapter
 		- create hollow template
-		
-		
+
+
 2016 8 25
 	- move templates to rubymotion.app/resouces
 	- create new book with given template
 		book new my_book template=paperback
 		book new my_quiz template=quiz_book
 		book new my_magazine template=ourtown_magzine
-		
+
 	- change Book chapter cli to Chapter
 	- fix Rakefile tasks in book folder
 	- 2r bug when generating font with scale matrix
 	- QuizItem
 		QuizItem.sample(200)
-			
-	
+
+
 	- asciidoctor to active_record
 		- asciidoctor add on markup
 			class Node
@@ -431,7 +438,7 @@ TODO List
 				parent
 				text
 				attributes
-			
+
 2016 8 22
 	- fix layout bug paragraph after space
 	- generate doc_info.yml for each book documents
@@ -442,8 +449,8 @@ TODO List
 		memo, calendar, pdf_inserts
 	- and merge doc_info[:toc] into project/front_matter/toc/doc_info.yml
 	- add custom markups to adoc file
-	- add forced layout to Rakefile 
-	
+	- add forced layout to Rakefile
+
 2016 7 29
 	- parse adoc quiz format
 		. question
@@ -451,26 +458,26 @@ TODO List
 		image::drawing1-3.jpg[figure]
 		== 3
 		=== this is why
-	
+
 	- parse markdown quiz format
 		1. question
 		 	1. choice
 		image::drawing1-3.jpg[figure]
 		## 3
 		### this is why
-	
+
 	- TextTrain, TextStack, EShape, label
-	
+
 2016 7 28
 	- fix QuizItem
 	- parse QuizItem, using both markdown and hash
 	- fix cli, to take local path, not absolute path
-	 
+
 2016 7 27
-	- move read_story to Story and 
+	- move read_story to Story and
 	  refactor from ChapterMaker, MagazineArticleMaker
 	- Create ItemList, something similar to Story but handles itmes
-	
+
 2016 7 15
 	- add hex color #FF0022
 	- make styles similar to css
@@ -482,37 +489,37 @@ TODO List
 2016 7 15
 	- hex color
 	- Quote, Leading, style
-	
+
 2016 7 13
-	- float_group 
+	- float_group
 	change ImageGroup to FloatGroup
 	[floats]
 		image grid_frame
 		quote grid_frame
 		allow_text_jump_over
 	[picture_page]
-	
+
 2016 7 5
 	- ItemChapterMaker
 		- header with Image
 		- side_column
 		- ItemContainer
 		- numbering
-		
+
 2016 6 25
 	- add :stack for  stack mode
-	
+
 2016 6 17
 	- fix Paragraph layout_lines(text_column) for complex column
 	- fix page numbering in ChapterMaker
-	
+
 2016 6 16
 	- fix Paragraph layout_lines(text_column)
-	
+
 2016 6 13
 	- image fit mode 0
 	- puts image at origin and make image size as source size
-	
+
 2016 6 10
 	- create label
 	- make default alignment as "left", not "center"
@@ -523,7 +530,7 @@ TODO List
 	label("T: 010-445-6688")
 	label("E: some@gmail.com", label_font: gothic-bold)
 	label("M: 010-445-6688", label_text_color: 'gray')
-		
+
 2016 5 22
 	- make long document grid_based, based on body grid
 	- Paragraph
@@ -536,7 +543,7 @@ TODO List
 2016 5 12
 	- paragraph text line space ???
 	- eliminate empty line between paragraphs
-	
+
 2016 5 10
 	- FloatGroup
 		page_offset
@@ -549,28 +556,28 @@ TODO List
 2016 5 4
 	- custom style_support
 		chapter_style.rb, magazine_style.rb, news_style.rb
-	
+
 2016 4 27
 	- fix paragraph snapping space skipping, column_layout_space = 0
 	- min_y(grid_frame.rect)
-	
+
 2016 4 21
 	- make parent_graphic as options parent
 	- relayout image_fit when relayout!
-	
+
 2016 2 23
 	- Quiz Maker
 		- add reading text
 		- add answers page
 2016 2 22
 	- heading QuizHeading, NewsHeading
-	
+
 2016 2 21
 	- refactor grid in Graphic
 	    handle grid_frame option, parent_grid_base option
-		init_grid should go under container init 
+		init_grid should go under container init
 	- grid_box
-	
+
 2016 2 17
 	- MusicChapter
 		- put the Header
@@ -579,13 +586,13 @@ TODO List
 2016 2 15
 	- GridBox
 	- CompositePage, generate HTML with map
-	
+
 2015 12 21
 	- parse idml
-	
+
 2015 12 20
 	- add galley mode printing
-	
+
 2015 12 7
 	- get rid of Klass, just use class
 	- fix memo
@@ -594,39 +601,39 @@ TODO List
 
 2015 12 5
 	- add MemoArea
-		
+
 2015 12 3
 	- custom table style support, named table style
 	- master page, chapter, toc, index
 	- admonition
-	
-2015 12 2 
+
+2015 12 2
 	- for articles, support design layouts with different name
 	 	as long as they have .rb extension.
 	- fix newspaper for new structure
-	
+
 2015 12 1
 	- import table data from csv
-	- make table to grow height, break along liked columns 
+	- make table to grow height, break along liked columns
 	- fix TableRow height
-	
+
 2015 11 29
 	- Admonition, label list, icon
-	- synthesised char symbol 
+	- synthesised char symbol
 	- convert hwpml table to adoc table(psv)
-	
+
 2015 11 27
 	- parse Hangul hwpml, create hwpml to rlayout folder
 		- create layout.rb and Rakefile
-		- hwpml korean file name not displayed properly in Mac 
-		- determine image file types, 
+		- hwpml korean file name not displayed properly in Mac
+		- determine image file types,
 		- fix .bmp filetype bug
 		- save table info to disk
 
 2015 11 25
 	- fix hwpml parsing for fragmented paragraph
 	- add paragraph level
-	
+
 2015 11 24
 	- parse hwpml
 	- save image
@@ -639,47 +646,47 @@ TODO List
 	- fix Image shadow bug
 	- add ImageBox IMAGE_PATTERNS add rotation, [1,1,1,1,5], [1,1,1,1,-5]
 	- ImageBox add image_pattern options
-	
+
 2015 11 10
 	- fill upto margin_rect I need to fill the entire area with fill
-	
+
 2015 11 10
 	- fix ImageBox image_style
-	
+
 2015 11 9
 	- TextTrain, char_train
 
 2015 11 7
 	- is_anchor: true, from_lelf, from_bottom, width, height
-	- class growing_box < Container 
-	
+	- class growing_box < Container
+
 2015 11 5
 	- Graphic
 		- fill_image, shadow, rotation
-	- process emphasis element _itatic_, *bold*, underline, super, sub, 
-	- app distribution, 
+	- process emphasis element _itatic_, *bold*, underline, super, sub,
+	- app distribution,
 		demo version, validation date check with license server, 		
 		installation, auto update
 		Documentation
-		
+
 2015 11 4
 	- text_string_array, text_atts_array
-	
+
 2015 11 3
 	- flowing_item
-		member_item, product_item, 
+		member_item, product_item,
 	- anchor
 	  {from_right: 30, from_bottom: 20}
 	- center[:vertical, :horizontal]
 	- page_count, scale, fit text to text_box
-	
+
 2015 11 2
 	- image_caption is done with flowing item
-	
+
 2015 11 1
 	- paragraph
 	- prefix_text, prefix_image, prefix_number
-	
+
 2015 10 26
 	- Magazine save_toc
 	- Document save_layout_info option layout_info.yml
@@ -687,43 +694,43 @@ TODO List
 		toc
 		x_ref
 		index
-		
+
 2015 10 25
 	- Listing
 	- BoxAd
 
 2015 10 23
 	- ObjectBox
-	
+
 2015 10 22
 	- ImageBox, image_pattern
-	- 
-	
+	-
+
 2015 10 19
 	- Rakefile, add changes to layout.rb file
 	- Guardfile
 	- fix grid_rect, set show grid_rect from document
-	
+
 2015 10 18
 	- set demotion level 4, when parse markdown to para_data
-	
+
 2015 10 16
-	- fix quiz markup for GeeMoo 
+	- fix quiz markup for GeeMoo
 	- style
 		- add layout info to text styles
 			fill_color, fill_type, stroke_sides, stroke_width
 		- pass layout_style to document
-		
+
 2015 10 15
 	- heading text element with "clear" color as default fill_color
 	- apply styles to newly creating pages, and TextBoxes
 	- master_page
-		doc, 
+		doc,
 		pages
 			starting_page, middle_page, ending_page
 			left_side, right_side
-			starting_left_page, starting_right_page, 
-			middle_left_page, middle_right_page, 
+			starting_left_page, starting_right_page,
+			middle_left_page, middle_right_page,
 			ending_left_page, ending_right_page
 		heading
 		text_box
@@ -738,67 +745,67 @@ TODO List
 		header
 		footer
 		item
-		
+
 2015 10 14
 	- fix bug: in text_box layout_item duplicating item insert
 	- draw inter_column lines
 	- custom style support
 	- answer sheet
-	
+
 2015 10 13
-	- grow/shorten graphic height as text height 
+	- grow/shorten graphic height as text height
 	- 'keep_box_height', 'fit_text_to_box', 'adjust_box_height'    
-	
+
 2015 10 12
 	- QuizChapterMaker
 	- fix multi column bug
-	
+
 2015 10 7
-	- Book, 
+	- Book,
 	- side_column support
 	- image_layout.rb?
 	- Document generate document_layout.rb
 	- place dummy_image.jpg if no image is present
-	
+
 2015 10 6
 	- fit_text_to_box
 	- FloatGroup
-	
+
 2015 10 5
 	- Table category cell font size
-	- fix text overflow for non-proposed_height 
-		it should be 
+	- fix text overflow for non-proposed_height
+		it should be
 		range= @layout_manager.glyphRangeForTextContainer @text_container
 		if range.length < @att_string.string.length
-		
+
 2015 10 3
-	- delayed content layout 
+	- delayed content layout
 		- by calling layout_content
-		- Page should call layout_content to nested graphics 
-	
+		- Page should call layout_content to nested graphics
+
 2015 10 2
 	- categorized Table with category color
 	- CategoryRow: group of rows with Text
-	- ImageCategoryRow Image as category item. 
+	- ImageCategoryRow Image as category item.
 	- ImageRow: Row with image cells
 	- CustomHead : customizable text
-	
+
 2015 10 1
 	- table_column_width_array
 	- table_column_width_array_average
 	- table_column_width_array_longest
-	- auto_column_width = off, average, 
-	- table_column_align_array 
-	
+	- auto_column_width = off, average,
+	- table_column_align_array
+
 2015 9 30
-	- fix: fill_color should not be Text background color 
-	- fix: layout_lines should have auto adjusting height optional 
-	
+	- fix: fill_color should not be Text background color
+	- fix: layout_lines should have auto adjusting height optional
+
 2015 9 28
 	- TextCell vertical fit
 	- support toned down color
 	- category_level = 1 table
-	
+
 2015 9 27
 	- TextCell font
 	- TextCell stroke_sides line drawing
@@ -816,79 +823,79 @@ TODO List
 	- form for complex short table
 		- stack, bar, hori, vert
 		form do
-		 bar do 
+		 bar do
 			"this",
 			stack("that", "this"),
 			"that"
 		 end
 		end
-		
+
 	table_text = <<-EOF
 	---
 	has_head: true
 	___
-	
+
 	|this span(d1)| that| more text|
 	|             |     | more text|
 	EOF
-	
+
 2015 9 22
-	- table 
+	- table
 		bug fix
 			- Hangul Support(motion-csv bug)
 			- underline drawn at some cells
-			
+
 		- line drawing, # book_mode, book_mode1, news_mode
 		- text fitting
 		- row width array
 		- Heading style, first row style, body cycling
-		
+
 		- table style in Styles
 		- custom table style support
-		
+
 		- linked table
-		- linked table has_heading	
+		- linked table has_heading
 		- multi-column
 		- category, category_level
 		- head_corner_cell col\row
-		
+
 2015 9 20
 	- Newspaper
 	- NewspaperIssue
 	- NewspaperSection
 	- made NewsArticle work with story folder
-	
+
 2015 9 18
 	- NewsArticleMaker bug that heading is not showing
 	- def heading in TextBox
 	- support \n for new line in text_record
-	
+
 2015 9 7
 	- Custom Chapter style
 	- running float image, bleed
 	- HorizontalRule Rule < Line
 	- add Heading background
 	- add running page insert marker
-	
+
 2015 9 6
 	- parse image ![]{grid_frame: [0,0,1,1], local_image: "1.jpg"}
 
 2015 9 1
 	- error handling when pgscript eval fails
 	- show/hide grid rects in TextColumn
-	
-	
+
+
 2015 8 31
-	- magazine: do not add page when layout, just use as designed 
+	- magazine: do not add page when layout, just use as designed
 	- news_article_maker
-	
+
 2015 8 30
 	- TODO: prevent blocks from executing multiple times
 	  once in super and one more time in child class
 	  get rid of block processing in Page
 	- do not execute blocks in Container
 	- do it only at the super class of Container
-	
+
 2015 8 28
 	- MagazineArticleMaker
 	- main_text
@@ -896,37 +903,37 @@ TODO List
 		floats using grid_frame
 
 2015 8 27
-	- ChapterMaker, MagazineArticleMaker, 
+	- ChapterMaker, MagazineArticleMaker,
 		replace Chapter, MagazineArticle, NewsArticle
 	- support custom style loading at rum time
-	
+
 2015 8 23
 	- class Bar
-	- Bar is Container starting as layout_direction set to "horizontal" 
-	
+	- Bar is Container starting as layout_direction set to "horizontal"
+
 
 2015 8 14
 	- fix image fitting in nested pgscript layout
-	- add position 
+	- add position
 		top_left, top_center, top_right
 		middle_left, middle_center, middle_right
 		bottom_left, bottom_center, bottom_right
-		
+
 2015 8 5
 	- support graphic rotation
 	- multiple layout templates for selection
 	- magazine
 	- pgscript manual
-	
+
 2015 7 29
 	- rjob batch mode
 
 2015 7 7
 	- improve text layout
 		fix text spacing
-	
+
 2015 7 3
-	improve PageScript 
+	improve PageScript
 	- add profile
 	- add place
 	- add replace
@@ -934,7 +941,7 @@ TODO List
 
 2015 7 2
 	- add stroke_sides
-	
+
 2015 7 1
 	- project_path local_image
 	- name, division, job_title, address1, address2
@@ -942,43 +949,43 @@ TODO List
 	- ch_name, ch_division, ch_job_title, ch_address1, ch_address2
 	- heading, text_box, side_bar, image_box, text_bar
 	- title, subtitle, author, leading, quate, p, h4, h5, h6
-	
+
 2015 6 17
 	- news_article add reading image layout info
 	- auto fit news_article
-	
-2015 6 12 
+
+2015 6 12
 	- add  section_name to section config
-	
+
 2015 6 1
 	- move grid_frame and grid_size from story metadata to config in section
 	- I should hide this info from users, they don't need to see this.
 	- create symbolic link after creating pdf and jpg, if newsman server
 	 	is set
 	- newsman_issue_path: "/User/mskim/..../OurTownNews/-2015-5-20/Sports"
-	
+
 2015 5 30
 	- save jpg with option jpg: true
 	- don't save pdf with pdf: false
-	
+
 2015 5 21
 	1. NewspaperSection
 		- create images folder in section News
 		- working_site.html
 		- newsman@gmail.com
-		- multi-threaded rake, use global rake 
-		
+		- multi-threaded rake, use global rake
+
 2015 5 16
 	1. Newspaper
 		- float image
-		- article type 
+		- article type
 		- line decoration
-		 
+
 2015 5 15
 	1. book
-		images, 
+		images,
 		fix line space between paragraph
-		
+
 2015 5 13
 	1. support for default and custom Styles
 		- set body_line_height for textColumn
@@ -987,72 +994,72 @@ TODO List
 2015 5 12
 	1. image_fitting, image_frame
 	1. rjob, rnews, rbook, rnamecard, ridcard, rcalendar
-	
+
 2015 5 11
 	1. draw grid lines
 	1. update Text(text_layout_manager) for nsview drawing
-	
-	
+
+
 2015 5 10
 	1. GraphicViewMac Drawing
 		- I was using subviews to present chidren, but it has some problem.
-		- strokes that goes beyond the subview frame are cut off. 
+		- strokes that goes beyond the subview frame are cut off.
 		- I decided not to use subviews for children,but use transforms instead
 		- I can also implement rotation using transforms
 		- in order to use transforms, I have to use bounds instead of frame.
 		- for center point rotation, I have to use center point bounds.
 2015 5 7
 	1. motion rlayout_test app to test in rubymotion environment.
-	
+
 2015 5 7
 	1. Image fit_type, fit_best, fit_horizontal, fit_vertical
 	1. image size detection with mini_magick
 	1. image clipping area
 	1. NSViewDrawing
-	
+
 2015 5 2
 	1. change line records to stroke stroke[:color], stroke[:thickness], stroke[:dash]
 	1. SVG drawing, Container, Page, Document
 	1. Line, LineArrow, Ribbon, RomanDagger, SawTooth
 	1. Struct
-	
+
 2015 4 17
 	1. Graphic drawing
-		1. fill_type, 
+		1. fill_type,
 		1. line_dash, line_type, line_drawing_sides
 		1. shape clipping path, shape corner
-		
+
 2015 4 16
 	1. Add Sojo layout script
 	1. remake grid_key pattern 7x12/5, 7x12/H/5, 7x12/HA/5
 	1. Add image to story, add auto fit with image resizing, min, max
 	1. add filtering to story \'
-	
+
 2015 4 13
 	1. Newsman integration
 	1. Dropbox integration
 	1. change_section_layout
-	1. change section grid_layout 
+	1. change section grid_layout
 	1. support custom grid_key file
 	1. synthesize grid_layouts
 	1. 7x11, 7x6, 6x11, 6x6
-	  
+
 2015 4 11
 	1. grid_key with head notation 7x12H/4, 7x12/5
-	
+
 2015 4 10
 	1. Rakefile for story.pdf, section.pdf, heading.pdf
 	1. has_heading
-	
+
 2015 4 8
 	1. Article, NewsArticle, NewsSection
 	1. grid_size with margin, gutter paper_size
 	1. put the grid_pattern_with source, no need to save it as file
 	1. heading_column for news_article story.
-	1. Page with and without Heading 
+	1. Page with and without Heading
 	1. Save section_info.yml in section folder
 	1. Save CSV
-	
+
 2015 3 31
 	1. Merge grid & float into major feature.
 			Update PGScript to make use of it.
@@ -1224,7 +1231,7 @@ TODO List
 	- auto_layout align top, center, bottom, justified
 	- layout non-expanding children column
 	- fix set_frame, should reset text layout_size
-	
+
 2014 11 10
 	- image drawing,
 	- update image with frame changes

@@ -16,7 +16,7 @@
 #         location: top_left
 #      }
 #]
-#    
+#
 #
 # One way is to put image_path in the meta_data as hash, along with title
 # For book_chaper_article, place image tag along paragraph text
@@ -33,6 +33,14 @@
 #   end
 # end
 
+# iamge crop is done with image_crop rect
+# crop: {6x6, [1,1,4,4]}
+# this will crop image with grid_base and grid_frame
+
+# image catopn file
+# location along side the image with file extention of .captopn
+# first line is the caption title, if ther are more than single line
+
 IMAGE_FIT_TYPE_ORIGINAL       = 0
 IMAGE_FIT_TYPE_VERTICAL       = 1
 IMAGE_FIT_TYPE_HORIZONTAL     = 2
@@ -45,8 +53,8 @@ IMAGE_CHANGE_BOX_SIZE         = 6 #change box size to fit image source as is at 
 # ex. should put images in project.rlayout/images/my_image.jpg
 module RLayout
   class Graphic
-    attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :source_frame, :local_image
-    
+    attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :source_frame, :local_image, :image_caption, :image_crop_rect, :image_crop_grid
+
     def init_image(options)
       #TODO why is image_object is used instead of @image_record??
       @image_record  = options.fetch(:image_record,nil)
@@ -63,7 +71,7 @@ module RLayout
         else
         # elsif options[:local_image]
         #   @local_image          = options[:local_image]
-          return 
+          return
         end
       end
       @image_path       = options[:image_path]
@@ -76,7 +84,7 @@ module RLayout
       #TODO Get rid of this and do it for MRI
       if RUBY_ENGINE == 'rubymotion'
         @image_object     =NSImage.alloc.initByReferencingFile(@image_path)
-        @image_dimension  = [@image_object.size.width, @image_object.size.height] 
+        @image_dimension  = [@image_object.size.width, @image_object.size.height]
         if @image_object && options[:adjust_height_to_keep_ratio]
           @height *= image_object_height_to_width_ratio
         end
@@ -89,21 +97,33 @@ module RLayout
         # end
         # apply_fit_type
       end
-      
+
+      if options[:image_caption] || options[:image_caption]
+        @image_caption = options[:image_caption] || options[:image_caption]
+      else
+        return false unless @image_path
+        ext = File.extname(@image_path)
+        image_caption_path = @image_path.sub(ext, ".caption")
+        if File.exist?(image_caption_path)
+          @image_caption = File.open(image_caption_path, 'r'){|f| f.read}
+        end
+      end
+
+      self
     end
-    
+
     def image_defaults
       {
         image_path: nil,
         local_image: nil,
-        # image_fit_type: IMAGE_FIT_TYPE_KEEP_RATIO, 
-        image_fit_type: IMAGE_FIT_TYPE_IGNORE_RATIO, 
+        # image_fit_type: IMAGE_FIT_TYPE_KEEP_RATIO,
+        image_fit_type: IMAGE_FIT_TYPE_IGNORE_RATIO,
         # source_frame: NSZeroRect,
         clip_path: nil,
         rotation: 0
       }
     end
-    
+
     def apply_fit_type
       case @image_fit_type
       when  IMAGE_FIT_TYPE_ORIGINAL
@@ -113,18 +133,18 @@ module RLayout
       when  IMAGE_FIT_TYPE_HORIZONTAL
         fit_horizontal
       when  IMAGE_FIT_TYPE_KEEP_RATIO
-        fit_keep_ratio 
+        fit_keep_ratio
       when  IMAGE_FIT_TYPE_IGNORE_RATIO
         fit_ignore_ratio
       when IMAGE_CHANGE_BOX_SIZE
         fit_by_changing_box_size
       end
     end
-    
+
     def can_split_at?(position)
       false
     end
-        
+
     def image_object_height_to_width_ratio
       return 1 unless @image_object
       if @image_dimensions
@@ -132,7 +152,7 @@ module RLayout
       else
         @height/@width
       end
-      # return 1 unless 
+      # return 1 unless
     end
 
     def fit_original
@@ -149,11 +169,11 @@ module RLayout
         @source_frame.origin.x = @image_frame.size.width/2.0 - frame_rect.size.width/2.0
         @source_frame.origin.y = @image_frame.size.height/2.0 - frame_rect.size.height/2.0
       else
-        
+
       end
     end
-    
-    def fit_vertical      
+
+    def fit_vertical
       return unless @image_object
       if RUBY_ENGINE == 'rubymotion'
         @image_frame      = NSZeroRect
@@ -172,7 +192,7 @@ module RLayout
          @source_frame.size.width = source_width
          @source_frame.size.height = @image_frame.size.height
       else
-        
+
       end
     end
 
@@ -188,14 +208,14 @@ module RLayout
           return
         end
         # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-        # This is really confusing. If I want to make smaller image , I have to make the source_frame larger        
+        # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
         source_height = @height / (@width/@image_frame.size.width)
         @source_frame.origin.x = 0
         @source_frame.origin.y = (@image_frame.size.height - source_height)/2.0
         @source_frame.size.height = source_height
         @source_frame.size.width = @image_frame.size.width
       else
-        
+
       end
     end
 
@@ -209,14 +229,14 @@ module RLayout
         if grapaphic_rect_width_to_height_ratio > image_frame_width_to_height_ratio
           fit_horizontal
         else
-          fit_vertical 
+          fit_vertical
         end
       else
-        
+
       end
     end
-    
-    
+
+
     def fit_ignore_ratio
       @source_frame = [0,0,0,0]
     end
@@ -224,6 +244,6 @@ module RLayout
     def fit_by_changing_box_size
       puts "fit_by_changing_box_size"
     end
-    
+
   end
 end

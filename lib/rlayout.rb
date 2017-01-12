@@ -17,7 +17,6 @@ elsif RUBY_ENGINE == "opal"
   # require files for Opal
   #
 else
-  puts "loading pry +++++++++++++++++"
   # puts RUBY_ENGINE
   # require 'pry'
   require 'strscan'
@@ -105,6 +104,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/publication/magazine'
   require File.dirname(__FILE__) + '/rlayout/publication/mart'
   require File.dirname(__FILE__) + '/rlayout/publication/newspaper'
+  require File.dirname(__FILE__) + '/rlayout/publication/news_plan'
   require File.dirname(__FILE__) + '/rlayout/publication/photo_book'
   require File.dirname(__FILE__) + '/rlayout/publication/calendar'
   require File.dirname(__FILE__) + '/rlayout/publication/marathon_tag'
@@ -117,9 +117,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/quiz/nr_semi_test_chapter_maker'
 
   require File.dirname(__FILE__) + '/rlayout/mlayout/mdocument'
-
-  puts "finish laoding +++++++++++++++++"
-
 end
 
 module RLayout
