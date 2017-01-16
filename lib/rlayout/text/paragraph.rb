@@ -353,6 +353,14 @@ module RLayout
         token = @tokens.first
         @tallest_token_height = token.height
       end
+
+      if @graphics.length > 0
+        # "Second time around"
+        last_line         = @graphics.last
+        @line_index       = @graphics.length
+        @line_y_offset    = last_line.y + last_line.height
+      end
+
       while @tokens.length > 0
         token = @tokens.first
         if @line_index == 0 && !@linked
@@ -393,8 +401,8 @@ module RLayout
             else
               @overflow = true
             end
-            puts "text_column.column_index:#{text_column.column_index}"
-            puts "reached bottom of column"
+            #  "text_column.column_index:#{text_column.column_index}"
+            #  "reached bottom of column"
             return
           elsif @line_rectangle[2] == 0
             # move move_current_position_by token_heigh
@@ -534,7 +542,7 @@ module RLayout
       range = Pointer.new(NSRange.type)
       i=0
       string = att_str.string
-      puts "att_str.string:#{att_str.string}"
+      #  "att_str.string:#{att_str.string}"
       while i < att_str.string.length do
         attrDict = att_str.attributesAtIndex  i, effectiveRange:range
         length=range[0].length
@@ -542,8 +550,8 @@ module RLayout
         att_hash={}
         starting_index = range[0].location
         ending_index = starting_index + (range[0].length - 1)
-        puts "[starting_index..ending_index]:#{[starting_index..ending_index]}"
-        puts att_hash[:string] = string[starting_index..ending_index]
+        #  "[starting_index..ending_index]:#{[starting_index..ending_index]}"
+        #  att_hash[:string] = string[starting_index..ending_index]
         att_hash[:paragraph_style]=attrDict[NSParagraphStyleAttributeName]  if attrDict[NSParagraphStyleAttributeName]
         if attrDict[NSFontAttributeName]
           att_hash[:font]=attrDict[NSFontAttributeName].fontName

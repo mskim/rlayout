@@ -400,15 +400,6 @@ module RLayout
           end
         end
 
-        if @item.para_string =~/^Seven/
-          puts "@item.para_string:#{@item.para_string}"
-          puts "@item.undeflow:#{@item.underflow}"
-          puts "@item.overflow:#{@item.overflow}"
-          puts "@item.height:#{@item.height}"
-          puts "current_column.room:#{current_column.room}"
-          puts "@item.is_breakable?:#{@item.is_breakable?}"
-        end
-
         if !@item.overflow? && !@item.underflow?
           # @item fits to current column
           current_column.place_item(@item)
@@ -451,7 +442,6 @@ module RLayout
           end
 
         else # overflow and non-breakable
-          puts "overflow and non-breakable"
           #  "not breakable and no room ++++++ "
           column_index +=1
           if column_index < @column_count
@@ -459,7 +449,7 @@ module RLayout
             flowing_items.unshift(@item)
             next
           else
-            puts "going to next page..."
+            # puts "going to next page..."
             flowing_items.unshift(@item)
             return false
           end

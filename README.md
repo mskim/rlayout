@@ -116,11 +116,20 @@ TODO List
 			- index
 			- glossary
 		- put templates under rubymotion app/resouces/
+		- Use YAML, JSON, CSON as design template
 
 2017 1 17
-	- fix layout_items in TextBox
-	- fix layout_lines in Paragraph
-		when overflow happens, there is a bug, layout_lines for the second time.
+	1. Fix Chapter for going beyond two page.
+		- fix layout_items in TextBox
+		- fix layout_lines in Paragraph
+		- when overflow happens, there is a bug, layout_lines for the second time.
+
+	1. make 00_front or front_matter
+		- generate toc
+		- add set starting for next chapter page to doc_info.yml
+		- set starting page from doc_info.yml
+
+	1. fix Rakefile to process only changed file.
 
 2017 1 12
 	- add image crop
