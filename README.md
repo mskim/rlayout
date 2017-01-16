@@ -117,6 +117,11 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017 1 17
+	- fix layout_items in TextBox
+	- fix layout_lines in Paragraph
+		when overflow happens, there is a bug, layout_lines for the second time.
+
 2017 1 12
 	- add image crop
 	- add image caption
@@ -129,7 +134,7 @@ TODO List
 	- multiple_story_article
 
 2016 11 21
-	- fix stroke bug
+	- fix stroke drawing with extra origin offset value bug
 
 2016 11 2
 	- fix label text_size*0.8 bug

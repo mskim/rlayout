@@ -399,12 +399,21 @@ module RLayout
             @item.underflow = true
           end
         end
-        # now item is layed out with colum width, place them in the column
-        # if @item.class != Paragraph
 
-        if @item.respond_to?(:underflow?) && @item.underflow?
+        if @item.para_string =~/^Seven/
+          puts "@item.para_string:#{@item.para_string}"
+          puts "@item.undeflow:#{@item.underflow}"
+          puts "@item.overflow:#{@item.overflow}"
+          puts "@item.height:#{@item.height}"
+          puts "current_column.room:#{current_column.room}"
+          puts "@item.is_breakable?:#{@item.is_breakable?}"
+        end
 
-          # @item doesn't even fit a single line all
+        if !@item.overflow? && !@item.underflow?
+          # @item fits to current column
+          current_column.place_item(@item)
+        elsif @item.respond_to?(:underflow?) && @item.underflow?
+          # @item doesn't even fit a first line
           # no need to split, go to next column
           column_index +=1
           @item.underflow = false
@@ -417,45 +426,42 @@ module RLayout
             flowing_items.unshift(@item)
             return false
           end
-        elsif !@item.overflow? && !@item.underflow?
-          current_column.place_item(@item)
         elsif @item.overflow? && @item.is_breakable?
+          # item doesn not fit, but it is breakable
           if @item.linked
-            # @item is alread splited once so force fit to column
+            # @item is already splited once and it is the second_half,
+            # so force fit to column
+            # TODO We might need to spit this multiple times
             current_column.place_item(@item)
           else
+            # split item into two, place the first part into current column
+            # and insert the second_half into the items array
             second_half = @item.split_overflowing_lines
             current_column.place_item(@item)
+            flowing_items.unshift(second_half)
           end
           column_index +=1
-
           if column_index < @column_count
-            current_column = @graphics[column_index]
-            flowing_items.unshift(second_half)
+            # try with next column
             next
           else
             # we are done with this text_box
-            # insert second_half  back to the item list
             # current_column.relayout!
-            flowing_items.unshift(second_half)
             return false
           end
 
-        elsif !@item.is_breakable?
-          if current_column.room < @item.height
-            #  "not breakable and no room ++++++ "
-            column_index +=1
-            if column_index < @column_count
-              current_column = @graphics[column_index]
-              @item.overflow = false # clear oveflow flag
-              flowing_items.unshift(@item)
-              flowing_items.unshift(@item)
-              next
-            else
-              #  "going to next page..."
-              flowing_items.unshift(@item)
-              return false
-            end
+        else # overflow and non-breakable
+          puts "overflow and non-breakable"
+          #  "not breakable and no room ++++++ "
+          column_index +=1
+          if column_index < @column_count
+            current_column = @graphics[column_index]
+            flowing_items.unshift(@item)
+            next
+          else
+            puts "going to next page..."
+            flowing_items.unshift(@item)
+            return false
           end
         end
       end
