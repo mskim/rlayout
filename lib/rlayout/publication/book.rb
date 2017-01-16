@@ -2,22 +2,24 @@
 
 
 # Creating a book
-# 1. book new sample_book 
-#     this creates a folder 
+# 1. book new sample_book
+#     this creates a folder
 # 2. cd sample_book
 #     there will be a file called book_info.yml
 #     And a folder called source
 #     put text source files in source folder
 #     # source
-#        1.chapter.md
 #        1.chapter/
-#           photo1.jpg
-#           photo2.jpg
-#        2.chapter.md
-#        3.chapter.md
-#        4.chapter.md
-#        5.chapter.md
-#        6.chapter.md
+            # images/
+            #   photo1.jpg
+            #   photo2.jpg
+            # output.pdf
+            # story.md
+#        2.chapter/
+#        3.chapter/
+#        4.chapter/
+#        5.chapter/
+#        6.chapter/
 
 #     and edit book_info.yml
 #     comment out item if you wish to include it.
@@ -61,25 +63,25 @@
 # 6. rake web_site
 #        This will generate HTML version of the book.
 
-# rake update pdf 
+# rake update pdf
 # rake publish pdf_book
 # rake publish web_site
 
 module RLayout
-  
+
   class Book
     attr_accessor :project_path, :starting_page
     def initialize(project_path, options={})
       @project_path  = project_path
-      unless File.exists?(@project_path)
-        system("mkdir -p #{@project_path}") 
+      unless File.directory?(@project_path)
+        system("mkdir -p #{@project_path}")
         copy_template(options)
       end
       @book_tree      = {}
       @starting_page  = 1
       self
     end
-    
+
     #TODO update template
     # fix Rakefile, add cover, toc, forward, dedication
     def copy_template(options={})
@@ -89,7 +91,7 @@ module RLayout
         system("cp -r #{source}/ #{@project_path}/")
       end
     end
-    
+
     def merge_pdf_chpaters
       book_pdf = PDFDocument.new
       Dir.glob("#{@project_path}/*.pdf") do |path|
@@ -107,9 +109,9 @@ module RLayout
       end
       book_pdf.writeToFile("#{@project_path}/book.pdf")
     end
-    
+
     def merge_pdf_articles
-      # Dir.glob("#{@project_path}/*.pdf") 
+      # Dir.glob("#{@project_path}/*.pdf")
       if RUBY_ENGINE == 'rubymotion'
         book_pdf = PDFDocument.new
       end
@@ -132,7 +134,7 @@ module RLayout
         book_pdf.writeToFile("#{@project_path}/book.pdf")
       end
     end
-        
+
     def parse_front_matter_toc
       content = ""
       Dir["#{@project_path}/front_matter/**/doc_info.yml"].each do |front_mater_info|
@@ -142,7 +144,7 @@ module RLayout
       end
       content
     end
-    
+
     def parse_chapter_toc
       content = ""
       Dir["#{@project_path}/*chapter*/doc_info.yml"].each do |chapter_info|
@@ -153,7 +155,7 @@ module RLayout
       end
       content
     end
-    
+
     def parse_rear_matter_toc
       content = ""
       Dir["#{@project_path}/rear_matter/**/doc_info.yml"].each do |read_mater_info|
@@ -161,12 +163,12 @@ module RLayout
       end
       content
     end
-    
+
     def self.update_toc(project_path)
       b=Book.new(project_path)
       b.update_toc
     end
-    
+
     def update_toc
       content =<<EOF
 # Table of content \n
@@ -178,12 +180,24 @@ EOF
       toc_path = @project_path + "/front_matter/01_toc/toc.md"
       File.open(toc_path, 'w'){|f| f.write content}
     end
-    
+
     #update markdown files metadata starting_page:
-    def update_markdown_file_starting_page
-      
+    def update_starting_page
+      new_starting_page = 1
+      Dir["#{@project_path}/*chapter*/doc_info.yml"].each_with_index do |chapter_info, i|
+        yml                 = YAML::load(File.open(chapter_info, 'r'){|f| f.read})
+        if i == 0
+          yml[:starting_page] = 1
+          File.open(chapter_info, 'w'){|f| f.write yml.to_yaml}
+          next
+        end
+        new_starting_page += yml[:page_count]
+        yml[:starting_page] = new_starting_page
+        File.open(chapter_info, 'w'){|f| f.write yml.to_yaml}
+      end
+
     end
-    
+
     def delete_pdf_files
       Dir.glob("#{@project_path}/*.pdf") do |m|
         puts "deleting #{m}..."
@@ -197,10 +211,11 @@ EOF
         system("rm #{m}")
       end
     end
-    
+
     #TODO
     # skip files that are already 3 digits or more
-    # fix filenames with space 
+    # fix filenames with space
+    # 000_chapter
     def normalize_filenames
       new_names = []
       Dir.glob("#{@project_path}/*") do |m|
@@ -218,6 +233,6 @@ EOF
       end
       new_names
     end
-  end  
+  end
 
 end

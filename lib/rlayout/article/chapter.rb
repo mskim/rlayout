@@ -6,7 +6,7 @@
 # deprecated **** Story can be .story, adoc, markdown, or html format.
 # Story file format is our own, mixture of adoc, markdown and LaTex.
 # Stories are first converted to para_data format,
-# It is also converted to Asciidoctor or GHF-markdown for HTML generation. 
+# It is also converted to Asciidoctor or GHF-markdown for HTML generation.
 # Chapter first look for template in local folder,
 # if it is not found, takes default template from library location.
 
@@ -17,12 +17,12 @@
 # We can set width of image as 1, 1/2, 1/3, 1/4 of column.
 # And text will flow around it.
 # The second way is to use float_group.
-# float_group markup shoud containe position information, 
-# such as grid_frame, size, position attributes. 
-# New page is triggered. pre-desinged layout pattern can also be used. 
+# float_group markup shoud containe position information,
+# such as grid_frame, size, position attributes.
+# New page is triggered. pre-desinged layout pattern can also be used.
 # Images and floats are layed on top as floats allowing text to flow around it.
-# And the third method is to use photo_page, 
-# it is similar to image_group, but no text flowing. 
+# And the third method is to use photo_page,
+# it is similar to image_group, but no text flowing.
 # New page is triggered for photo_page.
 # photo_page is pure photo only page, no text paragraph is layed out,
 # no header, no footer, no page number.
@@ -44,14 +44,14 @@
 
 # Add Image bleeding support
 
-# Inserting Pre-Made PDF Pages in the middle of the pages. 
+# Inserting Pre-Made PDF Pages in the middle of the pages.
 
 # new page triggering
 # when we encounter page triggering node, add new page
 #    section_1, photo_page, image_group
 
 
-# LongDocument 
+# LongDocument
 # LongDocument is made to handle collection of document parts, for long document.
 # Typical LongDocument parts are, title_page, section, photo_page, image_group_page.
 # and pdf_insert.
@@ -68,15 +68,15 @@
 # I am adding some of my own markups to asciidoctor adoc with extension.
 # I should transform them into Asciidoctor, LqTex, or markdown format.
 # And it should be simple.
-# First part is meta-data 
-# And followed by block data. 
+# First part is meta-data
+# And followed by block data.
 # Block data is separated by new empty line.
 #
 
 # meta-data
 # ---
 # yaml format key value pair
-# title: 
+# title:
 # subtitle:
 # quote:
 # author:
@@ -127,7 +127,7 @@
 # [table]
 # [math]
 
-# block attributes 
+# block attributes
 # :style: my_style1
 # :shape: round_rect
 # example
@@ -159,7 +159,7 @@ module RLayout
     attr_accessor :document, :output_path, :column_count
     attr_accessor :doc_info, :toc_content
     attr_reader :book_title, :title, :starting_page_number
-    
+
     def initialize(options={} ,&block)
       @project_path = options[:project_path] || options[:article_path]
       if @project_path
@@ -200,17 +200,24 @@ module RLayout
         return
       end
       @starting_page_number = options.fetch(:starting_page_number,1)
+      doc_info_path = @project_path + "/doc_info.yml"
+      if File.exist?(doc_info_path)
+        yaml = File.open(doc_info_path, 'r'){|f| f.read}
+        @doc_info = YAML::load(yaml)
+        @starting_page_number = @doc_info[:starting_page_number]
+      else
+        @doc_info = {}
+      end
       read_story
       layout_story
       output_options = {preview: true}
-      @document.save_pdf(@output_path,output_options) unless options[:no_output] 
-      @doc_info = {}
+      @document.save_pdf(@output_path,output_options) unless options[:no_output]
       @doc_info[:page_count] = @document.pages.length
       save_toc
       self
     end
-        
-    def read_story      
+
+    def read_story
       ext = File.extname(@story_path)
       if ext == ".md" || ext == ".markdown" || ext == ".story"
         @story  = Story.new(@story_path).markdown2para_data
@@ -241,7 +248,7 @@ module RLayout
         elsif para[:markup] == 'unordered_list'
           @paragraphs << UnorderedList.new(para)
         else
-          @paragraphs << Paragraph.new(para) 
+          @paragraphs << Paragraph.new(para)
         end
       end
     end
@@ -268,19 +275,27 @@ module RLayout
 
       @first_page.main_box.layout_items(@paragraphs)
       @page_index = 1
-      
+      puts "@page_index:#{@page_index}"
       while @paragraphs.length > 0
         if @page_index >= @document.pages.length
+          puts "@page_index:#{@page_index}"
+          puts "@document.pages.length:#{@document.pages.length}"
+          puts "create more pages"
           options               = {}
           options[:parent]      = @document
           options[:footer]      = true
           options[:header]      = true
           options[:text_box]    = true
-          options[:column_count] = @document.column_count
-          p=Page.new(options)
+          options[:column_count]= @document.column_count
+          puts " before @document:pages.length:#{@document.pages.length}"
+          p = Page.new(options)
           p.relayout!
           p.main_box.create_column_grid_rects
+          puts " after @document:pages.length:#{@document.pages.length}"
+        else
+          puts "we have pages"
         end
+
         if @document.pages[@page_index].main_box.nil?
           @document.pages[@page_index].main_text
           @document.pages[@page_index].relayout!
@@ -290,10 +305,16 @@ module RLayout
           first_item = @paragraphs.shift
           first_item.layout_page(document: @document, page_index: @page_index)
         end
+        puts "@page_index:#{@page_index}"
         @document.pages[@page_index].main_box.layout_items(@paragraphs)
+        puts "+++++++ after layout page @paragraphs.length:#{@paragraphs.length}"
         @page_index += 1
+        puts "+++++ @page_index:#{@page_index}"
       end
-      update_header_and_footer      
+      puts "+++++++++ After all layed out +++++ @paragraphs.length:#{@paragraphs.length}"
+      puts "+++++++++ After all layed out +++++ @document.pages.length:#{@document.pages.length}"
+
+      update_header_and_footer
     end
 
     def next_chapter_starting_page_number
@@ -307,7 +328,7 @@ module RLayout
       @doc_info[:toc] = @toc_content
       File.open(toc_path, 'w') { |f| f.write @doc_info.to_yaml}
     end
-    
+
     def update_header_and_footer
       header = {}
       header[:first_page_text]  = "| #{@book_title} |" if @book_title
@@ -325,7 +346,7 @@ module RLayout
       @document.footer_rule = footer_rule
       @document.pages.each { |page| page.update_header_and_footer(options)}
     end
-    
+
     def header_rule
       {
         first_page_only: true,

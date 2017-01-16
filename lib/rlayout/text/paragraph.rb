@@ -1,7 +1,7 @@
 
-# For text handling, Text and Paragraph are used 
+# For text handling, Text and Paragraph are used
 # Text Object is used for simple text, usually for single page document or Ads.
-# Text uses NSTextSystem, 
+# Text uses NSTextSystem,
 # Text is also used in Heading, HeadingContainer, where several short texts are used.
 # Paragraph Object is used in middle to long document.
 # Paragraph uses our own text system.
@@ -10,13 +10,13 @@
 # 1. Tokens are created with given para_style.
 # 2. Paragraphs can be layed out the initail time if we know the width of the column to be,
 #    but most of the we do not know where the paragraph will be layed out. So, layout_lines(width)
-#    is called at the time of layout. 
+#    is called at the time of layout.
 # 3. We can encounter simple column or complex column
-#    complex column are those who have overlapping floats of various shapes. 
-#    so the text lines could be shorter than the ones in simple column. 
+#    complex column are those who have overlapping floats of various shapes.
+#    so the text lines could be shorter than the ones in simple column.
 # 3. We can also encounter tokens that are not uniform in heights, math tokens for example
 
- 
+
 # LineFragments
 # LineFragments are made up of TextTokens, ImageToken, MathToken etc....
 # When paragraph is created, TextTokenAtts is created for default att value for all TextTokena and they are all created using it as default.
@@ -30,16 +30,16 @@
 # For text effect, such as italic, bold, boxed, underline, hidden_text, emphasis we can modify the @token_style to get the effect. So designer need to provide paragraph_styles paragraph style as hash.
 # For special layout tokens, such as ruby, reverse ruby,  we have to do some layout modification. In this case, desinger needs to proved the function name of the emphasis, such as ruby, reverse_ruby, icon: name . in custom paragraph style. as para_style[:double_emphasis]  = "reverse_ruby"
 
-#  
+#
 # {{base text}{top text}}
 # {{base text}{top text}}
-# 
+#
 DefRegex = /(def_.*?\(.*?\))/
 
 INLINE_SINGLE_CURL = /(\{.*?\})/
 INLINE_DOUBLE_CURL = /(\{\{.*?\}\})/m
 RUBY_ARGUMENT_DIVIDER   = /\}(\s)*?\{/
-  
+
 # String#split
 # if we use String#split with match, we get the match as an Array eleemnt. I find it very useful.
 # I am using it to parse the inline style empasis and inline special empasis.
@@ -55,7 +55,7 @@ RUBY_ARGUMENT_DIVIDER   = /\}(\s)*?\{/
 # candidate 2
 #   {style empases}
 #   {{boxed_text}}
-#   {{base_text}{top_text}} 
+#   {{base_text}{top_text}}
 #   for each document meaning of {{}} and {} are specified by designer
 #   to make writers not to be concered with design aspect
 #   writers should not be memprizing many many markups, just two or three.
@@ -73,18 +73,18 @@ module RLayout
   #    tokens << TabToken.new
   # end
   # tokens.pop #pop the last TabToken
-  
+
   # tab Token
-    
+
   # we use three different string types in opions
   # text_string for NSText
   # string          Token
   # para_string     For Paragraph, para_string is passed to Tokens as string
   # so the text drawing take place only when option is text_string and string
-  
+
   # list_styles option items are used in list type paragraphs, such as
   # OrderedList, UnordersList, OrderedSection, UpperAlpaList
-  # they all have prefix of ":list_*" , 
+  # they all have prefix of ":list_*" ,
   # it is filtered using "filter_list_options(options)" and saved in @list_style
   # @list_style is passed into Tokens as Graphic options.
 
@@ -94,25 +94,25 @@ module RLayout
   # line_color => color of Line
   # list_fill_color => fill_color of NumberToken
   # list_line_color => line_color of NumberToken
-  
+
   class Paragraph < Container
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
     attr_accessor :para_string, :para_style, :list_style
-    attr_accessor :text_column, :grid_height 
+    attr_accessor :text_column, :grid_height
     attr_accessor :overflow, :underflow, :linked, :line_y_offset, :body_line_height
     attr_accessor :linked
     def initialize(options={})
-      super   
+      super
       #simple, drop_cap, drop_cap_image, math, with_image, with_math
-      @markup         = options.fetch(:markup, 'p') 
+      @markup         = options.fetch(:markup, 'p')
       @para_string    = options.fetch(:para_string, "")
       make_para_style
       # super doen't set @para_style values
-      @fill.color     = @para_style[:fill_color]   
+      @fill.color     = @para_style[:fill_color]
       @space_width    = @para_style[:space_width]
       @grid_height    = options.fetch(:grid_height, 2)
-      @linked         = options.fetch(:linked, false) 
+      @linked         = options.fetch(:linked, false)
       if options[:tokens]
         # this is when Paragraph has been splited into two
         # left over tokens are passed in options[:tokens]
@@ -127,17 +127,17 @@ module RLayout
         # end
       else
         @tokens       = []
-        create_tokens   
+        create_tokens
       end
       # layout_lines is called when Paragraph is actually placed in the column
       # do not call layout_lines at initialization stage, unless requested.
       if options[:layout_lines]
         @body_line_height = 30
-        layout_lines(self)        
+        layout_lines(self)
       end
       self
-    end    
-    
+    end
+
     def box(text, options={})
       para_style = @para_style.dup
       # para_style[:text_string] = text
@@ -145,7 +145,7 @@ module RLayout
       para_style[:stroke_width] = 0.5
       @tokens << TextToken.new(para_style)
     end
-    
+
     def round(text, options={})
       para_style = @para_style.dup
       para_style[:string] = text
@@ -153,7 +153,7 @@ module RLayout
       para_style[:shape]        = "round"
       @tokens << TextToken.new(para_style)
     end
-    
+
     def create_tokens_with_double_curl(para_string)
       split_array = para_string.split(INLINE_DOUBLE_CURL)
       # splited array contains double curl content
@@ -192,9 +192,9 @@ module RLayout
           # line text with just noral text tokens
           create_text_tokens(line)
         end
-      end      
+      end
     end
-    
+
     def create_tokens_with_single_curl(para_string)
       para_string.chomp!
       para_string.sub!(/^\s*/, "")
@@ -224,7 +224,7 @@ module RLayout
         end
       end
     end
-    
+
     def create_special_token(token_type, line_text)
       case token_type
       when "ruby"
@@ -246,23 +246,23 @@ module RLayout
         options[:image_name]  = line_text
         @tokens << RLayout::ImageToken.new(options)
       else
-        #TODO supply more special tokens 
+        #TODO supply more special tokens
         options = {}
         options[:string]  = arg[9]
         @tokens << RLayout::TextToken.new(options)
       end
     end
-    
+
     def create_text_tokens(para_string)
       # parse for tab first
       @tokens += para_string.split(" ").collect do |token_string|
         @para_style[:string] = token_string
         @para_style.delete(:parent) if @para_style[:parent]
         RLayout::TextToken.new(@para_style)
-      end      
+      end
     end
-    
-    # before we create any text_tokens, 
+
+    # before we create any text_tokens,
     # check if we have any special token mark {{something}} or {something}
     # first check for double curl, single curl
     # if double curl is found, split para string with double curl fist
@@ -301,11 +301,11 @@ module RLayout
         end
       end
     end
-        
+
     def line_count
       @graphics.length
     end
-    
+
     # algorithm for laying out paragraph in simple and complex container
     # loop until we run out of tokens
 	  # 1. start with line rect with width of column and height of para_style
@@ -322,7 +322,7 @@ module RLayout
 	  # all tokens are layed out even fo underflow, or overflow.
 	  # underflow is when there is no room even for a single line.
 	  # overflow is when there is not enough room to fit all the lines.
-    
+
     def layout_lines(text_column)
       @text_column      = text_column
       @overflow         = false
@@ -333,11 +333,11 @@ module RLayout
       @text_line_width  = @column_width
       if @para_style[:h_alignment] == "left" || @para_style[:h_alignment] == "justified"
         @first_line_width = @column_width - @para_style[:first_line_indent] - @para_style[:tail_indent]
-        @text_line_width  = @column_width - @para_style[:head_indent] - @para_style[:tail_indent] 
-        
+        @text_line_width  = @column_width - @para_style[:head_indent] - @para_style[:tail_indent]
+
       else
         @first_line_width = @column_width - @para_style[:head_indent] - @para_style[:tail_indent]
-        @text_line_width  = @column_width - @para_style[:head_indent] - @para_style[:tail_indent] 
+        @text_line_width  = @column_width - @para_style[:head_indent] - @para_style[:tail_indent]
       end
       @body_line_height = @text_column.body_line_height
       @line_y_offset    = 0
@@ -350,11 +350,11 @@ module RLayout
       @line_x           = 0
       @line_width       = @first_line_width
       if @tokens.length > 0
-        token = @tokens.first 
+        token = @tokens.first
         @tallest_token_height = token.height
       end
       while @tokens.length > 0
-        token = @tokens.first 
+        token = @tokens.first
         if @line_index == 0 && !@linked
           @line_x     = @para_style[:first_line_indent]
           @line_width = @first_line_width
@@ -374,11 +374,11 @@ module RLayout
                 commited_tokens = line.graphics.dup
                 @tokens.unshift(commited_tokens).flatten!
                 @graphics = [] #clear LineFragment created for this column
-              else
                 @tokens.unshift(@line_tokens).flatten!
+                @overflow   = true
               end
             else
-              @overflow   = true 
+              @overflow   = true
             end
             @height     = @line_y_offset
             return
@@ -390,7 +390,7 @@ module RLayout
             if @graphics.length <= 1
               @underflow  = true
             else
-              @overflow = true 
+              @overflow = true
             end
             puts "text_column.column_index:#{text_column.column_index}"
             puts "reached bottom of column"
@@ -400,14 +400,14 @@ module RLayout
             @text_column.move_current_position_by(@tallest_token_height)
             @line_y_offset += @tallest_token_height
             next
-          else            
+          else
             if @line_rectangle[0] > @para_style[:head_indent]
               #TODO tail_indent
-              @line_x     = @line_rectangle[0]              
+              @line_x     = @line_rectangle[0]
             else
               # @para_style[:head_indent] is right of line origin
               # use head_indent, adjust width as @line_rectangle[2] - (@para_style[:head_indent] - @line_rectangle[0])
-              @line_x     = @para_style[:head_indent]              
+              @line_x     = @para_style[:head_indent]
               @line_width = @line_rectangle[2] - (@para_style[:head_indent] - @line_rectangle[0])
             end
           end
@@ -416,7 +416,7 @@ module RLayout
         if  (@total_token_width + @para_style[:space_width] + token.width) < @line_width
           @total_token_width += (@para_style[:space_width] + token.width)
           @line_tokens << @tokens.shift
-        else 
+        else
           options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @line_width, height: @line_rectangle[3], space_width: @para_style[:space_width]}
           line = LineFragment.new(options)
           @line_y_offset += line.height
@@ -426,7 +426,7 @@ module RLayout
           @height = @line_y_offset
         end
       end
-      
+
       # make LineFragment for last line
       if @line_tokens.length > 0
         options = {parent:self, para_style: @para_style, tokens: @line_tokens, x: @line_x, y: @line_y_offset , width: @line_width, height: @line_rectangle[3], space_width: @para_style[:space_width]}
@@ -437,13 +437,13 @@ module RLayout
       if @para_style[:space_after]
         @height = @line_y_offset + @para_style[:space_after]
       end
-      
+
     end
-	  
+
 	  # this is called when paragraph is splitted or moved to next column and have to be
 	  # relayed out at the carried over column
 	  # lines are already created, it might have to be layed out for complex column
-	  # or different column width, 
+	  # or different column width,
     # def re_layout_lines(text_column)
     #   @overflow         = false
     #       @underflow        = false
@@ -463,7 +463,7 @@ module RLayout
       h[:linked]          = true
       h
     end
-    
+
     # split current paragraph into two at overflowing line
     # return newly created second half Paragraph
     # steps
@@ -478,22 +478,22 @@ module RLayout
       second_half.linked            = true
       second_half
     end
-    
-    # overflow is when we have breakable paragraph 
-    # and partial lines are layout at current column. 
+
+    # overflow is when we have breakable paragraph
+    # and partial lines are layout at current column.
 	  def overflow?
 	    @overflow == true
 	  end
-	  
+
 	  # underflow is when none of the lines can fit into a given column at the position
-	  # We move it to the item to the next column 
+	  # We move it to the item to the next column
 	  def underflow?
 	    @underflow == true
 	  end
-	  
+
 	  # I should read it from StyleService
 	  # list_* are for list item order token attributes
-    def make_para_style      
+    def make_para_style
       h                           = {}
       h[:font]                    = "smSSMyungjoP-W30"
       h[:text_size]               = 10
@@ -511,23 +511,23 @@ module RLayout
       h[:tab_stops]               = [['left', 20], ['left', 40], ['left', 60],['left', 80]]
       h[:double_emphasis]         = {stroke_sides: [1,1,1,1], stroke_thickness: 0.5}
       h[:single_emphasis]         = {stroke_sides: [0,1,0,1], stroke_thickness: 0.5}
-      
+
       style = RLayout::StyleService.shared_style_service.current_style[@markup]
       if style.class == String
         # this is when a style is refering to other style by name
         style = RLayout::StyleService.shared_style_service.current_style[style]
       end
       if style
-        h.merge! style 
-      end     
+        h.merge! style
+      end
       @para_style = h
     end
-    
+
     def filter_list_options(h)
       list_only = Hash[h.select{|k,v| [k, v] if k=~/^list_/}]
       Hash[list_only.collect{|k,v| [k.to_s.sub("list_","").to_sym, v]}]
     end
-    
+
     def attributes_of_attributed_string(att_str)
       att_run_array=[]
       range = Pointer.new(NSRange.type)
@@ -542,12 +542,12 @@ module RLayout
         starting_index = range[0].location
         ending_index = starting_index + (range[0].length - 1)
         puts "[starting_index..ending_index]:#{[starting_index..ending_index]}"
-        puts att_hash[:string] = string[starting_index..ending_index]  
-        att_hash[:paragraph_style]=attrDict[NSParagraphStyleAttributeName]  if attrDict[NSParagraphStyleAttributeName] 
+        puts att_hash[:string] = string[starting_index..ending_index]
+        att_hash[:paragraph_style]=attrDict[NSParagraphStyleAttributeName]  if attrDict[NSParagraphStyleAttributeName]
         if attrDict[NSFontAttributeName]
-          att_hash[:font]=attrDict[NSFontAttributeName].fontName     
-          att_hash[:size]= attrDict[NSFontAttributeName].pointSize.round(2)     
-          # att_hash[:color]= attrDict[NSForegroundColorAttributeName].color     
+          att_hash[:font]=attrDict[NSFontAttributeName].fontName
+          att_hash[:size]= attrDict[NSFontAttributeName].pointSize.round(2)
+          # att_hash[:color]= attrDict[NSForegroundColorAttributeName].color
         end
         att_hash[:tracking]       = attrDict[NSKernAttributeName]            if attrDict[NSKernAttributeName]
         att_hash[:strike]         = attrDict[NSStrikethroughStyleAttributeName] if attrDict[NSStrikethroughStyleAttributeName]
@@ -557,11 +557,11 @@ module RLayout
         att_hash[:styles]<<:bold                                      if attrDict[NSObliquenessAttributeName]
         att_hash[:styles]<< :underline                                if attrDict[NSUnderlineStyleAttributeName]
         att_hash[:styles]<< :superscript                              if attrDict[NSSuperscriptAttributeName]
-        
+
         # is there no subscript?
         # att_hash[:styles]<< :suberscript  if attrDict[NSSubscriptAttributeName]
         att_run_array <<  att_hash
-      end 
+      end
       att_run_array
     end
     # NSString *NSFontAttributeName;
@@ -594,7 +594,7 @@ module RLayout
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent, :para_style
     attr_accessor :x, :y, :width, :height, :total_token_width
-    
+
   	def	initialize(options={})
       # options[:stroke_color]    = 'red'
       options[:layout_direction]  = 'horizontal'
@@ -613,19 +613,19 @@ module RLayout
   	  @para_style       = options[:para_style]
   	  @graphics.each do |token|
         token.parent_graphic = self
-      end   
+      end
   		align_tokens
   		self
   	end
-    
+
     def token_width_sum
       @graphics.map{|t| t.width}.reduce(0, :+)
     end
-    
+
     def rect
       [@x, @y, @width, @height]
     end
-    
+
 	  def align_tokens
 	    return if @graphics.length == 0
 	    @total_token_width = token_width_sum
@@ -634,19 +634,19 @@ module RLayout
       x = 0.0
       @graphics.each do |token|
         token.x = x
-        x += token.width + @space_width        
+        x += token.width + @space_width
       end
-      
+
       case @para_style[:text_alignment]
       when 'left'
       when 'center'
         @graphics.map {|t| t.x += room/2.0}
       when 'right'
-        @graphics.map do |t| 
+        @graphics.map do |t|
           t.x += room
         end
       #TODO
-      # when 'justified' 
+      # when 'justified'
       #   if is_last_line?
       #   else
       #     just_space = room/(@graphics.length - 1)
@@ -657,11 +657,11 @@ module RLayout
       #     end
       #   end
       else
-        
+
       end
-      
+
 	  end
-    
+
     def line_string
       string = ""
       @graphics.each do |token|
@@ -669,46 +669,45 @@ module RLayout
       end
       string
     end
-    
+
     # def tallest_token
-    #  
+    #
     # end
-	  
+
     # def room
     #       @width - @left_indent - @right_indent
     # end
-  
+
   end
 
-  
+
   class DropParagraph < Paragraph
     attr_accessor :image_object, :cap_object, :title, :subtitle, :body
     def initialize(options={}, &block)
       super
-      
+
       self
     end
-    
+
     def layout_lines
-      
+
     end
   end
-  
+
   # ComboParagraph can have DropCap, DropImage, head, body
   class ComboParagraph < Paragraph
     attr_accessor :image_object, :cap_object, :title, :subtitle, :body
-    
+
     def initialize(options={}, &block)
       super
       add_title_tokens
       self
     end
-    
-  end
-  
-  def add_title_tokens
-    
-  end
-    
-end
 
+  end
+
+  def add_title_tokens
+
+  end
+
+end

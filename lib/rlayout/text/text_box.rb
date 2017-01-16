@@ -273,9 +273,9 @@ module RLayout
     #
     # layout paragraphs into columns
     def layout_items(flowing_items)
-      column_index = 0
-      current_column = @graphics[column_index]
-      while @item  = flowing_items.shift do
+      column_index    = 0
+      current_column  = @graphics[column_index]
+      while @item = flowing_items.shift do
         if @item.is_a?(Hash)
           #TODO add hash content to Heading
           if @item[:markup]
@@ -401,9 +401,16 @@ module RLayout
         end
         # now item is layed out with colum width, place them in the column
         # if @item.class != Paragraph
+        puts "@item.para_string:#{@item.para_string}"
+        puts "@item.underflow:#{@item.underflow}"
+        puts "@item.overflow:#{@item.overflow}"
+        puts "@item.is_breakable?:#{@item.is_breakable?}"
+        puts "current_column.room:#{current_column.room}"
+        puts "@item.height:#{@item.height}"
 
         if @item.respond_to?(:underflow?) && @item.underflow?
-
+          puts "underflow"
+          puts  "going to next page..."
           # @item doesn't even fit a single line all
           # no need to split, go to next column
           column_index +=1
@@ -434,6 +441,8 @@ module RLayout
             flowing_items.unshift(second_half)
             next
           else
+            puts "overflow "
+            puts
             # we are done with this text_box
             # insert second_half  back to the item list
             # current_column.relayout!
@@ -442,21 +451,35 @@ module RLayout
           end
 
         elsif !@item.is_breakable?
+          puts "non-breakable"
+          puts "current_column.room:#{current_column.room}"
+          puts "@item.height:#{@item.height}"
           if current_column.room < @item.height
             #  "not breakable and no room ++++++ "
+            puts "should go to next column"
             column_index +=1
+            puts "column_index:#{column_index}"
+            puts "@column_count:#{@column_count}"
             if column_index < @column_count
               current_column = @graphics[column_index]
               @item.overflow = false # clear oveflow flag
-              flowing_items.unshift(@item)
+              @item.underflow = false # clear underflow flag
               flowing_items.unshift(@item)
               next
             else
-              #  "going to next page..."
+              puts "overflowing non breakable"
+              puts  "going to next page..."
+              @item.overflow = false # clear oveflow flag
+              @item.underflow = false # clear underflow flag
               flowing_items.unshift(@item)
               return false
             end
+          else
+
+
           end
+
+
         end
       end
       true
