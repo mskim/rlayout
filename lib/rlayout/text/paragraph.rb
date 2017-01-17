@@ -382,8 +382,8 @@ module RLayout
                 commited_tokens = line.graphics.dup
                 @tokens.unshift(commited_tokens).flatten!
                 @graphics = [] #clear LineFragment created for this column
-              else
                 @tokens.unshift(@line_tokens).flatten!
+                @overflow   = true
               end
             else
               @overflow   = true
@@ -550,8 +550,6 @@ module RLayout
         att_hash={}
         starting_index = range[0].location
         ending_index = starting_index + (range[0].length - 1)
-        #  "[starting_index..ending_index]:#{[starting_index..ending_index]}"
-        #  att_hash[:string] = string[starting_index..ending_index]
         att_hash[:paragraph_style]=attrDict[NSParagraphStyleAttributeName]  if attrDict[NSParagraphStyleAttributeName]
         if attrDict[NSFontAttributeName]
           att_hash[:font]=attrDict[NSFontAttributeName].fontName

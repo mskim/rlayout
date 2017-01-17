@@ -380,7 +380,7 @@ module RLayout
       if options['grid_key']
         @grid_key     = options['grid_key']
         @story_frames = GRID_PATTERNS[@grid_key]
-        @has_heading  = grid_key.split("/")[1]=~/^H/ ? true : false
+        @has_heading  = grid_key.split("/")[1]=~/H/ ? true : false
       end
       system("mkdir -p #{@section_path}") unless File.exist?(@section_path)
       copy_heading_pdf if @has_heading
@@ -430,7 +430,7 @@ module RLayout
       File.open(layout_path, 'w'){|f| f.write layout_content}
     end
 
-    # TODO if Rubymotion YAML kit is fixed the symbol issue in YAML kit, fix it
+    # TODO if Rubymotion YAML kit has fixed the symbol issue in YAML kit, fix it
     # Each section folder has config.yml.
     # config.yml contains information about the section.
     # At the moment, Rubymotion YAML kit doesn't seem to work with symbols it reads symbols as ':key' String.
@@ -461,36 +461,34 @@ module RLayout
     end
 
     # change grid_key value in cofig.yml
-    def change_section_layout(path, grid_key)
-      config_path = path + "/config.yml"
-      section_config = File.open(config_path, 'r'){|f| f.read}
-      section_config = YAML::load(section_config)
-      @section_config['grid_key'] = grid_key
-      @section_config['story_frames'] = @story_frames = GRID_PATTERNS[grid_key.to_sym]
-      File.open(config_path, 'w'){|f| f.write @section_config.to_yaml}
-      section.update_section_layout
-    end
-
-    # grid_key has changed, so update section story files according to new layout
-    # and regenerate all stroies to new layout
-    # regenerate section.pdf and section.jpg
-    def update_section_layout
-      unless GRID_PATTERNS[@grid_key]
+    def self.change_section_layout(section_path, grid_key)
+      unless GRID_PATTERNS[grid_key]
         puts "There is no grid_key as #{grid_key}"
         return
       end
-      @has_heading = @grid_key.split("/")[0] =~/H$/ ? true : false
-      @story_frames = GRID_PATTERNS[@grid_key]
-      @number_of_stories = @story_frames.length
+      config_path = section_path + "/config.yml"
+      section_config = File.open(config_path, 'r'){|f| f.read}
+      section_config = YAML::load(section_config)
+      section_config['grid_key'] = grid_key
+      section_config['story_frames'] = story_frames = GRID_PATTERNS[grid_key.to_sym]
+      File.open(config_path, 'w'){|f| f.write section_config.to_yaml}
+
+      # grid_key has changed, so update section story files according to new layout
+      # and regenerate all stroies to new layout
+      # regenerate section.pdf and section.jpg
+      # update new layout
+      has_heading = grid_key.split("/")[0] =~/H$/ ? true : false
+      story_frames = GRID_PATTERNS[@grid_key]
+      number_of_stories = story_frames.length
       # update config
-      section_config_path = @section_path + "/config.yml"
+      section_config_path = section_path + "/config.yml"
       section_config = make_section_config
       File.open(section_config_path, 'w'){|f| f.write section_config.to_yaml}
-      if @has_heading
-        @number_of_stories -= 1
+      if has_heading
+        number_of_stories -= 1
       end
-      @number_of_stories.times do |i|
-        story_path =  @section_path + "/#{i + 1}.story.md"
+      number_of_stories.times do |i|
+        story_path =  section_path + "/#{i + 1}.story.md"
         if File.exist?(story_path)
           make_story_layout(i)
         else
@@ -501,7 +499,13 @@ module RLayout
       end
       # update section pdf
       puts "generating section pdf..."
-      update_section
+      NewspaperSection.update_section(section_path)
+    end
+
+    # Run rake to update pdf files in section folder
+    # class method
+    def self.update_section(section_path)
+      system ("cd #{section_path} && rake")
     end
 
     # Run rake to update pdf files in section folder

@@ -273,9 +273,9 @@ module RLayout
     #
     # layout paragraphs into columns
     def layout_items(flowing_items)
-      column_index = 0
-      current_column = @graphics[column_index]
-      while @item  = flowing_items.shift do
+      column_index    = 0
+      current_column  = @graphics[column_index]
+      while @item = flowing_items.shift do
         if @item.is_a?(Hash)
           #TODO add hash content to Heading
           if @item[:markup]
@@ -436,11 +436,12 @@ module RLayout
             # try with next column
             next
           else
+            puts "overflow "
+            puts
             # we are done with this text_box
             # current_column.relayout!
             return false
           end
-
         else # overflow and non-breakable
           #  "not breakable and no room ++++++ "
           column_index +=1
@@ -529,7 +530,8 @@ module RLayout
       if grid_frame[0] >= @graphics.length
         frame_x           = @graphics.last.x_max
       else
-        frame_x           = @grid_size[0]*grid_frame[0]
+        # frame_x           = @grid_size[0]*grid_frame[0]
+        frame_x           = @grid_size[0]*grid_frame[0] + (grid_frame[0])*@layout_space
       end
       frame_y             = @grid_size[1]*grid_frame[1]
       frame_width         = @grid_size[0]*grid_frame[2] + (grid_frame[2] - 1)*@layout_space

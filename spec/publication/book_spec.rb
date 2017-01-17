@@ -1,9 +1,8 @@
-require File.dirname(__FILE__) + "/../spec_helper"
-
+require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'create new book' do
   before do
-    @path = "/Users/mskim/magazine_article"
+    @path = "/Users/mskim/demo/demo_book/sample_book"
     @book = Book.new(@path)
   end
 
@@ -14,10 +13,15 @@ describe 'create new book' do
   it 'should create a folder ' do
     File.exists?(@path).must_equal true
   end
-  
-  it 'should merge pdf_articles ' do
-    @book.merge_pdf_articles
+
+  it 'should add page number to doc_info.yml' do
+    @book.update_starting_page
+
   end
+  #
+  # it 'should merge pdf_articles ' do
+  #   @book.merge_pdf_articles
+  # end
 end
 
 __END__

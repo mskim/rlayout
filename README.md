@@ -131,6 +131,19 @@ TODO List
 
 	1. fix Rakefile to process only changed file.
 
+2017_1_15
+	1. Use YAML, JSON, CSON as design template
+
+2017_1_14
+	book
+	1. Fix Chapter for going beyond two page.
+	1. make 00_front
+		- generate toc
+		- add set starting for next chapter page to doc_info.yml
+		- set starting page from doc_info.yml
+
+	1. fix Rakefile to process only changed file.
+
 2017 1 12
 	- add image crop
 	- add image caption
@@ -183,13 +196,17 @@ TODO List
 	- FakerBook
 		title
 		author
-
-2016 10 11
-	- chapter
-		- filename_output:true will output pdf with filename.pdf
+		- filename_output: true will output pdf with filename.pdf
 		  otherwise output.pdf
 		- fix footer
 		- justify
+
+2016 10 11
+	- Chapter/Book
+	- generate TOC
+	- set Starting page
+	- grid_layout
+		- auto-generate grid_layouts by splitting
 
 2016 10 7
 	- Rakefile file dependency on either md or layout.rb, not both
@@ -202,7 +219,7 @@ TODO List
 		process single PDF file.
 		generate jpg, preview, doc_info
 
-2016 10 5
+2016 10 4
 	- fix list justification
 	- Add ImageToken
 
