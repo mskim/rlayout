@@ -1,25 +1,25 @@
 
 module RLayout
-  
+
   # Why FloatGroup?
   # The problem
   # I want to add flowing images along the text, but laying them out is a challenge.
   # How do I place an image or any floats, when they are flowing with text?
   # It can be unpredictable where they might end up.
-  # We can have several floating objects at a same page, and it would be a nightmante to layout them out by any algorithm. 
-  # I might want to place two images in a same page, but they could end up in different pages. I need to a way to spceify the layout, and yet they need to flow dynamictally with text. This is where FloatGroup comes in. FloatGroup is a semi-auto layout process. You can specipy the layout of float group by page. 
-  
-  # FloatGroup puts group of floats(an image, quote, etc..) at current page 
+  # We can have several floating objects at a same page, and it would be a nightmante to layout them out by any algorithm.
+  # I might want to place two images in a same page, but they could end up in different pages. I need to a way to spceify the layout, and yet they need to flow dynamictally with text. This is where FloatGroup comes in. FloatGroup is a semi-auto layout process. You can specipy the layout of float group by page.
+
+  # FloatGroup puts group of floats(an image, quote, etc..) at current page
   # if image group is the first item, text_box.exmpty?==true
-  # else it puts image at the following page, adding page if the page doen't exist. 
+  # else it puts image at the following page, adding page if the page doen't exist.
   # for the second case we could get unwanted space between the previous paragraph and next page image, since we don't know where the exact breaking point is.
-  # We want the folliwing paragraphs to fill into the previous page's space before the image, if we have room. "allow_text_jump_over" flag is used to tell it to do so. 
+  # We want the folliwing paragraphs to fill into the previous page's space before the image, if we have room. "allow_text_jump_over" flag is used to tell it to do so.
 
   # 1. allow_text_jump_over
   # it tells to allow following text to jump over and fill the gap in previous page of the image.
-  
+
   # 2. page_offset?? not implemented yet we could do this we multipe image_group
-  # if image is specified with page_offset starting from next page, 
+  # if image is specified with page_offset starting from next page,
   # image is place ot offsetting page
   # This is used to layout image that are certain pages apart.
   # [float_group]
@@ -37,10 +37,10 @@ module RLayout
       @floats               = make_floats(options[:text_block])
       self
     end
-    
+
     # example
     #TODO hanlde other floats besides image
-    
+
     # [float_group]
   	# {local_image: "1.jpg", frame_rect: [0,0,1,1]}
   	# {local_image: "2.jpg", frame_rect: [0,0,1,1], page_offset:1}
@@ -73,13 +73,13 @@ module RLayout
     def layout_page(options={})
       @document     = options[:document]
       @page_index   = options[:page_index]
-      @starting_page_number = options.fetch(:@starting_page_number, 1)
+      @starting_page = options.fetch(:@starting_page, 1)
       @page         = @document.pages[@page_index]
       @main_box     = @page.main_box
-      
+
       if @main_box.empty?
         # put image group in empty main_box
-      else        
+      else
         # go to next page
         @page_index += 1
         # make page, if it is the last page
@@ -89,7 +89,7 @@ module RLayout
           options[:footer]      = true
           options[:header]      = true
           options[:text_box]    = true
-          options[:page_number] = @starting_page_number + @page_index
+          options[:page_number] = @starting_page + @page_index
           options[:column_count]= @document.column_count
           p=Page.new(options)
           p.relayout!
@@ -107,7 +107,7 @@ module RLayout
       @main_box.set_overlapping_grid_rect
       @main_box.update_column_areas
     end
-    
+
   end
 
 

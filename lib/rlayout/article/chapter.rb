@@ -158,7 +158,7 @@ module RLayout
     attr_accessor :project_path, :template_path, :story_path
     attr_accessor :document, :output_path, :column_count
     attr_accessor :doc_info, :toc_content
-    attr_reader :book_title, :title, :starting_page_number
+    attr_reader :book_title, :title, :starting_page
 
     def initialize(options={} ,&block)
       @project_path = options[:project_path] || options[:article_path]
@@ -199,19 +199,24 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
-      @starting_page_number = options.fetch(:starting_page_number,1)
+      @starting_page = options.fetch(:starting_page,1)
       doc_info_path = @project_path + "/doc_info.yml"
       if File.exist?(doc_info_path)
         yaml = File.open(doc_info_path, 'r'){|f| f.read}
         @doc_info = YAML::load(yaml)
-        @starting_page_number = @doc_info[:starting_page_number]
+        @starting_page = @doc_info[:starting_page]
       else
         @doc_info = {}
+      end
+      @document.starting_page = @starting_page
+      @document.pages.each_with_index do |page, i|
+        page.page_number = @starting_page + i
       end
       read_story
       layout_story
       output_options = {preview: true}
       @document.save_pdf(@output_path,output_options) unless options[:no_output]
+      @doc_info[:starting_page] = @starting_page
       @doc_info[:page_count] = @document.pages.length
       save_toc
       self
@@ -275,25 +280,17 @@ module RLayout
 
       @first_page.main_box.layout_items(@paragraphs)
       @page_index = 1
-      puts "@page_index:#{@page_index}"
       while @paragraphs.length > 0
         if @page_index >= @document.pages.length
-          puts "@page_index:#{@page_index}"
-          puts "@document.pages.length:#{@document.pages.length}"
-          puts "create more pages"
           options               = {}
           options[:parent]      = @document
           options[:footer]      = true
           options[:header]      = true
           options[:text_box]    = true
           options[:column_count]= @document.column_count
-          puts " before @document:pages.length:#{@document.pages.length}"
           p = Page.new(options)
           p.relayout!
           p.main_box.create_column_grid_rects
-          puts " after @document:pages.length:#{@document.pages.length}"
-        else
-          puts "we have pages"
         end
 
         if @document.pages[@page_index].main_box.nil?
@@ -305,22 +302,17 @@ module RLayout
           first_item = @paragraphs.shift
           first_item.layout_page(document: @document, page_index: @page_index)
         end
-        puts "@page_index:#{@page_index}"
         @document.pages[@page_index].main_box.layout_items(@paragraphs)
-        puts "+++++++ after layout page @paragraphs.length:#{@paragraphs.length}"
         @page_index += 1
-        puts "+++++ @page_index:#{@page_index}"
       end
-      puts "+++++++++ After all layed out +++++ @paragraphs.length:#{@paragraphs.length}"
-      puts "+++++++++ After all layed out +++++ @document.pages.length:#{@document.pages.length}"
 
       update_header_and_footer
     end
 
-    def next_chapter_starting_page_number
-      @starting_page_number = 1 if @starting_page_number.nil?
+    def next_chapter_starting_page
+      @starting_page = 1 if @starting_page.nil?
       @page_view_count = 0   if @page_view_count.nil?
-      @starting_page_number + @page_view_count
+      @starting_page + @page_view_count
     end
 
     def save_toc

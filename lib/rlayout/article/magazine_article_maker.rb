@@ -3,26 +3,26 @@
 # MagazineArticleMaker should be able to support highly customizable designs.
 # MagazineArticleMaker works with given folder with story, layout.rb, and images
 # layout.rb defines layout and styles
-# if layout.rb doesn't exist in article folder, 
+# if layout.rb doesn't exist in article folder,
 # default layout is used, "/Users/Shared/SoftwareLab/article_template/magazine.rb" is used.
 # Image layout can be set using GIM
 # Images can be stored in images folder by page and image size
 # making image in the article controlable.
- 
+
 # Page Count is usually fixed for magazine, default is 2
 
 module RLayout
 
   class MagazineArticleMaker
     attr_accessor :article_path, :template, :story_path, :images_dir, :tables_dir
-    attr_accessor :document, :style, :starting_page_number, :no_story
+    attr_accessor :document, :style, :starting_page, :no_story
     attr_accessor :output_path
-    
+
     def initialize(options={} ,&block)
       puts "2016 6 17"
       $publication_type = "magazine"
       @article_path = options[:article_path] || options[:project_path]
-      @starting_page_number = options.fetch(:starting_page_number, 1)
+      @starting_page = options.fetch(:starting_page, 1)
       @article_path = options[:article_path]
       @story_path   = Dir.glob("#{@article_path}/*.{md,markdown}").first
       if !@story_path && @article_path
@@ -44,7 +44,7 @@ module RLayout
       else
         @tables_dir = @article_path + "/tables"
       end
-      
+
       unless File.exist?(@template)
         @template   = "/Users/Shared/SoftwareLab/article_template/magazine.rb"
       end
@@ -56,13 +56,13 @@ module RLayout
       unless @document.kind_of?(RLayout::Document)
         puts "Not a @document kind created !!!"
         return
-      end 
-                   
+      end
+
       unless @no_story == true
         read_story
         layout_story
       end
-      
+
       if @output_path
         if RUBY_ENGINE =="rubymotion"
           output_options = {:preview=>true}
@@ -71,10 +71,10 @@ module RLayout
           puts "RUBY_ENGINE == ruby"
         end
       end
-      
+
       self
     end
-    
+
     def read_story
       unless File.exists?(@story_path)
         puts "Can not find file #{@story_path}!!!!"
@@ -141,16 +141,16 @@ module RLayout
       update_header_and_footer
     end
 
-    def next_chapter_starting_page_number
-      @starting_page_number=1 if @starting_page_number.nil?
+    def next_chapter_starting_page
+      @starting_page=1 if @starting_page.nil?
       @page_view_count = 0   if @page_view_count.nil?
-      @starting_page_number + @page_view_count
+      @starting_page + @page_view_count
     end
 
     def save_toc(path)
 
     end
-    
+
     def update_header_and_footer
       header= {}
       header[:first_page_text]  = "| #{@book_title} |" if @book_title
@@ -169,7 +169,7 @@ module RLayout
       @document.footer_rule = footer_rule
       @document.pages.each {|page| page.update_header_and_footer(options)}
     end
-    
+
     def header_rule
       {
         :first_page_only  => true,
@@ -185,7 +185,7 @@ module RLayout
       h[:right_page]      = true
       h
     end
-    
+
     def self.save_rakefile(path)
       rake_text  = <<-EOF.gsub(/^\s*/, "")
       task :default => :pdf
@@ -208,7 +208,7 @@ module RLayout
       	end
       end
 
-      
+
       EOF
       File.open(path, 'w'){|f| f.write rake_text}
     end

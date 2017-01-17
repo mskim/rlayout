@@ -72,7 +72,7 @@ module RLayout
   class Document
     attr_accessor :title, :path, :paper_size, :portrait, :width, :height, :starts_left, :double_side
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
-    attr_accessor :pages, :document_view, :starting_page_number
+    attr_accessor :pages, :document_view, :starting_page
     attr_accessor :page_view_count, :toc_elements
     attr_accessor :header_rule, :footer_rule, :gim
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
@@ -93,7 +93,7 @@ module RLayout
         @portrait   = options[:layout_style].fetch(:portrait, document_defaults[:portrait])
         @double_side= options[:layout_style].fetch(:double_side, document_defaults[:double_side])
         @starts_left= options[:layout_style].fetch(:starts_left, document_defaults[:starts_left])
-      else        
+      else
         @paper_size = options.fetch(:paper_size, "A4")
         @portrait   = options.fetch(:portrait, document_defaults[:portrait])
         @double_side= options.fetch(:double_side, document_defaults[:double_side])
@@ -112,11 +112,11 @@ module RLayout
         @width  = @height
         @height = temp
       end
-      # for printing 
+      # for printing
       if options[:pdf_path]
         @pdf_path = options[:pdf_path]
       end
-      
+
       if options[:jpg]
         @jpg = options[:jpg]
       end
@@ -128,17 +128,17 @@ module RLayout
       @top_margin = options.fetch(:top_margin, document_defaults[:top_margin])
       @right_margin = options.fetch(:right_margin, document_defaults[:right_margin])
       @bottom_margin= options.fetch(:bottom_margin, document_defaults[:bottom_margin])
-      if options[:starting_page_number]
-        @starting_page_number = options[:starting_page_number]
-        if @starting_page_number.odd?
+      if options[:starting_page]
+        @starting_page = options[:starting_page]
+        if @starting_page.odd?
           @starts_left = false
         end
       elsif @starts_left
-        @starting_page_number = 2
+        @starting_page = 2
       else
-        @starting_page_number = 1
+        @starting_page = 1
       end
-      if options[:initial_page] == false        
+      if options[:initial_page] == false
         # do not create any page
       elsif options[:pages]
         options[:pages].each do |page_hash|
@@ -162,16 +162,16 @@ module RLayout
       if proposed_style = options[:current_style]
         if proposed_style.is_a?(Hash) && proposed_style != {}
           RLayout::StyleService.shared_style_service.current_style.merge! proposed_style
-        end 
+        end
       end
-      
+
       if @toc_on
         # save_toc elements for this document
         @toc_elements = []
       end
       if block
         instance_eval(&block)
-      end  
+      end
       self
     end
 
@@ -189,11 +189,11 @@ module RLayout
         bottom_margin: 50,
       }
     end
-    
+
     def layout_rect
       [@left_margin, @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
     end
-    
+
     def page(options={}, &block)
       options[:parent] = self
       options[:paper_size] = @paper_size
@@ -257,7 +257,7 @@ module RLayout
       end
       h
     end
-    
+
     def self.upgrade_format(old_hash)
       new_hash = old_hash.dup
       new_pages = []
@@ -270,7 +270,7 @@ module RLayout
       new_hash[:pages]    = new_pages
       new_hash
     end
-    
+
     def self.open(path, options={})
       rlayout_yaml_path= path + "/layout.yml"
       hash = {}
@@ -293,19 +293,19 @@ module RLayout
     def self.rlayout(path, options={},&block)
       options[:path]=path
       doc=Document.new(options,&block)
-      doc.rlayout(path)      
+      doc.rlayout(path)
       doc
     end
 
     def save_yml(path)
       File.open(path, 'w'){|f| f.write to_hash.to_yaml}
     end
-    
+
     def pdf_document
       @document_view ||= DocumentViewMac.new(self)
       @document_view.pdf_document
     end
-    
+
     def save_pdf(path, options={})
       if RUBY_ENGINE == 'rubymotion'
         @ns_view = DocumentViewMac.new(self)
@@ -318,7 +318,7 @@ module RLayout
     def save_toc(path)
       File.open(path, 'w'){|f| f.write toc_element.to_yaml}
     end
-    
+
     def to_pgscript
       layout = ""
       @pages.each do |page|
@@ -326,7 +326,7 @@ module RLayout
       end
       layout
     end
-    
+
     def save_document_layout(options={})
       doc_variables = "width: #{@width}, height: #{@height}"
       # doc_variables += ", "

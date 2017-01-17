@@ -2,21 +2,21 @@ module RLayout
 
   class CodeMusic < Document
     attr_accessor :project_path, :music_hash, :piano_keys, :piano_codes_path
-    
+
     def initialize(options={}, &block)
       @project_path = options[:project_path]
       yml_path      = Dir.glob("#{@project_path}/*.yml").first
-      @music_hash   = YAML::load(File.open(yml_path, 'r'){|f| f.read}) 
+      @music_hash   = YAML::load(File.open(yml_path, 'r'){|f| f.read})
       save_piano_keys_scripts
       generate_piano_code
       layout_pages
       self
     end
-    
+
     def layout_pages
       @music_hash[:measures].length
     end
-    
+
     def save_piano_keys_scripts
       @piano_keys = []
       # puts "@music_hash[:measures].length:#{@music_hash[:measures].length}"
@@ -32,19 +32,19 @@ EOF
         File.open(script_path, 'w'){|f| f.write piano_code_script}
       end
     end
-    
+
     def generate_piano_code
       script_dir = "/Users/mskim/Development/music/songs/iu/script"
       Dir.glob("#{script_dir}/*.rb").each do |script|
         system "/Applications/rjob.app/Contents/MacOS/rjob #{script}"
       end
     end
-    # 
+    #
   end
-  
+
   # we have cord_layout and sheet_layout
-  # 
-  
+  #
+
   class CodeMusicPage < Page
     attr_accessor :heading, :code_layout, :sheet_image, :sheet_layout, :cord_layout
     def initialize(options={})
@@ -61,13 +61,12 @@ EOF
       self
     end
   end
-  
+
   class PianoFinger < Container
     attr_accessor :number, :project_path, :piano_codes_path, :image_path, :code, :lyric, :code_image, :lyric_layout, :output_path
     def initialize(options={})
       options[:width] = 300 unless options[:width]
       super
-      puts "options:#{options}"
       @project_path     = options[:project_path]
       @piano_codes_path = "/Users/Shared/piano_cord"
       @number           = options[:number] #|| options['number']
@@ -84,6 +83,6 @@ EOF
       relayout!
       self
     end
-    
+
   end
 end

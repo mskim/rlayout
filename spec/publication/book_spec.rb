@@ -16,7 +16,7 @@ describe 'create new book' do
 
   it 'should add page number to doc_info.yml' do
     @book.update_starting_page
-
+    @book.update_toc
   end
   #
   # it 'should merge pdf_articles ' do

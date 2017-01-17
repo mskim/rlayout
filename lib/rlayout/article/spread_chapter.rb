@@ -20,7 +20,7 @@
 
 # we need to create Heading from markdown
 
-# markup2heading_key_map 
+# markup2heading_key_map
 # ["number", "title", "subtitle", "leading"] defined in style of h1
 # = 03
 # Some title
@@ -32,10 +32,10 @@
 # Answer in page 2
 
 # abpve markup text will be translated to Chapter Heading
- 
-#    
+
+#
 module RLayout
-    
+
   class SpreadChapter < Chapter
 	  attr_accessor :first_page, :second_page, :h1_heading_object, :h2_heading_object, :sections_paragraph
 	  attr_reader :book_title, :title
@@ -56,12 +56,12 @@ module RLayout
         @project_path = File.dirname(@story_path)
       end
       $ProjectPath  = @project_path
-      
+
       if options[:output_path]
         @output_path = options[:output_path]
       else
         @output_path = @project_path + "/output.pdf"
-      end      
+      end
       if options[:template_path] && File.exist?(options[:template_path])
         @template_path = options[:template_path]
       else
@@ -80,28 +80,28 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
-      @starting_page_number = options.fetch(:starting_page_number,2)
-      @document.starting_page_number = @starting_page_number
+      @starting_page = options.fetch(:starting_page,2)
+      @document.starting_page = @starting_page
       read_story
       layout_story
       output_options = {:preview=>true}
-      @document.save_pdf(@output_path, output_options) unless options[:no_output] 
+      @document.save_pdf(@output_path, output_options) unless options[:no_output]
       @doc_info = {}
       @doc_info[:page_count] = @document.pages.length
       save_toc
       self
     end
-    
+
     # markdown2section_data reads stroy by section
-    # markdown2section_data is used 
+    # markdown2section_data is used
     # Story is read with a format with two page content
     # Story has heading content.
     # story[0]
     # first_page_heading = story[:first][0]
     # story[1]
     # second_page_heading = story[:second][0]
-    
-    def read_story      
+
+    def read_story
       ext = File.extname(@story_path)
       if ext == ".md" || ext == ".markdown" || ext == ".story"
         # @story  = Story.new(@story_path).markdown2para_data
@@ -126,7 +126,7 @@ module RLayout
           elsif para[:markup] == 'h2'
             current_section_paragraph << para
           elsif para[:markup] == 'img' && para[:string]
-            para.merge! eval(para.delete(:string))            
+            para.merge! eval(para.delete(:string))
             current_section_paragraph << Image.new(para)
           elsif para[:markup] == 'table'
             current_section_paragraph << Table.new(para)
@@ -141,7 +141,7 @@ module RLayout
           elsif para[:markup] == 'unordered_list'
             current_section_paragraph << UnorderedList.new(para)
           else
-            current_section_paragraph << Paragraph.new(para) 
+            current_section_paragraph << Paragraph.new(para)
           end
         end
         @sections_paragraph << current_section_paragraph
@@ -152,7 +152,7 @@ module RLayout
       @page_index               = 0
       @first_page               = @document.pages[0]
       if heading = @first_page.has_heading?
-        @first_page_heading = @first_page.heading_object        
+        @first_page_heading = @first_page.heading_object
       else
         @heading[:layout_expand] = [:width, :height]
         heading_object           = Heading.new(@heading)
@@ -190,7 +190,7 @@ module RLayout
             options[:footer]      = true
             options[:header]      = true
             options[:text_box]    = true
-            options[:page_number] = @starting_page_number + @page_index
+            options[:page_number] = @starting_page + @page_index
             options[:column_count]= @document.column_count
             p=Page.new(options)
             p.relayout!
@@ -208,7 +208,7 @@ module RLayout
           @document.pages[@page_index].main_box.layout_items(section_paragraphs)
           @page_index += 1
         end
-      end 
+      end
       update_header_and_footer
     end
 
@@ -229,7 +229,7 @@ module RLayout
       @document.footer_rule = footer_rule
       @document.pages.each {|page| page.update_header_and_footer(options)}
     end
-    
+
     def header_rule
       {
         :left_page        => false,
@@ -245,6 +245,6 @@ module RLayout
       h
     end
   end
-  
+
 
 end

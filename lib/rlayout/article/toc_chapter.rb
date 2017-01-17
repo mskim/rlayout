@@ -5,8 +5,8 @@
 # It work similar to other chapter layout, read toc.md and layout them out on pages.
 
 module RLayout
-  
-  class TOCChapter 
+
+  class TOCChapter
 	  attr_accessor :project_path, :toc_path, :document
     def initialize(options={} ,&block)
       @project_path = options[:project_path]
@@ -25,12 +25,12 @@ module RLayout
         @project_path = File.dirname(@toc_path)
       end
       $ProjectPath  = @project_path
-      
+
       if options[:output_path]
         @output_path = options[:output_path]
       else
         @output_path = @project_path + "/output.pdf"
-      end      
+      end
       if options[:template_path] && File.exist?(options[:template_path])
         @template_path = options[:template_path]
       else
@@ -49,18 +49,18 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
-      # @starting_page_number = options.fetch(:starting_page_number,2)
-      # @document.starting_page_number = @starting_page_number
+      # @starting_page = options.fetch(:starting_page,2)
+      # @document.starting_page = @starting_page
       read_toc
       layout_toc
       output_options = {:preview=>true}
-      @document.save_pdf(@output_path, output_options) unless options[:no_output] 
+      @document.save_pdf(@output_path, output_options) unless options[:no_output]
       @doc_info = {}
       @doc_info[:page_count] = @document.pages.length
       self
     end
-        
-    def read_toc     
+
+    def read_toc
       ext = File.extname(@toc_path)
       if ext == ".md"
         @story  = Story.new(@toc_path).markdown2para_data
@@ -72,7 +72,7 @@ module RLayout
       #   next if para.nil?
       #   para[:layout_expand]  = [:width]
       #   if para[:markup] == 'img' && para[:string]
-      #     para.merge! eval(para.delete(:string))            
+      #     para.merge! eval(para.delete(:string))
       #     @paragraphs << Image.new(para)
       #   elsif para[:markup] == 'ordered_list'
       #     @paragraphs << OrderedList.new(para)
@@ -83,7 +83,7 @@ module RLayout
       #   elsif para[:markup] == 'unordered_list'
       #     @paragraphs << UnorderedList.new(para)
       #   else
-      #     @paragraphs << Paragraph.new(para) 
+      #     @paragraphs << Paragraph.new(para)
       #   end
       # end
     end
@@ -112,6 +112,6 @@ module RLayout
 
 
   end
-  
+
 
 end

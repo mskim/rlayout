@@ -1,7 +1,7 @@
 
-# layout_content! 
+# layout_content!
 # layout_content calls layout_content for each text_box, and table.
-# 
+#
 module RLayout
 
   class Page < Container
@@ -12,9 +12,9 @@ module RLayout
     def initialize(options={}, &block)
       @parent_graphic = options[:parent] || options[:document]
       @document       = @parent_graphic
-      @column_count   = 1 
+      @column_count   = 1
       if @document
-        @column_count   = @document.column_count 
+        @column_count   = @document.column_count
       end
       @column_count  = options[:column_count] if options[:column_count]
       options[:left_margin]   = layout_default[:left_margin] unless options[:left_margin]
@@ -23,10 +23,10 @@ module RLayout
       options[:bottom_margin] = layout_default[:bottom_margin] unless options[:bottom_margin]
       if @document
         options[:width]         = @document.width
-        options[:height]        = @document.height        
+        options[:height]        = @document.height
         options[:left_margin]   = @document.left_margin
-        options[:top_margin]    = @document.top_margin 
-        options[:right_margin]  = @document.right_margin 
+        options[:top_margin]    = @document.top_margin
+        options[:right_margin]  = @document.right_margin
         options[:bottom_margin] = @document.bottom_margin
       elsif options[:paper_size] && options[:paper_size] != "custom"
         options[:width]   = SIZES[options[:paper_size]][0]
@@ -35,25 +35,26 @@ module RLayout
         options[:width]   = options.fetch(:width, page_defaults[:width])
         options[:height]  = options.fetch(:height, page_defaults[:height])
       end
-      
+
       if  @parent_graphic && !@parent_graphic.pages.include?(self)
-        @parent_graphic.pages << self 
+        @parent_graphic.pages << self
       end
       super
       if  @parent_graphic
-        @page_number = @parent_graphic.pages.index(self) + @parent_graphic.starting_page_number
+        @page_number = @parent_graphic.pages.index(self) + @parent_graphic.starting_page
+      elsif options[:page_number]
+        @page_number = options[:page_number]
       else
         @page_number = 1
       end
-      @page_number = options[:page_number] if options[:page_number]
       # if @parent_graphic && @parent_graphic.double_side
       @left_page  = @page_number.even?
       # else
       #   @left_page  = false
-      # end      
+      # end
       @fixtures = []
       @floats   = []
-      
+
       main_box_options                = {}
       main_box_options[:x]            = @left_margin
       main_box_options[:y]            = @top_margin
@@ -70,9 +71,9 @@ module RLayout
         main_box_options.merge!(options[:text_box_options])
       end
       if options[:text_box]
-        @main_box = TextBox.new(main_box_options) 
+        @main_box = TextBox.new(main_box_options)
       elsif options[:toc_table]
-        @main_box = TocTable.new(main_box_options) 
+        @main_box = TocTable.new(main_box_options)
       elsif options[:grid_box]
         @main_box = GridBox.new(main_box_options)
       elsif options[:composite_box]
@@ -80,11 +81,11 @@ module RLayout
       end
       if block
         instance_eval(&block)
-      end    
+      end
       self
     end
-    
-    def adjust_page_size_to_document    
+
+    def adjust_page_size_to_document
       @width          = @document.width
       @height         = @document.height
       @left_margin    = @document.left_margin
@@ -93,11 +94,11 @@ module RLayout
       @bottom_margin  = @document.bottom_margin
       relayout!
     end
-    
+
     def is_left_page?
       @left_page
     end
-    
+
     def to_pgscript
 pgscript =<<EOF
   page do
@@ -107,7 +108,7 @@ pgscript =<<EOF
 EOF
       pgscript
     end
-    
+
     def floats_pgscript
       script = ""
       @floats.each do |g|
@@ -115,7 +116,7 @@ EOF
       end
       script
     end
-    
+
     def graphics_pgscript
       script = ""
       @graphics.each do |g|
@@ -123,7 +124,7 @@ EOF
       end
       script
     end
-    
+
     # layout_content! should be called to layout out content
     # after graphics positiona are settled from relayout!
     # text_box and table should respond and layout content
@@ -133,11 +134,11 @@ EOF
 
       @graphics.each do |graphic|
         if graphic.respond_to?(:layout_content!)
-          graphic.layout_content! 
+          graphic.layout_content!
         end
       end
     end
-    
+
     def first_text_box
       @graphics.each do |graphic|
         if graphic.kind_of?(RLayout::TextBox)
@@ -146,7 +147,7 @@ EOF
       end
       return nil
     end
-    
+
     # does page include Heading in graphics
     def get_heading?
       @graphics.each do |graphic|
@@ -154,7 +155,7 @@ EOF
       end
       nil
     end
-    
+
     def main_text(options={}, &block)
       options[:parent_frame]  = true # fit to page's layout_frame
       options[:grid_base]     = "3x3" unless options[:grid_base]
@@ -162,7 +163,7 @@ EOF
       options[:parent]        = self
       @main_box=TextBox.new(options, &block)
     end
-    
+
     def document
       @parent_graphic
     end
@@ -175,7 +176,7 @@ EOF
         height: 800,
       }
     end
-    
+
     def to_hash
       h= super
       if @fixtures && @fixtures.length > 0
@@ -184,7 +185,7 @@ EOF
       end
       h
     end
-    
+
     def layout_default
       {
         left_margin:  50,
@@ -201,7 +202,7 @@ EOF
         layout_length:  1,
       }
     end
-    
+
     def add_heading(heading_object)
       @heading_object = heading_object
       @heading_object.parent_graphic = self
@@ -212,23 +213,24 @@ EOF
       @graphics.each do |g|
         if g.class == RLayout::Heading || g.class == RLayout::HeadingContainer
           @heading_object = g unless @heading_object
-          return true 
+          return true
         end
       end
       false
     end
-    
+
     def get_heading
       @graphics.each do |g|
         return g if g.class == RLayout::Heading
       end
       nil
     end
-    
+
     def update_header_and_footer(options={})
       return if @no_fixture_page # for pictures page
       options[:header][:font] = 8
       options[:footer][:font] = 8
+      # binding.pry
       if first_page?
         if options[:header] && (header_rule[:first_page_only] || header_rule[:first_page])
           options[:header][:text_string] = options[:header][:first_page_text]
@@ -247,7 +249,7 @@ EOF
           options[:footer][:text_string] = options[:footer][:left_page_text]
           @footer_object = footer(options[:footer])
         end
-        
+
       else
         if options[:header] && header_rule[:right_page] && !header_rule[:first_page_only]
           options[:header][:text_string] = options[:header][:right_page_text]
@@ -257,7 +259,7 @@ EOF
           options[:footer][:text_string] = options[:footer][:right_page_text]
           @footer_object = footer(options[:footer])
         end
-        
+
       end
     end
 
@@ -265,15 +267,15 @@ EOF
     #   puts __method__
     #   @main_box.create_column_grid_rects
     # end
-    # 
+    #
     # def set_overlapping_grid_rect
     #   @main_box.set_overlapping_grid_rect
     # end
-    # 
+    #
     # def layout_items(paragraphs)
     #   @main_box.layout_items(paragraphs)
     # end
-    
+
     def to_data
       h = {}
       instance_variables.each{|a|
@@ -357,27 +359,27 @@ EOF
       options[:parent] = self
       @main_box = TextBox.new(options) unless @main_box
     end
-    
+
     def toc_table(options={}, &block)
       options[:parent] = self
       @main_box = TocTable.new(options) unless @main_box
     end
-    
+
     def table(options={}, &block)
       options[:parent] = self
       Table.new(options, &block)
     end
-    
+
     def image_box(options={}, &block)
       options[:parent] = self
       ImageBox.new(options, &block)
     end
-    
+
     def object_box(options={}, &block)
       options[:parent] = self
       ObjectBox.new(options)
     end
-    
+
     def header(options={})
       #TODO
       Header.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
@@ -385,7 +387,6 @@ EOF
 
     def footer(options={})
       Footer.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
-      
     end
 
     def side_bar(options={})

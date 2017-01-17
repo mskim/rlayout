@@ -151,7 +151,6 @@ module RLayout
         yml     = YAML::load(File.open(chapter_info, 'r'){|f| f.read})
         content += yml[:toc].gsub(/0$/, @starting_page.to_s)
         @starting_page += yml[:page_count]
-        puts "@starting_page:#{@starting_page}"
       end
       content
     end
@@ -170,30 +169,34 @@ module RLayout
     end
 
     def update_toc
+      @front_matter_path = @project_path + "/front_matter/toc"
+      system("mkdir -p #{@front_matter_path}") unless File.directory?(@front_matter_path)
+
       content =<<EOF
 # Table of content \n
 EOF
-      #TODO update this for front_matter
-      # content += parse_front_matter_toc
       content += parse_chapter_toc
       content += parse_rear_matter_toc
-      toc_path = @project_path + "/front_matter/01_toc/toc.md"
+      toc_path = @project_path + "/front_matter/toc/toc.md"
+      system("touch #{toc_path}")
       File.open(toc_path, 'w'){|f| f.write content}
     end
 
     #update markdown files metadata starting_page:
     def update_starting_page
-      new_starting_page = 1
+      @new_starting_page = 1
       Dir["#{@project_path}/*chapter*/doc_info.yml"].each_with_index do |chapter_info, i|
-        yml                 = YAML::load(File.open(chapter_info, 'r'){|f| f.read})
+        yml  = YAML::load(File.open(chapter_info, 'r'){|f| f.read})
         if i == 0
-          yml[:starting_page] = 1
-          File.open(chapter_info, 'w'){|f| f.write yml.to_yaml}
+          # yml = File.open(chapter_info, 'w'){|f| f.write yml.to_yaml}
+          page_count = yml[:page_count]
+          @new_starting_page += page_count
           next
         end
-        new_starting_page += yml[:page_count]
-        yml[:starting_page] = new_starting_page
+        yml[:starting_page] = @new_starting_page
         File.open(chapter_info, 'w'){|f| f.write yml.to_yaml}
+        @new_starting_page += yml[:page_count]
+
       end
 
     end

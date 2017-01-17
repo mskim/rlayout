@@ -42,21 +42,21 @@
 # Do the number
 
 # @quiz_style = {
-#   heading_space: 20,  
-#   column_layout_space: 30, 
-#   column_gutter: 10,  
-#   column_gutter_line: true, 
-#   
+#   heading_space: 20,
+#   column_layout_space: 30,
+#   column_gutter: 10,
+#   column_gutter_line: true,
+#
 #   :num_style => {
 #     q_num_type: "numeric",
 #     font: 'Helvetica',
 #     text_size: 20,
 #     text_color: 'black',
-#     chice_num_type: 'circled_alphabet' 
+#     chice_num_type: 'circled_alphabet'
 #   },
 #   #number, alphaber, hangul_jaum,
-#   #plain, circled, reverse_circled, 
-#   :q_style => {    
+#   #plain, circled, reverse_circled,
+#   :q_style => {
 #     font: 'Helvetica',
 #     text_size: 20,
 #     text_color: 'black',
@@ -67,7 +67,7 @@
 #     layout_expand: [:width],
 #     space_after:10,
 #   },
-#   
+#
 #   :choice_style =>{
 #     font: 'Times',
 #     text_size: 16,
@@ -92,17 +92,17 @@
 # options[:current_style]   = current_tyle
 # RLayout::Document.new(options)
 
-# Math questions, 
+# Math questions,
 # 1. Need lots of room to write down while solving.
 # 1. choice is open in one single line, they are shourt and can get to 5 choices.
 # 1. It is usually two questions per page, with lots of room for writting.
 
 module RLayout
-  
+
   # QuizChapterMaker
   class QuizChapterMaker
     attr_accessor :project_path, :template_path, :quiz_data_path, :answer_page
-    attr_accessor :document, :output_path, :starting_page_number, :column_count
+    attr_accessor :document, :output_path, :starting_page, :column_count
     attr_accessor :layout_style
     def initialize(options={} ,&block)
       if options[:project_path]
@@ -156,14 +156,14 @@ module RLayout
         $quiz_item_style      = @quiz_item_style
       end
       $layout_style         = @layout_style
-      @starting_page_number = options.fetch(:starting_page_number,1)
+      @starting_page = options.fetch(:starting_page,1)
       read_quiz_items
-      layout_quiz_items 
+      layout_quiz_items
       output_options = {:preview=>true}
       @document.save_pdf(@output_path, output_options)
       self
     end
-        
+
     def read_quiz_items
       puts __method__
       @quiz_hash  = read_metadata
@@ -179,18 +179,18 @@ module RLayout
       @text_box_layout_length=@layout_style[:text_box][:layout_length] || 8
       @quiz_items           = @quiz_hash[:quiz_items]
     end
-    
-    # quiz item in markdown 
+
+    # quiz item in markdown
     def parse_quiz_markdown(lines_block)
-      
+
     end
-    
-    # quiz item in asciidoctor 
+
+    # quiz item in asciidoctor
     def parse_quiz_adoc(lines_block)
-      
+
     end
-    
-    # quiz item in yml 
+
+    # quiz item in yml
     def parse_quiz_yml(lines_block)
       # TODO this need to be changed to markdown parsing
       block_text = lines_block.join("\n")
@@ -206,18 +206,18 @@ module RLayout
         @q_index += 1
       end
     end
-    
-    
-    # quiz item in yaml 
+
+
+    # quiz item in yaml
     def parse_quiz_data(content, type)
       puts __method__
       @item_array   = []
       @answer_item  = []
-      reader        = RLayout::Reader.new content, nil      
+      reader        = RLayout::Reader.new content, nil
       @q_index      = 0
       reader.text_blocks.each do |lines_block|
         parse_quiz_yml(lines_block)
-        
+
         # case type
         # when 'md','markdown'
         #   parse_quiz_markdown(lines_block)
@@ -231,7 +231,7 @@ module RLayout
       end
       @item_array
     end
-    
+
     def read_metadata
       puts __method__
       source = File.open(@quiz_data_path, 'r'){|f| f.read}
@@ -257,7 +257,7 @@ module RLayout
       # h[:quiz_items]  = parse_quiz_data(@contents, File.extname(@quiz_data_path))
       h
     end
-    
+
     def layout_quiz_items
       puts __method__
       puts "@quiz_items.length:#{@quiz_items.length}"
@@ -267,7 +267,7 @@ module RLayout
         options[:header]      = true
         options[:text_box]    = true
         options[:text_box_options]    = @layout_style[:text_box]
-        options[:page_number] = @starting_page_number
+        options[:page_number] = @starting_page
         options[:parent]      = @document
         p=Page.new(options)
         p.relayout!
@@ -285,23 +285,23 @@ module RLayout
       end
       @first_page.layout_space              = @main_layout_space
       @first_page.main_box.layout_length    = @text_box_layout_length
-      @first_page.main_box.layout_space     = @column_gutter 
-      @first_page.main_box.draw_gutter_stroke= @draw_gutter_stroke 
+      @first_page.main_box.layout_space     = @column_gutter
+      @first_page.main_box.draw_gutter_stroke= @draw_gutter_stroke
       @first_page.main_box.graphics.each{|col| col.layout_space = @column_layout_space}
       @first_page.relayout!
       @first_page.main_box.create_column_grid_rects
       @first_page.main_box.set_overlapping_grid_rect
       @first_page.main_box.layout_items(@quiz_items)
       if @document.pages[1]
-        @second_page  = @document.pages[1] 
+        @second_page  = @document.pages[1]
         @second_page.layout_space              = @main_layout_space
         @second_page.main_box.layout_length    = @text_box_layout_length
-        @second_page.main_box.layout_space     = @column_gutter 
-        @second_page.main_box.draw_gutter_stroke= @draw_gutter_stroke 
+        @second_page.main_box.layout_space     = @column_gutter
+        @second_page.main_box.draw_gutter_stroke= @draw_gutter_stroke
         @second_page.main_box.graphics.each{|col| col.layout_space = @column_layout_space}
         @second_page.relayout!
         @second_page.main_box.create_column_grid_rects
-        @second_page.main_box.set_overlapping_grid_rect      
+        @second_page.main_box.set_overlapping_grid_rect
       end
       page_index = 1
       while @quiz_items.length > 0
@@ -311,7 +311,7 @@ module RLayout
           options[:header]      = true
           options[:text_box]    = true
           options[:text_box_options]    = @layout_style[:text_box]
-          options[:page_number] = @starting_page_number + page_index
+          options[:page_number] = @starting_page + page_index
           options[:parent]      = @document
           p=Page.new(options)
           p.relayout!
@@ -321,7 +321,7 @@ module RLayout
         @document.pages[page_index].main_box.layout_items(@quiz_items)
         page_index += 1
       end
-      
+
       # add answer page
       if @answer_page
         page_index = @document.pages.length + 1
@@ -331,7 +331,7 @@ module RLayout
         options[:text_box]    = true
         options[:text_box_options]    = @layout_style[:text_box]
         options[:text_box_options][:column_count] = 4
-        options[:page_number] = @starting_page_number + page_index
+        options[:page_number] = @starting_page + page_index
         options[:parent]      = @document
         p = Page.new(options)
         p.relayout!
@@ -352,7 +352,7 @@ module RLayout
             options[:text_box]    = true
             options[:text_box_options]    = @layout_style[:text_box]
             options[:text_box_options][:column_count] = 4
-            options[:page_number] = @starting_page_number + page_index
+            options[:page_number] = @starting_page + page_index
             options[:parent]      = @document
             p=Page.new(options)
             p.relayout!
@@ -361,11 +361,11 @@ module RLayout
           @document.pages.last.relayout!
           @document.pages.last.main_box.layout_items(@answer_item)
           page_index += 1
-        end        
+        end
       end
       update_header_and_footer
     end
-    
+
     def update_header_and_footer
       header= {}
       header[:first_page_text]  = "| #{@book_title} |" if @book_title
@@ -383,7 +383,7 @@ module RLayout
       @document.footer_rule = footer_rule
       @document.pages.each {|page| page.update_header_and_footer(options)}
     end
-    
+
     def header_rule
       {:first_page_only   => true,
         :left_page        => false,
@@ -399,47 +399,47 @@ module RLayout
       h
     end
   end
-  
+
   class QuizAnsText < Text
     def initialize(options={})
       options[:text_fit_type] = 'adjust_box_height'
       options[:layout_expand] = [:width]
-      super 
+      super
       self
     end
-    
+
     def set_content
       @text_layout_manager.layout_lines(text_fit_type: 'adjust_box_height') if @text_layout_manager
       self
     end
-    
+
   end
-  
+
   class QuizRefText < Text
     def initialize(options={})
       options[:layout_expand] = [:width]
-      super 
+      super
       self
     end
-    
+
     def set_content
       @text_layout_manager.layout_lines(text_fit_type: 'adjust_box_height') if @text_layout_manager
       self
     end
   end
-  
+
   # number type, style
   # 1. number
   # a. alphbet
-  
-  # choice type 
+
+  # choice type
   # 1. number
   # a. alphbet
   # 넉. hangul-jaum
   # a. alphbet
   # choice style
   #  1. , circle, ( )
-  
+
   # this is default QuizItem with question and miltiple choice answers
   class QuizItem < Container
     attr_accessor :q_object, :row1_object, :row2_object
@@ -451,7 +451,7 @@ module RLayout
       @data[:num] = options.fetch('number', "1")
       @data[:q]   = options.fetch('q', {text_string: "Some question goes here? "})
       @data[:img] = options.fetch('img', nil)
-      @data[:cap] = options.fetch('cap', nil)  
+      @data[:cap] = options.fetch('cap', nil)
       @choice_1   = options.fetch(1, "choice1")
       @choice_1   = "1. " + @choice_1
       @choice_2   = options.fetch(2, "choice1")
@@ -470,19 +470,19 @@ module RLayout
       super
       self
     end
-    
+
     def set_content
       quiz_width = @width - @left_margin - @right_margin
       @layout_space = $quiz_item_style[:layout_space] || 10
       if @data[:q]
         q_options = $quiz_item_style[:q_style].dup
         q_options[:width] = quiz_width
-        @q_object = text(@data[:q], q_options)        
+        @q_object = text(@data[:q], q_options)
       end
       if @data[:img]
         @img_object = image(@data[:img])
       end
-      
+
       if @data[:row1]
         row_indent            = $quiz_item_style[:q_style][:text_head_indent] || 20
         @data[:row1][:width]  = @width - row_indent - @left_margin - @right_margin
@@ -492,7 +492,7 @@ module RLayout
         @graphics << @row1_object unless @graphics.include?(@row1_object)
         @row1_object.relayout!
       end
-      
+
       if @data[:row2]
         row_indent            = $quiz_item_style[:q_style][:text_head_indent] || 20
         @data[:row2][:width]  = @width - row_indent - @left_margin - @right_margin
@@ -500,25 +500,25 @@ module RLayout
         @row2_object          = TableRow.new(@data[:row2])
         @row2_object.parent_graphic = self
         @graphics << @row2_object unless @graphics.include?(@row2_object)
-        @row2_object.relayout!        
+        @row2_object.relayout!
       end
-            
+
       height_sum = 0
       if @q_object
         height_sum +=@q_object.height
         height_sum += @layout_space
       end
-      
+
       if @img_object
         height_sum +=@img_object.height
         height_sum += @layout_space
       end
-      
+
       if @row1_object
         height_sum +=@row1_object.height
         height_sum += @layout_space
       end
-      
+
       if @row2_object
         height_sum +=@row2_object.height
         height_sum += @layout_space
@@ -533,27 +533,27 @@ module RLayout
         @bottom_inset     +=  room/2
         @height           = mutiple_height
       end
-      relayout!      
+      relayout!
       @processed = true # prevent it from creating duplicates
       @data[:q] = nil
     end
-    
+
     def to_hash
       super
     end
-    
+
     def self.with_yaml(yaml_data)
-      
+
     end
-    
+
     def self.with_md(markdown)
-      
+
     end
-    
+
     def self.with_adoc(adoc)
-      
+
     end
-    
+
     # generate count nimber of quiz_item
     # return single quiz_item if count is 1
     # return array of quiz_items if count > 1
@@ -562,23 +562,23 @@ module RLayout
         return QuizItem.new
       else
         items_array = []
-        count.times do 
+        count.times do
           items_array << QuizItem.new
         end
         return items_array
       end
     end
-    
+
   end
-  
+
   # IncorrectAnswersNoteMaker
   # creates notes for each student.
   # omr_cards folder keeps omr_cards for students
-  # finished notes are stored in mistaken_ttem_note folder 
+  # finished notes are stored in mistaken_ttem_note folder
   # It takes quiz items, and series of omr_cards
   class IncorrectAnswersNoteMaker
     attr_accessor :project_path, :omr_card, :correct_answers, :wrong_answers
-    
+
     def initialize(project_path)
       @project_path = project_path
       @omr_path     = @project_path + "/omr"
@@ -591,16 +591,16 @@ module RLayout
       end
       self
     end
-    
+
     def extract_correct_answers
-      
+
     end
-    
+
   end
-  
+
   class IncorrectAnswersNote
     attr_accessor :name, :omr_card, :correct_answers, :wrong_answers
-    
+
     def initialize(correct_answers, orm_card)
       @orm_card       = orm_card
       @name           = extract_student_name
@@ -608,17 +608,17 @@ module RLayout
       save_note
       self
     end
-    
+
     def extract_student_name
-      
+
     end
-    
+
     def extract_wrong_answers
-      
+
     end
-    
+
     def save_note
-      
+
     end
   end
 end
