@@ -1,16 +1,18 @@
-require File.dirname(__FILE__) + "/spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/spec_helper"
 
 describe 'shuld save rlayout docment' do
-  before do 
-    @rlayout_path = "/Users/Shared/rlayout/output/document_test.rlayout"   
+  before do
+    @rlayout_path = "/Users/Shared/rlayout/output/document_test"
     @doc = Document.new(path:@rlayout_path )
   end
+
   it 'should create Document' do
     assert @doc.class == Document
   end
+
   it 'should save Document' do
-    @doc.save_document
-    assert File.exist?(@rlayout_path)
+    @doc.save_svg(@rlayout_path)
+    assert_equal @doc.class, Document #File.exist?(@rlayout_path)
   end
 end
 
@@ -20,7 +22,7 @@ describe 'open document' do
   before do
     @rlayout_path = "/Users/Shared/rlayout/output/document_test.rlayout"
   end
-  
+
   it 'should open hash' do
     h = YAML::load_file(@path)
     puts h.keys
@@ -37,13 +39,13 @@ describe 'save multiple page document' do
       end
     end
     @pdf_path = "/Users/Shared/rlayout/output/document_long_page_test.pdf"
-    
+
   end
-  
+
   it 'should have 50 pages' do
     @doc.pages.length.must_equal 20
   end
-  
+
   it 'should save 50 pages' do
     @doc.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true
@@ -71,14 +73,14 @@ describe "document" do
         rect :fill_color=> "black" , x:300, y:300
         rect :fill_color=> "blue", x:500, y:500
       end
-      
+
     end
   end
-  
+
   it 'document should create document ' do
     @doc.must_be_kind_of Document
   end
-  
+
   it 'document should have default values' do
     @doc.title.must_equal "untitled"
     @doc.paper_size.must_equal "A4"
@@ -89,11 +91,11 @@ describe "document" do
     @doc.portrait.must_equal true
     @doc.pages.length.must_equal 3
   end
-  
+
   it 'should have pages' do
     @doc.pages.length.must_equal 3
   end
-  
+
   it 'should save svg' do
     @svg_path = "/Users/Shared/rlayout/output/document_test.svg"
     @svg0_path = "/Users/Shared/rlayout/output/document_test0.svg"

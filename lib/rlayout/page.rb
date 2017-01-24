@@ -10,8 +10,10 @@ module RLayout
     attr_accessor :fixtures, :document, :column_count
 
     def initialize(options={}, &block)
-      @parent_graphic = options[:parent] || options[:document]
-      @document       = @parent_graphic
+      if options[:parent] || options[:document]
+        @parent_graphic = options[:parent] || options[:document]
+        @document       = @parent_graphic
+      end
       @column_count   = 1
       if @document
         @column_count   = @document.column_count
@@ -390,7 +392,7 @@ EOF
     end
 
     def side_bar(options={})
-      SideBar.new(:paernt=>self, :text_string=>options[:text_string], :is_fixture=>true)
+      SideBar.new(:parent=>self, :text_string=>options[:text_string], :is_fixture=>true)
     end
 
 

@@ -116,13 +116,16 @@ TODO List
 			- index
 			- glossary
 		- put templates under rubymotion app/resouces/
-		- Use YAML, JSON, CSON as design template
+
+2017_1_25
+	- Use YAML, JSON, CSON as design template
 
 2017 1 24
+	- module_function color, unit, rectangle functions,
 	- add bar, stack, g,
 	- include RLayout
-	- render
-	
+	- render svg
+
 2017 1 17
 	1. Fix Chapter for going beyond two page.
 		- fix layout_items in TextBox

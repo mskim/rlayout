@@ -25,48 +25,48 @@ module RLayout
       options[:parent] = self
       Rectangle.new(options)
     end
-    
+
     def rectangle(options={})
       options[:parent] = self
       Rectangle.new(options)
     end
-    
+
     def round_rect(options={})
       options[:parent] = self
       RoundRect.new(options)
     end
-    
+
     def text(string, options={})
       options[:parent] = self
       options[:text_string] = string
       Text.new(options)
     end
-    
+
     def label(string, options={})
       options[:parent] = self
       options[:text_string] = string
       Label.new(options)
     end
-    
+
     def quote(string, options={})
       options[:parent] = self
       Quote.new(options)
     end
-    
+
     def text_runs(strings_array, atts_array, options={})
       options[:parent] = self
       options[:text_string_array] = strings_array
       options[:text_atts_array]   = atts_array
       Text.new(options)
     end
-    
+
     def text_train(text_string_array, atts_array, options={})
       options[:parent] = self
       options[:text_string_array] = text_string_array.split(" ")
       options[:text_atts_array]   = atts_array
       TextTrain.new(options)
     end
-    
+
     def char_train(string, atts_array)
       options = {}
       options[:parent] = self
@@ -74,7 +74,7 @@ module RLayout
       options[:text_atts_array]   = atts_array
       TextTrain.new(options)
     end
-    
+
     def circle(options={})
       options[:parent] = self
       Circle.new(options)
@@ -84,16 +84,33 @@ module RLayout
       options[:parent] = self
       Image.new(options)
     end
-    
+
     def line(options={})
       options[:parent] = self
       Line.new(options)
     end
-    
+
     def container(options={}, &block)
       options[:parent] = self
       Container.new(options, &block)
     end
+
+    def stack(options={}, &block)
+      options[:parent] = self
+      Container.new(options, &block)
+    end
+
+    def g((options={}, &block))
+      options[:parent] = self
+      Graphic.new(options, &block)
+    end
+
+    def bar(options={}, &block)
+      options[:parent] = self
+      options[:layout_direction] = 'horizontal'
+      Container.new(options, &block)
+    end
+
 
     def bar(options={}, &block)
       options[:parent] = self
@@ -103,42 +120,42 @@ module RLayout
     def random_graphics(number)
       add_graphic(Graphic.random_graphics(number))
     end
-        
+
     def text_box(options={}, &block)
       options[:parent] = self
       TextBox.new(options)
     end
-    
+
     def memo(options={})
       options[:parent] = self
       MemoArea.new(options)
     end
-    
+
     def heading(options={}, &block)
       options[:parent] = self
       Heading.new(options, &block)
     end
-    
+
     def heading_container(options={}, &block)
       options[:parent] = self
       HeadingContainer.new(options, &block)
     end
-    
+
     def table(options={}, &block)
       options[:parent] = self
       Table.new(options, &block)
     end
-    
+
     def item_list(options={}, &block)
       options[:parent] = self
       ItemList.new(options, &block)
     end
-    
+
     def grid_box(options={}, &block)
       options[:parent] = self
       GridBox.new(options, &block)
     end
-    
+
     # place graphis as float using grid_frame
     def float(klass, grid_frame, options={})
       if klass.class == String
@@ -149,11 +166,11 @@ module RLayout
 
       end
     end
-    
+
     def stack_v (graphic, options={})
       add_graphic(graphic)
     end
-    
+
     # ds graphic by replacing place holder with same tag
     # this is how we use layout template
     # by creating place holder with tag and replacing them with user graphic
@@ -170,7 +187,7 @@ module RLayout
       # relayout!
       self
     end
-    
+
     def replace_graphic(graphic)
       tag = graphic.tag
       @graphics.each do |place_folder|
@@ -192,7 +209,7 @@ module RLayout
         end
       end
     end
-    
+
     # group graphics that intersects give rect
     # and return with new Container which rect is union of all intersection graphics
     def group_graphics(rect)
@@ -210,7 +227,7 @@ module RLayout
       new_container.parent_parent:self
       @graphics << new_container
     end
-    
+
     def split(number=2, options={})
       @layout_direction = options.fetch(:layout_direction, "vertical")
       if options[:layout_space]

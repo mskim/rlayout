@@ -306,6 +306,13 @@ module RLayout
       @document_view.pdf_document
     end
 
+    def save_svg(path, options={})
+      puts "++++++++++++ save_svg"
+      "path:#{path}"
+      s= path
+      "some string"
+    end
+
     def save_pdf(path, options={})
       if RUBY_ENGINE == 'rubymotion'
         @ns_view = DocumentViewMac.new(self)
