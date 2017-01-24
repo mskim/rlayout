@@ -118,19 +118,26 @@ TODO List
 		- put templates under rubymotion app/resouces/
 		- Use YAML, JSON, CSON as design template
 
+2017 1 24
+	- add bar, stack, g,
+	- include RLayout
+	- render
+	
 2017 1 17
 	1. Fix Chapter for going beyond two page.
 		- fix layout_items in TextBox
+
+	1. fix when overflow happens, there is a bug, layout_lines for the second time.
 		- fix layout_lines in Paragraph
-		- when overflow happens, there is a bug, layout_lines for the second time.
+
 	1. make continuos page_number from doc_info.yml
-		- add update_toc to Chapter.app command
-	1. make front_matter/toc/toc.md
 		- generate toc
 		- add set starting for next chapter page to doc_info.yml
 		- set starting page from doc_info.yml
+		- add update_toc to book.app command
 
 	1. fix Rakefile to process only changed file.
+
 	1. force chapter starting page to right side only, or left side only.
 
 2017_1_14
