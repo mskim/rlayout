@@ -27,9 +27,24 @@ else
 
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
+  require File.dirname(__FILE__) + "/rlayout/graphic/color"
+  require File.dirname(__FILE__) + "/rlayout/graphic/fill"
+  require File.dirname(__FILE__) + "/rlayout/graphic/graphic_struct"
+  require File.dirname(__FILE__) + "/rlayout/graphic/graphic_view_svg"
+  require File.dirname(__FILE__) + "/rlayout/graphic/image"
+  require File.dirname(__FILE__) + "/rlayout/graphic/layout"
+  require File.dirname(__FILE__) + "/rlayout/graphic/node_tree"
+  require File.dirname(__FILE__) + "/rlayout/graphic/rotation"
+  require File.dirname(__FILE__) + "/rlayout/graphic/shadow"
+  require File.dirname(__FILE__) + "/rlayout/graphic/shape"
+  require File.dirname(__FILE__) + "/rlayout/graphic/stroke"
+  require File.dirname(__FILE__) + "/rlayout/graphic/text"
   require File.dirname(__FILE__) + '/rlayout/graphic'
-  require File.dirname(__FILE__) + '/rlayout/container'
 
+  require File.dirname(__FILE__) + '/rlayout/container/auto_layout'
+  require File.dirname(__FILE__) + '/rlayout/container/grid'
+  require File.dirname(__FILE__) + '/rlayout/container/pgscript'
+  require File.dirname(__FILE__) + '/rlayout/container'
 
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/heading_container'

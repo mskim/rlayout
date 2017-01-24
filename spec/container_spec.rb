@@ -1,8 +1,4 @@
-require 'minitest/autorun'
-$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
-require 'rlayout/graphic'
-require 'rlayout/container'
-include RLayout
+require File.dirname(File.expand_path(__FILE__)) + "/spec_helper"
 
 describe 'test profile' do
   before do
@@ -31,7 +27,7 @@ describe 'testing container with graphics' do
     @g3 = RoundRect.new(parent: @container, :fill_color=> 'blue')
     @container.relayout!
   end
-    
+
   it 'should save svg' do
     @svg_path = "/Users/Shared/rlayout/output/container_test.svg"
     @container.save_svg(@svg_path)
@@ -49,7 +45,7 @@ describe 'testing container with line' do
     @g4 = Line.new(parent: @container, :line_color=> 'green', :line_width=> 1)
     @container.relayout!
   end
-    
+
   it 'should save svg' do
     @svg_path = "/Users/Shared/rlayout/output/container_with_line_test.svg"
     @container.save_svg(@svg_path)
@@ -70,19 +66,19 @@ describe 'testing container with graphics' do
       @g5= Graphic.new(parent: @g2, :fill_color=> 'yellow', :tag=> 'g5')
       @g6= Graphic.new(parent: @g2, :fill_color=> 'blue', :tag=> 'g6')
     @container.relayout!
-     
+
   end
-  
+
   it 'should add graphics' do
     @container.graphics.length.must_equal 2
     @container.graphics.length.must_equal 2
   end
-  
+
   it 'added graphics should have self as parent' do
     @container.graphics[0].parent_graphic.must_equal @container
     @container.graphics[1].parent_graphic.must_equal @container
   end
-  
+
   it 'should save pdf' do
     @svg_path = "/Users/Shared/rlayout/output/container_test.svg"
     @container.save_svg(@svg_path)
@@ -94,11 +90,11 @@ describe 'testing container creation' do
   before do
     @container = Container.new()
   end
-  
+
   it 'should create container' do
     @container.must_be_kind_of Container
   end
-  
+
   it 'should have default values' do
     @container.x.must_equal 0
     # @container.y.must_equal 0   # I think there is MacRuby Bug for setting @y as nil
@@ -119,19 +115,19 @@ describe 'testing container with graphics' do
     @container.relayout!
     # puts "++++++ @c5.text_rect:#{@c5.text_rect}"
     # puts "++++++ @c6.text_rect:#{@c6.text_rect}"
-    
+
   end
-  
+
   # it 'should add graphics' do
   #   @container.graphics.length.must_equal 2
   #   @container.graphics.length.must_equal 2
   # end
-  # 
+  #
   # it 'added graphics should have self as parent' do
   #   @container.graphics[0].parent_graphic.must_equal @container
   #   @container.graphics[1].parent_graphic.must_equal @container
   # end
-  
+
   it 'should save pdf' do
     @svg_path = "/Users/Shared/rlayout/output/container_nested_test.svg"
     @container.save_svg(@svg_path)

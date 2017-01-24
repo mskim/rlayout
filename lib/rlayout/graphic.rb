@@ -1,17 +1,3 @@
-if RUBY_ENGINE != 'rubymotion'
-  require File.dirname(__FILE__) + "/graphic/color"
-  require File.dirname(__FILE__) + "/graphic/fill"
-  require File.dirname(__FILE__) + "/graphic/graphic_struct"
-  require File.dirname(__FILE__) + "/graphic/graphic_view_svg"
-  require File.dirname(__FILE__) + "/graphic/image"
-  require File.dirname(__FILE__) + "/graphic/layout"
-  require File.dirname(__FILE__) + "/graphic/node_tree"
-  require File.dirname(__FILE__) + "/graphic/rotation"
-  require File.dirname(__FILE__) + "/graphic/shadow"
-  require File.dirname(__FILE__) + "/graphic/shape"
-  require File.dirname(__FILE__) + "/graphic/stroke"
-  require File.dirname(__FILE__) + "/graphic/text"
-end
 
 module RLayout
 
@@ -20,21 +6,21 @@ module RLayout
     attr_accessor :graphics, :fixtures, :floats, :grid_frame
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
-    attr_accessor :frame_image, :shadow, :rotation 
+    attr_accessor :frame_image, :shadow, :rotation
     attr_accessor :overflow, :underflow
 
     def initialize(options={}, &block)
       @parent_graphic = options[:parent]
       # if @parent_graphic && @parent_graphic.class.kind_of?(Document)
       #   set_frame(@parent_graphic.layout_rect)
-      @tag              = options[:tag]      
+      @tag              = options[:tag]
       if @parent_graphic && options[:parent_frame]
         set_frame(@parent_graphic.layout_rect)
       elsif options[:grid_frame] && @parent_graphic && @parent_graphic.grid
         # if options[:grid_frame] is given, convert grid_frame to x,y,width,heigth of parent's grid cordinate
         set_frame_in_parent_grid(options[:grid_frame])
         # disable autolayout
-        @layout_expand = nil        
+        @layout_expand = nil
       else
         @x              = options.fetch(:x, graphic_defaults[:x])
         @y              = options.fetch(:y, graphic_defaults[:y])
@@ -53,7 +39,7 @@ module RLayout
       init_rotation(options)  if options[:rotation] || options[:rotation_content]
       init_text(options)
       init_image(options)
-        
+
       if @parent_graphic
         if @parent_graphic.kind_of?(Document)
           @parent_graphic.pages << self if  !parent_graphic.pages.include?(self)
@@ -69,7 +55,7 @@ module RLayout
       end
       self
     end
-        
+
     def set_frame_in_parent_grid(grid_frame)
       set_frame(@parent_graphic.frame_for(grid_frame))
     end
@@ -84,31 +70,31 @@ module RLayout
         shape: 0,
       }
     end
-    
+
     def get_stroke_rect
       if RUBY_ENGINE == "rubymotion"
         # for TextToken, use attstring rect instead of Graphic frame
         # r = NSMakeRect(@x,@y,@width,@height)
         r = NSMakeRect(@left_margin,@top_margin,@width,@height)
-        
-        if @line_position == 1 #LINE_POSITION_MIDDLE 
+
+        if @line_position == 1 #LINE_POSITION_MIDDLE
           return r
-        elsif @line_position == 2 
-          #LINE_POSITION_OUTSIDE) 
+        elsif @line_position == 2
+          #LINE_POSITION_OUTSIDE)
           return NSInsetRect(r, - @stroke[:thickness]/2.0, - @stroke[:thickness]/2.0)
-        else 
-          # LINE_POSITION_INSIDE        
+        else
+          # LINE_POSITION_INSIDE
           return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
         end
       else
         puts "get_stroke_rect for ruby mode"
       end
     end
-    
+
     def update_shape
       @shape = RectStruct.new(@x,@y,@width,@height)
     end
-        
+
     def current_style
       RLayout::StyleService.shared_style_service.current_style
     end
@@ -121,17 +107,17 @@ module RLayout
       h = current_style['p']
       h[:text_size] + h[:text_line_spacing]
     end
-    
+
     def is_breakable?
-      false 
+      false
     end
-    
+
     def style_for_markup(markup, options={})
       h = current_style[markup]
       h[:text_markup] = markup
       h
     end
-    
+
     def self.upgrade_format(old_hash)
       key   = old_hash.keys.first
       new_hash = old_hash.values.first.dup
@@ -145,7 +131,7 @@ module RLayout
       end
       new_hash
     end
-    
+
     def to_hash
       h = {}
       h[:klass]   = Class.to_s
@@ -154,7 +140,7 @@ module RLayout
       h[:width]   = @width    if @width != graphic_defaults[:width]
       h[:height]  = @height   if @height != graphic_defaults[:height]
       h[:tag]     = @tag      if @tag
-      h.merge!(layout_to_hash) 
+      h.merge!(layout_to_hash)
       h.merge!(@fill.to_hash)   if @fill
       h.merge!(@stroke.to_hash) if @stroke
       h.merge!(@shape.to_hash)  if @shape
@@ -162,7 +148,7 @@ module RLayout
       h.merge!(@image_record.to_hash)  if @image_record
       h
     end
-    
+
     def overflow?
       @overflow == true
     end
@@ -170,12 +156,12 @@ module RLayout
     def underflow?
       @underflow == true
     end
-	      
+
     def tag=(new_tag)
       @tag = new_tag
       self
     end
-    
+
 
     # difference between to_hash and to_data:
     # to_hash does not save values, if they are equal to default
@@ -194,11 +180,11 @@ module RLayout
       end
       h
     end
-    
+
     def self.random_text
       TEXT_STRING_SAMPLES.sample
     end
-    
+
     def random_text
       TEXT_STRING_SAMPLES.sample
     end
@@ -221,47 +207,47 @@ module RLayout
     def min_x(rect)
       rect[0]
     end
-    
+
     def min_y(rect)
       rect[1]
     end
-    
+
     def mid_x(rect)
       rect[0] + rect[2]/2
     end
-    
+
     def mid_y(rect)
       rect[1] + rect[3]/2
     end
-        
+
     def max_x(rect)
       rect[0] + rect[2]
     end
-    
+
     def y_max
       @y + @height
     end
-    
+
     def x_max
       @x + @width
     end
-    
+
     def max_y(rect)
       rect[1] + rect[3]
     end
-    
+
     def contains_rect(rect_1,rect_2)
       (rect_1[0]<=rect_2[0] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) >= max_y(rect_2))
     end
-    
+
     def intersects_x(rect1, rect2)
       (max_x(rect1) > rect2[0] && max_x(rect2) > rect1[0]) || (max_x(rect2) > rect1[0] && max_x(rect1) > rect2[0])
     end
-    
+
     def intersects_y(rect1, rect2)
       (max_y(rect1) > rect2[1] && max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] && max_y(rect1) > rect2[1])
     end
-    
+
     def intersects_rect(rect_1, rect_2)
       intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
     end
@@ -317,16 +303,16 @@ module RLayout
     def self.with(style_name, &block)
       Graphic.new(Style.shared_style(style_name), &block)
     end
-    
+
     def relayout!
       return unless @grid_frame
-      
+
     end
-    
+
     # def graphic_rect
     #   [@x,@y,@width,@height]
     # end
-    
+
     def frame_rect
       [@x,@y,@width,@height]
     end
@@ -338,7 +324,7 @@ module RLayout
     def layout_rect
       [@left_margin, @top_margin, @width - @left_margin - @right_margin - @left_inset - @right_inset, @height - @top_margin - @bottom_margin - @top_inset - @bottom_inset]
     end
-    
+
     def layout_size
       [@width - @left_margin - @right_margin - @left_inset - @right_inset, @height - @top_margin - @top_inset - @bottom_margin - @bottom_inset]
     end
@@ -446,16 +432,16 @@ module RLayout
       end
       s
     end
-    
+
     def save_svg(path)
       File.open(path, 'w'){|f| f.write to_svg}
     end
-    
+
     def save_pdf(path, options={})
       if RUBY_ENGINE == 'rubymotion'
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path, options)
-      elsif RUBY_ENGINE == 'ruby' 
+      elsif RUBY_ENGINE == 'ruby'
         puts "RUBY_ENGINE:#{RUBY_ENGINE}"
       end
     end
@@ -547,27 +533,27 @@ module RLayout
         return NSColor.whiteColor
       end
     end
-    
+
     def self.color_from_string(color_string)
       if color_string == nil
         return NSColor.whiteColor
       end
-    
+
       if color_string==""
         return NSColor.whiteColor
       end
-    
+
       if COLOR_NAMES.include?(color_string)
         return self.color_from_name(color_string)
       end
-      
+
       if color_string =~ /^#/
         return color_from_hex(color_string)
       end
-      
+
       # TODO
       # elsif color_string=~/^#   for hex color
-    
+
       color_array=color_string.split("=")
       color_kind=color_array[0]
       color_values=color_array[1].split(",")
@@ -589,18 +575,18 @@ module RLayout
       @text_layout_manager.fit_text_to_box  if @text_layout_manager
     end
   end
-    
+
   class Text < Graphic
     def initialize(options={})
       super
       self
     end
-    
+
     def set_attributed_string(new_att_string)
       return unless @text_layout_manager
       @text_layout_manager.setAttributedString(new_att_string)
     end
-    
+
     def set_text_string(text_string)
       if RUBY_ENGINE == "rubymotion"
         return unless @text_layout_manager
@@ -609,7 +595,7 @@ module RLayout
         @text_record.string = text_string
       end
     end
-      
+
     def set_text(text_string)
       if RUBY_ENGINE == "rubymotion"
         return unless @text_layout_manager
@@ -618,7 +604,7 @@ module RLayout
         @text_record.string = text_string
       end
     end
-    
+
     def text_string
       if @text_layout_manager
         @text_layout_manager.att_string.string
@@ -626,7 +612,7 @@ module RLayout
         @text_record.string
       end
     end
-    
+
     def text_size
       unless @text_layout_manager
         return 16.0
@@ -634,24 +620,24 @@ module RLayout
         @text_layout_manager.text_size
       end
     end
-    
+
     def setAttributes(atts, range)
       return unless @text_layout_manager
       @text_layout_manager.att_string.setAttributes(atts, range: range)
     end
-    
+
     def to_pgscript
       if text_string && text_string.length > 0
         variables = "\"#{text_string}\", text_size: #{text_size}, x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}"
         #TODO
         # variables += ", #{@text_color}" unless @text_color == "black"
-        variables += ", tag: \"#{@tag}\"" if @tag 
+        variables += ", tag: \"#{@tag}\"" if @tag
         "   text(#{variables})\n"
       else
         " "
       end
     end
-    
+
     def self.sample(options={})
       if options[:number] > 0
         Text.new(text_string: "This is a sample text string"*options[:number])
@@ -679,13 +665,13 @@ module RLayout
       self
     end
   end
-  
+
   class Rectangle < Graphic
     def initialize(options={})
       super
       self
     end
-    
+
     def to_pgscript
       "   rectangle(x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height})\n"
     end
@@ -693,7 +679,7 @@ module RLayout
 
   class Image < Graphic
     attr_accessor :caption , :bleed
-    def initialize(options={})  
+    def initialize(options={})
       if options[:caption]
         @caption = options[:caption]
       end
@@ -712,14 +698,14 @@ module RLayout
       end
       self
     end
-    
+
     def frame_rect
       [@x,@y,@width,@height]
     end
-    
+
     def to_pgscript
       variables = "x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}, image_path: \"#{@image_path}\""
-      variables += ", tag: \"#{@tag}\"" if @tag 
+      variables += ", tag: \"#{@tag}\"" if @tag
       "   image(#{variables})\n"
     end
   end
@@ -730,24 +716,24 @@ module RLayout
       update_shape
       self
     end
-    
+
     def to_pgscript
       "   circle(x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height})\n"
     end
-    
+
     def update_shape
       shorter = @width < @height ? @width : @height
       @shape = CircleStruct.new(@x + @width/2, @y + @height/2, shorter/2)
     end
   end
-  
+
   class Ellipse < Graphic
     def initialize(options={})
       super
       update_shape
       self
     end
-    
+
     def update_shape
       @shape = EllipseStruct.new((@x+@width)/2, (@y + @height)/2, @width/2, @height/2)
     end
@@ -759,16 +745,16 @@ module RLayout
       update_shape
       self
     end
-    
+
     def update_shape
       shorter = @width < @height ? @width : @height
       r= shorter/10
       @shape = RoundRectStruct.new(@x, @y, @width, @height, r, r)
     end
   end
-  
+
   class Line < Graphic
-    attr_accessor :line_type   
+    attr_accessor :line_type
     #"horizontal_rule", vertical_rule, top_left_to_bottom_right, top_right_to_bottom_left
     def initialize(options={})
       options[:thickness]     = 1 unless options[:thickness]

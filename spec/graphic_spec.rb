@@ -1,12 +1,9 @@
-require 'minitest/autorun'
-$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
-require 'rlayout/graphic'
-include RLayout
+require File.dirname(File.expand_path(__FILE__)) + "/spec_helper"
 
 describe ' convert string to color' do
   before do
     color_string = "FF0000"
-    @color = color_from_hex(color_string)
+    @color = RLayout::color_from_hex(color_string)
   end
   it 'shuld convert hex color' do
     @color.must_equal "rgba(1.0,0.0,0.0,1)"
@@ -17,32 +14,32 @@ describe 'create Graphic ' do
   before do
     @g = Graphic.new(parent:nil, :fill_color=>"blue")
   end
-  
+
   it 'should create Graphic' do
     @g.class.must_equal Graphic
   end
-  
-  it 'should not have fill' do    
+
+  it 'should not have fill' do
     @g.fill.class.must_equal FillStruct
     @g.fill.color.must_equal 'blue'
   end
-  
-  it 'should create rect shape' do    
+
+  it 'should create rect shape' do
     @g.shape.class.must_equal RectStruct
   end
-  
-  it 'should have stroke' do    
+
+  it 'should have stroke' do
     @g.stroke.class.must_equal StrokeStruct
     @g.stroke.color.must_equal 'black'
     @g.stroke.thickness.must_equal 0
   end
-  
-  it 'should not have image_record' do    
-    @g.image_record.must_equal nil
+
+  it 'should not have image_record' do
+    assert_nil @g.image_record
   end
-  
-  it 'should not have text_record' do    
-    @g.text_record.must_equal nil
+
+  it 'should not have text_record' do
+    assert_nil @g.text_record
   end
 end
 
@@ -78,11 +75,11 @@ describe 'create Circle' do
     @c.shape.cx.must_equal 100
     @c.shape.cy.must_equal 100
   end
-  it 'should have fill' do    
+  it 'should have fill' do
     @c.fill.class.must_equal FillStruct
     @c.fill.color.must_equal 'white'
   end
-  it 'should have stroke' do    
+  it 'should have stroke' do
     @c.stroke.class.must_equal StrokeStruct
     @c.stroke.color.must_equal 'black'
     @c.stroke.thickness.must_equal 0
@@ -96,36 +93,36 @@ describe 'create Ellipse' do
   it 'should create Ellipse' do
     @c.class.must_equal Ellipse
   end
-  
+
   it 'should create EllipseStruct shape' do
     @c.shape.class.must_equal EllipseStruct
     @c.shape.rx.must_equal 50
     @c.shape.ry.must_equal 100
   end
-  
-  it 'should have fill' do    
+
+  it 'should have fill' do
     @c.fill.class.must_equal FillStruct
     @c.fill.color.must_equal 'orange'
   end
-  
-  it 'should have stroke' do    
+
+  it 'should have stroke' do
     @c.stroke.class.must_equal StrokeStruct
     @c.stroke.color.must_equal 'black'
     @c.stroke.thickness.must_equal 0
   end
-  
-  it 'should have stroke' do    
+
+  it 'should have stroke' do
     @c.stroke.class.must_equal StrokeStruct
     @c.stroke.color.must_equal 'black'
     @c.stroke.thickness.must_equal 0
   end
-  
+
   it 'should save' do
     @path = "/Users/Shared/rlayout/output/graphic_color_test.svg"
     @c.save_svg(@path)
     # system "open #{@path}"
   end
-  
+
 end
 
 describe 'create RoundRect' do
@@ -135,17 +132,17 @@ describe 'create RoundRect' do
   it 'should create RoundRect' do
     @c.class.must_equal RoundRect
   end
-  
+
   it 'should create RoundRectStruct shape' do
     @c.shape.class.must_equal RoundRectStruct
     @c.shape.rx.must_equal 10.0
     @c.shape.ry.must_equal 10.0
   end
-  it 'should have fill' do    
+  it 'should have fill' do
     @c.fill.class.must_equal FillStruct
     @c.fill.color.must_equal 'white'
   end
-  it 'should have stroke' do    
+  it 'should have stroke' do
     @c.stroke.class.must_equal StrokeStruct
     @c.stroke.color.must_equal 'black'
     @c.stroke.thickness.must_equal 0
@@ -160,17 +157,17 @@ describe 'create Image' do
     @c.class.must_equal Image
     @c.image_path.must_equal "my_image_path.jpg"
   end
-  
+
   it 'should create Image shape' do
     @c.shape.class.must_equal RectStruct
     @c.shape.width.must_equal 100
     @c.shape.height.must_equal 200
   end
-  it 'should have fill' do    
+  it 'should have fill' do
     @c.fill.class.must_equal FillStruct
     @c.fill.color.must_equal 'white'
   end
-  it 'should have stroke' do    
+  it 'should have stroke' do
     @c.stroke.class.must_equal StrokeStruct
     @c.stroke.color.must_equal 'black'
     @c.stroke.thickness.must_equal 0
@@ -185,20 +182,20 @@ describe 'create Text' do
     @c.class.must_equal Text
   end
   it 'should create text_record' do
-  
+
     @c.text_record.string.must_equal "This is my text string."
   end
-  
+
   it 'should create Text shape' do
     @c.shape.class.must_equal RectStruct
     @c.shape.width.must_equal 100
     @c.shape.height.must_equal 200
   end
-  it 'should have fill' do    
+  it 'should have fill' do
     @c.fill.class.must_equal FillStruct
     @c.fill.color.must_equal 'white'
   end
-  it 'should have stroke' do    
+  it 'should have stroke' do
     @c.stroke.class.must_equal StrokeStruct
     @c.stroke.color.must_equal 'black'
     @c.stroke.thickness.must_equal 0
@@ -210,7 +207,7 @@ describe 'generate random graphics' do
     @g = Graphic.random_graphics(200)
     @path = "/Users/Shared/rlayout/output/graphic_random_test.svg"
   end
-  
+
   it 'should create Graphic' do
     @g.must_be_kind_of Array
   end
@@ -221,18 +218,16 @@ describe 'testing Text ' do
   before do
     @t = Text.new(width: 400,  text_string: "This is text string and I like it very much. Wouldn't you? "*4, text_size: 24, text_alignment: 'right')
   end
-  
+
   it 'should create heading' do
     @t.must_be_kind_of Text
     @t.text_record.size.must_equal 24
   end
-  
+
   it 'should save Text' do
     @svg_path = "/Users/Shared/rlayout/output/text_test.svg"
     @t.save_svg(@svg_path)
     File.exists?(@svg_path).must_equal true
   end
-  
+
 end
-
-
