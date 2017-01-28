@@ -16,6 +16,65 @@
 #  text_styles
 
 
+# Stylea are predefined Hash tables
+# They can be merged with custom styles at run time,
+# making them very flexible components.
+# We can define default component and override only what we need at run time.
+# We can override content as well as styles.
+# Operations can be achieved simply by using Hadh#merge,
+# changing only those that are specified in merging Hash(custom element).
+
+# NAMECARD_1 = {
+#   doc_type: "NAMECARD",
+#   page_front:{
+#     image_logo: {
+#       grid: [0,0,1,1],
+#       image: '1.jpg'
+#     },
+#     stack_personal: {
+#       grid: [0,0,1,1],
+#       name: 'Min Soo Kim'
+#       email: 'Min Soo Kim'
+#     },
+#     stack_company: {
+#       grid: [0,0,1,1],
+#       address1: '10 Some Stree',
+#       address2: 'Seoul, Korea'
+#     }
+#   },
+#
+#   page_back: {
+#     image_logo: {
+#       grid: [0,0,1,1],
+#       image: '1.jpg'
+#     },
+#
+#     stack_personal: {
+#       grid: [0,0,1,1],
+#       name: 'Min Soo Kim'
+#       email: 'Min Soo Kim'
+#     },
+#
+#     stack_company: {
+#       grid: [0,0,1,1],
+#       address1: '10 Some Stree',
+#       address2: 'Seoul, Korea'
+#     }
+#   },
+#
+#
+
+# my_personal = {
+#   name: "Jeeyoon Kim".
+#   email: "some_name@gmail.com"
+# }
+# replace
+# my_namecard = NAMECARD_1[:page_front][:stack_personal] = my_personal
+# merge
+# my_namecard = NAMECARD_1[:page_front][:stack_personal].merge(my_personal)
+
+
+
 NEWS_PAPER_DEFAULTS = {
   name: "Ourtown News",
   period: 'daily',

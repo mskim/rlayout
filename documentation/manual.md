@@ -100,7 +100,7 @@ default value is 1 for all
 1. rjob
 1. Chaper
 1. MagazineArticle
-1. NewsArticle
+1. Newsman
 1. Quiz
 1. StepAndRepeat
 1. Calendar
@@ -110,26 +110,24 @@ default value is 1 for all
 ## Color
 ### Named Colors
 COLOR_NAMES =%w[black blue brown clear cyan darkGray gray green lightGray magenta orange purple red white yellow]
-	
+
 ### RGB Colors
 	"RGB=100,60,0" "RGB=100,60,0"
-	
+
 ### CMYK Colors
-    "CMYK=100,60,0,20" 
+    "CMYK=100,60,0,20"
 
 
 ## Units
-### point 
+### point
 	any integer or float will be treated as point
 	12
 ### mm
 	string ending with "cm" will be considered as centimeter
-	"12mm" 
-### cm 
+	"12mm"
+### cm
 	string ending with "cm" will be considered as centimeter
-	"12.3cm" 
-### inch 
+	"12.3cm"
+### inch
 	string ending with "inch" will be considered as inch
-	"12inch" 
-
-
+	"12inch"

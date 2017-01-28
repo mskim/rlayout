@@ -24,6 +24,7 @@ else
   require 'csv'
   require 'erb'
   require 'base64'
+  require 'json'
 
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
@@ -78,7 +79,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/box/composite_box'
   require File.dirname(__FILE__) + '/rlayout/box/item_list'
   require File.dirname(__FILE__) + '/rlayout/box/title_box'
-  require File.dirname(__FILE__) + '/rlayout/box/news_article_box'
   require File.dirname(__FILE__) + '/rlayout/box/menu'
 
   require File.dirname(__FILE__) + '/rlayout/math/eqn'
@@ -97,19 +97,20 @@ else
   require File.dirname(__FILE__) + '/rlayout/story/reader'
   require File.dirname(__FILE__) + '/rlayout/story/remote_reader'
 
-
   require File.dirname(__FILE__) + '/rlayout/article/pdf_chapter'
   require File.dirname(__FILE__) + '/rlayout/article/chapter'
   require File.dirname(__FILE__) + '/rlayout/article/spread_chapter'
   require File.dirname(__FILE__) + '/rlayout/article/toc_chapter'
   require File.dirname(__FILE__) + '/rlayout/article/float_group'
-  require File.dirname(__FILE__) + '/rlayout/article/news_article_maker'
-  require File.dirname(__FILE__) + '/rlayout/article/news_section_page'
-  require File.dirname(__FILE__) + '/rlayout/article/news_heading_maker'
   require File.dirname(__FILE__) + '/rlayout/article/magazine_article_maker'
   require File.dirname(__FILE__) + '/rlayout/article/single_page_maker'
   require File.dirname(__FILE__) + '/rlayout/article/rjob'
   require File.dirname(__FILE__) + '/rlayout/article/item_chapter_maker'
+
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_heading_maker'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_maker'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_section_page'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_box'
 
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/book_plan'

@@ -1,5 +1,60 @@
 require File.dirname(File.expand_path(__FILE__)) + "/spec_helper"
 
+describe ' create Graphic from yaml' do
+  before do
+
+yml =<<-EOF
+{
+  doc_type: "NAMECARD",
+  page_front: {
+    image_logo: {
+      grid: [0,0,1,1],
+      image: '1.jpg'
+    },
+    stack_personal: {
+      grid: [0,0,1,1],
+      name: 'Min Soo Kim',
+      email: 'mskimsid@gmail.com'
+    },
+    stack_company: {
+      grid: [0,0,1,1],
+      address1: '10 Some Stree',
+      address2: 'Seoul, Korea'
+    }
+  },
+
+  page_back: {
+    image_logo: {
+      grid: [0,0,1,1],
+      image: '1.jpg'
+    },
+
+    stack_personal: {
+      grid: [0,0,1,1],
+      name: 'Min Soo Kim',
+      email: 'mskimsid@gmail.com'
+    },
+
+    stack_company: {
+      grid: [0,0,1,1],
+      address1: '10 Some Stree',
+      address2: 'Seoul, Korea'
+    }
+  }
+}
+
+    EOF
+    puts YAML::load(yml).to_json
+    @g = RLayout::Graphic.new(json: YAML::load(yml))
+    puts "@g.to_hash:#{@g.to_hash}"
+  end
+
+  it 'shuld create object from data' do
+    @g.class.must_equal Graphic
+  end
+end
+
+__END__
 describe ' convert string to color' do
   before do
     color_string = "FF0000"

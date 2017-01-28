@@ -1,4 +1,52 @@
-
+# Graphic
+# Create Graphic from hash
+#
+#
+# NAMECARD_1 = {
+#   doc_type: "NAMECARD",
+#   page_front:{
+#     image_logo: {
+#       grid: [0,0,1,1],
+#       image: '1.jpg'
+#     },
+#     stack_personal: {
+#       grid: [0,0,1,1],
+#       name: 'Min Soo Kim'
+#       email: 'Min Soo Kim'
+#     },
+#     stack_company: {
+#       grid: [0,0,1,1],
+#       address1: '10 Some Stree',
+#       address2: 'Seoul, Korea'
+#     }
+#   },
+#
+#   page_back: {
+#     image_logo: {
+#       grid: [0,0,1,1],
+#       image: '1.jpg'
+#     },
+#
+#     stack_personal: {
+#       grid: [0,0,1,1],
+#       name: 'Min Soo Kim'
+#       email: 'Min Soo Kim'
+#     },
+#
+#     stack_company: {
+#       grid: [0,0,1,1],
+#       address1: '10 Some Stree',
+#       address2: 'Seoul, Korea'
+#     }
+#   },
+#
+#
+# }
+# undefined key name in Container is conaidered as Text class with tag
+# We should predefine style for this.
+# this serves as text replacement as will as style tag.
+# name, email, address1, address2, title, subtitle, p,
+# #
 module RLayout
 
   class Graphic
@@ -62,7 +110,6 @@ module RLayout
 
     def graphic_defaults
       {
-        klass: 'Rectangle',
         x: 0,
         y: 0,
         width: 100,
@@ -73,8 +120,7 @@ module RLayout
 
     def get_stroke_rect
       if RUBY_ENGINE == "rubymotion"
-        # for TextToken, use attstring rect instead of Graphic frame
-        # r = NSMakeRect(@x,@y,@width,@height)
+to_hash        # r = NSMakeRect(@x,@y,@width,@height)
         r = NSMakeRect(@left_margin,@top_margin,@width,@height)
 
         if @line_position == 1 #LINE_POSITION_MIDDLE
@@ -133,19 +179,21 @@ module RLayout
     end
 
     def to_hash
+      klass   = self.class
+      atts = {}
+      atts[:x]       = @x        if @x != graphic_defaults[:x]
+      atts[:y]       = @y        if @y != graphic_defaults[:y]
+      atts[:width]   = @width    if @width != graphic_defaults[:width]
+      atts[:height]  = @height   if @height != graphic_defaults[:height]
+      atts[:tag]     = @tag      if @tag
+      atts.merge!(layout_to_hash)
+      atts.merge!(@fill.to_hash)   if @fill
+      atts.merge!(@stroke.to_hash) if @stroke
+      atts.merge!(@shape.to_hash)  if @shape
+      atts.merge!(@text_record.to_hash)   if @text_record
+      atts.merge!(@image_record.to_hash)  if @image_record
       h = {}
-      h[:klass]   = Class.to_s
-      h[:x]       = @x        if @x != graphic_defaults[:x]
-      h[:y]       = @y        if @y != graphic_defaults[:y]
-      h[:width]   = @width    if @width != graphic_defaults[:width]
-      h[:height]  = @height   if @height != graphic_defaults[:height]
-      h[:tag]     = @tag      if @tag
-      h.merge!(layout_to_hash)
-      h.merge!(@fill.to_hash)   if @fill
-      h.merge!(@stroke.to_hash) if @stroke
-      h.merge!(@shape.to_hash)  if @shape
-      h.merge!(@text_record.to_hash)   if @text_record
-      h.merge!(@image_record.to_hash)  if @image_record
+      h[klass] =  atts
       h
     end
 
@@ -176,7 +224,7 @@ module RLayout
         next if a == @graphics
         v = instance_variable_get a
         s = a.to_s.sub("@","")
-        h[s.to_sym] = v  if !v.nil?
+        atts[s.to_sym] = v  if !v.nil?
       end
       h
     end

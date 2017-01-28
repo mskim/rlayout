@@ -117,8 +117,32 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_1_2
+	- news_section
+	- show overflow
+	- show box number
+	- best_fit
+	- try to fit by reducing
+		1. image
+		2. by heading
+		3. as a last resort is to reduce sibling size.
+		options
+			i: reduce image,  
+			h: reduce heading
+			s: reduce sibling
+
 2017_1_25
-	- Use YAML, JSON, CSON as design template
+	- Use YAML,as design template
+	- method_missing, undefined_key for tagged text
+	- look for design for method_missing, or use Text as default class
+
+	Stylea are predefined Hash tables
+	They can be merged with custom styles at run time,
+	making them very flexible components.
+	We can define default component and override only what we need at run time.
+	We can override content as well as styles.
+	Operations can be achieved simply by using Hadh#merge,
+	changing only those that are specified in merging Hash(custom element).
 
 2017 1 24
 	- module_function color, unit, rectangle functions,
@@ -903,7 +927,7 @@ TODO List
 	- Newspaper
 	- NewspaperIssue
 	- NewspaperSection
-	- made NewsArticle work with story folder
+	- made NewsArticleMaker work with story folder
 
 2015 9 18
 	- NewsArticleMaker bug that heading is not showing
@@ -944,7 +968,7 @@ TODO List
 
 2015 8 27
 	- ChapterMaker, MagazineArticleMaker,
-		replace Chapter, MagazineArticle, NewsArticle
+		replace Chapter, MagazineArticle, NewsArticleMaker
 	- support custom style loading at rum time
 
 2015 8 23
@@ -1092,7 +1116,7 @@ TODO List
 	1. has_heading
 
 2015 4 8
-	1. Article, NewsArticle, NewsSection
+	1. Article, NewsArticleMaker, NewsSection
 	1. grid_size with margin, gutter paper_size
 	1. put the grid_pattern_with source, no need to save it as file
 	1. heading_column for news_article story.
@@ -1196,7 +1220,7 @@ TODO List
 		have floats template
 
 2015 1 7
-	- fix NewsArticle, TextBox
+	- fix NewsArticleMaker, TextBox
 
 2014 12 31
 	- fix grid,
@@ -1481,7 +1505,7 @@ TODO: Write usage instructions here
 
 #  Page
 #    Article
-#    NewsArticle
+#    NewsArticleMaker
 #    BookPage
 #    Ad
 #    Calendar

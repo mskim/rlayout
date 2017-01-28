@@ -100,7 +100,7 @@ module RLayout
       Container.new(options, &block)
     end
 
-    def g((options={}, &block))
+    def g(options={}, &block)
       options[:parent] = self
       Graphic.new(options, &block)
     end
