@@ -15,8 +15,8 @@ module RLayout
   # body_line_height
   # line_height = body_style[:text_size] # default line_height, set to text_size*1.3
   # @body_line_height = (line_height + body_style[:text_line_spacing])
-  
-  
+
+
   class TextColumn < Container
     attr_accessor :current_position, :current_grid_index
     attr_accessor :grid_rects, :body_line_height
@@ -45,6 +45,7 @@ module RLayout
       # line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
       line_height = body_style[:text_size] # default line_height, set to text_size*1.3
       @body_line_height = (line_height + body_style[:text_line_spacing])
+      puts "++++++++ @body_line_height:#{@body_line_height}"
       @current_position = @top_margin + @top_inset
       # @room = text_rect[3] - @current_position
       if block
@@ -52,11 +53,11 @@ module RLayout
       end
       self
     end
-    
+
     def is_simple_column?
-      @complex_rect == false 
+      @complex_rect == false
     end
-    
+
     # tells if rest of the column area is simple column
     def is_rest_of_area_simple?
       grid_index = current_grid_rect_index_at_position(@current_position)
@@ -64,12 +65,12 @@ module RLayout
         next if i < grid_index
         return false if grid.fully_covered?
       end
-      @complex_rect = false 
+      @complex_rect = false
       true
     end
-    
+
     # called from paragraph to get the line rect at current_y position of text_column
-    # line_offset and line_height is given 
+    # line_offset and line_height is given
     # It should check the grid_rects at the point of interserts
     # And return a rect, a text_area that is not overlapping with floats.
     def sugest_me_a_rect_at(line_offset, line_height)
@@ -87,28 +88,28 @@ module RLayout
         if grid.fully_covered
           return [@width,line_offset,0,line_height]
         end
-        max_starting_x= grid.rect[0] if grid.rect[0] > max_starting_x        
+        max_starting_x= grid.rect[0] if grid.rect[0] > max_starting_x
         min_ending_x  = max_x(grid.rect) if max_x(grid.rect) < min_ending_x
       end
       [max_starting_x, line_offset , min_ending_x - max_starting_x, line_height]
     end
-    
+
     def place_item(item)
       return if @graphics.include?(item)
       @graphics << item
       item.parent_graphic = self
       item.x              = @left_margin + @left_inset
       item.y              = @current_position
-      @current_position   += item.height 
+      @current_position   += item.height
       @current_position   += @layout_space  if @layout_space
       @current_position   = snap_to_grid_rect(@current_position)
       @room               = text_rect[3] - @current_position
     end
-    
+
     def move_current_position_by(y_amount)
       @current_position += y_amount
     end
-    
+
     # update current_grid_index after paragraph is placed
     def advance_current_grid_index_with_y_position(y_amount)
       unless @grid_rects
@@ -122,7 +123,7 @@ module RLayout
         @current_grid_index += int_amount + 1
       end
     end
-    
+
     # create grid_rects after relayou!
     # make sure the grids are created after adjusting the column size for the final layout
     def create_grid_rects(options={})
@@ -207,11 +208,11 @@ module RLayout
       end
       @grid_rects.length # index is beyond the array range
     end
-    
+
     def column_index
       @parent_graphic.graphics.index(self)
     end
-    
+
     def text_width
       text_rect[2]
     end
@@ -272,7 +273,7 @@ module RLayout
         end
       end
     end
-    
+
     def justify_items(options={})
       height_sum = 0
       # height_sum  = @graphics.collect{|g| g.height}.reduce(:+)
@@ -290,7 +291,7 @@ module RLayout
     end
   end
 
-  
+
   # GridRect has two rectangle, rect and text_area
   # rect represents the position of grid_rect in TexBox cordinate.
   # rect is used to determine the overlappings with floats, which are in TexBox cordinate.
@@ -316,7 +317,7 @@ module RLayout
       path.setLineWidth(1)
       path.stroke
     end
-    
+
     #TODO refoctor this ############
     def min_x(rect)
       rect[0]
@@ -417,7 +418,7 @@ module RLayout
     def fully_covered?
       @fully_covered == true
     end
-    
+
     def overlap?
       @overlap == true
     end

@@ -57,7 +57,6 @@ module RLayout
         @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/article_template/news_style.rb")
       end
       template = File.open(@template_path,'r'){|f| f.read}
-      puts "+++++++++ template:#{template}"
       @news_article_box       = eval(template)
       if @news_article_box.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
@@ -78,13 +77,10 @@ module RLayout
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
       if @heading !={}
-        puts "@heading:#{@heading}"
         box_heading = nil
         if box_heading = @news_article_box.get_heading && box_heading.class == RLayout::Heading
           box_heading.set_heading_content(@heading)
         end
-        puts "+++++++++++box_heading:#{box_heading}"
-
       end
       @paragraphs =[]
       @story[:paragraphs].each do |para|
@@ -110,7 +106,6 @@ module RLayout
     end
 
     def layout_story
-      puts "+++++++++++ @paragraphs.length:#{@paragraphs.length}"
       @news_article_box.layout_floats!
       @news_article_box.set_overlapping_grid_rect
       @news_article_box.layout_items(@paragraphs)

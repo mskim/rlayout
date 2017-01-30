@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 
 describe 'creaet document with NewsArticleMaker' do
@@ -13,7 +13,7 @@ describe 'creaet document with NewsArticleMaker' do
     puts heading.class
     puts "heading.graphics.length:#{heading.graphics.length}"
   end
-  
+
   it 'should create MagazineArticleScript' do
      assert @maker.class == NewsArticleMaker
   end
@@ -25,10 +25,9 @@ describe 'news_article reading stoy' do
     @path     = "/Users/mskim/Dropbox/OurTownNews/2015-06-12/News/1.story"
     @article  = NewsArticleMaker.make_layout(@path)
   end
-    
+
   it 'should create layout file' do
     @layout_path = @path + "/layout.rb"
     assert File.exist?(@layout_path)
   end
 end
-

@@ -124,7 +124,9 @@ module RLayout
         end
       else
         @column_count.times do
-          TextColumn.new(:parent=>self, layout_space: @column_layout_space)
+          g= TextColumn.new(:parent=>nil, layout_space: @column_layout_space)
+          g.parent_graphic = self
+          @graphics << g
         end
       end
       relayout!
@@ -290,6 +292,7 @@ module RLayout
           end
           next
         elsif @item.is_a?(RLayout::Paragraph)
+          puts "+++++++++++ current_column.class:#{current_column.class}"
           @item.layout_lines(current_column)
         elsif @item.is_a?(RLayout::ParagraphNSText) && @item.text_layout_manager
           # We have text
