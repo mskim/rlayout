@@ -3,15 +3,11 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'creaet document with NewsArticleMaker' do
   before do
-    article_path = "/Users/mskim/Dropbox/OurTownNews/2015-06-12/News/1.story"
-    @maker = NewsArticleMaker.new(article_path: article_path)
-    @news_box = @maker.news_article_box
-    puts "@news_box.class:#{@news_box.class}"
-    puts "@news_box.puts_frame:#{@news_box.puts_frame}"
-    puts "@news_box.floats.length:#{@news_box.floats.length}"
-    heading = @news_box.floats.first
-    puts heading.class
-    puts "heading.graphics.length:#{heading.graphics.length}"
+    @article_path = "/Users/mskim/Dropbox/OurTownNews/2015-06-12/News/1.story"
+    @article_path = "/Users/mskim/demo/demo_news/1"
+    @maker        = NewsArticleMaker.new(article_path: @article_path)
+    @news_box     = @maker.news_article_box
+    heading       = @news_box.floats.first
   end
 
   it 'should create MagazineArticleScript' do

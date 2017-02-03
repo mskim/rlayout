@@ -292,7 +292,6 @@ module RLayout
           end
           next
         elsif @item.is_a?(RLayout::Paragraph)
-          puts "+++++++++++ current_column.class:#{current_column.class}"
           @item.layout_lines(current_column)
         elsif @item.is_a?(RLayout::ParagraphNSText) && @item.text_layout_manager
           # We have text
@@ -440,7 +439,6 @@ module RLayout
             next
           else
             puts "overflow "
-            puts
             # we are done with this text_box
             # current_column.relayout!
             return false

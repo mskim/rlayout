@@ -25,13 +25,13 @@ else
   require 'erb'
   require 'base64'
   require 'json'
+  require 'hexapdf'
 
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
   require File.dirname(__FILE__) + "/rlayout/graphic/color"
   require File.dirname(__FILE__) + "/rlayout/graphic/fill"
   require File.dirname(__FILE__) + "/rlayout/graphic/graphic_struct"
-  require File.dirname(__FILE__) + "/rlayout/graphic/graphic_view_svg"
   require File.dirname(__FILE__) + "/rlayout/graphic/image"
   require File.dirname(__FILE__) + "/rlayout/graphic/layout"
   require File.dirname(__FILE__) + "/rlayout/graphic/node_tree"
@@ -90,8 +90,15 @@ else
   require File.dirname(__FILE__) + '/rlayout/page/composite_page'
   require File.dirname(__FILE__) + '/rlayout/page/page_variables_extend'
 
+  require File.dirname(__FILE__) + '/rlayout/view/svg_view/document_view_svg'
+  require File.dirname(__FILE__) + '/rlayout/view/svg_view/paragraph_view_svg'
+  require File.dirname(__FILE__) + "/rlayout/view/svg_view/graphic_view_svg"
+
+  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/document_view_pdf'
+  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/page_view_pdf'
+  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/graphic_view_pdf'
+
   require File.dirname(__FILE__) + '/rlayout/document'
-  require File.dirname(__FILE__) + '/rlayout/view/document_view_svg'
   require File.dirname(__FILE__) + '/rlayout/document_variables_extend'
   require File.dirname(__FILE__) + '/rlayout/story/story'
   require File.dirname(__FILE__) + '/rlayout/story/reader'
@@ -131,7 +138,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/quiz/english_quiz_item_maker'
   require File.dirname(__FILE__) + '/rlayout/quiz/quiz_chapter_maker'
   require File.dirname(__FILE__) + '/rlayout/quiz/nr_semi_test_chapter_maker'
-
   require File.dirname(__FILE__) + '/rlayout/mlayout/mdocument'
 end
 

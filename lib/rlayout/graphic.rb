@@ -50,7 +50,7 @@
 module RLayout
 
   class Graphic
-    attr_accessor :parent_graphic, :tag, :ns_view, :svg_view, :path
+    attr_accessor :parent_graphic, :tag, :ns_view, :pdf_view, :svg_view, :path
     attr_accessor :graphics, :fixtures, :floats, :grid_frame
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
@@ -490,7 +490,16 @@ to_hash        # r = NSMakeRect(@x,@y,@width,@height)
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path, options)
       elsif RUBY_ENGINE == 'ruby'
-        puts "RUBY_ENGINE:#{RUBY_ENGINE}"
+        unless @parent_graphic
+          doc       = HexaPDF::Document.new
+          page      = doc.pages.add
+          canvas    = page.canvas
+          # flip virtically canvas
+          canvas.translate(0.0, page.box.height)
+          canvas.scale(1.0, -1.0)
+          to_pdf(canvas)
+          doc.write(path, optimize: true)
+        end
       end
     end
 
@@ -626,6 +635,8 @@ to_hash        # r = NSMakeRect(@x,@y,@width,@height)
 
   class Text < Graphic
     def initialize(options={})
+      puts "creating Text"
+      puts "options:#{options}"
       super
       self
     end

@@ -33,6 +33,10 @@ module RLayout
           return
         end
         @story_path = Dir.glob("#{@article_path}/*[.md, .markdown]").first
+        unless File.exist?(@story_path)
+          puts "story_path doesn't exit !!!"
+          return
+        end
       end
 
       $ProjectPath  = @article_path
@@ -67,7 +71,7 @@ module RLayout
       if RUBY_ENGINE =="rubymotion"
         @news_article_box.save_pdf(@output_path, :jpg=>true)
       else
-        puts "not in rubymotion"
+        puts "save_pdf in ruby"
       end
       self
     end
@@ -76,10 +80,14 @@ module RLayout
       @story      = Story.new(@story_path).markdown2para_data
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
-      if @heading !={}
+
+      if @heading
         box_heading = nil
-        if box_heading = @news_article_box.get_heading && box_heading.class == RLayout::Heading
+        box_heading = @news_article_box.get_heading
+        if  box_heading.class == RLayout::Heading
           box_heading.set_heading_content(@heading)
+        else
+          puts "+++++++++++ box_heading.class:#{box_heading.class}"
         end
       end
       @paragraphs =[]

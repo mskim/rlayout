@@ -47,8 +47,8 @@ module RLayout
     attr_accessor :number_object, :title_object, :subtitle_object, :leading_object, :author_object
     attr_accessor :align_to_body_text
     def initialize(options={}, &block)
-      super      
-      case $publication_type        
+      super
+      case $publication_type
       when "magazine"
         @current_style = RLayout::StyleService.shared_style_service.magazine_style
       when "chapter"
@@ -82,50 +82,48 @@ module RLayout
       set_heading_content(options)
       if block
         instance_eval(&block)
-      end    
-      
+      end
+
       self
     end
-    
+
+    def transform_keys_to_symbols(value)
+      return value if not value.is_a?(Hash)
+      hash = value.inject({}){|memo,(k,v)| memo[k.to_sym] = transform_keys_to_symbols(v); memo}
+      return hash
+    end
+
     def set_heading_content(options)
+      options = transform_keys_to_symbols(options)
       if options[:image_only]
         # place image, change size, width, or height as instructed
         # This is when pre-made Heading is provided as pdf file using other app.
-         
         return
       end
-      
+
       if options[:background]
         # place image in the background, change size, width, or height as instructed
       end
-      
+
       # if options[:number]
       #   @number_object = title(options[:title], options)
       # elsif options["number"]
       #   @number_object = title(options["number"], options)
       # end
-        
+
       if options[:title]
         @title_object = title(options[:title], options)
-      elsif options["title"]
-        @title_object = title(options["title"], options)
       end
       if options[:subtitle]
         @subtitle_object = subtitle(options[:subtitle], options)
-      elsif options["subtitle"]
-        @subtitle_object = subtitle(options["subtitle"], options)
       end
       if options[:leading]
         @leading_object = leading(options[:leading], options)
-      elsif options["leading"]
-        @leading_object = leading(options["leading"], options)
       end
       if options[:author]
         @author_object = author(options[:author], options)
-      elsif options["author"]
-        @author_object = author(options["author"], options)
       end
-      
+
       height_sum = 0
       height_sum +=@title_object.height    unless @title_object.nil?
       height_sum += 5
@@ -137,7 +135,6 @@ module RLayout
       height_sum += 5
       # @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
       @height = height_sum
-      
       if @align_to_body_text
         mutiple           = (@height/body_height).to_i
         mutiple_height    = mutiple*body_height
@@ -149,7 +146,7 @@ module RLayout
       relayout!
       self
     end
-    
+
     # create container with template and replace variavle data to get our heaing
     def self.variable_heading(options)
       unless options[:keys] && options[:data]
@@ -215,7 +212,7 @@ module RLayout
       # @title_object               = Text.new(atts)
       Text.new(atts)
       @title_object               = @graphics.last
-      
+
       @title_object.layout_length = @title_object.height
       @title_object
     end
@@ -262,10 +259,10 @@ module RLayout
       @author_object.layout_length  = @author_object.height
       @author_object
     end
-    
+
     def background(image_path, options={})
       options[:loca_image] = image_path
-      init_image(options) 
+      init_image(options)
     end
   end
 

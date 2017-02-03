@@ -45,7 +45,6 @@ module RLayout
       # line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
       line_height = body_style[:text_size] # default line_height, set to text_size*1.3
       @body_line_height = (line_height + body_style[:text_line_spacing])
-      puts "++++++++ @body_line_height:#{@body_line_height}"
       @current_position = @top_margin + @top_inset
       # @room = text_rect[3] - @current_position
       if block

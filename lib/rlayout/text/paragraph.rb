@@ -324,8 +324,6 @@ module RLayout
 	  # overflow is when there is not enough room to fit all the lines.
 
     def layout_lines(text_column)
-      puts "text_column.class:#{text_column.class}"
-      puts "caller:#{caller}"
       @text_column      = text_column
       @overflow         = false
       @underflow        = false

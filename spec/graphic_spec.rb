@@ -1,5 +1,7 @@
 require File.dirname(File.expand_path(__FILE__)) + "/spec_helper"
 
+
+
 describe ' create Graphic from yaml' do
   before do
 
@@ -54,7 +56,6 @@ yml =<<-EOF
   end
 end
 
-__END__
 describe ' convert string to color' do
   before do
     color_string = "FF0000"

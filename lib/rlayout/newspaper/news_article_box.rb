@@ -24,7 +24,11 @@ module RLayout
           options[:grid_height] = eval(options[:grid_height])
         end
         @heading_columns = options[:grid_frame][2]
-        @heading_columns = HEADING_COLUMNS_TABLE[options[:grid_frame][2].to_i]
+        if options[:heding_columns]
+          @heading_columns = options[:heding_columns]
+        else
+          @heading_columns = HEADING_COLUMNS_TABLE[options[:grid_frame][2].to_i]
+        end
         options[:grid_frame]  = eval(options[:grid_frame]) if options[:grid_frame].class == String
         options[:column_count]= options[:grid_frame][2]
         @grid_width           = options.fetch(:grid_width, 200)

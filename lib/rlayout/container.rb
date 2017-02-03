@@ -16,12 +16,12 @@ module RLayout
       @layout_direction     = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])
       @layout_space         = options.fetch(:layout_space, layout_defaults_hash[:layout_space])
       @layout_align         = options.fetch(:layout_align, layout_defaults_hash[:layout_align])
-      @gutter_stroke_color  = options.fetch(:gutter_stroke_color, 'black')
       @draw_gutter_stroke   = options.fetch(:draw_gutter_stroke, false)
-      @gutter_stroke_width  = options.fetch(:gutter_stroke_width, 1)
-      @gutter_stroke_dash   = options.fetch(:gutter_stroke_dash, nil)
-      @gutter_stroke_type   = options.fetch(:gutter_stroke_type, 0)
-      @gutter_stroke        = GutterStrokeStruct.new(@gutter_stroke_color,  @gutter_stroke_width, @gutter_stroke_dash, @gutter_stroke_type) if @draw_gutter_stroke
+      gutter_stroke_color   = options.fetch(:gutter_stroke_color, 'black')
+      gutter_stroke_width   = options.fetch(:gutter_stroke_width, 1)
+      gutter_stroke_dash    = options.fetch(:gutter_stroke_dash, nil)
+      gutter_stroke_type    = options.fetch(:gutter_stroke_type, 0)
+      @gutter_stroke        = GutterStrokeStruct.new(gutter_stroke_color,  gutter_stroke_width, gutter_stroke_dash, gutter_stroke_type) if @draw_gutter_stroke
       init_grid(options)    if options[:grid_base]
       if options[:graphics]
         create_children(options[:graphics])

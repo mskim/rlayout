@@ -77,7 +77,7 @@ module RLayout
     attr_accessor :header_rule, :footer_rule, :gim
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_accessor :pdf_path, :jpg, :preview, :column_count, :layout_style
-    attr_accessor :page_headings
+    attr_accessor :page_headings, :document_view_pdf
     def initialize(options={}, &block)
       @pages      = []
       @title      = "untitled"
@@ -318,7 +318,9 @@ module RLayout
         @ns_view = DocumentViewMac.new(self)
         @page_view_count = @ns_view.save_pdf(path, options)
       else
-        puts "RUBY_ENGINE:#{RUBY_ENGINE}"
+        @document_view_pdf = DocumentViewPdf.new(self)
+        @document_view_pdf.save_pdf(path, options)
+        @pages.length
       end
     end
 

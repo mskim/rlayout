@@ -117,6 +117,13 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_2_2
+	- newsman
+		- specify heading_columns when creating NewsArticleBox
+		- heading title and subtitle size according to heading_columns
+	- Greeking mode
+		- fill token with gray box
+		
 2017_1_2
 	- news_section
 	- show overflow
@@ -130,6 +137,7 @@ TODO List
 			i: reduce image,  
 			h: reduce heading
 			s: reduce sibling
+
 
 2017_1_25
 	- Use YAML,as design template
