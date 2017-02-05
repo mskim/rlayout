@@ -1,4 +1,5 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../../spec_helper"
+require 'xmlsimple'
 
 describe 'parse SVG text ' do
   before do
@@ -11,7 +12,7 @@ SVG
     puts @h
     @svg_path = "/Users/Shared/rlayout/output/graphic_test.svg"
   end
-  
+
   it 'parse svg text' do
     @h.must_be_kind_of Graphic
   end
@@ -102,4 +103,3 @@ describe 'create Text svg ' do
     system "open #{@svg_path}"
   end
 end
-

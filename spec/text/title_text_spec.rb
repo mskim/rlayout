@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'testing Head creation' do
   before do
@@ -6,7 +6,7 @@ describe 'testing Head creation' do
     options = { width: 500, height: 100, text_options: text_options}
     @tt = TitleText.new(options)
   end
-  
+
   it 'should create TitleText' do
     assert @tt.class == TitleText
   end
@@ -14,7 +14,7 @@ describe 'testing Head creation' do
   it 'should create text_object' do
     assert @tt.text_object.class == Text
   end
-  
+
   it 'should have frame_rect' do
     assert @tt.text_object.frame_rect == [10,10,400,80]
   end

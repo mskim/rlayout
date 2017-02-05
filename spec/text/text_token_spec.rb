@@ -1,5 +1,5 @@
 
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create  TextToken' do
   before do
@@ -10,7 +10,7 @@ describe 'create  TextToken' do
       puts t.width
     end
   end
-  
+
   it 'should create right number of tokens' do
     @para.tokens.length.must_equal 10
   end
@@ -26,7 +26,7 @@ describe 'create special TextToken' do
       puts t.string.dump
     end
   end
-  
+
   it 'should create right number of tokens' do
     assert_equal @para.tokens.length, 11
   end
@@ -43,13 +43,13 @@ describe 'create special TextToken' do
       puts t.class
     end
   end
-  
+
   it 'should create right number of tokens' do
-    assert_equal @para.tokens.length, 7 
+    assert_equal @para.tokens.length, 7
   end
-  
+
   it 'should create special Token' do
-    assert_equal @para.tokens[1].class, TextToken 
+    assert_equal @para.tokens[1].class, TextToken
     assert_equal @para.tokens[0].stroke[:sides], [1,1,1,1]
     assert_equal @para.tokens[0].stroke[:thickness], 0
     assert_equal @para.tokens[3].class, ReverseRubyToken
@@ -68,18 +68,18 @@ describe 'create TextToken' do
     @text_string    = "This is a {{double}} String"
     @para           = Paragraph.new(para_string: @text_string, markup: "p")
   end
-  
+
   it 'should create Paragraph' do
-    assert_equal @para.class, Paragraph 
-    assert_equal @para.tokens.length, 5 
+    assert_equal @para.class, Paragraph
+    assert_equal @para.tokens.length, 5
   end
-  
+
   it 'should create TextToken' do
-    assert_equal @para.tokens.first.class, TextToken 
+    assert_equal @para.tokens.first.class, TextToken
   end
-  
+
   it 'should create special Token' do
-    skip "assert_equal @para.tokens[1].class, TabToken" 
-    
+    skip "assert_equal @para.tokens[1].class, TabToken"
+
   end
 end

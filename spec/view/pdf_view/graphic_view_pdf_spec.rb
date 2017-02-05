@@ -1,4 +1,4 @@
-require File.dirname((File.expand_path __FILE__)) + "/../../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../../spec_helper"
 
 describe 'save pdf pdf in Ruby mode rectangle' do
   before do

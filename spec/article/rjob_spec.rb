@@ -1,11 +1,11 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'RJob with pgscript' do
   before do
     @script_path = "/Users/mskim/Documents/Customers/nail/namecard/output/강방자.rb"
     @rjob = RLayout::RJob.new(script_path: @script_path)
   end
-  
+
   it 'should create rjob' do
     @rjob.created_object.must_be_kind_of Document
   end
@@ -27,16 +27,16 @@ describe 'RJob with pgscript' do
     end
     EOF
     @d= eval(@my_text)
-    
+
     # @job = RJob.new(pdf_path: @pdf_path, pgscript: my_text,  has_pgscript: true)
   end
-  
+
   it 'should create RJob' do
     @d.must_be_kind_of RLayout::Document
     @d.pdf_path.must_equal == @pdf_path
     @d.must_equal nil
   end
-  
+
   # it 'should save rjob' do
   #   system("echo '#{@my_text}' | /Applications/rjob.app/Contents/MacOS/rjob ")
   #   # assert File.exist?(@pdf_path) == true
@@ -49,7 +49,7 @@ end
 #     @path = "/Users/mskim/rjob_samples/SoftwareLab.rlayout"
 #     @job = RJob.new(@path)
 #   end
-#   
+#
 #   it 'should create RJob' do
 #     @job.must_be_kind_of RJob
 #     @job.valid_job?.must_equal true

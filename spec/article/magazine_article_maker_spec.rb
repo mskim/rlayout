@@ -1,4 +1,5 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
+
 describe 'create magazine_article from template' do
   before do
     template = <<-EOF.gsub(/^(\s)*/,"")
@@ -27,7 +28,7 @@ describe 'create magazine_article from template' do
     #   g.puts_frame
     # end
   end
-  
+
   it 'should process template' do
     assert @document.class == Document
   end
@@ -43,7 +44,7 @@ describe 'create MagazineArticleMaker' do
 EOF
   system "echo '#{@script}' | /Applications/magazine.app/Contents/MacOS/magazine"
   end
-  
+
   it 'should save pdf ' do
     assert File.exist?(@pdf_path)
   end
@@ -54,11 +55,11 @@ describe 'create MagazineArticleMaker' do
     @path       = "~/magazine_article/second_article"
     @magazine_maker = MagazineArticleMaker.new(article_path: File.expand_path(@path))
   end
-  
+
   it 'shuld create MagazineArticleMaker' do
     assert @magazine_maker.class == MagazineArticleMaker
   end
-  
+
 end
 
 
@@ -72,14 +73,14 @@ end
 #           float_image(local_image: "2.jpg", :grid_frame=> [0,1,1,1])
 #         end
 #       end
-# 
+#
 #       page do
 #         main_text do
 #           float_image(local_image: "1.jpg", :grid_frame=> [0,0,1,1])
 #         end
 #       end
 #     end
-#     
+#
 #     @document = @doc
 #     puts "@document.pages.length:#{@document.pages.length}"
 #     puts "@document.pages[0].graphics.length:#{@document.pages[0].graphics.length}"
@@ -92,13 +93,13 @@ end
 #       graphic.puts_frame
 #       puts "graphic.grid_frame:#{graphic.grid_frame}"
 #     end
-#     
+#
 #   end
-#   
+#
 #   it 'shoul place image' do
 #     assert @doc.class == RLayout::Document
 #   end
-#   
+#
 # end
 
 describe 'creaet document with MagazineArticleMaker' do
@@ -116,20 +117,20 @@ describe 'creaet document with MagazineArticleMaker' do
     puts heading.class
     puts "heading.graphics.length:#{heading.graphics.length}"
   end
-  
+
   it 'should create MagazineArticleScript' do
      assert @maker.class == MagazineArticleMaker
   end
-  #  
+  #
   #  it 'should create Document' do
   #    assert @maker.document.class == RLayout::Document
   #  end
-  #  
+  #
   #  it 'should create Pages' do
   #    assert @maker.document.pages.length == 2
   #    assert @maker.document.pages.first.heading.class == RLayout::Heading
   #  end
-  
+
   # it 'should create Heading' do
   #   heading = @maker.document.pages.first.heading
   #   puts heading.class
@@ -138,5 +139,5 @@ describe 'creaet document with MagazineArticleMaker' do
   #     puts "graphic.class:#{graphic.class}"
   #   end
   # end
-  
+
 end

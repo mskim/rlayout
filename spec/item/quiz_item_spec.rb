@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 RUBY_DEP_GEM_SILENCE_WARNINGS=1
 

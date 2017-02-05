@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'TextBox test' do
   before do
@@ -13,7 +13,7 @@ RLayout::Document.new(:initial_page=>false) do
       float_image(:local_image=> "2.jpg", :grid_frame=> [0,1,1,1])
     end
   end
-  
+
   page do
     main_text(column_count: 3) do
       float_image(:local_image=> "3.jpg", :grid_frame=> [1,0,2,2])
@@ -35,19 +35,19 @@ EOF
     puts  "@third_column.is_simple_column?:#{@third_column.is_simple_column?}"
     puts  "@third_column.is_rest_of_area_simple?:#{@third_column.is_rest_of_area_simple?}"
     puts  "@third_column.is_simple_column?:#{@third_column.is_simple_column?}"
-    
+
   end
   # it 'shold create Document' do
   #   @doc.class.must_equal Document
   # end
-  # 
+  #
   # it 'shold create TextBox' do
   #   @text_box.class.must_equal TextBox
   # end
   it 'shold create TextColumn' do
     @second_column.class.must_equal TextColumn
   end
-  
+
 end
 
 __END__
@@ -61,25 +61,25 @@ describe 'TextBox test' do
     @column = @tb.graphics.first
     @column2 = @tb.graphics[1]
   end
-  
+
   it 'should create path' do
     @column.must_be_kind_of TextColumn
   end
-  
+
   it 'column should containe grid_rects' do
     @column.grid_rects.must_be_kind_of Array
-    @column.grid_rects.length.must_equal 55 
+    @column.grid_rects.length.must_equal 55
   end
-  
+
   it 'should set complex_rect' do
     @column.complex_rect.must_equal true
     @column2.complex_rect.must_equal true
   end
-  
+
   it 'should return a sugested rect' do
     @column2.sugest_me_a_rect_at(0, 16.0)
   end
-  # 
+  #
   # it 'should return overlapping rects' do
   #   # puts "overlapping_rects"
   #   # @column2.overlapping_rects.each do |rect|
@@ -89,11 +89,11 @@ describe 'TextBox test' do
   #   # @column2.fully_covered_rects.each do |rect|
   #   #   puts "rect.rect:#{rect.rect}"
   #   # end
-  #   
+  #
   #   puts "@column.current_position:#{@column.current_position}"
   #   @column.overlapping_rects.length.must_equal 13
   # end
-  # 
+  #
   # it 'should draw path from current position' do
   #   puts "@column.current_position:#{@column.current_position}"
   #   @pdf_path = File.dirname(__FILE__) + "/output/text_column_grid_path.pdf"
@@ -109,25 +109,25 @@ describe 'GridRect' do
   before do
     @grid = GridRect.new([0,0,200,8])
   end
-  
+
   it 'should test top_right_position' do
     x, y= @grid.top_right_position
     x.must_equal 200
     y.must_equal 0
   end
-  
+
   it 'should test top_left_position' do
     x, y= @grid.top_left_position
     x.must_equal 0
     y.must_equal 0
   end
-  
+
   it 'should test bottom_left_position' do
     x, y= @grid.bottom_left_position
     x.must_equal 0
     y.must_equal 8
   end
-  
+
   it 'should test bottom_right_position' do
     x, y= @grid.bottom_right_position
     x.must_equal 200
@@ -142,20 +142,20 @@ describe 'TextColumn creation' do
     @tc = @tb.graphics.first
     @tc.create_grid_rects
   end
-  
+
   it 'should create TextColumn' do
     @tc.must_be_kind_of TextColumn
   end
-  
+
   it 'should create grid_rects' do
     @tc.grid_rects.must_be_kind_of Array
     @tc.grid_rects.length.must_equal 87
   end
-  
+
   it 'shoul test simple_rect?' do
     @tc.grid_rects.first.overlap?.must_equal false
   end
-  
+
   it 'should get the line at position' do
     grid_rect = @tc.current_grid_rect_at_position(20)
     grid_rect.must_be_kind_of GridRect
@@ -173,11 +173,11 @@ end
 #     CGPathAddRect(@proposed_path, nil, bounds)
 #     @proposed_path.stroke
 #   end
-#   
+#
 #   it 'should draw path' do
-#     
+#
 #   end
-# 
+#
 # end
 describe 'TextColumn creation test' do
   before do
@@ -186,7 +186,7 @@ describe 'TextColumn creation test' do
     @pdf_path = "/Users/Shared/rlayout/output/text_column_test.pdf"
     # puts @para.inspect
   end
-  
+
   it 'should create TextColumn object' do
     @tb.must_be_kind_of TextColumn
     @tb.line_grid_height.must_equal 30
@@ -194,7 +194,7 @@ describe 'TextColumn creation test' do
     @tb.line_grid_count.must_equal 26
     @tb.line_grid_rects.must_be_kind_of Array
   end
-  
+
   it 'should insert paragraphs' do
     @para_list = Paragraph.generate(5)
     @para_list.must_be_kind_of Array
@@ -209,6 +209,5 @@ describe 'TextColumn creation test' do
     @tb.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true
   end
-  
-end
 
+end

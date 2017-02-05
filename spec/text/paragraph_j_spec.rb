@@ -1,5 +1,5 @@
 # 
-# require File.dirname(__FILE__) + "/../spec_helper"
+# require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 # 
 # describe 'create ParagraphJ' do
 #   before do

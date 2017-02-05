@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../../spec_helper"
 
 if  RUBY_ENGINE == "macruby"
 describe 'document_view_mac' do
@@ -22,11 +22,11 @@ describe 'document_view_mac' do
     @doc.pages.length.must_equal 3
     @doc.pages.first.graphics.length.must_equal 20
   end
-  
+
   it 'should create DocumentViewMac' do
     @doc_view.must_be_kind_of DocumentViewMac
   end
-  
+
   it 'should save DocumentViewMac' do
     @doc_view.save_pdf(@pdf_path)
     File.exists?(@pdf_path).must_equal true

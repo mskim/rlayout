@@ -1,8 +1,5 @@
-require 'minitest/autorun'
-$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '../..', 'lib')
-require 'rlayout/graphic'
-require 'rlayout/container'
-include RLayout
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
+
 
 describe 'pgscritp for Container ' do
   before do
@@ -12,7 +9,7 @@ describe 'pgscritp for Container ' do
       relayout!
     end
   end
-  
+
   it 'should have two graphics' do
     @container.graphics.length.must_equal 2
   end
@@ -29,19 +26,19 @@ describe 'processing from raw text ' do
     EOF
     @container = eval(@text)
   end
-  
+
   it 'should create container' do
     @container.must_be_kind_of Container
   end
-  
+
   it 'should have two graphics' do
     @container.graphics.length.must_equal 3
   end
-  
+
   it 'should have layout_direction' do
     @container.layout_direction.must_equal 'vertical'
   end
-  
+
   it 'should apply option values' do
     @container.graphics.first.fill.color.must_equal 'white'
     @container.graphics.first.height.must_equal 260
@@ -57,26 +54,26 @@ describe 'testing container split-v' do
       @graphics.first.split_h(3, :fill_color=>'red', :layout_space=>10)
     end
   end
-  
+
   it 'should create container' do
     @container.must_be_kind_of Container
   end
-  
+
   it 'should have two graphics' do
     @container.graphics.length.must_equal 3
   end
-  
+
   it 'should have layout_direction' do
     @container.layout_direction.must_equal 'vertical'
   end
-  
+
   it 'should apply option values' do
     @container.graphics.first.fill.color.must_equal 'white'
     # @container.graphics.first.height.must_equal 26
     # @container.graphics[1].height.must_equal 26
     # @container.graphics[1].fill_color.must_equal 'white'
   end
-  
+
   it 'should save' do
     @svg_path = "/Users/Shared/rlayout/output/container_pgscript_split-v.svg"
     @container.save_svg(@svg_path)
@@ -90,22 +87,21 @@ describe 'testing container split-h' do
       split_h(3, :fill_color=>"gray", :layout_space=>10)
     end
   end
-  
+
   it 'should create container' do
     @container.must_be_kind_of Container
   end
-  
+
   it 'should have two graphics' do
     @container.graphics.length.must_equal 3
   end
-  
+
   it 'should have layout_direction' do
     @container.layout_direction.must_equal 'horizontal'
   end
-  
+
   it 'should save' do
     svg_path = "/Users/Shared/rlayout/output/container_pgscript_split-h.svg"
     @container.save_svg(svg_path)
   end
 end
-

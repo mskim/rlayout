@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe "SpreadChapter" do
   before do
@@ -8,7 +8,7 @@ describe "SpreadChapter" do
     @doc        = @sc.document
     @first_page = @sc.document.pages.first
   end
-  
+
   it 'should create SpreadChapter' do
     # assert @sc.class == SpreadChapter
     # assert @doc.class == Document
@@ -17,5 +17,5 @@ describe "SpreadChapter" do
     # assert @first_page.main_box.class == TextBox
     @first_page.heading_object.class.must_equal RLayout::HeadingContainer
   end
-  
+
 end

@@ -1,5 +1,5 @@
 
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create TextTrain' do
   before do
@@ -11,14 +11,14 @@ describe 'create TextTrain' do
       {text_color: 'yellow'},
     ]
     @tt = TextTrain.new(text_string_array: text_string_array, text_atts_array: atts_array)
-    
+
   end
   it 'should create TextTrain' do
     assert @tt.class == TextTrain
     assert @tt.graphics.length == 6
     assert  @tt.graphics.first.text_string == 'this'
   end
-  
+
 end
 
 describe 'create char_train' do
@@ -37,5 +37,5 @@ describe 'create char_train' do
   it 'should create TextTrain' do
     assert @con.graphics.first.class == TextTrain
   end
-  
+
 end

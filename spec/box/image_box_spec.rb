@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 
 describe 'create ImageBox' do
@@ -20,12 +20,12 @@ describe 'create ImageBox' do
       end
     end
   end
-  
+
   it 'should create Image object' do
     assert @g.class == Document
   end
-  
-  
+
+
 
   # it 'shluld save pdf' do
   #   @pdf_path = "/Users/mskim/mart/group_image.pdf"
@@ -43,11 +43,10 @@ describe 'create magazine-article with image-box' do
     @path = "/Users/mskim/magazine_article/fourth_article"
     @g = MagazineArticleMaker.new(article_path: @path)
   end
-  
+
   it 'should create document' do
     assert @g.document.class == Document
-    
-  end
-  
-end
 
+  end
+
+end

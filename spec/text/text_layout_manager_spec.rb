@@ -1,13 +1,13 @@
-require File.dirname(__FILE__) + "/../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'text_string_array and text_atts_array' do
   before do
     @text_string_array  = ["This is a", "String"]
     @text_atts_array    = [{text_size:24, text_color: "red"}, {text_size:16, text_color: "black"} ]
     @text               = Text.new(text_string_array: @text_string_array, text_atts_array: @text_atts_array)
-    
+
   end
-  
+
 end
 
 __END__
@@ -29,12 +29,12 @@ describe 'text overflow' do
     @t = Text.new(options)
     @tl = @t.text_layout_manager
   end
-  
+
   it 'should overflow' do
     @tl.must_be_kind_of TextLayoutManager
     @tl.text_overflow.must_equal true
   end
-  
+
   it 'should save pdf' do
     @pdf_path = "/Users/Shared/rlayout/output/text_layout_fit_to_box.pdf"
     @tl.fit_text_to_box
@@ -57,7 +57,7 @@ describe 'dropcap' do
       어르신들은 누구나 자랑하고 싶은 ‘왕년에’가 있으신가보다.
        '*5,
        text_string: "This is a test and this is good"*5,
-       
+
       drop_lines:  2,
       drop_font: 'Helvetica',
       drop_text_color: 'gray',
@@ -69,7 +69,7 @@ describe 'dropcap' do
   it 'shluld create TextLayoutManager' do
     @tl.must_be_kind_of TextLayoutManager
   end
-  
+
   it 'should save pdf' do
     @pdf_path = "/Users/Shared/rlayout/output/text_layout_manager_dropcap.pdf"
     @t.save_pdf(@pdf_path)
@@ -84,11 +84,11 @@ end
 #     @g = Graphic.new(proposed_height: 1000, text_string: "This is some sample string. And some more text is here.")
 #     @pdf_path = "/Users/Shared/rlayout/output/text_layout_manager_test.pdf"
 #   end
-#   
+#
 #   it 'should create TextLayoutManager' do
 #     @g.text_layout_manager.must_be_kind_of TextLayoutManager
 #   end
-#   
+#
 #   it 'should save TextLayoutManager' do
 #     @g.save_pdf(@pdf_path)
 #     File.exists?(@pdf_path).must_equal true
@@ -100,9 +100,9 @@ end
 #     # @att_string = {:fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>200, :text_alignment=>'justified', :text_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
 #     @g = Graphic.new(proposed_height: 100, text_string: "This is some sample string. And some more overflowing text.")
 #   end
-#     
-# 
-#   # 
+#
+#
+#   #
 #   # it 'should save TextLayoutManager' do
 #   #   @g.save_pdf(@pdf_path)
 #   #   File.exists?(@pdf_path).must_equal true

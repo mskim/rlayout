@@ -1,6 +1,4 @@
-require File.dirname(File.expand_path(__FILE__)) + "/spec_helper"
-
-
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe ' create Graphic from yaml' do
   before do
@@ -46,9 +44,7 @@ yml =<<-EOF
 }
 
     EOF
-    puts YAML::load(yml).to_json
     @g = RLayout::Graphic.new(json: YAML::load(yml))
-    puts "@g.to_hash:#{@g.to_hash}"
   end
 
   it 'shuld create object from data' do
