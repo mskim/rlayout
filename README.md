@@ -117,13 +117,26 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_2_6
+	- newsman
+		- news_article_box, show overflowing line with red
+		- expand and reduce article box
+		- make body_line_height from grid
+
+2017_2_5
+	- hexapdf Tj TJ, tm, tlm
+
+	- fix Container bug
+		additional container is inserted when processing block
+		calling stack was creating another Container, fixed.
+
 2017_2_2
 	- newsman
 		- specify heading_columns when creating NewsArticleBox
 		- heading title and subtitle size according to heading_columns
 	- Greeking mode
 		- fill token with gray box
-		
+
 2017_1_2
 	- news_section
 	- show overflow

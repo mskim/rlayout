@@ -1,12 +1,12 @@
 module RLayout
-  
-  
+
+
   class Graphic
     attr_accessor :x, :y, :width, :height
     attr_accessor :left_margin , :top_margin, :right_margin, :bottom_margin
     attr_accessor :left_inset, :top_inset, :right_inset, :bottom_inset
     attr_accessor :layout_direction, :layout_member, :layout_length, :layout_expand, :layout_alignment
-    
+
     def init_layout(options)
       if options[:margin]
         @left_margin    = options[:margin]
@@ -30,12 +30,12 @@ module RLayout
         @right_inset    = options.fetch(:right_inset, layout_default[:right_inset])     unless @right_inset
         @bottom_inset   = options.fetch(:bottom_inset, layout_default[:bottom_inset])   unless @bottom_inset
       end
-      
+
       @layout_direction = options.fetch(:layout_direction, layout_default[:layout_direction])
       @layout_member    = options.fetch(:layout_member, layout_default[:layout_member])
       @layout_length    = options.fetch(:layout_length, layout_default[:layout_length])
       @layout_alignment = "left"
-      if @parent_graphic && @parent_graphic.respond_to?(:stack) && @parent_graphic.stack
+      if @parent_graphic #&& @parent_graphic.respond_to?(:stack) && @parent_graphic.stack
         if @parent_graphic.layout_direction == 'vertical'
           @layout_expand = :width
         else
@@ -58,7 +58,7 @@ module RLayout
       @right_inset    = convert_to_pt(@right_inset) if @right_inset.class == String
       @bottom_inset   = convert_to_pt(@bottom_inset)if @bottom_inset.class == String
     end
-    
+
     def layout_default
       {
         left_margin:  0,
@@ -71,11 +71,11 @@ module RLayout
         bottom_inset: 0,
         layout_direction: "vertical",
         layout_member: true,
-        layout_expand: [:width, :height], # auto_layout expand 
+        layout_expand: [:width, :height], # auto_layout expand
         layout_length:  1,
       }
     end
-    
+
     def layout_to_hash
       layout_default_hash = layout_default
       h = {}

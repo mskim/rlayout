@@ -1,5 +1,19 @@
 require File.dirname(File.expand_path(__FILE__)) + "/spec_helper"
 
+describe 'container block script' do
+  before do
+    @container = Container.new  do
+      text("string1")
+      text("string2")
+      text("string3")
+      text("string4")
+    end
+  end
+  it 'should have chidren graphcis' do
+    assert_equal(@container.graphics.length, 4)
+  end
+end
+
 describe 'test profile' do
   before do
     @g5 = Container.new(:tag=> 'g2', :layout_direction=>'horizontal')

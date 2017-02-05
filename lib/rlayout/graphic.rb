@@ -87,19 +87,19 @@ module RLayout
       init_rotation(options)  if options[:rotation] || options[:rotation_content]
       init_text(options)
       init_image(options)
-
-      if @parent_graphic
-        if @parent_graphic.kind_of?(Document)
-          @parent_graphic.pages << self if  !parent_graphic.pages.include?(self)
-        elsif options[:is_float]
-          @parent_graphic.floats << self if @parent_graphic.floats && !@parent_graphic.floats.include?(self)
-          # init_float(options)
-        elsif options[:is_fixture]
-          #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics
-          @parent_graphic.fixtures << self if !@parent_graphic.fixtures.include?(self)
-        elsif @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
-          @parent_graphic.graphics << self
-        end
+      if @parent_graphic.nil?
+        return self
+      end
+      if @parent_graphic.kind_of?(Document)
+        @parent_graphic.pages << self if  !parent_graphic.pages.include?(self)
+      elsif options[:is_float]
+        @parent_graphic.floats << self if @parent_graphic.floats && !@parent_graphic.floats.include?(self)
+        # init_float(options)
+      elsif options[:is_fixture]
+        #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics
+        @parent_graphic.fixtures << self if !@parent_graphic.fixtures.include?(self)
+      elsif @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
+        @parent_graphic.graphics << self
       end
       self
     end
@@ -635,8 +635,6 @@ to_hash        # r = NSMakeRect(@x,@y,@width,@height)
 
   class Text < Graphic
     def initialize(options={})
-      puts "creating Text"
-      puts "options:#{options}"
       super
       self
     end

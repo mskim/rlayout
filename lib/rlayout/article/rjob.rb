@@ -30,7 +30,7 @@ module RLayout
             puts "output_path not specified!!! "
             return
           end
-        end        
+        end
       elsif options[:script_path]
         unless File.exist?(options[:script_path])
           puts "no file #{options[:script_path]} doesn't exit!!! "
@@ -58,7 +58,7 @@ module RLayout
       output_options            = {}
       output_options[:jpg]      = @jpg if @jpg
       output_options[:preview]  = @preview if @preview
-      @created_object.save_pdf(@output_path, output_options) if @created_object.respond_to?(:save_pdf)      
+      @created_object.save_pdf(@output_path, output_options) if @created_object.respond_to?(:save_pdf)
       self
     end
   end
