@@ -3,11 +3,13 @@
 # grid_frame is passed to detemine the width, height, and column_number of text_box
 # Used when creating newspaper article, called from NewsArticleMaker
 
+# show_overflow_lines
+#
 module RLayout
 
   class NewsArticleBox < TextBox
-    attr_accessor :story_path
-
+    attr_accessor :story_path, :show_overflow_lines
+    attr_accessor :adjust_lines # bottom+1, top-1, bottom+2, top-2,
     def initialize(options={}, &block)
       if options[:grid_frame]
         if options[:grid_frame].class == String
@@ -48,6 +50,27 @@ module RLayout
       self
     end
 
+    def overflow_box
+      # take the last columns last paragraphs
+      last_para = @graphics.last.graphics.last
+      if last_para && @graphics.last.graphics.last.overflow?
+        return last_para.split_overflowing_lines
+      end
+      nil
+    end
+
+    def reduce_lines(overflow_count)
+      paragraphs = []
+      @graphics.each do |column|
+        paragraphs += column.graphics
+      end
+      reduced_line = 0
+      paragraphs.reverse.each do |para|
+        exit if reduced_line == overflow_count
+        goal = overflow_count - reduced_line
+        result = para.try_reducing_line_numbers_by_changing_space_width(goal)
+      end
+    end
 
     def make_paragraph(para_data_array)
       @paragraphs =[]

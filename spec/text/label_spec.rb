@@ -1,5 +1,5 @@
 
-$LOAD_PATH.unshift File.join(File.dirname(File.expand_path(__FILE__)), '../..', 'lib')
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe ' label creation' do
   before do

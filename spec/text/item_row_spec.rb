@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.join(File.dirname(File.expand_path(__FILE__)), '../..', 'lib')
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'testing TitleText creation' do
   before do

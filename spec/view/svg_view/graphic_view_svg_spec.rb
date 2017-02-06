@@ -1,5 +1,4 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../../spec_helper"
-require 'xmlsimple'
 
 describe 'parse SVG text ' do
   before do

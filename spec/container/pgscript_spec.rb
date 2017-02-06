@@ -1,6 +1,5 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
-
 describe 'pgscritp for Container ' do
   before do
     @container = RLayout::Container.new() do

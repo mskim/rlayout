@@ -8,14 +8,13 @@
 
 # How Paragraoh is layed out?
 # 1. Tokens are created with given para_style.
-# 2. Paragraphs can be layed out the initail time if we know the width of the column to be,
-#    but most of the we do not know where the paragraph will be layed out. So, layout_lines(width)
-#    is called at the time of layout.
+# 2. Paragraphs can be layed out at the initail time if we know the width of the column to be,
+#    but most of the time we do not know where the paragraph will be placed. So, text layout id defered amd layout_lines(width)
+#    is called at the time of actual layout.
 # 3. We can encounter simple column or complex column
-#    complex column are those who have overlapping floats of various shapes.
+#    complex column are those that have overlapping floats of various shapes.
 #    so the text lines could be shorter than the ones in simple column.
 # 3. We can also encounter tokens that are not uniform in heights, math tokens for example
-
 
 # LineFragments
 # LineFragments are made up of TextTokens, ImageToken, MathToken etc....
@@ -24,18 +23,18 @@
 
 # Emphasis Handling
 # inline emphasis are handled using double curl {{content}}, or single curl {content}
-# We want the emphasis mark to be simple as possible for writers. This is work in process, it might change as we go!!!!
-# So, we limit the emphasis markup to those two only, and how it is implement is left to designer, not to the writer. It means designer need to provide custom style at the run time for effected para styles.
+# We want the emphasis mark to be simple as possible for writers.
+# This is work in process, it might change as we go!!!!
+# So, we limit the emphasis markup to those two only,
+# and how it is implement is left to designer, not to the writer.
+# It means designer need to provide custom style at run time for effected para styles.
 # There are two types of emphasis,  "text effect" and "special layout".
 # For text effect, such as italic, bold, boxed, underline, hidden_text, emphasis we can modify the @token_style to get the effect. So designer need to provide paragraph_styles paragraph style as hash.
 # For special layout tokens, such as ruby, reverse ruby,  we have to do some layout modification. In this case, desinger needs to proved the function name of the emphasis, such as ruby, reverse_ruby, icon: name . in custom paragraph style. as para_style[:double_emphasis]  = "reverse_ruby"
-
 #
 # {{base text}{top text}}
 # {{base text}{top text}}
 #
-DefRegex = /(def_.*?\(.*?\))/
-
 INLINE_SINGLE_CURL = /(\{.*?\})/
 INLINE_DOUBLE_CURL = /(\{\{.*?\}\})/m
 RUBY_ARGUMENT_DIVIDER   = /\}(\s)*?\{/
@@ -46,7 +45,7 @@ RUBY_ARGUMENT_DIVIDER   = /\}(\s)*?\{/
 
 # {{ruby sting, uppper}}
 
-# I am still toying with differnce syntexes to make it easy to work
+# I am still toying with differnce syntexes to make it easy to write.
 # candidate 1
 #   def_box('boxed_text')
 #   def_ruby('base_text', 'top_text')
@@ -279,6 +278,8 @@ module RLayout
         atts[NSKernAttributeName]             = text_tracking if text_tracking
         @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
         @para_style[:atts] = @atts
+      else
+        # puts "@para_style:#{@para_style}"
       end
 
       # do we have any doulbe curl?
@@ -306,6 +307,17 @@ module RLayout
       @graphics.length
     end
 
+    def is_rest_of_area_simple?
+      true
+    end
+
+    def is_simple_column?
+      true
+    end
+
+    def room
+      @height
+    end
     # algorithm for laying out paragraph in simple and complex container
     # loop until we run out of tokens
 	  # 1. start with line rect with width of column and height of para_style
@@ -387,6 +399,7 @@ module RLayout
               end
             else
               @overflow   = true
+
             end
             # @height     = @line_y_offset
             @height     = @line_y_offset + @line_rectangle[3]
@@ -446,7 +459,44 @@ module RLayout
       if @para_style[:space_after]
         @height = @line_y_offset + @para_style[:space_after]
       end
+    end
 
+    def number_of_tokens
+      number_of_tokens = 0
+      @graphics.each do |line|
+        number_of_tokens +=  line.graphics.count
+      end
+      number_of_tokens
+    end
+
+    # it makes sense to reduce space by the paragraph, since return key blocks the rippling effect.
+    # we reduce the paragraphs from the alst to first untill we have reduced desired number of lines.
+    def para_space_info
+      number_of_spaces = 0
+      number_of_tokens = 0
+      @graphics.each do |line|
+        number_of_spaces +=  line.graphics.count - 1
+        number_of_tokens +=  line.graphics.count
+      end
+      number_of_lines = @graphics.count
+      # number_of_spaces
+      # number_of_tokens
+      last_line_tokens = @graphics.last.graphics.count
+      if @tokens.length > 0
+        last_line_tokens = @tokens.lengt
+      end
+      {number_of_lines: number_of_lines, number_of_spaces: number_of_spaces, number_of_tokens: number_of_tokens, last_line_tokens: last_line_tokens}
+    end
+
+    # try reducing lines by using reducded space width
+    # the result would either succeed in reducing the number of lines
+    # or we just can't reduce the line numbers without going over the limit
+    # goal is given, so stop the process, if we have reached a goal
+    # return number of reduced lines
+    def try_reducing_line_numbers_by_changing_space_width(our_goal)
+      reduced_lines = 0
+      #TODO
+      reduced_lines
     end
 
 	  # this is called when paragraph is splitted or moved to next column and have to be
@@ -458,7 +508,6 @@ module RLayout
     #       @underflow        = false
     #   @height           = @graphics.map{|line| line.height}.inject(:+)
     # end
-
     def is_breakable?
       return true  if @graphics.length > 2
       false
