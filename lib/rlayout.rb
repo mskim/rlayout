@@ -26,7 +26,7 @@ else
   require 'base64'
   require 'json'
   require 'hexapdf'
-  require 'xmlsimple'
+  # require 'xmlsimple'
 
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
