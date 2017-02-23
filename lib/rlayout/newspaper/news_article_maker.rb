@@ -51,7 +51,7 @@ module RLayout
       else
         @output_path  = @article_path + "/output.pdf"
       end
-
+      @svg_path  = @article_path + "/output.svg"
       if options[:template_path] && File.exist?(options[:template_path])
         @template_path = options[:template_path]
       else
@@ -72,6 +72,8 @@ module RLayout
         @news_article_box.save_pdf(@output_path, :jpg=>true)
       else
         puts "save_pdf in ruby"
+        @news_article_box.save_svg(@svg_path)
+
       end
       self
     end
@@ -87,7 +89,7 @@ module RLayout
         if  box_heading.class == RLayout::Heading
           box_heading.set_heading_content(@heading)
         else
-          puts "+++++++++++ box_heading.class:#{box_heading.class}"
+          puts "+++++++++++ no heading"
         end
       end
       @paragraphs =[]
@@ -95,21 +97,11 @@ module RLayout
         para_options = {}
         para_options[:markup]         = para[:markup]
         para_options[:layout_expand]  = [:width]
-        if para[:markup] == 'img'
-          source = para[:image_path]
-          para_options[:caption]        = para[:caption]
-          para_options[:bottom_margin]  = 10
-          para_options[:bottom_inset]   = 10
-          full_image_path = File.dirname(@story_path) + "/#{source}"
-          para_options[:image_path] = full_image_path
-          @paragraphs << Image.new(para_options)
-          next
-        end
         para_options[:para_string]    = para[:para_string]
         para_options[:article_type]   = "news_article"
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
-        @paragraphs << Paragraph.new(para_options)
+        @paragraphs << NewsParagraph.new(para_options)
       end
     end
 
@@ -117,6 +109,7 @@ module RLayout
       @news_article_box.layout_floats!
       @news_article_box.set_overlapping_grid_rect
       @news_article_box.layout_items(@paragraphs)
+
     end
   end
 end
