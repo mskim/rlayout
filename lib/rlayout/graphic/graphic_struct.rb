@@ -266,12 +266,8 @@ module RLayout
     end
 
     def to_pdf(canvas)
-      puts "to_pdf of TextStruct"
-      puts "string:#{string}"
       font = 'Times' unless font
-      puts "font:#{font}"
       size = 16 unless size
-      puts "size:#{size}"
       canvas.font(font, size: size)
       canvas.text(string, at:[100,100])
     end

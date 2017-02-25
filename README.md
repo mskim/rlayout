@@ -116,6 +116,9 @@ TODO List
 			- index
 			- glossary
 		- put templates under rubymotion app/resouces/
+		
+2017_2_28
+	- new lauyout for newspaper, NewsArticleMaker, NewsArticleBox, NewsColumn, NewsParagraph, NewsLineFragment
 
 2017_2_6
 	- newsman

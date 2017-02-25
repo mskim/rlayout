@@ -7,7 +7,6 @@ class GraphicViewMac < NSView
     unless File.exist?(graphic.image_path)
       r = ns_bounds_rect(graphic)
       drawLine(r, withTrap:0)
-      draw_x(r)
       return
     end
     r = graphic.layout_rect

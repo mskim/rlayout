@@ -31,6 +31,7 @@ class GraphicViewMac < NSView
     transform.translateXBy(graphic.x, yBy: graphic.y)
 
     if graphic.rotation
+      #TODO set roatation center
       transform.transformPoint(ns_center_point(graphic))
       # transform.rotateByRadians(-graphic.rotation)
       # using -angle for flipped view
@@ -52,7 +53,7 @@ class GraphicViewMac < NSView
     draw_floats(graphic.floats)        if !graphic.floats.nil? && graphic.floats.length > 0
     @context.restoreGraphicsState
   end
-  
+
   def draw_fixtures(fixtures)
       fixtures.each do |child|
         draw_graphic_in_nsview(child)

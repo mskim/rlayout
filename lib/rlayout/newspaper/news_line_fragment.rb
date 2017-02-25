@@ -15,14 +15,13 @@ module RLayout
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent, :para_style
     attr_accessor :x, :y, :width, :height, :total_token_width, :room
-    attr_accessor :paragraph, :font_size, :text_area_width
+    attr_accessor :paragraph, :font_size, :text_area_width, :has_text, :space_width
     def	initialize(options={})
       # options[:stroke_color]    = 'red'
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
-      # options[:fill_color]        = options.fetch(:line_color, 'gray')
+      options[:fill_color]        = options.fetch(:line_color, 'lightGray')
       options[:stroke_width]      = 0.5
-
       super
       @graphics         = options[:tokens] || []
       @space_width      = options.fetch(:space_width, 5.0)
@@ -36,8 +35,9 @@ module RLayout
     end
 
     def set_paragraph(paragraph)
-      @paragraph = paragraph
-      @font_size = paragraph.para_style[:text_size]
+      @paragraph    = paragraph
+      @font_size    = paragraph.para_style[:text_size]
+      @space_width  = @paragraph.para_style[:space_width]
     end
 
     def set_line_type(line_type)
@@ -57,7 +57,7 @@ module RLayout
         @text_area_width    = @first_line_width
       else
         @starting_position  = @paragraph.para_style[:head_indent]
-        @text_area_width    = @moddle_line_width
+        @text_area_width    = @middle_line_width
       end
       @room  = @text_area_width
       #code
@@ -66,20 +66,15 @@ module RLayout
     # place tokens in the line, given tokens array
     # return loft over tokens array if not all tokens are layed out
     # return false if no leftvver tokens
-    def place_tokens(tokens)
-      while token = tokens.shift
-        break unless @room
-        if token.width <= @room
-          token.parent_graphic = self
-          @graphics << token
-          @room -= token.width
-          @room -= @paragraph.para_style[:space_width]
-        else
-          tokens.unshift(token)
-          return tokens
-        end
+    def place_token(token)
+      if @room >= token.width
+        token.parent_graphic = self
+        @graphics << token
+        @room -= token.width
+        @room -= @space_width
+        return true
       end
-      false # this mean no more tokens are left
+      return false
     end
 
     def token_width_sum

@@ -328,16 +328,23 @@ module RLayout
       @current_line = text_column.current_line
       @current_line.set_paragraph(self)
       @current_line.set_line_type("first_line")
-      while @current_line.place_tokens(tokens)
-        @current_line.align_tokens
-        @current_line = text_column.go_to_next_line
-        if @current_line
-          @current_line.set_paragraph(self)
-          @current_line.set_line_type("middle_line")
+      token = tokens.shift
+      while token
+        success = @current_line.place_token(token)
+        if success
+          token = tokens.shift
         else
-          break
+          @current_line.align_tokens
+          @current_line = text_column.go_to_next_line
+          if @current_line
+            @current_line.set_paragraph(self)
+            @current_line.set_line_type("middle_line")
+          else
+            break #reached end of column
+          end
         end
       end
+
       if text_column.is_last_line?
         split = true
         return true # left over is true
