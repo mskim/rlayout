@@ -116,15 +116,17 @@ TODO List
 			- index
 			- glossary
 		- put templates under rubymotion app/resouces/
-		
-2017_2_28
+
+2017_2_26
+	- make body_height_with_given line_count, not font size, 8 lines per one grid? or 10?
+	- news_article_box, show overflowing line with red
+	- expand and reduce article box, also update section layout position
+
+2017_2_25
 	- new lauyout for newspaper, NewsArticleMaker, NewsArticleBox, NewsColumn, NewsParagraph, NewsLineFragment
 
 2017_2_6
 	- newsman
-		- make body_height_with_given line_count, not font size 8 lines per one grid? or 10?
-		- news_article_box, show overflowing line with red
-		- expand and reduce article box, also update section layout position
 		- make body_line_height from grid
 
 2017_2_5

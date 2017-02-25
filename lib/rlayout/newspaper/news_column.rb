@@ -24,19 +24,21 @@ module RLayout
     attr_accessor :complex_rect, :align_body_text, :show_grid_rects
 
     def initialize(options={}, &block)
-      options[:width]   = 200 unless options[:width]
-      options[:height]  = 500 unless options[:height]
+      options[:width]     = 200 unless options[:width]
+      options[:height]    = 500 unless options[:height]
       super
+      @line_count         = options[:column_line_count]
       @show_grid_rects    = options[:show_grid_rects] || true
       @layout_space       = options.fetch(:column_layout_space, 0)
       @complex_rect       = false
-      @current_style      = RLayout::StyleService.shared_style_service.current_style
-      body_style          = options[:body_style] || @current_style['p']
+      # @current_style      = RLayout::StyleService.shared_style_service.current_style
+      # body_style          = options[:body_style] || @current_style['p']
       # line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
-      line_height         = body_style[:text_size] # default line_height, set to text_size*1.3
-      @body_line_height   = (line_height + body_style[:text_line_spacing])
+      # line_height         = body_style[:text_size] # default line_height, set to text_size*1.3
+      # @body_line_height   = (line_height + body_style[:text_line_spacing])
+      @body_line_height   = options[:body_line_height]
       @current_position   = @top_margin + @top_inset
-      @line_count = (@height/@body_line_height).to_i
+      # @line_count = (@height/@body_line_height).to_i
       if block
         instance_eval(&block)
       end
@@ -89,30 +91,6 @@ module RLayout
 
     def is_last_line?
       @current_line_index == @line_count
-    end
-    # called from paragraph to get the line rect at current_y position of text_column
-    # line_offset and line_height is given
-    # It should check the grid_rects at the point of interserts
-    # And return a rect, a text_area that is not overlapping with floats.
-    def sugest_me_a_rect_at(line_offset, line_height)
-      grid_index = current_grid_rect_index_at_position(@current_position + line_offset)
-      grid_count = line_height/@grid_rects.first.rect[3]
-      int_amount = grid_count.round
-      grid_rects_count = @grid_rects.length
-      if (grid_index + int_amount) >= grid_rects_count
-        return [0,0,@width,line_height]
-      end
-      max_starting_x  = 0
-      min_ending_x    = @x + @width
-      int_amount.times do |i|
-        grid          = @grid_rects[grid_index + i]
-        if grid.fully_covered
-          return [@width,line_offset,0,line_height]
-        end
-        max_starting_x= grid.rect[0] if grid.rect[0] > max_starting_x
-        min_ending_x  = max_x(grid.rect) if max_x(grid.rect) < min_ending_x
-      end
-      [max_starting_x, line_offset , min_ending_x - max_starting_x, line_height]
     end
 
     def move_current_position_by(y_amount)
@@ -205,40 +183,12 @@ module RLayout
       @grid_rects.last.rect
     end
 
-    #TODO it should not start at the half height starting position using options[:align_to_body_text}
-    def current_grid_rect_index_at_position(y_position)
-      return 0 unless @grid_rects
-      # @current_position = @top_margin + @top_inset unless @current_position #@top_margin + @top_inset
-      @grid_rects.each_with_index do |grid_rect, i|
-        if y_position >= min_y(grid_rect.rect) && y_position <= (max_y(grid_rect.rect) + 1) #make sure for flaot rounding
-          # return grid_rect
-          return i
-        end
-      end
-      @grid_rects.length # index is beyond the array range
-    end
-
     def column_index
       @parent_graphic.graphics.index(self)
     end
 
     def text_width
       text_rect[2]
-    end
-
-    def mark_overlapping_grid_rects(float_rect, float_class)
-      @complex_rect = true
-      @grid_rects.each do |grid_rect|
-        grid_rect.update_text_area(float_rect)
-      end
-    end
-
-    # non_overlapping_rect is a actual layout frame that is not overlapping with flaots
-    def non_overlapping_frame
-      if @non_overlapping_rect
-        return @non_overlapping_rect
-      end
-      bounds_rect
     end
 
 
@@ -263,41 +213,6 @@ module RLayout
       max_y(@grid_rects.last.rect)
     end
 
-
-    # skip fully_covered_rect and update current_position
-    def update_current_position
-      return unless @grid_rects
-      @current_grid_index = current_grid_rect_index_at_position(@current_position)
-      while @current_grid_index < @grid_rects.length do
-        if !@grid_rects[@current_grid_index].fully_covered
-          if @current_grid_index.odd? && @current_grid_index < (@grid_rects.length - 1)
-            @current_position = min_y(@grid_rects[@current_grid_index + 1].rect)
-            return
-          end
-          #????
-          @current_position = min_y(@grid_rects[@current_grid_index].rect)
-          return
-        else
-          @current_grid_index += 1
-        end
-      end
-    end
-
-    def justify_items(options={})
-      height_sum = 0
-      # height_sum  = @graphics.collect{|g| g.height}.reduce(:+)
-      @graphics.each do |g|
-        height_sum=+ g.height if g
-      end
-      room        = @height - height_sum
-      margin      = 0
-      space       = (@height - height_sum - margin*2)/(@graphics.length - 1)
-      y = 0
-      @graphics.each do |g|
-        g.y = y
-        y += g.height + space
-      end
-    end
   end
 
 

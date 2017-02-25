@@ -12,13 +12,14 @@
 # 1. generate line_fragemnts that doen't overlap with floats
 # 1.  def adjust_overlapping_lines
 
+GridLineCount = 8
 
 module RLayout
 
   class NewsArticleBox < Container
-    attr_accessor :heading_columns, :grid_size, :grid_frame
+    attr_accessor :heading_columns, :grid_size, :grid_frame, :body_line_height
     attr_accessor :story_path, :show_overflow_lines, :overflow_column
-    attr_accessor :column_count, :column_layout_space
+    attr_accessor :column_count, :column_layout_space, :line_count_per_column
     attr_accessor :draw_gutter_stroke, :gutter, :v_gutter
     attr_accessor :heading, :subtitle_box, :quote_box, :personal_image, :image
     attr_accessor :adjust_lines # bottom+1, top-1, bottom+2, top-2,
@@ -56,7 +57,8 @@ module RLayout
       @width                = @grid_frame[2]*@grid_width + (@grid_frame[2] - 1)*@gutter
       @height               = @grid_frame[3]*@grid_height + (@grid_frame[3] - 1)*@v_gutter
       @column_count         = @grid_frame[2]
-
+      @body_line_height     = @grid_height/GridLineCount
+      @column_line_count    = @grid_frame[3]*GridLineCount
       create_columns
       if block
         instance_eval(&block)
@@ -75,7 +77,7 @@ module RLayout
     def create_columns
       current_x = @gutter/2
       @column_count.times do
-        g= NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: @grid_width, height: @height)
+        g= NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: @grid_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height)
         g.parent_graphic = self
         @graphics << g
         current_x += @grid_width + @gutter

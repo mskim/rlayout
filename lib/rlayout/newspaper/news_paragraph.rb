@@ -110,21 +110,6 @@ module RLayout
       self
     end
 
-    def box(text, options={})
-      para_style = @para_style.dup
-      # para_style[:text_string] = text
-      para_style[:string] = text
-      para_style[:stroke_width] = 0.5
-      @tokens << TextToken.new(para_style)
-    end
-
-    def round(text, options={})
-      para_style = @para_style.dup
-      para_style[:string] = text
-      para_style[:stroke_width] = 0.5
-      para_style[:shape]        = "round"
-      @tokens << TextToken.new(para_style)
-    end
 
     def create_tokens_with_double_curl(para_string)
       split_array = para_string.split(INLINE_DOUBLE_CURL)
@@ -326,8 +311,7 @@ module RLayout
     # end
     def layout_lines(text_column)
       @current_line = text_column.current_line
-      @current_line.set_paragraph(self)
-      @current_line.set_line_type("first_line")
+      @current_line.set_paragraph_info(self, "first_line")
       token = tokens.shift
       while token
         success = @current_line.place_token(token)
@@ -337,8 +321,7 @@ module RLayout
           @current_line.align_tokens
           @current_line = text_column.go_to_next_line
           if @current_line
-            @current_line.set_paragraph(self)
-            @current_line.set_line_type("middle_line")
+            @current_line.set_paragraph_info(self, "middle_line")
           else
             break #reached end of column
           end

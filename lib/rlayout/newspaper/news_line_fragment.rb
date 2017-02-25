@@ -13,9 +13,9 @@ module RLayout
   # line fill_color is set by optins[:line_color] or it is set to clear
   class	NewsLineFragment < Container
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
-    attr_accessor :left_indent, :right_indent, :para_style
+    attr_accessor :left_indent, :right_indent, :para_style, :text_alignment
     attr_accessor :x, :y, :width, :height, :total_token_width, :room
-    attr_accessor :paragraph, :font_size, :text_area_width, :has_text, :space_width
+    attr_accessor :text_area_width, :has_text, :space_width
     def	initialize(options={})
       # options[:stroke_color]    = 'red'
       options[:layout_direction]  = 'horizontal'
@@ -34,29 +34,26 @@ module RLayout
       puts __method__
     end
 
-    def set_paragraph(paragraph)
-      @paragraph    = paragraph
-      @font_size    = paragraph.para_style[:text_size]
-      @space_width  = @paragraph.para_style[:space_width]
-    end
-
-    def set_line_type(line_type)
-      @para_style = paragraph.para_style
-      if @para_style[:h_alignment] == "left" || @para_style[:h_alignment] == "justified"
-        @first_line_width   = @width - @para_style[:first_line_indent] - @para_style[:tail_indent]
-        @middle_line_width  = @width - @para_style[:head_indent] - @para_style[:tail_indent]
+    # set line type, and paragraph information for line
+    def set_paragraph_info(paragraph, line_type)
+      para_style    = paragraph.para_style
+      @space_width  = para_style[:space_width]
+      @text_alignment = para_style[:h_alignment]
+      if @text_alignment == "left" || @text_alignment == "justified"
+        @first_line_width   = @width - para_style[:first_line_indent] - para_style[:tail_indent]
+        @middle_line_width  = @width - para_style[:head_indent] - para_style[:tail_indent]
       else
         #TODO fix this
-        @first_line_width   = @width - @para_style[:head_indent] - @para_style[:tail_indent]
-        @middle_line_width  = @width - @para_style[:head_indent] - @para_style[:tail_indent]
+        @first_line_width   = @width - para_style[:head_indent] - para_style[:tail_indent]
+        @middle_line_width  = @width - para_style[:head_indent] - para_style[:tail_indent]
       end
 
       @line_type = line_type
       if @line_type == 'first_line'
-        @starting_position  = @paragraph.para_style[:first_line_indent]
+        @starting_position  = para_style[:first_line_indent]
         @text_area_width    = @first_line_width
       else
-        @starting_position  = @paragraph.para_style[:head_indent]
+        @starting_position  = para_style[:head_indent]
         @text_area_width    = @middle_line_width
       end
       @room  = @text_area_width
@@ -96,7 +93,7 @@ module RLayout
         x += token.width + @space_width
       end
 
-      case @para_style[:text_alignment]
+      case @text_alignment
       when 'left'
       when 'center'
         @graphics.map {|t| t.x += room/2.0}
