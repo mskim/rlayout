@@ -24,11 +24,9 @@ module RLayout
     attr_accessor :complex_rect, :align_body_text, :show_grid_rects
 
     def initialize(options={}, &block)
-      puts "++++++++ NewsColumn"
       options[:width]   = 200 unless options[:width]
       options[:height]  = 500 unless options[:height]
       super
-      @current_line_index = 0
       @show_grid_rects    = options[:show_grid_rects] || true
       @layout_space       = options.fetch(:column_layout_space, 0)
       @complex_rect       = false
@@ -39,25 +37,37 @@ module RLayout
       @body_line_height   = (line_height + body_style[:text_line_spacing])
       @current_position   = @top_margin + @top_inset
       @line_count = (@height/@body_line_height).to_i
-      create_lines
-      @current_line = @graphics[@current_line_index]
       if block
         instance_eval(&block)
       end
       self
     end
 
-    def create_lines
+    def create_lines(overlapping_floats)
       current_x = 0
       current_y = 0
       @line_count.times do
-        options = {parent:self, x: current_y, y: current_y , width: @width, height: @body_line_height}
-        line = NewsLineFragment.new(options)
-        # @graphics << line
-        current_y + @body_line_height
+        options = {parent:self, x: current_x, y: current_y , width: @width, height: @body_line_height}
+        line = NewsLineFragment.new(options)        # @graphics << line
+        current_y += @body_line_height
       end
-      relayout!
+      @current_line_index = 0
+      @current_line       = @graphics[@current_line_index]
     end
+
+    def adjust_overlapping_lines(overlapping_floats)
+      #code
+    end
+
+    def adjust_overlapping_lines(overlapping_floats)
+      overlapping_floats.each do |float|
+        float_rect = float.frame_rect
+        @graphics.each do |line|
+          line.adjust_text_area_away_from(float_rect) if intersects_rect(float_rect, line.rect)
+        end
+      end
+    end
+
 
     # get text for each line lines
     def column_line_string

@@ -232,7 +232,6 @@ EOF
       return if @no_fixture_page # for pictures page
       options[:header][:font] = 8
       options[:footer][:font] = 8
-      # binding.pry
       if first_page?
         if options[:header] && (header_rule[:first_page_only] || header_rule[:first_page])
           options[:header][:text_string] = options[:header][:first_page_text]

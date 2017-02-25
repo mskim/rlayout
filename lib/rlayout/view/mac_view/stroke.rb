@@ -4,7 +4,7 @@ class GraphicViewMac < NSView
   def draw_stroke(graphic)
     draw_gutter_stroke(graphic) if graphic.respond_to?(:gutter_stroke) && graphic.draw_gutter_stroke
     return if graphic.stroke[:thickness].nil?
-    return if graphic.stroke[:thickness] == 0 
+    return if graphic.stroke[:thickness] == 0
     @stroke       = graphic.stroke
     @stroke_rect  = graphic.get_stroke_rect
     @line_position = 1
@@ -13,7 +13,7 @@ class GraphicViewMac < NSView
     draw_rules(r) if @stroke[:rule]
     # drawArrow if @start_arrow && @owner_graphic
   end
-    
+
   def draw_rules(rect)
     if @stroke[:rule] == "horizontal_rule"
       # puts  "draw bottom"
@@ -21,7 +21,7 @@ class GraphicViewMac < NSView
       path.setLineWidth(@stroke[:thickness])
       path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + rect.size.height/2.0))
       path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height/2.0))
-      path.stroke 
+      path.stroke
     end
     if @stroke[:rule] == "vertical_rule"
       # puts  "draw bottom"
@@ -29,13 +29,13 @@ class GraphicViewMac < NSView
       path.setLineWidth(@stroke[:thickness])
       path.moveToPoint(NSPoint.new(rect.origin.x + rect.size.width/2.0, rect.origin.y ))
       path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width/2.0, rect.origin.y + + rect.size.height))
-      path.stroke 
+      path.stroke
     end
     #TODO
     # if @stroke[:rule]  == "top_left_to_bottom_right"
     # if @stroke[:rule]  == "top_right_to_bottom_left"
   end
-  
+
   def draw_gutter_stroke(graphic)
     # return unless graphic.kind_of?(RLayout::TextBox)
     #draw gutter lines
@@ -49,7 +49,7 @@ class GraphicViewMac < NSView
     space = graphic.layout_space/2.0
     if graphic.gutter_stroke.nil?
       gutter_stroke = {}
-      gutter_stroke[:thickness] = 1.0 
+      gutter_stroke[:thickness] = 1.0
       gutter_stroke[:color] = "black"
       graphic.gutter_stroke = gutter_stroke
     elsif graphic.gutter_stroke.thickness.nil?
@@ -72,23 +72,23 @@ class GraphicViewMac < NSView
       end
     end
   end
-  
+
   def draw_line_from(starting, ending, width)
     path= NSBezierPath.bezierPath
     path.setLineWidth(width)
     path.moveToPoint(starting)
     path.lineToPoint(ending)
-    path.stroke 
+    path.stroke
   end
-  
+
   # def getStrokeRect(r)
-  #   if @line_position == 1 #LINE_POSITION_MIDDLE 
+  #   if @line_position == 1 #LINE_POSITION_MIDDLE
   #     return r
-  #   elsif @line_position == 2 
-  #     #LINE_POSITION_OUTSIDE) 
+  #   elsif @line_position == 2
+  #     #LINE_POSITION_OUTSIDE)
   #     return NSInsetRect(r, - @stroke[:thickness]/2.0, - @stroke[:thickness]/2.0)
-  #   else 
-  #     # LINE_POSITION_INSIDE        
+  #   else
+  #     # LINE_POSITION_INSIDE
   #     return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
   #   end
   # end
@@ -99,33 +99,33 @@ class GraphicViewMac < NSView
     path.setLineCapStyle(@stroke[:line_cap]) if @stroke[:line_cap]
     path.setLineJoinStyle(@stroke[:line_join]) if @stroke[:line_join]
     if @dash
-      if(@stroke[:line_cap] == 1 && @stroke[:dash][0] == 0) 
+      if(@stroke[:line_cap] == 1 && @stroke[:dash][0] == 0)
         @stroke[:dash][0] = 0.0001
       end
       path.setLineDash(@dash, count:@dash.length, phase:0)
     end
     path
-  end  
+  end
 
-  def drawLine(rect, withTrap:trap)  
+  def drawLine(rect, withTrap:trap)
     # return if @stroke[:thickness] == 0 &&  @graphic.drawing_mode == "printing"
-    return if @stroke[:thickness] == 0 
+    return if @stroke[:thickness] == 0
     unless trap
       trap = 0
     end
     # clipLine = false
-    # rect = getStrokeRect(rect)    
+    # rect = getStrokeRect(rect)
     rect = @stroke_rect
-    @stroke[:color]  = convert_to_nscolor(@stroke[:color])    unless @stroke[:color].class == NSColor  
+    @stroke[:color]  = convert_to_nscolor(@stroke[:color])    unless @stroke[:color].class == NSColor
     @stroke[:color].set
 
     if @stroke[:type]==nil
       @stroke[:type] = 0
     end
-    
+
     # @stroke[:type] == 0 means single line
     # @stroke[:type] > 0 means double or triple line
-    if(@stroke[:type] == 0)   
+    if(@stroke[:type] == 0)
       if @stroke[:thickness] == 0
         NSColor.lightGrayColor.set
         # NSColor.lightGrayColor.set
@@ -138,7 +138,7 @@ class GraphicViewMac < NSView
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][0])
           path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y))
           path.lineToPoint(NSPoint.new(rect.origin.x , rect.origin.y + rect.size.height))
-          path.stroke 
+          path.stroke
         end
         if @stroke[:sides][1] > 0
           # puts  "draw top"
@@ -146,7 +146,7 @@ class GraphicViewMac < NSView
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][1])
           path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y))
           path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y))
-          path.stroke 
+          path.stroke
         end
         if @stroke[:sides][2] > 0
           # puts  "draw right"
@@ -154,7 +154,7 @@ class GraphicViewMac < NSView
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][2])
           path.moveToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y))
           path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
-          path.stroke 
+          path.stroke
         end
         if @stroke[:sides][3] > 0
           # puts  "draw bottom"
@@ -162,42 +162,57 @@ class GraphicViewMac < NSView
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][3])
           path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + rect.size.height))
           path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
-          path.stroke 
+          path.stroke
         end
 
+        # if [1,1,1,1,1,1] drawing x mark
+        if @stroke[:sides][4] &&  @stroke[:sides][4] > 0
+          # puts  "draw top-left to bottom-right"
+          path= NSBezierPath.bezierPath
+          path.setLineWidth(@stroke[:thickness]*@stroke[:sides][3])
+          path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y))
+          path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
+          path.stroke
+        end
+
+        if @stroke[:sides][5] &&  @stroke[:sides][5] > 0
+          # puts  "draw bottom-left to top-right"
+          path= NSBezierPath.bezierPath
+          path.setLineWidth(@stroke[:thickness]*@stroke[:sides][3])
+          path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + rect.size.height))
+          path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y))
+          path.stroke
+        end
+
+
       else
-        path = linePathWithRect(rect) 
+        path = linePathWithRect(rect)
         path.setLineWidth(@stroke[:thickness] + trap)
         path.stroke
-      end  
-    else 
+      end
+    else
         @line1=@line_types_width_table[@stroke[:type]][0]*@stroke[:thickness]
         @line2=@line_types_width_table[@stroke[:type]][1]*@stroke[:thickness]
         w = @line1
         indentValue = (@stroke[:thickness] - w)/-2.0
-        if(@stroke[:type] > 3) 
+        if(@stroke[:type] > 3)
             path = linePathWithRect(rect)
             path.setLineWidth(@line2 + trap)
             path.stroke
         end
-        new_rect=NSInsetRect(rect, indentValue, indentValue)              
+        new_rect=NSInsetRect(rect, indentValue, indentValue)
         path = linePathWithRect(NSInsetRect(rect, indentValue, indentValue))
         path.setLineWidth(@line1 + trap)
         path.stroke
-        if(@stroke[:type] < 4) 
+        if(@stroke[:type] < 4)
           w = @line2
         end
         indentValue = (@stroke[:thickness] - w)/2.0
-        new_rect=NSInsetRect(rect, indentValue, indentValue)              
+        new_rect=NSInsetRect(rect, indentValue, indentValue)
         path = linePathWithRect(NSInsetRect(rect, indentValue, indentValue))
         path.setLineWidth(w + trap)
         path.stroke
     end
   end
 
-  # def draw_line(r)
-  #   drawLine(r, graphic, withTrap:0)
-  #   drawArrow if @start_arrow && @owner_graphic
-  # end
-  
 end

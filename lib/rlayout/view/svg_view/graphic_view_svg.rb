@@ -4,6 +4,22 @@ if RUBY_ENGINE != 'rubymotion'
 end
 
 module RLayout
+  class GreaphicViewSvg
+    attr_accessor :graphic
+
+    def initialize(graphic)
+      @graphic = grephic
+
+      self
+    end
+
+    def draw
+      #code
+    end
+
+  end
+
+
   class Graphic
     def self.parse_svg(svg_text, options={})
       hash = XmlSimple.xml_in svg_text

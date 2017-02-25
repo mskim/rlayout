@@ -4,12 +4,12 @@
 # TextToken does not contain space character. Space charcter is implemented as gap between tokens.
 
 # TextTokens with graphic attributes
-# TextTokens can have graphic attributes, such as  Box, Round, Colored, 
+# TextTokens can have graphic attributes, such as  Box, Round, Colored,
 # text{options}
 # boxed_text{stroke_width: 0.5}
 # rounded_text{stroke_width: 0.5, shape: "round"}
 
-# Special Tokens 
+# Special Tokens
 # Special Tokens are those tokens with complex shapes or special text effects,
 # such as Ruby, ReversedRuby, InlineMultipleChoice ...
 # Special tokens are created from markup,
@@ -34,14 +34,14 @@
 #   number_effect: 'circle'
 #   chioce_style: 'underline'
 # }
-# 
+#
 
 # LatexToken
 #
 #
 module RLayout
   # token fill_color is set by optins[:token_color] or it is set to clear
-  
+
   class TextToken < Graphic
     attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
     attr_accessor :string, :atts, :stroke, :has_text, :token_type # number, empasis, special
@@ -74,22 +74,22 @@ module RLayout
         @x      = @left_margin
         @height = @att_string.size.height
         if options[:text_line_spacing]
-          @height += options[:text_line_spacing] 
+          @height += options[:text_line_spacing]
         else
           @height += 10
         end
       end
       self
     end
-    
+
     def size
       @att_string.size
     end
-    
+
     def origin
       NSMakePoint(@x,@y)
     end
-            
+
     def svg
       # TODO <text font-size=\"#{text_size}\"
       s = ""
@@ -98,7 +98,7 @@ module RLayout
       end
       s
     end
-    
+
     def ns_atts_from_style(style)
       atts = {}
       atts[NSFontAttributeName] = NSFont.fontWithName("Times", size:10.0)
@@ -108,38 +108,38 @@ module RLayout
       if style[:text_color]
         #TODO fix this
         # I have color_from_string as module_function, but getting error
-        # so, I am calling Graphic.color_from_string 
-        atts[NSForegroundColorAttributeName] = Graphic.color_from_string(style[:text_color]) 
+        # so, I am calling Graphic.color_from_string
+        atts[NSForegroundColorAttributeName] = Graphic.color_from_string(style[:text_color])
       end
       atts
     end
-    
+
     def default_atts
       #TODO add color
       {
         NSFontAttributeName => NSFont.fontWithName("Times", size:10.0),
       }
     end
-    
+
     # TextToken don't have TextLayoutManager, they just have @att_string
     def draw_text
       # drawing view origin is at @x,@y
       @att_string.drawAtPoint(NSMakePoint(@left_margin,0))
     end
-    
+
     def get_stroke_rect
       if RUBY_ENGINE == "rubymotion"
         stroke_width = @att_string.size.width + @left_margin + @right_margin
         # for TextToken, use attstring rect instead of Graphic frame
         r = NSMakeRect(0,0,stroke_width, @att_string.size.height)
         r = NSInsetRect(r, -1, -1)
-        if @line_position == 1 #LINE_POSITION_MIDDLE 
+        if @line_position == 1 #LINE_POSITION_MIDDLE
           return r
-        elsif @line_position == 2 
-          #LINE_POSITION_OUTSIDE) 
+        elsif @line_position == 2
+          #LINE_POSITION_OUTSIDE)
           return NSInsetRect(r, - @stroke[:thickness]/2.0, - @stroke[:thickness]/2.0)
-        else 
-          # LINE_POSITION_INSIDE        
+        else
+          # LINE_POSITION_INSIDE
           return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
         end
       else
@@ -147,7 +147,7 @@ module RLayout
       end
     end
   end
-  
+
   # TextCell is used to set alignment for TextToken is a cell
   class TextCell < Container
     attr_accessor :h_alignment, :v_alignment, :token
@@ -167,7 +167,7 @@ module RLayout
       align_token
       self
     end
-    
+
     def align_token
       @margin = 2
       @space = @width - @token.width - @margin*2
@@ -175,49 +175,49 @@ module RLayout
         @x = 0
         return
       end
-      
+
       case @h_alignment
       when 'left'
         @token.x = @margin
         if @insert_leader_token
           LeaderToken.new(parent: self, x: @margin + @token.width, width: @space, atts: @atts)
-        end      
+        end
       when 'center'
-        @token.x = @margin + @space/2 
+        @token.x = @margin + @space/2
       when 'right'
         @token.x = @margin + @space
         if @insert_leader_token
           LeaderToken.new(parent: self, x: @margin, width: @space, atts: @atts)
           @graphics.reverse!
-        end      
+        end
       else
         @token.x = @margin
       end
-      
+
     end
   end
-  
-  #number, 
-  #lower_alphabet, 
-  #lower_alphabet, 
-  #roman, 
-  #korean_radical, 
+
+  #number,
+  #lower_alphabet,
+  #lower_alphabet,
+  #roman,
+  #korean_radical,
   #koreand_ga_na_da
   class NumberToken < TextToken
-    attr_accessor :number_type  
-    
+    attr_accessor :number_type
+
     def initialize(options={})
       # TODO i should refactor this using /^list_/
       if RUBY_ENGINE == 'rubymotion'
         options[:atts] = ns_atts_from_style(options)
-      end      
+      end
       super
-      
+
       self
-    end    
+    end
   end
-  
-  # TabToken servers as place holder 
+
+  # TabToken servers as place holder
   class TabToken < Graphic
     attr_accessor :tab_type  #left, right, center, decimal
     def initialize(options={})
@@ -227,11 +227,11 @@ module RLayout
       self
     end
   end
-  
+
   # LeaderToken fills the gap with leader chars
   class LeaderToken < Graphic
     attr_accessor :leader_char, :string, :has_text
-    def initialize(options={}) 
+    def initialize(options={})
       options[:layout_expand]   = nil
       @leader_char  = options.fetch(:leader_char,'.')
       super
@@ -240,7 +240,7 @@ module RLayout
       @margin       = 2
       if RUBY_ENGINE == "rubymotion"
         if options[:atts]
-          @atts     = options[:atts] 
+          @atts     = options[:atts]
         else
           @atts     = default_atts
         end
@@ -254,18 +254,18 @@ module RLayout
       @height = 20
       self
     end
-    
+
     def default_atts
       {
         NSFontAttributeName => NSFont.fontWithName("Times", size:10.0),
       }
     end
-    
+
     def draw_text
       @att_string.drawAtPoint(NSMakePoint(0,0))
     end
   end
-  
+
   class ImageToken < Graphic
     attr_accessor :image_path, :x,:y, :width, :height, :image_path
     def initialize(options={})
@@ -282,26 +282,26 @@ module RLayout
       options[:height]      = 9
       options[:image_record]= ImageStruct.new(options[:image_path])
       super
-      self   
-    end 
+      self
+    end
   end
 
   class SubscriptToken < TextToken
     # reduce size and shift y position
     # options[:atts]
     def initialize(options={})
-    
+
     end
   end
-  
+
   class SubperscriptToken < TextToken
     # reduce size and shift y position
     def initialize(options={})
-    
+
     end
   end
-  
-  # Special Tokens 
+
+  # Special Tokens
   # Special Tokens are those tokens with complex shapes or special text effects,
   # such as Ruby, ReversedRuby, InlineMultipleChoice ...
   # Special tokens are created from markup,
@@ -311,7 +311,7 @@ module RLayout
     attr_accessor :base_tokeb, :top_token, :size_ratio
     def initialize(options={})
       super
-      @size_ratio         = options.fetch(:size_ratio, 0.5) 
+      @size_ratio         = options.fetch(:size_ratio, 0.5)
       base_style          = options[:para_style]
       base_style[:string] = options[:base]
       base_style[:parent] = self
@@ -330,26 +330,26 @@ module RLayout
       self
     end
   end
-  
+
   # markup has form of  {{r-ruby 'base', 'bottom', options={})}}
   class ReverseRubyToken < Container
     attr_accessor :base_token, :bottom_token, :size_ratio, :base_style, :bottom_style
     def initialize(options={})
       options[:fill_color] = "clear"
-      super      
+      super
       # make the top_token with size 0.5 text
-      @size_ratio         = options.fetch(:size_ratio, 0.5) 
+      @size_ratio         = options.fetch(:size_ratio, 0.5)
       @base_style          = options[:para_style].dup
       @bottom_style        = options[:para_style].dup
 
       @base_style[:string] = options[:base]
       @base_style[:parent] = self
       if RUBY_ENGINE == "rubymotion"
-        @base_style[:atts][NSForegroundColorAttributeName]  =  NSColor.blackColor        
+        @base_style[:atts][NSForegroundColorAttributeName]  =  NSColor.blackColor
       else
         @base_style[:text_color]= "blue"
       end
-      
+
       @base_style[:tag]    = "base"
       @base_style[:stroke_sides]    = [0,0,0,1]
       @base_style[:stroke_color]    = "blue"
@@ -357,7 +357,7 @@ module RLayout
       @base_token             = TextToken.new(@base_style)
       @bottom_style[:text_size]= @base_style[:text_size]*@size_ratio
       # if RUBY_ENGINE == "rubymotion"
-      #   @bottom_style[:atts][NSForegroundColorAttributeName]  =  NSColor.blueColor        
+      #   @bottom_style[:atts][NSForegroundColorAttributeName]  =  NSColor.blueColor
       # else
       #   @bottom_style[:text_color]= "blue"
       # end
@@ -373,13 +373,13 @@ module RLayout
       @bottom_token            = TextToken.new(@bottom_style)
       # token = TextToken.new(string: item, atts: @table_head_style, layout_expand: :width)
       TextCell.new(parent: self, width: @base_token.width, height: @bottom_style[:height], token: @bottom_token, h_alignment: "center", atts: @bottom_style, fill_color: 'clear')
-      
+
       @height                  = 25
       @width                   = @base_token.width
       # relayout!
       self
     end
   end
-  
+
 
 end

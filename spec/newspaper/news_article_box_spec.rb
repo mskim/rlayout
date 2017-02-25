@@ -10,8 +10,8 @@ describe 'create NewsArticleBox' do
   end
 
   it 'shold create TextColumn' do
-    assert @nab.graphics.length == 1
-    assert @nab.graphics[0].class == TextColumn
+    assert_equal 2, @nab.graphics.length
+    assert_equal NewsColumn, @nab.graphics[0].class 
   end
 
 end

@@ -58,12 +58,6 @@ module RLayout
     def init_image(options)
       #TODO why is image_object is used instead of @image_record??
       @image_record  = options.fetch(:image_record,nil)
-      # puts "in init image :#{options[:local_image]}"
-      # puts "$ProjectPath :#{$ProjectPath}"
-      if self.class == "ImageToken"
-        puts "+++++++ in init of Image"
-        puts options[:image_path]
-      end
       unless options[:image_path]
         if options[:local_image] && $ProjectPath
           @local_image          = options[:local_image]
@@ -79,6 +73,10 @@ module RLayout
       @image_fit_type   = @image_fit_type.to_i
       unless File.exists?(@image_path)
         @image_path = "/Users/Shared/SoftwareLab/images/dummy.jpg"
+        @stroke[:color] = 'black'
+        @stroke[:thickness] = 1.0
+        @stroke[:sides] = [1,1,1,1,1,1]
+        @fill[:color] = 'lightGray'
       end
       @image_path
       #TODO Get rid of this and do it for MRI

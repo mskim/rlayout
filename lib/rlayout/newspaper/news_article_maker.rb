@@ -1,15 +1,11 @@
 # encoding: utf-8
 
-# NewsArticleMaker should be able to support highly customizable designs.
-# NewsArticleMaker works with given folder with story, layout.rb, and images
-# layout.rb can define layout and styles
+# NewsArticleMaker.
+# NewsArticleMaker works with given folder with story.md, layout.rb, and images
+# layout.rb defines the layout of the article.
 # if layout.rb doesn't exist in article folder,
 # default layout is used, "/Users/Shared/SoftwareLab/article_template/news_article.rb" is used.
-# Image layout can be set using GIM
-# Images can be stored in images folder by page and image size
-# making almost every image in the article hand controlable.
 
-# Page Count is usually fixed, default is 2
 
 module RLayout
 
@@ -71,7 +67,6 @@ module RLayout
       if RUBY_ENGINE =="rubymotion"
         @news_article_box.save_pdf(@output_path, :jpg=>true)
       else
-        puts "save_pdf in ruby"
         @news_article_box.save_svg(@svg_path)
 
       end
@@ -106,8 +101,7 @@ module RLayout
     end
 
     def layout_story
-      @news_article_box.layout_floats!
-      @news_article_box.set_overlapping_grid_rect
+      # @news_article_box.layout_floats!
       @news_article_box.layout_items(@paragraphs)
 
     end

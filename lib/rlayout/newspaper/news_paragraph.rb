@@ -87,7 +87,6 @@ module RLayout
     attr_accessor :text_column, :grid_height
     attr_accessor :body_line_height, :split
     def initialize(options={})
-      puts "++++++++++++ NewsParagraph"
       @tokens = []
       #simple, drop_cap, drop_cap_image, math, with_image, with_math
       @markup         = options.fetch(:markup, 'p')
@@ -249,7 +248,8 @@ module RLayout
           text_color    = RLayout::convert_to_nscolor(@para_style[:text_color]) unless (@para_style[:text_color]) == NSColor
           @atts[NSForegroundColorAttributeName] = text_color
         end
-        atts[NSKernAttributeName]             = text_tracking if text_tracking
+        #TODO
+        # atts[NSKernAttributeName]             = text_tracking if text_tracking
         @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
         @para_style[:atts] = @atts
       else
@@ -257,15 +257,16 @@ module RLayout
       end
 
       # do we have any doulbe curl?
-      if @para_string =~INLINE_DOUBLE_CURL
-        create_tokens_with_double_curl(@para_string)
-      # no doulbe curl, do we have any single curl?
-      elsif @para_string =~INLINE_SINGLE_CURL
-        create_tokens_with_single_curl(@para_string)
-      # no curls found, so create_text_tokens
-      else
-        create_text_tokens(@para_string)
-      end
+      # if @para_string =~INLINE_DOUBLE_CURL
+      #   create_tokens_with_double_curl(@para_string)
+      # # no doulbe curl, do we have any single curl?
+      # elsif @para_string =~INLINE_SINGLE_CURL
+      #   create_tokens_with_single_curl(@para_string)
+      # # no curls found, so create_text_tokens
+      # else
+      #   create_text_tokens(@para_string)
+      # end
+      create_text_tokens(@para_string)
       token_heights_are_eqaul = true
       return unless  @tokens.length > 0
       tallest_token_height = @tokens.first.height
@@ -327,14 +328,14 @@ module RLayout
       @current_line = text_column.current_line
       @current_line.set_paragraph(self)
       @current_line.set_line_type("first_line")
-      while @current_line.place_tokens(tokens) && text_column.has_room?
+      while @current_line.place_tokens(tokens)
         @current_line.align_tokens
         @current_line = text_column.go_to_next_line
         if @current_line
           @current_line.set_paragraph(self)
           @current_line.set_line_type("middle_line")
         else
-          exit
+          break
         end
       end
       if text_column.is_last_line?

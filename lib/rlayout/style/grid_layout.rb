@@ -238,7 +238,6 @@ module RLayout
     # split grid into two
     def split_grid
       # puts __method__
-      # binding.pry
       return false unless can_split?
       if @children.length < 2
         if @columns >= @rows

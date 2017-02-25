@@ -19,17 +19,17 @@ class GraphicViewMac < NSView
     @graphic.ns_view = self
     self
   end
-  
+
   def drawRect(r)
     draw_graphic_in_nsview(@graphic)
   end
 
   def draw_graphic_in_nsview(graphic)
     @context  = NSGraphicsContext.currentContext
-    transform = NSAffineTransform.transform            
+    transform = NSAffineTransform.transform
     @context.saveGraphicsState
     transform.translateXBy(graphic.x, yBy: graphic.y)
-    
+
     if graphic.rotation
       transform.transformPoint(ns_center_point(graphic))
       # transform.rotateByRadians(-graphic.rotation)
@@ -43,8 +43,8 @@ class GraphicViewMac < NSView
     draw_text(graphic)            if graphic.text_record || graphic.text_layout_manager || graphic.has_text
     draw_stroke(graphic)          if graphic.stroke
     # shadow was drawen for image itself and the frame
-    # I only want frame to be shadowed 
-    # draw_shadow should be called at last 
+    # I only want frame to be shadowed
+    # draw_shadow should be called at last
     # TODO  how about text shadow???
     draw_shadow(graphic)          if graphic.shadow
     draw_fixtures(graphic.fixtures)    if !graphic.fixtures.nil? && graphic.fixtures.length > 0
@@ -52,25 +52,25 @@ class GraphicViewMac < NSView
     draw_floats(graphic.floats)        if !graphic.floats.nil? && graphic.floats.length > 0
     @context.restoreGraphicsState
   end
-    
+  
   def draw_fixtures(fixtures)
       fixtures.each do |child|
         draw_graphic_in_nsview(child)
       end
   end
-  
+
   def draw_graphics(graphics)
     graphics.each do |child|
       draw_graphic_in_nsview(child)
     end
   end
-  
+
   def draw_floats(floats)
     floats.each do |child|
       draw_graphic_in_nsview(child)
     end
   end
-  
+
   def draw_grid_rects(graphic)
     return if graphic.show_grid_rects == false
     NSColor.yellowColor.set
@@ -78,30 +78,30 @@ class GraphicViewMac < NSView
       graphic.grid_rects.each {|line| line.draw_grid_rect}
     end
   end
-    
+
   def ns_origin(graphic)
     r = graphic.frame_rect
     p = NSPoint.new(r[0], r[1])
     p
   end
-  
+
   def ns_center_point(graphic)
     r = graphic.frame_rect
     x_center = r[0] + r[2]/2.0
     y_center = r[1] + r[3]/2.0
     NSPoint.new(x_center, y_center)
   end
-  
+
   def ns_bounds_rect(graphic)
     r = graphic.frame_rect
     NSMakeRect(0, 0,r[2],r[3])
   end
-  
+
   def ns_frame_rect(graphic)
     r = graphic.frame_rect
     NSMakeRect(r[0],r[1],r[2],r[3])
   end
-    
+
   def isFlipped
     true
   end
@@ -110,33 +110,33 @@ class GraphicViewMac < NSView
     pdf = pdf_data
     # save PDFDocument ?
     pdf_doc = PDFDocument.alloc.initWithData(pdf_data)
-    
+
     unless options[:pdf] == false
-      pdf_doc.writeToFile(pdf_path, atomically:false) 
-    end 
+      pdf_doc.writeToFile(pdf_path, atomically:false)
+    end
     if options[:jpg] || options[:preview]
       compression = options[:compression] || 0.5
       compression = compression.to_f
       image       = NSImage.alloc.initWithData pdf
       imageData   = image.TIFFRepresentation
-      imageRep    = NSBitmapImageRep.imageRepWithData(imageData)  
+      imageRep    = NSBitmapImageRep.imageRepWithData(imageData)
       # imageProps  = {NSImageCompressionFactor=> 1.0}
       imageProps  = NSDictionary.dictionaryWithObject(NSNumber.numberWithFloat(compression), forKey:NSImageCompressionFactor)
       imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
       jpg_path    = pdf_path.sub(".pdf", ".jpg")
       # puts "imageData.class:#{imageData}.class"
       if options[:jpg]
-        imageData.writeToFile(jpg_path, atomically:false)      
+        imageData.writeToFile(jpg_path, atomically:false)
       end
-      
+
       if options[:preview]
         preview_folder_path = File.dirname(pdf_path) + "/preview"
         system "mkdir -p #{preview_folder_path}" unless File.directory?(preview_folder_path)
         preview_path = preview_folder_path + "/page_001.jpg"
-        imageData.writeToFile(preview_path, atomically:false)      
+        imageData.writeToFile(preview_path, atomically:false)
       end
     end
-    
+
   end
 
   def save_jpg(path)
@@ -144,18 +144,18 @@ class GraphicViewMac < NSView
     tiffdata = image.TIFFRepresentation
     tiffdata.writeToFile path, atomically:false
   end
-    
+
   def pdf_data
       dataWithPDFInsideRect(bounds)
   end
-  
-  def convert_to_nscolor(color) 
+
+  def convert_to_nscolor(color)
 
     return color_from_string(color) if color.class == String
     color
   end
-  
-  
+
+
   def color_from_string(color_string)
     if color_string == nil
       return NSColor.whiteColor
@@ -168,7 +168,7 @@ class GraphicViewMac < NSView
     if COLOR_NAMES.include?(color_string)
       return color_from_name(color_string)
     elsif color_string=~/^#/   #for hex color
-      string = color_string[1..5] 
+      string = color_string[1..5]
       color_values = hex2rgb(string)
       color_values.map!{|v| v/1000.0}
       return NSColor.colorWithCalibratedRed(color_values[0], green:color_values[1], blue:color_values[2], alpha:1.0)
@@ -177,7 +177,7 @@ class GraphicViewMac < NSView
     color_kind=color_array[0]
     color_values=color_array[1].split(",")
     case color_kind
-    when "RGB" , "rgb"  
+    when "RGB" , "rgb"
         @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
     when "CMYK", "cmyk"
         @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
@@ -233,7 +233,7 @@ class GraphicViewMac < NSView
       return NSColor.whiteColor
     end
   end
-  
+
   def self.pdf2jpg(pdf_path, options={})
     url = NSURL.fileURLWithPath pdf_path
     pdfdoc = PDFDocument.alloc.initWithURL url
@@ -249,12 +249,12 @@ class GraphicViewMac < NSView
         outfile = "#{pdf_path}_#{i+1}.jpg"
       end
       imageData = image.TIFFRepresentation
-      imageRep = NSBitmapImageRep.imageRepWithData(imageData)  
+      imageRep = NSBitmapImageRep.imageRepWithData(imageData)
       imageProps = NSDictionary.dictionaryWithObject(NSNumber.numberWithFloat(compression), forKey:NSImageCompressionFactor)
       imageData = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
       imageData.writeToFile(outfile, atomically:false)
     end
-    
+
   end
 
 end

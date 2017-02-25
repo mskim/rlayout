@@ -1,23 +1,5 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../../spec_helper"
 
-describe 'parse SVG text ' do
-  before do
-    @svg_text =<<SVG
-<svg height="210" width="500">
-  <polygon points="200,10 250,190 160,210" style="fill:lime;stroke:purple;stroke-width:1" />
-</svg>
-SVG
-    @h  = Graphic.from_svg(@svg_text)
-    puts @h
-    @svg_path = "/Users/Shared/rlayout/output/graphic_test.svg"
-  end
-
-  it 'parse svg text' do
-    @h.must_be_kind_of Graphic
-  end
-end
-
-__END__
 describe 'create Graphic svg ' do
   before do
     @g = Graphic.new(:x=>200, :y=>400, :fill_color=>"blue")
@@ -80,8 +62,8 @@ end
 
 describe 'create Image svg ' do
   before do
-    @image_path = "/Users/Shared/rlayout/image/1.jpg"
-    @g = Image.new(nil,:image_path=> @image_path)
+    @image_path = "/Users/Shared/rlayout/images/1.jpg"
+    @g = Image.new(:image_path=> @image_path)
     @svg_path = "/Users/Shared/rlayout/output/image_test.svg"
   end
   it 'should save svg' do
@@ -93,12 +75,29 @@ end
 
 describe 'create Text svg ' do
   before do
-    @g = Text.new(nil,:text_string=> "This is a text test.")
+    @g = Text.new(:text_string=> "This is a text test.")
     @svg_path = "/Users/Shared/rlayout/output/text_test.svg"
   end
   it 'should save svg' do
     @g.save_svg(@svg_path)
     assert File.exist?(@svg_path) == true
     system "open #{@svg_path}"
+  end
+end
+
+describe 'parse SVG text ' do
+  before do
+    @svg_text =<<SVG
+<svg height="210" width="500">
+  <polygon points="200,10 250,190 160,210" style="fill:lime;stroke:purple;stroke-width:1" />
+</svg>
+SVG
+    @h  = Graphic.from_svg(@svg_text)
+    puts @h
+    @svg_path = "/Users/Shared/rlayout/output/graphic_test.svg"
+  end
+
+  it 'parse svg text' do
+    @h.must_be_kind_of Graphic
   end
 end

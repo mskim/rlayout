@@ -120,7 +120,7 @@ module RLayout
 
     def get_stroke_rect
       if RUBY_ENGINE == "rubymotion"
-to_hash        # r = NSMakeRect(@x,@y,@width,@height)
+        # r = NSMakeRect(@x,@y,@width,@height)
         r = NSMakeRect(@left_margin,@top_margin,@width,@height)
 
         if @line_position == 1 #LINE_POSITION_MIDDLE
@@ -490,6 +490,7 @@ to_hash        # r = NSMakeRect(@x,@y,@width,@height)
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path, options)
       elsif RUBY_ENGINE == 'ruby'
+        puts "i+++++++++ in save_pdf of Graphic"
         unless @parent_graphic
           doc       = HexaPDF::Document.new
           page      = doc.pages.add

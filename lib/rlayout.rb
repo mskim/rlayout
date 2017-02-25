@@ -116,9 +116,12 @@ else
   require File.dirname(__FILE__) + '/rlayout/article/item_chapter_maker'
 
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_heading_maker'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_line_fragment'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_paragraph'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_column'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_box'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_maker'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_section_page'
-  require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_box'
 
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/book_plan'

@@ -5,81 +5,108 @@
 
 # show_overflow_lines
 #
+# 1. create NewsArticleBox
+# 1. generate columns
+# 1. generate floats and layout temout
+# 1.   create_line
+# 1. generate line_fragemnts that doen't overlap with floats
+# 1.  def adjust_overlapping_lines
+
+
 module RLayout
 
   class NewsArticleBox < Container
-    attr_accessor :heading_columns, :grid_size
-    attr_accessor :story_path, :show_overflow_lines
+    attr_accessor :heading_columns, :grid_size, :grid_frame
+    attr_accessor :story_path, :show_overflow_lines, :overflow_column
     attr_accessor :column_count, :column_layout_space
-    attr_accessor :draw_gutter_stroke
+    attr_accessor :draw_gutter_stroke, :gutter, :v_gutter
     attr_accessor :heading, :subtitle_box, :quote_box, :personal_image, :image
     attr_accessor :adjust_lines # bottom+1, top-1, bottom+2, top-2,
     def initialize(options={}, &block)
-      if options[:grid_frame]
-        if options[:grid_frame].class == String
-          options[:grid_frame] = eval(options[:grid_frame])
-        end
-        if options[:grid_size].class == String
-          options[:grid_size] = eval(options[:grid_size])
-        end
-
-        if options[:grid_width].class == String
-          options[:grid_width] = eval(options[:grid_width])
-        end
-        if options[:grid_height].class == String
-          options[:grid_height] = eval(options[:grid_height])
-        end
-        @heading_columns = options[:grid_frame][2]
-        if options[:heding_columns]
-          @heading_columns = options[:heding_columns]
-        else
-          @heading_columns = HEADING_COLUMNS_TABLE[options[:grid_frame][2].to_i]
-        end
-        options[:grid_frame]  = eval(options[:grid_frame]) if options[:grid_frame].class == String
-        options[:column_count]= options[:grid_frame][2]
-        @grid_width           = options.fetch(:grid_width, 200)
-        @grid_height          = options.fetch(:grid_height, 200)
-        options[:grid_size]   = [@grid_width , @grid_height]
-        options[:gutter]      = 10 unless options[:gutter]
-        options[:v_gutter]    = 0 unless options[:v_gutter]
-        options[:width]       = options[:grid_frame][2]*options[:grid_width] + (options[:grid_frame][2] - 1)*options[:gutter]
-        options[:height]      = options[:grid_frame][3]*options[:grid_height] + ((options[:grid_frame][3] - 1)*options[:v_gutter])
-        options[:column_count]= options[:grid_frame][2]
-      end
       options[:left_margin]   = 5 unless options[:left_margin]
       options[:top_margin]    = 5 unless options[:top_margin]
       options[:right_margin]  = 5 unless options[:right_margin]
       options[:bottom_margin] = 5 unless options[:bottom_margin]
       super
+      if options[:grid_frame]
+        @grid_frame = options[:grid_frame]
+        if @grid_frame.class == String
+          @grid_frame = eval(@grid_frame)
+        end
+      else
+        puts "no grid_frame given......"
+        @grid_frame  = [0,0,2,3]
+
+      end
+      if options[:heding_columns]
+        @heading_columns = options[:heding_columns]
+      else
+        @heading_columns = HEADING_COLUMNS_TABLE[@grid_frame[2]]
+      end
+
+      @grid_width           = options.fetch(:grid_width, 200)
+      @grid_height          = options.fetch(:grid_height, 200)
+      @gutter               = options.fetch(:gutter, 10)
+      @v_gutter             = 0 #options.fetch(:v_gutter, 0)
+      @grid_size            = [@grid_width , @grid_height]
       @layout_direction     = options.fetch(:layout_direction, "horizontal")
-      @layout_space         = options.fetch(:layout_space, 10)
-      @column_count         = options.fetch(:column_count, 1).to_i
+      @layout_space         = options.fetch(:layout_space, @gutter)
       @column_layout_space  = options.fetch(:column_layout_space, 0)
-      @heading_columns      = options.fetch(:heading_columns, @column_count)
       @floats               = options.fetch(:floats, [])
-      @item_space           = options.fetch(:item_space, 30)
-      @grid_size            = options[:grid_size]
+      @width                = @grid_frame[2]*@grid_width + (@grid_frame[2] - 1)*@gutter
+      @height               = @grid_frame[3]*@grid_height + (@grid_frame[3] - 1)*@v_gutter
+      @column_count         = @grid_frame[2]
+
       create_columns
       if block
         instance_eval(&block)
       end
       if @floats.length > 0
         layout_floats!
-        set_overlapping_grid_rect
       end
+      create_column_lines
+      # adjust_overlapping_lines
+
       self
     end
 
     # create news_columns
     #  news_columns are different from text_column
     def create_columns
+      current_x = @gutter/2
       @column_count.times do
-        g= NewsColumn.new(:parent=>nil, width: @grid_width, layout_space: @column_layout_space)
+        g= NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: @grid_width, height: @height)
         g.parent_graphic = self
         @graphics << g
+        current_x += @grid_width + @gutter
       end
-      relayout!
+      # relayout!
     end
+
+    # create lines that are adjusted for overflapping floats
+    # This is called after floats are layoued out.
+    def create_column_lines
+      @graphics.each do |column|
+        column.create_lines(overlapping_floats_with(column))
+      end
+    end
+
+    def overlapping_floats_with(column)
+      overlapping_floats = []
+      @floats.each do |float|
+        overlapping_floats << float if intersects_rect(column.frame_rect, float.frame_rect)
+      end
+      overlapping_floats
+    end
+
+    # adjust overlapping line_fragment text area
+    # this method is called when float positions have changed
+    def adjust_overlapping_lines
+      @graphics.each do |column|
+        column.adjust_lines(overlapping_floats_with(column))
+      end
+    end
+
 
     def overflow_box
       # take the last columns last paragraphs
@@ -145,6 +172,13 @@ module RLayout
       nil
     end
 
+    def get_image
+      @floats.each do |float|
+        return float if float.class == RLayout::Image
+      end
+      nil
+    end
+
     def has_leading_box?
       @floats.each do |float|
         return true if float.tag == "leading"
@@ -168,20 +202,6 @@ module RLayout
       @graphics.last.x_max - @graphics.first.x
     end
 
-    # set text_column's overlapping grid_rect area
-    # this method is called after float is added and relayout!
-    def set_overlapping_grid_rect
-      @floats.each do |float|
-        float_rect = float.frame_rect
-        @graphics.each_with_index do |text_column, i|
-          next if text_column.class != RLayout::TextColumn
-          text_column.create_grid_rects unless text_column.grid_rects
-          if intersects_rect(float_rect, text_column.frame_rect)
-            text_column.mark_overlapping_grid_rects(float_rect,float.class)
-          end
-        end
-      end
-    end
 
     def float_leading(options={})
       leading_options = {}
@@ -255,7 +275,7 @@ module RLayout
         frame_x           = @graphics.last.x_max
       else
         # frame_x           = @grid_size[0]*grid_frame[0]
-        frame_x           = @grid_size[0]*grid_frame[0] + (grid_frame[0])*@layout_space
+        frame_x           = @grid_size[0]*grid_frame[0] + (grid_frame[0])*@gutter + @gutter/2
       end
       frame_y             = @grid_size[1]*grid_frame[1]
       frame_width         = @grid_size[0]*grid_frame[2] + (grid_frame[2] - 1)*@layout_space
@@ -291,6 +311,7 @@ module RLayout
       if has_heading? && (@heading_columns != @column_count)
         heading = get_heading
         heading.width = width_of_columns(@heading_columns)
+        heading.x     = @gutter/2
       end
       #TODO position bottom bottom_occupied_rects
       # middle occupied rect shoul
