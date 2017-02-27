@@ -6,7 +6,6 @@
 # if layout.rb doesn't exist in article folder,
 # default layout is used, "/Users/Shared/SoftwareLab/article_template/news_article.rb" is used.
 
-
 module RLayout
 
   class NewsArticleMaker

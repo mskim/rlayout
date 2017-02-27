@@ -27,14 +27,14 @@ describe 'creaet document with NewsArticleMaker' do
     assert_equal 10, @news_box.gutter
     assert_equal @first_column.width, @second_column.width
     assert_equal (@second_column.x - @first_column.width), 15
-    assert_equal 24, @first_column.graphics.length
+    assert_equal 30, @first_column.graphics.length
   end
 
   it 'should create lines' do
     assert_equal @first_column_first_line.width, @second_column_first_line.width
     assert_equal @first_column_first_line.width, @first_column.width
     assert_equal @first_column.graphics.length, @third_column.graphics.length
-    assert_equal @first_column_first_line.height, @first_column.height/24.0
+    assert_equal @first_column_first_line.height, @first_column.height/30.0
   end
 
   it 'should layout tokens' do

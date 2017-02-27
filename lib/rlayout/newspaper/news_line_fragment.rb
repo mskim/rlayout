@@ -15,23 +15,38 @@ module RLayout
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent, :para_style, :text_alignment
     attr_accessor :x, :y, :width, :height, :total_token_width, :room
-    attr_accessor :text_area_width, :has_text, :space_width
+    attr_accessor :text_area, :has_text, :space_width
     def	initialize(options={})
       # options[:stroke_color]    = 'red'
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
-      options[:fill_color]        = options.fetch(:line_color, 'lightGray')
-      options[:stroke_width]      = 0.5
+      # options[:fill_color]        = options.fetch(:line_color, 'lightGray')
+      # options[:stroke_width]      = 0.5
       super
       @graphics         = options[:tokens] || []
       @space_width      = options.fetch(:space_width, 5.0)
       @stroke_width     = 1
+      @text_area        = [@x, @y, @width, @height]
+      @room             = @text_area[2]
+
       self
     end
 
-    def adjust_text_area_away_from(overlapping_float)
+    def adjust_text_area_away_from(overlapping_float_rect)
       #first adjust cordinate offset from pararent graphic
-      puts __method__
+      translated_rect = frame_rect.dup
+      translated_rect[0] += @parent_graphic.x
+      translated_rect[1] += @parent_graphic.y
+      # puts "overlapping_float_rect:#{overlapping_float_rect}"
+      # puts "translated_rect:#{translated_rect}"
+      if intersects_rect(overlapping_float_rect, translated_rect)
+        @text_area[2] = 0
+        @room         = @text_area[2]
+      end
+    end
+
+    def has_text_room?
+      @room > 20
     end
 
     # set line type, and paragraph information for line

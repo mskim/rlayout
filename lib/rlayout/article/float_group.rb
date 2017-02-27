@@ -101,9 +101,6 @@ module RLayout
         @main_box.float_image(image_info)
       end
       @main_box.layout_floats!
-      # @main_box.floats.each do |float|
-      #   float.puts_frame
-      # end
       @main_box.set_overlapping_grid_rect
       @main_box.update_column_areas
     end

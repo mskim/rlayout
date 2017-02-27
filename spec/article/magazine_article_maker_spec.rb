@@ -22,11 +22,6 @@ describe 'create magazine_article from template' do
 
     EOF
     @document = eval(template)
-    # page = @document.pages.first
-    # page.graphics.each do |g|
-    #   puts g.class
-    #   g.puts_frame
-    # end
   end
 
   it 'should process template' do

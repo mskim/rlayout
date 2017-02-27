@@ -7,12 +7,11 @@
 #
 # 1. create NewsArticleBox
 # 1. generate columns
-# 1. generate floats and layout temout
-# 1.   create_line
-# 1. generate line_fragemnts that doen't overlap with floats
-# 1.  def adjust_overlapping_lines
+#   1. create_lines
+# 1. generate floats and layout floats
+#   1. mark lines that over lapping floats
 
-GridLineCount = 8
+GridLineCount = 10
 
 module RLayout
 
@@ -23,6 +22,7 @@ module RLayout
     attr_accessor :draw_gutter_stroke, :gutter, :v_gutter
     attr_accessor :heading, :subtitle_box, :quote_box, :personal_image, :image
     attr_accessor :adjust_lines # bottom+1, top-1, bottom+2, top-2,
+
     def initialize(options={}, &block)
       options[:left_margin]   = 5 unless options[:left_margin]
       options[:top_margin]    = 5 unless options[:top_margin]
@@ -35,9 +35,8 @@ module RLayout
           @grid_frame = eval(@grid_frame)
         end
       else
-        puts "no grid_frame given......"
+        # puts "grid_frame not specified!!! using default grid_frame [0,0,2,3]..."
         @grid_frame  = [0,0,2,3]
-
       end
       if options[:heding_columns]
         @heading_columns = options[:heding_columns]
@@ -66,8 +65,7 @@ module RLayout
       if @floats.length > 0
         layout_floats!
       end
-      create_column_lines
-      # adjust_overlapping_lines
+      adjust_overlapping_columns
 
       self
     end
@@ -82,19 +80,14 @@ module RLayout
         @graphics << g
         current_x += @grid_width + @gutter
       end
-      # relayout!
     end
 
-    # create lines that are adjusted for overflapping floats
-    # This is called after floats are layoued out.
-    def create_column_lines
-      @graphics.each do |column|
-        column.create_lines(overlapping_floats_with(column))
-      end
-    end
-
-    def overlapping_floats_with(column)
-      overlapping_floats = []
+    #
+    # # create lines that are adjusted for overflapping floats
+    # # This is called after floats are layoued out.
+    # def create_column_lines
+    def overlapping_floats_with_column(column)
+      overlapping_floats = []# IDEA: ndi
       @floats.each do |float|
         overlapping_floats << float if intersects_rect(column.frame_rect, float.frame_rect)
       end
@@ -103,9 +96,11 @@ module RLayout
 
     # adjust overlapping line_fragment text area
     # this method is called when float positions have changed
-    def adjust_overlapping_lines
-      @graphics.each do |column|
-        column.adjust_lines(overlapping_floats_with(column))
+    def adjust_overlapping_columns
+      @graphics.each_with_index do |column, i|
+        # puts "++++++++ column_index:#{i}"
+        overlapping_floats = overlapping_floats_with_column(column)
+        column.adjust_overlapping_lines(overlapping_floats)
       end
     end
 
@@ -133,6 +128,7 @@ module RLayout
     end
 
     def layout_items(flowing_items)
+      puts __method__
       column_index    = 0
       current_column  = @graphics[column_index]
       while @item = flowing_items.shift do
@@ -146,12 +142,15 @@ module RLayout
 
     # make heading as float
     def heading(options={})
-      options[:is_float]  = true
-      options[:parent]    = self
+      h_options = options.dup
+      h_options[:is_float]  = true
+
+      h_options[:is_float]  = true
+      h_options[:parent]    = self
       if @heading_columns != @column_count
-        options[:width] = width_of_columns(@heading_columns)
+        h_options[:width] = width_of_columns(@heading_columns)
       end
-      h = Heading.new(options)
+      h = NewsArticleHeading.new(h_options)
       unless h== @floats.first
         # make heading as first one in floats
         h = @floats.pop
@@ -255,12 +254,6 @@ module RLayout
         end
       elsif images.class == Hash
         float_image(images)
-      end
-    end
-
-    def update_column_areas
-      @graphics.each do |column|
-        column.update_current_position
       end
     end
 
@@ -390,5 +383,6 @@ module RLayout
         return new_rect
       end
     end
+
   end
 end

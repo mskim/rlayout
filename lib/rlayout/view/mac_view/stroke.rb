@@ -109,6 +109,7 @@ class GraphicViewMac < NSView
 
   def drawLine(rect, withTrap:trap)
     # return if @stroke[:thickness] == 0 &&  @graphic.drawing_mode == "printing"
+    return unless @stroke
     return if @stroke[:thickness] == 0
     unless trap
       trap = 0

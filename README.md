@@ -118,16 +118,15 @@ TODO List
 		- put templates under rubymotion app/resouces/
 
 2017_2_26
+	- news_article_box
 	- make body_height_with_given line_count, not font size, 8 lines per one grid? or 10?
 	- news_article_box, show overflowing line with red
 	- expand and reduce article box, also update section layout position
+	- change dummy image drawing, stroke sides [1,1,1,1,1,1,] for x mark
 
 2017_2_25
-	- new lauyout for newspaper, NewsArticleMaker, NewsArticleBox, NewsColumn, NewsParagraph, NewsLineFragment
-
-2017_2_6
-	- newsman
-		- make body_line_height from grid
+	- news_article_box
+		- new lauyout for newspaper, NewsArticleMaker, NewsArticleBox, NewsColumn, NewsParagraph, NewsLineFragment
 
 2017_2_5
 	- hexapdf Tj TJ, tm, tlm

@@ -3,8 +3,8 @@ class GraphicViewMac < NSView
 
   def draw_image(graphic)
     return unless graphic.image_object
-      #draw dummy image
     unless File.exist?(graphic.image_path)
+      #draw dummy image
       r = ns_bounds_rect(graphic)
       drawLine(r, withTrap:0)
       return

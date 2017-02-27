@@ -310,7 +310,8 @@ module RLayout
 	     # 3. Each time with new token, check the height change, tallest_token and adjust line height.
     # end
     def layout_lines(text_column)
-      @current_line = text_column.current_line
+      # @current_line = text_column.current_line
+      @current_line = text_column.get_line_with_text_room
       @current_line.set_paragraph_info(self, "first_line")
       token = tokens.shift
       while token

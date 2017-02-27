@@ -38,14 +38,14 @@ module RLayout
       # @body_line_height   = (line_height + body_style[:text_line_spacing])
       @body_line_height   = options[:body_line_height]
       @current_position   = @top_margin + @top_inset
-      # @line_count = (@height/@body_line_height).to_i
+      create_lines
       if block
         instance_eval(&block)
       end
       self
     end
 
-    def create_lines(overlapping_floats)
+    def create_lines
       current_x = 0
       current_y = 0
       @line_count.times do
@@ -58,16 +58,26 @@ module RLayout
     end
 
     def adjust_overlapping_lines(overlapping_floats)
-      #code
-    end
-
-    def adjust_overlapping_lines(overlapping_floats)
-      overlapping_floats.each do |float|
+      floats = overlapping_floats.dup
+      floats.each do |float|
         float_rect = float.frame_rect
         @graphics.each do |line|
-          line.adjust_text_area_away_from(float_rect) if intersects_rect(float_rect, line.rect)
+          line.adjust_text_area_away_from(float_rect)
         end
       end
+    end
+
+    def get_line_with_text_room
+      if @current_line.has_text_room?
+        return @current_line
+      end
+        #code
+      while go_to_next_line
+        if @current_line.has_text_room?
+          return @current_line
+        end
+      end
+      #code
     end
 
 

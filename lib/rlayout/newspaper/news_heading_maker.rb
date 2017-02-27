@@ -7,7 +7,7 @@ module RLayout
       @layout_path  = Dir.glob("#{@heading_path}/*.{rb,script,pgscript}").first
       @layout_script= File.open(@layout_path, 'r'){|f| f.read}
       @heading      = eval(@layout_script)
-      puts @heading.class
+      puts "@heading.class:#{@heading.class}"
       if @heading.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return
@@ -16,9 +16,9 @@ module RLayout
         @heading.save_pdf(@output_path)
       end
       self
-    end    
+    end
   end
-  
+
   class NewsHeading < Container
     attr_accessor :date, :news_logo, :left_ad, :right_ad, :info_box
     def initialize(options={}, &block)
@@ -30,7 +30,4 @@ module RLayout
       @news_logo = Image.new(:parent=>self, parent_grid: true, grid_frame:[2,0,4,1])
     end
   end
-  
-  
-  
 end
