@@ -12,6 +12,11 @@ describe 'overlapping floats' do
     @second_column  = @news_box.graphics[1]
     @third_column   = @news_box.graphics[2]
     @fourth_column   = @news_box.graphics[3]
+    @box_width = (@third_column.width + @news_box.gutter)*4
+  end
+
+  it 'shold create image_box with multiples of column width' do
+    assert_equal @box_width, @news_box.width
   end
 
   it 'should collect overlapping floats with column' do

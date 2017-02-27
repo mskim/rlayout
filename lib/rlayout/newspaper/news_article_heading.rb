@@ -12,17 +12,21 @@ module RLayout
 
     def set_heading_content(options)
       # options = transform_keys_to_symbols(options)
-      if options[:title]
-        @title_object = title(options[:title], options)
+
+      if options['title']
+        @title_object = title(options['title'], options)
       end
-      if options[:subtitle]
-        @subtitle_object = subtitle(options[:subtitle], options)
+      if options['subtitle']
+        @subtitle_object = subtitle(options['subtitle'], options)
       end
-      if options[:leading]
-        @leading_object = leading(options[:leading], options)
+      if options['leading']
+        @leading_object = leading(options['leading'], options)
       end
-      if options[:author]
-        @author_object = author(options[:author], options)
+      if options['quote']
+        @quote_object = quote(options['quote'], options)
+      end
+      if options['author']
+        @author_object = author(options['author'], options)
       end
 
       height_sum = 0

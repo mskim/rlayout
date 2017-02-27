@@ -312,6 +312,7 @@ module RLayout
     def layout_lines(text_column)
       # @current_line = text_column.current_line
       @current_line = text_column.get_line_with_text_room
+      return unless @current_line
       @current_line.set_paragraph_info(self, "first_line")
       token = tokens.shift
       while token

@@ -53,7 +53,7 @@ module RLayout
       @layout_space         = options.fetch(:layout_space, @gutter)
       @column_layout_space  = options.fetch(:column_layout_space, 0)
       @floats               = options.fetch(:floats, [])
-      @width                = @grid_frame[2]*@grid_width + (@grid_frame[2] - 1)*@gutter
+      @width                = @grid_frame[2]*(@grid_width + @gutter) # we have @gutter/2 on each side
       @height               = @grid_frame[3]*@grid_height + (@grid_frame[3] - 1)*@v_gutter
       @column_count         = @grid_frame[2]
       @body_line_height     = @grid_height/GridLineCount
@@ -65,8 +65,7 @@ module RLayout
       if @floats.length > 0
         layout_floats!
       end
-      adjust_overlapping_columns
-
+      
       self
     end
 
@@ -128,7 +127,6 @@ module RLayout
     end
 
     def layout_items(flowing_items)
-      puts __method__
       column_index    = 0
       current_column  = @graphics[column_index]
       while @item = flowing_items.shift do
@@ -144,17 +142,17 @@ module RLayout
     def heading(options={})
       h_options = options.dup
       h_options[:is_float]  = true
-
       h_options[:is_float]  = true
       h_options[:parent]    = self
       if @heading_columns != @column_count
         h_options[:width] = width_of_columns(@heading_columns)
       end
-      h = NewsArticleHeading.new(h_options)
-      unless h== @floats.first
+      @heading = NewsArticleHeading.new(h_options)
+      unless @heading== @floats.first
         # make heading as first one in floats
-        h = @floats.pop
-        @floats.unshift(h)
+        #
+        @heading = @floats.pop
+        @floats.unshift(@heading)
       end
     end
 
@@ -168,7 +166,7 @@ module RLayout
 
     def get_heading
       @floats.each do |float|
-        return float if float.class == RLayout::Heading
+        return float if float.class == RLayout::NewsArticleHeading
       end
       nil
     end

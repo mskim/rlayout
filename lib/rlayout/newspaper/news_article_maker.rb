@@ -76,11 +76,10 @@ module RLayout
       @story      = Story.new(@story_path).markdown2para_data
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
-
       if @heading
         box_heading = nil
         box_heading = @news_article_box.get_heading
-        if  box_heading.class == RLayout::Heading
+        if  box_heading.class == RLayout::NewsArticleHeading
           box_heading.set_heading_content(@heading)
         else
           puts "+++++++++++ no heading"
@@ -101,6 +100,7 @@ module RLayout
 
     def layout_story
       # @news_article_box.layout_floats!
+      @news_article_box.adjust_overlapping_columns
       @news_article_box.layout_items(@paragraphs)
 
     end

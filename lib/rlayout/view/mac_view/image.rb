@@ -5,6 +5,7 @@ class GraphicViewMac < NSView
     return unless graphic.image_object
     unless File.exist?(graphic.image_path)
       #draw dummy image
+      # puts "image_width should be 04.442857142856:#{graphic.width}"
       r = ns_bounds_rect(graphic)
       drawLine(r, withTrap:0)
       return

@@ -117,10 +117,17 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_2_28
+	- we should have news title, subtitle style for large article
+
+2017_2_27
+	- news_article_box,
+	- create overflowing line with red lines
+	- fix image size, no heading...
+
 2017_2_26
 	- news_article_box
 	- make body_height_with_given line_count, not font size, 8 lines per one grid? or 10?
-	- news_article_box, show overflowing line with red
 	- expand and reduce article box, also update section layout position
 	- change dummy image drawing, stroke sides [1,1,1,1,1,1,] for x mark
 

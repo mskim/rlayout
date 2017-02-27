@@ -63,10 +63,6 @@ describe 'overlapping floats' do
   end
 end
 
-
-
-
-
 describe 'save NewsColumn as SVG'  do
   before do
     @para         = NewsParagraph.new(para_string: "This is a sample text. ")
