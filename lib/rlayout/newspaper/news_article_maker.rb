@@ -63,11 +63,11 @@ module RLayout
       end
       read_story
       layout_story
+
       if RUBY_ENGINE =="rubymotion"
         @news_article_box.save_pdf(@output_path, :jpg=>true)
       else
         @news_article_box.save_svg(@svg_path)
-
       end
       self
     end
@@ -82,7 +82,8 @@ module RLayout
         if  box_heading.class == RLayout::NewsArticleHeading
           box_heading.set_heading_content(@heading)
         else
-          puts "+++++++++++ no heading"
+          @heading[:is_float] = true
+          @news_article_box.heading(@heading)
         end
       end
       @paragraphs =[]
@@ -99,10 +100,8 @@ module RLayout
     end
 
     def layout_story
-      # @news_article_box.layout_floats!
       @news_article_box.adjust_overlapping_columns
       @news_article_box.layout_items(@paragraphs)
-
     end
   end
 end

@@ -68,6 +68,7 @@ module RLayout
     end
 
     def get_line_with_text_room
+      return nil unless @current_line
       if @current_line.has_text_room?
         return @current_line
       end

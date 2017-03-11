@@ -117,6 +117,27 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_3_10
+	- TextToken hyphenation
+	- Fix bug when text overflow not printing, bug title not showing
+	- gutter_line([4,0,4,10], 0.5, 'black')
+	- fix last line of column, new paragraph in middle of column expands beyond line 
+	- style guide
+		- name_tag, name_tag_body
+		- underline
+	- email based workflow
+			to: layout_server@naeildesign
+			subject: url
+
+			---
+			title: this is title
+			subtitle: this is sub title
+			---
+
+			Put the content here.
+
+
+
 2017_2_28
 	- we should have news title, subtitle style for large article
 

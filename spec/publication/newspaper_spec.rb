@@ -10,11 +10,11 @@ describe 'create Newspaper' do
     @newspaper.must_be_kind_of Newspaper
   end
 
-  # it 'should create new issue' do
-  #   @newspaper.create_new_issue(issue_date: "2015-4-18", create_sections: true)
-  #   issue_path = "/Users/Shared/Newspaper/Naeil/2015-4-18"
-  #   File.exist?(issue_path).must_equal true
-  # end
+  it 'should create new issue' do
+    @newspaper.create_new_issue(issue_date: "2015-4-18", create_sections: true)
+    issue_path = "/Users/Shared/Newspaper/Naeil/2015-4-18"
+    File.exist?(issue_path).must_equal true
+  end
 end
 
 

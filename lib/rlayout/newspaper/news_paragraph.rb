@@ -335,6 +335,7 @@ module RLayout
         return true # left over is true
       else
         @current_line.align_tokens
+        @current_line = text_column.go_to_next_line
       end
       false # no left over
     end
@@ -407,7 +408,7 @@ module RLayout
     def make_para_style
       h                           = {}
       h[:font]                    = "smSSMyungjoP-W30"
-      h[:text_size]               = 10
+      h[:text_size]               = 9.2
       h[:space_width]             = 4
       h[:text_color]              = "black"
       h[:fill_color]              = "white"

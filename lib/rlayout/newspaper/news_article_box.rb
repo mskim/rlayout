@@ -11,37 +11,39 @@
 # 1. generate floats and layout floats
 #   1. mark lines that over lapping floats
 
-GridLineCount = 10
+GridLineCount = 5
 
 module RLayout
 
   class NewsArticleBox < Container
     attr_accessor :heading_columns, :grid_size, :grid_frame, :body_line_height
     attr_accessor :story_path, :show_overflow_lines, :overflow_column
-    attr_accessor :column_count, :column_layout_space, :line_count_per_column
+    attr_accessor :column_count, :row_count, :column_layout_space, :line_count_per_column
     attr_accessor :draw_gutter_stroke, :gutter, :v_gutter
     attr_accessor :heading, :subtitle_box, :quote_box, :personal_image, :image
     attr_accessor :adjust_lines # bottom+1, top-1, bottom+2, top-2,
 
     def initialize(options={}, &block)
       options[:left_margin]   = 5 unless options[:left_margin]
-      options[:top_margin]    = 5 unless options[:top_margin]
+      options[:top_margin]    = 0 unless options[:top_margin]
       options[:right_margin]  = 5 unless options[:right_margin]
-      options[:bottom_margin] = 5 unless options[:bottom_margin]
+      options[:bottom_margin] = 0 unless options[:bottom_margin]
       super
+      @column_count = options[:column]
+      @row_count = options[:row]
+
       if options[:grid_frame]
         @grid_frame = options[:grid_frame]
         if @grid_frame.class == String
           @grid_frame = eval(@grid_frame)
         end
       else
-        # puts "grid_frame not specified!!! using default grid_frame [0,0,2,3]..."
-        @grid_frame  = [0,0,2,3]
+        @grid_frame  = [0,0,@column_count, @row_count]
       end
       if options[:heding_columns]
         @heading_columns = options[:heding_columns]
       else
-        @heading_columns = HEADING_COLUMNS_TABLE[@grid_frame[2]]
+        @heading_columns = HEADING_COLUMNS_TABLE[@column_count]
       end
 
       @grid_width           = options.fetch(:grid_width, 200)
@@ -53,11 +55,11 @@ module RLayout
       @layout_space         = options.fetch(:layout_space, @gutter)
       @column_layout_space  = options.fetch(:column_layout_space, 0)
       @floats               = options.fetch(:floats, [])
-      @width                = @grid_frame[2]*(@grid_width + @gutter) # we have @gutter/2 on each side
-      @height               = @grid_frame[3]*@grid_height + (@grid_frame[3] - 1)*@v_gutter
-      @column_count         = @grid_frame[2]
+      @width                = @column_count*@grid_width + (@column_count - 1)*@gutter # we have @gutter/2 on each side
+      @height               = @row_count*@grid_height + (@row_count- 1)*@v_gutter
       @body_line_height     = @grid_height/GridLineCount
-      @column_line_count    = @grid_frame[3]*GridLineCount
+      @column_line_count    = @row_count*GridLineCount
+
       create_columns
       if block
         instance_eval(&block)
@@ -65,7 +67,6 @@ module RLayout
       if @floats.length > 0
         layout_floats!
       end
-      
       self
     end
 
@@ -97,7 +98,6 @@ module RLayout
     # this method is called when float positions have changed
     def adjust_overlapping_columns
       @graphics.each_with_index do |column, i|
-        # puts "++++++++ column_index:#{i}"
         overlapping_floats = overlapping_floats_with_column(column)
         column.adjust_overlapping_lines(overlapping_floats)
       end
@@ -132,7 +132,7 @@ module RLayout
       while @item = flowing_items.shift do
         while left_over = @item.layout_lines(current_column)
           column_index    += 1
-          exit if column_index >= column_count
+          break if column_index >= column_count
           current_column  = @graphics[column_index]
         end
       end
@@ -271,7 +271,7 @@ module RLayout
         frame_x           = @grid_size[0]*grid_frame[0] + (grid_frame[0])*@gutter + @gutter/2
       end
       frame_y             = @grid_size[1]*grid_frame[1]
-      frame_width         = @grid_size[0]*grid_frame[2] + (grid_frame[2] - 1)*@layout_space
+      frame_width         = @grid_size[0]*column_count + (column_count - 1)*@layout_space
       frame_height        = @grid_size[1]*grid_frame[3] + (grid_frame[3] - 1)*@column_layout_space
       [frame_x, frame_y, frame_width, frame_height]
     end
