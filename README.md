@@ -118,10 +118,11 @@ TODO List
 		- put templates under rubymotion app/resouces/
 
 2017_3_10
+	- fix last line of column bug, 
 	- TextToken hyphenation
 	- Fix bug when text overflow not printing, bug title not showing
 	- gutter_line([4,0,4,10], 0.5, 'black')
-	- fix last line of column, new paragraph in middle of column expands beyond line 
+	- new paragraph in middle of column expands beyond line
 	- style guide
 		- name_tag, name_tag_body
 		- underline

@@ -85,12 +85,13 @@ module RLayout
     attr_accessor :tokens, :token_heights_are_eqaul
     attr_accessor :para_string, :para_style, :list_style
     attr_accessor :text_column, :grid_height
-    attr_accessor :body_line_height, :split
+    attr_accessor :body_line_height, :split, :line_count
     def initialize(options={})
       @tokens = []
       #simple, drop_cap, drop_cap_image, math, with_image, with_math
       @markup         = options.fetch(:markup, 'p')
       @para_string    = options.fetch(:para_string, "")
+      @line_count = 0
       make_para_style
       # super doen't set @para_style values
       @space_width    = @para_style[:space_width]
@@ -108,106 +109,6 @@ module RLayout
         create_tokens
       end
       self
-    end
-
-
-    def create_tokens_with_double_curl(para_string)
-      split_array = para_string.split(INLINE_DOUBLE_CURL)
-      # splited array contains double curl content
-      split_array.each do |line|
-        if line =~INLINE_DOUBLE_CURL
-          line.sub!("{{", "").sub!("}}", "")
-          if line=~RUBY_ARGUMENT_DIVIDER
-            # when no custm style is defined, just use normal style
-            # when no custm style is defined, just use normal style
-            # @para_style[:string] = line.sub("{{", "").sub("}}", "")
-            # create_special_token(@para_style[:double_emphasis], line)
-            create_special_token('reverse_ruby', line)
-          elsif line=~/^@/
-            line.sub!(/^@/, "")
-            create_special_token('image', line)
-          elsif @para_style[:double_emphasis].is_a?(Hash)
-            emp = @para_style[:double_emphasis]
-            emphasized_style = @para_style.dup.merge emp
-            emphasized_style.delete(:double_emphasis)
-            emphasized_style[:string]        = line
-            emphasized_style.delete(:parent) if emphasized_style[:parent]
-            emphasized_style[:left_margin]   = 3 # box left side margin
-            emphasized_style[:right_margin]  = 3 # box right side margin
-            @tokens << RLayout::TextToken.new(emphasized_style)
-          else
-            @para_style[:string] = line
-            @para_style.delete(:parent) if emphasized_style[:parent]
-            @tokens << RLayout::TextToken.new(@para_style)
-          end
-          # elsif @para_style[:double_emphasis].is_a?(String)
-            # create_special_token(@para_style[:double_emphasis], line)
-        elsif  line =~INLINE_SINGLE_CURL
-          # some of the split line contains single curl
-          create_tokens_with_single_curl(line)
-        else
-          # line text with just noral text tokens
-          create_text_tokens(line)
-        end
-      end
-    end
-
-    def create_tokens_with_single_curl(para_string)
-      para_string.chomp!
-      para_string.sub!(/^\s*/, "")
-      split_array = para_string.split(INLINE_SINGLE_CURL)
-      split_array.each do |line|
-        if line =~INLINE_SINGLE_CURL
-          line.sub!("{", "").sub!("}", "")
-          if @para_style[:single_emphasis].is_a?(Hash)
-            # single emphasis style is specified
-            emp = @para_style[:single_emphasis]
-            emphasized_style = @para_style.dup.merge emp
-            emphasized_style[:string] = line
-            emphasized_style.delete(:single_emphasis)
-            @tokens << RLayout::TextToken.new(emphasized_style)
-          else
-            # when no style is defined, just use normal style
-            @para_style[:string] = line
-            @tokens << RLayout::TextToken.new(@para_style)
-          end
-        else
-          # line text with just noral text tokens
-          if line.empty? || line == " " or line == "\n"
-            # puts "line is emptuy"
-          else
-            create_text_tokens(line)
-          end
-        end
-      end
-    end
-
-    def create_special_token(token_type, line_text)
-      case token_type
-      when "ruby"
-        arg = line_text.split(RUBY_ARGUMENT_DIVIDER)
-        options = {}
-        options[:base]  = arg[1]
-        options[:top]   = arg[2]
-        options[:para_style] = @para_style
-        @tokens << RLayout::RubyToken.new(options)
-      when "reverse_ruby"
-        arg = line_text.split(RUBY_ARGUMENT_DIVIDER)
-        options = {}
-        options[:base]  = arg[0]
-        options[:bottom]= arg[1]
-        options[:para_style] = @para_style
-        @tokens << RLayout::ReverseRubyToken.new(options)
-      when "image"
-        options = {}
-        options[:image_name]  = line_text
-        @tokens << RLayout::ImageToken.new(options)
-      else
-        #TODO supply more special tokens
-        options = {}
-        options[:string]  = arg[9]
-        @tokens << RLayout::TextToken.new(options)
-      end
     end
 
     def create_text_tokens(para_string)
@@ -241,7 +142,7 @@ module RLayout
         # puts "@para_style:#{@para_style}"
       end
 
-      # do we have any doulbe curl?
+      # do we have any doulbe curl?, for special token
       # if @para_string =~INLINE_DOUBLE_CURL
       #   create_tokens_with_double_curl(@para_string)
       # # no doulbe curl, do we have any single curl?
@@ -261,10 +162,6 @@ module RLayout
           return
         end
       end
-    end
-
-    def line_count
-      @graphics.length
     end
 
     def room
@@ -309,11 +206,15 @@ module RLayout
        # this is for variable line height
 	     # 3. Each time with new token, check the height change, tallest_token and adjust line height.
     # end
-    def layout_lines(text_column)
+    def layout_lines(text_box)
       # @current_line = text_column.current_line
-      @current_line = text_column.get_line_with_text_room
+      @current_line = text_box.next_text_line
       return unless @current_line
-      @current_line.set_paragraph_info(self, "first_line")
+      if @line_count == 0
+        @current_line.set_paragraph_info(self, "first_line")
+      else
+        @current_line.set_paragraph_info(self, "middle_line")
+      end
       token = tokens.shift
       while token
         success = @current_line.place_token(token)
@@ -321,23 +222,24 @@ module RLayout
           token = tokens.shift
         else
           @current_line.align_tokens
-          @current_line = text_column.go_to_next_line
+          @current_line.room = 0
+          @current_line = text_box.next_text_line
           if @current_line
             @current_line.set_paragraph_info(self, "middle_line")
+            @line_count += 1
           else
-            break #reached end of column
+            tokens.unshift(token) #stick the unplace token back to the tokens
+            return true # overflow
+            # break #reached end of column
           end
         end
       end
-
-      if text_column.is_last_line?
-        split = true
-        return true # left over is true
-      else
-        @current_line.align_tokens
-        @current_line = text_column.go_to_next_line
-      end
-      false # no left over
+      @current_line.align_tokens
+      # move cursor to new line
+      # binding.pry
+      text_box.current_column.go_to_next_line
+      text_box.next_text_line
+      false # no  overflow
     end
 
 
@@ -374,21 +276,6 @@ module RLayout
       h[:para_style]      = @para_style
       h[:linked]          = true
       h
-    end
-
-    # split current paragraph into two at overflowing line
-    # return newly created second half Paragraph
-    # steps
-    # 1. create second_half paragraph with options saved from to_hash
-    # 1. move left over tokens to second_half_options[:tokens]
-    # 1. clear tokens from first_half
-    def split_overflowing_lines
-      second_half_options           = to_hash
-      second_half_options[:tokens]  = @tokens.dup
-      @tokens                       = []
-      second_half                   = Paragraph.new(second_half_options)
-      second_half.linked            = true
-      second_half
     end
 
     # overflow is when we have breakable paragraph

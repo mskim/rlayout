@@ -235,7 +235,7 @@ NEWS_STYLES={
   "head"    =>{:font => 'Helvetica', :text_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
   "h6"      =>{:font => 'Helvetica', :text_size=>10.0, :text_line_spacing=>5, :text_color => 'black'},
   "p"       =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black'},
-  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black'},
+  "body"    =>{:font => 'Times',     :text_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black', :text_first_line_head_indent=>9},
   "caption" =>{:font => 'Times',     :text_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'Times', :text_size=>8.0, :text_color => 'black'},

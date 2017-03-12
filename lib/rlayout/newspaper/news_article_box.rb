@@ -11,7 +11,7 @@
 # 1. generate floats and layout floats
 #   1. mark lines that over lapping floats
 
-GridLineCount = 5
+GridLineCount = 6
 
 module RLayout
 
@@ -22,6 +22,8 @@ module RLayout
     attr_accessor :draw_gutter_stroke, :gutter, :v_gutter
     attr_accessor :heading, :subtitle_box, :quote_box, :personal_image, :image
     attr_accessor :adjust_lines # bottom+1, top-1, bottom+2, top-2,
+    attr_accessor :current_column, :current_column_index
+
 
     def initialize(options={}, &block)
       options[:left_margin]   = 5 unless options[:left_margin]
@@ -29,8 +31,9 @@ module RLayout
       options[:right_margin]  = 5 unless options[:right_margin]
       options[:bottom_margin] = 0 unless options[:bottom_margin]
       super
-      @column_count = options[:column]
-      @row_count = options[:row]
+      @column_count           = options[:column]
+      @row_count              = options[:row]
+      @current_column_index   = 0
 
       if options[:grid_frame]
         @grid_frame = options[:grid_frame]
@@ -55,7 +58,7 @@ module RLayout
       @layout_space         = options.fetch(:layout_space, @gutter)
       @column_layout_space  = options.fetch(:column_layout_space, 0)
       @floats               = options.fetch(:floats, [])
-      @width                = @column_count*@grid_width + (@column_count - 1)*@gutter # we have @gutter/2 on each side
+      @width                = @column_count*@grid_width + @column_count*@gutter # we have @gutter/2 on each side
       @height               = @row_count*@grid_height + (@row_count- 1)*@v_gutter
       @body_line_height     = @grid_height/GridLineCount
       @column_line_count    = @row_count*GridLineCount
@@ -113,6 +116,8 @@ module RLayout
       nil
     end
 
+    # get next line from curretn line
+
     def reduce_lines(overflow_count)
       paragraphs = []
       @graphics.each do |column|
@@ -126,15 +131,47 @@ module RLayout
       end
     end
 
-    def layout_items(flowing_items)
-      column_index    = 0
-      current_column  = @graphics[column_index]
-      while @item = flowing_items.shift do
-        while left_over = @item.layout_lines(current_column)
-          column_index    += 1
-          break if column_index >= column_count
-          current_column  = @graphics[column_index]
+    def first_text_line
+      #code
+    end
+
+    def next_text_line
+      @current_column = @graphics[@current_column_index]
+      if line = @current_column.get_line_with_text_room
+        return line
+      else
+        @current_column_index +=1
+        return nil if @current_column_index >= @graphics.length
+        @current_column = @graphics[@current_column_index]
+        if line = @current_column.get_line_with_text_room
+          return line
         end
+      end
+      nil
+    end
+
+    def current_location
+      [@current_column_index, @current_column.current_line_index]
+    end
+
+    def layout_items(flowing_items)
+      @column_index       = 0
+      @current_column     = @graphics[@column_index]
+      overflow = false
+      while @item = flowing_items.shift do
+
+        break if overflow = @item.layout_lines(self)
+
+        # while left_over   = @item.layout_lines(current_column)
+        #   column_index    += 1
+        #   break if column_index >= column_count
+        #   current_column  = @graphics[column_index]
+	      #   left_over       = @item.layout_lines(current_column)
+        # end
+      end
+      if overflow
+        #TODO
+        puts "oveflow"
       end
     end
 

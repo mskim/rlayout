@@ -194,10 +194,6 @@ module RLayout
       @grid_rects.last.rect
     end
 
-    def column_index
-      @parent_graphic.graphics.index(self)
-    end
-
     def text_width
       text_rect[2]
     end

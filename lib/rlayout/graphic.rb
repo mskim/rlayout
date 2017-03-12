@@ -118,6 +118,14 @@ module RLayout
       }
     end
 
+    def graphics_index
+      @parent_graphic.graphics.index(self) if @parent_graphic && @parent_graphic.graphics
+    end
+
+    def floats_index
+      @parent_graphic.floats.index(self) if @parent_graphic && @parent_graphic.floats
+    end
+
     def get_stroke_rect
       if RUBY_ENGINE == "rubymotion"
         # r = NSMakeRect(@x,@y,@width,@height)
