@@ -80,6 +80,9 @@ module RLayout
   # list_fill_color => fill_color of NumberToken
   # list_line_color => line_color of NumberToken
 
+CharHalfWidthCushion  = 5.0
+MinimunLineRoom       = 4.0
+
   class NewsParagraph
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
@@ -212,15 +215,29 @@ module RLayout
       return unless @current_line
       if @line_count == 0
         @current_line.set_paragraph_info(self, "first_line")
-      else
-        @current_line.set_paragraph_info(self, "middle_line")
       end
       token = tokens.shift
       while token
-        success = @current_line.place_token(token)
-        if success
+        result = @current_line.place_token(token)
+        if result.class == TextToken
+          # token is broken into two, second part is returned
+          @current_line.align_tokens
+          @current_line.room = 0
+          @current_line = text_box.next_text_line
+          if @current_line
+            @current_line.set_paragraph_info(self, "middle_line")
+            @line_count += 1
+            token = result
+          else
+            tokens.unshift(result) #stick the unplace token back to the tokens
+            return true # overflow
+            # break #reached end of column
+          end
+        elsif result
+          # # entire token placed succefully
           token = tokens.shift
         else
+          # entire token was rejected,
           @current_line.align_tokens
           @current_line.room = 0
           @current_line = text_box.next_text_line
@@ -302,9 +319,9 @@ module RLayout
       h[:text_style]              = "plain"
       h[:h_alignment]             = "left"
       h[:v_alignment]             = "center"
-      h[:first_line_indent]       = 20
-      h[:head_indent]             = 3
-      h[:tail_indent]             = 3
+      h[:first_line_indent]       = 10
+      h[:head_indent]             = 1
+      h[:tail_indent]             = 1
       h[:space_before]            = 0
       h[:space_after]             = 0
       h[:tab_stops]               = [['left', 20], ['left', 40], ['left', 60],['left', 80]]

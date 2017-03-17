@@ -117,11 +117,14 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_3_13
+	- Korean TextToken hyphenation
+
 2017_3_10
-	- fix last line of column bug, 
-	- TextToken hyphenation
-	- Fix bug when text overflow not printing, bug title not showing
-	- gutter_line([4,0,4,10], 0.5, 'black')
+	- fix last line of column bug,
+	- Fix bug: not printing if text overflow , bug title not showing
+	- gutter_line(line_frame_rect, thickness, color)
+	- example: gutter_line([4,0,4,10], 0.5, 'black')
 	- new paragraph in middle of column expands beyond line
 	- style guide
 		- name_tag, name_tag_body

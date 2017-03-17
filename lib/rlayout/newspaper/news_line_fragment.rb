@@ -46,7 +46,7 @@ module RLayout
     end
 
     def has_text_room?
-      @room > 20
+      @room > 10
     end
 
     # set line type, and paragraph information for line
@@ -64,6 +64,8 @@ module RLayout
       end
 
       @line_type = line_type
+      # puts "@first_line_width:#{@first_line_width}"
+      # puts "@middle_line_width:#{@middle_line_width}"
       if @line_type == 'first_line'
         @starting_position  = para_style[:first_line_indent]
         @text_area_width    = @first_line_width
@@ -78,13 +80,36 @@ module RLayout
     # place tokens in the line, given tokens array
     # return loft over tokens array if not all tokens are layed out
     # return false if no leftvver tokens
+
+    #CharHalfWidthCushion = 5.0
+
+    CharHalfWidthCushion  = 5.0
+    MinimunLineRoom       = 4.0
+
     def place_token(token)
-      if @room >= token.width
+      if @room + CharHalfWidthCushion >= token.width
+        # token is place into line.
         token.parent_graphic = self
         @graphics << token
         @room -= token.width
         @room -= @space_width
         return true
+      else
+        # no more room, try hyphenating token
+        result = token.hyphenate_token(@room)
+        if result == "period at the end of token"
+          # this ss when the last char is "." and we can sqeezed it into the line.
+          # token is not broken
+          @graphics << token
+          @room = 0
+          return true
+        elsif result.class == TextToken
+          # token is broken into two
+          @graphics << token  # insert front part to line_count
+          return result       # return second part
+        end
+        # cound not break the token,
+        return false
       end
       return false
     end

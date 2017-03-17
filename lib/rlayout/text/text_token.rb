@@ -45,6 +45,8 @@ module RLayout
   class TextToken < Graphic
     attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
     attr_accessor :string, :atts, :stroke, :has_text, :token_type # number, empasis, special
+    attr_reader :split_second_half_attsting
+
     def initialize(options={})
       @string                   = options[:string]
       options[:layout_expand]   = nil
@@ -55,9 +57,18 @@ module RLayout
         else
           @atts       = default_atts
         end
-        @att_string     = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
-        options[:width] = @att_string.size.width
-        options[:height]= @att_string.size.height*2
+        if options[:att_string]
+          @attrs        = options[:atts]
+          @att_string   = options[:att_string]
+          @string       = @att_string.string if @att_string.class == NSConcreteMutableAttributedString # if @att_string.respond_to?(:string)
+          # @string         = @att_string.string
+          options[:height]= @att_string.size.height*2
+
+        else
+          @att_string     = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
+          options[:width] = @att_string.size.width
+          options[:height]= @att_string.size.height*2
+        end
       else
         # TODO fix get string with from Rfont
         text_size = options[:text_size] || 10
@@ -66,13 +77,14 @@ module RLayout
         options[:height] = size[1]
       end
       options[:fill_color] = options.fetch(:token_color, 'clear')
-      # options[:stroke_width] = 1
       super
+
       if RUBY_ENGINE == "rubymotion"
         # add some margin to left and right of the token.
         @width  = @att_string.size.width + @left_margin + @right_margin
         @x      = @left_margin
-        @height = @att_string.size.height
+        # @heigth = @att_string.size.height*2
+        @heigth = 19.0
         if options[:text_line_spacing]
           @height += options[:text_line_spacing]
         else
@@ -80,6 +92,64 @@ module RLayout
         end
       end
       self
+    end
+
+    # return false if none broken
+    # split string into two and pit split_second_half_attsting
+    def break_attstring_at(break_position)
+      # give a char_half_cushion
+      return false if break_position < MinimunLineRoom
+      string_length = @att_string.length
+      if RUBY_ENGINE == "rubymotion"
+        initial_range = NSMakeRange(0,1)
+        sub_string_before = @att_string.attributedSubstringFromRange(initial_range)
+        (1..string_length).to_a.each do |i|
+          front_range = NSMakeRange(0,i)
+          sub_string_after = @att_string.attributedSubstringFromRange(front_range)
+          if i == string_length && sub_string_after.string =~ /\.$/
+            return "period at the end of token"
+          elsif sub_string_after.size.width > (break_position + CharHalfWidthCushion)
+            #TODO handle . , line ending rule. procenting orphan
+            cut_index = i - 1 # pne before i
+            back_range = NSMakeRange(cut_index,(string_length - cut_index))
+            original_string = @att_string
+            @att_string = sub_string_before
+            @string     = @att_string.string
+            @width      = @att_string.size.width + @left_margin + @right_margin
+            new_string  = original_string.attributedSubstringFromRange(back_range)
+            return new_string
+          else
+            sub_string_before = sub_string_after
+          end
+        end
+        return false
+
+      end
+
+    end
+
+    # divide token at position
+    def hyphenate_token(break_position)
+      position = break_position
+      if RUBY_ENGINE == "rubymotion"
+        # break_attstring_at breaks original att_string into two
+        # adjust first token width and result is second haldf att_string
+        # or false is return if not abtle to brake the token
+        result = break_attstring_at(position)
+        if result == "period at the end of token"
+          return "period at the end of token"
+        elsif result.class == NSConcreteMutableAttributedString
+          second_half = self.dup
+          second_half.att_string = result
+          second_half.width = result.size.width + @left_margin + @right_margin
+          return second_half
+          # return TextToken.new(att_string: result, atts: @atts)
+        else
+          return false
+        end
+      else
+      end
+      false
     end
 
     def size
