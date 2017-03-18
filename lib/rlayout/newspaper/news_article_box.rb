@@ -191,6 +191,7 @@ module RLayout
         @heading = @floats.pop
         @floats.unshift(@heading)
       end
+
     end
 
     # does current text_box include Heading in floats

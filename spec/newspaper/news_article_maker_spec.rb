@@ -8,6 +8,7 @@ describe 'creaet document with NewsArticleMaker' do
     @maker          = NewsArticleMaker.new(article_path: @article_path)
     @news_box       = @maker.news_article_box
     @heading        = @news_box.floats.first
+    @title          = @heading.title_object
     @first_column   = @news_box.graphics.first
     @eews_article_box_width = @first_column.width*3 + 10*3
     @first_column_first_line = @first_column.graphics.first
@@ -22,12 +23,19 @@ describe 'creaet document with NewsArticleMaker' do
     assert_equal @heading.class, NewsArticleHeading
     assert_equal @news_box.gutter, 10
   end
-#
-#   it 'should create NewsArticleBox' do
-#     assert_equal NewsArticleBox, @news_box.class
-#     assert_equal @eews_article_box_width, @news_box.width
-#
-#   end
+
+  it 'should create NewsArticleBox' do
+    assert_equal NewsArticleBox, @news_box.class
+    assert_equal @eews_article_box_width, @news_box.width
+
+  end
+
+  it 'should create NewsArtcicleHeading' do
+    assert_equal NewsArticleHeading, @heading.class
+    assert_equal Text, @title.class
+
+
+  end
 #   it 'shold create NewsColumn' do
 #     assert_equal NewsColumn, @first_column.class
 #     assert_equal 10, @news_box.gutter

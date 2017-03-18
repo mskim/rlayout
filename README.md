@@ -117,6 +117,9 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_3_17
+	- TextToken hyphenation, token alignment, line ending rule, orphan
+
 2017_3_13
 	- Korean TextToken hyphenation
 

@@ -1,5 +1,7 @@
 
 
+CharHalfWidthCushion  = 5.0
+MinimunLineRoom       = 4.0
 
 
 
@@ -83,8 +85,6 @@ module RLayout
 
     #CharHalfWidthCushion = 5.0
 
-    CharHalfWidthCushion  = 5.0
-    MinimunLineRoom       = 4.0
 
     def place_token(token)
       if @room + CharHalfWidthCushion >= token.width
@@ -126,15 +126,23 @@ module RLayout
       return if @graphics.length == 0
       @total_token_width = token_width_sum
       @total_space_width = (@graphics.length - 1)*@space_width if @graphics.length > 0
-      room = @text_area_width - (@total_token_width + @total_space_width)
-      x = @starting_position
-      @graphics.each do |token|
-        token.x = x
-        x += token.width + @space_width
-      end
+      room  = @text_area_width - (@total_token_width + @total_space_width)
+      x     = @starting_position
 
       case @text_alignment
+      when 'justified'
+        @space_width = (@text_area_width - @total_token_width)/(@graphics.length - 1)
+        @graphics.each do |token|
+          token.x = x
+          x += token.width + @space_width
+        end
+
       when 'left'
+        x = @starting_position
+        @graphics.each do |token|
+          token.x = x
+          x += token.width + @space_width
+        end
       when 'center'
         @graphics.map {|t| t.x += room/2.0}
       when 'right'

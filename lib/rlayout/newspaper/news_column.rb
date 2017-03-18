@@ -26,7 +26,7 @@ module RLayout
     def initialize(options={}, &block)
       options[:width]     = 200 unless options[:width]
       options[:height]    = 500 unless options[:height]
-      options[:stroke_width] = 1
+      # options[:stroke_width] = 1
       super
       @line_count         = options[:column_line_count]
       @show_grid_rects    = options[:show_grid_rects] || true

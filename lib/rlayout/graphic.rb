@@ -55,13 +55,14 @@ module RLayout
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
     attr_accessor :frame_image, :shadow, :rotation
-    attr_accessor :overflow, :underflow
+    attr_accessor :overflow, :underflow, :height_in_line_count
 
     def initialize(options={}, &block)
       @parent_graphic = options[:parent]
       # if @parent_graphic && @parent_graphic.class.kind_of?(Document)
       #   set_frame(@parent_graphic.layout_rect)
-      @tag              = options[:tag]
+      @tag                  = options[:tag]
+      @height_in_line_count = options[:height_in_line_count]
       if @parent_graphic && options[:parent_frame]
         set_frame(@parent_graphic.layout_rect)
       elsif options[:grid_frame] && @parent_graphic && @parent_graphic.grid

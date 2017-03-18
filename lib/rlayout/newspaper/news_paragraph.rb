@@ -80,9 +80,6 @@ module RLayout
   # list_fill_color => fill_color of NumberToken
   # list_line_color => line_color of NumberToken
 
-CharHalfWidthCushion  = 5.0
-MinimunLineRoom       = 4.0
-
   class NewsParagraph
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
@@ -317,7 +314,7 @@ MinimunLineRoom       = 4.0
       h[:text_color]              = "black"
       h[:fill_color]              = "white"
       h[:text_style]              = "plain"
-      h[:h_alignment]             = "left"
+      h[:h_alignment]             = "justified"
       h[:v_alignment]             = "center"
       h[:first_line_indent]       = 10
       h[:head_indent]             = 1
