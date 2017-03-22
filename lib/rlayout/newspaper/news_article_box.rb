@@ -10,20 +10,21 @@
 #   1. create_lines
 # 1. generate floats and layout floats
 #   1. mark lines that over lapping floats
+# 4.5*28.34646 = 12.755907
+# 15*28.34646 = 425.1969
 
 GridLineCount = 6
 
 module RLayout
 
   class NewsArticleBox < Container
-    attr_accessor :heading_columns, :grid_size, :grid_frame, :body_line_height
+    attr_accessor :top_story, :heading_columns, :grid_size, :grid_frame, :body_line_height
     attr_accessor :story_path, :show_overflow_lines, :overflow_column
     attr_accessor :column_count, :row_count, :column_layout_space, :line_count_per_column
     attr_accessor :draw_gutter_stroke, :gutter, :v_gutter
     attr_accessor :heading, :subtitle_box, :quote_box, :personal_image, :image
-    attr_accessor :adjust_lines # bottom+1, top-1, bottom+2, top-2,
+    attr_accessor :before_lines, :after_lines
     attr_accessor :current_column, :current_column_index
-
 
     def initialize(options={}, &block)
       options[:left_margin]   = 5 unless options[:left_margin]
@@ -34,6 +35,7 @@ module RLayout
       @column_count           = options[:column]
       @row_count              = options[:row]
       @current_column_index   = 0
+      @top_story              = options.fetch(:top_story, false)
 
       if options[:grid_frame]
         @grid_frame = options[:grid_frame]
@@ -46,7 +48,7 @@ module RLayout
       if options[:heding_columns]
         @heading_columns = options[:heding_columns]
       else
-        @heading_columns = HEADING_COLUMNS_TABLE[@column_count]
+        @heading_columns = @column_count
       end
 
       @grid_width           = options.fetch(:grid_width, 200)
@@ -85,7 +87,10 @@ module RLayout
       end
     end
 
-    #
+    def is_top_story?
+      @top_story
+    end
+
     # # create lines that are adjusted for overflapping floats
     # # This is called after floats are layoued out.
     # def create_column_lines
@@ -129,10 +134,6 @@ module RLayout
         goal = overflow_count - reduced_line
         result = para.try_reducing_line_numbers_by_changing_space_width(goal)
       end
-    end
-
-    def first_text_line
-      #code
     end
 
     def next_text_line
@@ -181,6 +182,8 @@ module RLayout
       h_options[:is_float]  = true
       h_options[:is_float]  = true
       h_options[:parent]    = self
+      h_options[:width]     = @width - @gutter
+      h_options[:x]         = @gutter/2
       if @heading_columns != @column_count
         h_options[:width] = width_of_columns(@heading_columns)
       end
@@ -191,7 +194,6 @@ module RLayout
         @heading = @floats.pop
         @floats.unshift(@heading)
       end
-
     end
 
     # does current text_box include Heading in floats
@@ -239,48 +241,91 @@ module RLayout
       @graphics.last.x_max - @graphics.first.x
     end
 
+    def make_floats(heading_hash)
+      if heading_hash['subtitle']
+        float_subtitle(heading_hash['subtitle'])
+      end
 
-    def float_leading(options={})
-      leading_options = {}
-      frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
-      leading_options[:x]       = frame_rect[0]
-      leading_options[:y]       = frame_rect[1]
-      leading_options[:width]   = frame_rect[2]
-      leading_options[:height]  = frame_rect[3]
-      leading_options[:layout_expand]   = nil
-      leading_options[:is_float]        = true
-      leading_options[:parent]          = self
-      Text.new(leading_options)
+      if heading_hash['personal_image']
+
+      end
+
+      if heading_hash['quote']
+        hash = {}
+
+        float_quote(hash)
+      end
+
+      if heading_hash['image']
+
+      end
+      layout_floats!
+    end
+
+    # text_height_in_lines should be calculated dynamically
+    def float_subtitle(subtitle_string)
+      subtitle_13     = '부제13'
+      subtitle_15     = '부제15'
+      options = NEWSPAPER_STYLE[subtitle_13]
+      if @column_count > 3
+        options = NEWSPAPER_STYLE[subtitle_15]
+      end
+      options[:text_string]   = subtitle_string
+      options[:text_fit_type] = 'adjust_box_height'
+      # options[:body_line_height] = @body_line_height
+      options[:x]             = 5
+      options[:y]             = 0
+      options[:grid_frame]    = [0,0,1,1]
+      options[:width]         = @grid_width
+      options[:layout_expand] = nil
+      options[:is_float]      = true
+      options[:parent]        = self
+      # options[:stroke_width]  = 1
+      #TODO put top_margin and bottom_margin
+      subtitle = Text.new(options)
     end
 
     def float_quote(options={})
-      quote_options = options.dup
+      options = {}
       frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
-      quote_options[:x]       = frame_rect[0]
-      quote_options[:y]       = frame_rect[1]
-      quote_options[:width]   = frame_rect[2]
-      quote_options[:height]  = frame_rect[3]
-      quote_options[:layout_expand]   = nil
-      quote_options[:is_float]        = true
-      quote_options[:parent]          = self
-      Quote.new(quote_options)
+      options[:x]       = frame_rect[0]
+      options[:y]       = frame_rect[1]
+      options[:width]   = frame_rect[2]
+      options[:height]  = frame_rect[3]
+      options[:layout_expand]   = nil
+      options[:is_float]        = true
+      options[:parent]          = self
+      Text.new(options)
+    end
+
+    def float_personal_image(options={})
+      options = options.dup
+      frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
+      options[:x]       = frame_rect[0]
+      options[:y]       = frame_rect[1]
+      options[:width]   = frame_rect[2]
+      options[:height]  = frame_rect[3]
+      options[:layout_expand]   = nil
+      options[:is_float]        = true
+      options[:parent]          = self
+      Quote.new(options)
     end
 
     # place imaegs that are in the head of the story as floats
     def float_image(options={})
-      image_options = {}
-      image_options[:image_path] = "#{options[:image_path]}" if options[:image_path]
-      image_options[:image_path] = "#{$ProjectPath}/images/#{options[:local_image]}" if options[:local_image]
+      options = {}
+      options[:image_path] = "#{options[:image_path]}" if options[:image_path]
+      options[:image_path] = "#{$ProjectPath}/images/#{options[:local_image]}" if options[:local_image]
       frame_rect              = grid_frame_to_image_rect([0,0,1,1])
       frame_rect              = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
-      image_options[:x]       = frame_rect[0]
-      image_options[:y]       = frame_rect[1]
-      image_options[:width]   = frame_rect[2]
-      image_options[:height]  = frame_rect[3]
-      image_options[:layout_expand]   = nil
-      image_options[:is_float]= true
-      image_options[:parent]  = self
-      @image                  = Image.new(image_options)
+      options[:x]       = frame_rect[0]
+      options[:y]       = frame_rect[1]
+      options[:width]   = frame_rect[2]
+      options[:height]  = frame_rect[3]
+      options[:layout_expand]   = nil
+      options[:is_float]= true
+      options[:parent]  = self
+      @image                  = Image.new(options)
     end
 
     def float_images(images)
@@ -349,7 +394,7 @@ module RLayout
       @middle_occupied_rects = []
       @bottom_occupied_rects = []
       @floats.each_with_index do |float, i|
-        next unless float.kind_of?(Image) || float.kind_of?(Heading)
+        # next unless float.kind_of?(Image) || float.kind_of?(Heading)
         @float_rect = float.frame_rect
         if i==0
           @occupied_rects << float.frame_rect
@@ -379,7 +424,7 @@ module RLayout
     def move_float_to_unoccupied_area(occupied_arry, float)
       occupied_arry.each do |occupied_rect|
         if intersects_rect(occupied_rect, float.frame_rect)
-          float.y = max_y(occupied_rect) + 5
+          float.y = max_y(occupied_rect) + 0
         end
       end
     end

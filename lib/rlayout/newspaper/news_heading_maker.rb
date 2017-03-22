@@ -1,3 +1,5 @@
+
+
 module RLayout
   class NewsHeadingMaker
     attr_accessor :output_path, :jpg, :heading

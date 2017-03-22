@@ -124,10 +124,10 @@ module RLayout
         @preview = options[:preview]
       end
       @column_count = options.fetch(:column_count, 1)
-      @left_margin= options.fetch(:left_margin, document_defaults[:left_margin])
-      @top_margin = options.fetch(:top_margin, document_defaults[:top_margin])
+      @left_margin  = options.fetch(:left_margin, document_defaults[:left_margin])
+      @top_margin    = options.fetch(:top_margin, document_defaults[:top_margin])
       @right_margin = options.fetch(:right_margin, document_defaults[:right_margin])
-      @bottom_margin= options.fetch(:bottom_margin, document_defaults[:bottom_margin])
+      @bottom_margin = options.fetch(:bottom_margin, document_defaults[:bottom_margin])
       if options[:starting_page]
         @starting_page = options[:starting_page]
         if @starting_page.odd?

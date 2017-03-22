@@ -75,37 +75,6 @@
 
 
 
-NEWS_PAPER_DEFAULTS = {
-  name: "Ourtown News",
-  period: 'daily',
-  skip_day: ['Saturday', 'Sunday'],
-  paper_size: 'A2'
-}
-
-
-NEW_SECTION_DEFAULTS = {
-  :width        => 1190.55,
-  :height       => 1683.78,
-  :grid         => [7, 12],
-  :lines_in_grid=> 10,
-  :gutter       => 10,
-  :left_margin  => 50,
-  :top_margin   => 50,
-  :right_margin => 50,
-  :bottom_margin=> 50,
-}
-
-HEADING_COLUMNS_TABLE = {
-  1 => 1,
-  2 => 2,
-  3 => 2,
-  4 => 2,
-  5 => 3,
-  6 => 3,
-  7 => 3
-}
-
-
 DEFAULT_STYLES={
   "doc_info" => {
     paper_size: "A4",

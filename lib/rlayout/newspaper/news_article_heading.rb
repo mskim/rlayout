@@ -1,14 +1,20 @@
+
+
 module RLayout
 
   class NewsArticleHeading < Container
     attr_accessor :grid_frame, :grid_width, :body_line_height
-    attr_accessor :big_title_object, :title_object, :name_tag_object, :subtitle_object
-    attr_reader   :upper_line_type
+    attr_accessor :title_object, :name_tag_object, :subtitle_object
+    attr_reader   :upper_line_type, :heading_columns
+    attr_reader   :subtitle_in_head, :top_story
 
     def initialize(options={})
       @grid_width       = options.fetch(:grid_width, 2)
+      @heading_columns  = @grid_width
       @body_line_height = options.fetch(:body_line_height, 12)
       super
+      @top_story        = options.fetch(:top_story, false)
+      @subtitle_in_head = options.fetch(:subtitle_in_head, false)
       set_heading_content(options)
       self
     end
@@ -17,81 +23,103 @@ module RLayout
       # options = transform_keys_to_symbols(options)
       @height_in_line_count_sum = 0
       if options['name_tag']
-        @name_tag_object = name_tag(options['name_tag'], options)
-        @height_in_line_count_sum +=@name_tag_object.height_in_line_count    unless @title_object.nil?
+        @name_tag_object = name_tag(options)
+        @height_in_line_count_sum +=@name_tag_object.height_in_lines    unless @title_object.nil?
+        # if when we have name_tag, reduce heading_columns size by 1
+        @heading_columns -= 1
       end
-      if options['big_title']
-        @big_title_object = big_title(options['big_title'], options)
-        @height_in_line_count_sum +=@big_title_object.height_in_line_count    unless @title_object.nil?
-      end
+
       if options['title']
-        @title_object = title(options['title'], options)
-        @height_in_line_count_sum += @title_object.height_in_line_count    unless @title_object.nil?
+        if @top_story
+          @title_object = top_title(options)
+        else
+          @title_object = title(options)
+        end
+        @height_in_line_count_sum += @title_object.height_in_lines    unless @title_object.nil?
       end
-      if options['subtitle']
-        @subtitle_object = subtitle(options['subtitle'], options)
-        @height_in_line_count_sum +=@subtitle_object.height_in_line_count unless @subtitle_object.nil?
+
+      if options['subtitle'] && (@top_story || @subtitle_in_head)
+        @subtitle_object = subtitle(options)
+        @height_in_line_count_sum +=@subtitle_object.height_in_lines unless @subtitle_object.nil?
       end
       @height = @height_in_line_count_sum*@body_line_height
       relayout!
       self
     end
 
-    ######## PageScript verbes
-
     def name_tag(options={})
-      @height_in_line_count = 1
-      atts                        = @current_style["name_tag"]
-      atts[:text_string]          = string
+      atts = NEWSPAPER_STYLE[name_tag]
+      atts[:text_string]            = options['name_tag']
+      atts[:body_line_height]       = @parent_graphic.body_line_height
+      atts[:width]                  = @width
+      atts[:text_fit_type]          = 'adjust_box_height'
+      atts[:layout_expand]          = [:width]
+      atts[:fill_color]             = options.fetch(:fill_color, 'clear')
+      atts                          = options.merge(atts)
+      atts[:parent]                 = self
+      atts[:layout_length_in_lines]    = true
+      Text.new(atts)
+      @title_object                 = @graphics.last
+      @title_object
+    end
+
+    def top_title(options={})
+      top_title_46     = '탑제목'
+      atts = NEWSPAPER_STYLE[top_title_46]
+      atts[:text_string]          = options['title']
+      atts[:body_line_height]     = @parent_graphic.body_line_height
       atts[:width]                = @width
       atts[:text_fit_type]        = 'adjust_box_height'
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts                        = options.merge(atts)
       atts[:parent]               = self
+      atts[:layout_length_in_lines] = true
       Text.new(atts)
       @title_object               = @graphics.last
-      @title_object.layout_length = @height_in_line_count
       @title_object
     end
 
-    def big_title(string, options={})
-      @height_in_line_count       = 4
-      atts                        = @current_style["big_title"]
-      atts[:text_string]          = string
+    def title(options={})
+      title_4_5     = '4-5단제목'
+      title_3       = '3단제목'
+      title_2       = '2단제목'
+      title_1       = '1단제목'
+      atts = {}
+      case @heading_columns
+      when 4,5,6,7
+        atts = NEWSPAPER_STYLE[title_4_5]
+      when 3
+        atts = NEWSPAPER_STYLE[title_3]
+      when 2
+        atts = NEWSPAPER_STYLE[title_2]
+      when 1
+        atts = NEWSPAPER_STYLE[title_1]
+      end
+      atts[:text_string]          = options['title']
+      atts[:body_line_height]     = @parent_graphic.body_line_height
       atts[:width]                = @width
       atts[:text_fit_type]        = 'adjust_box_height'
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
-      atts                        = options.merge(atts)
       atts[:parent]               = self
-      # @title_object               = Text.new(atts)
-      Text.new(atts)
-      @title_object               = @graphics.last
-      @title_object.layout_length = @height_in_line_count
+      # atts[:stroke_width]         = 1
+      atts[:layout_length_in_lines] = true
+      @title_object               = Text.new(atts)
       @title_object
     end
 
-    def title(string, options={})
-      atts = RLayout::StyleService.shared_style_service.current_style['title']
-      atts[:parent]               = self
-      atts[:height_in_line_count] = 2
-      atts[:text_string]          = string
-      atts[:width]                = @width
-      atts[:text_fit_type]        = 'adjust_box_height'
-      atts[:layout_expand]        = [:width]
-      atts[:fill_color]           = options.fetch(:fill_color, 'clear')
-      atts                        = options.merge(atts)
-      atts[:parent]               = self
-      @title_object               =Text.new(atts)
-      @title_object.layout_length = @height_in_line_count
-      @title_object
-    end
-
-    def subtitle(string, options={})
-      @height_in_line_count = 1
-      atts                          = @current_style["subtitle"]
-      atts[:text_string]            = string
+    def subtitle(options={})
+      subtitle_15   = '부제15'
+      subtitle_13   = '부제13'
+      #TODO
+      if @heading_columns >= 3
+        atts = NEWSPAPER_STYLE[subtitle_15]
+      else
+        atts = NEWSPAPER_STYLE[subtitle_13]
+      end
+      atts[:text_string]            = options['subtitle']
+      atts[:body_line_height]       = @parent_graphic.body_line_height
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')

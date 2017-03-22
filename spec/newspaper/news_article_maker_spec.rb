@@ -33,8 +33,11 @@ describe 'creaet document with NewsArticleMaker' do
   it 'should create NewsArtcicleHeading' do
     assert_equal NewsArticleHeading, @heading.class
     assert_equal Text, @title.class
+  end
 
-
+  it 'should create NewsArticleBox subtitle float' do
+    assert_equal 2, @news_box.floats.length
+    assert_equal Text, @news_box.floats[1].class
   end
 #   it 'shold create NewsColumn' do
 #     assert_equal NewsColumn, @first_column.class

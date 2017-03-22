@@ -1,5 +1,5 @@
 
-# TextLayoutManager 
+# TextLayoutManager
 # Text layout for Cocoa(Mac OS X) mode
 
 # text_string_array
@@ -97,7 +97,7 @@ module RLayout
     attr_accessor :text_fit_type, :text_overflow, :overflow_line_count, :text_underflow
     attr_accessor :text_atts_array, :text_string_array
     attr_reader   :att_string, :layout_manager, :text_container
-    
+
     def initialize(owner_graphic, options={})
       @owner_graphic  = owner_graphic
       @text_fit_type  = @owner_graphic.text_fit_type if @owner_graphic
@@ -122,7 +122,7 @@ module RLayout
       width           = @owner_graphic.width
       width           = options[:proposed_width] if options[:proposed_width]
       if options[:proposed_height]
-        @text_container.setContainerSize(NSMakeSize(width, options[:proposed_height]))        
+        @text_container.setContainerSize(NSMakeSize(width, options[:proposed_height]))
       else
         @text_container.setContainerSize(NSMakeSize(width, @owner_graphic.height))
       end
@@ -144,11 +144,23 @@ module RLayout
           @text_overflow = true
         end
       elsif options[:text_fit_type] == 'adjust_box_height'
-        @owner_graphic.height = used_rect.size.height
+        @owner_graphic.height = @owner_graphic.top_margin + @owner_graphic.top_inset + @owner_graphic.bottom_margin + @owner_graphic.bottom_inset
+        if @owner_graphic.text_height_in_lines
+          if used_rect.size.height > @owner_graphic.text_height_in_lines
+            # this is when text has more than one line
+            # We want to keeep it as multple of body_line_height
+            multiples = used_rect.size.height/(@owner_graphic.text_height_in_lines*@owner_graphic.body_line_height)
+            @owner_graphic.height += @owner_graphic.body_line_height*(multiples + 1)
+          else
+            @owner_graphic.height += (@owner_graphic.text_height_in_lines*@owner_graphic.body_line_height)
+          end
+        else
+          @owner_graphic.height += used_rect.size.height
+        end
       else
         # if range.length is less than @att_string.string.length
         # there is a overflow
-        @text_overflow = true if range.length < @att_string.string.length 
+        @text_overflow = true if range.length < @att_string.string.length
         if @text_overflow
           fit_text_to_box if @text_fit_type =="fit_text_to_box"
           # @text_overflow == false
@@ -179,13 +191,13 @@ module RLayout
       # layout_lines
       layout_lines()
     end
-    
+
     # TODO
     def set_text_string(string)
       range = NSMakeRange(0, @att_string.length)
       @att_string.replaceCharactersInRange(range, withString: string)
     end
-    
+
     def replace_string_with(string)
       range = NSMakeRange(0, @att_string.length)
       @att_string.replaceCharactersInRange(range, withString: string)
@@ -250,7 +262,7 @@ module RLayout
 
     def make_att_string_from_option(options)
       if options[:text_string_array] && options[:text_atts_array]
-        make_att_string_with_string_and_atts_array(options[:text_string_array], options[:text_atts_array])        
+        make_att_string_with_string_and_atts_array(options[:text_string_array], options[:text_atts_array])
       # if we are give pre-make NSAttributedString, use it
       elsif options[:ns_attributed_string]
         options[:ns_attributed_string]
@@ -261,7 +273,7 @@ module RLayout
         make_att_string(options)
       end
     end
-    
+
     #TODO
     # def has_inline_elements?(text_string)
     #   style_char = nil
@@ -271,14 +283,14 @@ module RLayout
     #     style_char += "*"
     #   end
     # end
-    
+
     # make att_string by merging segments of diffrent attributed strings
     # given in text_strings and text atts
     def make_att_string_with_string_and_atts_array(text_string_array, text_atts_array)
       att_string = NSMutableAttributedString.alloc.init
       #TODO make sure text_atts_array.length > 0
       default_atts = {}
-      default_atts = text_atts_array[0]  if text_atts_array.length > 0       
+      default_atts = text_atts_array[0]  if text_atts_array.length > 0
       text_string_array.each_with_index do |string, i|
         atts = default_atts
         if text_atts_array.length > i
@@ -289,7 +301,7 @@ module RLayout
       end
       att_string
     end
-    
+
     def make_att_string(options={})
       #TODO
       # atts[NSKernAttributeName] = @text_track           if @text_track
@@ -332,9 +344,9 @@ module RLayout
     end
 
     def fontSizedForAreaSize
-      text_size       = @att_string.size   
+      text_size       = @att_string.size
       # container_size  = NSMakeSize(@owner_graphic.text_rect[2], @owner_graphic.text_rect[3])
-      container_size  = @text_container.containerSize  
+      container_size  = @text_container.containerSize
       ptr = Pointer.new(NSRange.type)
       ptr[0]= NSMakeRange(0,0)
       current_font    = @att_string.attributesAtIndex(0, effectiveRange:ptr)[NSFontAttributeName]
@@ -348,7 +360,7 @@ module RLayout
       h_margin += @owner_graphic.left_margin + @owner_graphic.right_margin
       v_margin = @text_container.lineFragmentPadding
       h_margin += @owner_graphic.top_margin + @owner_graphic.bottom_margin
-      w=(box.width-h_margin)/(source.width + 4.0) 
+      w=(box.width-h_margin)/(source.width + 4.0)
       h=(box.height-v_margin)/source.height
       [w,h].min - 0.1 #TODO Why do I need this???
     end
@@ -467,4 +479,3 @@ end
 # Circle View
 # lineFragmentRect = @layoutManager.lineFragmentRectForGlyphAtIndex i, effectiveRange:nil
 # layoutLocation = @layoutManager.locationForGlyphAtIndex(i)
-

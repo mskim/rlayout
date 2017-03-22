@@ -117,6 +117,13 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_3_21
+	- space_before_in_lines, text_height_in_lines, space_after_in_lines,
+	- bottom_margin_in_lines
+
+2017_3_18
+	- top_margin_in_lines, bottom_margin_in_lines
+
 2017_3_17
 	- TextToken hyphenation, token alignment, line ending rule, orphan
 
