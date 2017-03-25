@@ -216,8 +216,8 @@ module RLayout
       token = tokens.shift
       while token
         result = @current_line.place_token(token)
+        # token is broken into two, second part is returned
         if result.class == TextToken
-          # token is broken into two, second part is returned
           @current_line.align_tokens
           @current_line.room = 0
           @current_line = text_box.next_text_line
@@ -230,11 +230,11 @@ module RLayout
             return true # overflow
             # break #reached end of column
           end
+        # entire token placed succefully, returned result is true
         elsif result
-          # # entire token placed succefully
           token = tokens.shift
+        # entire token was rejected,
         else
-          # entire token was rejected,
           @current_line.align_tokens
           @current_line.room = 0
           @current_line = text_box.next_text_line
@@ -243,11 +243,12 @@ module RLayout
             @line_count += 1
           else
             tokens.unshift(token) #stick the unplace token back to the tokens
-            return true # overflow
+            return true # overflow id true
             # break #reached end of column
           end
         end
       end
+      @current_line.set_paragraph_info(self, "last_line")
       @current_line.align_tokens
       # move cursor to new line
       # binding.pry

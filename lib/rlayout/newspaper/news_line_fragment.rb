@@ -131,12 +131,20 @@ module RLayout
 
       case @text_alignment
       when 'justified'
-        @space_width = (@text_area_width - @total_token_width)/(@graphics.length - 1)
-        @graphics.each do |token|
-          token.x = x
-          x += token.width + @space_width
+        # in justifed paragraph, we have to treat the last line as left aligned.
+        if @line_type == "last_line"
+          x = @starting_position
+          @graphics.each do |token|
+            token.x = x
+            x += token.width + @space_width
+          end
+        else
+          @space_width = (@text_area_width - @total_token_width)/(@graphics.length - 1)
+          @graphics.each do |token|
+            token.x = x
+            x += token.width + @space_width
+          end
         end
-
       when 'left'
         x = @starting_position
         @graphics.each do |token|

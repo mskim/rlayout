@@ -10,7 +10,7 @@ module RLayout
 
     def initialize(options={})
       @grid_width       = options.fetch(:grid_width, 2)
-      @heading_columns  = @grid_width
+      @heading_columns  = options[:column_count]
       @body_line_height = options.fetch(:body_line_height, 12)
       super
       @top_story        = options.fetch(:top_story, false)
@@ -72,11 +72,9 @@ module RLayout
       atts[:text_fit_type]        = 'adjust_box_height'
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
-      atts                        = options.merge(atts)
       atts[:parent]               = self
       atts[:layout_length_in_lines] = true
-      Text.new(atts)
-      @title_object               = @graphics.last
+      @title_object               = Text.new(atts)
       @title_object
     end
 
@@ -103,7 +101,6 @@ module RLayout
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts[:parent]               = self
-      # atts[:stroke_width]         = 1
       atts[:layout_length_in_lines] = true
       @title_object               = Text.new(atts)
       @title_object

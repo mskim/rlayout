@@ -117,6 +117,14 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_3_24
+	- fix top_heading implemetation bug
+		1. we have two substrings displayed.
+		1. position of substrings comes before the title.
+
+2017_3_22
+	- fix last line alignment of justified mode to align left, when token in too few.
+
 2017_3_21
 	- space_before_in_lines, text_height_in_lines, space_after_in_lines,
 	- bottom_margin_in_lines

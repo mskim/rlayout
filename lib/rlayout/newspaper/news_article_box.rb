@@ -183,7 +183,9 @@ module RLayout
       h_options[:is_float]  = true
       h_options[:parent]    = self
       h_options[:width]     = @width - @gutter
+      h_options[:column_count] = @column_count
       h_options[:x]         = @gutter/2
+      h_options[:top_story] = @top_story
       if @heading_columns != @column_count
         h_options[:width] = width_of_columns(@heading_columns)
       end
@@ -242,7 +244,7 @@ module RLayout
     end
 
     def make_floats(heading_hash)
-      if heading_hash['subtitle']
+      if heading_hash['subtitle'] && heading_hash['subtitle'] != ""
         float_subtitle(heading_hash['subtitle'])
       end
 
