@@ -68,6 +68,7 @@ NEWSPAPER_STYLE = {
   '기자명'   => {font: 'Helvetica', text_size: 7, text_alignment: 'left' },
   '이메일'   => {font: 'Helvetica', text_size: 7, text_alignment: 'left' },
   '탑제목'   => {font: 'Helvetica', text_size: 46, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 5, space_after_in_lines: 2},
+  '탑부제'   => {font: 'Helvetica', text_size: 24, text_alignment: 'left', space_before_in_lines: 1, text_height_in_lines: 3, space_after_in_lines: 2},
   '4-5단제목' => {font: 'Helvetica', text_size: 36, text_alignment: 'left', space_before_in_lines: 2,  text_height_in_lines: 4, space_after_in_lines: 2},
   '3단제목'  => {font: 'Helvetica', text_size: 28, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 4, space_after_in_lines: 2},
   '2단제목'  => {font: 'Helvetica', text_size: 26, text_alignment: 'left', space_before_in_lines: 1, text_height_in_lines: 3, space_after_in_lines: 2 },
@@ -157,6 +158,8 @@ module RLayout
           box_heading.set_heading_content(@heading)
         else
           @heading[:is_float] = true
+          @heading[:column_count] = @news_article_box.column_count
+
           @news_article_box.heading(@heading)
         end
         if @heading['top_story'] || @heading['subtitle_in_head']

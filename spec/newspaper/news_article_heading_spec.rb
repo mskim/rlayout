@@ -4,6 +4,7 @@ describe 'creating HewsArticleHeading top_story heading' do
   before do
     options= {
       :top_story => true,
+      :column_count => 3,
       'title'=> "Sample Title",
       'subtitle'=> "This is subtitle of the article",
       'author'=> "Min Soo Kim"
@@ -17,14 +18,14 @@ describe 'creating HewsArticleHeading top_story heading' do
     assert_equal NewsArticleHeading, @nh.class
     assert_equal RLayout::Text, @title_object.class
     assert_equal 2, @title_object.space_before_in_lines
-    assert_equal 4, @title_object.text_height_in_lines
+    assert_equal 5, @title_object.text_height_in_lines
     assert_equal 2, @title_object.space_after_in_lines
-    assert_equal 8, @title_object.height_in_lines
+    assert_equal 9, @title_object.height_in_lines
     assert_equal RLayout::Text, @subtitle_object.class
     assert_equal 1, @subtitle_object.space_before_in_lines
     assert_equal 2, @subtitle_object.text_height_in_lines
-    assert_equal 2, @subtitle_object.space_after_in_lines
-    assert_equal 5, @subtitle_object.height_in_lines
+    assert_equal 1, @subtitle_object.space_after_in_lines
+    assert_equal 4, @subtitle_object.height_in_lines
   end
 
   it 'should have title and subtitle' do
@@ -37,6 +38,7 @@ end
 describe 'creating HewsArticleHeading no subtitle in heading' do
   before do
     options= {
+      column_count: 4,
       'title'=> "Sample Title",
       'subtitle'=> "This is subtitle of the article",
       'author'=> "Min Soo Kim"
@@ -48,7 +50,7 @@ describe 'creating HewsArticleHeading no subtitle in heading' do
   it "should create NewsArticleHeading class" do
     assert_equal NewsArticleHeading, @nh.class
     assert_equal RLayout::Text, @title_object.class
-    assert_equal 3, @title_object.text_height_in_lines
+    assert_equal 4, @title_object.text_height_in_lines
   end
 
   it 'should have title only and no subtitle' do
@@ -60,7 +62,7 @@ end
 describe 'creating HewsArticleHeading with grid_width 3' do
   before do
     options= {
-      grid_width: 3,
+      column_count: 3,
       'title'=> "Sample Title",
       'subtitle'=> "This is subtitle of the article",
       'author'=> "Min Soo Kim"
@@ -79,7 +81,7 @@ end
 describe 'creating HewsArticleHeading with grid_width 4' do
   before do
     options= {
-      grid_width: 4,
+      column_count: 4,
       'title'=> "Sample Title",
       'subtitle'=> "This is subtitle of the article",
       'author'=> "Min Soo Kim"

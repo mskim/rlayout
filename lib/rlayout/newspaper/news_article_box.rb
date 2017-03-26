@@ -138,6 +138,7 @@ module RLayout
 
     def next_text_line
       @current_column = @graphics[@current_column_index]
+      return nil unless @current_column
       if line = @current_column.get_line_with_text_room
         return line
       else
@@ -172,7 +173,7 @@ module RLayout
       end
       if overflow
         #TODO
-        puts "oveflow"
+        # puts "oveflow"
       end
     end
 
@@ -244,7 +245,8 @@ module RLayout
     end
 
     def make_floats(heading_hash)
-      if heading_hash['subtitle'] && heading_hash['subtitle'] != ""
+      # don't create another subtitle, if it is top_story, It is created by heading
+      if !@top_story && heading_hash['subtitle'] && heading_hash['subtitle'] != ""
         float_subtitle(heading_hash['subtitle'])
       end
 

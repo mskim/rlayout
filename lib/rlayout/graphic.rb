@@ -498,7 +498,6 @@ module RLayout
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path, options)
       elsif RUBY_ENGINE == 'ruby'
-        puts "i+++++++++ in save_pdf of Graphic"
         unless @parent_graphic
           doc       = HexaPDF::Document.new
           page      = doc.pages.add

@@ -117,8 +117,11 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_3_26
+	- add top_subtitle to newspaper style
+
 2017_3_24
-	- fix top_heading implemetation bug
+	- fix top_heading implementation bug
 		1. we have two substrings displayed.
 		1. position of substrings comes before the title.
 
