@@ -120,6 +120,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_paragraph'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_column'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_heading'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_image'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/profile_image'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_box'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_maker'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_section_page'

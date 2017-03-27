@@ -117,6 +117,9 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_3_28
+	- image, subject_head, profile_image, quote
+
 2017_3_26
 	- add top_subtitle to newspaper style
 
@@ -148,7 +151,7 @@ TODO List
 	- example: gutter_line([4,0,4,10], 0.5, 'black')
 	- new paragraph in middle of column expands beyond line
 	- style guide
-		- name_tag, name_tag_body
+		- subject_head, subject_head_body
 		- underline
 	- email based workflow
 			to: layout_server@naeildesign

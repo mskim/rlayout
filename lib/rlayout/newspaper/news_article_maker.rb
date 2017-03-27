@@ -41,7 +41,7 @@ HEADING_COLUMNS_TABLE = {
 # heading       = '본문중제'
 # quote         = '발문'
 # related_story = '관력기사'
-# name_tag      = '문패'
+# subject_head   = '문패'
 # caption_title = '사진제목'
 # caption       = '사진설명'
 # reporter      = '기자명'
@@ -58,15 +58,15 @@ HEADING_COLUMNS_TABLE = {
 
 NEWSPAPER_STYLE = {
   '본문명조'  => {font: 'Times', text_size: 9.2, text_alignment: 'justified' },
-  '본문고딕'  => {font: 'Helvetica', text_size: 9.2, text_alignment: 'justified' },
-  '본문중제'  => {font: 'Helvetica', text_size: 9.2, text_alignment: 'left' },
-  '발문'     => {font: 'Helvetica', text_size: 9.2, text_alignment: 'left' },
-  '관련기사'  => {font: 'Helvetica', text_size: 9.5, text_alignment: 'left' },
-  '문패'     => {font: 'Helvetica', text_size: 12, text_alignment: 'left' },
-  '사진제목'  => {font: 'Helvetica', text_size: 12, text_alignment: 'left' },
-  '사진설명'  => {font: 'Helvetica', text_size: 12, text_alignment: 'left' },
-  '기자명'   => {font: 'Helvetica', text_size: 7, text_alignment: 'left' },
-  '이메일'   => {font: 'Helvetica', text_size: 7, text_alignment: 'left' },
+  '본문고딕'  => {font: 'Helvetica', text_size: 9.2, text_alignment: 'justified', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '본문중제'  => {font: 'Helvetica', text_size: 9.2, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '발문'     => {font: 'Helvetica', text_size: 9.2, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '관련기사'  => {font: 'Helvetica', text_size: 9.5, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '문패'     => {font: 'Helvetica', text_size: 12, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '사진제목'  => {font: 'Helvetica', text_size: 12, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0},
+  '사진설명'  => {font: 'Helvetica', text_size: 12, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0},
+  '기자명'   => {font: 'Helvetica', text_size: 7, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '이메일'   => {font: 'Helvetica', text_size: 7, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
   '탑제목'   => {font: 'Helvetica', text_size: 46, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 5, space_after_in_lines: 2},
   '탑부제'   => {font: 'Helvetica', text_size: 24, text_alignment: 'left', space_before_in_lines: 1, text_height_in_lines: 3, space_after_in_lines: 2},
   '4-5단제목' => {font: 'Helvetica', text_size: 36, text_alignment: 'left', space_before_in_lines: 2,  text_height_in_lines: 4, space_after_in_lines: 2},
@@ -75,8 +75,9 @@ NEWSPAPER_STYLE = {
   '1단제목'  => {font: 'Helvetica', text_size: 15, text_alignment: 'left', space_before_in_lines: 1, text_height_in_lines: 3, space_after_in_lines: 2 },
   '부제13'  => {font: 'Helvetica', text_size: 13, text_alignment: 'left', space_before_in_lines: 1, text_height_in_lines: 2, space_after_in_lines: 1 },
   '부제15'  => {font: 'Helvetica', text_size: 15, text_alignment: 'left', space_before_in_lines: 1, text_height_in_lines: 2, space_after_in_lines: 1 },
-  '뉴스라인제목'  => {font: 'Helvetica', text_size: 12, text_alignment: 'left' },
-  '사진출처'  => {font: 'Helvetica', text_size: 7, text_alignment: 'left' },
+  '뉴스라인제목'  => {font: 'Helvetica', text_size: 12, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '사진출처'  => {font: 'Helvetica', text_size: 7, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  #기자사진_설명
 }
 
 
