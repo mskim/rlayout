@@ -16,7 +16,7 @@ module RLayout
 	class List < Paragraph
 	  attr_reader :marker, :removed_marker, :name
 	  attr_reader :child_marker, :child_indent, :first_child_margin
-	  
+
 	  def initialize(options={})
 	    super
 	    @marker           = options[:marker]
@@ -25,13 +25,13 @@ module RLayout
 	    self
 	  end
 	end
-	
+
   # class OrderedList < List
-  #   
+  #
   # end
-  # 
+  #
   # class UnorderedList < List
-  #   
+  #
   # end
-  
+
 end

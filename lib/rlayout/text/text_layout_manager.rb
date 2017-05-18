@@ -149,8 +149,17 @@ module RLayout
           if used_rect.size.height > @owner_graphic.text_height_in_lines
             # this is when text has more than one line
             # We want to keeep it as multple of body_line_height
+            #TODO clean this up
             multiples = used_rect.size.height/(@owner_graphic.text_height_in_lines*@owner_graphic.body_line_height)
-            @owner_graphic.height += @owner_graphic.body_line_height*(multiples + 1)
+            mod_value = used_rect.size.height % (@owner_graphic.text_height_in_lines*@owner_graphic.body_line_height)
+            sub_float_values= multiples - multiples.to_i
+            ceiling = 0
+            ceiling = 1 if sub_float_values > 0.5
+            if ceiling > 0
+              @owner_graphic.height += @owner_graphic.body_line_height*(multiples + @owner_graphic.space_after_in_lines)
+            else
+              @owner_graphic.height += @owner_graphic.body_line_height*(multiples + @owner_graphic.space_after_in_lines + 1)
+            end
           else
             @owner_graphic.height += (@owner_graphic.text_height_in_lines*@owner_graphic.body_line_height)
           end
@@ -319,7 +328,7 @@ module RLayout
       @text_line_spacing             = options.fetch(:text_line_spacing, 0)
       @text_fit_type                 = options.fetch(:text_fit_type, 0)
       @text_alignment                = options.fetch(:text_alignment, "left")
-      @text_tracking                 = options.fetch(:text_tracking, 0)  if options[:text_tracking ]
+      @text_tracking                 = options.fetch(:text_tracking, 0)
       @text_first_line_head_indent   = options.fetch(:text_first_line_head_indent, 0)
       @text_head_indent              = options.fetch(:text_head_indent, 0)
       @text_tail_indent              = options.fetch(:text_tail_indent, 0)

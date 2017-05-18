@@ -13,30 +13,33 @@
 # 4.5*28.34646 = 12.755907
 # 15*28.34646 = 425.1969
 
-GridLineCount = 6
 
 module RLayout
 
   class NewsArticleBox < Container
-    attr_accessor :top_story, :heading_columns, :grid_size, :grid_frame, :body_line_height
-    attr_accessor :story_path, :show_overflow_lines, :overflow_column
+    attr_accessor :article_type, :top_story, :top_position, :heading_columns, :grid_size, :grid_frame, :body_line_height
+    attr_accessor :story_path, :show_overflow_lines
     attr_accessor :column_count, :row_count, :column_layout_space, :line_count_per_column
     attr_accessor :draw_gutter_stroke, :gutter, :v_gutter
-    attr_accessor :heading, :subtitle_box, :quote_box, :personal_image, :image
-    attr_accessor :before_lines, :after_lines
-    attr_accessor :current_column, :current_column_index
+    attr_accessor :current_column, :current_column_index, :overflow
+    attr_reader :before_lines, :after_lines
+    attr_reader :heading, :subtitle_box, :quote_box, :personal_image, :news_image, :is_ad_box
 
     def initialize(options={}, &block)
       options[:left_margin]   = 5 unless options[:left_margin]
       options[:top_margin]    = 0 unless options[:top_margin]
       options[:right_margin]  = 5 unless options[:right_margin]
       options[:bottom_margin] = 0 unless options[:bottom_margin]
+      options[:stroke_sides]  = [0,0,0,1]
+      options[:stroke_width]  = 0.3
       super
+      @article_type           = options[:article_type] || REGULAR_ARTICLE
+      @is_ad_box              = options[:is_ad_box] || false
       @column_count           = options[:column]
       @row_count              = options[:row]
       @current_column_index   = 0
       @top_story              = options.fetch(:top_story, false)
-
+      @top_position           = options.fetch(:top_position, false)
       if options[:grid_frame]
         @grid_frame = options[:grid_frame]
         if @grid_frame.class == String
@@ -62,8 +65,8 @@ module RLayout
       @floats               = options.fetch(:floats, [])
       @width                = @column_count*@grid_width + @column_count*@gutter # we have @gutter/2 on each side
       @height               = @row_count*@grid_height + (@row_count- 1)*@v_gutter
-      @body_line_height     = @grid_height/GridLineCount
-      @column_line_count    = @row_count*GridLineCount
+      @body_line_height     = @grid_height/GRID_LINE_COUNT
+      @column_line_count    = @row_count*GRID_LINE_COUNT
 
       create_columns
       if block
@@ -111,6 +114,41 @@ module RLayout
       end
     end
 
+    def average_characters_per_line
+      @graphics.first.average_characters_per_line
+    end
+
+    def suggested_number_of_characters
+      #TODO
+      article_box_lines_count*average_characters_per_line
+    end
+
+    def article_box_character_count
+      character_count = 0
+      @graphics.each_with_index do |column, i|
+        character_count += column.char_count
+      end
+      character_count
+    end
+
+    def article_box_lines_count
+      available_lines = 0
+      @graphics.each_with_index do |column, i|
+        lines = column.available_lines_count
+        available_lines += lines
+      end
+      available_lines
+    end
+
+    def save_article_info(info_path)
+      article_info = {}
+      article_info[:lines_count]            = article_box_lines_count
+      article_info[:current_characters]     = article_box_character_count
+      article_info[:suggested_characters]   = suggested_number_of_characters
+      article_info[:needed_chars]           = suggested_number_of_characters - article_box_character_count
+
+      File.open(info_path, 'w'){|f| f.write article_info.to_yaml}
+    end
 
     def overflow_box
       # take the last columns last paragraphs
@@ -159,36 +197,33 @@ module RLayout
     def layout_items(flowing_items)
       @column_index       = 0
       @current_column     = @graphics[@column_index]
-      overflow = false
+      @overflow = false
       while @item = flowing_items.shift do
-
-        break if overflow = @item.layout_lines(self)
-
-        # while left_over   = @item.layout_lines(current_column)
-        #   column_index    += 1
-        #   break if column_index >= column_count
-        #   current_column  = @graphics[column_index]
-	      #   left_over       = @item.layout_lines(current_column)
-        # end
+        break if @overflow = @item.layout_lines(self)
       end
-      if overflow
+
+      if @overflow
         #TODO
         # puts "oveflow"
       end
     end
 
     # make heading as float
-    def heading(options={})
+    def make_article_heading(options={})
+      @top_story              = options['top_story'] || options[:top_story]
+      @top_position           = options['top_story'] || options[:top_position]
+      @subtitle_in_head       = options['subtitle_in_head'] || options[:subtitle_in_head]
       h_options = options.dup
-      h_options[:is_float]  = true
-      h_options[:is_float]  = true
-      h_options[:parent]    = self
-      h_options[:width]     = @width - @gutter
+      h_options[:is_float]    = true
+      h_options[:parent]      = self
+      h_options[:width]       = @width - @gutter
       h_options[:column_count] = @column_count
-      h_options[:x]         = @gutter/2
-      h_options[:top_story] = @top_story
-      if @heading_columns != @column_count
-        h_options[:width] = width_of_columns(@heading_columns)
+      h_options[:x]           = @gutter/2
+      h_options[:top_story]   = @top_story
+      h_options[:top_position] = @top_position
+      h_options[:body_line_height] = @body_line_height
+      if @heading_columns     != @column_count
+        h_options[:width]     = width_of_columns(@heading_columns)
       end
       @heading = NewsArticleHeading.new(h_options)
       unless @heading== @floats.first
@@ -251,17 +286,16 @@ module RLayout
       end
 
       if heading_hash['personal_image']
-
+        float_personal_image(heading_hash)
       end
 
       if heading_hash['quote']
         hash = {}
-
-        float_quote(hash)
+        float_quote(heading_hash)
       end
 
       if heading_hash['image']
-
+        float_image(heading_hash)
       end
       layout_floats!
     end
@@ -317,19 +351,17 @@ module RLayout
 
     # place imaegs that are in the head of the story as floats
     def float_image(options={})
-      options = {}
-      options[:image_path] = "#{options[:image_path]}" if options[:image_path]
-      options[:image_path] = "#{$ProjectPath}/images/#{options[:local_image]}" if options[:local_image]
-      frame_rect              = grid_frame_to_image_rect([0,0,1,1])
-      frame_rect              = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
-      options[:x]       = frame_rect[0]
-      options[:y]       = frame_rect[1]
-      options[:width]   = frame_rect[2]
-      options[:height]  = frame_rect[3]
-      options[:layout_expand]   = nil
-      options[:is_float]= true
-      options[:parent]  = self
-      @image                  = Image.new(options)
+      image_options = {}
+      image_options[:image_path]  = "#{options[:image_path]}" if options[:image_path]
+      image_options[:image_path]  = "#{$ProjectPath}/images/#{options['image']}" if options['image']
+      image_options[:image_path]  = "#{$ProjectPath}/images/#{options[:local_image]}" if options[:local_image]
+      image_options[:local_image] = options['image'] if options['image']
+      image_options[:caption]     = options['caption'] if options['caption']
+      image_options[:caption_title] = options['caption_title'] if options['caption_title']
+      image_options[:layout_expand]   = nil
+      image_options[:is_float]    = true
+      image_options[:parent]      = self
+      @news_image                 = NewsImage.new(image_options)
     end
 
     def float_images(images)
@@ -354,11 +386,10 @@ module RLayout
       if grid_frame[0] >= @graphics.length
         frame_x           = @graphics.last.x_max
       else
-        # frame_x           = @grid_size[0]*grid_frame[0]
         frame_x           = @grid_size[0]*grid_frame[0] + (grid_frame[0])*@gutter + @gutter/2
       end
       frame_y             = @grid_size[1]*grid_frame[1]
-      frame_width         = @grid_size[0]*column_count + (column_count - 1)*@layout_space
+      frame_width         = @grid_size[0]*grid_frame[2] + (grid_frame[2] - 1)*@gutter
       frame_height        = @grid_size[1]*grid_frame[3] + (grid_frame[3] - 1)*@column_layout_space
       [frame_x, frame_y, frame_width, frame_height]
     end
@@ -398,7 +429,6 @@ module RLayout
       @middle_occupied_rects = []
       @bottom_occupied_rects = []
       @floats.each_with_index do |float, i|
-        # next unless float.kind_of?(Image) || float.kind_of?(Heading)
         @float_rect = float.frame_rect
         if i==0
           @occupied_rects << float.frame_rect

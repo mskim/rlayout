@@ -19,7 +19,8 @@ module RLayout
     attr_accessor :x, :y, :width, :height, :total_token_width, :room
     attr_accessor :text_area, :has_text, :space_width
     def	initialize(options={})
-      # options[:stroke_color]    = 'red'
+      # options[:stroke_color]      = 'red'
+      # options[:stroke_width]      = 1
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
       # options[:fill_color]        = options.fetch(:line_color, 'lightGray')
@@ -42,6 +43,8 @@ module RLayout
       # puts "overlapping_float_rect:#{overlapping_float_rect}"
       # puts "translated_rect:#{translated_rect}"
       if intersects_rect(overlapping_float_rect, translated_rect)
+        # puts "++++++++ overlapping_float_rect:#{overlapping_float_rect}"
+        # puts "translated_rect:#{translated_rect}"
         @text_area[2] = 0
         @room         = @text_area[2]
       end
@@ -51,6 +54,13 @@ module RLayout
       @room > 10
     end
 
+    def text_line?
+      @room > 10 || @graphics.length > 0
+    end
+
+    def char_count
+      line_string.length
+    end
     # set line type, and paragraph information for line
     def set_paragraph_info(paragraph, line_type)
       para_style    = paragraph.para_style

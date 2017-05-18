@@ -21,9 +21,10 @@ module RLayout
       @top_inset              = @space_before_in_lines*@body_line_height
       @text_height_in_lines   = options.fetch(:text_height_in_lines, 1)
       @space_after_in_lines   = options.fetch(:space_after_in_lines, 0)
+      @text_tracking          = options.fetch(:text_tracking, 0)
       @bottom_inset           = @space_after_in_lines*@body_line_height
       if options[:layout_length_in_lines]
-        @ayout_length = height_in_lines
+        @layout_length = height_in_lines
       end
 
       if options[:text_string] || options[:text_string_array] || options[:ns_attributed_string]
@@ -54,6 +55,17 @@ module RLayout
 
     def height_in_lines
       @space_before_in_lines  + @text_height_in_lines + @space_after_in_lines
+    end
+
+    # this is called after subtitle in body is layed out
+    # we want have space between the subtitle and body, around 2 lines
+    def adjust_box_height_with_changed_text_height
+      #code
+    end
+    # this is called after top_story title is created and
+    # before calling  subtitle in heading to balance the height of top_title and top_subtitle
+    def adjust_height_as_height_in_lines
+      @height = height_in_lines*@body_line_height
     end
 
     def space_before

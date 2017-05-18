@@ -13,17 +13,22 @@ NEWS_PAPER_DEFAULTS = {
   paper_size: 'A2'
 }
 
+NEWS_ARTICLE_BOTTOM_SPACE_IN_LINES  = 2
+NEWS_ARTICLE_TOP_SPACE_IN_LINES     = 1
+NEWS_ARTICLE_LINE_THICKNESS         = 0.3
+GRID_LINE_COUNT                     = 7
 
 NEW_SECTION_DEFAULTS = {
-  :width        => 1190.55,
-  :height       => 1683.78,
+  :width        => 1116.85, # 393 x 2.834646 = 1116.85
+  :height       => 1539.21, # 545 x 2.834646 = 1539.21
   :grid         => [7, 12],
-  :lines_in_grid=> 10,
+  :lines_in_grid=> 7,
   :gutter       => 10,
-  :left_margin  => 50,
-  :top_margin   => 50,
-  :right_margin => 50,
-  :bottom_margin=> 50,
+  :divider      => 20,
+  :left_margin  => 42.52,      # 15 x 2.834646 = 42.52
+  :top_margin   => 42.52,
+  :right_margin => 42.52,
+  :bottom_margin=> 42.52,
 }
 
 HEADING_COLUMNS_TABLE = {
@@ -35,6 +40,13 @@ HEADING_COLUMNS_TABLE = {
   6 => 3,
   7 => 3
 }
+
+REGULAR_ARTICLE                       = 0
+REGULAR_ARTICLE_AT_TOP_ROW            = 1
+REGULAR_ARTICLE_AT_TOP_ROW_FRONT_PAGE = 2
+MAIN_ARTICLE                          = 3
+MAIN_ARTICLE_FRONT_PAGE               = 4
+
 #
 # body          = '본문명조'
 # body_gothic   = '본문고딕'
@@ -57,7 +69,7 @@ HEADING_COLUMNS_TABLE = {
 # image_source   = '사진출처'
 
 NEWSPAPER_STYLE = {
-  '본문명조'  => {font: 'Times', text_size: 9.2, text_alignment: 'justified' },
+  '본문명조'  => {font: 'YDVYSinStd', text_size: 9.6, text_alignment: 'justified', text_tracking: -0.5 },
   '본문고딕'  => {font: 'Helvetica', text_size: 9.2, text_alignment: 'justified', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
   '본문중제'  => {font: 'Helvetica', text_size: 9.2, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
   '발문'     => {font: 'Helvetica', text_size: 9.2, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
@@ -67,25 +79,25 @@ NEWSPAPER_STYLE = {
   '사진설명'  => {font: 'Helvetica', text_size: 12, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0},
   '기자명'   => {font: 'Helvetica', text_size: 7, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
   '이메일'   => {font: 'Helvetica', text_size: 7, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '탑제목'   => {font: 'Helvetica', text_size: 46, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 5, space_after_in_lines: 2},
-  '탑부제'   => {font: 'Helvetica', text_size: 24, text_alignment: 'left', space_before_in_lines: 1, text_height_in_lines: 3, space_after_in_lines: 2},
-  '4-5단제목' => {font: 'Helvetica', text_size: 36, text_alignment: 'left', space_before_in_lines: 2,  text_height_in_lines: 4, space_after_in_lines: 2},
-  '3단제목'  => {font: 'Helvetica', text_size: 28, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 4, space_after_in_lines: 2},
-  '2단제목'  => {font: 'Helvetica', text_size: 26, text_alignment: 'left', space_before_in_lines: 1, text_height_in_lines: 3, space_after_in_lines: 2 },
-  '1단제목'  => {font: 'Helvetica', text_size: 15, text_alignment: 'left', space_before_in_lines: 1, text_height_in_lines: 3, space_after_in_lines: 2 },
-  '부제13'  => {font: 'Helvetica', text_size: 13, text_alignment: 'left', space_before_in_lines: 1, text_height_in_lines: 2, space_after_in_lines: 1 },
-  '부제15'  => {font: 'Helvetica', text_size: 15, text_alignment: 'left', space_before_in_lines: 1, text_height_in_lines: 2, space_after_in_lines: 1 },
+  '탑제목'   => {font: 'YDVYMjOStd145', text_size: 42.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 3, space_after_in_lines: 1},
+  '탑부제'   => {font: 'YDVYMjOStd145', text_size: 24, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 2},
+  '4-5단제목' => {font: 'YDVYMjOStd145', text_size: 42.0, text_alignment: 'left', space_before_in_lines: 2,  text_height_in_lines: 3, space_after_in_lines: 2},
+  '3단제목'  => {font: 'YDVYMjOStd135', text_size: 28.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 2, space_after_in_lines: 1},
+  '2단제목'  => {font: 'YDVYMjOStd135', text_size: 24.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 2, space_after_in_lines: 1},
+  '1단제목'  => {font: 'YDVYMjOStd135', text_size: 15.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 2, space_after_in_lines: 1},
+  '부제13'  => {font: 'YDVYMjOStd125', text_size: 13.0, text_line_spacing: 6, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 1},
+  '부제15'  => {font: 'YDVYMjOStd125', text_size: 15.0, text_line_spacing: 7, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 1},
   '뉴스라인제목'  => {font: 'Helvetica', text_size: 12, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
   '사진출처'  => {font: 'Helvetica', text_size: 7, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
   #기자사진_설명
 }
-
 
 module RLayout
 
   class NewsArticleMaker
     attr_accessor :article_path, :template, :story_path, :image_path
     attr_accessor :news_article_box, :style, :output_path, :project_path
+    attr_reader :article_info_path
 
     def initialize(options={} ,&block)
       @story_path = options[:story_path]
@@ -103,9 +115,9 @@ module RLayout
           return
         end
         @story_path = Dir.glob("#{@article_path}/*[.md, .markdown]").first
-        unless File.exist?(@story_path)
+        if !@story_path || !File.exist?(@story_path)
           puts "story_path doesn't exit !!!"
-          return
+          # return
         end
       end
 
@@ -121,7 +133,8 @@ module RLayout
       else
         @output_path  = @article_path + "/output.pdf"
       end
-      @svg_path  = @article_path + "/output.svg"
+      @svg_path           = @article_path + "/output.svg"
+      @article_info_path  = @article_path + "/article_info.yml"
       if options[:template_path] && File.exist?(options[:template_path])
         @template_path = options[:template_path]
       else
@@ -136,14 +149,21 @@ module RLayout
         puts "SyntaxError in #{@template_path} !!!!"
         return
       end
-      read_story
-      layout_story
-
+      if @news_article_box.is_ad_box
+        # @news_article_box is ad box
+        puts "@news_article_box is ad_box..."
+      else
+        read_story
+        layout_story
+      end
       if RUBY_ENGINE =="rubymotion"
         @news_article_box.save_pdf(@output_path, :jpg=>true)
       else
         @news_article_box.save_svg(@svg_path)
       end
+      # if @save_article_info
+        @news_article_box.save_article_info(@article_info_path)
+      # end
       self
     end
 
@@ -151,25 +171,11 @@ module RLayout
       @story      = Story.new(@story_path).markdown2para_data
       @heading    = @story[:heading] || {}
       @title      = @heading[:title] || "Untitled"
-
+      @heading[:top_story] = @news_article_box.top_story
+      @heading[:top_position] = @news_article_box.top_position
       if @heading
-        box_heading = nil
-        box_heading = @news_article_box.get_heading
-        if  box_heading.class == RLayout::NewsArticleHeading
-          box_heading.set_heading_content(@heading)
-        else
-          @heading[:is_float] = true
-          @heading[:column_count] = @news_article_box.column_count
-
-          @news_article_box.heading(@heading)
-        end
-        if @heading['top_story'] || @heading['subtitle_in_head']
-          # include subtitle in heading
-          @news_article_box.top_story         = @heading['top_story']
-          @news_article_box.subtitle_in_head  = @heading['subtitle_in_head']
-        else
-          @news_article_box.make_floats(@heading)
-        end
+        @news_article_box.make_article_heading(@heading)
+        @news_article_box.make_floats(@heading)
       end
 
       @paragraphs =[]

@@ -300,8 +300,13 @@ module RLayout
       (max_x(rect1) > rect2[0] && max_x(rect2) > rect1[0]) || (max_x(rect2) > rect1[0] && max_x(rect1) > rect2[0])
     end
 
+    # def intersects_y(rect1, rect2)
+    #   (max_y(rect1) > rect2[1] && max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] && max_y(rect1) > rect2[1])
+    # end
+
     def intersects_y(rect1, rect2)
-      (max_y(rect1) > rect2[1] && max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] && max_y(rect1) > rect2[1])
+      # puts __method__
+      (max_y(rect1).to_i > rect2[1].to_i && max_y(rect2).to_i > rect1[1].to_i) || (max_y(rect2).to_i > rect1[1].to_i && max_y(rect1).to_i > rect2[1].to_i)
     end
 
     def intersects_rect(rect_1, rect_2)

@@ -26,18 +26,15 @@ module RLayout
     def initialize(options={}, &block)
       options[:width]     = 200 unless options[:width]
       options[:height]    = 500 unless options[:height]
+      # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
-      @line_count         = options[:column_line_count]
+      @line_count         = options[:column_line_count] - NEWS_ARTICLE_BOTTOM_SPACE_IN_LINES
       @show_grid_rects    = options[:show_grid_rects] || true
       @layout_space       = options.fetch(:column_layout_space, 0)
       @complex_rect       = false
-      # @current_style      = RLayout::StyleService.shared_style_service.current_style
-      # body_style          = options[:body_style] || @current_style['p']
-      # line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
-      # line_height         = body_style[:text_size] # default line_height, set to text_size*1.3
-      # @body_line_height   = (line_height + body_style[:text_line_spacing])
       @body_line_height   = options[:body_line_height]
+      @height             -= @body_line_height if NEWS_ARTICLE_BOTTOM_SPACE_IN_LINES > 0
       @current_position   = @top_margin + @top_inset
       create_lines
       if block
@@ -66,6 +63,30 @@ module RLayout
           line.adjust_text_area_away_from(float_rect)
         end
       end
+    end
+
+    def char_count
+      lines_char_count = 0
+      @graphics.each do |line|
+        lines_char_count += line.char_count
+      end
+      lines_char_count
+    end
+
+    def available_lines_count
+      available_lines = 0
+      @graphics.each do |line|
+        available_lines +=1 if line.text_line?
+      end
+      available_lines
+    end
+
+    def average_characters_per_line
+      line_count = available_lines_count
+      if line_count == 0
+        return 1
+      end
+      char_count/line_count
     end
 
     def get_line_with_text_room

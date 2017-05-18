@@ -703,7 +703,7 @@ module RLayout
         " "
       end
     end
-
+    
     def self.sample(options={})
       if options[:number] > 0
         Text.new(text_string: "This is a sample text string"*options[:number])

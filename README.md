@@ -117,6 +117,28 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_5_11
+	- NewsSection
+		- pass gutters_array with divider
+
+2017_5_10
+	- NewsArticleBox
+		- leave one empty line at the bottom
+		- draw top line for non-top-position article
+		- top_position
+			- top_margin == 3 lines
+		- top_story
+			- mutiple column intelligent subtitle
+	- NewspaperSectionPage
+		- add page_hading to page
+
+2017_5_5
+	- relayout! align justified
+
+2017_4_30
+	- image, cation_title, caption
+		add image_hash, personal_picture, quote to head in story
+
 2017_3_28
 	- image, subject_head, profile_image, quote
 

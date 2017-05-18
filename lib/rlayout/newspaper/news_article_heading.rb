@@ -3,31 +3,39 @@
 module RLayout
 
   class NewsArticleHeading < Container
-    attr_accessor :grid_frame, :grid_width, :body_line_height
+    attr_accessor :grid_frame, :grid_width, :body_line_height, :height_in_lines, :starting_line
     attr_accessor :title_object, :subject_head_object, :subtitle_object
     attr_reader   :upper_line_type, :heading_columns
-    attr_reader   :subtitle_in_head, :top_story
+    attr_reader   :subtitle_in_head, :top_story, :top_position
 
     def initialize(options={})
       @grid_width       = options.fetch(:grid_width, 2)
       @heading_columns  = options[:column_count]
-      @body_line_height = options.fetch(:body_line_height, 12)
+      @body_line_height = options.fetch(:body_line_height, 15)
+      # options[:stroke_width] = 1
       super
       @top_story        = options.fetch(:top_story, false)
+      @top_position     = options.fetch(:top_position, false)
       @subtitle_in_head = options.fetch(:subtitle_in_head, false)
       set_heading_content(options)
       self
     end
 
     def set_heading_content(options)
+      @top_story    = options[:top_story]     if options[:top_story]
+      @top_position = options[:top_position]  if options[:top_position]
       # options = transform_keys_to_symbols(options)
-      @height_in_line_count_sum = 0
+      @height_in_lines = 0
+      if @top_position
+        @top_position_filler_object = top_position_filler
+        @height_in_lines += 3
+      end
+
       if options['subject_head']
         @subject_head_object = subject_head(options)
-        @height_in_line_count_sum +=@subject_head_object.height_in_lines    unless @title_object.nil?
+        @height_in_lines +=@subject_head_object.height_in_lines    unless @title_object.nil?
         # if when we have subject_head, reduce heading_columns size by 1
         @heading_columns -= 1
-
         # TODO
       end
 
@@ -35,6 +43,7 @@ module RLayout
         if @top_story
           # when strou is top_stroy
           @title_object = top_title(options)
+          @title_object.adjust_height_as_height_in_lines
         elsif @subject_head_object
           # when story has subject_head
           @title_object = title_with_subject_head(options)
@@ -42,21 +51,29 @@ module RLayout
           # refular story heading
           @title_object = title(options)
         end
-        @height_in_line_count_sum += @title_object.height_in_lines    unless @title_object.nil?
+        @height_in_lines += @title_object.height_in_lines    unless @title_object.nil?
       end
 
       if options['subtitle'] && (@top_story || @subtitle_in_head)
-        puts "@top_story:#{@top_story}"
         if @top_story
           @subtitle_object = top_subtitle(options)
         else
           @subtitle_object = subtitle(options)
         end
-        @height_in_line_count_sum +=@subtitle_object.height_in_lines unless @subtitle_object.nil?
+        @height_in_lines += @subtitle_object.height_in_lines unless @subtitle_object.nil?
       end
-      @height = @height_in_line_count_sum*@body_line_height
+      @height = @height_in_lines*@body_line_height
       relayout!
       self
+    end
+
+    def top_position_filler(options={})
+      line_height   = 15
+      if @parent_graphic
+        line_height   = @parent_graphic.body_line_height
+      end
+      top_postion_height = line_height*3
+      Graphic.new(parent:self, width: @width, height:top_postion_height)
     end
 
     def subject_head(options={})
@@ -66,7 +83,7 @@ module RLayout
       if @parent_graphic
         subject_atts[:body_line_height]   = @parent_graphic.body_line_height
       else
-        subject_atts[:body_line_height]   = 12
+        subject_atts[:body_line_height]   = 15
       end
       subject_atts[:width]                  = @width
       subject_atts[:stroke_sides]           = [0,1,0,0] # draw line at top only
@@ -99,7 +116,7 @@ module RLayout
       if @parent_graphic
         atts[:body_line_height]   = @parent_graphic.body_line_height
       else
-        atts[:body_line_height]   = 12
+        atts[:body_line_height]   = 15
       end
       atts[:width]                = @width
       atts[:text_fit_type]        = 'adjust_box_height'
@@ -130,7 +147,7 @@ module RLayout
       if @parent_graphic
         title_atts[:body_line_height]   = @parent_graphic.body_line_height
       else
-        title_atts[:body_line_height]   = 12
+        title_atts[:body_line_height]   = 15
       end
       title_atts[:width]                = @width
       title_atts[:text_fit_type]        = 'adjust_box_height'
@@ -149,7 +166,7 @@ module RLayout
       if @parent_graphic
         atts[:body_line_height]   = @parent_graphic.body_line_height
       else
-        atts[:body_line_height]   = 12
+        atts[:body_line_height]   = 15
       end
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
@@ -175,7 +192,7 @@ module RLayout
       if @parent_graphic
         atts[:body_line_height]   = @parent_graphic.body_line_height
       else
-        atts[:body_line_height]   = 12
+        atts[:body_line_height]   = 15
       end
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'

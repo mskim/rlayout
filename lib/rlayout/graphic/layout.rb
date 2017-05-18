@@ -34,15 +34,15 @@ module RLayout
       @layout_direction = options.fetch(:layout_direction, layout_default[:layout_direction])
       @layout_member    = options.fetch(:layout_member, layout_default[:layout_member])
       @layout_length    = options.fetch(:layout_length, layout_default[:layout_length])
-      @layout_alignment = "left"
-      if @parent_graphic #&& @parent_graphic.respond_to?(:stack) && @parent_graphic.stack
+      @layout_align     = options.fetch(:layout_align, "left")
+      if options[:layout_expand]
+        @layout_expand    = options.fetch(:layout_expand, layout_default[:layout_expand])
+      elsif @parent_graphic #&& @parent_graphic.respond_to?(:stack) && @parent_graphic.stack
         if @parent_graphic.respond_to?(:layout_direction) && @parent_graphic.layout_direction == 'vertical'
           @layout_expand = :width
         else
           @layout_expand = :height
         end
-      else
-        @layout_expand    = options.fetch(:layout_expand, layout_default[:layout_expand])
       end
       # convert unit to point if they are in cm or mm
       @x              = convert_to_pt(@x)           if @x.class == String
@@ -57,6 +57,14 @@ module RLayout
       @top_inset      = convert_to_pt(@top_inset)   if @top_inset.class == String
       @right_inset    = convert_to_pt(@right_inset) if @right_inset.class == String
       @bottom_inset   = convert_to_pt(@bottom_inset)if @bottom_inset.class == String
+    end
+
+    def expand_width?
+      @layout_expand == :width || @layout_expand == [:width, :height]
+    end
+
+    def expand_height
+      @layout_expand == :height || @layout_expand == [:width, :height]
     end
 
     def layout_default

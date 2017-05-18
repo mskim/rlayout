@@ -134,8 +134,12 @@ module RLayout
           text_color    = RLayout::convert_to_nscolor(@para_style[:text_color]) unless (@para_style[:text_color]) == NSColor
           @atts[NSForegroundColorAttributeName] = text_color
         end
-        #TODO
-        # atts[NSKernAttributeName]             = text_tracking if text_tracking
+        if @para_style[:text_tracking] != 0
+          # atts[NSKernAttributeName]  = text_tracking if text_tracking
+          @atts[NSKernAttributeName] = @para_style[:text_tracking]
+        end
+        # #TODO
+        # atts[NSKernAttributeName]  = text_tracking if text_tracking
         @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
         @para_style[:atts] = @atts
       else
@@ -251,7 +255,7 @@ module RLayout
       @current_line.set_paragraph_info(self, "last_line")
       @current_line.align_tokens
       # move cursor to new line
-      # binding.pry
+      #
       text_box.current_column.go_to_next_line
       text_box.next_text_line
       false # no  overflow
@@ -327,7 +331,9 @@ module RLayout
       h[:single_emphasis]         = {stroke_sides: [0,1,0,1], stroke_thickness: 0.5}
 
       style = RLayout::StyleService.shared_style_service.current_style[@markup]
-      if style.class == String
+      if @markup =='p'
+        style = NEWSPAPER_STYLE['본문명조']
+      elsif style.class == String
         # this is when a style is refering to other style by name
         style = RLayout::StyleService.shared_style_service.current_style[style]
       end
