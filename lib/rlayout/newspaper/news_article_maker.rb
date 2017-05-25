@@ -13,10 +13,12 @@ NEWS_PAPER_DEFAULTS = {
   paper_size: 'A2'
 }
 
-NEWS_ARTICLE_BOTTOM_SPACE_IN_LINES  = 2
-NEWS_ARTICLE_TOP_SPACE_IN_LINES     = 1
-NEWS_ARTICLE_LINE_THICKNESS         = 0.3
-GRID_LINE_COUNT                     = 7
+NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES     = 3
+NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_HEIGHT_IN_LINES    = 2
+NEWS_ARTICLE_HEADING_SPACE_IN_LINES                      = 3
+GRID_LINE_COUNT                                          = 7
+NEWS_ARTICLE_BOTTOM_SPACE_IN_LINES                       = 2
+NEWS_ARTICLE_LINE_THICKNESS                              = 0.3
 
 NEW_SECTION_DEFAULTS = {
   :width        => 1116.85, # 393 x 2.834646 = 1116.85
@@ -70,25 +72,25 @@ MAIN_ARTICLE_FRONT_PAGE               = 4
 
 NEWSPAPER_STYLE = {
   '본문명조'  => {font: 'YDVYSinStd', text_size: 9.6, text_alignment: 'justified', text_tracking: -0.5 },
-  '본문고딕'  => {font: 'Helvetica', text_size: 9.2, text_alignment: 'justified', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '본문중제'  => {font: 'Helvetica', text_size: 9.2, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '발문'     => {font: 'Helvetica', text_size: 9.2, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '관련기사'  => {font: 'Helvetica', text_size: 9.5, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '문패'     => {font: 'Helvetica', text_size: 12, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '사진제목'  => {font: 'Helvetica', text_size: 12, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0},
-  '사진설명'  => {font: 'Helvetica', text_size: 12, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0},
-  '기자명'   => {font: 'Helvetica', text_size: 7, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '이메일'   => {font: 'Helvetica', text_size: 7, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '탑제목'   => {font: 'YDVYMjOStd145', text_size: 42.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 3, space_after_in_lines: 1},
-  '탑부제'   => {font: 'YDVYMjOStd145', text_size: 24, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 2},
+  '본문고딕'  => {font: 'YDVYGOStd125', text_size: 9.4, text_alignment: 'justified', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '본문중제'  => {font: 'YDVYGOStd135', text_size: 9.6, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '발문'     => {font: 'YDVYMjOStd125', text_size: 12.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '관련기사'  => {font: 'YDVYGOStd125', text_size: 9.4, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '문패'     => {font: 'YDVYGOStd145', text_size: 12.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '사진제목'  => {font: 'YDVYGOStd145', text_size: 8.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0},
+  '사진설명'  => {font: 'YDVYGOStd125', text_size: 8.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0},
+  '기자명'   => {font: 'YDVYGOStd125', text_size: 7.0, text_alignment: 'right', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0, v_offset: 3.5},
+  '이메일'   => {font: 'YDVYGOStd125', text_size: 7.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '탑제목'   => {font: 'YDVYMjOStd145', text_size: 46.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 3, space_after_in_lines: 1},
+  '탑부제'   => {font: 'YDVYMjOStd145', text_size: 24.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 2},
   '4-5단제목' => {font: 'YDVYMjOStd145', text_size: 42.0, text_alignment: 'left', space_before_in_lines: 2,  text_height_in_lines: 3, space_after_in_lines: 2},
   '3단제목'  => {font: 'YDVYMjOStd135', text_size: 28.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 2, space_after_in_lines: 1},
   '2단제목'  => {font: 'YDVYMjOStd135', text_size: 24.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 2, space_after_in_lines: 1},
   '1단제목'  => {font: 'YDVYMjOStd135', text_size: 15.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 2, space_after_in_lines: 1},
   '부제13'  => {font: 'YDVYMjOStd125', text_size: 13.0, text_line_spacing: 6, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 1},
   '부제15'  => {font: 'YDVYMjOStd125', text_size: 15.0, text_line_spacing: 7, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 1},
-  '뉴스라인제목'  => {font: 'Helvetica', text_size: 12, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '사진출처'  => {font: 'Helvetica', text_size: 7, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '뉴스라인제목'  => {font: 'Helvetica', text_size: 13.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '사진출처'  => {font: 'Helvetica', text_size: 7.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
   #기자사진_설명
 }
 
@@ -97,7 +99,7 @@ module RLayout
   class NewsArticleMaker
     attr_accessor :article_path, :template, :story_path, :image_path
     attr_accessor :news_article_box, :style, :output_path, :project_path
-    attr_reader :article_info_path
+    attr_reader :article_info_path, :paragraphs_copy, :fill_up_enpty_lines
 
     def initialize(options={} ,&block)
       @story_path = options[:story_path]
@@ -154,24 +156,33 @@ module RLayout
         puts "@news_article_box is ad_box..."
       else
         read_story
+        if options[:fill_up_enpty_lines]
+          @paragraphs_copy = @paragraphs.dup
+        end
         layout_story
+        puts "@news_article_box.underflow:#{@news_article_box.underflow}"
+        if options[:fill_up_enpty_lines]
+          if @news_article_box.underflow
+            fill_with_paragraphs
+            @news_article_box.save_appened_story
+          end
+        end
       end
       if RUBY_ENGINE =="rubymotion"
         @news_article_box.save_pdf(@output_path, :jpg=>true)
       else
         @news_article_box.save_svg(@svg_path)
       end
-      # if @save_article_info
-        @news_article_box.save_article_info(@article_info_path)
       # end
       self
     end
 
     def read_story
-      @story      = Story.new(@story_path).markdown2para_data
-      @heading    = @story[:heading] || {}
-      @title      = @heading[:title] || "Untitled"
-      @heading[:top_story] = @news_article_box.top_story
+      @story                  = Story.new(@story_path).markdown2para_data
+      @heading                = @story[:heading] || {}
+      @title                  = @heading[:title] || "Untitled"
+      @heading[:is_front_page]= @news_article_box.is_front_page
+      @heading[:top_story]    = @news_article_box.top_story
       @heading[:top_position] = @news_article_box.top_position
       if @heading
         @news_article_box.make_article_heading(@heading)
@@ -194,6 +205,33 @@ module RLayout
     def layout_story
       @news_article_box.adjust_overlapping_columns
       @news_article_box.layout_items(@paragraphs)
+    end
+
+    # copy current_;pargraphs until qwh hAVE 1 line for reposter
+    def fill_with_paragraphs
+      puts __method__
+      puts "@paragraphs_copy.length:#{@paragraphs_copy.length}"
+
+      # story_path          = "#{$ProjectPath}/story.md"
+      # need_chars          = average_characters_per_line*(@empty_lines - 1)
+      # base_string         = "여기는 본문이 입니다. "
+      # string_half_length  = base_string.length/2
+      # target_chart_count  = need_chars - string_half_length
+      # puts "target_chart_count:#{target_chart_count}"
+      # sample_string       = "\n\n" + base_string
+      # count = 0
+      # while  sample_string.length < target_chart_count && count < 100 do
+      #   sample_string += base_string
+      #   count +=1
+      #   mutiples = count % 20
+      #   if mutiples == 0
+      #     sample_string +="\n\n"
+      #   end
+      # end
+      # sample_string += "\n\n\# 홍깅돌 기자 gdhong@naver.com"
+      # story = File.open(story_path, 'r'){|f| f.read}
+      # story += sample_string
+      # File.open(story_path, 'w'){|f| f.write story}
     end
 
     def draw_line_grids

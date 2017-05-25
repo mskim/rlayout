@@ -120,6 +120,16 @@ module RLayout
       end
     end
 
+    # this is use in calculating left ocer text after layout
+    def left_over_token_text
+      string = ""
+      @tokens.each do |token|
+        string += token.string
+        string += " "
+      end
+      string
+    end
+
     # before we create any text_tokens,
     # check if we have any special token mark {{something}} or {something}
     # first check for double curl, single curl
@@ -213,7 +223,7 @@ module RLayout
     def layout_lines(text_box)
       # @current_line = text_column.current_line
       @current_line = text_box.next_text_line
-      return unless @current_line
+      return true unless @current_line  # this mean overflow
       if @line_count == 0
         @current_line.set_paragraph_info(self, "first_line")
       end
@@ -255,7 +265,6 @@ module RLayout
       @current_line.set_paragraph_info(self, "last_line")
       @current_line.align_tokens
       # move cursor to new line
-      #
       text_box.current_column.go_to_next_line
       text_box.next_text_line
       false # no  overflow
@@ -333,13 +342,24 @@ module RLayout
       style = RLayout::StyleService.shared_style_service.current_style[@markup]
       if @markup =='p'
         style = NEWSPAPER_STYLE['본문명조']
+        style[:h_alignment] = style[:text_alignment]
       elsif style.class == String
         # this is when a style is refering to other style by name
         style = RLayout::StyleService.shared_style_service.current_style[style]
       end
+
+      if @markup =='h1'
+        style = NEWSPAPER_STYLE['기자명']
+        style[:h_alignment] = style[:text_alignment]
+      elsif style.class == String
+        # this is when a style is refering to other style by name
+        style = RLayout::StyleService.shared_style_service.current_style[style]
+      end
+
       if style
         h.merge! style
       end
+
       @para_style = h
     end
 

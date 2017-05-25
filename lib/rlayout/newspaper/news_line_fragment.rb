@@ -63,9 +63,10 @@ module RLayout
     end
     # set line type, and paragraph information for line
     def set_paragraph_info(paragraph, line_type)
-      para_style    = paragraph.para_style
-      @space_width  = para_style[:space_width]
-      @text_alignment = para_style[:h_alignment]
+      para_style        = paragraph.para_style
+      @space_width      = para_style[:space_width]
+      @text_alignment   = para_style[:h_alignment]
+      @v_offset         = para_style[:v_offset] || 0
       if @text_alignment == "left" || @text_alignment == "justified"
         @first_line_width   = @width - para_style[:first_line_indent] - para_style[:tail_indent]
         @middle_line_width  = @width - para_style[:head_indent] - para_style[:tail_indent]
@@ -138,7 +139,6 @@ module RLayout
       @total_space_width = (@graphics.length - 1)*@space_width if @graphics.length > 0
       room  = @text_area_width - (@total_token_width + @total_space_width)
       x     = @starting_position
-
       case @text_alignment
       when 'justified'
         # in justifed paragraph, we have to treat the last line as left aligned.
@@ -164,20 +164,12 @@ module RLayout
       when 'center'
         @graphics.map {|t| t.x += room/2.0}
       when 'right'
-        @graphics.map do |t|
-          t.x += room
+        x = room
+        @graphics.each do |token|
+          token.x += x
+          token.y = @v_offset
+          x += token.width + @space_width
         end
-      #TODO
-      # when 'justified'
-      #   if is_last_line?
-      #   else
-      #     just_space = room/(@graphics.length - 1)
-      #     x = 0
-      #     @graphics.each_with_index do |token, i|
-      #       token.x = x
-      #       x += token.width + just_space
-      #     end
-      #   end
       else
 
       end

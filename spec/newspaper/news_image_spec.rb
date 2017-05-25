@@ -3,7 +3,7 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'creaet NewsArticleMaker with Image' do
   before do
-    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/6/1"
+    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/section/1/7x15_H_5단통_4/1"
     @svg_path       = @article_path + "/output.svg"
     @maker          = NewsArticleMaker.new(article_path: @article_path)
     @news_box       = @maker.news_article_box

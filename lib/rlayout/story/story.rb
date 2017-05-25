@@ -3,7 +3,7 @@
 #  Copyright 2013 SoftwareLab. All rights reserved.
 
 # Story Class reads and converts markdown with meta-data heading, files to para_data.
-# para_data file is then converted to Asciidoctor 
+# para_data file is then converted to Asciidoctor
 # Asciidoctor file is used to create html using asciidocor cli.
 
 # Story file format is mixture of markdown, Asciidoctor, and our own tags.
@@ -46,7 +46,7 @@
 # \ruby, \ruby_under
 
 module RLayout
-  
+
   class Story
     attr_accessor :path, :para_data, :adoc, :options
     def initialize(path, options={})
@@ -54,14 +54,14 @@ module RLayout
       @options        = options
       self
     end
-    
+
     def self.sample
       @heading    = options.fetch(:heading, story_defaults)
       @published  = heading.fetch(:published, false)
       @paragraphs = options.fetch(:paragraphs,[])
       {:heading=>@metadata, :paragraphs =>paragraphs}
     end
-    
+
     def story_defaults
       h={}
       h[:title]     = 'Untitled Story '
@@ -82,7 +82,7 @@ module RLayout
       h[:paragraphs]  = @paragraphs
       h
     end
-    
+
     def to_html
       para_data_to_asciidoctor
       ext = File.extname(@path)
@@ -91,7 +91,7 @@ module RLayout
       File.open(adoc_path, 'w'){|f| f.write @adoc}
       system("cd #{folder_path} && asciidoctor #{adoc_path}")
     end
-        
+
     def para_data_to_asciidoctor
       @para_data  = markdown2para_data(@options) unless @para_data
       heading     = @para_data[:heading]
@@ -112,7 +112,7 @@ module RLayout
       else
         @adoc += "\n"
       end
-      
+
       if heading[:leading]
         @adoc += "[.lead] " + heading[:leading] + "\n\n"
       end
@@ -147,16 +147,16 @@ module RLayout
       end
       @adoc
     end
-    
+
     def remote_paragraphs
       reader = RLayout::RemoteReader.new @remote_options
       paragraphs = reader.text_blocks.map do |lines_block|
         block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
       end
       @para_data = {:heading=>@metadata, :paragraphs =>paragraphs}
-      
+
     end
-    
+
     #read story file and convert it to para_data format
     def markdown2para_data(options={})
       source = File.open(@path, 'r'){|f| f.read}
@@ -190,8 +190,8 @@ module RLayout
       @para_data = {:heading=>@metadata, :paragraphs =>paragraphs}
       # {:heading=>@metadata, :paragraphs =>paragraphs}
     end
-    
-    # markdown2section_data 
+
+    # markdown2section_data
     # it parses metadata heading
     # it puts paragraphs by sections in an array, each array starting with section head para
     # stroy[:heading]
@@ -215,7 +215,7 @@ module RLayout
       @current_section      = []
       section_number        = 0
       reader = RLayout::Reader.new @contents, nil
-      reader.text_blocks.each do |lines_block|  
+      reader.text_blocks.each do |lines_block|
         para = block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
         if para[:markup] == "h2"
           @current_section << para
@@ -226,13 +226,13 @@ module RLayout
           @current_section << para
         end
       end
-      @section_para_data << @current_section if @current_section.length > 0      
-      # return 
+      @section_para_data << @current_section if @current_section.length > 0
+      # return
       {:heading=>@metadata, :sections_paragraph =>@section_para_data}
-      
+
     end
-    
-    #processing a block of parsed text 
+
+    #processing a block of parsed text
     def block2para_data(text_block, options={})
       starting_heading_level = options.fetch(:starting_heading_level, 1)
       s = text_block.shift if text_block[0] =~ /(?>^\s*\n)+/
@@ -268,22 +268,22 @@ module RLayout
       elsif s =~/^\*\s?/
         # unordered list uli1
         return {:markup =>"unordered_list", :text_block=>text_block}
-      elsif s =~/^table\s?/   
-        # parse block   
+      elsif s =~/^table\s?/
+        # parse block
         @markup = "table"
         @string = s.sub(/table\s?/, "")
-      elsif s =~/^image\s?/      
+      elsif s =~/^image\s?/
         @markup = "image"
         #TODO multi line?
         @string = s.sub(/image\s?/, "")
-      elsif s =~/^photo_page\s?/      
+      elsif s =~/^photo_page\s?/
         @markup = "photo_page"
-      elsif s =~/^\[float_group\]\s?/      
+      elsif s =~/^\[float_group\]\s?/
         #float_group, changed to include other graphics
-        return {:markup =>"float_group", :text_block=>text_block}        
-      elsif s =~/^pdf_insert\s?/      
+        return {:markup =>"float_group", :text_block=>text_block}
+      elsif s =~/^pdf_insert\s?/
         @markup = "pdf_insert"
-      elsif s =~/^math\s?/      
+      elsif s =~/^math\s?/
         @markup = "math"
       else
         @markup = "p"
@@ -294,13 +294,13 @@ module RLayout
           end
         end
       end
-      # 
-      # 
+      #
+      #
       # string += text_block.join("\n")
       if @markup == "p" && @string =~/!\[/
         image_info = @string.match(/\{.*\}/)
         {:markup =>"img", :local_image=>image_info.to_s}
-      # elsif markup == "image" 
+      # elsif markup == "image"
       #   {:markup =>"image", :local_image=>@string.gsub("::", "")}
       elsif @markup == "table"
         if text_block.length > 1
@@ -314,14 +314,14 @@ module RLayout
       #   {:markup =>markup, :string=>@string}
       else
         {:markup =>@markup, :para_string=>@string}
-      end      
+      end
     end
 
     #TODO
     def to_asciidoctorpa
-      
+
     end
-    
+
     def to_meta_markdown
       text = @heading.to_yaml + "\n---\n\n"
       @paragraphs.each do |para|
@@ -361,7 +361,7 @@ module RLayout
       }
       Story.new(h)
     end
-    
+
     def self.magazine_article_sample(options={})
       heading         = ParagraphModel.heading
       heading[:type]  = "magazine article"
@@ -391,7 +391,7 @@ module RLayout
       }
       Story.new(h)
     end
-            
+
     def self.get_metadata_from_stroy(story_path)
       contents = File.open(story_path, 'r'){|f| f.read}
       begin
@@ -404,7 +404,7 @@ module RLayout
       end
       @metadata
     end
-    
+
     def Story.update_metadata(story_path, new_metadata_hash)
       contents = File.open(story_path, 'r'){|f| f.read}
       begin
@@ -415,7 +415,7 @@ module RLayout
       rescue => e
         puts "YAML Exception reading #filename: #{e.message}"
       end
-      
+
       @metadata.merge!(new_metadata_hash)
       meta_data_yaml = @metadata.to_yaml
       new_story = meta_data_yaml + "\n---\n" + @story_markdown
@@ -430,7 +430,7 @@ module RLayout
       @remote_options = @options.fetch(:remote_options, nil)
       self
     end
-    
+
   end
 
 end

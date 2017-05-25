@@ -4,7 +4,7 @@ describe 'overlapping floats' do
   before do
     @article_path   = "/Users/mskim/Development/rails5/articles/public/current_issue/1/1"
     @article_path   = "/Users/mskim/Development/rails5/page_template/public/current_issue/2/3"
-    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/5/4"
+    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/6/3x4/0"
     @svg_path       = @article_path + "/output.svg"
     @maker          = NewsArticleMaker.new(article_path: @article_path)
     @news_box       = @maker.news_article_box
@@ -21,12 +21,16 @@ describe 'overlapping floats' do
   end
 
   it 'shold create image_box with multiples of column width' do
-    assert_equal @box_width, @news_box.width
+    assert_equal @box_width + @news_box.gutter, @news_box.width
   end
 
   it 'should collect overlapping floats with column' do
     assert_equal @heading, @news_box.overlapping_floats_with_column(@first_column).first
     assert_equal @heading, @news_box.overlapping_floats_with_column(@second_column).first
+  end
+
+  it 'column should have 7 lines per grid - 2 ' do
+    assert_equal @first_column.graphics.length, 4*7 - 2
   end
 end
 

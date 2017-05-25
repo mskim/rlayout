@@ -146,7 +146,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/quiz/english_quiz_item_maker'
   require File.dirname(__FILE__) + '/rlayout/quiz/quiz_chapter_maker'
   require File.dirname(__FILE__) + '/rlayout/quiz/nr_semi_test_chapter_maker'
-  require File.dirname(__FILE__) + '/rlayout/mlayout/mdocument'
+  require File.dirname(__FILE__) + '/rlayout/math/mlayout/mdocument'
 end
 
 module RLayout

@@ -6,14 +6,16 @@ module RLayout
     attr_accessor :grid_frame, :grid_width, :body_line_height, :height_in_lines, :starting_line
     attr_accessor :title_object, :subject_head_object, :subtitle_object
     attr_reader   :upper_line_type, :heading_columns
-    attr_reader   :subtitle_in_head, :top_story, :top_position
+    attr_reader   :subtitle_in_head, :is_front_page, :top_story, :top_position
 
     def initialize(options={})
       @grid_width       = options.fetch(:grid_width, 2)
       @heading_columns  = options[:column_count]
-      @body_line_height = options.fetch(:body_line_height, 15)
       # options[:stroke_width] = 1
       super
+      @body_line_height = @parent_graphic.body_line_height
+      @body_line_height = options.fetch(:body_line_height) if options.fetch(:body_line_height)
+      @is_front_page    = options.fetch(:is_front_page, false)
       @top_story        = options.fetch(:top_story, false)
       @top_position     = options.fetch(:top_position, false)
       @subtitle_in_head = options.fetch(:subtitle_in_head, false)
@@ -22,13 +24,20 @@ module RLayout
     end
 
     def set_heading_content(options)
-      @top_story    = options[:top_story]     if options[:top_story]
-      @top_position = options[:top_position]  if options[:top_position]
+      @is_front_page    = options.fetch(:is_front_page, false)
+      @top_story        = options[:top_story]     if options[:top_story]
+      @top_position     = options[:top_position]  if options[:top_position]
+#
       # options = transform_keys_to_symbols(options)
-      @height_in_lines = 0
-      if @top_position
-        @top_position_filler_object = top_position_filler
-        @height_in_lines += 3
+      @height_in_lines  = 0
+
+      if @top_position && @is_front_page
+        puts "@top_position && @is_front_page:#{@top_position && @is_front_page}"
+        @top_position_filler_object = top_position_filler(NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES)
+        @height_in_lines += NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES
+      elsif @top_position
+        @top_position_filler_object = top_position_filler(NEWS_ARTICLE_HEADING_SPACE_IN_LINES)
+        @height_in_lines += NEWS_ARTICLE_HEADING_SPACE_IN_LINES
       end
 
       if options['subject_head']
@@ -67,12 +76,9 @@ module RLayout
       self
     end
 
-    def top_position_filler(options={})
-      line_height   = 15
-      if @parent_graphic
-        line_height   = @parent_graphic.body_line_height
-      end
-      top_postion_height = line_height*3
+    def top_position_filler(line_count, options={})
+      puts "line_count:#{line_count}"
+      top_postion_height = @body_line_height*line_count
       Graphic.new(parent:self, width: @width, height:top_postion_height)
     end
 
@@ -80,11 +86,7 @@ module RLayout
       subject_head                  = '문패'
       subject_atts                  = NEWSPAPER_STYLE[subject_head]
       subject_atts[:text_string]    = options['subject_head']
-      if @parent_graphic
-        subject_atts[:body_line_height]   = @parent_graphic.body_line_height
-      else
-        subject_atts[:body_line_height]   = 15
-      end
+      subject_atts[:body_line_height] = @body_line_height
       subject_atts[:width]                  = @width
       subject_atts[:stroke_sides]           = [0,1,0,0] # draw line at top only
       subject_atts[:stroke_width]           = 2
@@ -113,11 +115,7 @@ module RLayout
       # atts.merge(options)
       # puts "atts:#{atts}"
       atts[:text_string]          = options['title']
-      if @parent_graphic
-        atts[:body_line_height]   = @parent_graphic.body_line_height
-      else
-        atts[:body_line_height]   = 15
-      end
+      atts[:body_line_height]     = @body_line_height
       atts[:width]                = @width
       atts[:text_fit_type]        = 'adjust_box_height'
       atts[:layout_expand]        = [:width]
@@ -144,11 +142,7 @@ module RLayout
         title_atts = NEWSPAPER_STYLE[title_1]
       end
       title_atts[:text_string]          = options['title']
-      if @parent_graphic
-        title_atts[:body_line_height]   = @parent_graphic.body_line_height
-      else
-        title_atts[:body_line_height]   = 15
-      end
+      title_atts[:body_line_height]     = @body_line_height
       title_atts[:width]                = @width
       title_atts[:text_fit_type]        = 'adjust_box_height'
       title_atts[:layout_expand]        = [:width]
@@ -162,12 +156,8 @@ module RLayout
     def top_subtitle(options={})
       top_subtitle   = '탑부제'
       atts = NEWSPAPER_STYLE[top_subtitle]
-      atts[:text_string]            = options['subtitle']
-      if @parent_graphic
-        atts[:body_line_height]   = @parent_graphic.body_line_height
-      else
-        atts[:body_line_height]   = 15
-      end
+      atts[:text_string]          = options['subtitle']
+      atts[:body_line_height]     = @body_line_height
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
@@ -189,11 +179,7 @@ module RLayout
         atts = NEWSPAPER_STYLE[subtitle_13]
       end
       atts[:text_string]            = options['subtitle']
-      if @parent_graphic
-        atts[:body_line_height]   = @parent_graphic.body_line_height
-      else
-        atts[:body_line_height]   = 15
-      end
+      atts[:body_line_height]       = @body_line_height
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')

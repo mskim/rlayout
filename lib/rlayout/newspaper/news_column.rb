@@ -34,7 +34,7 @@ module RLayout
       @layout_space       = options.fetch(:column_layout_space, 0)
       @complex_rect       = false
       @body_line_height   = options[:body_line_height]
-      @height             -= @body_line_height if NEWS_ARTICLE_BOTTOM_SPACE_IN_LINES > 0
+      @height             -= @body_line_height*NEWS_ARTICLE_BOTTOM_SPACE_IN_LINES
       @current_position   = @top_margin + @top_inset
       create_lines
       if block
@@ -79,6 +79,10 @@ module RLayout
         available_lines +=1 if line.text_line?
       end
       available_lines
+    end
+
+    def empty_lines
+      @line_count - @current_line_index
     end
 
     def average_characters_per_line

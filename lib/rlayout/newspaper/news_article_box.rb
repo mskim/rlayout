@@ -17,13 +17,15 @@
 module RLayout
 
   class NewsArticleBox < Container
-    attr_accessor :article_type, :top_story, :top_position, :heading_columns, :grid_size, :grid_frame, :body_line_height
+    attr_accessor :is_front_page, :top_story, :top_position, :heading_columns, :grid_size, :grid_frame, :body_line_height
     attr_accessor :story_path, :show_overflow_lines
     attr_accessor :column_count, :row_count, :column_layout_space, :line_count_per_column
     attr_accessor :draw_gutter_stroke, :gutter, :v_gutter
-    attr_accessor :current_column, :current_column_index, :overflow
-    attr_reader :before_lines, :after_lines
-    attr_reader :heading, :subtitle_box, :quote_box, :personal_image, :news_image, :is_ad_box
+    attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines, :overflow_text
+    attr_accessor :reporter, :email, :fill_up_enpty_lines
+    attr_accessor :before_lines, :after_lines
+    attr_accessor :heading, :subtitle_box, :quote_box, :personal_image, :news_image, :is_ad_box
+
 
     def initialize(options={}, &block)
       options[:left_margin]   = 5 unless options[:left_margin]
@@ -33,11 +35,12 @@ module RLayout
       options[:stroke_sides]  = [0,0,0,1]
       options[:stroke_width]  = 0.3
       super
-      @article_type           = options[:article_type] || REGULAR_ARTICLE
+      @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
       @is_ad_box              = options[:is_ad_box] || false
       @column_count           = options[:column]
       @row_count              = options[:row]
       @current_column_index   = 0
+      @is_front_page          = options.fetch(:is_front_page, false)
       @top_story              = options.fetch(:top_story, false)
       @top_position           = options.fetch(:top_position, false)
       if options[:grid_frame]
@@ -131,6 +134,22 @@ module RLayout
       character_count
     end
 
+    def article_box_unoccupied_lines_count
+      colimn_index = @current_column.graphics_index
+      if colimn_index == (@column_count - 1)
+        # current position is at last column
+        @current_column.empty_lines
+      else
+        # current position is before last column
+        unoccupied_lines_count = 0
+        (colimn_index..(@column_count - 1)).to_a.each do |column_index|
+          column = @graphics[column_index]
+          unoccupied_lines_count += column.empty_lines
+        end
+        unoccupied_lines_count
+      end
+    end
+
     def article_box_lines_count
       available_lines = 0
       @graphics.each_with_index do |column, i|
@@ -140,13 +159,21 @@ module RLayout
       available_lines
     end
 
-    def save_article_info(info_path)
+    def save_article_info
       article_info = {}
-      article_info[:lines_count]            = article_box_lines_count
-      article_info[:current_characters]     = article_box_character_count
-      article_info[:suggested_characters]   = suggested_number_of_characters
-      article_info[:needed_chars]           = suggested_number_of_characters - article_box_character_count
-
+      if @underflow
+        article_info[:underflow]              = @underflow
+        article_info[:empty_lines]            = @empty_lines
+      elsif @overflow
+        article_info[:@overflow]              = true
+        article_info[:overflow_text]          = @overflow_text
+      else
+        # article_info[:lines_count]            = article_box_lines_count
+        article_info[:current_characters]     = article_box_character_count
+        # article_info[:suggested_characters]   = suggested_number_of_characters
+        # article_info[:needed_chars]           = suggested_number_of_characters - article_box_character_count
+      end
+      info_path = "#{$ProjectPath}/article_info.yml"
       File.open(info_path, 'w'){|f| f.write article_info.to_yaml}
     end
 
@@ -194,33 +221,55 @@ module RLayout
       [@current_column_index, @current_column.current_line_index]
     end
 
-    def layout_items(flowing_items)
+    def save_appened_story
+      #code
+    end
+
+    def layout_items(flowing_items, options={})
       @column_index       = 0
       @current_column     = @graphics[@column_index]
       @overflow = false
       while @item = flowing_items.shift do
         break if @overflow = @item.layout_lines(self)
       end
-
       if @overflow
-        #TODO
-        # puts "oveflow"
+        @empty_lines = 0
+        @overflow_text = ''
+        if flowing_items.length > 1
+          flowing_items.each do |para|
+            @overflow_text += para.left_over_token_text
+            @overflow_text += '\n'
+          end
+        else
+          @overflow_text += @item.left_over_token_text
+          @overflow_text += '\n'
+
+        end
+      else
+        @current_column = @graphics[@current_column_index] unless @current_column
+        @empty_lines    = article_box_unoccupied_lines_count
+        @underflow = true if @empty_lines > 0
+      end
+      if !@fill_up_enpty_lines
+        save_article_info
       end
     end
 
     # make heading as float
     def make_article_heading(options={})
-      @top_story              = options['top_story'] || options[:top_story]
-      @top_position           = options['top_story'] || options[:top_position]
-      @subtitle_in_head       = options['subtitle_in_head'] || options[:subtitle_in_head]
+      @is_front_page            = options['is_front_page'] || options[:is_front_page]
+      @top_story                = options['top_story'] || options[:top_story]
+      @top_position             = options['top_story'] || options[:top_position]
+      @subtitle_in_head         = options['subtitle_in_head'] || options[:subtitle_in_head]
       h_options = options.dup
-      h_options[:is_float]    = true
-      h_options[:parent]      = self
-      h_options[:width]       = @width - @gutter
-      h_options[:column_count] = @column_count
-      h_options[:x]           = @gutter/2
-      h_options[:top_story]   = @top_story
-      h_options[:top_position] = @top_position
+      h_options[:is_float]      = true
+      h_options[:parent]        = self
+      h_options[:width]         = @width - @gutter
+      h_options[:column_count]  = @column_count
+      h_options[:x]             = @gutter/2
+      h_options[:is_front_page] = @is_front_page
+      h_options[:top_story]     = @top_story
+      h_options[:top_position]  = @top_position
       h_options[:body_line_height] = @body_line_height
       if @heading_columns     != @column_count
         h_options[:width]     = width_of_columns(@heading_columns)
@@ -500,4 +549,5 @@ module RLayout
     end
 
   end
+
 end
