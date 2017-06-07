@@ -71,26 +71,26 @@ MAIN_ARTICLE_FRONT_PAGE               = 4
 # image_source   = '사진출처'
 
 NEWSPAPER_STYLE = {
-  '본문명조'  => {font: 'YDVYSinStd', text_size: 9.6, text_alignment: 'justified', text_tracking: -0.5 },
-  '본문고딕'  => {font: 'YDVYGOStd125', text_size: 9.4, text_alignment: 'justified', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '본문중제'  => {font: 'YDVYGOStd135', text_size: 9.6, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '발문'     => {font: 'YDVYMjOStd125', text_size: 12.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '관련기사'  => {font: 'YDVYGOStd125', text_size: 9.4, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '문패'     => {font: 'YDVYGOStd145', text_size: 12.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '사진제목'  => {font: 'YDVYGOStd145', text_size: 8.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0},
-  '사진설명'  => {font: 'YDVYGOStd125', text_size: 8.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0},
-  '기자명'   => {font: 'YDVYGOStd125', text_size: 7.0, text_alignment: 'right', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0, v_offset: 3.5},
-  '이메일'   => {font: 'YDVYGOStd125', text_size: 7.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '탑제목'   => {font: 'YDVYMjOStd145', text_size: 46.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 3, space_after_in_lines: 1},
-  '탑부제'   => {font: 'YDVYMjOStd145', text_size: 24.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 2},
-  '4-5단제목' => {font: 'YDVYMjOStd145', text_size: 42.0, text_alignment: 'left', space_before_in_lines: 2,  text_height_in_lines: 3, space_after_in_lines: 2},
-  '3단제목'  => {font: 'YDVYMjOStd135', text_size: 28.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 2, space_after_in_lines: 1},
-  '2단제목'  => {font: 'YDVYMjOStd135', text_size: 24.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 2, space_after_in_lines: 1},
-  '1단제목'  => {font: 'YDVYMjOStd135', text_size: 15.0, text_alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 2, space_after_in_lines: 1},
-  '부제13'  => {font: 'YDVYMjOStd125', text_size: 13.0, text_line_spacing: 6, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 1},
-  '부제15'  => {font: 'YDVYMjOStd125', text_size: 15.0, text_line_spacing: 7, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 1},
-  '뉴스라인제목'  => {font: 'Helvetica', text_size: 13.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-  '사진출처'  => {font: 'Helvetica', text_size: 7.0, text_alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '본문명조'  => {font: 'YDVYSinStd', text_size: 9.6, alignment: 'justified', tracking: -0.5 },
+  '본문고딕'  => {font: 'YDVYGOStd125', text_size: 9.4, alignment: 'justified', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '본문중제'  => {font: 'YDVYGOStd135', text_size: 9.6, alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '발문'     => {font: 'YDVYMjOStd125', text_size: 12.0, alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '관련기사'  => {font: 'YDVYGOStd125', text_size: 9.4, alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '문패'     => {font: 'YDVYGOStd145', text_size: 12.0, alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '사진제목'  => {font: 'YDVYGOStd145', text_size: 8.0, alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0},
+  '사진설명'  => {font: 'YDVYGOStd125', text_size: 8.0, alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0},
+  '기자명'   => {font: 'YDVYGOStd125', text_size: 7.0, alignment: 'right', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0, v_offset: 3.5},
+  '이메일'   => {font: 'YDVYGOStd125', text_size: 7.0, alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '탑제목'   => {font: 'YDVYMjOStd145', text_size: 46.0, alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 3, space_after_in_lines: 1},
+  '탑부제'   => {font: 'YDVYMjOStd145', text_size: 24.0, alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 2},
+  '4-5단제목' => {font: 'YDVYMjOStd145', text_size: 42.0, alignment: 'left', space_before_in_lines: 2,  text_height_in_lines: 3, space_after_in_lines: 2},
+  '3단제목'  => {font: 'YDVYMjOStd135', text_size: 28.0, alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 2, space_after_in_lines: 1},
+  '2단제목'  => {font: 'YDVYMjOStd135', text_size: 24.0, alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 2, space_after_in_lines: 1},
+  '1단제목'  => {font: 'YDVYMjOStd135', text_size: 15.0, alignment: 'left', space_before_in_lines: 2, text_height_in_lines: 2, space_after_in_lines: 1},
+  '부제13'  => {font: 'YDVYMjOStd125', text_size: 13.0, text_line_spacing: 6, alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 1},
+  '부제15'  => {font: 'YDVYMjOStd125', text_size: 15.0, text_line_spacing: 7, alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 2, space_after_in_lines: 1},
+  '뉴스라인제목'  => {font: 'Helvetica', text_size: 13.0, alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
+  '사진출처'  => {font: 'Helvetica', text_size: 7.0, alignment: 'left', space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
   #기자사진_설명
 }
 
@@ -100,6 +100,7 @@ module RLayout
     attr_accessor :article_path, :template, :story_path, :image_path
     attr_accessor :news_article_box, :style, :output_path, :project_path
     attr_reader :article_info_path, :paragraphs_copy, :fill_up_enpty_lines
+    attr_accessor :custom_style, :custom_style_output_path
 
     def initialize(options={} ,&block)
       @story_path = options[:story_path]
@@ -124,6 +125,20 @@ module RLayout
       end
 
       $ProjectPath  = @article_path
+      @custom_style = options[:custom_style] if options[:custom_style]
+      if @custom_style
+        @custom_article_path = @article_path + "/custom_style.yml"
+        if File.exist?(@custom_article_path)
+          custom_style_yaml = File.open(@custom_article_path, 'r'){|f| f.read}
+          @custom_style = YAML::load(custom_style_yaml)
+          RLayout::StyleService.shared_style_service.custom_style = @custom_style
+          @custom_style_output_path = @article_path + "/custom_style.pdf"
+        else
+          puts "No custom style file :#{@custom_article_path} found !!!"
+          return
+        end
+      end
+
       if options[:image_path]
         @image_path = options[:image_path]
       else
@@ -156,20 +171,16 @@ module RLayout
         puts "@news_article_box is ad_box..."
       else
         read_story
-        if options[:fill_up_enpty_lines]
-          @paragraphs_copy = @paragraphs.dup
-        end
         layout_story
-        puts "@news_article_box.underflow:#{@news_article_box.underflow}"
-        if options[:fill_up_enpty_lines]
-          if @news_article_box.underflow
-            fill_with_paragraphs
-            @news_article_box.save_appened_story
-          end
-        end
       end
+
       if RUBY_ENGINE =="rubymotion"
-        @news_article_box.save_pdf(@output_path, :jpg=>true)
+        if @custom_style_output_path
+          # using custom style,  output as custom_style.pdf
+          @news_article_box.save_pdf(@custom_style_output_path, :jpg=>true)
+        else
+          @news_article_box.save_pdf(@output_path, :jpg=>true)
+        end
       else
         @news_article_box.save_svg(@svg_path)
       end

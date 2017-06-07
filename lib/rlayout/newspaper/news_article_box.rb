@@ -160,7 +160,12 @@ module RLayout
     end
 
     def save_article_info
-      article_info = {}
+      article_info                  = {}
+      article_info[:column]         = @column_count
+      article_info[:row]            = @row_count
+      article_info[:is_front_page]  = @is_front_page
+      article_info[:top_story]      = @top_story
+      article_info[:top_position]   = @top_position
       if @underflow
         article_info[:underflow]              = @underflow
         article_info[:empty_lines]            = @empty_lines

@@ -85,7 +85,8 @@ module RLayout
         @x      = @left_margin
         # @heigth = @att_string.size.height*2
         @heigth = 19.0
-        if options[:text_line_spacing]
+        #TODO fix this
+        if options[:text_line_spacing] && options[:text_line_spacing].class != String
           @height += options[:text_line_spacing]
         else
           @height += 10

@@ -4,8 +4,8 @@ module RLayout
   class NewspaperSectionPage < Page
     attr_accessor :section_path, :section_name, :output_path
     attr_accessor :is_front_page, :paper_size, :page_heading
-    attr_accessor :story_frames, :grid_key, :grid_width, :grid_height, :number_of_stories
-    attr_accessor :divider_info, :body_line_height
+    attr_accessor :story_frames, :grid_width, :grid_height, :number_of_stories
+    attr_accessor :divider_info, :body_line_height, :ad_type
     def initialize(options={}, &block)
       super
       @section_path   = options[:section_path] if options[:section_path]
@@ -20,7 +20,7 @@ module RLayout
       @height         = options['height'] if options['height']
       @lines_in_grid  = options.fetch(:lines_in_grid, 7)
       @section_name   = options['section_name'] || "untitled"
-      @ad_type        = options.fetch('gutter', 10)
+      @gutter         = options.fetch('gutter', 10)
       # handling un-even sized gutter,
       # divider_info has values of divider location and divider width
       if options['divider_info']
@@ -33,7 +33,6 @@ module RLayout
       @top_margin     = options.fetch('top_margin', 50)
       @right_margin   = options.fetch('right_margin', 50)
       @bottom_margin  = options.fetch('bottom_margin', 50)
-      # @has_heading    = options[:has_heading] || false if options[:has_heading]
       @is_front_page  = options['is_front_page'] || false
       @grid_size      = options.fetch('grid_size', [137.40142857142857, 96.94466666666668])
       @grid_width     = @grid_size[0]
@@ -41,9 +40,6 @@ module RLayout
       # @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
       # @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
       @body_line_height = @grid_height/@lines_in_grid
-      # @grid_key       = "#{@grid_base.join("x")}"
-      # @grid_key      += "/H" if @has_heading
-      # @story_frames   = GRID_PATTERNS[@grid_key]
       config_path     = @section_path + "/config.yml"
       if File.exist?(config_path)
         section_config = File.open(config_path, 'r'){|f| f.read}
@@ -60,28 +56,21 @@ module RLayout
         @bottom_margin  = section_config['bottom_margin'] if section_config['bottom_margin']
         @grid_base      = section_config['grid_base'] if section_config['grid_base']
         @grid_base      = @grid_base.map {|e| e.to_i}
-        if section_config['has_heading']
-          @has_heading    = section_config['has_heading']
-          puts "we have has_heading !!! fix this!!!!"
-        end
+        @ad_type        = section_config[:ad_type]
         @is_front_page  = section_config['is_front_page'] if section_config['is_front_page']
         @grid_size      = section_config['grid_size']
         @grid_width     = @grid_size[0]
         @grid_height    = @grid_size[1]
-        # @grid_key       = section_config['grid_key'] if section_config['grid_key']
         @story_frames   = section_config['story_frames']
         @divider_info   = options['divider_info'] if section_config['divider_info']
       end
 
       unless @story_frames
         #TODO used some precentive default story_frames
-        puts "no @story_frames for #{@grid_key}!!!"
+        puts "no @story_frames found!!!"
       end
       @number_of_stories = @story_frames.length
       @number_of_stories -= 1 if has_ad?
-
-      # @grid_key      += "/H" if @is_front_page
-      # @grid_key      += "/#{@number_of_stories}"
 
       self
     end

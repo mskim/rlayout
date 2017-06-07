@@ -117,6 +117,14 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_6_1
+	- add custom_style to load
+		- if options[:custom_style]
+		- if there is "custom_style.yml"
+
+2017_6_1
+	- add Path Object
+
 2017_5_11
 	- NewsSection
 		- pass gutters_array with divider
@@ -1454,7 +1462,7 @@ TODO List
 2014 10 20
  1. text_starts_at anywhere, column, text_box, page, right_page, left_page
  1. text_drop_cap_line_count, text_drop_cap_char_count
- 1. text_tracking
+ 1.
  1. text_colors in hex/cmyk/rgb
 	- drawRect and text layout in one place, in Model, only
 2014 10 19

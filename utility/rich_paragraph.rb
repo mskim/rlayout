@@ -9,14 +9,14 @@
 
 # RichParagraph
 #  RichParagraph
-#  RichParagraph is desinged to automate complex, design rich paragraph, layout. 
-#  It has been difficult to automate design rich publiscations, 
-#  which contain various boxed paragraphs, graphics based numbering, graphics based paragraph identifiers, specially designed dropcap. 
-#  They are usually implemented using multiple graphics. 
+#  RichParagraph is desinged to automate complex, design rich paragraph, layout.
+#  It has been difficult to automate design rich publiscations,
+#  which contain various boxed paragraphs, graphics based numbering, graphics based paragraph identifiers, specially designed dropcap.
+#  They are usually implemented using multiple graphics.
 #  But, that process makes it difficult to automate and keep in sync as a resuable data once thay are created.
 #  Solution is to use RichParagraph.
 #  RichParagraph uses pre-defined templates and treat them as varibale graphics.
-#  RichParagraph content is stored in each paragraph separate from grphiphcs, and only this part is edited and synced to representing graphics. 
+#  RichParagraph content is stored in each paragraph separate from grphiphcs, and only this part is edited and synced to representing graphics.
 #  RichParagraphs are also made to flow along columns.
 #  RichParagraph is layed out in object_column, which belongs to object_box.
 #  For case where paragraph has to be split into different columns, child text can be created to hanle overflowing text.
@@ -28,7 +28,7 @@
 # causing vertical misalignment, follinging body paragraph should snap back to next grid.
 
 # heading paragrph
-# heading paragrph lines should be vertically centers within head's paragraph box. 
+# heading paragrph lines should be vertically centers within head's paragraph box.
 # change_width_and_adjust_height for heading paragrph should set height as multiples of grid_line_height
 
 # RichParagraph is initialize with para_string, it creates series of TextTokens with default size and font.
@@ -39,12 +39,12 @@ module RLayout
     attr_accessor :atts_array, :tab_separated_string, :att_string
     def initialize(options={})
       super
-      
+
       self
     end
-    
+
   end
-  
+
   class RichParagraph < Container
     attr_accessor :breakable, :part # head, body, tail
     attr_accessor :markup, :para_string, :tokens, :line_height
@@ -64,10 +64,10 @@ module RLayout
       @line_color   = 'red'
       @line_width   = 1
       @layout_space = 0 #  #@font_object.space_width
-      create_tokens      
+      create_tokens
       self
     end
-    
+
     def create_tokens
       font_object  = RFont.new(@font, @text_size)
       @token_space  = font_object.space_char_width
@@ -77,42 +77,42 @@ module RLayout
         TextToken.new(:text_string=>token_string, :width=>size[0], :height=>@line_height, :layout_expand=>[], :font=>@font, :text_size=>@text_size) #, :line_width=>1, :line_color=>'green'
       end
     end
-    
-    # create a line 
+
+    # create a line
     def add_line
       t= TextLine.new(parent: self, :x=>@left_inset, :y=>@line_y, :width=>(@width - @left_inset - @right_inset) , :height=>@line_height, :layout_space=>@token_space, :layout_expand=>[:width], :line_width=>1, :line_color=>'black' )
       @line_y += t.height
       t
     end
-    
+
     # This is very similar to layout_items for ObjectBox
     # The difference is we are adding tokens to lines instead of adding flowing items to columns
     # TextLines get added as we need them, where as colums are not add for ObjectBox layout
     # TextLines size are change with token size,  where as colum size is fixed and flowing item size are chamged.
 
-    def layout_lines 
+    def layout_lines
       # create line as we layout tokens
       # clear lines
       @graphics = []
       @line_y = 0 #TODO @top_inset
-      add_line 
+      add_line
       current_line = @graphics.last
       while front_most_token = @tokens.shift do
         if current_line.insert_token(front_most_token)
           # item fit into column successfully!
         else
           current_line.relayout!
-          add_line 
+          add_line
           current_line = @graphics.last
           current_line.insert_token(front_most_token)
         end
-      end      
+      end
       # relayout!
 
       # now change the height of paragraph
       @sum = 0
       line_y = 0
-      @graphics.each do |line| 
+      @graphics.each do |line|
         line.y = line_y
         line_height = line.height
         @sum += line_height + @layout_space
@@ -120,18 +120,18 @@ module RLayout
       end
       @height = @sum
     end
-    
+
     def layout_para_at(column)
-      
+
     end
-    
+
     def change_width_and_adjust_height(new_width, options={})
       # for heading paragrph, should set height as multiples of grid_line_height
-      
+
       @width = new_width
-      if options[:line_grid_height] 
+      if options[:line_grid_height]
         #TODO
-        
+
         # if @line_height != options[:line_grid_height]
         # @line_height = options[:line_grid_height]
         # update token size
@@ -148,10 +148,10 @@ module RLayout
       list
     end
   end
-  
+
   class TextLine < Container
-    attr_accessor 
-    
+    attr_accessor
+
     def initialize(options={})
       super
       @klass = "TextLine"
@@ -161,21 +161,21 @@ module RLayout
       @layout_expand = []
       self
     end
-    
+
     # def graphics_width_sum
     #   return 0 if @graphics.length == 0
     #   @sum = 0
     #   @graphics.each {|g| @sum+= g.width + @layout_space}
-    #   return @sum 
+    #   return @sum
     # end
-    
-    
-    def insert_token(token)      
+
+
+    def insert_token(token)
       if (graphics_width_sum + token.width + @layout_space) < (@width - @left_margin - @right_margin)
         # insert the token into the line
         token.parent_graphic = self
         @graphics << token
-        
+
         #TODO
         # change line height if taller token is inserted
         # Chack the size of the token, if this new one has bigger size than the height,
@@ -190,47 +190,24 @@ module RLayout
       end
     end
   end
-  
+
   class TextRun < Graphic
     attr_accessor :attrs, :space
     attr_accessor :font, :size, :rich_style, :horizontal
     attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
-    
+
     def initialize(options={})
       super
       @attrs = options[:atts]
-      
-      
+
+
       self
     end
-    
+
   end
-  
+
   # Token is very basic element of layout
   # in Text case it is word
   # Token can also be math element or image
-  
-  # class TextToken < Text 
-  #       
-  #   # keep attributes that are diffrent from paragraph only
-  #   attr_accessor :hide, :hypenated_head, :hypenated_middle, :hypenated_tail
-  #   def initialize(options={}, &block)
-  #     puts "init Rich TextToken"
-  #     super      
-  #     @klass = "TextToken"
-  #     @layout_expand = []
-  #     # @text_string  = options[:text_string]      
-  #     self
-  #   end
-  #   
-  #   def layout_length
-  #     @width
-  #   end
-  #       
-  #   #TODO
-  #   def hyphenate
-  #     
-  #   end    
-  # end
-  # 
+
 end

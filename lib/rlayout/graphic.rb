@@ -833,4 +833,14 @@ module RLayout
       self
     end
   end
+
+
+  class Path < Graphic
+    def initialize(options={})
+      super
+      self
+    end
+
+    
+  end
 end

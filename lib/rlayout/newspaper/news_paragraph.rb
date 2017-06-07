@@ -137,6 +137,7 @@ module RLayout
     # and do it recursively with split strings
     # and call create_text_tokens for regular string segmnet
     def create_tokens
+      puts __method__
       @atts = {}
       if RUBY_ENGINE == 'rubymotion'
         @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:text_size])
@@ -150,9 +151,14 @@ module RLayout
         end
         # #TODO
         # atts[NSKernAttributeName]  = text_tracking if text_tracking
-        @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
+        unless @para_style[:space_width]
+          @space_width = @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
+        end
         @para_style[:atts] = @atts
       else
+        unless @para_style[:space_width]
+          @space_width = @para_style[:space_width]  = @para_style[:text_size]/2
+        end
         # puts "@para_style:#{@para_style}"
       end
 
@@ -324,7 +330,6 @@ module RLayout
       h                           = {}
       h[:font]                    = "smSSMyungjoP-W30"
       h[:text_size]               = 9.2
-      h[:space_width]             = 4
       h[:text_color]              = "black"
       h[:fill_color]              = "white"
       h[:text_style]              = "plain"
@@ -340,22 +345,44 @@ module RLayout
       h[:single_emphasis]         = {stroke_sides: [0,1,0,1], stroke_thickness: 0.5}
 
       style = RLayout::StyleService.shared_style_service.current_style[@markup]
-      if @markup =='p'
-        style = NEWSPAPER_STYLE['본문명조']
-        style[:h_alignment] = style[:text_alignment]
-      elsif style.class == String
-        # this is when a style is refering to other style by name
-        style = RLayout::StyleService.shared_style_service.current_style[style]
-      end
+      if custom_styles = RLayout::StyleService.shared_style_service.custom_style
+        if @markup =='p'
+          style_hash = custom_styles['본문명조']
+          style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
 
-      if @markup =='h1'
-        style = NEWSPAPER_STYLE['기자명']
-        style[:h_alignment] = style[:text_alignment]
-      elsif style.class == String
-        # this is when a style is refering to other style by name
-        style = RLayout::StyleService.shared_style_service.current_style[style]
-      end
+        elsif style.class == String
+          # this is when a style is refering to other style by name
+          style = RLayout::StyleService.shared_style_service.current_style[style]
+        end
 
+        if @markup =='h1'
+          style_hash = custom_styles['기자명']
+          style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+        elsif style.class == String
+          # this is when a style is refering to other style by name
+          style = RLayout::StyleService.shared_style_service.current_style[style]
+        end
+      else
+        if @markup =='p'
+          style = NEWSPAPER_STYLE['본문명조']
+        elsif style.class == String
+          # this is when a style is refering to other style by name
+          style = RLayout::StyleService.shared_style_service.current_style[style]
+        end
+
+        if @markup =='h1'
+          style = NEWSPAPER_STYLE['기자명']
+        elsif style.class == String
+          # this is when a style is refering to other style by name
+          style = RLayout::StyleService.shared_style_service.current_style[style]
+        end
+      end
+      puts "before style[:space_width]:#{style[:space_width]}"
+      style[:space_width]    = style[:space_width]  if style[:space_width]
+      puts "after style[:space_width]:#{style[:space_width]}"
+
+      style[:text_tracking] = style[:tracking]    if style[:tracking]
+      style[:h_alignment]   = style[:alignment]   if style[:alignment]
       if style
         h.merge! style
       end

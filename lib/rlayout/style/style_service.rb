@@ -224,7 +224,9 @@ LIST_KIND     = %w[ordered_list ordered_list_item unordered_list unordered_list_
 module RLayout
   class StyleService
     attr_accessor :current_style, :default_style, :chapter_style, :news_style, :magazine_style, :quiz_item_style
+    attr_accessor :custom_style
     def initialize
+      @custom_style   = nil
       @current_style  = DEFAULT_STYLES
       @chapter_style  = CHAPTER_STYLES
       @chapter_style_path = "/Users/Shared/SoftwareLab/article_template/chapter_style.rb"

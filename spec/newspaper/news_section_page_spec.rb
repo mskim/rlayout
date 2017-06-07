@@ -16,4 +16,13 @@ describe 'creaet NewsArticleMaker with Image' do
     assert_equal 4, @page.number_of_stories
   end
 
+  it 'should should have ad' do
+    assert_equal true, @page.has_ad?
+    assert_equal  @article_path + "/ad/images/1.jpg", @page.ad_image_path
+  end
+
+  it 'should hace ad_type of 5단통' do
+    assert_equal  "5단통", @page.ad_type
+  end
+
 end
