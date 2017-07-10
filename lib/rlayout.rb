@@ -26,12 +26,9 @@ else
   require 'base64'
   require 'json'
   require 'hexapdf'
-  require 'xmlsimple'
-  require 'awesome_print'
 
   # require 'victor'
   # require 'xmlsimple'
-  require File.dirname(__FILE__) + '/rlayout/svg'
 
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
