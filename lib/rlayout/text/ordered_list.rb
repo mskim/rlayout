@@ -10,9 +10,9 @@ module RLayout
   # @list_style containes 
   # h[:list_font]               = h[:font]
   # h[:list_text_color]         = h[:text_color]
-  # h[:list_text_size]          = h[:text_size]
-  # h[:list_to_text_space]      = h[:text_size]*2 # space between num token and stating text
-  # h[:list_text_indent]        = h[:text_size]*4 # x to stating text, independent of num token
+  # h[:list_text_size]          = h[:font_size]
+  # h[:list_to_text_space]      = h[:font_size]*2 # space between num token and stating text
+  # h[:list_text_indent]        = h[:font_size]*4 # x to stating text, independent of num token
   #                                               # also sets the head indent of rest of lines
   #                                               # tab effect for all lines without tab 
   # h[:list_child_indent]       = h[:list_text_size]*4
@@ -98,7 +98,7 @@ module RLayout
       @head_indent        = @first_line_indent + @indent
       # puts the list style in @list_style
       # @list_style[:font]
-      # @list_style[:text_size]
+      # @list_style[:font_size]
       # @list_style[:text_color]
       # @list_style[:text_indent]
       

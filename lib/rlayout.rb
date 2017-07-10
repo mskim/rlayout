@@ -26,8 +26,12 @@ else
   require 'base64'
   require 'json'
   require 'hexapdf'
+  require 'xmlsimple'
+  require 'awesome_print'
+
   # require 'victor'
   # require 'xmlsimple'
+  require File.dirname(__FILE__) + '/rlayout/svg'
 
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
@@ -126,6 +130,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_box'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_maker'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_section_page'
+  require File.dirname(__FILE__) + '/rlayout/svg/canvas'
+  require File.dirname(__FILE__) + '/rlayout/svg/svg2pdf'
 
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/book_plan'

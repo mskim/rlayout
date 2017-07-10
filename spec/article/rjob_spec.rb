@@ -21,7 +21,7 @@ describe 'RJob with pgscript' do
     @jpg         = true
     RLayout::Document.new(pdf_path: "#{@pdf_path}") do
       page do
-        RLayout::Text.new(parent: self, text_string: "some_text", text_size: 12, font: "smGothicP-W70")
+        RLayout::Text.new(parent: self, text_string: "some_text", font_size: 12, font: "smGothicP-W70")
       end
       page
     end

@@ -4,11 +4,11 @@ module RLayout
   class LatexToken < Graphic
     
     attr_accessor :latex_string, :escaped_string, :math_file_path, :math_image
-    attr_accessor :math_lib_path, :math_latex_path, :text_size
+    attr_accessor :math_lib_path, :math_latex_path, :font_size
     
     def initialize(options={})
       @latex_string     = options[:latex_string]      
-      @text_size        = options.fetch(text_size, 10)
+      @font_size        = options.fetch(font_size, 10)
       #TODO
       # take care fo space char using Shellwords.escape
       

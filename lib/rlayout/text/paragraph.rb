@@ -270,9 +270,9 @@ module RLayout
     def create_tokens
       @atts = {}
       if RUBY_ENGINE == 'rubymotion'
-        @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:text_size])
+        @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:font_size])
         if @para_style[:text_color]
-          text_color    = RLayout::convert_to_nscolor(@para_style[:text_color]) unless (@para_style[:text_color]) == NSColor
+          text_color    = RLayout.convert_to_nscolor(@para_style[:text_color]) unless (@para_style[:text_color]) == NSColor
           @atts[NSForegroundColorAttributeName] = text_color
         end
         atts[NSKernAttributeName]             = text_tracking if text_tracking
@@ -554,7 +554,7 @@ module RLayout
     def make_para_style
       h                           = {}
       h[:font]                    = "smSSMyungjoP-W30"
-      h[:text_size]               = 10
+      h[:font_size]               = 10
       h[:space_width]             = 4
       h[:text_color]              = "black"
       h[:fill_color]              = "white"

@@ -2,7 +2,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'testing TitleText creation' do
   before do
-    text_options = {text_string: "Some Head Text Here!", text_size: 16, text_color: "brown", x:10, y: 10, width: 400, height: 80}
+    text_options = {text_string: "Some Head Text Here!", font_size: 16, text_color: "brown", x:10, y: 10, width: 400, height: 80}
     image_path = "/Users/mskim/demo_rjob/title_text/tree.jpg"
     options = { width: 500, height: 100, image_path: image_path, text_options: text_options}
     @tt = TitleText.new(options)

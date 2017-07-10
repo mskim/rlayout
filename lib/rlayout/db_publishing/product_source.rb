@@ -1,7 +1,7 @@
 
 # Variabble Printing Strategy
 # 1. Have a Rails Database App for mamaging items
-# 2. Generate PDF Cells for each item with template, 
+# 2. Generate PDF Cells for each item with template,
 #    we need to consider width to height ratio of final book column.
 # 3. Finally Layout pdf cells into a book
 
@@ -34,17 +34,17 @@ module RLayout
       layout_item
       self
     end
-    
+
     def layout_item
-      
+
     end
-    
+
     def self.from_template(template, options={})
       product_box = Container.new(template)
       product_box.substibute_variables(options)
       product_box
     end
-    
+
     def self.samples_of(number)
       ad = []
       number.times do
@@ -52,26 +52,25 @@ module RLayout
       end
       ad
     end
-    
+
     def self.sample
       proudct = ProductBox.new(line_width: 2, line_color: 'gray') do
-        @company = text(text_string: ramdom_text, fill_color: random_color, line_with: 2, line_color: 'red')
-        @phone   = text(text_string: ramdom_text, fill_color: random_color)
-        @copy1   = text(text_string: ramdom_text, fill_color: random_color, line_with: 2, line_color: 'red')
-        @copy2   = text(text_string: ramdom_text, fill_color: random_color, line_with: 2, line_color: 'red')
+        @company = text(text_string: ramdom_text, fill_color: RLayout.random_color, line_with: 2, line_color: 'red')
+        @phone   = text(text_string: ramdom_text, fill_color: RLayout.random_color)
+        @copy1   = text(text_string: ramdom_text, fill_color: RLayout.random_color, line_with: 2, line_color: 'red')
+        @copy2   = text(text_string: ramdom_text, fill_color: RLayout.random_color, line_with: 2, line_color: 'red')
       end
       proudct.relayout!
       proudct
     end
-        
+
     def layout_content(room)
-      
+
     end
-    
+
     def is_breakable?
       false
     end
   end
-  
-end
 
+end

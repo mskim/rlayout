@@ -13,7 +13,7 @@ module RLayout
   # If all body text starts at even numbered grids, this will horozontally alignment body text across the columns.
 
   # body_line_height
-  # line_height = body_style[:text_size] # default line_height, set to text_size*1.3
+  # line_height = body_style[:font_size] # default line_height, set to font_size*1.3
   # @body_line_height = (line_height + body_style[:text_line_spacing])
 
 
@@ -42,8 +42,8 @@ module RLayout
         @current_style = RLayout::StyleService.shared_style_service.current_style
       end
       body_style = @current_style['p']
-      # line_height = body_style[:text_size]*1.3 # default line_height, set to text_size*1.3
-      line_height = body_style[:text_size] # default line_height, set to text_size*1.3
+      # line_height = body_style[:font_size]*1.3 # default line_height, set to font_size*1.3
+      line_height = body_style[:font_size] # default line_height, set to font_size*1.3
       @body_line_height = (line_height + body_style[:text_line_spacing])
       @current_position = @top_margin + @top_inset
       # @room = text_rect[3] - @current_position

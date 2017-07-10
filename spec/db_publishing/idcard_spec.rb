@@ -22,10 +22,10 @@ describe 'create idcard from hash' do
           :image_path => "/Users/mskim/idcard/back_side.pdf",
           :left_margin => 0,
           :graphics=>[
-            {:klass=>"Text", :text_string=>'김민수', :text_size=>9, :x=>53, :y=>60, :width=>70, :height=>10, :layout_expand=>nil},
-            {:klass=>"Text", :text_string=>'2012/3/4', :text_size=>9, :x=>53, :y=>72, :width=>70, :height=>10, :layout_expand=>nil},
-            {:klass=>"Text", :text_string=>'1959/1/29', :text_size=>9, :x=>53, :y=>82, :width=>70, :height=>10, :layout_expand=>nil},
-            {:klass=>"Text", :text_string=>'2014/3', :text_size=>9, :x=>53, :y=>92, :width=>70, :height=>10, :layout_expand=>nil},
+            {:klass=>"Text", :text_string=>'김민수', :font_size=>9, :x=>53, :y=>60, :width=>70, :height=>10, :layout_expand=>nil},
+            {:klass=>"Text", :text_string=>'2012/3/4', :font_size=>9, :x=>53, :y=>72, :width=>70, :height=>10, :layout_expand=>nil},
+            {:klass=>"Text", :text_string=>'1959/1/29', :font_size=>9, :x=>53, :y=>82, :width=>70, :height=>10, :layout_expand=>nil},
+            {:klass=>"Text", :text_string=>'2014/3', :font_size=>9, :x=>53, :y=>92, :width=>70, :height=>10, :layout_expand=>nil},
           ]
           
         },

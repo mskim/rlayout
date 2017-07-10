@@ -137,12 +137,11 @@ module RLayout
     # and do it recursively with split strings
     # and call create_text_tokens for regular string segmnet
     def create_tokens
-      puts __method__
       @atts = {}
       if RUBY_ENGINE == 'rubymotion'
-        @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:text_size])
+        @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:font_size])
         if @para_style[:text_color]
-          text_color    = RLayout::convert_to_nscolor(@para_style[:text_color]) unless (@para_style[:text_color]) == NSColor
+          text_color    = RLayout.convert_to_nscolor(@para_style[:text_color]) unless (@para_style[:text_color]) == NSColor
           @atts[NSForegroundColorAttributeName] = text_color
         end
         if @para_style[:text_tracking] != 0
@@ -157,7 +156,7 @@ module RLayout
         @para_style[:atts] = @atts
       else
         unless @para_style[:space_width]
-          @space_width = @para_style[:space_width]  = @para_style[:text_size]/2
+          @space_width = @para_style[:space_width]  = @para_style[:font_size]/2
         end
         # puts "@para_style:#{@para_style}"
       end
@@ -329,7 +328,7 @@ module RLayout
     def make_para_style
       h                           = {}
       h[:font]                    = "smSSMyungjoP-W30"
-      h[:text_size]               = 9.2
+      h[:font_size]               = 9.2
       h[:text_color]              = "black"
       h[:fill_color]              = "white"
       h[:text_style]              = "plain"
@@ -347,7 +346,7 @@ module RLayout
       style = RLayout::StyleService.shared_style_service.current_style[@markup]
       if custom_styles = RLayout::StyleService.shared_style_service.custom_style
         if @markup =='p'
-          style_hash = custom_styles['본문명조']
+          style_hash = custom_styles['body']
           style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
 
         elsif style.class == String
@@ -356,7 +355,7 @@ module RLayout
         end
 
         if @markup =='h1'
-          style_hash = custom_styles['기자명']
+          style_hash = custom_styles['reporter']
           style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
         elsif style.class == String
           # this is when a style is refering to other style by name
@@ -364,22 +363,26 @@ module RLayout
         end
       else
         if @markup =='p'
-          style = NEWSPAPER_STYLE['본문명조']
+          style = NEWSPAPER_STYLE['body']
+          style = Hash[style.map{ |k, v| [k.to_sym, v] }]
+
         elsif style.class == String
           # this is when a style is refering to other style by name
           style = RLayout::StyleService.shared_style_service.current_style[style]
         end
 
         if @markup =='h1'
-          style = NEWSPAPER_STYLE['기자명']
+          style = NEWSPAPER_STYLE['reporter']
+          style = Hash[style.map{ |k, v| [k.to_sym, v] }]
+
         elsif style.class == String
           # this is when a style is refering to other style by name
           style = RLayout::StyleService.shared_style_service.current_style[style]
         end
       end
-      puts "before style[:space_width]:#{style[:space_width]}"
+      # puts "before style[:space_width]:#{style[:space_width]}"
       style[:space_width]    = style[:space_width]  if style[:space_width]
-      puts "after style[:space_width]:#{style[:space_width]}"
+      # puts "after style[:space_width]:#{style[:space_width]}"
 
       style[:text_tracking] = style[:tracking]    if style[:tracking]
       style[:h_alignment]   = style[:alignment]   if style[:alignment]

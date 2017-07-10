@@ -27,20 +27,30 @@ module RLayout
       @is_front_page    = options.fetch(:is_front_page, false)
       @top_story        = options[:top_story]     if options[:top_story]
       @top_position     = options[:top_position]  if options[:top_position]
-#
       # options = transform_keys_to_symbols(options)
       @height_in_lines  = 0
 
       if @top_position && @is_front_page
-        puts "@top_position && @is_front_page:#{@top_position && @is_front_page}"
         @top_position_filler_object = top_position_filler(NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES)
         @height_in_lines += NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES
       elsif @top_position
         @top_position_filler_object = top_position_filler(NEWS_ARTICLE_HEADING_SPACE_IN_LINES)
         @height_in_lines += NEWS_ARTICLE_HEADING_SPACE_IN_LINES
       end
-
       if options['subject_head']
+        if @column_count > 5
+          options = NEWSPAPER_STYLE['subject_head_L']
+          options = Hash[options.map{ |k, v| [k.to_sym, v] }]
+
+        elsif @column_count > 3
+          options = NEWSPAPER_STYLE['subject_head_M']
+          options = Hash[options.map{ |k, v| [k.to_sym, v] }]
+
+        else
+          options = NEWSPAPER_STYLE['subject_head_S']
+          options = Hash[options.map{ |k, v| [k.to_sym, v] }]
+
+        end
         @subject_head_object = subject_head(options)
         @height_in_lines +=@subject_head_object.height_in_lines    unless @title_object.nil?
         # if when we have subject_head, reduce heading_columns size by 1
@@ -51,7 +61,7 @@ module RLayout
       if options['title']
         if @top_story
           # when strou is top_stroy
-          @title_object = top_title(options)
+          @title_object = main_title(options)
           @title_object.adjust_height_as_height_in_lines
         elsif @subject_head_object
           # when story has subject_head
@@ -77,14 +87,15 @@ module RLayout
     end
 
     def top_position_filler(line_count, options={})
-      puts "line_count:#{line_count}"
       top_postion_height = @body_line_height*line_count
       Graphic.new(parent:self, width: @width, height:top_postion_height)
     end
 
     def subject_head(options={})
-      subject_head                  = '문패'
-      subject_atts                  = NEWSPAPER_STYLE[subject_head]
+      # subject_head                  = '문패'
+      subject_atts                  = NEWSPAPER_STYLE['subject_head_M']
+      subject_atts                  = Hash[subject_atts.map{ |k, v| [k.to_sym, v] }]
+
       subject_atts[:text_string]    = options['subject_head']
       subject_atts[:body_line_height] = @body_line_height
       subject_atts[:width]                  = @width
@@ -109,11 +120,10 @@ module RLayout
       title(push_title_to_right)
     end
 
-    def top_title(options={})
-      top_title_46     = '탑제목'
-      atts = NEWSPAPER_STYLE[top_title_46]
-      # atts.merge(options)
-      # puts "atts:#{atts}"
+    def main_title(options={})
+      atts = NEWSPAPER_STYLE['title_main']
+      atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
+      atts.merge(options)
       atts[:text_string]          = options['title']
       atts[:body_line_height]     = @body_line_height
       atts[:width]                = @width
@@ -127,19 +137,27 @@ module RLayout
     end
 
     def title(options={})
-      title_4_5     = '4-5단제목'
-      title_3       = '3단제목'
-      title_2       = '2단제목'
-      title_1       = '1단제목'
+      # title_4_5     = '제목_4-5단'
+      # title_3       = '제목_3단'
+      # title_2       = '제목_2단'
+      # title_1       = '제목_1단'
       case @heading_columns
       when 4,5,6,7
-        title_atts = NEWSPAPER_STYLE[title_4_5]
+        title_atts = NEWSPAPER_STYLE['title_4_5']
+        title_atts = Hash[title_atts.map{ |k, v| [k.to_sym, v] }]
+
       when 3
-        title_atts = NEWSPAPER_STYLE[title_3]
+        title_atts = NEWSPAPER_STYLE['title_3']
+        title_atts = Hash[title_atts.map{ |k, v| [k.to_sym, v] }]
+
       when 2
-        title_atts = NEWSPAPER_STYLE[title_2]
+        title_atts = NEWSPAPER_STYLE['title_2']
+        title_atts = Hash[title_atts.map{ |k, v| [k.to_sym, v] }]
+
       when 1
-        title_atts = NEWSPAPER_STYLE[title_1]
+        title_atts = NEWSPAPER_STYLE['title_1']
+        title_atts = Hash[title_atts.map{ |k, v| [k.to_sym, v] }]
+
       end
       title_atts[:text_string]          = options['title']
       title_atts[:body_line_height]     = @body_line_height
@@ -154,8 +172,9 @@ module RLayout
     end
 
     def top_subtitle(options={})
-      top_subtitle   = '탑부제'
-      atts = NEWSPAPER_STYLE[top_subtitle]
+      atts = NEWSPAPER_STYLE['subtitle_main']
+      atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
+
       atts[:text_string]          = options['subtitle']
       atts[:body_line_height]     = @body_line_height
       atts[:width]                  = @width
@@ -170,13 +189,12 @@ module RLayout
     end
 
     def subtitle(options={})
-      subtitle_15   = '부제15'
-      subtitle_13   = '부제13'
-      #TODO
       if @heading_columns >= 3
-        atts = NEWSPAPER_STYLE[subtitle_15]
+        atts = NEWSPAPER_STYLE['subtitle_M']
+        atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       else
-        atts = NEWSPAPER_STYLE[subtitle_13]
+        atts = NEWSPAPER_STYLE['subtitle_S']
+        atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       end
       atts[:text_string]            = options['subtitle']
       atts[:body_line_height]       = @body_line_height

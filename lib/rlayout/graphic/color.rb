@@ -22,30 +22,22 @@ module RLayout
         raise ArgumentError
     end
     if colors.size == 3
-      rgb_color(colors[0], colors[1], colors[2])
+      RLayout.rgb_color(colors[0], colors[1], colors[2])
     elsif colors.size == 4
-      rgba_color(colors[1], colors[2], colors[3], colors[0])
+      RLayout.rgba_color(colors[1], colors[2], colors[3], colors[0])
     else
       raise ArgumentError
     end
   end
 
 
-  # color2rgb('lightGray)
-  # => [0, 61, 61]
-  # color2rgb('orange)
-  # => [0, 250, 80]
   def color2rgb(name)
     unless COLOR_LIST[upcase_first_letter(name)]
-      return hex2rgb(COLOR_LIST['Black'])
+      return RLayout.hex2rgb(COLOR_LIST['Black'])
     end
-    hex2rgb(COLOR_LIST[upcase_first_letter(name)])
+    RLayout.hex2rgb(COLOR_LIST[upcase_first_letter(name)])
   end
 
-  # color2rgb('lightGray)
-  # => #D3D3D3
-  # color2rgb('orange)
-  # => #FFA500
   def color2hex(name)
     unless COLOR_LIST[upcase_first_letter(name)]
       return COLOR_LIST['Black']
@@ -57,10 +49,6 @@ module RLayout
     rgb.map { |e| "%02x" % e }.join
   end
 
-  # Converts hex string into RGB value array:
-  #  hex2rgb("ff7808")
-  #  => [255, 120, 8]
-  #
   def hex2rgb(hex)
     r,g,b = hex[0..1], hex[2..3], hex[4..5]
     [r,g,b].map { |e| e.to_i(16) }
@@ -72,7 +60,7 @@ module RLayout
   end
 
   def convert_to_nscolor(color)
-    return color_from_string(color) if color.class == String
+    return RLayout.color_from_string(color) if color.class == String
     color
   end
 
@@ -87,40 +75,34 @@ module RLayout
     end
 
     if COLOR_NAMES.include?(color_string)
-      return color_from_name(color_string)
+      return RLayout.color_from_name(color_string)
     end
 
     if color_string =~ /^#/
       string = color_string[1..5]
       if RUBY_ENGINE == "robymotion"
-        color_values = hex2rgb(string)
-        color_values.map!{|v| v/1000.0}
+        color_values = RLayout.hex2rgb(string)
+        color_values.map!{|v| v/100.0}
         return NSColor.colorWithCalibratedRed(color_values[0], green:color_values[1], blue:color_values[2], alpha:1.0)
       end
-      return color_from_hex(color_string)
+      return RLayout.color_from_hex(color_string)
     end
-    # TODO
-    # elsif color_string=~/^#   for hex color
-    # RGB=
-    ### RGB Colors
-    #	"RGB=100,60,0" "RGB=100,60,0"
-    # rgb(100,60,0)
-    ### CMYK Colors
-    #    "CMYK=100,60,0,20"
-    # cmyk(100,60,0,20)
+
     color_array=color_string.split("=")
     color_kind=color_array[0]
     color_values=color_array[1].split(",")
     if color_kind=~/RGB/
         @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
     elsif color_kind=~/CMYK/
+        color_values.map!{|v| v.to_f/100.0} if color_values[0].to_i < 2
+        color_values << 1.0 if color_values.length == 4
         @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
     elsif color_kind=~/NSCalibratedWhiteColorSpace/
         @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
     elsif color_kind=~/NSCalibratedBlackColorSpace/
         @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)
     else
-        @color = color_from_name(color_string)
+        @color = RLayout.color_from_name(color_string)
     end
     @color
   end
@@ -163,7 +145,7 @@ module RLayout
   end
 
   def rgb_color(r,g,b)
-    rgba_color(r,g,b,1)
+    RLayout.rgba_color(r,g,b,1)
   end
 
   # @return [UIcolor]
@@ -173,13 +155,9 @@ module RLayout
       a = a / 255.0
     end
     if RUBY_ENGINE =="rubymotion"
-      puts "creating NSColor+++++++++"
       NSColor.colorWithDeviceRed(r, green: g, blue: b, alpha: a)
     else
       "rgba(#{r},#{g},#{b},#{a})"
     end
   end
 end
-# puts capitalize_first('lightGray')
-# puts RLayout::color2hex('lightGray')
-# puts RLayout::random_color

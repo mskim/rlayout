@@ -19,7 +19,7 @@ module RLayout
         s+= "></rect>\n"
 
         if @text_string !=nil && @text_string != ""
-          s += "<text font-size=\"#{@text_size}\" x=\"#{@x}\" y=\"#{@y}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"
+          s += "<text font-size=\"#{@font_size}\" x=\"#{@x}\" y=\"#{@y}\" fill=\"#{@text_color}\">#{@text_string}</text>\n"
         end
         s
     end

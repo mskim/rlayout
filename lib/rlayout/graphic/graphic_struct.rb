@@ -29,16 +29,8 @@ module RLayout
       h
     end
 
-    def color2hex(name)
-      return name.sub("#", "") if name =~/^#/
-      unless COLOR_LIST[upcase_first_letter(name)]
-        return COLOR_LIST['Black']
-      end
-      COLOR_LIST[upcase_first_letter(name)].sub("#", "")
-    end
-
     def to_pdf(canvas)
-      canvas.fill_color= color2hex(color)
+      canvas.fill_color= RLayout.color2hex(color)
     end
   end
 

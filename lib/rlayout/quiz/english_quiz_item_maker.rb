@@ -36,7 +36,7 @@ SAMPLE_LAYOUT =<<LAYOUT
   num_style: {
     q_num_type: "numeric",
     font: 'Helvetica',
-    text_size: 14,
+    font_size: 14,
     text_color: 'brown',
     chice_num_type: 'circled_alphabet', 
     text_vertical_alignment: 'top',
@@ -49,7 +49,7 @@ SAMPLE_LAYOUT =<<LAYOUT
   q_style: {    
     fill_color: 'white',
     font: 'Helvetica',
-    text_size: 14,
+    font_size: 14,
     text_color: 'black',
     text_alignment: 'left',
     text_vertical_alignment: 'top',
@@ -63,7 +63,7 @@ SAMPLE_LAYOUT =<<LAYOUT
   
   choice_style: {
     font: 'Times',
-    text_size: 14,
+    font_size: 14,
     text_color: 'black',
     text_head_indent: 0,
     text_alignment: 'left',
@@ -80,7 +80,7 @@ SAMPLE_LAYOUT =<<LAYOUT
   column_leader_array: [false,true,false,true],
   table_head_style: {
     font: 'Helvetica',
-    text_size: 14,
+    font_size: 14,
     text_color: 'black',
     text_alignment: 'center',
     text_vertical_alignment: 'top',
@@ -89,7 +89,7 @@ SAMPLE_LAYOUT =<<LAYOUT
   
   table_body_style: {
     font: 'Times',
-    text_size: 14,
+    font_size: 14,
     text_color: 'black',
     text_head_indent: 0,
     text_alignment: 'left',

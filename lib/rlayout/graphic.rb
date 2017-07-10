@@ -159,7 +159,7 @@ module RLayout
 
     def body_height
       h = current_style['p']
-      h[:text_size] + h[:text_line_spacing]
+      h[:font_size] + h[:text_line_spacing]
     end
 
     def is_breakable?
@@ -315,13 +315,13 @@ module RLayout
 
     def self.random_graphic_atts
       atts = {}
-      atts[:fill_color] = random_color
+      atts[:fill_color] = RLayout.random_color
       atts[:x]          = Random.new.rand(0..600)
       atts[:y]          = Random.new.rand(0..800)
       atts[:width]      = Random.new.rand(10..200)
       atts[:height]     = Random.new.rand(10..200)
       atts[:line_width] = Random.new.rand(0..10)
-      atts[:line_color] = random_color
+      atts[:line_color] = RLayout.random_color
       atts
     end
 
@@ -566,81 +566,6 @@ module RLayout
       path
     end
 
-
-    def self.color_from_name(name)
-      case name
-      when "black"
-        return NSColor.blackColor
-      when "blue"
-        return NSColor.blueColor
-      when "brown"
-        return NSColor.brownColor
-      when "clear"
-        return NSColor.clearColor
-      when "cyan"
-        return NSColor.cyanColor
-      when "dark_gray", "darkGray"
-        return NSColor.darkGrayColor
-      when "gray"
-        return NSColor.grayColor
-      when "green"
-        return NSColor.greenColor
-      when "light_gray", "lightGray"
-        return NSColor.lightGrayColor
-      when "magenta"
-        return NSColor.magentaColor
-      when "orange"
-        return NSColor.orangeColor
-      when "purple"
-        return NSColor.purpleColor
-      when "red"
-        return NSColor.redColor
-      when "white"
-        return NSColor.whiteColor
-      when "yellow"
-        return NSColor.yellowColor
-      else
-        return NSColor.whiteColor
-      end
-    end
-
-    def self.color_from_string(color_string)
-      if color_string == nil
-        return NSColor.whiteColor
-      end
-
-      if color_string==""
-        return NSColor.whiteColor
-      end
-
-      if COLOR_NAMES.include?(color_string)
-        return self.color_from_name(color_string)
-      end
-
-      if color_string =~ /^#/
-        return color_from_hex(color_string)
-      end
-
-      # TODO
-      # elsif color_string=~/^#   for hex color
-
-      color_array=color_string.split("=")
-      color_kind=color_array[0]
-      color_values=color_array[1].split(",")
-      if color_kind=~/RGB/
-          @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
-      elsif color_kind=~/CMYK/
-          @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
-      elsif color_kind=~/NSCalibratedWhiteColorSpace/
-          @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
-      elsif color_kind=~/NSCalibratedBlackColorSpace/
-          @color = NSColor.colorWithCalibratedBlack(color_values[0].to_f, alpha:color_values[1].to_f)
-      else
-          @color = self.color_from_name(color_string)
-      end
-      @color
-    end
-
     def fit_text_to_box
       @text_layout_manager.fit_text_to_box  if @text_layout_manager
     end
@@ -683,11 +608,11 @@ module RLayout
       end
     end
 
-    def text_size
+    def font_size
       unless @text_layout_manager
         return 16.0
       else
-        @text_layout_manager.text_size
+        @text_layout_manager.font_size
       end
     end
 
@@ -698,7 +623,7 @@ module RLayout
 
     def to_pgscript
       if text_string && text_string.length > 0
-        variables = "\"#{text_string}\", text_size: #{text_size}, x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}"
+        variables = "\"#{text_string}\", font_size: #{font_size}, x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}"
         #TODO
         # variables += ", #{@text_color}" unless @text_color == "black"
         variables += ", tag: \"#{@tag}\"" if @tag
@@ -720,7 +645,7 @@ module RLayout
   class Quote < Text
     def initialize(options={})
       options[:text_string] = "“ #{options[:text_string]} ”" if options[:text_string]
-      options[:text_size]   = 24 unless options[:text_size]
+      options[:font_size]   = 24 unless options[:font_size]
       super
       self
     end
@@ -836,11 +761,15 @@ module RLayout
 
 
   class Path < Graphic
+    attr_accessor :d
+
     def initialize(options={})
       super
       self
     end
 
     
+
+
   end
 end

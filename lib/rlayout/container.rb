@@ -32,6 +32,7 @@ module RLayout
 
       if self.class == Container
         if block
+          puts block
           instance_eval(&block)
         end
       end
@@ -218,9 +219,9 @@ module RLayout
 
     def self.sample
       ad = AdBox.new(nil) do
-        rect(fill_color: random_color)
-        rect(fill_color: random_color)
-        rect(fill_color: random_color)
+        rect(fill_color: RLayout.random_color)
+        rect(fill_color: RLayout.random_color)
+        rect(fill_color: RLayout.random_color)
       end
       ad
     end

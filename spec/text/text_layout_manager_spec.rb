@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe 'text_string_array and text_atts_array' do
   before do
     @text_string_array  = ["This is a", "String"]
-    @text_atts_array    = [{text_size:24, text_color: "red"}, {text_size:16, text_color: "black"} ]
+    @text_atts_array    = [{font_size:24, text_color: "red"}, {font_size:16, text_color: "black"} ]
     @text               = Text.new(text_string_array: @text_string_array, text_atts_array: @text_atts_array)
 
   end
@@ -18,7 +18,7 @@ describe 'text overflow' do
     options = {
       width: 100,
       height: 50,
-      text_size: 12,
+      font_size: 12,
       font: 'Times',
       text_line_spacing: 10,
       text_alignment: 'justified',
@@ -48,7 +48,7 @@ end
 describe 'dropcap' do
   before do
     drop_cap_options = {
-      text_size: 12,
+      font_size: 12,
       font: 'Times',
       text_line_spacing: 10,
       text_alignment: 'justified',

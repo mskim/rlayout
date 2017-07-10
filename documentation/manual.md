@@ -43,7 +43,7 @@ default value is 1 for all
 ### Text Attributes
 - text_string
 - font
-- text_size
+- font_size
 - text_color
 - text_alignment
 - text_head_indent
@@ -51,8 +51,8 @@ default value is 1 for all
 - text_tail_indent
 
 #### PageScript
-	text("this is a text.", font: "Times", text_size: 12)
-	text("this is a text.", font: "Times", text_size: 12, text_alignment: "center")
+	text("this is a text.", font: "Times", font_size: 12)
+	text("this is a text.", font: "Times", font_size: 12, text_alignment: "center")
 	label("T: 02) 446-6688.", label_text_color: "gray")
 
 ### Image Attributes

@@ -137,10 +137,10 @@ module RLayout
 
 DEFAULT_TABLE_STYLE = {
     :head_row_atts   => { row_type: "head_row", fill_color: 'gray', stroke_sides: [1,1,1,1]},
-    :head_cell_atts  => { fill_color: "clear", text_color: 'white', font: "Helvetica", text_size: 12.0, stroke_sides: [1,0,1,0]},
+    :head_cell_atts  => { fill_color: "clear", text_color: 'white', font: "Helvetica", font_size: 12.0, stroke_sides: [1,0,1,0]},
     :body_row_atts   => { row_type: "body_row", fill_color: "white", stroke_sides: [0,1,0,1]},
-    :body_cell_atts  => { font: "smSSMyungjoP-W35", text_size: 12.0, stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
-    :category_atts   => { font: "smSSMyungjoP-W35", text_size: 12.0, stroke_sides: [1,1,1,1]},
+    :body_cell_atts  => { font: "smSSMyungjoP-W35", font_size: 12.0, stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
+    :category_atts   => { font: "smSSMyungjoP-W35", font_size: 12.0, stroke_sides: [1,1,1,1]},
     :category_colors => [["CMYK=0.1,0,0,0,1", "CMYK=0.05,0,0,0,1"],["CMYK=0,0.1,0,0,1", "CMYK=0,0.05,0,0,1"],["CMYK=0,0,0.1,0,1", "CMYK=0,0,0.05,0,1"]]
 }
   
@@ -430,7 +430,7 @@ DEFAULT_TABLE_STYLE = {
       @cell_widths        = []
       @row_data.each_with_index do |cell_text, i|
         cell_atts[:text_string]   = cell_text
-        # cell_atts[:text_size]     = 9.0
+        # cell_atts[:font_size]     = 9.0
         if options[:column_width]
           cell_atts[:layout_length] = options[:column_width][i] 
         else

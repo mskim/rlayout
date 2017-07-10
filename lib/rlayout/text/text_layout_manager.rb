@@ -91,7 +91,7 @@ module RLayout
   class TextLayoutManager
     attr_accessor :owner_graphic
     attr_accessor :text_direction, :text_markup
-    attr_accessor :line_count, :text_size, :linked, :text_line_spacing
+    attr_accessor :line_count, :font_size, :linked, :text_line_spacing
     attr_accessor :text_alignment, :text_vertical_alignment, :text_vertical_offset
     attr_accessor :drop_lines, :drop_char, :drop_char_width, :drop_char_height
     attr_accessor :text_fit_type, :text_overflow, :overflow_line_count, :text_underflow
@@ -103,8 +103,8 @@ module RLayout
       @text_fit_type  = @owner_graphic.text_fit_type if @owner_graphic
       @text_direction = options.fetch(:text_direction, 'left_to_right') # top_to_bottom for Japanese
       @text_vertical_alignment = options.fetch(:text_vertical_alignment, "center")
-      @text_size      = options[:text_size] || 16
-      @text_line_spacing = options[:text_line_spacing] || 0 #@text_size*0.5
+      @font_size      = options[:font_size] || 16
+      @text_line_spacing = options[:text_line_spacing] || 0 #@font_size*0.5
       @att_string     = NSTextStorage.alloc.initWithAttributedString(make_att_string_from_option(options))
       @layout_manager = NSLayoutManager.alloc.init
       @att_string.addLayoutManager @layout_manager
@@ -222,7 +222,7 @@ module RLayout
       h[:text_markup]   = @text_markup
       h[:text_direction]= @text_direction
       h[:text_string]   = @att_string.string
-      h[:text_size]     = @text_size
+      h[:font_size]     = @font_size
       h[:text_line_spacing] = @text_line_spacing
       h[:text_fit_type] = @text_fit_type
       h[:att_string]    = att_string_to_hash(@att_string)
@@ -231,13 +231,13 @@ module RLayout
     end
 
     def make_atts
-      @text_color = RLayout::convert_to_nscolor(@text_color)    unless @text_color.class == NSColor
+      @text_color = RLayout.convert_to_nscolor(@text_color)    unless @text_color.class == NSColor
       atts={}
-      atts[NSFontAttributeName]             = NSFont.fontWithName(@font, size:@text_size)
+      atts[NSFontAttributeName]             = NSFont.fontWithName(@font, size:@font_size)
       atts[NSForegroundColorAttributeName]  = @text_color
       if @guguri_width && @guguri_width < 0
         atts[NSStrokeWidthAttributeName] = atts_hash[:guguri_width] #0, -2,-5,-10
-        atts[NSStrokeColorAttributeName]=color_from_string(attributes[:guguri_color])
+        atts[NSStrokeColorAttributeName] = RLayout.color_from_string(attributes[:guguri_color])
         #atts[NSStrokeColorAttributeName]=Graphic.color_from_string(attributes[:guguri_color])
       end
       if @text_tracking
@@ -323,7 +323,7 @@ module RLayout
       end
       @text_string                   = options.fetch(:text_string, "")
       @font                          = options.fetch(:font, "Times")
-      @text_size                     = options.fetch(:text_size, 16)
+      @font_size                     = options.fetch(:font_size, 16)
       @text_color                    = options.fetch(:text_color, "black")
       @text_line_spacing             = options.fetch(:text_line_spacing, 0)
       @text_fit_type                 = options.fetch(:text_fit_type, 0)
@@ -353,13 +353,13 @@ module RLayout
     end
 
     def fontSizedForAreaSize
-      text_size       = @att_string.size
+      font_size       = @att_string.size
       # container_size  = NSMakeSize(@owner_graphic.text_rect[2], @owner_graphic.text_rect[3])
       container_size  = @text_container.containerSize
       ptr = Pointer.new(NSRange.type)
       ptr[0]= NSMakeRange(0,0)
       current_font    = @att_string.attributesAtIndex(0, effectiveRange:ptr)[NSFontAttributeName]
-      scale           = scaleToAspectFit(text_size, container_size)
+      scale           = scaleToAspectFit(font_size, container_size)
       NSFont.fontWithDescriptor(current_font.fontDescriptor, size:scale * current_font.pointSize)
     end
 
@@ -388,12 +388,12 @@ module RLayout
     # @att_string: att_string without dropped char
     # @frame:        CTFrame with rest of lines
     def layout_drop_cap_lines(options)
-      @drop_char_height      = @drop_lines*(@text_size + @text_line_spacing)
+      @drop_char_height      = @drop_lines*(@font_size + @text_line_spacing)
       proposed_width    = @owner_graphic.width
       proposed_width    = options[:proposed_width] if options[:proposed_width]
       drop_font    = options.fetch(:drop_font, 'Helvetica')
       drop_text_color   = options.fetch(:drop_text_color, @text_color)
-      drop_text_color   = RLayout::convert_to_nscolor(drop_text_color)    unless drop_text_color.class == NSColor
+      drop_text_color   = RLayout.convert_to_nscolor(drop_text_color)    unless drop_text_color.class == NSColor
       atts={}
       @drop_char_text_size                  = @drop_char_height
       atts[NSFontAttributeName]             = NSFont.fontWithName(drop_font, size:@drop_char_text_size)
@@ -415,7 +415,7 @@ module RLayout
         CGPathAddRect(@proposed_path, nil, bounds)
         @frame            = CTFramesetterCreateFrame(@frame_setter,CFRangeMake(0, 0), @proposed_path, nil)
         @line_count       = CTFrameGetLines(@frame).count
-        used_size_height  = @line_count*(@text_size + @text_line_spacing) + @drop_char_height
+        used_size_height  = @line_count*(@font_size + @text_line_spacing) + @drop_char_height
         # set text_overflow and under flow
         @owner_graphic.adjust_size_with_text_height_change(proposed_width, used_size_height)
       else
@@ -424,11 +424,11 @@ module RLayout
     end
 
     def text_height
-      @line_count*(@text_size + @text_line_spacing)
+      @line_count*(@font_size + @text_line_spacing)
     end
 
     def text_line_height
-      @text_size + @text_line_spacing
+      @font_size + @text_line_spacing
     end
 
     # split att_string into two at overflowing position

@@ -50,7 +50,7 @@
 #   :num_style => {
 #     q_num_type: "numeric",
 #     font: 'Helvetica',
-#     text_size: 20,
+#     font_size: 20,
 #     text_color: 'black',
 #     chice_num_type: 'circled_alphabet'
 #   },
@@ -58,7 +58,7 @@
 #   #plain, circled, reverse_circled,
 #   :q_style => {
 #     font: 'Helvetica',
-#     text_size: 20,
+#     font_size: 20,
 #     text_color: 'black',
 #     text_alignment: 'left',
 #     text_vertical_alignment: 'top',
@@ -70,7 +70,7 @@
 #
 #   :choice_style =>{
 #     font: 'Times',
-#     text_size: 16,
+#     font_size: 16,
 #     text_color: 'black',
 #     text_head_indent: 16,
 #     text_alignment: 'left',

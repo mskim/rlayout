@@ -12,7 +12,7 @@
 #   it 'shuld have attribute of para_string' do
 #     @para.para_string.must_equal "One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen"
 #     @para.markup.must_equal "p"
-#     @para.text_size.must_equal 12
+#     @para.font_size.must_equal 12
 #     @para.font.must_equal "Times"
 #     @para.text_color.must_equal "black"
 #   end

@@ -117,6 +117,31 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_7_5
+	- refactor color from all over the place into one module function
+	- graphic class Line draw
+	- add path
+
+	- support box_style_attributes hash
+	- add SVGView class as base
+		SvgText, SvgRect, SvgLine, SvgPath, SvgPolygon, SvgImage, SvgG
+	- GText, GImage, Container
+
+
+2017_7_1
+	- change text_size to font_size to make it work with other naming convention
+	- fix NewsArticleBox for correct gutter and divider
+	- fix NewsSectionPage for correct gutter and divider
+	- fix TextStyle string key to symbol key check
+	-
+2017_7_1
+	- make newspaper text_style to use custom style by publication
+			when custom_style == true and publication name is given
+			on the command line type
+			"newsman article . -custom=#{publication.name}"
+
+	- read styles from /Users/Shared/newspaper_text_style/#{publication_name}.yml
+
 2017_6_1
 	- add custom_style to load
 		- if options[:custom_style]
@@ -304,7 +329,7 @@ TODO List
 	- fix stroke drawing with extra origin offset value bug
 
 2016 11 2
-	- fix label text_size*0.8 bug
+	- fix label font_size*0.8 bug
 
 2016 10 23
 	- fix bug in MRI RFont String width calculation bug
@@ -403,7 +428,7 @@ TODO List
 	list_style => {
 		:font=>"Times",
 		:text_color=>"Blue",
-		:text_size=>16,
+		:font_size=>16,
 		:text_indent=>30
 	}
 

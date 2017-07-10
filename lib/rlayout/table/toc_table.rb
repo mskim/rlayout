@@ -18,7 +18,7 @@ module RLayout
         options = {}
         options[:parent]        = self
         options[:text_string]   = title_para[:para_string]
-        options[:text_size]     = 20
+        options[:font_size]     = 20
         options[:text_alignment]= "center"
         options[:layout_expand] = :width
         options[:height]        = 70

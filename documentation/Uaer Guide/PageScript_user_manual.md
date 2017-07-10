@@ -77,7 +77,7 @@ PageScript serves to merge three resources and output for multiple medium, print
 		shdow_bluer_radius
 		
 	- text_record
-		text_string, text_color, font, text_size, 
+		text_string, text_color, font, font_size, 
 		text_alignment, text_v_alignment, 
 		markup, 
 		text_layout_manager

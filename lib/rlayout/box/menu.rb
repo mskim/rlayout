@@ -47,7 +47,7 @@ module RLayout
     attr_accessor :leader_character, :is_leader
     
     def initialize(options={})
-      options[:text_size] = parent_graphic.height - 4
+      options[:font_size] = parent_graphic.height - 4
       options[:height] = parent_graphic.height - 2
       @is_leader = options.fetch(:is_leader, false)
       

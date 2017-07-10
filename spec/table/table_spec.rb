@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe 'create page with table' do
   before do
     @page = RLayout::Page.new() do
-      text("Table Sample", fill_color: "yellow", text_size: 16)
+      text("Table Sample", fill_color: "yellow", font_size: 16)
       col_width = [2,1,1,1,1.5,1.5,3]
       t1 = table(column_width_array: col_width, csv_path: "/Users/mskim/flier/category_demo.csv", category_level: 1, layout_length: 7, table_style_path: "/Users/mskim/flier/table_style.rb")
       t2 = table(column_width_array: col_width, csv_path: "/Users/mskim/flier/category_demo.csv", category_level: 1, layout_length: 7, table_style_path: "/Users/mskim/flier/table_style.rb")

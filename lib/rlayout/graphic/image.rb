@@ -56,6 +56,7 @@ module RLayout
     attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :source_frame, :local_image, :image_caption, :image_crop_rect, :image_crop_grid
 
     def init_image(options)
+
       @image_record  = options.fetch(:image_record,nil)
       unless options[:image_path]
         if options[:local_image] && $ProjectPath

@@ -5,7 +5,7 @@
 module RLayout
 
   class Graphic
-    attr_accessor :text_markup, :text_direction, :text_string, :text_color, :text_size, :text_line_spacing, :font, :text_style
+    attr_accessor :text_markup, :text_direction, :text_string, :text_color, :font_size, :text_line_spacing, :font, :text_style
     attr_accessor :text_fit_type, :text_alignment, :text_tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
     attr_accessor :text_layout_manager, :has_text, :body_line_height, :space_before_in_lines, :text_height_in_lines,  :space_after_in_lines
 
@@ -15,12 +15,14 @@ module RLayout
       else
         @has_text = false
       end
-
       @body_line_height       = options.fetch(:body_line_height, 12)
-      @space_before_in_lines  = options.fetch(:space_before_in_lines, 0)
+      @space_before_in_lines  = 0
+      @space_before_in_lines  = options[:space_before_in_lines] if options[:space_before_in_lines]
       @top_inset              = @space_before_in_lines*@body_line_height
-      @text_height_in_lines   = options.fetch(:text_height_in_lines, 1)
-      @space_after_in_lines   = options.fetch(:space_after_in_lines, 0)
+      @text_height_in_lines   = 0
+      @text_height_in_lines  = options[:text_height_in_lines] if options[:text_height_in_lines]
+      @space_after_in_lines   = 0
+      @space_after_in_lines  = options[:space_after_in_lines] if options[:space_after_in_lines]
       @text_tracking          = options.fetch(:text_tracking, 0)
       @bottom_inset           = @space_after_in_lines*@body_line_height
       if options[:layout_length_in_lines]
@@ -37,7 +39,7 @@ module RLayout
           @text_record    = TextStruct.new(options[:text_string], nil, nil)
         end
         @text_record[:color] = options[:text_color] if options[:text_color]
-        @text_record[:size]  = options[:text_size] if options[:text_size]
+        @text_record[:size]  = options[:font_size] if options[:font_size]
         if RUBY_ENGINE == 'rubymotion'
           @text_layout_manager = TextLayoutManager.new(self, options)
         end
@@ -76,8 +78,8 @@ module RLayout
     end
 
     def minimun_text_height
-      if @text_layout_manager && @text_layout_manager.text_size
-        @text_layout_manager.text_size
+      if @text_layout_manager && @text_layout_manager.font_size
+        @text_layout_manager.font_size
       else
         9
       end

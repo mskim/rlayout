@@ -9,7 +9,7 @@
 #   config.yml
 #     contains chapter configuration
 #     things that effects all item folders
-#     paper size, number style, font, text_size, columns, side_column
+#     paper size, number style, font, font_size, columns, side_column
 #   items
 #     List of items
 #     Each folder contains layout.rb, images, story.md, or data.csv

@@ -49,7 +49,7 @@ __END__
 describe 'create page with menu' do
   before do
     @page = RLayout::Page.new(nil) do
-      text("Menu Sample", fill_color: "yellow", text_size: 16)
+      text("Menu Sample", fill_color: "yellow", font_size: 16)
       m = Menu.new(parent: self, menu_text_path: "/Users/mskim/menu/menu_text.csv", layout_length: 7)
       relayout!
     end

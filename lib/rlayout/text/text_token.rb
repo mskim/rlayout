@@ -71,12 +71,13 @@ module RLayout
         end
       else
         # TODO fix get string with from Rfont
-        text_size = options[:text_size] || 10
-        size = RFont.string_size(@string, options[:font], text_size)
+        font_size = options[:font_size] || 10
+        size = RFont.string_size(@string, options[:font], font_size)
         options[:width]  = size[0]
         options[:height] = size[1]
       end
       options[:fill_color] = options.fetch(:token_color, 'clear')
+      # options[:stroke_width] = 1
       super
 
       if RUBY_ENGINE == "rubymotion"
@@ -162,10 +163,10 @@ module RLayout
     end
 
     def svg
-      # TODO <text font-size=\"#{text_size}\"
+      # TODO <text font-size=\"#{font_size}\"
       s = ""
       if string !=nil && string != ""
-        s += "<text font-size=\"#{@text_size}\" x=\"#{x}\" y=\"#{y + height*0.8}\">#{string}</text>\n"
+        s += "<text font-size=\"#{@font_size}\" x=\"#{x}\" y=\"#{y + height*0.8}\">#{string}</text>\n"
       end
       s
     end
@@ -173,20 +174,20 @@ module RLayout
     def ns_atts_from_style(style)
       atts = {}
       atts[NSFontAttributeName] = NSFont.fontWithName("Times", size:10.0)
-      if style[:font] && style[:text_size]
-        atts[NSFontAttributeName] = NSFont.fontWithName(style[:font], size: style[:text_size])
+      if style[:font] && style[:font_size]
+        atts[NSFontAttributeName] = NSFont.fontWithName(style[:font], size: style[:font_size])
       end
       if style[:text_color]
-        #TODO fix this
-        # I have color_from_string as module_function, but getting error
-        # so, I am calling Graphic.color_from_string
-        atts[NSForegroundColorAttributeName] = Graphic.color_from_string(style[:text_color])
+        if style[:text_color] == ""
+          atts[NSForegroundColorAttributeName] = NSColor.blackColor
+        else
+          atts[NSForegroundColorAttributeName] = RLayout.color_from_string(style[:text_color])
+        end
       end
       atts
     end
 
     def default_atts
-      #TODO add color
       {
         NSFontAttributeName => NSFont.fontWithName("Times", size:10.0),
       }
@@ -390,7 +391,7 @@ module RLayout
       @base_token         = TextToken.new(base_style)
       # make the top_token with size 0.5 text
       top_style           = options[:para_style]
-      top_style[:text_size]= top_style[:text_size]*@size_ratio
+      top_style[:font_size]= top_style[:font_size]*@size_ratio
       top_style[:string]  = options[:top]
       top_style[:parent]  = self
       top_style[:tag]        = "top"
@@ -426,7 +427,7 @@ module RLayout
       @base_style[:stroke_color]    = "blue"
       @base_style[:stroke_width]    = 0.5
       @base_token             = TextToken.new(@base_style)
-      @bottom_style[:text_size]= @base_style[:text_size]*@size_ratio
+      @bottom_style[:font_size]= @base_style[:font_size]*@size_ratio
       # if RUBY_ENGINE == "rubymotion"
       #   @bottom_style[:atts][NSForegroundColorAttributeName]  =  NSColor.blueColor
       # else

@@ -70,11 +70,10 @@ IMAGE_SIZE_POSITION_TABLE = {
 
 module RLayout
   class NewsImage < Container
-    attr_reader :article_column, :article_row, :image_size, :image_position, :caption_title
-    attr_reader :image_object
-    attr_reader :caption_string, :caption_title_string, :caption_title_text, :caption_object
+    attr_accessor :article_column, :column, :article_row, :row, :image_size, :image_position, :caption_title
+    attr_accessor :image_object
+    attr_accessor :caption_string, :caption_title_string, :caption_title_text, :caption_object
     def initialize(options={})
-      puts "in NewsImage options keys:#{options.keys}"
       if options[:parent]
         @article_column       = options[:parent].column_count
         @article_row          = options[:parent].row_count
@@ -82,6 +81,10 @@ module RLayout
         @article_column       = 3
         @article_row          = 3
       end
+      @image_path             = options[:image_path]
+      @column                 = options[:column]
+      @row                    = options[:row]
+      options[:fill_color]    = 'red'
       options[:grid_frame]    = convert_size_position_to_frame(options)
       options[:layout_expand] = nil
       super
@@ -93,22 +96,22 @@ module RLayout
       @height                 = frame_rect[3]
       image_optins            = {}
       image_optins[:width]    = @width
+      image_optins[:height]   = @height
+      image_optins[:height]   = @height
+      image_optins[:stroke_width] = 1
+      image_optins[:image_fit_type] = IMAGE_FIT_TYPE_KEEP_RATIO
+      image_optins[:image_path] = @image_path
       image_optins[:parent]   = self
       @image_object           = Image.new(image_optins)
       @caption_title_string   = options[:caption_title]
       @caption_string         = options[:caption]
-      puts "options[:caption_title]:#{options[:caption_title]}"
-      puts "options[:caption]:#{options[:caption]}"
-      puts "@caption_title_string:#{@caption_title_string}"
-      puts "@caption_string:#{@caption_string}"
       if @caption_title_string
-        make_caption_title
+        #TODO
+        # make_caption_title
       end
       if @caption_string
-        make_caption
-      end
-      @graphics.each do |graphic|
-        puts "graphic.class:#{graphic.class}"
+        #TODO
+        # make_caption
       end
       self
     end
@@ -122,6 +125,11 @@ module RLayout
       when 'medium'
       when 'small'
       end
+    end
+
+    def adjust_image_height
+      @image_object.height = @height
+      @image_object.apply_fit_type
     end
 
     # convert size, position into x,y,width, and height
@@ -138,7 +146,9 @@ module RLayout
 
     def make_caption_title
       caption_title                 = '사진제목'
-      atts                          = NEWSPAPER_STYLE[caption_title]
+      atts                          = NEWSPAPER_STYLE['caption_title']
+      atts                          = Hash[atts.map{ |k, v| [k.to_sym, v] }]
+
       atts[:text_string]            = @caption_title_string
       if @parent_graphic
         atts[:body_line_height]     = @parent_graphic.body_line_height
@@ -155,7 +165,9 @@ module RLayout
 
     def make_caption
       caption                       = '사진설명'
-      atts                          = NEWSPAPER_STYLE[caption]
+      atts                          = NEWSPAPER_STYLE['caption']
+      atts                          = Hash[atts.map{ |k, v| [k.to_sym, v] }]
+
       atts[:text_string]            = @caption
       if @parent_graphic
         atts[:body_line_height]     = @parent_graphic.body_line_height

@@ -15,7 +15,7 @@
 
 # Using chapter_heading and section_heading instead of Paragraph
 # There are times when we want to use Heading rather than a Paragraph.
-# We do this by setting use_heading in style instead of specifigy font text_size
+# We do this by setting use_heading in style instead of specifigy font font_size
 # We set use_heading: true , and we use @h1_heading_object, @h2_heading_object and so on.
 
 # we need to create Heading from markdown

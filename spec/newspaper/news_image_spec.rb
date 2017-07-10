@@ -4,6 +4,7 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 describe 'creaet NewsArticleMaker with Image' do
   before do
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/section/1/7x15_H_5단통_4/1"
+    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/1/1/1"
     @svg_path       = @article_path + "/output.svg"
     @maker          = NewsArticleMaker.new(article_path: @article_path)
     @news_box       = @maker.news_article_box
@@ -11,32 +12,37 @@ describe 'creaet NewsArticleMaker with Image' do
     @heading        = @news_box.floats.first
     @title          = @heading.title_object
     @first_column   = @news_box.graphics.first
-    @eews_article_box_width = @first_column.width*6 + 10*6
-    @first_column_first_line = @first_column.graphics.first
-    @tokens         = @first_column_first_line.graphics
-    @second_column  = @news_box.graphics[1]
-    @second_column_first_line = @second_column.graphics.first
-    @third_column   = @news_box.graphics[2]
+    @image_path     = "/Users/mskim/Development/rails5/style_guide/public/1/issue/1/images/1_1_2.jpg"
+    # @eews_article_box_width = @first_column.width*6 + 10*6
+    # @first_column_first_line = @first_column.graphics.first
+    # @tokens         = @first_column_first_line.graphics
+    # @second_column  = @news_box.graphics[1]
+    # @second_column_first_line = @second_column.graphics.first
+    # @third_column   = @news_box.graphics[2]
   end
 
-  it 'should create NewsArticleBox' do
-    assert_equal NewsArticleBox, @news_box.class
-    assert_equal NewsArticleHeading, @heading.class
+  it 'should create NewsImage ' do
     assert_equal NewsImage, @news_image.class
-    assert_equal 10, @news_box.gutter
-    assert_equal @news_box.height, @first_column.height
-    assert_equal @eews_article_box_width, @news_box.width
+    assert_equal 3, @news_image.column
+    assert_equal @image_path, @news_image.image_path
   end
+  #
+  # it 'should create NewsArticleBox' do
+  #   assert_equal NewsArticleBox, @news_box.class
+  #   assert_equal NewsArticleHeading, @heading.class
+  #   assert_equal NewsImage, @news_image.class
+  #   assert_equal 10, @news_box.gutter
+  #   # assert_equal @news_box.height, @first_column.height
+  #   # assert_equal @eews_article_box_width, @news_box.width
+  # end
+  #
+  # it 'should create floats' do
+  #   assert_equal NewsArticleHeading, @news_box.floats[0].class
+  # end
 
-  it 'should create NewsArtcicleHeading' do
-    assert_equal NewsArticleHeading, @heading.class
-    assert_equal Text, @title.class
-  end
 
-  it 'should create NewsArticleBox subtitle float' do
-    assert_equal 3, @news_box.floats.length
-    assert_equal Text, @news_box.floats[1].class
-  end
+
+
 end
 #
 # describe 'creating NewsImage ' do

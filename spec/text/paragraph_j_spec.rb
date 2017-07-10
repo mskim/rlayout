@@ -27,7 +27,7 @@
 
 # describe 'create ParagraphJ' do
 #   before do
-#     @pj       = Paragraph.new(inset:50, width: 400, height: 600, text_direction: 'top_to_bottom', text_size:12, text_string:  "しかし、これは非常に複雑で、広範囲であるために一般的に使用するには無理が伴います。SGMLの規則によりながら、Webに使用するいくつかのマークアップのみを定義して使用したものがHTMLです。")
+#     @pj       = Paragraph.new(inset:50, width: 400, height: 600, text_direction: 'top_to_bottom', font_size:12, text_string:  "しかし、これは非常に複雑で、広範囲であるために一般的に使用するには無理が伴います。SGMLの規則によりながら、Webに使用するいくつかのマークアップのみを定義して使用したものがHTMLです。")
 #     @pdf_path = File.dirname(__FILE__) + "/../output/paragraph_japanese.pdf"
 #   end
 #   

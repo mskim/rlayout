@@ -58,7 +58,7 @@ class GraphicViewMac < NSView
       graphic.gutter_stroke.color = "black"
     end
     width = graphic.gutter_stroke.thickness
-    convert_to_nscolor(graphic.gutter_stroke.color).set
+    RLayout.convert_to_nscolor(graphic.gutter_stroke.color).set
     graphic.graphics.each_with_index do |g, i|
       next if i == graphic.graphics.length - 1 # last one
       if graphic.layout_direction == "vertical"
@@ -114,14 +114,26 @@ class GraphicViewMac < NSView
     unless trap
       trap = 0
     end
+
     # clipLine = false
     # rect = getStrokeRect(rect)
     rect = @stroke_rect
-    @stroke[:color]  = convert_to_nscolor(@stroke[:color])    unless @stroke[:color].class == NSColor
+    @stroke[:color]  = RLayout.convert_to_nscolor(@stroke[:color])    unless @stroke[:color].class == NSColor
     @stroke[:color].set
 
     if @stroke[:type]==nil
       @stroke[:type] = 0
+    end
+
+    if @graphic.class == RLayout::Line
+      starting  = NSPoint.new(rect.origin.x, rect.origin.y)
+      ending    = NSPoint.new(rect.origin.x, + rect.size.width,  rect.origin.y + rect.size.height)
+      path      = NSBezierPath.bezierPath
+      path.setLineWidth(@stroke[:thickness])
+      path.moveToPoint(starting)
+      path.lineToPoint(ending)
+      path.stroke
+      return
     end
 
     # @stroke[:type] == 0 means single line

@@ -268,7 +268,7 @@ end
 
 describe 'testing Text ' do
   before do
-    @t = Text.new(width: 400,  text_string: "This is text string and I like it very much. Wouldn't you? "*4, text_size: 24, text_alignment: 'right')
+    @t = Text.new(width: 400,  text_string: "This is text string and I like it very much. Wouldn't you? "*4, font_size: 24, text_alignment: 'right')
   end
 
   it 'should create heading' do

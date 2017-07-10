@@ -22,10 +22,10 @@ describe 'create idcard from hash' do
           :image_path => "/Users/mskim/idcard/back_side.pdf",
           :left_margin => 0,
           :graphics=>[
-            {:klass=>"Text", :tag=>'year', :text_size=>9, :x=>53, :y=>60, :width=>70, :height=>10, :layout_expand=>nil},
-            {:klass=>"Text", :tag=>'name', :text_size=>9, :x=>53, :y=>72, :width=>70, :height=>10, :layout_expand=>nil},
-            {:klass=>"Text", :tag=>'birthday', :text_size=>9, :x=>53, :y=>82, :width=>70, :height=>10, :layout_expand=>nil},
-            {:klass=>"Text", :tag=>'exp', :text_size=>9, :x=>53, :y=>92, :width=>70, :height=>10, :layout_expand=>nil},
+            {:klass=>"Text", :tag=>'year', :font_size=>9, :x=>53, :y=>60, :width=>70, :height=>10, :layout_expand=>nil},
+            {:klass=>"Text", :tag=>'name', :font_size=>9, :x=>53, :y=>72, :width=>70, :height=>10, :layout_expand=>nil},
+            {:klass=>"Text", :tag=>'birthday', :font_size=>9, :x=>53, :y=>82, :width=>70, :height=>10, :layout_expand=>nil},
+            {:klass=>"Text", :tag=>'exp', :font_size=>9, :x=>53, :y=>92, :width=>70, :height=>10, :layout_expand=>nil},
           ]
           
         },

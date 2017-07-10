@@ -5,7 +5,7 @@ module RLayout
     attr_accessor :section_path, :section_name, :output_path
     attr_accessor :is_front_page, :paper_size, :page_heading
     attr_accessor :story_frames, :grid_width, :grid_height, :number_of_stories
-    attr_accessor :divider_info, :body_line_height, :ad_type
+    attr_accessor :body_line_height, :ad_type
     def initialize(options={}, &block)
       super
       @section_path   = options[:section_path] if options[:section_path]
@@ -21,13 +21,7 @@ module RLayout
       @lines_in_grid  = options.fetch(:lines_in_grid, 7)
       @section_name   = options['section_name'] || "untitled"
       @gutter         = options.fetch('gutter', 10)
-      # handling un-even sized gutter,
-      # divider_info has values of divider location and divider width
-      if options['divider_info']
-        @divider_info = options['divider_info']
-      else
-        @divider_info = [7, @gutter] # this is when we have to divider
-      end
+
       @v_gutter       = options.fetch('v_gutter', 0)
       @left_margin    = options.fetch('left_margin', 50)
       @top_margin     = options.fetch('top_margin', 50)
@@ -62,7 +56,6 @@ module RLayout
         @grid_width     = @grid_size[0]
         @grid_height    = @grid_size[1]
         @story_frames   = section_config['story_frames']
-        @divider_info   = options['divider_info'] if section_config['divider_info']
       end
 
       unless @story_frames
@@ -84,6 +77,7 @@ module RLayout
       image_path
     end
 
+    # convert stopry frames into layout format
     def make_layout_info
       @layout_info = []
       @story_frames.each_with_index do |grid_frame, i|
@@ -98,14 +92,10 @@ module RLayout
         else
           info[:image_path] = @section_path + "/#{i + 1}/output.pdf"
         end
-        info[:x] = grid_frame[0]*(@grid_width + @gutter) + @left_margin
-        if grid_frame[0] >= @divider_info[0]
-          # adjust x positin for divier
-          # info[:x] += @divider_info[1] - @gutter
-          info[:x] += @gutter
-        end
+        # info[:x] = grid_frame[0]*(@grid_width + @gutter) + @left_margin
+        info[:x] = grid_frame[0]*@grid_width + @left_margin
         info[:y]              = grid_frame[1]*@grid_height  + @top_margin
-        info[:width]          = grid_frame[2]*@grid_width + @gutter*(grid_frame[2])
+        info[:width]          = grid_frame[2]*@grid_width
         info[:height]         = grid_frame[3]*@grid_height
         info[:layout_expand]  = nil
         info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
@@ -154,13 +144,7 @@ module RLayout
         # NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES     = 1
         # NEWS_ARTICLE_HEADING_SPACE_IN_LINES                      = 3
         # GRID_LINE_COUNT                                          = 7
-        heading_info[:height]   = (GRID_LINE_COUNT + NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_HEIGHT_IN_LINES) * @body_line_height
-        # puts "GRID_LINE_COUNT:#{GRID_LINE_COUNT}"
-        # puts "@body_line_height:#{@body_line_height}"
-        # puts "NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_HEIGHT_IN_LINES:#{NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_HEIGHT_IN_LINES}"
-        # puts "heading_info[:height]:#{heading_info[:height]}"
-        # puts "heading_info[:height]*2.834646:#{heading_info[:height]*2.834646}"
-        # puts "heading_info[:width]*2.834646:#{heading_info[:width]*2.834646}"
+        heading_info[:height]   = (GRID_LINE_COUNT + NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES) * @body_line_height
 
 
       else

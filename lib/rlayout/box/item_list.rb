@@ -59,7 +59,7 @@ module RLayout
       @column_alignment_array     = options[:column_alignment_array] if options[:column_alignment_array]
       super
       @item_text_array.each_with_index do |cell_text, i|
-        Text.new(parent:self, text_string: cell_text, text_size: (@height - 4), fill_color: "clear", layout_length: @column_width_array[i], text_alignment: @column_alignment_array[i])
+        Text.new(parent:self, text_string: cell_text, font_size: (@height - 4), fill_color: "clear", layout_length: @column_width_array[i], text_alignment: @column_alignment_array[i])
       end
       relayout!
       self

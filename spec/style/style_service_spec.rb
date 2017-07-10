@@ -10,7 +10,7 @@ describe 'newspaper body text' do
   end
   
   it 'should return current_style_body_height' do
-    @news_style['p'][:text_size].must_equal 10
+    @news_style['p'][:font_size].must_equal 10
   end
 end
 
@@ -32,7 +32,7 @@ describe 'create StyleService' do
   
   it 'should have chapter_style["body"]' do
     @sr.chapter_style['body'][:font].must_equal 'smSSMyungjoP-W30'
-    @sr.chapter_style['body'][:text_size].must_equal 10
+    @sr.chapter_style['body'][:font_size].must_equal 10
   end
   
 end
