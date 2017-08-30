@@ -3,51 +3,13 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '../..', 'lib')
 require 'rlayout/graphic'
 include RLayout
 
-describe 'color struct' do
-  before do
-    @c= ColorStruct.new('blue')
-  end
-  it 'should crete color' do
-    @c['name'].must_equal 'blue'
-  end
-  it 'should create random color' do
-    COLOR_NAMES.include?(@c.sample).must_equal true
-  end
-end
 
-describe 'cmyk color struct' do
-  before do
-    @cmyk = CMYKStruct.new(100,100,0,0)
-  end
-  
-  it 'should test cmyk' do
-    @cmyk[:c].must_equal 100
-  end
-  
-  it 'should have alpha of nil' do
-    @cmyk[:a].must_equal nil
-  end
-end
-
-describe 'rgb color struct' do
-  before do
-    @rgb = RGBStruct.new(50,50,0,30)
-  end
-  
-  it 'should test grb red' do
-    @rgb[:r].must_equal 50
-  end
-  
-  it 'test test grb alpha' do
-    @rgb[:a].must_equal 30
-  end
-end
 
 describe 'fill struct' do
   before do
     @fill = FillStruct.new('black')
   end
-  
+
   it 'should test LinearGradient starting_color' do
     @fill[:color].must_equal 'black'
   end
@@ -57,15 +19,15 @@ describe 'LinearGradient struct' do
   before do
     @lg = LinearGradient.new('black', 'white', 0, 10)
   end
-  
+
   it 'should test LinearGradient starting_color' do
     @lg[:starting_color].must_equal 'black'
   end
-  
+
   it 'test LinearGradient ending_color' do
     @lg[:ending_color].must_equal 'white'
   end
-  
+
   it 'test LinearGradient steps' do
     @lg[:steps].must_equal 10
   end
@@ -124,7 +86,7 @@ describe 'RectStruct struct' do
   it 'test RectStruct bottom' do
     @s[:height].must_equal 400
   end
-  
+
 end
 
 describe 'RoundRectStruct struct' do
@@ -238,6 +200,3 @@ describe 'ImageStruct struct' do
   end
 
 end
-
-
-

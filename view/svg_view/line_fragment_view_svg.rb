@@ -1,6 +1,5 @@
 module RLayout
   class LineFragment
-    puts __method__
     def to_svg
       s = ""
       if @parent_graphic

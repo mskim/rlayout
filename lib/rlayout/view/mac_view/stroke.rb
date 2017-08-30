@@ -173,9 +173,16 @@ class GraphicViewMac < NSView
           # puts  "draw bottom"
           path= NSBezierPath.bezierPath
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][3])
-          path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + rect.size.height))
-          path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
-          path.stroke
+
+          if @graphic.class == RLayout::NewsArticleBox
+            path.moveToPoint(NSPoint.new(@graphic.border_x, rect.origin.y + rect.size.height))
+            path.lineToPoint(NSPoint.new(@graphic.border_x + @graphic.border_width, rect.origin.y + rect.size.height))
+            path.stroke
+          else
+            path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + rect.size.height))
+            path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
+            path.stroke
+          end
         end
 
         # if [1,1,1,1,1,1] drawing x mark

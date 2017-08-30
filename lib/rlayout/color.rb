@@ -90,6 +90,8 @@ module RLayout
 
     color_array=color_string.split("=")
     color_kind=color_array[0]
+    # retrun black color unless color_array[1]
+    return NSColor.blackColor unless color_array[1]
     color_values=color_array[1].split(",")
     if color_kind=~/RGB/
         @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)

@@ -3,14 +3,15 @@ module RLayout
 
   class NewspaperSectionPage < Page
     attr_accessor :section_path, :section_name, :output_path
-    attr_accessor :is_front_page, :paper_size, :page_heading
+    attr_accessor :kind, :is_front_page, :paper_size, :page_heading
     attr_accessor :story_frames, :grid_width, :grid_height, :number_of_stories
-    attr_accessor :body_line_height, :ad_type
+    attr_accessor :body_line_height, :ad_type, :page_heading_margin_in_lines, :lines_per_grid, :draw_divider_line, :divider_line_thickness
     def initialize(options={}, &block)
       super
       @section_path   = options[:section_path] if options[:section_path]
       @output_path    = @section_path + "/section.pdf"
       @output_path    = options[:output_path]   if options[:output_path]
+      @kind           = options.fetch(:kind,"article") # opinion, editorial
       @paper_size     = options.fetch(:paper_size,"A2")
       @width          = SIZES[@paper_size][0]
       @height         = SIZES[@paper_size][1]
@@ -21,7 +22,6 @@ module RLayout
       @lines_in_grid  = options.fetch(:lines_in_grid, 7)
       @section_name   = options['section_name'] || "untitled"
       @gutter         = options.fetch('gutter', 10)
-
       @v_gutter       = options.fetch('v_gutter', 0)
       @left_margin    = options.fetch('left_margin', 50)
       @top_margin     = options.fetch('top_margin', 50)
@@ -56,6 +56,9 @@ module RLayout
         @grid_width     = @grid_size[0]
         @grid_height    = @grid_size[1]
         @story_frames   = section_config['story_frames']
+        @lines_per_grid = section_config['lines_per_grid'].to_i
+        @page_heading_margin_in_lines = section_config['page_heading_margin_in_lines'].to_i
+
       end
 
       unless @story_frames
@@ -99,6 +102,7 @@ module RLayout
         info[:height]         = grid_frame[3]*@grid_height
         info[:layout_expand]  = nil
         info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
+        # info[:image_fit_type] = IMAGE_FIT_TYPE_ORIGINAL
         @layout_info << info.dup
       end
       @layout_info
@@ -138,18 +142,22 @@ module RLayout
       heading_info[:width]      = @width - @left_margin - @right_margin
       heading_info[:layout_expand]  = nil
       heading_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
+      # heading_info[:image_fit_type] = IMAGE_FIT_TYPE_ORIGINAL
 
       if @is_front_page
         #TODO
         # NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES     = 1
         # NEWS_ARTICLE_HEADING_SPACE_IN_LINES                      = 3
-        # GRID_LINE_COUNT                                          = 7
-        heading_info[:height]   = (GRID_LINE_COUNT + NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES) * @body_line_height
-
+        puts "@page_heading_margin_in_lines:#{@page_heading_margin_in_lines}"
+        puts "@lines_per_grid:#{@lines_per_grid}"
+        puts "@body_line_height:#{@body_line_height}"
+        heading_info[:height]   = (@lines_per_grid + @page_heading_margin_in_lines) * @body_line_height
+        puts "heading_info[:height]:#{heading_info[:height]}"
 
       else
-        heading_info[:height]   = NEWS_ARTICLE_HEADING_SPACE_IN_LINES * @body_line_height
+        heading_info[:height]   = @page_heading_margin_in_lines * @body_line_height
       end
+
       @page_heading = Image.new(heading_info)
       if @output_path
         save_pdf(@output_path, options)

@@ -26,6 +26,11 @@ module RLayout
       if options[:graphics]
         create_children(options[:graphics])
       end
+
+      if options[:svg_graphics]
+        create_children_from_svg(options[:svg_graphics])
+      end
+
       if options[:floats]
         create_floats(options[:floats])
       end
@@ -308,6 +313,69 @@ module RLayout
       relayout!
     end
 
+
+    def create_children_from_svg(svg_hash)
+
+      svg_hash.each do |kind, value|
+        case kind
+        when 'circle'
+          value.each do |element_hash|
+            element_hash[:parent] = se;f
+            @graphics << Circle.from_svg(element_hash)
+          end
+        when 'image'
+          value.each do |element_hash|
+            element_hash[:parent] = self
+            h[:graphics] << Image.from_svg(element_hash)
+          end
+        when 'line'
+          value.each do |element_hash|
+            element_hash[:parent] = self
+            @graphics << Line.from_svg(element_hash)
+          end
+        when 'path'
+          value.each do |element_hash|
+            element_hash[:parent] = self
+            @graphics << Path.from_svg(element_hash)
+          end
+        when 'polyline'
+          value.each do |element_hash|
+            @graphics << Polyline.from_svg(element_hash)
+          end
+        when 'polygon'
+          value.each do |element_hash|
+            element_hash[:parent] = self
+            @graphics << Polygon.from_svg(element_hash)
+          end
+        when 'rect'
+          value.each do |element_hash|
+            element_hash[:parent] = self
+            @graphics << Rectangle.from_svg(element_hash)
+          end
+        when 'text'
+          value.each do |element_hash|
+            element_hash[:parent] = self
+            @graphics << Text.from_svg(element_hash)
+          end
+        when 'g'
+          value.each do |element_hash|
+            element_hash[:parent] = self
+            @graphics << Container.new(svg_graphics: element_hash)
+          end
+        when 'width'
+          @width = value
+        when 'heigth'
+          @height = value
+        else
+          # puts "#{kind} not supported!!!"
+        end
+
+      end
+
+
+
+    end
+
     def create_floats(floats_hash_array)
       return if floats_hash_array.nil?
       @floats = [] if @floats.nil?
@@ -316,12 +384,6 @@ module RLayout
         float_hash[:is_float] = true
         create_graphic_of_type(klass_name,float_hash)
       end
-      # relayout_floats!
-    end
-
-    ########### pgscript verbes
-    def flatten
-
     end
 
     def split_grid(col=12, row=12)

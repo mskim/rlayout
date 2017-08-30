@@ -5,6 +5,8 @@ describe 'overlapping floats' do
     @article_path   = "/Users/mskim/Development/rails5/articles/public/current_issue/1/1"
     @article_path   = "/Users/mskim/Development/rails5/page_template/public/current_issue/2/3"
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/6/3x4/0"
+    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/1/22/2"
+    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/2"
     @svg_path       = @article_path + "/output.svg"
     @maker          = NewsArticleMaker.new(article_path: @article_path)
     @news_box       = @maker.news_article_box
@@ -16,22 +18,26 @@ describe 'overlapping floats' do
     @box_width      = (@first_column.width)*3 + (@news_box.gutter)*2
   end
 
-  it 'shjould create NewsArticleHeading' do
+  it 'should create NewsArticleHeading' do
     assert_equal NewsArticleHeading, @heading.class
   end
 
-  it 'shold create image_box with multiples of column width' do
-    assert_equal @box_width + @news_box.gutter, @news_box.width
+  it 'heading should have two graphics' do
+    assert_equal 2, @heading.graphics.length
   end
 
-  it 'should collect overlapping floats with column' do
-    assert_equal @heading, @news_box.overlapping_floats_with_column(@first_column).first
-    assert_equal @heading, @news_box.overlapping_floats_with_column(@second_column).first
-  end
-
-  it 'column should have 7 lines per grid - 2 ' do
-    assert_equal @first_column.graphics.length, 4*7 - 2
-  end
+  # it 'shold create image_box with multiples of column width' do
+  #   assert_equal @box_width + @news_box.gutter, @news_box.width
+  # end
+  #
+  # it 'should collect overlapping floats with column' do
+  #   assert_equal @heading, @news_box.overlapping_floats_with_column(@first_column).first
+  #   assert_equal @heading, @news_box.overlapping_floats_with_column(@second_column).first
+  # end
+  #
+  # it 'column should have 7 lines per grid - 2 ' do
+  #   assert_equal @first_column.graphics.length, 4*7 - 2
+  # end
 end
 
 #

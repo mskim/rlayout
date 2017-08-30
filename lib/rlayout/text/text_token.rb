@@ -39,6 +39,14 @@
 # LatexToken
 #
 #
+
+QUOTE_PLAIN_SINGLE         = 39
+QUOTE_PLAIN_DOUBLE         = 34
+QUOTE_SMART_SINGLE_OPEN    = 8216
+QUOTE_SMART_SINGLE_CLOSE   = 8217
+QUOTE_SMART_DOUBLE_OPEN    = 8220
+QUOTE_SMART_DOUBLE_CLOSE   = 8221
+
 module RLayout
   # token fill_color is set by optins[:token_color] or it is set to clear
 
@@ -52,18 +60,19 @@ module RLayout
       options[:layout_expand]   = nil
       @has_text                 = true
       if RUBY_ENGINE == "rubymotion"
+
         if options[:atts]
           @atts = options[:atts]
+
         else
           @atts       = default_atts
         end
+
         if options[:att_string]
-          @attrs        = options[:atts]
+          @attrs        = options[:atts] #TODO?
           @att_string   = options[:att_string]
           @string       = @att_string.string if @att_string.class == NSConcreteMutableAttributedString # if @att_string.respond_to?(:string)
-          # @string         = @att_string.string
           options[:height]= @att_string.size.height*2
-
         else
           @att_string     = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
           options[:width] = @att_string.size.width
@@ -77,7 +86,6 @@ module RLayout
         options[:height] = size[1]
       end
       options[:fill_color] = options.fetch(:token_color, 'clear')
-      # options[:stroke_width] = 1
       super
 
       if RUBY_ENGINE == "rubymotion"

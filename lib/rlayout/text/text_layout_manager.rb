@@ -146,22 +146,26 @@ module RLayout
       elsif options[:text_fit_type] == 'adjust_box_height'
         @owner_graphic.height = @owner_graphic.top_margin + @owner_graphic.top_inset + @owner_graphic.bottom_margin + @owner_graphic.bottom_inset
         if @owner_graphic.text_height_in_lines
-          if used_rect.size.height > @owner_graphic.text_height_in_lines
+          if used_rect.size.height > @owner_graphic.text_height_in_lines*@owner_graphic.body_line_height
             # this is when text has more than one line
             # We want to keeep it as multple of body_line_height
             #TODO clean this up
-            multiples = used_rect.size.height/(@owner_graphic.text_height_in_lines*@owner_graphic.body_line_height)
+            exceeding_height = used_rect.size.height - @owner_graphic.text_height_in_lines*@owner_graphic.body_line_height
+            body_height_multiples = exceeding_height/@owner_graphic.body_line_height
             mod_value = used_rect.size.height % (@owner_graphic.text_height_in_lines*@owner_graphic.body_line_height)
-            sub_float_values= multiples - multiples.to_i
+            sub_float_values= body_height_multiples - body_height_multiples.to_i
             ceiling = 0
             ceiling = 1 if sub_float_values > 0.5
             if ceiling > 0
-              @owner_graphic.height += @owner_graphic.body_line_height*(multiples + @owner_graphic.space_after_in_lines)
+              @owner_graphic.height += @owner_graphic.body_line_height*(body_height_multiples)
             else
-              @owner_graphic.height += @owner_graphic.body_line_height*(multiples + @owner_graphic.space_after_in_lines + 1)
+              # add one extra line if it falls short of 0.5
+              @owner_graphic.height += @owner_graphic.body_line_height*(body_height_multiples + 1)
             end
           else
-            @owner_graphic.height += (@owner_graphic.text_height_in_lines*@owner_graphic.body_line_height)
+            # text_height_in_lines*@owner_graphic.body_line_height is the default mininum height
+            @owner_graphic.height += used_rect.size.height
+            # @owner_graphic.height = @owner_graphic.text_height_in_lines*@owner_graphic.body_line_height
           end
         else
           @owner_graphic.height += used_rect.size.height
@@ -171,7 +175,9 @@ module RLayout
         # there is a overflow
         @text_overflow = true if range.length < @att_string.string.length
         if @text_overflow
-          fit_text_to_box if @text_fit_type =="fit_text_to_box"
+          puts "+++++++++++ @text_overflow"
+          puts "@text_fit_type:#{@text_fit_type}"
+          fit_text_to_box if @text_fit_type == "fit_text_to_box"
           # @text_overflow == false
           range     = @layout_manager.glyphRangeForTextContainer @text_container
           if range.length < @att_string.string.length
@@ -375,6 +381,7 @@ module RLayout
     end
 
     def fit_text_to_box
+      puts __method__
       fitting_font=fontSizedForAreaSize
       atts={NSFontAttributeName=>fitting_font}
       range=NSMakeRange(0,@att_string.length)

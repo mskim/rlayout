@@ -147,9 +147,10 @@ module RLayout
       return 1 unless @image_object
       if @image_dimensions
         @image_dimensions[1]/@image_dimensions[0]
-      else
-        @height/@width
       end
+      1
+      #   @height/@width
+      # end
       # return 1 unless
     end
 

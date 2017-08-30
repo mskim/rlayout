@@ -10,7 +10,7 @@
 # line layout is done in TextColumn
 
 
-# Emphasis Handling
+# Emphasis Handling(2016_11)
 # inline emphasis are handled using double curl {{content}}, or single curl {content}
 # We want the emphasis mark to be simple as possible for writers.
 # This is work in process, it might change as we go!!!!
@@ -382,8 +382,6 @@ module RLayout
       end
       # puts "before style[:space_width]:#{style[:space_width]}"
       style[:space_width]    = style[:space_width]  if style[:space_width]
-      # puts "after style[:space_width]:#{style[:space_width]}"
-
       style[:text_tracking] = style[:tracking]    if style[:tracking]
       style[:h_alignment]   = style[:alignment]   if style[:alignment]
       if style
@@ -417,15 +415,14 @@ module RLayout
           att_hash[:size]= attrDict[NSFontAttributeName].pointSize.round(2)
           # att_hash[:color]= attrDict[NSForegroundColorAttributeName].color
         end
-        att_hash[:tracking]       = attrDict[NSKernAttributeName]            if attrDict[NSKernAttributeName]
-        att_hash[:strike]         = attrDict[NSStrikethroughStyleAttributeName] if attrDict[NSStrikethroughStyleAttributeName]
-        att_hash[:baseline_offset]= attrDict[NSBaselineOffsetAttributeName]       if attrDict[NSBaselineOffsetAttributeName]
+        att_hash[:tracking]         = attrDict[NSKernAttributeName]               if attrDict[NSKernAttributeName]
+        att_hash[:strike]           = attrDict[NSStrikethroughStyleAttributeName] if attrDict[NSStrikethroughStyleAttributeName]
+        att_hash[:baseline_offset]  = attrDict[NSBaselineOffsetAttributeName]     if attrDict[NSBaselineOffsetAttributeName]
         att_hash[:styles]= []
-        att_hash[:styles]<<:italic                                    if attrDict[NSObliquenessAttributeName]
-        att_hash[:styles]<<:bold                                      if attrDict[NSObliquenessAttributeName]
-        att_hash[:styles]<< :underline                                if attrDict[NSUnderlineStyleAttributeName]
-        att_hash[:styles]<< :superscript                              if attrDict[NSSuperscriptAttributeName]
-
+        att_hash[:styles]<<:italic                                                if attrDict[NSObliquenessAttributeName]
+        att_hash[:styles]<<:bold                                                  if attrDict[NSObliquenessAttributeName]
+        att_hash[:styles]<< :underline                                            if attrDict[NSUnderlineStyleAttributeName]
+        att_hash[:styles]<< :superscript                                          if attrDict[NSSuperscriptAttributeName]
         # is there no subscript?
         # att_hash[:styles]<< :suberscript  if attrDict[NSSubscriptAttributeName]
         att_run_array <<  att_hash
@@ -454,7 +451,6 @@ module RLayout
     # NSString *NSCursorAttributeName;
     # NSString *NSToolTipAttributeName;
     # NSString *NSMarkedClauseSegmentAttributeName;
-
   end
 
 end

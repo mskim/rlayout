@@ -129,7 +129,7 @@ module RLayout
     def get_stroke_rect
       if RUBY_ENGINE == "rubymotion"
         # r = NSMakeRect(@x,@y,@width,@height)
-        r = NSMakeRect(@left_margin,@top_margin,@width,@height)
+        r = NSMakeRect(@left_margin,@top_margin,@width - (@left_margin + @right_margin) ,@height- (@top_margin + @bottom_margin))
 
         if @line_position == 1 #LINE_POSITION_MIDDLE
           return r
@@ -305,7 +305,6 @@ module RLayout
     # end
 
     def intersects_y(rect1, rect2)
-      # puts __method__
       (max_y(rect1).to_i > rect2[1].to_i && max_y(rect2).to_i > rect1[1].to_i) || (max_y(rect2).to_i > rect1[1].to_i && max_y(rect1).to_i > rect2[1].to_i)
     end
 
@@ -574,6 +573,7 @@ module RLayout
   class Text < Graphic
     def initialize(options={})
       super
+      @transform = options[:transform]
       self
     end
 
@@ -759,17 +759,29 @@ module RLayout
     end
   end
 
+  class Polygon < Graphic
+    def initialize(options={})
+      super
+      @points= options[:d]
+      self
+    end
+  end
+
+  class Polyline < Graphic
+    def initialize(options={})
+      super
+      @points= options[:points]
+      self
+    end
+  end
 
   class Path < Graphic
     attr_accessor :d
 
     def initialize(options={})
       super
+      @d= options[:d]
       self
     end
-
-    
-
-
   end
 end

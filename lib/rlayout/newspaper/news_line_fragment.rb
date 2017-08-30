@@ -15,9 +15,9 @@ module RLayout
   # line fill_color is set by optins[:line_color] or it is set to clear
   class	NewsLineFragment < Container
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
-    attr_accessor :left_indent, :right_indent, :para_style, :text_alignment
+    attr_accessor :left_indent, :right_indent, :para_style, :text_alignment, :starting_position
     attr_accessor :x, :y, :width, :height, :total_token_width, :room
-    attr_accessor :text_area, :has_text, :space_width
+    attr_accessor :text_area, :text_area_width, :has_text, :space_width
     def	initialize(options={})
       # options[:stroke_color]      = 'red'
       # options[:stroke_width]      = 1
@@ -27,9 +27,12 @@ module RLayout
       # options[:stroke_width]      = 0.5
       super
       @graphics         = options[:tokens] || []
-      @space_width      = options.fetch(:space_width, 5.0)
+      @space_width      = options.fetch(:space_width, 3.0)
+      @text_alignment   = options.fetch(:text_alignment, 'left')
+      @starting_position = @left_inset || 0
       @stroke_width     = 1
       @text_area        = [@x, @y, @width, @height]
+      @text_area_width  = @width
       @room             = @text_area[2]
 
       self
@@ -93,19 +96,17 @@ module RLayout
     # place tokens in the line, given tokens array
     # return loft over tokens array if not all tokens are layed out
     # return false if no leftvver tokens
-
     #CharHalfWidthCushion = 5.0
-
-
-    def place_token(token)
+    def place_token(token, options={})
       if @room + CharHalfWidthCushion >= token.width
-        # token is place into line.
+        # place token in line.
         token.parent_graphic = self
         @graphics << token
         @room -= token.width
         @room -= @space_width
         return true
       else
+        return false if options[:do_not_break]
         # no more room, try hyphenating token
         result = token.hyphenate_token(@room)
         if result == "period at the end of token"
@@ -171,7 +172,12 @@ module RLayout
           x += token.width + @space_width
         end
       else
-
+        # do as left
+        x = @starting_position
+        @graphics.each do |token|
+          token.x = x
+          x += token.width + @space_width
+        end
       end
 
     end

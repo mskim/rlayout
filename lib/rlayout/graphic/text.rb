@@ -19,10 +19,11 @@ module RLayout
       @space_before_in_lines  = 0
       @space_before_in_lines  = options[:space_before_in_lines] if options[:space_before_in_lines]
       @top_inset              = @space_before_in_lines*@body_line_height
+      @top_inset              += options[:top_inset] if options[:top_inset]
       @text_height_in_lines   = 0
-      @text_height_in_lines  = options[:text_height_in_lines] if options[:text_height_in_lines]
+      @text_height_in_lines   = options[:text_height_in_lines] if options[:text_height_in_lines]
       @space_after_in_lines   = 0
-      @space_after_in_lines  = options[:space_after_in_lines] if options[:space_after_in_lines]
+      @space_after_in_lines   = options[:space_after_in_lines] if options[:space_after_in_lines]
       @text_tracking          = options.fetch(:text_tracking, 0)
       @bottom_inset           = @space_after_in_lines*@body_line_height
       if options[:layout_length_in_lines]

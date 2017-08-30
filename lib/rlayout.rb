@@ -27,12 +27,14 @@ else
   require 'json'
   require 'hexapdf'
 
-  # require 'victor'
-  # require 'xmlsimple'
+  require 'awesome_print'
+  require 'xmlsimple'
 
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/utility'
-  require File.dirname(__FILE__) + "/rlayout/graphic/color"
+  require File.dirname(__FILE__) + '/rlayout/color'
+
+
   require File.dirname(__FILE__) + "/rlayout/graphic/fill"
   require File.dirname(__FILE__) + "/rlayout/graphic/graphic_struct"
   require File.dirname(__FILE__) + "/rlayout/graphic/image"
@@ -70,6 +72,16 @@ else
   require File.dirname(__FILE__) + '/rlayout/container_extended/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container_extended/place_item'
   require File.dirname(__FILE__) + '/rlayout/container_extended/memo_area'
+
+  require File.dirname(__FILE__) + "/rlayout/svg/canvas"
+  require File.dirname(__FILE__) + "/rlayout/svg/circle"
+  require File.dirname(__FILE__) + "/rlayout/svg/image"
+  require File.dirname(__FILE__) + "/rlayout/svg/line"
+  require File.dirname(__FILE__) + "/rlayout/svg/path"
+  require File.dirname(__FILE__) + "/rlayout/svg/polygon"
+  require File.dirname(__FILE__) + "/rlayout/svg/rectangle"
+  require File.dirname(__FILE__) + "/rlayout/svg/text"
+  require File.dirname(__FILE__) + "/rlayout/svg/svg2pdf"
 
   require File.dirname(__FILE__) + '/rlayout/style/style_service'
   require File.dirname(__FILE__) + '/rlayout/style/grid_layout'
@@ -117,6 +129,9 @@ else
   require File.dirname(__FILE__) + '/rlayout/article/rjob'
   require File.dirname(__FILE__) + '/rlayout/article/item_chapter_maker'
 
+  require File.dirname(__FILE__) + '/rlayout/newspaper/title_text'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/caption_paragraph'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/caption_column'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_heading_maker'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_line_fragment'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_paragraph'
@@ -127,8 +142,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_box'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_maker'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_section_page'
-  require File.dirname(__FILE__) + '/rlayout/svg/canvas'
-  require File.dirname(__FILE__) + '/rlayout/svg/svg2pdf'
 
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/book_plan'

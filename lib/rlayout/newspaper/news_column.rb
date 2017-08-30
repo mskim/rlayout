@@ -22,19 +22,20 @@ module RLayout
     attr_accessor :line_count, :current_line_index, :current_line
     attr_accessor :grid_rects, :body_line_height
     attr_accessor :complex_rect, :align_body_text, :show_grid_rects
-
+    attr_accessor :article_bottom_space_in_lines
     def initialize(options={}, &block)
       options[:width]     = 200 unless options[:width]
       options[:height]    = 500 unless options[:height]
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
-      @line_count         = options[:column_line_count] - NEWS_ARTICLE_BOTTOM_SPACE_IN_LINES
+      @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
+      @line_count         = options[:column_line_count] - @article_bottom_space_in_lines
       @show_grid_rects    = options[:show_grid_rects] || true
       @layout_space       = options.fetch(:column_layout_space, 0)
       @complex_rect       = false
       @body_line_height   = options[:body_line_height]
-      @height             -= @body_line_height*NEWS_ARTICLE_BOTTOM_SPACE_IN_LINES
+      @height             -= @body_line_height*@article_bottom_space_in_lines
       @current_position   = @top_margin + @top_inset
       create_lines
       if block
@@ -43,7 +44,7 @@ module RLayout
       self
     end
 
-    def create_lines
+    def create_lines(options={})
       current_x = 0
       current_y = 0
       @line_count.times do

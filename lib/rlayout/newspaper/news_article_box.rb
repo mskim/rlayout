@@ -31,7 +31,8 @@ module RLayout
   end
 
   class NewsArticleBox < Container
-    attr_accessor :on_left_edge, :on_right_edge, :is_front_page, :top_story, :top_position, :heading_columns, :grid_size, :grid_frame, :body_line_height
+    attr_accessor :on_left_edge, :on_right_edge, :is_front_page, :top_story, :top_position, :heading_columns, :subtitle_in_head, :grid_size, :grid_frame, :body_line_height
+    attr_accessor :kind, :page_heading_margin_in_lines, :article_bottom_spaces_in_lines
     attr_accessor :story_path, :show_overflow_lines
     attr_accessor :column_count, :row_count, :column_layout_space, :line_count_per_column
     attr_accessor :draw_gutter_stroke, :gutter, :v_gutter
@@ -41,8 +42,6 @@ module RLayout
     attr_accessor :heading, :subtitle_box, :quote_box, :personal_image, :news_image
     attr_accessor :column_width, :starting_column_x
     # attr_accessor :is_ad_box
-
-
     def initialize(options={}, &block)
       # @is_ad_box              = options[:is_ad_box] || false
       @gutter                 = options.fetch(:gutter, 10)
@@ -50,20 +49,25 @@ module RLayout
       options[:right_margin]  = 0
       options[:top_margin]    = options.fetch(:top_margin, 0)
       options[:bottom_margin] = options.fetch(:bottom_margin, 0)
-      options[:stroke_sides]  = [0,0,0,1]
-      options[:stroke_width]  = 0.3
+      if options[:article_line_draw_sides]
+        options[:stroke_sides]  = eval(options[:article_line_draw_sides])
+      else
+        options[:stroke_sides]  = [0,0,0,1]
+      end
+      options[:stroke_width]  = options.fetch(:article_line_thickness,0.3)
       @on_left_edge           = options.fetch(:on_left_edge, false)
       @on_right_edge          = options.fetch(:on_right_edge, false)
-      # end
+      @page_heading_margin_in_lines    = options[:page_heading_margin_in_lines] || 0
       super
       # puts "++++++++++ @is_ad_box:#{@is_ad_box}"
-      @fill_up_enpty_lines    = options[:©] || false
+      @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
       @column_count           = options[:column]
       @row_count              = options[:row]
       @current_column_index   = 0
       @is_front_page          = options.fetch(:is_front_page, false)
       @top_story              = options.fetch(:top_story, false)
       @top_position           = options.fetch(:top_position, false)
+      @article_bottom_spaces_in_lines = options.fetch(:article_bottom_spaces_in_lines, 2)
       if options[:grid_frame]
         @grid_frame = options[:grid_frame]
         if @grid_frame.class == String
@@ -80,6 +84,7 @@ module RLayout
 
       @grid_width           = options.fetch(:grid_width, 200)
       @grid_height          = options.fetch(:grid_height, 200)
+      @lines_per_grid       = options.fetch(:lines_per_grid, 7)
       @v_gutter             = 0 #options.fetch(:v_gutter, 0)
       @grid_size            = [@grid_width , @grid_height]
       @layout_direction     = options.fetch(:layout_direction, "horizontal")
@@ -114,8 +119,8 @@ module RLayout
       else
         @height             = @row_count*@grid_height + (@row_count- 1)*@v_gutter
       end
-      @body_line_height     = @grid_height/GRID_LINE_COUNT
-      @column_line_count    = @row_count*GRID_LINE_COUNT
+      @body_line_height     = @grid_height/@lines_per_grid
+      @column_line_count    = @row_count*@lines_per_grid
 
       create_columns
       #
@@ -137,7 +142,7 @@ module RLayout
     def create_columns
       current_x = @starting_column_x
       @column_count.times do
-        g= NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height)
+        g= NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         g.parent_graphic = self
         @graphics << g
         current_x += @column_width + @gutter
@@ -317,24 +322,20 @@ module RLayout
     def make_article_heading(options={})
       @is_front_page            = options['is_front_page'] || options[:is_front_page]
       @top_story                = options['top_story'] || options[:top_story]
-      @top_position             = options['top_story'] || options[:top_position]
+      @top_position             = options['top_position'] || options[:top_position]
       @subtitle_in_head         = options['subtitle_in_head'] || options[:subtitle_in_head]
       h_options = options.dup
       h_options[:is_float]      = true
       h_options[:parent]        = self
-      h_options[:width]         = @width - @gutter
+      h_options[:width]         = @width # - @gutter
       h_options[:column_count]  = @column_count
       h_options[:x]             = @starting_column_x
-      h_options[:is_front_page] = @is_front_page
-      h_options[:top_story]     = @top_story
-      h_options[:top_position]  = @top_position
-      h_options[:body_line_height] = @body_line_height
-      # h_options[:stroke_width]  = 1
 
       if @heading_columns       != @column_count
-        h_options[:width]       = @column_width
+        h_options[:width]       = @heading_columns+@column_width
       end
       @heading = NewsArticleHeading.new(h_options)
+
       unless @heading== @floats.first
         # make heading as first one in floats
         @heading = @floats.pop
@@ -401,7 +402,6 @@ module RLayout
 
     # text_height_in_lines should be calculated dynamically
     def float_subtitle(subtitle_string)
-
       options = NEWSPAPER_STYLE['subtitle_S']
       options = Hash[options.map{ |k, v| [k.to_sym, v] }]
       if @column_count > 3
@@ -413,12 +413,12 @@ module RLayout
       # options[:body_line_height] = @body_line_height
       options[:x]             = @starting_column_x
       options[:y]             = 0
-      options[:grid_frame]    = [0,0,1,1]
+      options[:top_inset]     = 3 if options[:space_before_in_lines] == 0
+      # options[:grid_frame]    = [0,0,1,0.5]
       options[:width]         = @column_width
       options[:layout_expand] = nil
       options[:is_float]      = true
       options[:parent]        = self
-      # options[:stroke_width]  = 1
       #TODO put top_margin and bottom_margin
       subtitle = Text.new(options)
     end
@@ -493,10 +493,10 @@ module RLayout
       if grid_frame[0] >= @graphics.length
         frame_x           = @graphics.last.x_max
       else
-        frame_x           = @grid_size[0]*grid_frame[0] + (grid_frame[0])*@gutter + @gutter/2
+        frame_x           = @graphics[grid_frame[0]].x
       end
       frame_y             = @grid_size[1]*grid_frame[1]
-      frame_width         = @grid_size[0]*grid_frame[2] + (grid_frame[2] - 1)*@gutter
+      frame_width         = @graphics[grid_frame[0] + grid_frame[2] - 1].x_max - frame_x
       frame_height        = @grid_size[1]*grid_frame[3] + (grid_frame[3] - 1)*@column_layout_space
       [frame_x, frame_y, frame_width, frame_height]
     end
@@ -567,12 +567,8 @@ module RLayout
         if intersects_rect(occupied_rect, float.frame_rect)
           float.y = max_y(occupied_rect) + 0
           if max_y(float.frame_rect) > @column_bottom
-            puts "float.class:#{float.class}"
-            puts "we have large one beyond @column_bottom"
-            puts "before float.height:#{float.height}"
             float.height = @column_bottom - float.y
             float.adjust_image_height if float.respond_to?(:adjust_image_height)
-            puts "after float.height:#{float.height}"
           end
         end
       end
@@ -612,6 +608,18 @@ module RLayout
         new_rect[HEIGHT_VAL] = min_y(float_rect)
         return new_rect
       end
+    end
+
+    def border_x
+      return @x  if @on_left_edge
+      @x + @gutter
+    end
+
+    def border_width
+      width = @width
+      width -=@gutter unless @on_left_edge
+      width -=@gutter unless @on_right_edge
+      width
     end
 
   end

@@ -21,16 +21,12 @@ module RLayout
 
 
   class Graphic
-    def self.parse_svg(svg_text, options={})
-      hash = XmlSimple.xml_in svg_text
-      hash = JSON.parse(hash.to_json, symbolize_names: true)
-      hash
-    end
 
-    def self.from_svg(svg_text, options={})
-      h = parse_svg(svg_text)
-      Graphic.new(h)
-    end
+
+    # def self.from_svg(svg_text, options={})
+    #   h = parse_svg(svg_text)
+    #   Graphic.new(h)
+    # end
 
     def to_svg
       if @parent_graphic

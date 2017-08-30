@@ -71,10 +71,10 @@ IMAGE_SIZE_POSITION_TABLE = {
 module RLayout
   class NewsImage < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :image_position, :caption_title
-    attr_accessor :image_box, :caption_column, :caption_paragraph
-
+    attr_accessor :image_box_object, :caption_title_object, :caption_object
+    attr_accessor :caption_string, :caption_title_string
+    attr_accessor :caption_height_sum
     def initialize(options={})
-
       if options[:parent]
         @article_column       = options[:parent].column_count
         @article_row          = options[:parent].row_count
@@ -88,36 +88,42 @@ module RLayout
       options[:grid_frame]    = convert_size_position_to_frame(options)
       options[:layout_expand] = nil
       options[:fill_color]    = 'clear'
+
       super
-      frame_rect              = @parent_graphic.grid_frame_to_image_rect(options[:grid_frame])
+      frame_rect              = @parent_graphic.grid_frame_to_image_rect(options[:grid_frame]) if @parent_graphic
+      #TODO use set_frame_rect?
       @x                      = frame_rect[0]
       @y                      = frame_rect[1]
       @width                  = frame_rect[2]
       @height                 = frame_rect[3]
-
-      @caption_column         = CaptionColumn.new(parent:self, width: @width, top_space_in_lines: 0.3, caption_line_height: 12)
-      @caption_paragraph      = CaptionParagraph.new(options)
-      @caption_paragraph.layout_lines(@caption_column)
+      @caption_title_string   = options[:caption_title]
+      @caption_string         = options[:caption]
+      @caption_height_sum     = 0
+      if @caption_title_string
+        make_caption_title
+      end
+      if @caption_string
+        make_caption
+      end
       image_optins                = {}
       image_optins[:width]        = @width
-      image_optins[:height]       = @height - @caption_column.height
+      image_optins[:height]       = @height - @caption_height_sum
       image_optins[:stroke_width] = 0.3
       image_optins[:image_fit_type] = IMAGE_FIT_TYPE_KEEP_RATIO
       image_optins[:image_path]   = @image_path
+      # image_optins[:layout_expand] = [:width, :height]
       image_optins[:layout_expand] = nil
       image_optins[:parent]       = self
-      @image_box                  = Image.new(image_optins)
-      @caption_column.y           = @image_box.height
-      # make space after the news_image when we have following text
-      # for full sized news_image, this will be adjusted by adjust_image_height
-      @height                     += @parent_graphic.body_line_height
-      self
-    end
+      @image_box_object           = Image.new(image_optins)
+      # @image_box_object.apply_fit_type
+      current_y                   = @image_box_object.y_max
+      if @caption_title_object
+        @caption_title_object.y   = current_y
+        current_y                 += @caption_title_object.height
+      end
+      @caption_object.y           = current_y     if @caption_object
 
-    def adjust_image_height
-      @image_box.height  = @height - @caption_column.height
-      @image_box.apply_fit_type
-      @caption_column.y  = @image_box.height
+      self
     end
 
     def size_to_grid(size)
@@ -131,23 +137,27 @@ module RLayout
       end
     end
 
+    def adjust_image_height
+      @image_box_object.height = @height - @caption_height_sum
+      @image_box_object.apply_fit_type
+      @caption_object.y       = @height - @caption_object.height
+      @caption_title_object.y = @caption_object.y - @caption_title_object.height
+    end
+
     # convert size, position into x,y,width, and height
     def convert_size_position_to_frame(options={})
-
       size_string             = "#{@article_column}x#{@article_row}"
       default_image_options   = IMAGE_SIZE_POSITION_TABLE[size_string]
       default_image_options   = IMAGE_COLUMN_POSITION_TABLE[@article_column.to_s] unless default_image_options
       image_size              = options.fetch(:size, default_image_options[:size])
       image_position          = options.fetch(:position, default_image_options[:position])
-      #TODO this is only for upper right, do it for other positions as well
-      if options[:column] && options[:row]
-        image_size[0] = options[:column]
-        image_size[1] = options[:row]
-      end
       x_grid = @article_column - image_size[0]
       y_grid = 0 #@article_row - image_size[1]
       [x_grid, y_grid, image_size[0], image_size[1]]
     end
+
+
+
 
   end
 

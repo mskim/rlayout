@@ -1,7 +1,7 @@
 
-KLASS_NAMES =%w[Rectangle Circle RoundRect Ellipse Line Text Image]
+KLASS_NAMES         =%w[Rectangle Circle Ellipse Line Text Image]
 TEXT_STRING_SAMPLES =["This is a text", "Good Morning", "Nice", "Cool", "RLayout", "PageScript"]
-IMAGE_TYPES = %w[pdf jpg tiff png PDF JPG TIFF]
+IMAGE_TYPES         = %w[pdf jpg tiff png PDF JPG TIFF]
 
 # NAMED_COLORS        = %w[black white blue yellow lightGray darkGray gray brown green orange clear cyan magenta].sample
 STROKE_TYPES        = %w[single double double1 double2 tripple tripple1 tripple2 tripple3 tripple4 tripple5]
@@ -10,14 +10,6 @@ SIDE_SHAPE_TYPES    = %w[round inverted_round ribbon roman_knife]
 
 module RLayout
 
-  ColorStruct     = Struct.new(:name) do
-    def sample
-      COLOR_NAMES.sample
-    end
-  end
-  CMYKStruct      = Struct.new(:c, :m, :y, :k, :a)
-
-  RGBStruct       = Struct.new(:r, :g, :b, :a)
 
   FillStruct      = Struct.new(:color) do
     def to_svg
@@ -45,6 +37,7 @@ module RLayout
 
     end
   end
+
   StrokeStruct   = Struct.new(:color, :thickness, :dash, :line_cap, :line_join, :type, :sides, :rule) do
     def to_svg
       s = "stroke:#{color};"
@@ -98,12 +91,17 @@ module RLayout
       canvas.rectangle(x, y, width, height)
     end
 
+    def to_nspath
+      NSBezierPath.bezierPathWithRect(NSMakeRect(@x,@y,@width,@height))
+    end
+
   end
 
   RoundRectStruct = Struct.new(:x, :y, :width, :height, :rx, :ry, :corners) do
     def to_svg
       "<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" rx=\"#{rx}\" ry=\"#{ry}\" replace_this_with_style />"
     end
+
     def to_hash
       h = {}
       h[:x]       = x if x
@@ -124,12 +122,16 @@ module RLayout
       canvas.rectangle(@x, @y, @width, @height, radius: @round)
     end
 
+    def to_nspath
+      NSBezierPath.bezierPathWithRoundedRect(NSMakeRect(@x,@y,@width,@height), xRadius: @rx, yRadius: @ry)
+    end
   end
 
   CircleStruct    = Struct.new(:cx, :cy, :r) do
     def to_svg
       "<circle cx=\"#{cx}\" cy=\"#{cy}\" r=\"#{r}\" replace_this_with_style />"
     end
+
     def to_hash
       h = {}
       h[:cx]  = cx if cx
@@ -147,6 +149,10 @@ module RLayout
       # center_y = @y + @height/2.0
       # r = (@width <= @height)?  @width/2 :  @height/2
       canvas.circle(cx, cy, r)
+    end
+
+    def to_nspath
+      NSBezierPath.bezierPathWithOvalInRect(NSMakeRect(@x,@y,@width,@height))
     end
 
   end
@@ -172,6 +178,10 @@ module RLayout
 
     end
 
+    def to_nspath
+      NSBezierPath.bezierPathWithOvalInRect(NSMakeRect(@x,@y,@width,@height))
+    end
+
   end
 
   LineStruct      = Struct.new(:x1, :y1, :x2, :y2, :h_direction, :v_direction) do
@@ -192,6 +202,14 @@ module RLayout
 
     def to_pdf(canvas)
 
+    end
+
+    def to_nspath
+      path      = NSBezierPath.bezierPath
+      path.move_to(NSPoint)
+      path.moveToPoint(NSPoint.new(@x,@y))
+      path.lineToPoint(NSPoint.new(@x + @width, @y + @height))
+      path
     end
 
   end
@@ -216,13 +234,18 @@ module RLayout
 
   end
 
-  BezierStruct = Struct.new(:points, :style) do
+  PathStruct = Struct.new(:d) do
     def to_svg
       #TODO
     end
     def to_hash
       to_h
       # self.to_h.delete_if{|k,v| v.nil?}
+    end
+
+    def to_nspath
+      path  = NSBezierPath.bezierPath
+
     end
   end
 
