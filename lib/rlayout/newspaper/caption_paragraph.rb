@@ -20,6 +20,23 @@ module RLayout
       make_source_tokens        if @source
     end
 
+
+    def make_caption_title_tokens
+      atts                          = NEWSPAPER_STYLE['caption_title']
+      atts                          = Hash[atts.map{ |k, v| [k.to_sym, v] }]
+      @caption_title_space_width    = atts[:space_width] || atts[:font_size]/2
+      @tokens += @caption_title.split(" ").collect do |token_string|
+        options = {}
+        options[:string] = token_string
+        if RUBY_ENGINE == 'rubymotion'
+          options[:atts]    = ns_atts_from_style(atts)
+        end
+        RLayout::TextToken.new(options)
+      end
+
+    end
+
+
     def ns_atts_from_style(style)
       atts = {}
       atts[NSFontAttributeName] = NSFont.fontWithName("Times", size:10.0)
@@ -36,21 +53,6 @@ module RLayout
 
       #TODO tracking, scale, space_width
       atts
-    end
-
-    def make_caption_title_tokens
-      atts                          = NEWSPAPER_STYLE['caption_title']
-      atts                          = Hash[atts.map{ |k, v| [k.to_sym, v] }]
-      @caption_title_space_width    = atts[:space_width] || atts[:font_size]/2
-      @tokens += @caption_title.split(" ").collect do |token_string|
-        options = {}
-        options[:string] = token_string
-        if RUBY_ENGINE == 'rubymotion'
-          options[:atts]    = ns_atts_from_style(atts)
-        end
-        RLayout::TextToken.new(options)
-      end
-
     end
 
     def make_caption_tokens
@@ -115,7 +117,7 @@ module RLayout
         token_list                = @current_line.graphics
         source_tokens_space_sum   = @source_tokens.length*@source_space_width
         source_tokens_width_sum   = @source_tokens.map{|x| x.width}.reduce(:+)
-        source_tokens_area_width  = source_tokens_width_sum + source_tokens_space_sum
+        source_tokens_area_width  = source_tokens_width_sum + source_tokens_space_sum + 2
         source_starting_x         = line_width - source_tokens_area_width + @source_space_width
         end_of_tokens             = token_list.last.x_max
         token_list.last.x_max
@@ -142,7 +144,7 @@ module RLayout
           end
         end
       end
-      
+
     end
 
   end

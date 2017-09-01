@@ -6,7 +6,7 @@ module RLayout
 
   class Graphic
     attr_accessor :text_markup, :text_direction, :text_string, :text_color, :font_size, :text_line_spacing, :font, :text_style
-    attr_accessor :text_fit_type, :text_alignment, :text_tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
+    attr_accessor :text_fit_type, :text_alignment, :tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
     attr_accessor :text_layout_manager, :has_text, :body_line_height, :space_before_in_lines, :text_height_in_lines,  :space_after_in_lines
 
     def init_text(options)
@@ -24,7 +24,7 @@ module RLayout
       @text_height_in_lines   = options[:text_height_in_lines] if options[:text_height_in_lines]
       @space_after_in_lines   = 0
       @space_after_in_lines   = options[:space_after_in_lines] if options[:space_after_in_lines]
-      @text_tracking          = options.fetch(:text_tracking, 0)
+      @tracking               = options.fetch(:tracking, 0)
       @bottom_inset           = @space_after_in_lines*@body_line_height
       if options[:layout_length_in_lines]
         @layout_length = height_in_lines
@@ -84,6 +84,25 @@ module RLayout
       else
         9
       end
+    end
+
+    def ns_atts_from_style(style)
+      atts = {}
+      atts[NSFontAttributeName] = NSFont.fontWithName("Times", size:10.0)
+      if style[:font] && style[:font_size]
+        atts[NSFontAttributeName] = NSFont.fontWithName(style[:font], size: style[:font_size])
+      end
+      if style[:text_color]
+        if style[:text_color] == ""
+          atts[NSForegroundColorAttributeName] = NSColor.blackColor
+        else
+          atts[NSForegroundColorAttributeName] = RLayout.color_from_string(style[:text_color])
+        end
+      end
+      atts[NSKernAttributeName] = style[:tracking] if style[:tracking]
+
+      #TODO tracking, scale, space_width
+      atts
     end
 
     # TODO

@@ -9,6 +9,7 @@ module RLayout
     def initialize(options={})
       @grid_width       = options.fetch(:grid_width, 2)
       @heading_columns  = options[:column_count]
+      # options[:fill_color]    = 'yellow'
       super
       @body_line_height = @parent_graphic.body_line_height
       if options['editorial_head']
@@ -16,6 +17,7 @@ module RLayout
       else
         set_heading_content(options)
       end
+
       self
     end
 
@@ -34,23 +36,26 @@ module RLayout
     end
 
     def set_heading_content(options)
-      @height_in_lines      = 0
+      @height_in_lines            = 0
       @top_position_filler_object = top_position_filler(@parent_graphic.page_heading_margin_in_lines)
-      @height_in_lines       += @parent_graphic.page_heading_margin_in_lines
+      @height_in_lines            += @parent_graphic.page_heading_margin_in_lines
       if options['subject_head']
-        @subject_head_object  = subject_head(options)
-        @height_in_lines      +=@subject_head_object.height_in_lines    unless @subject_head_object.nil?
+        @subject_head_object      = subject_head(options)
+        @height_in_lines          +=@subject_head_object.height_in_lines    unless @subject_head_object.nil?
       end
+      y = @height_in_lines*@body_line_height
+      options[:y] = y
+      options[:x] = 0
 
       if options['title']
+
         if @parent_graphic.top_story
           @title_object = main_title(options)
           @title_object.adjust_height_as_height_in_lines
         else
           @title_object = title(options)
         end
-        @height_in_lines += @title_object.height_in_lines    unless @title_object.nil?
-
+        @height_in_lines  +=@title_object.height_in_lines    unless @title_object.nil?
       end
 
       if options['subtitle'] && (@parent_graphic.top_story || @parent_graphic.subtitle_in_head)
@@ -139,13 +144,12 @@ module RLayout
       atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       atts.merge(options)
       atts[:text_string]          = options['title']
-      atts[:text_string]          = options['title'].chop
+
       if atts[:text_string] =~/\n/
         atts[:text_fit_type]        = 'adjust_box_height' #fit_text_to_box
       else
         atts[:text_fit_type]        = 'fit_text_to_box' #
       end
-
       atts[:body_line_height]     = @body_line_height
       atts[:width]                = @width
       # atts[:text_fit_type]        = 'adjust_box_height'
@@ -162,39 +166,45 @@ module RLayout
       # title_3       = '제목_3단'
       # title_2       = '제목_2단'
       # title_1       = '제목_1단'
+      atts = {}
       case @heading_columns
+
       when 4,5,6,7
-        title_atts = NEWSPAPER_STYLE['title_4_5']
-        title_atts = Hash[title_atts.map{ |k, v| [k.to_sym, v] }]
+        atts[:style_name] = 'title_4_5'
+        # atts = NEWSPAPER_STYLE['title_4_5']
+        # atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       when 3
-        title_atts = NEWSPAPER_STYLE['title_3']
-        title_atts = Hash[title_atts.map{ |k, v| [k.to_sym, v] }]
+        atts[:style_name] = 'title_3'
+        # atts = NEWSPAPER_STYLE['title_3']
+        # atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       when 2
-        title_atts = NEWSPAPER_STYLE['title_2']
-        title_atts = Hash[title_atts.map{ |k, v| [k.to_sym, v] }]
+        atts[:style_name] = 'title_2'
+        # atts = NEWSPAPER_STYLE['title_2']
+        # atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       when 1
-        title_atts = NEWSPAPER_STYLE['title_1']
-        title_atts = Hash[title_atts.map{ |k, v| [k.to_sym, v] }]
+        atts[:style_name] = 'title_1'
+        # atts = NEWSPAPER_STYLE['title_1']
+        # atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       end
-      title_atts[:text_string]          = options['title'].chop
-      if title_atts[:text_string] =~/\n/
-        title_atts[:text_fit_type]        = 'adjust_box_height'
+      atts[:text_string]          = options['title']
+
+      if atts[:text_string] =~/\n/
+        atts[:text_fit_type]        = 'adjust_box_height'
       else
-        title_atts[:text_fit_type]        = 'fit_text_to_box' #
-        #fit_text_to_box
+        atts[:text_fit_type]        = 'fit_text_to_box' #
       end
 
-      title_atts[:body_line_height]     = @body_line_height
-      title_atts[:width]                = @width
-      # title_atts[:text_fit_type]        = 'adjust_box_height' #fit_text_to_box
-      title_atts[:layout_expand]        = [:width]
-      title_atts[:fill_color]           = options.fetch(:fill_color, 'clear')
-      title_atts[:parent]               = self
-      # title_atts[:stroke_width]         = 1
-      title_atts[:layout_length_in_lines] = true
-      # title_atts.merge!(options)
-      @title_object                     = Text.new(title_atts)
-      @title_object
+      atts[:body_line_height]     = @body_line_height
+      atts[:width]                = @width
+      atts[:layout_expand]        = [:width]
+      atts[:fill_color]           = options.fetch(:fill_color, 'clear')
+      atts[:parent]               = self
+      # atts[:stroke_width]         = 1
+      atts[:layout_length_in_lines] = true
+      options.delete(:parent)
+      atts.merge!(options)
+      @title_object               = TitleText.new(atts)
+      # @title_object                     = Text.new(atts)
     end
 
     def top_subtitle(options={})

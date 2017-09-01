@@ -144,12 +144,11 @@ module RLayout
           text_color    = RLayout.convert_to_nscolor(@para_style[:text_color]) unless (@para_style[:text_color]) == NSColor
           @atts[NSForegroundColorAttributeName] = text_color
         end
-        if @para_style[:text_tracking] != 0
-          # atts[NSKernAttributeName]  = text_tracking if text_tracking
-          @atts[NSKernAttributeName] = @para_style[:text_tracking]
+        if @para_style[:tracking] != 0
+          @atts[NSKernAttributeName] = @para_style[:tracking]
         end
         # #TODO
-        # atts[NSKernAttributeName]  = text_tracking if text_tracking
+        # atts[NSKernAttributeName]  = tracking if tracking
         unless @para_style[:space_width]
           @space_width = @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
         end
@@ -158,7 +157,6 @@ module RLayout
         unless @para_style[:space_width]
           @space_width = @para_style[:space_width]  = @para_style[:font_size]/2
         end
-        # puts "@para_style:#{@para_style}"
       end
 
       # do we have any doulbe curl?, for special token
@@ -382,7 +380,7 @@ module RLayout
       end
       # puts "before style[:space_width]:#{style[:space_width]}"
       style[:space_width]    = style[:space_width]  if style[:space_width]
-      style[:text_tracking] = style[:tracking]    if style[:tracking]
+      style[:tracking] = style[:tracking]    if style[:tracking]
       style[:h_alignment]   = style[:alignment]   if style[:alignment]
       if style
         h.merge! style

@@ -76,11 +76,11 @@ module RLayout
       else
         @grid_frame  = [0,0,@column_count, @row_count]
       end
-      if options[:heading_columns]
-        @heading_columns = options[:heading_columns]
-      else
-        @heading_columns = @column_count
-      end
+      # if options[:heading_columns]
+      #   @heading_columns = options[:heading_columns]
+      # else
+      @heading_columns = @column_count
+      # end
 
       @grid_width           = options.fetch(:grid_width, 200)
       @grid_height          = options.fetch(:grid_height, 200)
@@ -335,7 +335,6 @@ module RLayout
         h_options[:width]       = @heading_columns+@column_width
       end
       @heading = NewsArticleHeading.new(h_options)
-
       unless @heading== @floats.first
         # make heading as first one in floats
         @heading = @floats.pop
@@ -546,9 +545,6 @@ module RLayout
         else
           @occupied_rects << @float_rect
         end
-      end
-      @floats.each do |float|
-        return "floats oveflow!!" if contains_rect(frame_rect, float.frame_rect)
       end
       true
     end

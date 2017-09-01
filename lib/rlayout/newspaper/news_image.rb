@@ -88,6 +88,7 @@ module RLayout
       options[:grid_frame]    = convert_size_position_to_frame(options)
       options[:layout_expand] = nil
       options[:fill_color]    = 'clear'
+      # options[:stroke_width]  = 1
       super
       frame_rect              = @parent_graphic.grid_frame_to_image_rect(options[:grid_frame])
       @x                      = frame_rect[0]

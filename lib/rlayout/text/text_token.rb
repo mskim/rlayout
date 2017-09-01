@@ -60,10 +60,8 @@ module RLayout
       options[:layout_expand]   = nil
       @has_text                 = true
       if RUBY_ENGINE == "rubymotion"
-
         if options[:atts]
           @atts = options[:atts]
-
         else
           @atts       = default_atts
         end
@@ -76,7 +74,7 @@ module RLayout
         else
           @att_string     = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
           options[:width] = @att_string.size.width
-          options[:height]= @att_string.size.height*2
+          options[:height]= @att_string.size.height*1.2
         end
       else
         # TODO fix get string with from Rfont
@@ -84,25 +82,41 @@ module RLayout
         size = RFont.string_size(@string, options[:font], font_size)
         options[:width]  = size[0]
         options[:height] = size[1]
+
       end
       options[:fill_color] = options.fetch(:token_color, 'clear')
       super
-
       if RUBY_ENGINE == "rubymotion"
         # add some margin to left and right of the token.
         @width  = @att_string.size.width + @left_margin + @right_margin
         @x      = @left_margin
         # @heigth = @att_string.size.height*2
-        @heigth = 19.0
+        # @heigth = 19.0
         #TODO fix this
         if options[:text_line_spacing] && options[:text_line_spacing].class != String
           @height += options[:text_line_spacing]
         else
-          @height += 10
+          # @height += 10
         end
       end
       self
     end
+
+    # reduce the tracking value of token by 10%
+    def reduce_tracking_value
+      if RUBY_ENGINE == "rubymotion"
+        font_size   = @atts[NSFontAttributeName].pointSize
+        delta       = font_size/10
+        @atts[NSKernAttributeName] -= delta
+        @att_string     = NSAttributedString.alloc.initWithString(@string, attributes: @atts)
+        @width = @att_string.size.width
+      else
+        font_size   = @atts[:font_size]
+        delta       = font_size/10
+        @para_style[:tracking] -= delta
+      end
+    end
+
 
     # return false if none broken
     # split string into two and pit split_second_half_attsting
@@ -177,22 +191,6 @@ module RLayout
         s += "<text font-size=\"#{@font_size}\" x=\"#{x}\" y=\"#{y + height*0.8}\">#{string}</text>\n"
       end
       s
-    end
-
-    def ns_atts_from_style(style)
-      atts = {}
-      atts[NSFontAttributeName] = NSFont.fontWithName("Times", size:10.0)
-      if style[:font] && style[:font_size]
-        atts[NSFontAttributeName] = NSFont.fontWithName(style[:font], size: style[:font_size])
-      end
-      if style[:text_color]
-        if style[:text_color] == ""
-          atts[NSForegroundColorAttributeName] = NSColor.blackColor
-        else
-          atts[NSForegroundColorAttributeName] = RLayout.color_from_string(style[:text_color])
-        end
-      end
-      atts
     end
 
     def default_atts

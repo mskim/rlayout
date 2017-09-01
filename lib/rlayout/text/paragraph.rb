@@ -275,11 +275,11 @@ module RLayout
           text_color    = RLayout.convert_to_nscolor(@para_style[:text_color]) unless (@para_style[:text_color]) == NSColor
           @atts[NSForegroundColorAttributeName] = text_color
         end
-        atts[NSKernAttributeName]             = text_tracking if text_tracking
+        atts[NSKernAttributeName]  = @para_style[:tracking] if @para_style[:tracking]
         @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
         @para_style[:atts] = @atts
       else
-        # puts "@para_style:#{@para_style}"
+
       end
 
       # do we have any doulbe curl?

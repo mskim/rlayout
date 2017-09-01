@@ -246,8 +246,8 @@ module RLayout
         atts[NSStrokeColorAttributeName] = RLayout.color_from_string(attributes[:guguri_color])
         #atts[NSStrokeColorAttributeName]=Graphic.color_from_string(attributes[:guguri_color])
       end
-      if @text_tracking
-        atts[NSKernAttributeName] = @text_tracking
+      if @tracking
+        atts[NSKernAttributeName] = @tracking
       end
       left_align        = NSMutableParagraphStyle.alloc.init.setAlignment(NSLeftTextAlignment)
       right_align       = NSMutableParagraphStyle.alloc.init.setAlignment(NSRightTextAlignment)
@@ -334,7 +334,7 @@ module RLayout
       @text_line_spacing             = options.fetch(:text_line_spacing, 0)
       @text_fit_type                 = options.fetch(:text_fit_type, 0)
       @text_alignment                = options.fetch(:text_alignment, "left")
-      @text_tracking                 = options.fetch(:text_tracking, 0)
+      @tracking                 = options.fetch(:tracking, 0)
       @text_first_line_head_indent   = options.fetch(:text_first_line_head_indent, 0)
       @text_head_indent              = options.fetch(:text_head_indent, 0)
       @text_tail_indent              = options.fetch(:text_tail_indent, 0)

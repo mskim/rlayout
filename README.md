@@ -116,11 +116,19 @@ TODO List
 			- index
 			- glossary
 		- put templates under rubymotion app/resouces/
-2017_8_27
 
+2017_8_27
+	- Text
+	- NSText
+
+	- Magazine
+	- Chapter
+	- AdBox
+
+2017_8_27
 	- caption_paragraph
 		- source
-		
+
 2017_7_5
 	- refactor color from all over the place into one module function
 	- graphic class Line draw
