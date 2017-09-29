@@ -10,11 +10,7 @@ module RLayout
     attr_accessor :text_layout_manager, :has_text, :body_line_height, :space_before_in_lines, :text_height_in_lines,  :space_after_in_lines
 
     def init_text(options)
-      if options[:string]
-        @has_text = true
-      else
-        @has_text = false
-      end
+      @has_text               = options[:string] ? true : false
       @body_line_height       = options.fetch(:body_line_height, 12)
       @space_before_in_lines  = 0
       @space_before_in_lines  = options[:space_before_in_lines] if options[:space_before_in_lines]
@@ -86,26 +82,6 @@ module RLayout
       end
     end
 
-    def ns_atts_from_style(style)
-      atts = {}
-      atts[NSFontAttributeName] = NSFont.fontWithName("Times", size:10.0)
-      if style[:font] && style[:font_size]
-        atts[NSFontAttributeName] = NSFont.fontWithName(style[:font], size: style[:font_size])
-      end
-      if style[:text_color]
-        if style[:text_color] == ""
-          atts[NSForegroundColorAttributeName] = NSColor.blackColor
-        else
-          atts[NSForegroundColorAttributeName] = RLayout.color_from_string(style[:text_color])
-        end
-      end
-      atts[NSKernAttributeName] = style[:tracking] if style[:tracking]
-
-      #TODO tracking, scale, space_width
-      atts
-    end
-
-    # TODO
     def set_text(new_string)
       if @text_layout_manager.nil?
         @text_layout_manager = TextLayoutManager.new(:parent=>self, :text_string=>new_string)

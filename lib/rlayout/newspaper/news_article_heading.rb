@@ -17,7 +17,6 @@ module RLayout
       else
         set_heading_content(options)
       end
-
       self
     end
 
@@ -48,7 +47,6 @@ module RLayout
       options[:x] = 0
 
       if options['title']
-
         if @parent_graphic.top_story
           @title_object = main_title(options)
           @title_object.adjust_height_as_height_in_lines
@@ -68,6 +66,7 @@ module RLayout
       end
       @height = @height_in_lines*@body_line_height
       relayout!
+
       self
     end
 
@@ -79,14 +78,14 @@ module RLayout
     def editorial_head(options={})
       # subject_head_height_in_lines       = options[:space_before_in_lines] + options[:text_height_in_lines] + options[:space_after_in_lines]
       # puts "subject_head_height_in_lines:#{subject_head_height_in_lines}"
+      subject_atts = {}
       if @heading_columns > 5
-        subject_atts = NEWSPAPER_STYLE['subject_head_L']
+        subject_atts[:style_name] = 'subject_head_L'
       elsif @heading_columns > 3
-        subject_atts = NEWSPAPER_STYLE['subject_head_M']
+        subject_atts[:style_name] = 'subject_head_M'
       else
-        subject_atts = NEWSPAPER_STYLE['subject_head_S']
+        subject_atts[:style_name] = 'subject_head_S'
       end
-      subject_atts                      = Hash[subject_atts.map{ |k, v| [k.to_sym, v] }]
       subject_atts[:text_string]        = options['editorial_head']
       subject_atts[:body_line_height]   = @body_line_height
       subject_atts[:width]              = @parent_graphic.column_width
@@ -99,7 +98,7 @@ module RLayout
       subject_atts[:fill_color]         = options.fetch(:fill_color, 'clear')
       subject_atts[:parent]             = self
       subject_atts[:layout_length_in_lines] = true
-      t = Text.new(subject_atts)
+      t = TitleText.new(subject_atts)
       t
     end
 
@@ -118,37 +117,36 @@ module RLayout
     end
 
     def subject_head(options={})
+      atts = {}
       if @heading_columns > 5
-        subject_atts = NEWSPAPER_STYLE['subject_head_L']
+        atts[:style_name] = 'subject_head_L'
       elsif @heading_columns > 3
-        subject_atts = NEWSPAPER_STYLE['subject_head_M']
+        atts[:style_name] = 'subject_head_M'
       else
-        subject_atts = NEWSPAPER_STYLE['subject_head_S']
+        atts[:style_name] = 'subject_head_S'
       end
       #todo second half string
-      subject_atts                      = Hash[subject_atts.map{ |k, v| [k.to_sym, v] }]
-      subject_atts[:text_string]        = options['subject_head']
-      subject_atts[:body_line_height]   = @body_line_height
-      subject_atts[:width]              = @width
-      subject_atts[:stroke_width]       = 0
-      subject_atts[:text_fit_type]      = 'adjust_box_height'
-      subject_atts[:layout_expand]      = [:width] #TODO
-      subject_atts[:fill_color]         = options.fetch(:fill_color, 'clear')
-      subject_atts[:parent]             = self
-      subject_atts[:layout_length_in_lines] = true
-      Text.new(subject_atts)
+      atts[:text_string]        = options['subject_head']
+      atts[:body_line_height]   = @body_line_height
+      atts[:width]              = @width
+      atts[:stroke_width]       = 0
+      atts[:text_fit_type]      = 'adjust_box_height'
+      atts[:layout_expand]      = [:width] #TODO
+      atts[:fill_color]         = options.fetch(:fill_color, 'clear')
+      atts[:parent]             = self
+      atts[:layout_length_in_lines] = true
+      TitleText.new(atts)
     end
 
     def main_title(options={})
-      atts = NEWSPAPER_STYLE['title_main']
-      atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
+      atts = {}
+      atts[:style_name] = 'title_main'
       atts.merge(options)
       atts[:text_string]          = options['title']
-
       if atts[:text_string] =~/\n/
-        atts[:text_fit_type]        = 'adjust_box_height' #fit_text_to_box
+        atts[:text_fit_type]      = 'adjust_box_height' #fit_text_to_box
       else
-        atts[:text_fit_type]        = 'fit_text_to_box' #
+        atts[:text_fit_type]      = 'fit_text_to_box' #
       end
       atts[:body_line_height]     = @body_line_height
       atts[:width]                = @width
@@ -157,8 +155,8 @@ module RLayout
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts[:parent]               = self
       atts[:layout_length_in_lines] = true
-      @title_object               = Text.new(atts)
-      @title_object
+      atts[:single_line_title]    = true
+      @title_object               = TitleText.new(atts)
     end
 
     def title(options={})
@@ -171,23 +169,14 @@ module RLayout
 
       when 4,5,6,7
         atts[:style_name] = 'title_4_5'
-        # atts = NEWSPAPER_STYLE['title_4_5']
-        # atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       when 3
         atts[:style_name] = 'title_3'
-        # atts = NEWSPAPER_STYLE['title_3']
-        # atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       when 2
         atts[:style_name] = 'title_2'
-        # atts = NEWSPAPER_STYLE['title_2']
-        # atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       when 1
         atts[:style_name] = 'title_1'
-        # atts = NEWSPAPER_STYLE['title_1']
-        # atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       end
       atts[:text_string]          = options['title']
-
       if atts[:text_string] =~/\n/
         atts[:text_fit_type]        = 'adjust_box_height'
       else
@@ -200,36 +189,35 @@ module RLayout
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts[:parent]               = self
       # atts[:stroke_width]         = 1
-      atts[:layout_length_in_lines] = true
+      # atts[:layout_length_in_lines] = true
+      atts[:single_line_title]    = true
       options.delete(:parent)
       atts.merge!(options)
       @title_object               = TitleText.new(atts)
-      # @title_object                     = Text.new(atts)
     end
 
     def top_subtitle(options={})
-      atts = NEWSPAPER_STYLE['subtitle_main']
-      atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
+      atts = {}
+      atts[:style_name]           = 'subtitle_main'
       atts[:text_string]          = options['subtitle']
       atts[:body_line_height]     = @body_line_height
-      atts[:width]                  = @width
-      atts[:text_fit_type]          = 'adjust_box_height'
-      atts[:fill_color]             = options.fetch(:fill_color, 'clear')
+      atts[:width]                = @width
+      atts[:text_fit_type]        = 'adjust_box_height'
+      atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       # atts                          = options.merge(atts)
-      atts[:parent]                 = self
-      @subtitle_object              = Text.new(atts)
+      atts[:parent]               = self
+      @subtitle_object            = TitleText.new(atts)
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object
     end
 
     def subtitle(options={})
+      atts = {}
       if @heading_columns >= 3
-        atts = NEWSPAPER_STYLE['subtitle_M']
-        atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
+        atts[:style_name] = 'subtitle_M'
       else
-        atts = NEWSPAPER_STYLE['subtitle_S']
-        atts = Hash[atts.map{ |k, v| [k.to_sym, v] }]
+        atts[:style_name] = 'subtitle_S'
       end
       atts[:text_string]            = options['subtitle']
       atts[:body_line_height]       = @body_line_height
@@ -237,7 +225,7 @@ module RLayout
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts[:parent]                 = self
-      @subtitle_object              = Text.new(atts)
+      @subtitle_object              = TitleText.new(atts)
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object

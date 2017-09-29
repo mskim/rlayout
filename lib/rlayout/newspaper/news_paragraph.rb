@@ -139,19 +139,8 @@ module RLayout
     def create_tokens
       @atts = {}
       if RUBY_ENGINE == 'rubymotion'
-        @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:font_size])
-        if @para_style[:text_color]
-          text_color    = RLayout.convert_to_nscolor(@para_style[:text_color]) unless (@para_style[:text_color]) == NSColor
-          @atts[NSForegroundColorAttributeName] = text_color
-        end
-        if @para_style[:tracking] != 0
-          @atts[NSKernAttributeName] = @para_style[:tracking]
-        end
-        # #TODO
-        # atts[NSKernAttributeName]  = tracking if tracking
-        unless @para_style[:space_width]
-          @space_width = @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
-        end
+        @atts = NSUtils.ns_atts_from_style(@para_style)
+        @space_width = @atts[:@space_width]
         @para_style[:atts] = @atts
       else
         unless @para_style[:space_width]
@@ -341,51 +330,30 @@ module RLayout
       h[:double_emphasis]         = {stroke_sides: [1,1,1,1], stroke_thickness: 0.5}
       h[:single_emphasis]         = {stroke_sides: [0,1,0,1], stroke_thickness: 0.5}
 
-      style = RLayout::StyleService.shared_style_service.current_style[@markup]
-      if custom_styles = RLayout::StyleService.shared_style_service.custom_style
-        if @markup =='p'
-          style_hash = custom_styles['body']
-          style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-
-        elsif style.class == String
-          # this is when a style is refering to other style by name
-          style = RLayout::StyleService.shared_style_service.current_style[style]
-        end
-
-        if @markup =='h1'
-          style_hash = custom_styles['reporter']
-          style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-        elsif style.class == String
-          # this is when a style is refering to other style by name
-          style = RLayout::StyleService.shared_style_service.current_style[style]
-        end
-      else
-        if @markup =='p'
-          style = NEWSPAPER_STYLE['body']
-          style = Hash[style.map{ |k, v| [k.to_sym, v] }]
-
-        elsif style.class == String
-          # this is when a style is refering to other style by name
-          style = RLayout::StyleService.shared_style_service.current_style[style]
-        end
-
-        if @markup =='h1'
-          style = NEWSPAPER_STYLE['reporter']
-          style = Hash[style.map{ |k, v| [k.to_sym, v] }]
-
-        elsif style.class == String
-          # this is when a style is refering to other style by name
-          style = RLayout::StyleService.shared_style_service.current_style[style]
-        end
+      current_style = RLayout::StyleService.shared_style_service.current_style
+      if @markup =='p'
+        style_hash = current_style['body']
+        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
-      # puts "before style[:space_width]:#{style[:space_width]}"
-      style[:space_width]    = style[:space_width]  if style[:space_width]
-      style[:tracking] = style[:tracking]    if style[:tracking]
+      # h1 $ is  assigned as reporrter
+      if @markup =='h1'
+        style_hash = current_style['reporter']
+        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+      end
+
+      if @markup =='h2'
+        style_hash = current_style['body_gothic']
+        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+      end
+
+      if @markup =='h3'
+        style_hash = current_style['running_head']
+        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+      end
       style[:h_alignment]   = style[:alignment]   if style[:alignment]
       if style
         h.merge! style
       end
-
       @para_style = h
     end
 
@@ -394,61 +362,6 @@ module RLayout
       Hash[list_only.collect{|k,v| [k.to_s.sub("list_","").to_sym, v]}]
     end
 
-    def attributes_of_attributed_string(att_str)
-      att_run_array=[]
-      range = Pointer.new(NSRange.type)
-      i=0
-      string = att_str.string
-      #  "att_str.string:#{att_str.string}"
-      while i < att_str.string.length do
-        attrDict = att_str.attributesAtIndex  i, effectiveRange:range
-        length=range[0].length
-        i += length
-        att_hash={}
-        starting_index = range[0].location
-        ending_index = starting_index + (range[0].length - 1)
-        att_hash[:paragraph_style]=attrDict[NSParagraphStyleAttributeName]  if attrDict[NSParagraphStyleAttributeName]
-        if attrDict[NSFontAttributeName]
-          att_hash[:font]=attrDict[NSFontAttributeName].fontName
-          att_hash[:size]= attrDict[NSFontAttributeName].pointSize.round(2)
-          # att_hash[:color]= attrDict[NSForegroundColorAttributeName].color
-        end
-        att_hash[:tracking]         = attrDict[NSKernAttributeName]               if attrDict[NSKernAttributeName]
-        att_hash[:strike]           = attrDict[NSStrikethroughStyleAttributeName] if attrDict[NSStrikethroughStyleAttributeName]
-        att_hash[:baseline_offset]  = attrDict[NSBaselineOffsetAttributeName]     if attrDict[NSBaselineOffsetAttributeName]
-        att_hash[:styles]= []
-        att_hash[:styles]<<:italic                                                if attrDict[NSObliquenessAttributeName]
-        att_hash[:styles]<<:bold                                                  if attrDict[NSObliquenessAttributeName]
-        att_hash[:styles]<< :underline                                            if attrDict[NSUnderlineStyleAttributeName]
-        att_hash[:styles]<< :superscript                                          if attrDict[NSSuperscriptAttributeName]
-        # is there no subscript?
-        # att_hash[:styles]<< :suberscript  if attrDict[NSSubscriptAttributeName]
-        att_run_array <<  att_hash
-      end
-      att_run_array
-    end
-    # NSString *NSFontAttributeName;
-    # NSString *NSParagraphStyleAttributeName;
-    # NSString *NSForegroundColorAttributeName;
-    # NSString *NSUnderlineStyleAttributeName;
-    # NSString *NSSuperscriptAttributeName;
-    # NSString *NSBackgroundColorAttributeName;
-    # NSString *NSAttachmentAttributeName;
-    # NSString *NSLigatureAttributeName;
-    # NSString *NSBaselineOffsetAttributeName;
-    # NSString *NSKernAttributeName;
-    # NSString *NSLinkAttributeName;
-    # NSString *NSStrokeWidthAttributeName;
-    # NSString *NSStrokeColorAttributeName;
-    # NSString *NSUnderlineColorAttributeName;
-    # NSString *NSStrikethroughStyleAttributeName;
-    # NSString *NSStrikethroughColorAttributeName;
-    # NSString *NSShadowAttributeName;
-    # NSString *NSObliquenessAttributeName;
-    # NSString *NSExpansionAttributeName;
-    # NSString *NSCursorAttributeName;
-    # NSString *NSToolTipAttributeName;
-    # NSString *NSMarkedClauseSegmentAttributeName;
   end
 
 end

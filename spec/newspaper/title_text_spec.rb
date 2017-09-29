@@ -13,7 +13,6 @@ describe 'create with article' do
     assert_equal NewsArticleBox, @news_box.class
     assert_equal NewsArticleHeading, @heading.class
   end
-
 end
 #
 # describe 'create TitleText' do

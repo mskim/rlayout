@@ -1,21 +1,23 @@
 module RLayout
-
+  MAX_SQUEEZE_LIMIT = 1.1
   # TitleText single line uniform styled text
   # used for title, subject_head
   # It can squeeze text
   class TitleText < Container
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
-
+    attr_accessor :current_line, :current_line_y
+    attr_accessor :single_line_title, :force_fit_title
     def initialize(options={})
       @string                 = options.delete(:text_string)
-      # options[:fill_color]    = 'red'
+      options[:fill_color]    = options.fetch(:line_color, 'clear')
       super
       @tokens                 = []
       @room                   = @width
+      @single_line_title      = options[:single_line_title]
       @style_name             = options[:style_name]
-      @para_style             = NEWSPAPER_STYLE[@style_name]
+      @para_style             = RLayout::StyleService.shared_style_service.current_style[@style_name]
       @para_style             = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
-      @space_width            = @para_style[:space_width] || @para_style[:font_size]
+      @space_width            = @para_style[:space_width] || @para_style[:font_size]/3
       @text_alignment         = options[:text_alignment] || 'left'
       @body_line_height       = options[:body_line_height] || 14
       @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
@@ -25,13 +27,22 @@ module RLayout
       @space_after_in_lines   = @para_style[:space_after_in_lines] || 0
       @tracking               = @para_style.fetch(:tracking, 0)
       @bottom_inset           = @space_after_in_lines*@body_line_height
-      @height_in_lines        = 0
       @height_in_lines        = @space_before_in_lines + @text_height_in_lines + @space_after_in_lines
       @height                 = @height_in_lines*@body_line_height
-      @line                   = NewsLineFragment.new(parent:self, width:@width, height:@height)
-
+      if @para_style[:text_line_spacing] == "" || @para_style[:text_line_spacing].nil?
+        # this is when text_line_spacing is not defined
+        @line_space           =  @para_style[:font_size]*0.4
+      else
+        @line_space           = @para_style[:text_line_spacing]
+      end
+      @line_height            = @para_style[:font_size] + @line_space
+      @current_line_y         = @top_inset
+      @current_line           = NewsLineFragment.new(parent:self, x: 0, y:@current_line_y,  width:@width, height:@line_height, space_width: @space_width, debug: true)
+      @current_line_y         +=@current_line.height
       create_tokens
-      layout_title_toknes
+      layout_toknes
+      ajust_height_as_body_height_multiples
+
       self
     end
 
@@ -39,46 +50,76 @@ module RLayout
       @tokens += @string.split(" ").collect do |token_string|
         options = {}
         options[:string]  = token_string
-        options[:y]       = @top_inset
+        options[:y]       = 0
         if RUBY_ENGINE == 'rubymotion'
-          options[:atts]    = ns_atts_from_style(@para_style)
+          options[:atts]    = NSUtils.ns_atts_from_style(@para_style)
+          @space_width      = options[:atts][:space_width]
         end
         # options[:stroke_width] = 1
         RLayout::TextToken.new(options)
       end
+
     end
 
-    def token_width_sum
-      @tokens.map{|t| t.width}.reduce(:+)
+    def add_new_line
+      @current_line       = NewsLineFragment.new(parent:self, x: 0, y:@current_line_y,  width:@width, height:@line_height, space_width: @space_width, debug: true)
+      @current_line_y    += @current_line.height + @line_space
     end
 
-    def space_width_sum
-      (@tokens.length - 1)*@space_width
+    def line_height_sum
+      @graphics.map{|line| line.height}.reduce(:+)
     end
 
-    def layout_title_toknes
-      if @width <= token_width_sum + space_width_sum
-        reduce_space_width_to_fit
+    def ajust_height_as_body_height_multiples
+      # We want to keeep it as multple of body_line_height
+      if @graphics.length == 1
+        @height = @height_in_lines*@body_line_height - 1
+        return
       end
-      if @width <= token_width_sum + space_width_sum
-        reduce_tracking_values_of_tokens
+      natural_height          =  @top_inset + line_height_sum
+      body_height_multiples   = natural_height/@body_line_height
+      @height_in_lines        = body_height_multiples.to_i
+      float_delta             = body_height_multiples - body_height_multiples.to_i
+      if float_delta > 0.7
+        @height_in_lines += (@space_after_in_lines + 1)
+      else
+        @height_in_lines += @space_after_in_lines
       end
+      @height = @height_in_lines*@body_line_height - 1
+    end
+
+    def layout_toknes
       token = tokens.shift
       while token
-        result = @line.place_token(token, do_not_break: true, testing:true)
+        result = @current_line.place_token(token, do_not_break: @single_line_title)
+        # result = @current_line.place_token(token)
         # forcing not to break the token
         # result can be one of two
         # case 1. entire token placed succefully, returned result is true
         # case 2. entire token is rejected from the line
-        if result # case 1
+        if result.class == TrueClass
           # entire token placed succefully, returned result is true
           token = tokens.shift
         else  # case 2
-          # entire token was rejected,
-          mark_over_flow
+          if @single_line_title
+            # insert left over tokens to @current_line for fitting
+            @current_line.graphics << token if result.class == FalseClass
+            @current_line.graphics += @tokens
+            @current_line.reduce_to_fit(force_fit: @force_fit_title)
+            return
+          else
+            if result.class == TextToken
+              token = result
+            end
+            @current_line.align_tokens
+            add_new_line
+            @current_line.place_token(token)
+            token = tokens.shift
+          end
         end
       end
-      @line.align_tokens
+      @current_line.align_tokens
+
     end
 
     # place tokens in the line, given tokens array
@@ -99,23 +140,9 @@ module RLayout
       return false
     end
 
-    def mark_over_flow
-      #code
-    end
-
-    def reduce_space_width_to_fit
-      @space_width *= 0.8
-    end
-
-    def reduce_tracking_values_of_tokens
-      @tokens = @tokens.map{|t| t.reduce_tracking_value}
-    end
-
-    def squeeze_tokens_to_fit
-      # see if remaining tokesn width sum is squeezeable
-      if token_width_sum/@token_width_sum < 0.8
-      #code
-      end
+    def mark_overflow
+      # return unless @tokens.length > 0
+      @current_line.mark_overflow
     end
 
     def graphics_width_sum
@@ -126,58 +153,7 @@ module RLayout
       (@graphics.length - 1)*@space_width
     end
 
-    def align_tokens
-      return if @graphics.length == 0
-      @total_token_width = token_width_sum
-      @graphics_width_sum = (@graphics.length - 1)*@space_width if @graphics.length > 0
-      room  = @width - (graphics_width_sum + graphics_width_sum)
-      x     = 0
-      case @text_alignment
-      when 'justified'
-        # in justifed paragraph, we have to treat the last line as left aligned.
-        if @line_type == "last_line"
-          x = @starting_position
-          @graphics.each do |token|
-            token.x = x
-            x += token.width + @space_width
-          end
-        else
-          @space_width = (@text_area_width - @total_token_width)/(@graphics.length - 1)
-          @graphics.each do |token|
-            token.x = x
-            x += token.width + @space_width
-          end
-        end
-      when 'left'
-        x = 0
-        @graphics.each do |token|
-          token.x = x
-          x += token.width + @space_width
-        end
-      when 'center'
-        @graphics.map {|t| t.x += room/2.0}
-      when 'right'
-        x = room
-        @graphics.each do |token|
-          token.x += x
-          token.y = @v_offset
-          x += token.width + @space_width
-        end
-      else
-        # do as left
-        x = @starting_position
-        @graphics.each do |token|
-          token.x = x
-          x += token.width + @space_width
-        end
-      end
-
-    end
-
-
     def relayout!
-      puts __method__
-      # layout_title_toknes
     end
   end
 

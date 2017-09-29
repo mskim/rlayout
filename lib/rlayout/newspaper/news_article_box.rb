@@ -401,25 +401,25 @@ module RLayout
 
     # text_height_in_lines should be calculated dynamically
     def float_subtitle(subtitle_string)
-      options = NEWSPAPER_STYLE['subtitle_S']
-      options = Hash[options.map{ |k, v| [k.to_sym, v] }]
+      options = {}
+      options[:style_name] = 'subtitle_S'
+
       if @column_count > 3
-        options = NEWSPAPER_STYLE['subtitle_M']
-        options = Hash[options.map{ |k, v| [k.to_sym, v] }]
+        options[:style_name] = 'subtitle_M'
       end
       options[:text_string]   = subtitle_string
       options[:text_fit_type] = 'adjust_box_height'
       # options[:body_line_height] = @body_line_height
       options[:x]             = @starting_column_x
       options[:y]             = 0
-      options[:top_inset]     = 3 if options[:space_before_in_lines] == 0
+      options[:top_inset]     = 0 if options[:space_before_in_lines] == 0
       # options[:grid_frame]    = [0,0,1,0.5]
       options[:width]         = @column_width
       options[:layout_expand] = nil
       options[:is_float]      = true
       options[:parent]        = self
       #TODO put top_margin and bottom_margin
-      subtitle = Text.new(options)
+      TitleText.new(options)
     end
 
     def float_quote(options={})
@@ -432,7 +432,7 @@ module RLayout
       options[:layout_expand]   = nil
       options[:is_float]        = true
       options[:parent]          = self
-      Text.new(options)
+      TitleText.new(options)
     end
 
     def float_personal_image(options={})
@@ -454,31 +454,6 @@ module RLayout
       options[:is_float]  = true
       @news_image         = NewsImage.new(options)
     end
-
-    # # place imaegs that are in the head of the story as floats
-    # def float_image(options={})
-    #   image_options = {}
-    #   image_options[:image_path]  = "#{options[:image_path]}" if options[:image_path]
-    #   image_options[:image_path]  = "#{$ProjectPath}/images/#{options['image']}" if options['image']
-    #   image_options[:image_path]  = "#{$ProjectPath}/images/#{options[:local_image]}" if options[:local_image]
-    #   image_options[:local_image] = options['image'] if options['image']
-    #   image_options[:caption]     = options['caption'] if options['caption']
-    #   image_options[:caption_title] = options['caption_title'] if options['caption_title']
-    #   image_options[:layout_expand]   = nil
-    #   image_options[:is_float]    = true
-    #   image_options[:parent]      = self
-    #   @news_image                 = NewsImage.new(image_options)
-    # end
-
-    # def float_images(images)
-    #   if images.class == Array
-    #     images.each do |image_info|
-    #       float_image(image_info)
-    #     end
-    #   elsif images.class == Hash
-    #     float_image(images)
-    #   end
-    # end
 
     def grid_frame_to_image_rect(grid_frame)
       return [0,0,100,100]    unless @graphics

@@ -117,6 +117,25 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2017_9_29
+	- create NSUtils, refactor all scattered ns_atts_from_style
+
+2017_9_27
+	- fix custom style did not getting applied to title text
+
+2017_9_18
+	- layout_length bug
+			- fix layout_expand default value
+
+2017_9_15
+	- layout_length bug
+	- text vertical position
+	- use Ruby PDF
+		get font width
+
+2017_8_27
+	- add def mark_overflow in NewsLineFragment
+
 2017_8_27
 	- Text
 	- NSText

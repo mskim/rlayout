@@ -37,7 +37,6 @@ module RLayout
 
       if self.class == Container
         if block
-          puts block
           instance_eval(&block)
         end
       end

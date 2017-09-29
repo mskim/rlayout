@@ -70,7 +70,7 @@ module RLayout
           @attrs        = options[:atts] #TODO?
           @att_string   = options[:att_string]
           @string       = @att_string.string if @att_string.class == NSConcreteMutableAttributedString # if @att_string.respond_to?(:string)
-          options[:height]= @att_string.size.height*2
+          options[:height]= @att_string.size.height*1.2
         else
           @att_string     = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])
           options[:width] = @att_string.size.width
@@ -82,7 +82,6 @@ module RLayout
         size = RFont.string_size(@string, options[:font], font_size)
         options[:width]  = size[0]
         options[:height] = size[1]
-
       end
       options[:fill_color] = options.fetch(:token_color, 'clear')
       super
@@ -102,12 +101,17 @@ module RLayout
       self
     end
 
+    def tracking_count
+      return 0 unless @string
+      @string.length - 1
+    end
+
     # reduce the tracking value of token by 10%
-    def reduce_tracking_value
+    def reduce_tracking_value(tracking_value)
       if RUBY_ENGINE == "rubymotion"
         font_size   = @atts[NSFontAttributeName].pointSize
         delta       = font_size/10
-        @atts[NSKernAttributeName] -= delta
+        @atts[NSKernAttributeName] = -tracking_value
         @att_string     = NSAttributedString.alloc.initWithString(@string, attributes: @atts)
         @width = @att_string.size.width
       else
@@ -115,6 +119,7 @@ module RLayout
         delta       = font_size/10
         @para_style[:tracking] -= delta
       end
+      self
     end
 
 

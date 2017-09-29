@@ -1,5 +1,27 @@
 require File.dirname(File.expand_path(__FILE__)) + "/spec_helper"
 
+
+describe 'testing layout_length' do
+  before do
+    @container = Container.new height:100 do
+      text("string1", layout_length: 2)
+      text("string2")
+      relayout!
+    end
+    @first  = @container.graphics.first
+    @last   = @container.graphics.last
+  end
+  it 'should have chidren graphcis' do
+    assert_equal(@container.graphics.length, 2)
+  end
+
+  it 'should have chidren graphcis' do
+    assert_equal(@first.height.to_i,  66)
+    assert_equal(@last.height.to_i,  33)
+  end
+end
+
+
 describe 'container block script' do
   before do
     @container = Container.new  do
@@ -80,7 +102,6 @@ describe 'testing container with graphics' do
       @g5= Graphic.new(parent: @g2, :fill_color=> 'yellow', :tag=> 'g5')
       @g6= Graphic.new(parent: @g2, :fill_color=> 'blue', :tag=> 'g6')
     @container.relayout!
-
   end
 
   it 'should add graphics' do
@@ -127,9 +148,6 @@ describe 'testing container with graphics' do
     @c5 = Container.new(parent: @c2, tag: "c5", fill_color: 'blue')
     @c6 = Container.new(parent: @c2, fill_color: 'brown')
     @container.relayout!
-    # puts "++++++ @c5.text_rect:#{@c5.text_rect}"
-    # puts "++++++ @c6.text_rect:#{@c6.text_rect}"
-
   end
 
   # it 'should add graphics' do
@@ -145,16 +163,7 @@ describe 'testing container with graphics' do
   it 'should save pdf' do
     @svg_path = "/Users/Shared/rlayout/output/container_nested_test.svg"
     @container.save_svg(@svg_path)
-    File.exists?(@svg_path = "/Users/Shared/rlayout/output/container_nested_test.svg"
-    ).must_equal true
-    # view = @container.ns_view
-    # s_views = view.subviews
-    # c2 = s_views.last
-    # puts "c2.frame.origin.y:#{c2.frame.origin.y}"
-    # c5=c2.subviews.first
-    # puts "c5.frame.origin.y:#{c5.frame.origin.y}"
-    # c6=c2.subviews.last
-    # puts c6.frame.origin.x
-    # puts "c6.frame.origin.y:#{c6.frame.origin.y}"
+    File.exists?(@svg_path = "/Users/Shared/rlayout/output/container_nested_test.svg").must_equal true
+
   end
 end

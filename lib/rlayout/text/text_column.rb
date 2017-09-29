@@ -19,7 +19,7 @@ module RLayout
 
   class TextColumn < Container
     attr_accessor :current_position, :current_grid_index
-    attr_accessor :grid_rects, :body_line_height
+    attr_accessor :grid_rects, :body_line_height, :line_space
     attr_accessor :complex_rect, :align_body_text, :show_grid_rects
 
     def initialize(options={}, &block)
@@ -41,10 +41,16 @@ module RLayout
       else
         @current_style = RLayout::StyleService.shared_style_service.current_style
       end
-      body_style = @current_style['p']
-      # line_height = body_style[:font_size]*1.3 # default line_height, set to font_size*1.3
+      body_style = @current_style['p'] || @current_style['body']
+      body_style = Hash[body_style.map{ |k, v| [k.to_sym, v] }]
       line_height = body_style[:font_size] # default line_height, set to font_size*1.3
-      @body_line_height = (line_height + body_style[:text_line_spacing])
+      if body_style[:text_line_spacing] == "" || body_style[:text_line_spacing].nil?
+        # when text_line_spacing is not defined
+        @line_space           = body_style[:font_size]*0.4
+      else
+        @line_space           = body_style[:text_line_spacing]
+      end
+      @body_line_height = line_height + @line_space
       @current_position = @top_margin + @top_inset
       # @room = text_rect[3] - @current_position
       if block

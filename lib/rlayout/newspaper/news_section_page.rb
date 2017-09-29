@@ -148,12 +148,7 @@ module RLayout
         #TODO
         # NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES     = 1
         # NEWS_ARTICLE_HEADING_SPACE_IN_LINES                      = 3
-        puts "@page_heading_margin_in_lines:#{@page_heading_margin_in_lines}"
-        puts "@lines_per_grid:#{@lines_per_grid}"
-        puts "@body_line_height:#{@body_line_height}"
         heading_info[:height]   = (@lines_per_grid + @page_heading_margin_in_lines) * @body_line_height
-        puts "heading_info[:height]:#{heading_info[:height]}"
-
       else
         heading_info[:height]   = @page_heading_margin_in_lines * @body_line_height
       end

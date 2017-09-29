@@ -1,7 +1,7 @@
 module RLayout
   class CaptionParagraph
     attr_accessor :caption_title, :caption, :source
-    attr_accessor :tokens, :source_tokens
+    attr_accessor :tokens, :source_tokens, :current_style
     attr_accessor :caption_title_space_width, :caption_space_width, :source_space_width
 
     def initialize(options={})
@@ -10,6 +10,7 @@ module RLayout
       @source         = options[:source]
       @tokens         = []
       @source_tokens  = []
+      @current_style  = RLayout::StyleService.shared_style_service.current_style
       create_tokens
       self
     end
@@ -22,62 +23,44 @@ module RLayout
 
 
     def make_caption_title_tokens
-      atts                          = NEWSPAPER_STYLE['caption_title']
+      atts                          = @current_style['caption_title']
       atts                          = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       @caption_title_space_width    = atts[:space_width] || atts[:font_size]/2
       @tokens += @caption_title.split(" ").collect do |token_string|
         options = {}
         options[:string] = token_string
         if RUBY_ENGINE == 'rubymotion'
-          options[:atts]    = ns_atts_from_style(atts)
+          options[:atts]    = NSUtils.ns_atts_from_style(atts)
+          @caption_title_space_width = options[:atts][:space_width]
         end
         RLayout::TextToken.new(options)
       end
 
     end
 
-
-    def ns_atts_from_style(style)
-      atts = {}
-      atts[NSFontAttributeName] = NSFont.fontWithName("Times", size:10.0)
-      if style[:font] && style[:font_size]
-        atts[NSFontAttributeName] = NSFont.fontWithName(style[:font], size: style[:font_size])
-      end
-      if style[:text_color]
-        if style[:text_color] == ""
-          atts[NSForegroundColorAttributeName] = NSColor.blackColor
-        else
-          atts[NSForegroundColorAttributeName] = RLayout.color_from_string(style[:text_color])
-        end
-      end
-
-      #TODO tracking, scale, space_width
-      atts
-    end
-
     def make_caption_tokens
-      atts                          = NEWSPAPER_STYLE['caption']
+      atts                          = @current_style['caption']
       atts                          = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       @caption_space_width          = atts[:space_width] || 3
       @tokens += @caption.split(" ").collect do |token_string|
         options = {}
         options[:string]  = token_string
         if RUBY_ENGINE == 'rubymotion'
-          options[:atts]    = ns_atts_from_style(atts)
+          options[:atts]    = NSUtils.ns_atts_from_style(atts)
         end
         RLayout::TextToken.new(options)
       end
     end
 
     def make_source_tokens
-      atts                          = NEWSPAPER_STYLE['source']
+      atts                          = @current_style['source']
       atts                          = Hash[atts.map{ |k, v| [k.to_sym, v] }]
       @source_space_width           = atts[:space_width] || atts[:font_size]/2
       @source_tokens += @source.split(" ").collect do |token_string|
         options = {}
         options[:string]  = token_string
         if RUBY_ENGINE == 'rubymotion'
-          options[:atts]    = ns_atts_from_style(atts)
+          options[:atts]    = NSUtils.ns_atts_from_style(atts)
         end
         RLayout::TextToken.new(options)
       end
@@ -116,11 +99,11 @@ module RLayout
         line_width                = @current_line.width
         token_list                = @current_line.graphics
         source_tokens_space_sum   = @source_tokens.length*@source_space_width
-        source_tokens_width_sum   = @source_tokens.map{|x| x.width}.reduce(:+)
+        source_tokens_width_sum   = @source_tokens.map{|x| x.width}.reduce(0, :+)
         source_tokens_area_width  = source_tokens_width_sum + source_tokens_space_sum + 2
         source_starting_x         = line_width - source_tokens_area_width + @source_space_width
-        end_of_tokens             = token_list.last.x_max
-        token_list.last.x_max
+        end_of_tokens             = 0
+        end_of_tokens             = token_list.last.x_max if token_list.length > 0
         if (end_of_tokens + @source_space_width) < source_starting_x
           x = source_starting_x
           @source_tokens.each do |source_token|
@@ -133,7 +116,7 @@ module RLayout
 
         else
           # create one more line
-          add_new_line
+          caption_column.add_new_line
           x = source_starting_x + @source_space_width
           @source_tokens.each do |source_token|
             source_token.parent_graphic = self

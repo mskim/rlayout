@@ -38,11 +38,15 @@ module RLayout
       if options[:layout_expand]
         @layout_expand    = options.fetch(:layout_expand, layout_default[:layout_expand])
       elsif @parent_graphic #&& @parent_graphic.respond_to?(:stack) && @parent_graphic.stack
-        if @parent_graphic.respond_to?(:layout_direction) && @parent_graphic.layout_direction == 'vertical'
-          @layout_expand = :width
-        else
-          @layout_expand = :height
-        end
+        # if @parent_graphic.respond_to?(:layout_direction) && @parent_graphic.layout_direction == 'vertical'
+        #   @layout_expand = :width
+        # else
+        #   @layout_expand = :height
+        # end
+        #TODO
+        @layout_expand = [:width, :height]
+      else
+        @layout_expand = [:width, :height]
       end
       # convert unit to point if they are in cm or mm
       @x              = convert_to_pt(@x)           if @x.class == String

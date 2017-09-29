@@ -17,7 +17,7 @@ module RLayout
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent, :para_style, :text_alignment, :starting_position
     attr_accessor :x, :y, :width, :height, :total_token_width, :room
-    attr_accessor :text_area, :text_area_width, :has_text, :space_width
+    attr_accessor :text_area, :text_area_width, :has_text, :space_width, :debug
     def	initialize(options={})
       # options[:stroke_color]      = 'red'
       # options[:stroke_width]      = 1
@@ -26,6 +26,7 @@ module RLayout
       # options[:fill_color]        = options.fetch(:line_color, 'lightGray')
       # options[:stroke_width]      = 0.5
       super
+      @debug            = options[:debug]
       @graphics         = options[:tokens] || []
       @space_width      = options.fetch(:space_width, 3.0)
       @text_alignment   = options.fetch(:text_alignment, 'left')
@@ -34,8 +35,14 @@ module RLayout
       @text_area        = [@x, @y, @width, @height]
       @text_area_width  = @width
       @room             = @text_area[2]
-
       self
+    end
+
+    def mark_overflow
+      return if @floats.length > 0
+      @stroke.color = 'red'
+      @stroke.thickness = 1
+      @stroke.sides = [1,1,1,1,1,1]
     end
 
     def adjust_text_area_away_from(overlapping_float_rect)
@@ -43,11 +50,7 @@ module RLayout
       translated_rect = frame_rect.dup
       translated_rect[0] += @parent_graphic.x
       translated_rect[1] += @parent_graphic.y
-      # puts "overlapping_float_rect:#{overlapping_float_rect}"
-      # puts "translated_rect:#{translated_rect}"
       if intersects_rect(overlapping_float_rect, translated_rect)
-        # puts "++++++++ overlapping_float_rect:#{overlapping_float_rect}"
-        # puts "translated_rect:#{translated_rect}"
         @text_area[2] = 0
         @room         = @text_area[2]
       end
@@ -80,8 +83,6 @@ module RLayout
       end
 
       @line_type = line_type
-      # puts "@first_line_width:#{@first_line_width}"
-      # puts "@middle_line_width:#{@middle_line_width}"
       if @line_type == 'first_line'
         @starting_position  = para_style[:first_line_indent]
         @text_area_width    = @first_line_width
@@ -135,11 +136,13 @@ module RLayout
     end
 
     def align_tokens
+
       return if @graphics.length == 0
       @total_token_width = token_width_sum
       @total_space_width = (@graphics.length - 1)*@space_width if @graphics.length > 0
       room  = @text_area_width - (@total_token_width + @total_space_width)
       x     = @starting_position
+
       case @text_alignment
       when 'justified'
         # in justifed paragraph, we have to treat the last line as left aligned.
@@ -189,6 +192,67 @@ module RLayout
       end
       string = strings.join(" ")
     end
+
+
+    def force_fit
+
+      puts "in force fit!!!"
+    end
+
+    def tracking_positions_count
+      @graphics.map{|t| t.tracking_count}.reduce(:+)
+    end
+
+    def reduce_tracking_values_of_tokens_by(width_in_points)
+      # we have divide tracking evenly throughout all tokens
+      # tracking_positions_count: number of tracking applied positions
+      per_tracking_value = width_in_points/tracking_positions_count
+      @graphics.map!{|t| t.reduce_tracking_value(per_tracking_value)}
+    end
+
+    def space_width_sum
+      (@graphics.length - 1)*@space_width
+    end
+
+    def reduce_to_fit(options={})
+      content_width = token_width_sum + space_width_sum
+      if content_width < @width
+      elsif over_width > space_width_sum
+        if options[:force_fit]
+          force_fit
+          return
+        end
+        align_tokens
+        mark_overflow
+        return
+      elsif over_width < space_width_sum/2
+        @text_alignment = 'justified'
+      else
+        @text_alignment = 'justified'
+        reduce_amount = over_width/2
+        reduce_tracking_values_of_tokens_by(reduce_amount)
+      end
+      align_tokens
+
+    end
+
+  end
+
+  class OverFlowMarker < Graphic
+    def initialize(options)
+      puts "in OverFlowMarker"
+      options[:is_float] = true
+      super
+      @x                = @parent_graphic.width - 8
+      @y                = @parent_graphic.height - 8
+      @width            = 8
+      @hwight           = 8
+      @stroke_color     = 'red'
+      @stroke_width     = 1
+      @stroke_sides     = [1,1,1,1,1,1]
+      self
+    end
+
   end
 
 end

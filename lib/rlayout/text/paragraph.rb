@@ -270,14 +270,9 @@ module RLayout
     def create_tokens
       @atts = {}
       if RUBY_ENGINE == 'rubymotion'
-        @atts[NSFontAttributeName]  = NSFont.fontWithName(@para_style[:font], size: @para_style[:font_size])
-        if @para_style[:text_color]
-          text_color    = RLayout.convert_to_nscolor(@para_style[:text_color]) unless (@para_style[:text_color]) == NSColor
-          @atts[NSForegroundColorAttributeName] = text_color
-        end
-        atts[NSKernAttributeName]  = @para_style[:tracking] if @para_style[:tracking]
-        @para_style[:space_width]  = NSAttributedString.alloc.initWithString(" ", attributes: @atts).size.width
-        @para_style[:atts] = @atts
+        @atts                      = NSUtils.ns_atts_from_style(@para_style)
+        @para_style[:space_width]  = @atts[:space_width]
+        @para_style[:atts]         = @atts
       else
 
       end
@@ -585,63 +580,6 @@ module RLayout
       list_only = Hash[h.select{|k,v| [k, v] if k=~/^list_/}]
       Hash[list_only.collect{|k,v| [k.to_s.sub("list_","").to_sym, v]}]
     end
-
-    def attributes_of_attributed_string(att_str)
-      att_run_array=[]
-      range = Pointer.new(NSRange.type)
-      i=0
-      string = att_str.string
-      #  "att_str.string:#{att_str.string}"
-      while i < att_str.string.length do
-        attrDict = att_str.attributesAtIndex  i, effectiveRange:range
-        length=range[0].length
-        i += length
-        att_hash={}
-        starting_index = range[0].location
-        ending_index = starting_index + (range[0].length - 1)
-        att_hash[:paragraph_style]=attrDict[NSParagraphStyleAttributeName]  if attrDict[NSParagraphStyleAttributeName]
-        if attrDict[NSFontAttributeName]
-          att_hash[:font]=attrDict[NSFontAttributeName].fontName
-          att_hash[:size]= attrDict[NSFontAttributeName].pointSize.round(2)
-          # att_hash[:color]= attrDict[NSForegroundColorAttributeName].color
-        end
-        att_hash[:tracking]       = attrDict[NSKernAttributeName]            if attrDict[NSKernAttributeName]
-        att_hash[:strike]         = attrDict[NSStrikethroughStyleAttributeName] if attrDict[NSStrikethroughStyleAttributeName]
-        att_hash[:baseline_offset]= attrDict[NSBaselineOffsetAttributeName]       if attrDict[NSBaselineOffsetAttributeName]
-        att_hash[:styles]= []
-        att_hash[:styles]<<:italic                                    if attrDict[NSObliquenessAttributeName]
-        att_hash[:styles]<<:bold                                      if attrDict[NSObliquenessAttributeName]
-        att_hash[:styles]<< :underline                                if attrDict[NSUnderlineStyleAttributeName]
-        att_hash[:styles]<< :superscript                              if attrDict[NSSuperscriptAttributeName]
-
-        # is there no subscript?
-        # att_hash[:styles]<< :suberscript  if attrDict[NSSubscriptAttributeName]
-        att_run_array <<  att_hash
-      end
-      att_run_array
-    end
-    # NSString *NSFontAttributeName;
-    # NSString *NSParagraphStyleAttributeName;
-    # NSString *NSForegroundColorAttributeName;
-    # NSString *NSUnderlineStyleAttributeName;
-    # NSString *NSSuperscriptAttributeName;
-    # NSString *NSBackgroundColorAttributeName;
-    # NSString *NSAttachmentAttributeName;
-    # NSString *NSLigatureAttributeName;
-    # NSString *NSBaselineOffsetAttributeName;
-    # NSString *NSKernAttributeName;
-    # NSString *NSLinkAttributeName;
-    # NSString *NSStrokeWidthAttributeName;
-    # NSString *NSStrokeColorAttributeName;
-    # NSString *NSUnderlineColorAttributeName;
-    # NSString *NSStrikethroughStyleAttributeName;
-    # NSString *NSStrikethroughColorAttributeName;
-    # NSString *NSShadowAttributeName;
-    # NSString *NSObliquenessAttributeName;
-    # NSString *NSExpansionAttributeName;
-    # NSString *NSCursorAttributeName;
-    # NSString *NSToolTipAttributeName;
-    # NSString *NSMarkedClauseSegmentAttributeName;
 
   end
 

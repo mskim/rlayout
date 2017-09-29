@@ -62,6 +62,7 @@ module RLayout
       # if @parent_graphic && @parent_graphic.class.kind_of?(Document)
       #   set_frame(@parent_graphic.layout_rect)
       @tag                  = options[:tag]
+
       if @parent_graphic && options[:parent_frame]
         set_frame(@parent_graphic.layout_rect)
       elsif options[:grid_frame] && @parent_graphic && @parent_graphic.grid
@@ -570,10 +571,12 @@ module RLayout
     end
   end
 
+  # Text Using NSText System
   class Text < Graphic
     def initialize(options={})
       super
       @transform = options[:transform]
+      init_text(options)
       self
     end
 
@@ -682,6 +685,7 @@ module RLayout
         @bleed = options[:bleed]
       end
       super
+      init_image(options)
       if options[:local_image]
         @local_image = options[:local_image]
       end

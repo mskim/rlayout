@@ -2,6 +2,22 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'overlapping floats' do
   before do
+    @ad_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/ad"
+    @maker     = NewsArticleMaker.new(article_path: @ad_path)
+    @ad_box    = @maker.news_article_box
+
+  end
+
+  it 'should create NewsAdBox' do
+    assert_equal NewsAdBox, @@ad_box.class
+  end
+
+end
+
+
+__END__
+describe 'overlapping floats' do
+  before do
     @article_path   = "/Users/mskim/Development/rails5/articles/public/current_issue/1/1"
     @article_path   = "/Users/mskim/Development/rails5/page_template/public/current_issue/2/3"
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/6/3x4/0"
