@@ -9,7 +9,7 @@ module RLayout
     def initialize(options={})
       @grid_width       = options.fetch(:grid_width, 2)
       @heading_columns  = options[:column_count]
-      # options[:fill_color]    = 'yellow'
+      # options[:stroke_width]    = 1
       super
       @body_line_height = @parent_graphic.body_line_height
       if options['editorial_head']

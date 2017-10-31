@@ -89,8 +89,6 @@ module RLayout
         # add some margin to left and right of the token.
         @width  = @att_string.size.width + @left_margin + @right_margin
         @x      = @left_margin
-        # @heigth = @att_string.size.height*2
-        # @heigth = 19.0
         #TODO fix this
         if options[:text_line_spacing] && options[:text_line_spacing].class != String
           @height += options[:text_line_spacing]
@@ -323,8 +321,10 @@ module RLayout
       @margin       = 2
       if RUBY_ENGINE == "rubymotion"
         if options[:atts]
+          puts "options[:atts]['NSFont'].pointSize"
           @atts     = options[:atts]
         else
+          puts "using default_atts"
           @atts     = default_atts
         end
         @att_string = NSAttributedString.alloc.initWithString(@string, attributes: options[:atts])

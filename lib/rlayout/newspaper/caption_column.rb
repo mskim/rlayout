@@ -7,6 +7,7 @@ module RLayout
     attr_reader :top_space_in_lines, :bottom_space_in_lines, :caption_line_height
 
     def initialize(options={})
+      puts "in CaptionColumn"
       @top_space_in_lines             = options[:top_space_in_lines] || 0.0
       @bottom_space_in_lines          = options[:bottom_space_in_lines] || 1
       @caption_line_height            = options[:caption_line_height] || 9

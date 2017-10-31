@@ -68,13 +68,24 @@ IMAGE_SIZE_POSITION_TABLE = {
   '7x4'=> {size: [3,3], position: 'top_right'},
 }
 
+NUMBER_TO_POSITION = {
+  '1'=> 'top_left',
+  '2'=> 'top_center',
+  '3'=> 'top_right',
+  '4'=> 'center_left',
+  '5'=> 'center_center',
+  '6'=> 'center_right',
+  '7'=> 'bottom_left',
+  '8'=> 'bottom_center',
+  '9'=> 'bottom_right',
+}
+
 module RLayout
   class NewsImage < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :image_position, :caption_title
-    attr_accessor :image_box, :caption_column, :caption_paragraph
+    attr_accessor :image_box, :caption_column, :caption_paragraph, :position, :fit_type, :expand, :has_caption
 
     def initialize(options={})
-
       if options[:parent]
         @article_column       = options[:parent].column_count
         @article_row          = options[:parent].row_count
@@ -86,8 +97,11 @@ module RLayout
       @column                 = options[:column]
       @row                    = options[:row]
       options[:grid_frame]    = convert_size_position_to_frame(options)
+      @position               = options[:position]
       options[:layout_expand] = nil
       options[:fill_color]    = 'clear'
+      @fit_type               = options[:fit_type] if options[:fit_type]
+      @expand                 = options[:expand] if options[:expand]
       # options[:stroke_width]  = 1
       super
       frame_rect              = @parent_graphic.grid_frame_to_image_rect(options[:grid_frame])
@@ -95,24 +109,52 @@ module RLayout
       @y                      = frame_rect[1]
       @width                  = frame_rect[2]
       @height                 = frame_rect[3]
-
-      @caption_column         = CaptionColumn.new(parent:self, width: @width, top_space_in_lines: 0.3, caption_line_height: 12)
-      @caption_paragraph      = CaptionParagraph.new(options)
-      @caption_paragraph.layout_lines(@caption_column)
-      image_optins                = {}
-      image_optins[:width]        = @width
-      image_optins[:height]       = @height - @caption_column.height
-      image_optins[:stroke_width] = 0.3
-      image_optins[:image_fit_type] = IMAGE_FIT_TYPE_KEEP_RATIO
-      image_optins[:image_path]   = @image_path
-      image_optins[:layout_expand] = nil
-      image_optins[:parent]       = self
-      @image_box                  = Image.new(image_optins)
-      @caption_column.y           = @image_box.height
+      has_caption_text?(options)
+      if @has_caption
+        @caption_column         = CaptionColumn.new(parent:self, width: @width, top_space_in_lines: 0.3, caption_line_height: 12)
+        @caption_paragraph      = CaptionParagraph.new(options)
+        @caption_paragraph.layout_lines(@caption_column)
+      end
+      image_options                = {}
+      image_options[:width]        = @width
+      image_options[:height]       = @height
+      image_options[:height]       = @height - @caption_column.height if @caption_column
+      #TODO if position is not top,(1,2,3,), we need space above the image
+      unless top_position?
+        image_options[:y]          = @parent_graphic.body_line_height
+        image_options[:height]     -= @parent_graphic.body_line_height
+      end
+      image_options[:stroke_width]   = 0.3
+      image_options[:image_fit_type] = IMAGE_FIT_TYPE_KEEP_RATIO
+      image_options[:image_fit_type] = @fit_type if @fit_type
+      image_options[:image_path]     = @image_path
+      image_options[:layout_expand]  = nil
+      image_options[:layout_expand]  = @expand if @expand
+      image_options[:parent]         = self
+      @image_box                    = Image.new(image_options)
+      @caption_column.y             = @image_box.height if @caption_column
+      @caption_column.y             += @parent_graphic.body_line_height unless top_position? if @caption_column
       # make space after the news_image when we have following text
       # for full sized news_image, this will be adjusted by adjust_image_height
-      @height                     += @parent_graphic.body_line_height
+      @height                       += @parent_graphic.body_line_height
       self
+    end
+
+    def has_caption_text?(options)
+      @has_caption = false
+      if options[:caption_title] && options[:caption_title] != ""
+         @has_caption = true
+      elsif options[:caption] && options[:caption] !=""
+        @has_caption = true
+      elsif options[:source] && options[:source] !=""
+        @has_caption = true
+      else
+        @has_caption = false
+      end
+    end
+
+    def top_position?
+      @position == 1 || @position == 2 || @position == 3
     end
 
     def adjust_image_height
@@ -134,19 +176,44 @@ module RLayout
 
     # convert size, position into x,y,width, and height
     def convert_size_position_to_frame(options={})
-
-      size_string             = "#{@article_column}x#{@article_row}"
-      default_image_options   = IMAGE_SIZE_POSITION_TABLE[size_string]
+      default_image_options   = IMAGE_SIZE_POSITION_TABLE["#{@article_column}x#{@article_row}"]
       default_image_options   = IMAGE_COLUMN_POSITION_TABLE[@article_column.to_s] unless default_image_options
       image_size              = options.fetch(:size, default_image_options[:size])
-      image_position          = options.fetch(:position, default_image_options[:position])
+      image_position          = "top_right"
+      image_position          = NUMBER_TO_POSITION[options[:position].to_s] if options[:position]
       #TODO this is only for upper right, do it for other positions as well
       if options[:column] && options[:row]
         image_size[0] = options[:column]
         image_size[1] = options[:row]
       end
+      position_array = image_position.split("_")
+      v_position = position_array[0]
+      h_position = position_array[1]
       x_grid = @article_column - image_size[0]
       y_grid = 0 #@article_row - image_size[1]
+
+      # horizontal posiion
+      if h_position == 'center'
+        diff   = @article_column - image_size[0]
+        if diff.odd?
+          x_grid = (diff + 1)/2
+        else
+          x_grid = diff/2
+        end
+      elsif h_position == 'left'
+        x_grid = 0
+      end
+      # veritical posiion
+      if v_position == 'center'
+        diff   = @article_row - image_size[1]
+        if diff.odd?
+          y_grid = (diff + 1)/2
+        else
+          y_grid = diff/2
+        end
+      elsif v_position == 'bottom'
+        y_grid = @article_row - image_size[1]
+      end
       [x_grid, y_grid, image_size[0], image_size[1]]
     end
 

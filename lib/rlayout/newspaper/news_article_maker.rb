@@ -72,6 +72,8 @@ module RLayout
       @publication_name = options[:publication_name] if options[:publication_name]
       # puts "@custom_style:#{@custom_style}"
       # puts "@publication_name:#{@publication_name}"
+      RLayout::StyleService.shared_style_service.current_style = NEWSPAPER_STYLE
+
       if @custom_style && @publication_name
         @custom_style_path = "/Users/Shared/SoftwareLab/newsman/#{@publication_name}/text_style.yml"
         if File.exist?(@custom_style_path)
@@ -112,7 +114,11 @@ module RLayout
         puts "SyntaxError in #{@template_path} !!!!"
         return
       end
-      if @news_article_box.is_a?(NewsArticleBox)
+      if @news_article_box.is_a?(NewsImageBox)
+
+      elsif @news_article_box.is_a?(NewsComicBox)
+        layout_comic_article
+      elsif @news_article_box.is_a?(NewsArticleBox)
         read_story
         layout_story
       elsif @news_article_box.is_a?(NewsAdBox)
@@ -153,6 +159,10 @@ module RLayout
         para_options[:layout_lines]   = false
         @paragraphs << NewsParagraph.new(para_options)
       end
+    end
+
+    def layout_comic_article
+      #code
     end
 
     def layout_story

@@ -66,7 +66,7 @@ module RLayout
       if @parent_graphic && options[:parent_frame]
         set_frame(@parent_graphic.layout_rect)
       elsif options[:grid_frame] && @parent_graphic && @parent_graphic.grid
-        # if options[:grid_frame] is given, convert grid_frame to x,y,width,heigth of parent's grid cordinate
+        # if options[:grid_frame] is given, convert grid_frame to x,y,width,height of parent's grid cordinate
         set_frame_in_parent_grid(options[:grid_frame])
         # disable autolayout
         @layout_expand = nil

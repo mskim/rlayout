@@ -13,8 +13,8 @@
 # 1. create each element with expand=>[:width, :height]
 # 1. set set layout_length as height, so that their height is proportional to height
 # 1. set Heading expand =>:width
-# 1. adjust heigth to heigth sum of heading elements
-# when we call relayout! it will have grown to sum of its parts and layed outed out with height propotionally adjusted as each ones heigth.
+# 1. adjust height to height sum of heading elements
+# when we call relayout! it will have grown to sum of its parts and layed outed out with height propotionally adjusted as each ones height.
 
 # PageScript Verbs
 #  number

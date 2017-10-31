@@ -129,6 +129,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/article/rjob'
   require File.dirname(__FILE__) + '/rlayout/article/item_chapter_maker'
 
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_box'
   require File.dirname(__FILE__) + '/rlayout/newspaper/title_text'
   require File.dirname(__FILE__) + '/rlayout/newspaper/caption_paragraph'
   require File.dirname(__FILE__) + '/rlayout/newspaper/caption_column'

@@ -116,6 +116,32 @@ TODO List
 			- index
 			- glossary
 		- put templates under rubymotion app/resouces/
+2017_10_31
+		- create NewsBpx < Container
+				NewsArticleBox  < NewsBpx
+				NewsImageBox    < NewsBpx
+				NewsComicBox    < NewsBpx
+				NewsEditorialBox < NewsBpx
+				NewsOpinionBox  < NewsBpx
+				NewsAdBox       < NewsBpx
+		- have config file for each, so that this could be modified by designer.
+		
+2017_10_24
+	- line_fragemnt, text_token align text to the top
+	- 제목박스 크기 right_edge 와 다름
+
+2017_10_10
+	- using trix-editor to save files as story.yml
+	- story.yml
+		head:
+		body:
+			- {markup: 'p', para_string: 'some string'}		# 본문
+
+			- {markup: 'h1', para_string: 'some string'}	 # 준간제목
+			- {markup: 'code', para_string: 'some string'} # 기자명
+
+	- html2yml
+
 
 2017_9_29
 	- create NSUtils, refactor all scattered ns_atts_from_style

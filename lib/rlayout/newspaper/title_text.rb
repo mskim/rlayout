@@ -40,7 +40,7 @@ module RLayout
       @current_line           = NewsLineFragment.new(parent:self, x: 0, y:@current_line_y,  width:@width, height:@line_height, space_width: @space_width, debug: true)
       @current_line_y         +=@current_line.height
       create_tokens
-      layout_toknes
+      layout_tokens
       ajust_height_as_body_height_multiples
 
       self
@@ -88,7 +88,7 @@ module RLayout
       @height = @height_in_lines*@body_line_height - 1
     end
 
-    def layout_toknes
+    def layout_tokens
       token = tokens.shift
       while token
         result = @current_line.place_token(token, do_not_break: @single_line_title)

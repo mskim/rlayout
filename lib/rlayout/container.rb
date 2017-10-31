@@ -363,7 +363,7 @@ module RLayout
           end
         when 'width'
           @width = value
-        when 'heigth'
+        when 'height'
           @height = value
         else
           # puts "#{kind} not supported!!!"

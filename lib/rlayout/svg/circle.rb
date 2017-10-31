@@ -15,7 +15,7 @@ module RLayout
         h[:x] = cx - r
         h[:y] = cy + r
         h[:width] = cx + r
-        h[:heigth] = cy - r
+        h[:height] = cy - r
         h[:cx] = cx
         h[:cy] = cy
         h[:r]  = r
@@ -49,7 +49,7 @@ module RLayout
         h[:x] = cx - r
         h[:y] = cy + r
         h[:width] = cx + rx
-        h[:heigth] = cy - ry
+        h[:height] = cy - ry
         h[:cx] = cx
         h[:cy] = cy
         h[:rx]  = rx
