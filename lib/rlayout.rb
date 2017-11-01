@@ -141,7 +141,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_image'
   require File.dirname(__FILE__) + '/rlayout/newspaper/profile_image'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_box'
-  require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_maker'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_box_maker'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_section_page'
 
   require File.dirname(__FILE__) + '/rlayout/publication/book'

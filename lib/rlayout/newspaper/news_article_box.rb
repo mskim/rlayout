@@ -1,7 +1,7 @@
 
 # NewsArticleBox
 # grid_frame is passed to detemine the width, height, and column_number of text_box
-# Used when creating newspaper article, called from NewsArticleMaker
+# Used when creating newspaper article, called from NewsBoxMaker
 
 # show_overflow_lines
 #
@@ -15,13 +15,16 @@
 
 module RLayout
   class NewsArticleBox < NewsBox
-    attr_accessor :story_path, :show_overflow_lines, :subtitle_in_head, :heading_columns
-    attr_accessor :draw_gutter_stroke, :gutter, :v_gutter
+    attr_accessor :heading_columns, :fill_up_enpty_lines
     attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines, :overflow_text
-    attr_accessor :reporter, :email, :fill_up_enpty_lines
-    attr_accessor :before_lines, :after_lines, :column_bottom
-    attr_accessor :heading, :subtitle_box, :quote_box, :personal_image, :news_image
-    attr_accessor :column_width, :starting_column_x
+    attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :personal_image, :news_image
+    attr_accessor :column_width, :starting_column_x, :gutter, :column_bottom
+
+    # attr_accessor :story_path, :show_overflow_lines, :draw_gutter_stroke, , :v_gutter
+    # attr_accessor :reporter, :email,
+    # attr_accessor :before_lines, :after_lines,
+
+
     def initialize(options={}, &block)
       super
       @current_column_index   = 0

@@ -1,13 +1,13 @@
 require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 
-describe 'creaet document with NewsArticleMaker' do
+describe 'creaet document with NewsBoxMaker' do
   before do
     @article_path   = "/Users/mskim/Development/rails5/articles/public/current_issue/1/1"
     @article_path   = "/Users/mskim/Development/rails5/page_template/public/current_issue/2/3"
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/6/3x4/0"
     @svg_path       = @article_path + "/output.svg"
-    @maker          = NewsArticleMaker.new(article_path: @article_path, fill_up_enpty_lines: true)
+    @maker          = NewsBoxMaker.new(article_path: @article_path, fill_up_enpty_lines: true)
     @news_box       = @maker.news_article_box
     @heading        = @news_box.floats.first
     @title          = @heading.title_object
@@ -20,7 +20,7 @@ describe 'creaet document with NewsArticleMaker' do
     @third_column   = @news_box.graphics[2]
   end
 
-  it 'should create NewsArticleMaker' do
+  it 'should create NewsBoxMaker' do
     assert_equal @heading.class, NewsArticleHeading
     assert_equal @news_box.gutter, 10
   end

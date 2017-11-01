@@ -3,7 +3,7 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 describe 'overlapping floats' do
   before do
     @ad_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/ad"
-    @maker     = NewsArticleMaker.new(article_path: @ad_path)
+    @maker     = NewsBoxMaker.new(article_path: @ad_path)
     @ad_box    = @maker.news_article_box
 
   end
@@ -24,7 +24,7 @@ describe 'overlapping floats' do
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/1/22/2"
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/2"
     @svg_path       = @article_path + "/output.svg"
-    @maker          = NewsArticleMaker.new(article_path: @article_path)
+    @maker          = NewsBoxMaker.new(article_path: @article_path)
     @news_box       = @maker.news_article_box
     @heading        = @news_box.floats.first
     @image          = @news_box.floats[1]

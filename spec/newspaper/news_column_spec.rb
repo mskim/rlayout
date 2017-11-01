@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe 'overlapping lines' do
   before do
     @article_path   = "/Users/mskim/Development/rails5/articles/public/current_issue/1/1"
-    @maker          = NewsArticleMaker.new(article_path: @article_path)
+    @maker          = NewsBoxMaker.new(article_path: @article_path)
     @news_box       = @maker.news_article_box
     @heading        = @news_box.floats.first
     @image          = @news_box.floats[1]
@@ -24,7 +24,7 @@ end
 describe 'overlapping floats' do
   before do
     @article_path   = "/Users/mskim/Development/rails5/articles/public/current_issue/1/1"
-    @maker          = NewsArticleMaker.new(article_path: @article_path)
+    @maker          = NewsBoxMaker.new(article_path: @article_path)
     @news_box       = @maker.news_article_box
     @heading        = @news_box.floats.first
     @image          = @news_box.floats[1]

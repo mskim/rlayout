@@ -48,7 +48,7 @@ end
 # end
 #
 #
-# describe 'update NewsArticleMaker metadata' do
+# describe 'update NewsBoxMaker metadata' do
 #   before do
 #     @path = '/Users/Shared/Newspaper/OurTimes/2015-4-16/culture/2.story.md'
 #   end
@@ -111,7 +111,7 @@ end
 # # end
 #
 #
-# describe 'create NewsArticleMaker sample' do
+# describe 'create NewsBoxMaker sample' do
 #   before do
 #     @news_section = NewsSection.new('/Users/mskim/news_article/sample')
 #     @sample = RLayout::NewsSection.make_sample_articles(5)

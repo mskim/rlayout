@@ -1,7 +1,7 @@
 # encoding: utf-8
 
-# NewsArticleMaker.
-# NewsArticleMaker works with given folder with story.md, layout.rb, and images
+# NewsBoxMaker.
+# NewsBoxMaker works with given folder with story.md, layout.rb, and images
 # layout.rb defines the layout of the article.
 
 NEWSPAPER_STYLE = {"body"=>{"name"=>"본문명조", "font_family"=>"윤신문명조", "font"=>"YDVYSinStd", "font_size"=>9.6, "text_color"=>"black", "alignment"=>"justified", "tracking"=>-0.5, "space_width"=>5.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
@@ -39,9 +39,9 @@ NEWSPAPER_STYLE = {"body"=>{"name"=>"본문명조", "font_family"=>"윤신문명
 
 module RLayout
 
-  class NewsArticleMaker
+  class NewsBoxMaker
     attr_accessor :article_path, :template, :story_path, :image_path
-    attr_accessor :news_article_box, :style, :output_path, :project_path
+    attr_accessor :news_box, :style, :output_path, :project_path
     attr_reader :article_info_path, :paragraphs_copy, :fill_up_enpty_lines
     attr_accessor :custom_style, :publication_name
 
@@ -109,30 +109,36 @@ module RLayout
         return
       end
       template = File.open(@template_path,'r'){|f| f.read}
-      @news_article_box       = eval(template)
-      if @news_article_box.is_a?(SyntaxError)
+      @news_box       = eval(template)
+      if @news_box.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return
       end
-      if @news_article_box.is_a?(NewsImageBox)
+      if @news_box.is_a?(NewsImageBox)
 
-      elsif @news_article_box.is_a?(NewsComicBox)
-        layout_comic_article
-      elsif @news_article_box.is_a?(NewsArticleBox)
+      elsif @news_box.is_a?(NewsComicBox)
+        # layout_comic_article
+      elsif @news_box.is_a?(NewsArticleBox)
         read_story
         layout_story
-      elsif @news_article_box.is_a?(NewsAdBox)
-        # puts "@news_article_box is ad_box..."
-      elsif @news_article_box.is_a?(Container)
-        # puts "@news_article_box is container..."
+      elsif @news_box.is_a?(NewsEditorialBox)
+        read_story
+        layout_story
+      elsif @news_box.is_a?(NewsOpinionBox)
+        read_story
+        layout_story
+      elsif @news_box.is_a?(NewsAdBox)
+        # puts "@news_box is ad_box..."
+      elsif @news_box.is_a?(Container)
+        # puts "@news_box is container..."
       else
-        # puts "@news_article_box is Graphic..."
+        # puts "@news_box is Graphic..."
       end
 
       if RUBY_ENGINE =="rubymotion"
-        @news_article_box.save_pdf(@output_path, :jpg=>true)
+        @news_box.save_pdf(@output_path, :jpg=>true)
       else
-        @news_article_box.save_svg(@svg_path)
+        @news_box.save_svg(@svg_path)
       end
       self
     end
@@ -140,12 +146,12 @@ module RLayout
     def read_story
       @story                  = Story.new(@story_path).markdown2para_data
       @heading                = @story[:heading] || {}
-      @heading[:is_front_page]= @news_article_box.is_front_page
-      @heading[:top_story]    = @news_article_box.top_story
-      @heading[:top_position] = @news_article_box.top_position
+      @heading[:is_front_page]= @news_box.is_front_page
+      @heading[:top_story]    = @news_box.top_story
+      @heading[:top_position] = @news_box.top_position
       if @heading
-        @news_article_box.make_article_heading(@heading)
-        @news_article_box.make_floats(@heading)
+        @news_box.make_article_heading(@heading)
+        @news_box.make_floats(@heading)
       end
 
       @paragraphs =[]
@@ -166,10 +172,10 @@ module RLayout
     end
 
     def layout_story
-      @news_article_box.layout_floats!
-      @news_article_box.adjust_overlapping_columns
-      @news_article_box.layout_items(@paragraphs)
-      # @news_article_box.floats.each do |float|
+      @news_box.layout_floats!
+      @news_box.adjust_overlapping_columns
+      @news_box.layout_items(@paragraphs)
+      # @news_box.floats.each do |float|
       #   puts "++++++++ "
       #   puts "float.class:#{float.class}"
       #   float.puts_frame

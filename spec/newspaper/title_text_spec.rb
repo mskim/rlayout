@@ -3,13 +3,13 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 describe 'create with article' do
   before do
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/2"
-    @maker          = NewsArticleMaker.new(article_path: @article_path)
+    @maker          = NewsBoxMaker.new(article_path: @article_path)
     @news_box       = @maker.news_article_box
     @heading        = @news_box.floats.first
   end
 
-  it 'shoule create NewsArticleMaker' do
-    assert_equal NewsArticleMaker, @maker.class
+  it 'shoule create NewsBoxMaker' do
+    assert_equal NewsBoxMaker, @maker.class
     assert_equal NewsArticleBox, @news_box.class
     assert_equal NewsArticleHeading, @heading.class
   end

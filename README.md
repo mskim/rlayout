@@ -294,7 +294,7 @@ TODO List
 
 2017_2_25
 	- news_article_box
-		- new lauyout for newspaper, NewsArticleMaker, NewsArticleBox, NewsColumn, NewsParagraph, NewsLineFragment
+		- new lauyout for newspaper, NewsBoxMaker, NewsArticleBox, NewsColumn, NewsParagraph, NewsLineFragment
 
 2017_2_5
 	- hexapdf Tj TJ, tm, tlm
@@ -1121,10 +1121,10 @@ TODO List
 	- Newspaper
 	- NewspaperIssue
 	- NewspaperSection
-	- made NewsArticleMaker work with story folder
+	- made NewsBoxMaker work with story folder
 
 2015 9 18
-	- NewsArticleMaker bug that heading is not showing
+	- NewsBoxMaker bug that heading is not showing
 	- def heading in TextBox
 	- support \n for new line in text_record
 
@@ -1162,7 +1162,7 @@ TODO List
 
 2015 8 27
 	- ChapterMaker, MagazineArticleMaker,
-		replace Chapter, MagazineArticle, NewsArticleMaker
+		replace Chapter, MagazineArticle, NewsBoxMaker
 	- support custom style loading at rum time
 
 2015 8 23
@@ -1310,7 +1310,7 @@ TODO List
 	1. has_heading
 
 2015 4 8
-	1. Article, NewsArticleMaker, NewsSection
+	1. Article, NewsBoxMaker, NewsSection
 	1. grid_size with margin, gutter paper_size
 	1. put the grid_pattern_with source, no need to save it as file
 	1. heading_column for news_article story.
@@ -1414,7 +1414,7 @@ TODO List
 		have floats template
 
 2015 1 7
-	- fix NewsArticleMaker, TextBox
+	- fix NewsBoxMaker, TextBox
 
 2014 12 31
 	- fix grid,
@@ -1699,7 +1699,7 @@ TODO: Write usage instructions here
 
 #  Page
 #    Article
-#    NewsArticleMaker
+#    NewsBoxMaker
 #    BookPage
 #    Ad
 #    Calendar

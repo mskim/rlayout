@@ -39,7 +39,7 @@
   end
 
   file 'section.pdf' => source_files.ext(".pdf") do |t|
-    sh "/Applications/newsman.app/Contents/MacOS/newsman section_pdf #{pwd}"
+    sh "/Applications/newsman.app/Contents/MacOS/newsman section #{pwd}"
   end
   EOF
 
