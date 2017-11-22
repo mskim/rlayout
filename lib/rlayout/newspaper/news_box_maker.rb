@@ -110,21 +110,16 @@ module RLayout
       end
       template = File.open(@template_path,'r'){|f| f.read}
       @news_box       = eval(template)
+
       if @news_box.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return
       end
       if @news_box.is_a?(NewsImageBox)
-
+        @news_box.stroke.sides = [0,0,0,1]
+        @news_box.stroke.thickness = 0.3
       elsif @news_box.is_a?(NewsComicBox)
-        # layout_comic_article
       elsif @news_box.is_a?(NewsArticleBox)
-        read_story
-        layout_story
-      elsif @news_box.is_a?(NewsEditorialBox)
-        read_story
-        layout_story
-      elsif @news_box.is_a?(NewsOpinionBox)
         read_story
         layout_story
       elsif @news_box.is_a?(NewsAdBox)
@@ -134,8 +129,9 @@ module RLayout
       else
         # puts "@news_box is Graphic..."
       end
-
       if RUBY_ENGINE =="rubymotion"
+        puts "+++++++ @news_box.stroke.sides:#{@news_box.stroke.sides}"
+        puts "+++++++ @news_box.stroke.thickness:#{@news_box.stroke.thickness}"
         @news_box.save_pdf(@output_path, :jpg=>true)
       else
         @news_box.save_svg(@svg_path)
@@ -151,6 +147,7 @@ module RLayout
       @heading[:top_position] = @news_box.top_position
       if @heading
         @news_box.make_article_heading(@heading)
+        # make other floats quotes, opinition writer's personal_picture
         @news_box.make_floats(@heading)
       end
 
@@ -175,11 +172,6 @@ module RLayout
       @news_box.layout_floats!
       @news_box.adjust_overlapping_columns
       @news_box.layout_items(@paragraphs)
-      # @news_box.floats.each do |float|
-      #   puts "++++++++ "
-      #   puts "float.class:#{float.class}"
-      #   float.puts_frame
-      # end
     end
 
     # copy current_;pargraphs until qwh hAVE 1 line for reposter

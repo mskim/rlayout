@@ -116,16 +116,51 @@ TODO List
 			- index
 			- glossary
 		- put templates under rubymotion app/resouces/
+
+2017_11_9
+	- NewsImage put frame around image
+	- put stroke at the bottom of ArticleBox
+
+	- fullpage ad page_heading converted
+	- optimize when switching page templates
+	
+	- create stroke_style.yml, layout_style
+		기사박스    : [0,0,0,1]
+  		이미지영역
+  		이미지    : [1,1,1,1]
+  		켑션    : [0,0,0,0]
+		사진박스  : [0,0,0,1], [0,0,0,0]
+		  이미지영역
+		  이미지 [1,1,1,1], [0,0,0,0]
+		  켑션   
+		만평박스
+		  이미지 [0,0,0,0]
+		오피니언박스 [0,1,0,0]
+		  프로필이미지 [0,0,0,0]
+		사설박스 [1,6,1,1]
+		광고박스
+
+2017_11_8
+	- apply differnt stroke_width on difference sides
+
+	- word_stroke
+  - sentence_stroke
+  - line_stroke
+  - para_stroke
+
+2017_11_6
+	- on NewsBox
+		do not use top_position_filler in ArcileHeadings,
+		use top_margin
+
 2017_10_31
 		- create NewsBpx < Container
 				NewsArticleBox  < NewsBpx
 				NewsImageBox    < NewsBpx
 				NewsComicBox    < NewsBpx
-				NewsEditorialBox < NewsBpx
-				NewsOpinionBox  < NewsBpx
 				NewsAdBox       < NewsBpx
 		- have config file for each, so that this could be modified by designer.
-		
+
 2017_10_24
 	- line_fragemnt, text_token align text to the top
 	- 제목박스 크기 right_edge 와 다름
@@ -220,7 +255,7 @@ TODO List
 		- top_story
 			- mutiple column intelligent subtitle
 	- NewspaperSectionPage
-		- add page_hading to page
+		- add page_heading to page
 
 2017_5_5
 	- relayout! align justified

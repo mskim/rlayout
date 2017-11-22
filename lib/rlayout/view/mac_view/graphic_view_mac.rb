@@ -42,7 +42,6 @@ class GraphicViewMac < NSView
     draw_grid_rects(graphic)      if graphic.class == RLayout::TextColumn
     draw_image(graphic)           if graphic.image_record
     draw_text(graphic)            if graphic.text_record || graphic.text_layout_manager || graphic.has_text
-    draw_stroke(graphic)          if graphic.stroke
     # shadow was drawen for image itself and the frame
     # I only want frame to be shadowed
     # draw_shadow should be called at last
@@ -51,6 +50,7 @@ class GraphicViewMac < NSView
     draw_fixtures(graphic.fixtures)    if !graphic.fixtures.nil? && graphic.fixtures.length > 0
     draw_graphics(graphic.graphics)    if !graphic.graphics.nil? && graphic.graphics.length > 0
     draw_floats(graphic.floats)        if !graphic.floats.nil? && graphic.floats.length > 0
+    draw_stroke(graphic)          if graphic.stroke
     @context.restoreGraphicsState
   end
 

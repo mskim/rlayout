@@ -5,7 +5,7 @@ module RLayout
   # It can squeeze text
   class TitleText < Container
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
-    attr_accessor :current_line, :current_line_y
+    attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title
     def initialize(options={})
       @string                 = options.delete(:text_string)
@@ -21,10 +21,16 @@ module RLayout
       @text_alignment         = options[:text_alignment] || 'left'
       @body_line_height       = options[:body_line_height] || 14
       @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
+      @text_height_in_lines   = 2 if @text_height_in_lines == ""
+      puts "@para_style[:space_before_in_lines]:#{@para_style[:space_before_in_lines]}"
       @space_before_in_lines  = @para_style[:space_before_in_lines] || 0
+      @space_before_in_lines  = 0 if @space_before_in_lines == ""
+      puts "@style_name:#{@style_name}"
+      puts "+++++++ @space_before_in_lines:#{@space_before_in_lines}"
       @top_inset              = @space_before_in_lines*@body_line_height
       @top_inset              += options[:top_inset] if options[:top_inset]
       @space_after_in_lines   = @para_style[:space_after_in_lines] || 0
+      @space_after_in_lines   = 0 if @space_after_in_lines == ""
       @tracking               = @para_style.fetch(:tracking, 0)
       @bottom_inset           = @space_after_in_lines*@body_line_height
       @height_in_lines        = @space_before_in_lines + @text_height_in_lines + @space_after_in_lines
@@ -37,7 +43,10 @@ module RLayout
       end
       @line_height            = @para_style[:font_size] + @line_space
       @current_line_y         = @top_inset
-      @current_line           = NewsLineFragment.new(parent:self, x: 0, y:@current_line_y,  width:@width, height:@line_height, space_width: @space_width, debug: true)
+      @current_line_y         = @space_before_in_lines*@body_line_height
+      @starting_x             = @left_margin + @left_inset
+      @line_width             = @width - @starting_x - @right_margin - @right_inset
+      @current_line           = NewsLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true)
       @current_line_y         +=@current_line.height
       create_tokens
       layout_tokens
@@ -62,7 +71,7 @@ module RLayout
     end
 
     def add_new_line
-      @current_line       = NewsLineFragment.new(parent:self, x: 0, y:@current_line_y,  width:@width, height:@line_height, space_width: @space_width, debug: true)
+      @current_line       = NewsLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
       @current_line_y    += @current_line.height + @line_space
     end
 

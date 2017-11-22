@@ -1,7 +1,7 @@
 
 module RLayout
 
-  class NewsArticleHeading < Container
+  class NewsHeadingForArticle < Container
     attr_accessor :grid_frame, :grid_width, :body_line_height, :height_in_lines, :starting_line
     attr_accessor :title_object, :subject_head_object, :subtitle_object
     attr_reader   :upper_line_type, :heading_columns
@@ -12,40 +12,19 @@ module RLayout
       # options[:stroke_width]    = 1
       super
       @body_line_height = @parent_graphic.body_line_height
-      if options['editorial_head']
-        set_editorial_heading_content(options)
-      else
-        set_heading_content(options)
-      end
+      set_heading_content(options)
       self
-    end
-
-    def set_editorial_heading_content(options)
-      @height_in_lines      = 0
-      @top_position_filler_object = top_position_filler(@parent_graphic.page_heading_margin_in_lines)
-      @height_in_lines        += @parent_graphic.page_heading_margin_in_lines
-      if options['editorial_head']
-        @editorial_head_object  = editorial_head(options)
-      end
-
-      if options['title']
-        @title_object = title_with_editorial_head(options)
-        @height_in_lines += @title_object.height_in_lines    unless @title_object.nil?
-      end
     end
 
     def set_heading_content(options)
       @height_in_lines            = 0
-      @top_position_filler_object = top_position_filler(@parent_graphic.page_heading_margin_in_lines)
-      @height_in_lines            += @parent_graphic.page_heading_margin_in_lines
-      if options['subject_head']
+      if options['subject_head'] && options['subject_head'] != ""
         @subject_head_object      = subject_head(options)
         @height_in_lines          +=@subject_head_object.height_in_lines    unless @subject_head_object.nil?
       end
       y = @height_in_lines*@body_line_height
       options[:y] = y
       options[:x] = 0
-
       if options['title']
         if @parent_graphic.top_story
           @title_object = main_title(options)
@@ -66,54 +45,7 @@ module RLayout
       end
       @height = @height_in_lines*@body_line_height
       relayout!
-
       self
-    end
-
-    def top_position_filler(line_count, options={})
-      top_postion_height = @body_line_height*line_count
-      Graphic.new(parent:self, width: @width, height:top_postion_height)
-    end
-
-    def editorial_head(options={})
-      # subject_head_height_in_lines       = options[:space_before_in_lines] + options[:text_height_in_lines] + options[:space_after_in_lines]
-      # puts "subject_head_height_in_lines:#{subject_head_height_in_lines}"
-      subject_atts = {}
-      if @heading_columns > 5
-        subject_atts[:style_name] = 'subject_head_L'
-      elsif @heading_columns > 3
-        subject_atts[:style_name] = 'subject_head_M'
-      else
-        subject_atts[:style_name] = 'subject_head_S'
-      end
-      subject_atts[:text_string]        = options['editorial_head']
-      subject_atts[:body_line_height]   = @body_line_height
-      subject_atts[:width]              = @parent_graphic.column_width
-      subject_atts[:top_inset]          = 5
-      subject_atts[:y]                  = @top_position_filler_object.height
-      subject_atts[:stroke_sides]       = [0,1,0,0] # draw line at top only
-      subject_atts[:stroke_width]       = 2
-      subject_atts[:text_fit_type]      = 'adjust_box_height'
-      subject_atts[:layout_expand]      = nil #[:width] #TODO
-      subject_atts[:fill_color]         = options.fetch(:fill_color, 'clear')
-      subject_atts[:parent]             = self
-      subject_atts[:layout_length_in_lines] = true
-      t = TitleText.new(subject_atts)
-      t
-    end
-
-    def title_with_editorial_head(options)
-      push_title_to_right = {}
-      push_title_to_right[:parent]          = self
-      push_title_to_right[:x]               = @parent_graphic.column_width
-      push_title_to_right[:y]               = @top_position_filler_object.height
-      push_title_to_right[:width]           = @width - @parent_graphic.column_width
-      push_title_to_right[:height]          = @body_line_height*4
-      push_title_to_right[:stroke_sides]    = [0,1,0,0] # draw line at top only
-      push_title_to_right[:stroke_width]    = 0.3
-      push_title_to_right[:layout_expand]   = :height
-      title_options                         = options.merge(push_title_to_right)
-      title(title_options)
     end
 
     def subject_head(options={})
@@ -135,6 +67,8 @@ module RLayout
       atts[:fill_color]         = options.fetch(:fill_color, 'clear')
       atts[:parent]             = self
       atts[:layout_length_in_lines] = true
+      puts "atts.keys:#{atts.keys}"
+      puts 'before TitleText.new(atts)'
       TitleText.new(atts)
     end
 

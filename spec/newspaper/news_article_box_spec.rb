@@ -1,41 +1,44 @@
 require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
-describe 'overlapping floats' do
-  before do
-    @ad_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/ad"
-    @maker     = NewsBoxMaker.new(article_path: @ad_path)
-    @ad_box    = @maker.news_article_box
+# describe 'overlapping floats' do
+#   before do
+#     @ad_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/ad"
+#     @maker     = NewsBoxMaker.new(article_path: @ad_path)
+#     @ad_box    = @maker.news_box
+#
+#   end
+#
+#   it 'should create NewsAdBox' do
+#     assert_equal NewsAdBox, @ad_box.class
+#   end
+#
+# end
 
-  end
 
-  it 'should create NewsAdBox' do
-    assert_equal NewsAdBox, @@ad_box.class
-  end
-
-end
-
-
-__END__
 describe 'overlapping floats' do
   before do
     @article_path   = "/Users/mskim/Development/rails5/articles/public/current_issue/1/1"
     @article_path   = "/Users/mskim/Development/rails5/page_template/public/current_issue/2/3"
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/6/3x4/0"
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/1/22/2"
-    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/2"
+    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/1"
     @svg_path       = @article_path + "/output.svg"
     @maker          = NewsBoxMaker.new(article_path: @article_path)
-    @news_box       = @maker.news_article_box
+    @news_box       = @maker.news_box
+    puts "@news_box.class:#{@news_box.class}"
+    puts "@news_box.graphics.length:#{@news_box.graphics.length}"
+
     @heading        = @news_box.floats.first
     @image          = @news_box.floats[1]
     @first_column   = @news_box.graphics.first
     @second_column  = @news_box.graphics[1]
     @third_column   = @news_box.graphics[2]
+    puts "@first_column:#{@first_column}"
     @box_width      = (@first_column.width)*3 + (@news_box.gutter)*2
   end
 
-  it 'should create NewsArticleHeading' do
-    assert_equal NewsArticleHeading, @heading.class
+  it 'should create NewsHeadingForArticle' do
+    assert_equal NewsHeadingForArticle, @heading.class
   end
 
   it 'heading should have two graphics' do

@@ -21,7 +21,7 @@ describe 'creaet document with NewsBoxMaker' do
   end
 
   it 'should create NewsBoxMaker' do
-    assert_equal @heading.class, NewsArticleHeading
+    assert_equal @heading.class, NewsHeadingForArticle
     assert_equal @news_box.gutter, 10
   end
 
@@ -35,7 +35,7 @@ describe 'creaet document with NewsBoxMaker' do
   # end
   #
   # it 'should create NewsArtcicleHeading' do
-  #   assert_equal NewsArticleHeading, @heading.class
+  #   assert_equal NewsHeadingForArticle, @heading.class
   #   assert_equal Text, @title.class
   # end
   #

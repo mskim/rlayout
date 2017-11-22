@@ -10,13 +10,13 @@ describe 'creating HewsArticleHeading top_story heading' do
       'subtitle'=> "This is subtitle of the article",
       'author'=> "Min Soo Kim"
     }
-    @nh = NewsArticleHeading.new(options)
+    @nh = NewsHeadingForArticle.new(options)
     @title_object = @nh.title_object
     @subtitle_object = @nh.subtitle_object
   end
 
-  it "should create NewsArticleHeading class" do
-    assert_equal NewsArticleHeading, @nh.class
+  it "should create NewsHeadingForArticle class" do
+    assert_equal NewsHeadingForArticle, @nh.class
     assert_equal RLayout::Text, @title_object.class
     assert_equal 2, @title_object.space_before_in_lines
     assert_equal 5, @title_object.text_height_in_lines
@@ -47,14 +47,14 @@ describe 'creating HewsArticleHeading with subject_head' do
       'subtitle'=> "This is subtitle of the article",
       'author'=> "Min Soo Kim"
     }
-    @nh = NewsArticleHeading.new(options)
+    @nh = NewsHeadingForArticle.new(options)
     @sunject_head_object  = @nh.subject_head_object
     @title_object         = @nh.title_object
     @subtitle_object      = @nh.subtitle_object
   end
 
-  it "should create NewsArticleHeading class" do
-    assert_equal NewsArticleHeading, @nh.class
+  it "should create NewsHeadingForArticle class" do
+    assert_equal NewsHeadingForArticle, @nh.class
     assert_equal 2, @nh.heading_columns
     assert_equal RLayout::Text, @title_object.class
     assert_equal 1, @title_object.space_before_in_lines
@@ -81,12 +81,12 @@ describe 'creating HewsArticleHeading no subtitle in heading' do
       'subtitle'=> "This is subtitle of the article",
       'author'=> "Min Soo Kim"
     }
-    @nh = NewsArticleHeading.new(options)
+    @nh = NewsHeadingForArticle.new(options)
     @title_object = @nh.title_object
   end
 
-  it "should create NewsArticleHeading class" do
-    assert_equal NewsArticleHeading, @nh.class
+  it "should create NewsHeadingForArticle class" do
+    assert_equal NewsHeadingForArticle, @nh.class
     assert_equal RLayout::Text, @title_object.class
     assert_equal 4, @title_object.text_height_in_lines
   end
@@ -105,12 +105,12 @@ describe 'creating HewsArticleHeading with grid_width 3' do
       'subtitle'=> "This is subtitle of the article",
       'author'=> "Min Soo Kim"
     }
-    @nh = NewsArticleHeading.new(options)
+    @nh = NewsHeadingForArticle.new(options)
     @title_object = @nh.title_object
   end
 
-  it "should create NewsArticleHeading class" do
-    assert_equal NewsArticleHeading, @nh.class
+  it "should create NewsHeadingForArticle class" do
+    assert_equal NewsHeadingForArticle, @nh.class
     assert_equal RLayout::Text, @title_object.class
     assert_equal 4, @title_object.text_height_in_lines
   end
@@ -124,12 +124,12 @@ describe 'creating HewsArticleHeading with grid_width 4' do
       'subtitle'=> "This is subtitle of the article",
       'author'=> "Min Soo Kim"
     }
-    @nh = NewsArticleHeading.new(options)
+    @nh = NewsHeadingForArticle.new(options)
     @title_object = @nh.title_object
   end
 
-  it "should create NewsArticleHeading class" do
-    assert_equal NewsArticleHeading, @nh.class
+  it "should create NewsHeadingForArticle class" do
+    assert_equal NewsHeadingForArticle, @nh.class
     assert_equal RLayout::Text, @title_object.class
     assert_equal 4, @title_object.text_height_in_lines
   end

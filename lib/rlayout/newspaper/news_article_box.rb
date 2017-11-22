@@ -19,14 +19,22 @@ module RLayout
     attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines, :overflow_text
     attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :personal_image, :news_image
     attr_accessor :column_width, :starting_column_x, :gutter, :column_bottom
-
     # attr_accessor :story_path, :show_overflow_lines, :draw_gutter_stroke, , :v_gutter
     # attr_accessor :reporter, :email,
     # attr_accessor :before_lines, :after_lines,
-
-
     def initialize(options={}, &block)
       super
+
+      if @kind == '사설' || @kind == 'editorial'
+        @stroke.sides = [1,3,1,1]
+        @left_inset   = @gutter
+        @right_inset  = @gutter
+      elsif @kind == '기고' || @kind == 'opinion'
+        @stroke.sides = [0,1,0,0]
+      else
+        @stroke.sides = [0,0,0,1]
+        @stroke.thickness = 0.3
+      end
       @current_column_index   = 0
       @heading_columns = @column_count
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
@@ -44,11 +52,20 @@ module RLayout
     #  news_columns are different from text_column
     def create_columns
       current_x = @starting_column_x
-      @column_count.times do
-        g= NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+      if @kind == '사설' || @kind == 'editorial'
+        editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
+        current_x += @left_inset
+        # current_y += @top_margin + @top_inset
+        g= NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: editorial_column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         g.parent_graphic = self
         @graphics << g
-        current_x += @column_width + @gutter
+      else
+        @column_count.times do
+          g= NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+          g.parent_graphic = self
+          @graphics << g
+          current_x += @column_width + @gutter
+        end
       end
       @column_bottom = max_y(@graphics.first.frame_rect)
       # @graphics.first.puts_frame
@@ -96,14 +113,16 @@ module RLayout
     end
 
     def article_box_unoccupied_lines_count
-      colimn_index = @current_column.graphics_index
-      if colimn_index == (@column_count - 1)
+      column_index = @current_column.graphics_index
+      if @kind == '사설' || @kind == 'editorial'
+        @graphics[0].empty_lines
+      elsif column_index == (@column_count - 1)
         # current position is at last column
         @current_column.empty_lines
       else
         # current position is before last column
         unoccupied_lines_count = 0
-        (colimn_index..(@column_count - 1)).to_a.each do |column_index|
+        (column_index..(@column_count - 1)).to_a.each do |column_index|
           column = @graphics[column_index]
           unoccupied_lines_count += column.empty_lines
         end
@@ -227,21 +246,53 @@ module RLayout
       @top_story                = options['top_story'] || options[:top_story]
       @top_position             = options['top_position'] || options[:top_position]
       @subtitle_in_head         = options['subtitle_in_head'] || options[:subtitle_in_head]
+
       h_options = options.dup
       h_options[:is_float]      = true
       h_options[:parent]        = self
       h_options[:width]         = @width # - @gutter
       h_options[:column_count]  = @column_count
       h_options[:x]             = @starting_column_x
+      h_options[:y]             = 0
 
       if @heading_columns       != @column_count
         h_options[:width]       = @heading_columns+@column_width
       end
-      @heading = NewsArticleHeading.new(h_options)
-      unless @heading== @floats.first
-        # make heading as first one in floats
-        @heading = @floats.pop
-        @floats.unshift(@heading)
+      case @kind
+      when 'editorial', "사설"
+        @stroke.sides = [1,1,1,1]
+        @stroke.thickness = 0.3
+
+        h_options[:x]     += @left_inset
+        h_options[:width] -= (@left_margin + @left_inset + @right_margin + @right_inset)
+        @heading = NewsHeadingForEditorial.new(h_options)
+      when 'opinion', "기고"
+        @stroke.sides = [0,1,0,0]
+        @stroke.thickness = 0.3
+        h_options[:x]     += @left_margin + @column_width + @gutter
+        h_options[:y]     = 2
+        h_options[:width] -= (h_options[:x] + @right_inset + @right_margin )
+        @heading = NewsHeadingForOpinion.new(h_options)
+      else
+        @stroke.sides = [0,0,0,1]
+        @stroke.thickness = 0.3
+        # @stroke.color = 'red'
+        @heading = NewsHeadingForArticle.new(h_options)
+      end
+      # check if we have page_heading_place_holder
+      # put heading after page_heading_place_holder
+      if @page_heading_place_holder
+        unless @heading == @floats[1]
+          # make heading as second one in floats
+          @heading = @floats.pop
+          @floats.insert(1,@heading)
+        end
+      else
+        unless @heading == @floats.first
+          # make heading as first one in floats
+          @heading = @floats.pop
+          @floats.unshift(@heading)
+        end
       end
     end
 
@@ -255,7 +306,7 @@ module RLayout
 
     def get_heading
       @floats.each do |float|
-        return float if float.class == RLayout::NewsArticleHeading
+        return float if float.class == RLayout::NewsHeadingForArticle || float.class == RLayout::NewsHeadingForOpinion || float.class == RLayout::NewsHeadingForEditorial
       end
       nil
     end
@@ -374,13 +425,17 @@ module RLayout
       end
       #TODO
       frame_y             = @grid_size[1]*grid_frame[1]
-      # if image is on bottom, move up by @article_bottom_spaces_in_lines*@body_line_height
-      frame_y             -= @article_bottom_spaces_in_lines*@body_line_height if (grid_frame[1] + grid_frame[3]) == @row_count
-      frame_y             = @grid_size[1]*grid_frame[1] - @article_bottom_spaces_in_lines*@body_line_height
       frame_width         = @graphics[grid_frame[0] + grid_frame[2] - 1].x_max - frame_x
       frame_height        = @grid_size[1]*grid_frame[3]
+
+      # if image is on bottom, move up by @article_bottom_spaces_in_lines*@body_line_height
+      if (grid_frame[1] + grid_frame[3]) == @row_count
+        frame_height      -= @article_bottom_spaces_in_lines*@body_line_height
+        # frame_y             = @grid_size[1]*grid_frame[1] - @article_bottom_spaces_in_lines*@body_line_height
+      end
       [frame_x, frame_y, frame_width, frame_height]
     end
+
 
     # layout_floats!
     # Floats are Heading, Image, Quotes, SideBox ...

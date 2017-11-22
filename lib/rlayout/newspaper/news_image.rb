@@ -83,7 +83,7 @@ NUMBER_TO_POSITION = {
 module RLayout
   class NewsImage < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :image_position, :caption_title
-    attr_accessor :image_box, :caption_column, :caption_paragraph, :position, :fit_type, :expand, :has_caption
+    attr_accessor :image_box, :caption_column, :caption_paragraph, :position, :before_title, :fit_type, :expand, :has_caption
 
     def initialize(options={})
       if options[:parent]
@@ -100,15 +100,19 @@ module RLayout
       @position               = options[:position]
       options[:layout_expand] = nil
       options[:fill_color]    = 'clear'
+
       @fit_type               = options[:fit_type] if options[:fit_type]
       @expand                 = options[:expand] if options[:expand]
-      # options[:stroke_width]  = 1
+      @before_title           = options.fetch(:before_title, false)
       super
       frame_rect              = @parent_graphic.grid_frame_to_image_rect(options[:grid_frame])
       @x                      = frame_rect[0]
       @y                      = frame_rect[1]
       @width                  = frame_rect[2]
       @height                 = frame_rect[3]
+      if options[:extra_height_in_lines] > 0
+        @height += options[:extra_height_in_lines]*@parent_graphic.body_line_height
+      end
       has_caption_text?(options)
       if @has_caption
         @caption_column         = CaptionColumn.new(parent:self, width: @width, top_space_in_lines: 0.3, caption_line_height: 12)
@@ -124,16 +128,24 @@ module RLayout
         image_options[:y]          = @parent_graphic.body_line_height
         image_options[:height]     -= @parent_graphic.body_line_height
       end
+      # IMAGE_FIT_TYPE_KEEP_RATIO     = 3
+      # IMAGE_FIT_TYPE_IGNORE_RATIO   = 4
       image_options[:stroke_width]   = 0.3
-      image_options[:image_fit_type] = IMAGE_FIT_TYPE_KEEP_RATIO
+      image_options[:image_fit_type] = 3 #IMAGE_FIT_TYPE_KEEP_RATIO
       image_options[:image_fit_type] = @fit_type if @fit_type
+      puts "image_options[:image_fit_type]:#{image_options[:image_fit_type]}"
       image_options[:image_path]     = @image_path
       image_options[:layout_expand]  = nil
       image_options[:layout_expand]  = @expand if @expand
       image_options[:parent]         = self
+      if @parent_graphic.kind == '기고' || @parent_graphic.kind == 'opinion'
+        image_options[:stroke_width]  = 0
+      end
       @image_box                    = Image.new(image_options)
-      @caption_column.y             = @image_box.height if @caption_column
-      @caption_column.y             += @parent_graphic.body_line_height unless top_position? if @caption_column
+      if @caption_column
+        @caption_column.y             = @image_box.height
+        @caption_column.y             += @parent_graphic.body_line_height unless top_position?
+      end
       # make space after the news_image when we have following text
       # for full sized news_image, this will be adjusted by adjust_image_height
       @height                       += @parent_graphic.body_line_height
@@ -155,6 +167,10 @@ module RLayout
 
     def top_position?
       @position == 1 || @position == 2 || @position == 3
+    end
+
+    def before_title?
+      @before_title
     end
 
     def adjust_image_height

@@ -45,10 +45,11 @@ module RLayout
     end
 
     def create_lines(options={})
-      current_x = 0
-      current_y = 0
+      current_x   = 0
+      current_y   = 0
+      line_width  = @width - @left_inset - @right_inset
       @line_count.times do
-        options = {parent:self, x: current_x, y: current_y , width: @width, height: @body_line_height}
+        options = {parent:self, x: current_x, y: current_y , width: line_width, height: @body_line_height}
         line = NewsLineFragment.new(options)        # @graphics << line
         current_y += @body_line_height
       end

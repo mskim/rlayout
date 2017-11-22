@@ -11,7 +11,7 @@ describe 'create with article' do
   it 'shoule create NewsBoxMaker' do
     assert_equal NewsBoxMaker, @maker.class
     assert_equal NewsArticleBox, @news_box.class
-    assert_equal NewsArticleHeading, @heading.class
+    assert_equal NewsHeadingForArticle, @heading.class
   end
 end
 #
