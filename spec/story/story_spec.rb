@@ -1,6 +1,32 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
-describe 'read markdow table' do
+
+describe 'read markdown story' do
+  before do
+    story_path  = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/2/story.md"
+    @story      = Story.new(story_path)
+    @para_data  = @story.markdown2para_data
+  end
+
+  it 'shold create story' do
+    assert @story.class == Story
+  end
+
+  # it 'shold create story' do
+  #   assert @para_data.class == Hash
+  # end
+  #
+  # it 'should return :heading Hash' do
+  #   assert @para_data[:heading].class == Hash
+  # end
+  #
+  # it 'should return :heading Array' do
+  #   assert @para_data[:paragraphs].class == Array
+  # end
+end
+
+__END__
+describe 'read markdown table' do
   before do
     story_path  = "/Users/mskim/Development/ruby/gems/rlayout/sample/story/sample_story.md"
     story_path  = "/Users/mskim/demo_book/001.chapter.md"
@@ -10,19 +36,19 @@ describe 'read markdow table' do
     @para_data  = @story.markdown2para_data
     @asciidoctor= @story.to_html
   end
-  # 
+  #
   # it 'shold create story' do
   #   assert @story.class == Story
   # end
-  # 
+  #
   # it 'shold create story' do
   #   assert @para_data.class == Hash
   # end
-  
+
   it 'should return :heading Hash' do
     assert @para_data[:heading].class == Hash
   end
-  
+
   # it 'should return :paragraphs Array' do
   #   assert @para_data[:paragraphs].class == Array
   # end
@@ -31,7 +57,7 @@ describe 'read markdow table' do
     puts @asciidoctor
     assert @asciidoctor.class == String
   end
-  
+
   it 'should create html' do
     assert File.exist?(@adoc) == true
     assert File.exist?(@html) == true
@@ -49,7 +75,7 @@ describe 'reading story' do
       puts para[:markup]
     end
   end
-    
+
   it 'should read markdown' do
     assert @story.is_a?(Hash)
   end
@@ -112,4 +138,3 @@ describe 'create Story' do
     Story.book_chapter.must_be_kind_of Story
   end
 end
-

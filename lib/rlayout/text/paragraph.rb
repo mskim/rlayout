@@ -226,14 +226,14 @@ module RLayout
 
     def create_special_token(token_type, line_text)
       case token_type
-      when "ruby"
+      when "ruby" # some letter on top
         arg = line_text.split(RUBY_ARGUMENT_DIVIDER)
         options = {}
         options[:base]  = arg[1]
         options[:top]   = arg[2]
         options[:para_style] = @para_style
         @tokens << RLayout::RubyToken.new(options)
-      when "reverse_ruby"
+      when "reverse_ruby" # some letter at the bottom
         arg = line_text.split(RUBY_ARGUMENT_DIVIDER)
         options = {}
         options[:base]  = arg[0]

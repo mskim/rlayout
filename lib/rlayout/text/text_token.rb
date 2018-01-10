@@ -56,6 +56,7 @@ module RLayout
     attr_reader :split_second_half_attsting
 
     def initialize(options={})
+      @token_type               = options[:token_type]
       @string                   = options[:string]
       options[:layout_expand]   = nil
       @has_text                 = true
@@ -84,6 +85,7 @@ module RLayout
         options[:height] = size[1]
       end
       options[:fill_color] = options.fetch(:token_color, 'clear')
+
       super
       if RUBY_ENGINE == "rubymotion"
         # add some margin to left and right of the token.
@@ -121,8 +123,8 @@ module RLayout
     end
 
 
-    # return false if none broken
-    # split string into two and pit split_second_half_attsting
+    # return false if break_position < MinimunLineRoom
+    # split string into two and return split_second_half_attsting
     def break_attstring_at(break_position)
       # give a char_half_cushion
       return false if break_position < MinimunLineRoom

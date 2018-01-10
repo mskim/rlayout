@@ -407,10 +407,11 @@ module RLayout
     end
   end
 
-  # Stack is Container with layout_direction set to 'vertical'
+  # Stack is Container with layout_direction set to 'vertical' and v_align = 'bottom'
   class Stack < Container
     def initialize(options={}, &block)
-      options[:layout_direction] = "vertical"
+      options[:layout_direction]  = "vertical"
+      options[:v_alignment]       = "bottom"
       super
       @width = 300 unless options[:width]
       self

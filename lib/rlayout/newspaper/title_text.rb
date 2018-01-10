@@ -22,11 +22,8 @@ module RLayout
       @body_line_height       = options[:body_line_height] || 14
       @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
       @text_height_in_lines   = 2 if @text_height_in_lines == ""
-      puts "@para_style[:space_before_in_lines]:#{@para_style[:space_before_in_lines]}"
       @space_before_in_lines  = @para_style[:space_before_in_lines] || 0
       @space_before_in_lines  = 0 if @space_before_in_lines == ""
-      puts "@style_name:#{@style_name}"
-      puts "+++++++ @space_before_in_lines:#{@space_before_in_lines}"
       @top_inset              = @space_before_in_lines*@body_line_height
       @top_inset              += options[:top_inset] if options[:top_inset]
       @space_after_in_lines   = @para_style[:space_after_in_lines] || 0

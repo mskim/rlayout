@@ -237,7 +237,10 @@ module RLayout
       starting_heading_level = options.fetch(:starting_heading_level, 1)
       s = text_block.shift if text_block[0] =~ /(?>^\s*\n)+/
       s = text_block[0]
-      if s =~/^#\s/ || s =~/^=\s/
+      if  s =~/^<br>/ || s =~/^<\/br>/
+        @markup = "br"
+        @string = ""
+      elsif s =~/^#\s/ || s =~/^=\s/
         @markup = "h#{starting_heading_level}"
         s = text_block.join("\n")
         @string = s.sub(/#\s?/, "")
@@ -265,9 +268,10 @@ module RLayout
         return {:markup =>"ordered_section", :text_block=>text_block}
       elsif s =~/^[A-Z]\s/
         return {:markup =>"ordered_upper_alpha_list", :text_block=>text_block}
-      elsif s =~/^\*\s?/
-        # unordered list uli1
-        return {:markup =>"unordered_list", :text_block=>text_block}
+      #TODO
+      # elsif s =~/^\*\s?/
+      #   # unordered list uli1
+      #   return {:markup =>"unordered_list", :text_block=>text_block}
       elsif s =~/^table\s?/
         # parse block
         @markup = "table"
@@ -286,6 +290,7 @@ module RLayout
       elsif s =~/^math\s?/
         @markup = "math"
       else
+
         @markup = "p"
         if text_block.length > 0
           @string = ""

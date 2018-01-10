@@ -5,10 +5,10 @@ class GraphicViewMac < NSView
     draw_gutter_stroke(graphic) if graphic.respond_to?(:gutter_stroke) && graphic.draw_gutter_stroke
     return if graphic.stroke[:thickness].nil?
     return if graphic.stroke[:thickness] == 0
-    @stroke       = graphic.stroke
-    @stroke_rect  = graphic.get_stroke_rect
-    @line_position = 1
-    r             = ns_bounds_rect(graphic)
+    @stroke         = graphic.stroke
+    @stroke_rect    = graphic.get_stroke_rect
+    @line_position  = 1
+    r               = ns_bounds_rect(graphic)
     drawLine(r, withTrap:0)
     draw_rules(r) if @stroke[:rule]
     # drawArrow if @start_arrow && @owner_graphic
@@ -105,6 +105,12 @@ class GraphicViewMac < NSView
       path.setLineDash(@dash, count:@dash.length, phase:0)
     end
     path
+  end
+
+  def drawSingleLine
+    @stroke[:color]  = RLayout.convert_to_nscolor(@stroke[:color])    unless @stroke[:color].class == NSColor
+    @stroke[:color].set
+
   end
 
   def drawLine(rect, withTrap:trap)

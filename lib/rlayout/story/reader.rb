@@ -79,9 +79,10 @@ class Reader
   def text_blocks
     blocks_array = []
     block = []
+
     @lines.each do |line|
       # filter out carriage return key, if line has one.
-      filtered_line = line.gsub(/$\r/, "")
+      filtered_line = line.gsub(/\r/, "")
       if filtered_line== ""
         if block.length > 0
            blocks_array << block
@@ -94,9 +95,15 @@ class Reader
     if block.length > 0
       blocks_array << block
     end
+    # blocks_array.each do |a|
+    #   puts "++++"
+    #   puts a.class
+    #   puts a.first
+    # end
+    puts "blocks_array.length:#{blocks_array.length}"
     blocks_array
   end
-  
+
   # Internal: Prepare the lines from the provided data
   #
   # This method strips whitespace from the end of every line of

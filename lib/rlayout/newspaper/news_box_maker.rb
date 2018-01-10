@@ -130,8 +130,6 @@ module RLayout
         # puts "@news_box is Graphic..."
       end
       if RUBY_ENGINE =="rubymotion"
-        puts "+++++++ @news_box.stroke.sides:#{@news_box.stroke.sides}"
-        puts "+++++++ @news_box.stroke.thickness:#{@news_box.stroke.thickness}"
         @news_box.save_pdf(@output_path, :jpg=>true)
       else
         @news_box.save_svg(@svg_path)

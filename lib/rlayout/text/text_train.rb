@@ -4,57 +4,50 @@
 
 module RLayout
 
-  LabelTextRegex = /^[\s|\w]:/
-  # Label is a text with label in front of it
-  # label is separated from text by ":"
-  # label uses bold text, we can specifie the label font with
-  # label_font, label_text_size, label_text_color
-  # label uses small_captalized letters, *0.8 of font_size as default
-  class Label < Text
-    attr_accessor :label_text, :label_font, :label_text_color, :label_length
-    def initialize(options={})
-      @text_string = options[:text_string]
-      @font_size = options[:font_size]
-      super
-      @label_text   = @text_string.match(LabelTextRegex).to_s
-      @label_length = @label_text.length
-      @label_font   = options.fetch(:label_font, "Helvetica")
-      @label_text_size    = options.fetch(:label_text_size, @font_size*0.8)
-      @label_text_color   = options[:label_text_color] if options[:label_text_color]
-      atts          = {}
-      if RUBY_ENGINE == 'rubymotion'
-        @label_text_size= options.fetch(:label_text_size, @text_layout_manager.font_size*0.8)
-
-        range                                 = NSMakeRange(0, @label_length)
-        atts[NSFontAttributeName]             = NSFont.fontWithName(@label_font, size: @label_text_size)
-        if @label_text_color
-          @label_text_color = RLayout.convert_to_nscolor(@label_text_color)    unless @text_color.class == NSColor
-          atts[NSForegroundColorAttributeName]  = @label_text_color
-        end
-        setAttributes(atts, range)
-      else
-        @label_text_size    = options.fetch(:label_text_size, @font_size*0.8)
-      end
-      self
-    end
-
-  end
-
-
-  # TextTrain is a series of text runs with differnt attributes.
-  # They are separated by \t .
-  # It is used to handle mixed text attributes.
+  # TextTrain lays out series of text runs with differnt attributes.
+  # given text_array and atts_array
+  # It is used to handle mixed text attributed text run.
+  # If h_align is "right" , it will grow to the left changing the origin and width
+  # If h_align is "left" , it will grow to the right changing the  width
+  # This is used for" Newspage page heeaing"
   class TextTrain < Container
-    attr_accessor :text_run, :atts_run, :v_align
+    attr_accessor :text_array, :atts_array, :v_align, :h_align, :gap
+    attr_reader :x_max, :y_max, :x_mid
+
     def initialize(options={})
+      if options[:x_max]
+        @x_max = options[:x_max]
+      elsif options[:x_mid]
+        @x_mid = options[:x_mid]
+      end
+      if options[:y_max]
+        @y_max = options[:y_max]
+      end
       super
-      @text_run = options[:text_string].split("\t")
-      @v_align  = options.fetch(:v_align, "center")
-
-
+      @gap              = options.fetch[:gap, 3]
+      @layout_direction = 'horizontal'
+      @text_array       = options[:text_array]
+      @atts_array       = options[:atts_array]
+      @v_align          = options.fetch(:v_align, "center")
+      @h_align          = options.fetch(:h_align, "center")
+      create_text_tokens
+      layout_text_tokens
       self
     end
 
+    def create_text_tokens
+      # parse for tab first
+      @text_array.each_with_index do |token_string, i|
+        @token_style          = atts_array[i]
+        @token_style[:string] = token_string
+        @graphics << RLayout::TextToken.new(@token_style)
+      end
+    end
+
+    def layout_text_tokens
+      token_width_sum = @graphic.collect {|g| g.width}.recude(:+)
+      puts "token_width_sum:#{token_width_sum}"
+    end
 
   end
 

@@ -756,7 +756,7 @@ module RLayout
     attr_accessor :line_type
     #"horizontal_rule", vertical_rule, top_left_to_bottom_right, top_right_to_bottom_left
     def initialize(options={})
-      options[:thickness]     = 1 unless options[:thickness]
+      options[:thickness]     = 1 unless options[:thickness] || options[:stroke_thickness] || options[:stroke_width]
       options[:stroke_rule]   = "horizontal_rule" unless options[:stroke_rule]
       super
       self

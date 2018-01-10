@@ -80,6 +80,9 @@ module RLayout
   # list_fill_color => fill_color of NumberToken
   # list_line_color => line_color of NumberToken
 
+  EMPASIS_STRONG = /(\*\*.*?\*\*)/
+  EMPASIS_DIAMOND = /(\*.*?\*)/
+
   class NewsParagraph
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
@@ -97,7 +100,9 @@ module RLayout
       @space_width    = @para_style[:space_width]
       @grid_height    = options.fetch(:grid_height, 2)
       @linked         = options.fetch(:linked, false)
-      if options[:tokens]
+      if @markup == 'br'
+
+      elsif options[:tokens]
         # this is when Paragraph has been splited into two
         # left over tokens are passed in options[:tokens]
         # so, no need to re-create tokens.
@@ -111,12 +116,15 @@ module RLayout
       self
     end
 
-    def create_text_tokens(para_string)
+    def create_plain_tokens(para_string)
       # parse for tab first
-      @tokens += para_string.split(" ").collect do |token_string|
+      return unless para_string
+      tokens_strings = para_string.split(" ")
+      tokens_strings.each do |token_string|
+        next unless token_string
         @para_style[:string] = token_string
         @para_style.delete(:parent) if @para_style[:parent]
-        RLayout::TextToken.new(@para_style)
+        @tokens << RLayout::TextToken.new(@para_style)
       end
     end
 
@@ -135,7 +143,7 @@ module RLayout
     # first check for double curl, single curl
     # if double curl is found, split para string with double curl fist
     # and do it recursively with split strings
-    # and call create_text_tokens for regular string segmnet
+    # and call create_plain_tokens for regular string segmnet
     def create_tokens
       @atts = {}
       if RUBY_ENGINE == 'rubymotion'
@@ -147,18 +155,19 @@ module RLayout
           @space_width = @para_style[:space_width]  = @para_style[:font_size]/2
         end
       end
-
-      # do we have any doulbe curl?, for special token
-      # if @para_string =~INLINE_DOUBLE_CURL
-      #   create_tokens_with_double_curl(@para_string)
-      # # no doulbe curl, do we have any single curl?
-      # elsif @para_string =~INLINE_SINGLE_CURL
-      #   create_tokens_with_single_curl(@para_string)
-      # # no curls found, so create_text_tokens
-      # else
-      #   create_text_tokens(@para_string)
-      # end
-      create_text_tokens(@para_string)
+      if @markup == "h3"
+        unless @para_string =~/■/
+          @para_string = "■" + @para_string
+        end
+      end
+      if @para_string =~EMPASIS_STRONG
+        create_tokens_with_emphasis_strong(@para_string)
+      elsif @para_string =~EMPASIS_DIAMOND
+        create_tokens_with_emphasis_diamond(@para_string)
+      else
+        create_plain_tokens(@para_string)
+      end
+      # create_plain_tokens(@para_string)
       token_heights_are_eqaul = true
       return unless  @tokens.length > 0
       tallest_token_height = @tokens.first.height
@@ -166,6 +175,96 @@ module RLayout
         if token.height > tallest_token_height
           token_heights_are_eqaul = false
           return
+        end
+      end
+    end
+
+    def create_tokens_with_emphasis_strong(para_string)
+      para_string.chomp!
+      para_string.sub!(/^\s*/, "")
+      split_array = para_string.split(EMPASIS_STRONG)
+      # splited array contains strong content
+      split_array.each do |token_group|
+        if token_group =~EMPASIS_DIAMOND
+          token_group.gsub!("**", "")
+          current_style             = RLayout::StyleService.shared_style_service.current_style
+          style_hash                = current_style['body_gothic']
+          style_hash                = Hash[style_hash.map{ |k, v| [k.to_sym, v] }] if style_hash
+          emphasis_style              = @para_style.dup
+          emphasis_style[:font]       = style_hash[:font] if style_hash[:font]
+          emphasis_style[:font_size]  = style_hash[:font_size] if style_hash[:font_size]
+          emphasis_style[:text_color] = style_hash[:text_color] if style_hash[:text_color]
+          atts = {}
+          if RUBY_ENGINE == 'rubymotion'
+            atts = NSUtils.ns_atts_from_style(emphasis_style)
+            @space_width = atts[:@space_width]
+            emphasis_style[:atts] = atts
+          else
+            unless @para_style[:space_width]
+              @space_width = @para_style[:space_width]  = @para_style[:font_size]/2
+            end
+          end
+          # get font and size
+          tokens_array = token_group.split(" ")
+          tokens_array.each do |token_string|
+            emphasis_style[:string] = token_string
+            @tokens << RLayout::TextToken.new(emphasis_style)
+          end
+        else
+          # line text with just noral text tokens
+          puts "token_group for plain: #{token_group}"
+          create_plain_tokens(token_group)
+        end
+      end
+    end
+
+
+    def create_tokens_with_emphasis_diamond(para_string)
+
+      para_string.chomp!
+      para_string.sub!(/^\s*/, "")
+      split_array = para_string.split(EMPASIS_DIAMOND)
+      # splited array contains strong content
+      split_array.each do |token_group|
+        if token_group =~EMPASIS_DIAMOND
+          token_group.gsub!("*", "")
+          current_style             = RLayout::StyleService.shared_style_service.current_style
+          style_hash                = current_style['running_head']
+          style_hash                = Hash[style_hash.map{ |k, v| [k.to_sym, v] }] if style_hash
+          emphasis_style              = @para_style.dup
+          emphasis_style[:font]       = style_hash[:font] if style_hash[:font]
+          emphasis_style[:font_size]  = style_hash[:font_size] if style_hash[:font_size]
+          emphasis_style[:text_color] = style_hash[:text_color] if style_hash[:text_color]
+          atts = {}
+          if RUBY_ENGINE == 'rubymotion'
+            atts = NSUtils.ns_atts_from_style(emphasis_style)
+            @space_width = atts[:@space_width]
+            emphasis_style[:atts] = atts
+          else
+            unless @para_style[:space_width]
+              @space_width = @para_style[:space_width]  = @para_style[:font_size]/2
+            end
+          end
+          # get font and size
+          unless token_group =~ /◆/
+            token_group.strip!
+            token_group = "◆" + token_group
+          end
+          unless token_group =~ /\=/
+            token_group.strip!
+            token_group += " ="
+          end
+
+          tokens_array = token_group.split(" ")
+          tokens_array.each do |token_string|
+            emphasis_style[:string] = token_string
+            emphasis_style[:token_type] = 'diamond_emphasis'
+            @tokens << RLayout::TextToken.new(emphasis_style)
+          end
+        else
+          # line text with just noral text tokens
+          # puts "token_group for plain: #{token_group}"
+          create_plain_tokens(token_group)
         end
       end
     end
@@ -220,6 +319,15 @@ module RLayout
         @current_line.set_paragraph_info(self, "first_line")
       end
       token = tokens.shift
+      if token && token.token_type == 'diamond_emphasis'
+        puts "first token is diamond_emphasis"
+        # if first token is diamond emphasis, no head indent
+        @current_line.set_paragraph_info(self, "middle_line")
+      elsif @markup == 'h2' || @markup == 'h3'
+        puts "paragraph is h2 or h3"
+        @current_line.set_paragraph_info(self, "middle_line")
+      end
+
       while token
         result = @current_line.place_token(token)
         # token is broken into two, second part is returned
@@ -342,15 +450,23 @@ module RLayout
       end
 
       if @markup =='h2'
-        style_hash = current_style['body_gothic']
+        style_hash = current_style['running_head']
+        # style_hash = current_style['body_gothic']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
       if @markup =='h3'
-        style_hash = current_style['running_head']
+        style_hash = current_style['body_gothic']
+        # style_hash = current_style['body_gothic']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
-      style[:h_alignment]   = style[:alignment]   if style[:alignment]
+
+      # if @markup =='h3'
+      #   style_hash = current_style['running_head']
+      #   style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+      # end
+
+      style[:h_alignment]   = style[:alignment]   if style && style[:alignment]
       if style
         h.merge! style
       end

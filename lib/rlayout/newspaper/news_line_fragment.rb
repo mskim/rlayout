@@ -77,9 +77,12 @@ module RLayout
         @first_line_width   = @width - para_style[:first_line_indent] - para_style[:tail_indent]
         @middle_line_width  = @width - para_style[:head_indent] - para_style[:tail_indent]
       else
-        #TODO fix this
-        @first_line_width   = @width - para_style[:head_indent] - para_style[:tail_indent]
-        @middle_line_width  = @width - para_style[:head_indent] - para_style[:tail_indent]
+        @first_line_width   = @width
+        @middle_line_width  = @width
+        if para_style[:head_indent] && para_style[:tail_indent]
+          @first_line_width   = @width - para_style[:head_indent] - para_style[:tail_indent]
+          @middle_line_width  = @width - para_style[:head_indent] - para_style[:tail_indent]
+        end
       end
 
       @line_type = line_type
@@ -136,13 +139,11 @@ module RLayout
     end
 
     def align_tokens
-
       return if @graphics.length == 0
       @total_token_width = token_width_sum
       @total_space_width = (@graphics.length - 1)*@space_width if @graphics.length > 0
       room  = @text_area_width - (@total_token_width + @total_space_width)
       x     = @starting_position
-
       case @text_alignment
       when 'justified'
         # in justifed paragraph, we have to treat the last line as left aligned.

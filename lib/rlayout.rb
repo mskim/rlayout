@@ -132,6 +132,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/title_text'
   require File.dirname(__FILE__) + '/rlayout/newspaper/caption_paragraph'
   require File.dirname(__FILE__) + '/rlayout/newspaper/caption_column'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_ad_block'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_heading_maker'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_line_fragment'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_paragraph'

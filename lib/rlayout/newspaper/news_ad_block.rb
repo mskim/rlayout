@@ -1,5 +1,5 @@
 module RLayout
-  class DisplayAdInfo
+  class NewsAdData
     attr_accessor :advertiser, :company, :copy, :display_image, :phone, :email, :cell
     attr_accessor :price, :starting_date, :duration
     def initialize(options={})
@@ -18,16 +18,28 @@ module RLayout
   end
 
   # Individual display item
-  class DisplayAdItem < Container
+  class NewsAdItem < Container
     attr_accessor :data
+    def initialize(options={})
+      @data        = options[:data]
+      @grid_x      = options[:grid_x]
+      @grid_y      = options[:grid_x]
+      @grid_width  = options[:grid_width]
+      @grid_height = options[:grid_height]
+
+      self
+    end
 
   end
 
   # Area for  display ad item
-  class DisplayAdBox < NewsBox
-    attr_accessor :item_row, :item_column, :item_gutter, :item_v_gutter
+  class NewsAdGrid < NewsBox
+    attr_accessor :row, :column, :gutter, :v_gutter
     def initialize(options={})
-      #code
+      @row        = options.fetch(:row, 4)
+      @column     = options.fetch(:column, 4)
+      @gutter     = options.fetch(:column, 3)
+      @v_gutter   = options.fetch(:column, 3)
       self
     end
   end

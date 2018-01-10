@@ -133,7 +133,6 @@ module RLayout
       image_options[:stroke_width]   = 0.3
       image_options[:image_fit_type] = 3 #IMAGE_FIT_TYPE_KEEP_RATIO
       image_options[:image_fit_type] = @fit_type if @fit_type
-      puts "image_options[:image_fit_type]:#{image_options[:image_fit_type]}"
       image_options[:image_path]     = @image_path
       image_options[:layout_expand]  = nil
       image_options[:layout_expand]  = @expand if @expand

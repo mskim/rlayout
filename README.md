@@ -117,13 +117,25 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+
+2017_11_18
+	- text_train
+			- automatic
+	- max_x  set right most point, grow left side
+	- max_y  set bottom most point, grow up side
+	- mid_x  set middle point at mid_x
+
+2017_11_12
+	- editorial_title
+	- opinion_title
+	- main
 2017_11_9
 	- NewsImage put frame around image
 	- put stroke at the bottom of ArticleBox
 
 	- fullpage ad page_heading converted
 	- optimize when switching page templates
-	
+
 	- create stroke_style.yml, layout_style
 		기사박스    : [0,0,0,1]
   		이미지영역
