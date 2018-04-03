@@ -324,8 +324,24 @@ module RLayout
         # if first token is diamond emphasis, no head indent
         @current_line.set_paragraph_info(self, "middle_line")
       elsif @markup == 'h2' || @markup == 'h3'
-        puts "paragraph is h2 or h3"
+
+        # puts "@current_line.line_index:#{@current_line.line_index}"
+        # puts "@current_line.last_line_in_column?:#{@current_line.last_line_in_column?}"
+        # puts "@current_line.first_line_in_column?:#{@current_line.first_line_in_column?}"
+        # puts "@current_line.first_text_line_in_column?:#{@current_line.first_text_line_in_column?}"
+        #TODO
+        # if @current_line.first_text_line_in_column?
+        #   puts "firtst line"
+        #   puts "@current_line:#{@current_line}"
+        # else
+        #   @current_line = text_box.go_to_next_line
+        #   puts "@current_line:#{@current_line}"
+        # end
+        # @current_line = text_box.go_to_next_line
+        @current_line = text_box.next_text_line
         @current_line.set_paragraph_info(self, "middle_line")
+
+        # puts "@current_line.line_index:#{@current_line.line_index}"
       end
 
       while token

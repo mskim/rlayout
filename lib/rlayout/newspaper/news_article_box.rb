@@ -30,7 +30,9 @@ module RLayout
         @left_inset   = @gutter
         @right_inset  = @gutter
       elsif @kind == '기고' || @kind == 'opinion'
-        @stroke.sides = [0,1,0,0]
+        # @stroke.sides = [0,1,0,1]
+        @stroke.sides = [0,1,0,1]
+        @stroke.thickness = 0.3
       else
         @stroke.sides = [0,0,0,1]
         @stroke.thickness = 0.3
@@ -186,6 +188,47 @@ module RLayout
       end
     end
 
+    def go_to_next_line
+      @current_column = @graphics[@current_column_index]
+      if next_line = @current_column.go_to_next_line
+        return next_line
+      else
+        @current_column_index += 1
+        @current_column = @graphics[@current_column_index]
+        if next_line = @current_column.go_to_next_line
+          return next_line
+        else
+          return nil
+        end
+        #code
+      end
+    end
+
+    def first_text_line
+      @current_column = @graphics[@current_column_index]
+      if line = @current_column.get_line_with_text_room
+        return line
+      end
+    end
+
+    # def next_text_line(current_line)
+    #   return nil unless current_line
+    #   return nil unless current_line.parent
+    #   @current_column = current_line.parent
+    #   if line = @current_column.next_text_line(current_line)
+    #     return line
+    #   else
+    #     @current_column_index +=1
+    #     return nil if @current_column_index >= @graphics.length
+    #     @current_column = @graphics[@current_column_index]
+    #     if line = @current_column.get_line_with_text_room
+    #       return line
+    #     end
+    #   end
+    #   nil
+    # end
+
+
     def next_text_line
       @current_column = @graphics[@current_column_index]
       return nil unless @current_column
@@ -262,12 +305,11 @@ module RLayout
       when 'editorial', "사설"
         @stroke.sides = [1,1,1,1]
         @stroke.thickness = 0.3
-
         h_options[:x]     += @left_inset
         h_options[:width] -= (@left_margin + @left_inset + @right_margin + @right_inset)
         @heading = NewsHeadingForEditorial.new(h_options)
       when 'opinion', "기고"
-        @stroke.sides = [0,1,0,0]
+        @stroke.sides = [0,1,0,1]
         @stroke.thickness = 0.3
         h_options[:x]     += @left_margin + @column_width + @gutter
         h_options[:y]     = 2

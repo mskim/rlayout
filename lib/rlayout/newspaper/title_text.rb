@@ -15,6 +15,7 @@ module RLayout
       @room                   = @width
       @single_line_title      = options[:single_line_title]
       @style_name             = options[:style_name]
+      # puts "@style_name:#{@style_name }"
       @para_style             = RLayout::StyleService.shared_style_service.current_style[@style_name]
       @para_style             = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
       @space_width            = @para_style[:space_width] || @para_style[:font_size]/3
@@ -33,7 +34,6 @@ module RLayout
       @height_in_lines        = @space_before_in_lines + @text_height_in_lines + @space_after_in_lines
       @height                 = @height_in_lines*@body_line_height
       if @para_style[:text_line_spacing] == "" || @para_style[:text_line_spacing].nil?
-        # this is when text_line_spacing is not defined
         @line_space           =  @para_style[:font_size]*0.4
       else
         @line_space           = @para_style[:text_line_spacing]
@@ -48,11 +48,11 @@ module RLayout
       create_tokens
       layout_tokens
       ajust_height_as_body_height_multiples
-
       self
     end
 
     def create_tokens
+      return unless @string
       @tokens += @string.split(" ").collect do |token_string|
         options = {}
         options[:string]  = token_string

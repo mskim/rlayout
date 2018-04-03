@@ -3,16 +3,14 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'creaet document with NewsBoxMaker' do
   before do
-    @article_path   = "/Users/mskim/Development/rails5/articles/public/current_issue/1/1"
-    @article_path   = "/Users/mskim/Development/rails5/page_template/public/current_issue/2/3"
-    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/6/3x4/0"
-    @svg_path       = @article_path + "/output.svg"
+    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/22/1"
+    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2018-04-01/22/1"
     @maker          = NewsBoxMaker.new(article_path: @article_path, fill_up_enpty_lines: true)
-    @news_box       = @maker.news_article_box
-    @heading        = @news_box.floats.first
+    @news_box       = @maker.news_box
+    @heading        = @news_box.heading
     @title          = @heading.title_object
     @first_column   = @news_box.graphics.first
-    @eews_article_box_width = @first_column.width*6 + 10*6
+    @eews_article_box_width = @first_column.width*4 + 10*6
     @first_column_first_line = @first_column.graphics.first
     @tokens         = @first_column_first_line.graphics
     @second_column  = @news_box.graphics[1]
@@ -20,20 +18,20 @@ describe 'creaet document with NewsBoxMaker' do
     @third_column   = @news_box.graphics[2]
   end
 
+  it 'should create NewsArticleBox' do
+    assert_equal NewsArticleBox, @news_box.class
+  end
+
   it 'should create NewsBoxMaker' do
-    assert_equal @heading.class, NewsHeadingForArticle
-    assert_equal @news_box.gutter, 10
+    assert_equal NewsHeadingForOpinion, @heading.class
+    # assert_equal 10, @news_box.gutter
   end
 
   it 'should create columns with shorter height by 2' do
-    assert_equal @news_box.height, @first_column.height + (@first_column_first_line.height)*NEWS_ARTICLE_BOTTOM_SPACE_IN_LINES
+    assert_equal @first_column.height + (@first_column_first_line.height)*2, @news_box.height
   end
 
-  # it 'should create NewsArticleBox' do
-  #   assert_equal NewsArticleBox, @news_box.class
-  #   assert_equal @eews_article_box_width, @news_box.width
-  # end
-  #
+    #
   # it 'should create NewsArtcicleHeading' do
   #   assert_equal NewsHeadingForArticle, @heading.class
   #   assert_equal Text, @title.class

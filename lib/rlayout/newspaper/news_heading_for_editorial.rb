@@ -9,7 +9,6 @@ module RLayout
     def initialize(options={})
       @grid_width       = options.fetch(:grid_width, 2)
       @heading_columns  = options[:column_count]
-      # options[:stroke_width]    = 1
       super
       @body_line_height = @parent_graphic.body_line_height
       set_editorial_heading_content(options)
@@ -19,7 +18,6 @@ module RLayout
     def set_editorial_heading_content(options)
       @height_in_lines            = 0
       if options['subject_head'] && options['subject_head'] != ""
-        puts "options['subject_head']:#{options['subject_head']}"
         @subject_head_object      = subject_head(options)
         @height_in_lines          +=@subject_head_object.height_in_lines    unless @subject_head_object.nil?
       end
@@ -28,21 +26,17 @@ module RLayout
       options[:x] = 0
 
       if options['title']
-        if @parent_graphic.top_story
-          @title_object = main_title(options)
-          @title_object.adjust_height_as_height_in_lines
-        else
-          @title_object = title(options)
-        end
+        # if @parent_graphic.top_story
+        #   @title_object = main_title(options)
+        #   @title_object.adjust_height_as_height_in_lines
+        # else
+        @title_object = editorial_title(options)
+        # end
         @height_in_lines  +=@title_object.height_in_lines    unless @title_object.nil?
       end
 
-      if options['subtitle'] && (@parent_graphic.top_story || @parent_graphic.subtitle_in_head)
-        if @parent_graphic.top_story
-          @subtitle_object = top_subtitle(options)
-        else
-          @subtitle_object = subtitle(options)
-        end
+      if options['subtitle']
+        @subtitle_object = subtitle(options)
         @height_in_lines += @subtitle_object.height_in_lines unless @subtitle_object.nil?
       end
       @height = @height_in_lines*@body_line_height
@@ -56,25 +50,23 @@ module RLayout
     #   Graphic.new(parent:self, width: @width, height:top_postion_height, fill_color: 'red')
     # end
 
-    def main_title(options={})
-      atts = {}
-      atts[:style_name] = 'title_main'
-      atts.merge(options)
-      atts[:text_string]          = options['title']
-      if atts[:text_string] =~/\n/
-        atts[:text_fit_type]      = 'adjust_box_height' #fit_text_to_box
-      else
-        atts[:text_fit_type]      = 'fit_text_to_box' #
-      end
-      atts[:body_line_height]     = @body_line_height
-      atts[:width]                = @width
-      # atts[:text_fit_type]        = 'adjust_box_height'
-      atts[:layout_expand]        = [:width]
-      atts[:fill_color]           = options.fetch(:fill_color, 'clear')
-      atts[:parent]               = self
-      atts[:layout_length_in_lines] = true
-      atts[:single_line_title]    = true
-      @title_object               = TitleText.new(atts)
+
+    def editorial_title(options)
+      title_options = {}
+      title_options[:parent]          = self
+      title_options[:is_float]        = true
+      title_options[:x]               = 0
+      title_options[:y]               = @body_line_height
+      title_options[:width]           = @width - @parent_graphic.column_width - @parent_graphic.right_margin
+      title_options[:height]          = @body_line_height*4
+      title_options[:inset]           = @parent_graphic.gutter
+      title_options[:stroke_sides]    = [0,1,0,0] # draw line at top only
+      title_options[:stroke_width]    = 0.3
+      title_options[:stroke_color]    = 'red'
+      title_options['title']          = options['title']
+      title_options[:style_name]      = 'title_editorial'
+      title(title_options)
+      #code
     end
 
     def title(options={})
@@ -83,17 +75,16 @@ module RLayout
       # title_2       = '제목_2단'
       # title_1       = '제목_1단'
       atts = {}
-      case @heading_columns
-
-      when 4,5,6,7
-        atts[:style_name] = 'title_4_5'
-      when 3
-        atts[:style_name] = 'title_3'
-      when 2
-        atts[:style_name] = 'title_2'
-      when 1
-        atts[:style_name] = 'title_1'
-      end
+      # case @heading_columns
+      # when 4,5,6,7
+      #   atts[:style_name] = 'title_4_5'
+      # when 3
+      #   atts[:style_name] = 'title_3'
+      # when 2
+      #   atts[:style_name] = 'title_editorial'
+      # when 1
+      #   atts[:style_name] = 'title_1'
+      # end
       atts[:text_string]          = options['title']
       if atts[:text_string] =~/\n/
         atts[:text_fit_type]        = 'adjust_box_height'
@@ -101,6 +92,7 @@ module RLayout
         atts[:text_fit_type]        = 'fit_text_to_box' #
       end
 
+      atts[:style_name] = 'title_editorial'
       atts[:body_line_height]     = @body_line_height
       atts[:width]                = @width
       atts[:layout_expand]        = [:width]

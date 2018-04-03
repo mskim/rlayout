@@ -58,7 +58,6 @@ module RLayout
         @story_frames   = section_config['story_frames']
         @lines_per_grid = section_config['lines_per_grid'].to_i
         @page_heading_margin_in_lines = section_config['page_heading_margin_in_lines'].to_i
-
       end
 
       unless @story_frames
@@ -67,7 +66,6 @@ module RLayout
       end
       @number_of_stories = @story_frames.length
       @number_of_stories -= 1 if has_ad?
-
       self
     end
 
@@ -86,17 +84,17 @@ module RLayout
       @story_frames.each_with_index do |grid_frame, i|
         info = {}
         found_ad = false
-
         if grid_frame.length == 5
-          found_ad = "#{grid_frame[4][:'광고']}" || "grid_frame[4][:ad]"
+          found_ad = grid_frame[4][:'광고']
         end
-        if grid_frame.length == 5 && found_ad
+        if found_ad
           info[:image_path] = ad_image_path
         else
-          info[:image_path] = @section_path + "/#{i + 1}/output.pdf"
+          info[:image_path] = @section_path + "/#{i + 1}/story.pdf"
         end
+
         # info[:x] = grid_frame[0]*(@grid_width + @gutter) + @left_margin
-        info[:x] = grid_frame[0]*@grid_width + @left_margin
+        info[:x]              = grid_frame[0]*@grid_width + @left_margin
         info[:y]              = grid_frame[1]*@grid_height  + @top_margin
         info[:width]          = grid_frame[2]*@grid_width
         info[:height]         = grid_frame[3]*@grid_height
@@ -136,7 +134,7 @@ module RLayout
       # page heading
       heading_info = {}
       heading_info[:parent] = self
-      heading_info[:image_path] = @section_path + "/heading/output.pdf"
+      heading_info[:image_path] = @section_path + "/heading/layout.pdf"
       heading_info[:x]          = @left_margin
       heading_info[:y]          = @top_margin
       heading_info[:width]      = @width - @left_margin - @right_margin

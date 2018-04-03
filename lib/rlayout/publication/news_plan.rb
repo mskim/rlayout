@@ -118,7 +118,6 @@ module RLayout
       article_type = row[1] if row[1]
       if article_type
         @article_path = section_folder + "/#{article_type.gsub(" ","_")}"
-        puts "@article_path:#{@article_path}"
         FileUtils.mkdir_p(@article_path) unless File.directory?(@article_path)
         template_name = article_type
         #copy content

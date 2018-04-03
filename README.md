@@ -117,6 +117,16 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2018_3_3
+	- bottom_edge, rigth_edge
+	
+2018_2_27
+	- # extra space in ##, ### for news_paragraph
+
+	- Graphic add from_bottom, from_right
+			instead of starting from x, or y
+			this will create graphic from right_max_x, and bottom_max_y
+	- border line drawing at draw_on_inset, or draw_on_margin
 
 2017_11_18
 	- text_train

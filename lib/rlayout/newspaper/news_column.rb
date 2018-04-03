@@ -95,6 +95,35 @@ module RLayout
       char_count/line_count
     end
 
+    def first_text_line_in_column
+      first_text_line = nil
+      @graphics.each do |line|
+        return line if line.text_line? || line.graphics.length > 0
+      end
+    end
+
+    # def next_line(line)
+    #   line_index = @graphics.index(line)
+    #   next_line_index = line_index + 1
+    #   next_iind = @graphics[next_line_index]
+    # end
+    #
+    # def next_text_line(line)
+    #   puts __method__
+    #   line_index = @graphics.index(line)
+    #   next_line_index = line_index + 1
+    #   next_iine = next_line(line)
+    #   return nil unless next_iine
+    #   return next_iine if next_iine.has_text_room?
+    #   #TODO
+    #   line = next_iine
+    #   while line do
+    #     line = next_line(line)
+    #     return nil unless line
+    #     return line if line.has_text_room?
+    #   end
+    # end
+
     def get_line_with_text_room
       return nil unless @current_line
       if @current_line.has_text_room?

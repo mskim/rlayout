@@ -120,7 +120,6 @@ class GraphicViewMac < NSView
     unless trap
       trap = 0
     end
-
     # clipLine = false
     # rect = getStrokeRect(rect)
     rect = @stroke_rect
@@ -176,12 +175,12 @@ class GraphicViewMac < NSView
           path.stroke
         end
         if @stroke[:sides][3] > 0
-          # puts  "draw bottom"
           path= NSBezierPath.bezierPath
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][3])
+          # path.setLineWidth(2*@stroke[:sides][3])
 
           if @graphic.class == RLayout::NewsArticleBox
-            path.moveToPoint(NSPoint.new(@graphic.border_x, rect.origin.y + rect.size.height))
+            path.moveToPoint(NSPoint.new(@graphic.border_x, rect.origin.y + rect.size.height - 1.5))
             path.lineToPoint(NSPoint.new(@graphic.border_x + @graphic.border_width, rect.origin.y + rect.size.height))
             path.stroke
           else

@@ -45,9 +45,8 @@ module RLayout
       title_options[:stroke_sides]    = [0,1,0,0] # draw line at top only
       title_options[:stroke_width]    = 0.3
       title_options[:stroke_color]    = 'red'
-      # title_options[:layout_expand]   = :height
       title_options['title']          = options['title']
-      puts "title_options[:stroke]:title_options[:stroke]"
+      title_options[:style_name]      = 'title_opinion'
       title(title_options)
       #code
     end
@@ -58,17 +57,18 @@ module RLayout
       # title_2       = '제목_2단'
       # title_1       = '제목_1단'
       atts = {}
-      case @heading_columns - 1
-
-      when 4,5,6,7
-        atts[:style_name] = 'title_4_5'
-      when 3
-        atts[:style_name] = 'title_3'
-      when 2
-        atts[:style_name] = 'title_2'
-      when 1
-        atts[:style_name] = 'title_1'
-      end
+      # case @heading_columns - 1
+      #
+      # when 4,5,6,7
+      #   atts[:style_name] = 'title_4_5'
+      # when 3
+      #   atts[:style_name] = 'title_opinion'
+      # when 2
+      #   atts[:style_name] = 'title_2'
+      # when 1
+      #   atts[:style_name] = 'title_1'
+      # end
+      atts[:style_name] = 'title_opinion'
       atts[:text_string]          = options['title']
       if atts[:text_string] =~/\n/
         atts[:text_fit_type]        = 'adjust_box_height'

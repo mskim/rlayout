@@ -61,7 +61,9 @@ module RLayout
       unless options[:image_path]
         if options[:local_image] && $ProjectPath
           @local_image          = options[:local_image]
+          puts "++++++ $ProjectPath:#{$ProjectPath}"
           options[:image_path]  = $ProjectPath + "/images/" + options[:local_image]
+
         else
         # elsif options[:local_image]
         #   @local_image          = options[:local_image]
@@ -78,7 +80,7 @@ module RLayout
         @stroke[:sides] = [1,1,1,1,1,1]
         @fill[:color] = 'lightGray'
       end
-      @image_path
+      # @image_path
       #TODO Get rid of this and do it for MRI
       if RUBY_ENGINE == 'rubymotion'
         @image_object     =NSImage.alloc.initByReferencingFile(@image_path)

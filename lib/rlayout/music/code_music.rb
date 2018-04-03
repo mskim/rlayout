@@ -76,8 +76,6 @@ EOF
       unless File.exist?(@image_path)
         @image_path = @piano_codes_path + "/default.jpg"
       end
-      puts "@lyric:#{@lyric}"
-      puts "@image_path:#{@image_path}"
       @lyric_layout     = Text.new(:parent=>self, text_string: @lyric, font_size: 12)
       @code_image       = Image.new(:parent=>self, image_path: @image_path, layout_length: 4)
       relayout!

@@ -11,6 +11,18 @@ describe 'create news_paragrah' do
   end
 end
 
+
+describe 'create news_paragrah' do
+  before do
+    para            = {markup: 'p', para_string: "this is a string"}
+    @news_paragrah  = NewsParagraph.new(para)
+  end
+
+  it 'shoule create NewsParagraph' do
+    assert_equal NewsParagraph, @news_paragrah.class
+  end
+end
+
 describe 'create news_paragrah with strong emphasis' do
   before do
     para            = {markup: 'p', para_string: "**this** is a string"}

@@ -100,7 +100,6 @@ class Reader
     #   puts a.class
     #   puts a.first
     # end
-    puts "blocks_array.length:#{blocks_array.length}"
     blocks_array
   end
 

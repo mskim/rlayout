@@ -60,6 +60,24 @@ module RLayout
       @room > 10
     end
 
+    # is it the first line of the column
+    def first_line_in_column?
+      self == @parent_graphic.graphics.first
+    end
+
+    def first_text_line_in_column?
+      self == @parent_graphic.first_text_line_in_column
+    end
+
+    # is it the last line of the column
+    def last_line_in_column?
+      self == @parent_graphic.graphics.last
+    end
+
+    def line_index
+      @parent_graphic.graphics.index(self)
+    end
+
     def text_line?
       @room > 10 || @graphics.length > 0
     end
@@ -193,7 +211,6 @@ module RLayout
       end
       string = strings.join(" ")
     end
-
 
     def force_fit
 
