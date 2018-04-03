@@ -91,7 +91,6 @@ module RLayout
         @output_path  = @article_path + "/story.pdf"
       elsif options[:article_path]
         @article_path = options[:article_path]
-        puts "@article_path:#{@article_path}"
         unless File.directory?(@article_path)
           puts "article_path doesn't exit !!!"
           return

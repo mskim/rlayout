@@ -138,7 +138,6 @@ module RLayout
       #code
     end
 
-
     # get text for each line lines
     def column_line_string
       line_text = @graphics.map{|l| l.line_string}

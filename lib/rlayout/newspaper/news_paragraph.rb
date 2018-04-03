@@ -338,6 +338,10 @@ module RLayout
         #   puts "@current_line:#{@current_line}"
         # end
         # @current_line = text_box.go_to_next_line
+        puts "@current_line.first_text_line_in_column?:#{@current_line.first_text_line_in_column?}"
+        unless @current_line.first_text_line_in_column?
+          text_box.current_column.go_to_next_line
+        end
         @current_line = text_box.next_text_line
         @current_line.set_paragraph_info(self, "middle_line")
 

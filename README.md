@@ -117,9 +117,14 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2018_4_4
+	- fix text_box.next_text_line
+	- fix so that exception when currnet line is first text line in column
+  - fix br definition, include <br/>	
+
 2018_3_3
 	- bottom_edge, rigth_edge
-	
+
 2018_2_27
 	- # extra space in ##, ### for news_paragraph
 
