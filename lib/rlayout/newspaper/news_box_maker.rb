@@ -33,6 +33,11 @@
 # "name_tag-12"=>{"name"=>"문패_12", "font_family"=>"윤고딕140", "font"=>"YDVYGOStd14", "font_size"=>12.0, "text_color"=>"black", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>6.0, "scale"=>nil, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
 # "editor_note"=>{"name"=>"편집자주", "font_family"=>"윤고딕130", "font"=>"YDVYGOStd13", "font_size"=>8.8, "color"=>"CMYK=0,0,0,80", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>5.0, "scale"=>nil, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1}}
 
+EDITORIAL_MARGIN                  = 14
+EDITORIAL_TITLE_TOP_INSET         = 20
+EDITORIAL_SUBJECT_HEAD_TOP_INSET  = 14
+
+
 NEWSPAPER_STYLE = {
 "body"=>{"korean_name"=>"본문명조", "category"=>nil, "font_family"=>"조선일보명조", "font"=>"ChosunilboNM", "font_size"=>9.6, "text_color"=>"black", "alignment"=>"justified", "tracking"=>-0.4, "space_width"=>3.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
 "body_gothic"=>{"korean_name"=>"본문고딕", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Light", "font"=>"KoPubDotumPL", "font_size"=>9.4, "text_color"=>"black", "alignment"=>"justified", "tracking"=>-0.2, "space_width"=>3.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},

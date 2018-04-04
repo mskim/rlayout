@@ -238,7 +238,6 @@ module RLayout
       s = text_block.shift if text_block[0] =~ /(?>^\s*\n)+/
       s = text_block[0]
       if  s =~/^<br>/ || s =~/^<\/br>/ || s =~/^<br\/>/
-        puts "++++++++we have <br/>"
         @markup = "br"
         @string = ""
       elsif s =~/^#\s/ || s =~/^=\s/

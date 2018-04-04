@@ -328,7 +328,6 @@ module RLayout
         # puts "@current_line.line_index:#{@current_line.line_index}"
         # puts "@current_line.last_line_in_column?:#{@current_line.last_line_in_column?}"
         # puts "@current_line.first_line_in_column?:#{@current_line.first_line_in_column?}"
-        # puts "@current_line.first_text_line_in_column?:#{@current_line.first_text_line_in_column?}"
         #TODO
         # if @current_line.first_text_line_in_column?
         #   puts "firtst line"
@@ -338,7 +337,6 @@ module RLayout
         #   puts "@current_line:#{@current_line}"
         # end
         # @current_line = text_box.go_to_next_line
-        puts "@current_line.first_text_line_in_column?:#{@current_line.first_text_line_in_column?}"
         unless @current_line.first_text_line_in_column?
           text_box.current_column.go_to_next_line
         end

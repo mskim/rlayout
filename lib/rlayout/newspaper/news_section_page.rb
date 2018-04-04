@@ -75,6 +75,7 @@ module RLayout
         alternative_path = @section_path + "/ad/images"
         image_path = Dir.glob("#{alternative_path}/*[.jpg,.pdf]").first
       end
+      puts "image_path:#{image_path}"
       image_path
     end
 
@@ -88,7 +89,9 @@ module RLayout
           found_ad = grid_frame[4][:'광고']
         end
         if found_ad
+          puts "found_ad"
           info[:image_path] = ad_image_path
+          puts "info[:image_path]:#{info[:image_path]}"
         else
           info[:image_path] = @section_path + "/#{i + 1}/story.pdf"
         end

@@ -55,6 +55,8 @@ module RLayout
     def create_columns
       current_x = @starting_column_x
       if @kind == '사설' || @kind == 'editorial'
+        @left_inset   = EDITORIAL_MARGIN
+        @right_inset  = EDITORIAL_MARGIN
         editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
         current_x += @left_inset
         # current_y += @top_margin + @top_inset

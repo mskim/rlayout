@@ -98,6 +98,8 @@ module RLayout
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts[:parent]               = self
+      atts[:top_inset]            = EDITORIAL_TITLE_TOP_INSET
+
       # atts[:stroke_width]         = 1
       # atts[:layout_length_in_lines] = true
       atts[:single_line_title]    = true
@@ -156,12 +158,14 @@ module RLayout
       atts[:stroke_width]       = 0
       atts[:text_fit_type]      = 'adjust_box_height'
       atts[:layout_expand]      = [:width] #TODO
-      atts[:fill_color]         = options.fetch(:fill_color, 'clear')
+      atts[:fill_color]         = options.fetch(:fill_color, 'red')
       atts[:parent]             = self
       atts[:layout_length_in_lines] = true
       #TODO make this customizatble from font style
       atts[:stroke_sides]       = [0,1,0,0]
       atts[:stroke_width]       = 2
+      atts[:top_inset]          = EDITORIAL_SUBJECT_HEAD_TOP_INSET
+      atts[:space_before_in_lines] = 0.5
       TitleText.new(atts)
     end
 

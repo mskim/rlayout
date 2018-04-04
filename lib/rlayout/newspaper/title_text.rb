@@ -39,11 +39,12 @@ module RLayout
         @line_space           = @para_style[:text_line_spacing]
       end
       @line_height            = @para_style[:font_size] + @line_space
-      @current_line_y         = @top_inset
-      @current_line_y         = @space_before_in_lines*@body_line_height
+      @current_line_y         = @top_inset + @space_before_in_lines*@body_line_height
+      # @current_line_y         = @space_before_in_lines*@body_line_height
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @current_line           = NewsLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true)
+      puts "@current_line_y:#{@current_line_y}"
+      @current_line           = NewsLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
       @current_line_y         +=@current_line.height
       create_tokens
       layout_tokens

@@ -499,6 +499,7 @@ module RLayout
       end
       # update section pdf
       puts "generating section pdf..."
+      puts "section_path:#{section_path}"
       NewspaperSection.update_section(section_path)
     end
 
