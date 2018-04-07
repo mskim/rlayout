@@ -1,9 +1,9 @@
 module RLayout
   MAX_SQUEEZE_LIMIT = 1.1
-  # TitleText single line uniform styled text
+  # SimpleText single line uniform styled text
   # used for title, subject_head
   # It can squeeze text
-  class TitleText < Container
+  class SimpleText < Container
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title
@@ -16,9 +16,19 @@ module RLayout
       @single_line_title      = options[:single_line_title]
       @style_name             = options[:style_name]
       # puts "@style_name:#{@style_name }"
-      @para_style             = RLayout::StyleService.shared_style_service.current_style[@style_name]
-      @para_style             = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
-      @space_width            = @para_style[:space_width] || @para_style[:font_size]/3
+      if @style_name
+        puts "@style_name"
+        @para_style             = RLayout::StyleService.shared_style_service.current_style[@style_name]
+        @para_style             = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
+        @space_width            = @para_style[:space_width] || @para_style[:font_size]/3
+      elsif options[:@para_style]
+        @para_style             = options[:@para_style]
+      else
+        @para_style             = {}
+        @para_style[:font]      = options.fetch(:font, 'Times')
+        @para_style[:font_size] = options.fetch(:size, 16)
+      end
+
       @text_alignment         = options[:text_alignment] || 'left'
       @body_line_height       = options[:body_line_height] || 14
       @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
@@ -162,6 +172,8 @@ module RLayout
 
     def relayout!
     end
+
+
   end
 
 end

@@ -36,7 +36,7 @@ module RLayout
       atts[:single_line_title]    = true
       options.delete(:parent)
       atts.merge!(options)
-      @title_object               = TitleText.new(atts)
+      @title_object               = SimpleText.new(atts)
     end
 
     def subject_head(options={})
@@ -58,7 +58,7 @@ module RLayout
       atts[:fill_color]         = options.fetch(:fill_color, 'clear')
       atts[:parent]             = self
       atts[:layout_length_in_lines] = true
-      TitleText.new(atts)
+      SimpleText.new(atts)
     end
 
   end

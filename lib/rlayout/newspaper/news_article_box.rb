@@ -417,7 +417,7 @@ module RLayout
       options[:is_float]      = true
       options[:parent]        = self
       #TODO put top_margin and bottom_margin
-      TitleText.new(options)
+      SimpleText.new(options)
     end
 
     def float_quote(options={})
@@ -430,7 +430,7 @@ module RLayout
       options[:layout_expand]   = nil
       options[:is_float]        = true
       options[:parent]          = self
-      TitleText.new(options)
+      SimpleText.new(options)
     end
 
     def float_personal_image(options={})

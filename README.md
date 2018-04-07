@@ -117,10 +117,15 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2018_4_5
+
+	- simple_text.rb
+		We should make Text as Container Class and remove from Graphic
+		We should make Image as Container Class and remove from Graphic
+
 2018_4_4
-	- fix text_box.next_text_line
-	- fix so that exception when currnet line is first text line in column
-  - fix br definition, include <br/>	
+	- fix ## extra blank line, except for when current line is first text line in column
+  - fix br definition, include <br/>
 
 2018_3_3
 	- bottom_edge, rigth_edge
@@ -715,7 +720,7 @@ TODO List
 	- quiz item path/to/quiz_item.yaml
 
 2016 8 28
-	- TitleText
+	- SimpleText
 		- set_text
 			text_layout_manager
 				- set_text_string

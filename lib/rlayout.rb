@@ -56,6 +56,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/text/heading_container'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph_ns_text'
+  require File.dirname(__FILE__) + '/rlayout/text/simple_text'
   require File.dirname(__FILE__) + '/rlayout/text/text_token'
   require File.dirname(__FILE__) + '/rlayout/text/text_layout_manager'
   require File.dirname(__FILE__) + '/rlayout/text/font'
@@ -129,7 +130,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/article/item_chapter_maker'
 
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box'
-  require File.dirname(__FILE__) + '/rlayout/newspaper/title_text'
   require File.dirname(__FILE__) + '/rlayout/newspaper/caption_paragraph'
   require File.dirname(__FILE__) + '/rlayout/newspaper/caption_column'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_ad_block'

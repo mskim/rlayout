@@ -180,7 +180,8 @@ class GraphicViewMac < NSView
           # path.setLineWidth(2*@stroke[:sides][3])
 
           if @graphic.class == RLayout::NewsArticleBox
-            path.moveToPoint(NSPoint.new(@graphic.border_x, rect.origin.y + rect.size.height - 1.5))
+            # path.moveToPoint(NSPoint.new(@graphic.border_x, rect.origin.y + rect.size.height - 1.5))
+            path.moveToPoint(NSPoint.new(@graphic.border_x, rect.origin.y + rect.size.height))
             path.lineToPoint(NSPoint.new(@graphic.border_x + @graphic.border_width, rect.origin.y + rect.size.height))
             path.stroke
           else

@@ -15,15 +15,15 @@ describe 'create with article' do
   end
 end
 #
-# describe 'create TitleText' do
+# describe 'create SimpleText' do
 #   before do
-#     @tt                 = TitleText.new(string: "this is a title", para_style_name:'title_4_5', width: 500)
+#     @tt                 = SimpleText.new(string: "this is a title", para_style_name:'title_4_5', width: 500)
 #     @line               = @tt.graphics.first
 #     @string
 #   end
 #
-#   it 'should create TitleText' do
-#     assert_equal TitleText, @tt.class
+#   it 'should create SimpleText' do
+#     assert_equal SimpleText, @tt.class
 #     assert_equal 48, @tt.height
 #   end
 #

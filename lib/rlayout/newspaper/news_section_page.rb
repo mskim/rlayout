@@ -86,12 +86,10 @@ module RLayout
         info = {}
         found_ad = false
         if grid_frame.length == 5
-          found_ad = grid_frame[4][:'광고']
+          found_ad = grid_frame[4][:'광고'] || grid_frame[4]['광고']
         end
         if found_ad
-          puts "found_ad"
           info[:image_path] = ad_image_path
-          puts "info[:image_path]:#{info[:image_path]}"
         else
           info[:image_path] = @section_path + "/#{i + 1}/story.pdf"
         end

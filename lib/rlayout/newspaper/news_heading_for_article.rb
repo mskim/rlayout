@@ -68,8 +68,8 @@ module RLayout
       atts[:parent]             = self
       atts[:layout_length_in_lines] = true
       puts "atts.keys:#{atts.keys}"
-      puts 'before TitleText.new(atts)'
-      TitleText.new(atts)
+      puts 'before SimpleText.new(atts)'
+      SimpleText.new(atts)
     end
 
     def main_title(options={})
@@ -90,7 +90,7 @@ module RLayout
       atts[:parent]               = self
       atts[:layout_length_in_lines] = true
       atts[:single_line_title]    = true
-      @title_object               = TitleText.new(atts)
+      @title_object               = SimpleText.new(atts)
     end
 
     def title(options={})
@@ -127,7 +127,7 @@ module RLayout
       atts[:single_line_title]    = true
       options.delete(:parent)
       atts.merge!(options)
-      @title_object               = TitleText.new(atts)
+      @title_object               = SimpleText.new(atts)
     end
 
     def top_subtitle(options={})
@@ -140,7 +140,7 @@ module RLayout
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       # atts                          = options.merge(atts)
       atts[:parent]               = self
-      @subtitle_object            = TitleText.new(atts)
+      @subtitle_object            = SimpleText.new(atts)
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object
@@ -159,7 +159,7 @@ module RLayout
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts[:parent]                 = self
-      @subtitle_object              = TitleText.new(atts)
+      @subtitle_object              = SimpleText.new(atts)
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object
