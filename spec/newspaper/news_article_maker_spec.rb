@@ -3,8 +3,10 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'creaet document with NewsBoxMaker' do
   before do
-    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/22/1"
+    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2018-04-01/23/1"
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2018-04-01/23/2"
+    # @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/22/3"
+    puts "@article_path:#{@article_path}"
     @maker          = NewsBoxMaker.new(article_path: @article_path, fill_up_enpty_lines: true)
     @news_box       = @maker.news_box
     @heading        = @news_box.heading

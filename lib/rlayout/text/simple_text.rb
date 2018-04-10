@@ -10,14 +10,13 @@ module RLayout
     def initialize(options={})
       @string                 = options.delete(:text_string)
       options[:fill_color]    = options.fetch(:line_color, 'clear')
+      # options[:stroke_width]  = 1
       super
       @tokens                 = []
       @room                   = @width
       @single_line_title      = options[:single_line_title]
       @style_name             = options[:style_name]
-      # puts "@style_name:#{@style_name }"
       if @style_name
-        puts "@style_name"
         @para_style             = RLayout::StyleService.shared_style_service.current_style[@style_name]
         @para_style             = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
         @space_width            = @para_style[:space_width] || @para_style[:font_size]/3
@@ -28,14 +27,13 @@ module RLayout
         @para_style[:font]      = options.fetch(:font, 'Times')
         @para_style[:font_size] = options.fetch(:size, 16)
       end
-
       @text_alignment         = options[:text_alignment] || 'left'
       @body_line_height       = options[:body_line_height] || 14
       @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
       @text_height_in_lines   = 2 if @text_height_in_lines == ""
       @space_before_in_lines  = @para_style[:space_before_in_lines] || 0
-      @space_before_in_lines  = 0 if @space_before_in_lines == ""
-      @top_inset              = @space_before_in_lines*@body_line_height
+      @space_before_in_lines  = 1 if @space_before_in_lines == ""
+      # @top_inset              = @space_before_in_lines*@body_line_height
       @top_inset              += options[:top_inset] if options[:top_inset]
       @space_after_in_lines   = @para_style[:space_after_in_lines] || 0
       @space_after_in_lines   = 0 if @space_after_in_lines == ""
@@ -43,19 +41,26 @@ module RLayout
       @bottom_inset           = @space_after_in_lines*@body_line_height
       @height_in_lines        = @space_before_in_lines + @text_height_in_lines + @space_after_in_lines
       @height                 = @height_in_lines*@body_line_height
+
       if @para_style[:text_line_spacing] == "" || @para_style[:text_line_spacing].nil?
         @line_space           =  @para_style[:font_size]*0.4
       else
         @line_space           = @para_style[:text_line_spacing]
       end
       @line_height            = @para_style[:font_size] + @line_space
+      # @current_line_y         = @top_inset + @space_before_in_lines*@body_line_height
       @current_line_y         = @top_inset + @space_before_in_lines*@body_line_height
       # @current_line_y         = @space_before_in_lines*@body_line_height
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      puts "@current_line_y:#{@current_line_y}"
       @current_line           = NewsLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
       @current_line_y         +=@current_line.height
+      # puts "@style_name:#{@style_name}"
+      # puts "@top_inset:#{@top_inset}"
+      # puts "@current_line_y:#{@current_line_y}"
+      # puts "@space_before_in_lines:#{@space_before_in_lines}"
+      # puts "@text_height_in_lines:#{@text_height_in_lines}"
+      # puts "@space_after_in_lines:#{@space_after_in_lines}"
       create_tokens
       layout_tokens
       ajust_height_as_body_height_multiples
@@ -90,7 +95,8 @@ module RLayout
     def ajust_height_as_body_height_multiples
       # We want to keeep it as multple of body_line_height
       if @graphics.length == 1
-        @height = @height_in_lines*@body_line_height - 1
+        # to avoid edge case overloap adding 2 pixels would do it
+        @height = @height_in_lines*@body_line_height - 2
         return
       end
       natural_height          =  @top_inset + line_height_sum
@@ -103,6 +109,8 @@ module RLayout
         @height_in_lines += @space_after_in_lines
       end
       @height = @height_in_lines*@body_line_height - 1
+      @height -= 3
+      puts "after @height:#{@height}"
     end
 
     def layout_tokens

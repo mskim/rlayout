@@ -34,8 +34,6 @@
 # "editor_note"=>{"name"=>"편집자주", "font_family"=>"윤고딕130", "font"=>"YDVYGOStd13", "font_size"=>8.8, "color"=>"CMYK=0,0,0,80", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>5.0, "scale"=>nil, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1}}
 
 EDITORIAL_MARGIN                  = 14
-EDITORIAL_TITLE_TOP_INSET         = 20
-EDITORIAL_SUBJECT_HEAD_TOP_INSET  = 14
 
 
 NEWSPAPER_STYLE = {
@@ -48,6 +46,7 @@ NEWSPAPER_STYLE = {
 "caption"=>{"korean_name"=>"사진설명", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Light", "font"=>"KoPubDotumPL", "font_size"=>7.5, "text_color"=>"black", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>1.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
 "source"=>{"korean_name"=>"사진출처", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Light", "font"=>"KoPubDotumPL", "font_size"=>7.5, "text_color"=>"black", "alignment"=>"right", "tracking"=>-0.2, "space_width"=>2.0, "scale"=>70.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
 "reporter"=>{"korean_name"=>"기자명", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Light", "font"=>"KoPubDotumPL", "font_size"=>7.0, "text_color"=>"black", "alignment"=>"right", "tracking"=>0.0, "space_width"=>2.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
+"reporter_editorial"=>{"korean_name"=>"논설저자", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Light", "font"=>"KoPubDotumPL", "font_size"=>9.4, "text_color"=>"black", "alignment"=>"right", "tracking"=>0.0, "space_width"=>2.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
 "title_main"=>{"korean_name"=>"제목_메인", "category"=>nil, "font_family"=>"KoPub바탕체_Pro Bold", "font"=>"KoPubBatangPB", "font_size"=>42.0, "text_color"=>"black", "alignment"=>"left", "tracking"=>-1.0, "space_width"=>10.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>1, "space_after_in_lines"=>0, "text_height_in_lines"=>3, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
 "title_4_5"=>{"korean_name"=>"제목_4-5단", "category"=>nil, "font_family"=>"윤명조140", "font"=>"YDVYMjOStd14", "font_size"=>32.0, "text_color"=>"black", "alignment"=>"left", "tracking"=>-1.5, "space_width"=>10.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>1, "space_after_in_lines"=>2, "text_height_in_lines"=>2, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
 "title_4"=>{"korean_name"=>"제목_4단", "category"=>nil, "font_family"=>"KoPub바탕체_Pro Medium", "font"=>"KoPubBatangPM", "font_size"=>30.0, "text_color"=>"black", "alignment"=>"left", "tracking"=>-2.0, "space_width"=>7.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>1, "space_after_in_lines"=>2, "text_height_in_lines"=>2, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
@@ -61,10 +60,10 @@ NEWSPAPER_STYLE = {
 "brand_name"=>{"korean_name"=>"애드_브랜드명", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Medium", "font"=>"KoPubDotumPM", "font_size"=>13.0, "text_color"=>"black", "alignment"=>"center", "tracking"=>-0.5, "space_width"=>3.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
 "subject_head_L"=>{"korean_name"=>"문패_18", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Bold", "font"=>"KoPubDotumPB", "font_size"=>18.0, "text_color"=>"CMYK=100,50,0,0", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>0.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
 "subject_head_M"=>{"korean_name"=>"문패_14", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Bold", "font"=>"KoPubDotumPB", "font_size"=>14.0, "text_color"=>"black", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>3.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
-"subject_head_S"=>{"korean_name"=>"문패_12", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Bold", "font"=>"KoPubDotumPB", "font_size"=>12.0, "text_color"=>"black", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>3.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
+"subject_head_S"=>{"korean_name"=>"문패_12", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Bold", "font"=>"KoPubDotumPB", "font_size"=>12.0, "text_color"=>"black", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>3.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>1, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
 "editor_note"=>{"korean_name"=>"편집자주", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Medium", "font"=>"KoPubDotumPM", "font_size"=>8.8, "text_color"=>"CMYK=0,0,0,80", "alignment"=>"left", "tracking"=>-0.3, "space_width"=>3.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
-"title_opinion"=>{"korean_name"=>"기고 제목", "category"=>nil, "font_family"=>"KoPub바탕체_Pro Medium", "font"=>"KoPubBatangPM", "font_size"=>22.0, "text_color"=>"black", "alignment"=>"left", "tracking"=>-1.5, "space_width"=>7.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
-"title_editorial"=>{"korean_name"=>"사설 제목", "category"=>nil, "font_family"=>"KoPub바탕체_Pro Medium", "font"=>"KoPubBatangPM", "font_size"=>18.0, "text_color"=>"black", "alignment"=>"left", "tracking"=>-1.5, "space_width"=>5.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
+"title_opinion"=>{"korean_name"=>"기고 제목", "category"=>nil, "font_family"=>"KoPub바탕체_Pro Medium", "font"=>"KoPubBatangPM", "font_size"=>22.0, "text_color"=>"black", "alignment"=>"left", "tracking"=>-1.5, "space_width"=>7.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>1, "space_after_in_lines"=>2, "text_height_in_lines"=>2, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
+"title_editorial"=>{"korean_name"=>"사설 제목", "category"=>nil, "font_family"=>"KoPub바탕체_Pro Medium", "font"=>"KoPubBatangPM", "font_size"=>18.0, "text_color"=>"black", "alignment"=>"left", "tracking"=>-1.5, "space_width"=>5.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>1, "space_after_in_lines"=>1, "text_height_in_lines"=>2, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
 "title_7"=>{"korean_name"=>"제목_7단", "category"=>nil, "font_family"=>"KoPub바탕체_Pro Medium", "font"=>"KoPubBatangPM", "font_size"=>36.0, "text_color"=>"", "alignment"=>"left", "tracking"=>-2.0, "space_width"=>7.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>1, "space_after_in_lines"=>2, "text_height_in_lines"=>2, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
 "title_6"=>{"korean_name"=>"제목_6단", "category"=>nil, "font_family"=>"KoPub바탕체_Pro Medium", "font"=>"KoPubBatangPM", "font_size"=>34.0, "text_color"=>"", "alignment"=>"left", "tracking"=>-2.0, "space_width"=>7.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>1, "space_after_in_lines"=>2, "text_height_in_lines"=>2, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
 "title_5"=>{"korean_name"=>"제목_5단", "category"=>nil, "font_family"=>"KoPub바탕체_Pro Medium", "font"=>"KoPubBatangPM", "font_size"=>32.0, "text_color"=>"", "alignment"=>"left", "tracking"=>-2.0, "space_width"=>7.0, "scale"=>nil, "text_line_spacing"=>nil, "space_before_in_lines"=>1, "space_after_in_lines"=>2, "text_height_in_lines"=>2, "box_attributes"=>"", "markup"=>"", "dynamic_style"=>"", "publication_id"=>1},
@@ -114,8 +113,6 @@ module RLayout
       $ProjectPath      = @article_path
       @custom_style     = options[:custom_style] if options[:custom_style]
       @publication_name = options[:publication_name] if options[:publication_name]
-      # puts "@custom_style:#{@custom_style}"
-      # puts "@publication_name:#{@publication_name}"
       RLayout::StyleService.shared_style_service.current_style = NEWSPAPER_STYLE
 
       if @custom_style && @publication_name
@@ -153,8 +150,8 @@ module RLayout
         puts "No layout  found !!!"
         return
       end
-      template = File.open(@template_path,'r'){|f| f.read}
-      @news_box       = eval(template)
+      template    = File.open(@template_path,'r'){|f| f.read}
+      @news_box   = eval(template)
       if @news_box.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return
@@ -164,6 +161,7 @@ module RLayout
         @news_box.stroke.thickness = 0.3
       elsif @news_box.is_a?(NewsComicBox)
       elsif @news_box.is_a?(NewsArticleBox)
+
         read_story
         layout_story
       elsif @news_box.is_a?(NewsAdBox)
@@ -200,7 +198,7 @@ module RLayout
         para_options[:markup]         = para[:markup]
         para_options[:layout_expand]  = [:width]
         para_options[:para_string]    = para[:para_string]
-        para_options[:article_type]   = "news_article"
+        para_options[:article_type]   = @news_box.kind
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
         @paragraphs << NewsParagraph.new(para_options)

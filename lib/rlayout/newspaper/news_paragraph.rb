@@ -87,14 +87,15 @@ module RLayout
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
     attr_accessor :para_string, :para_style, :list_style
-    attr_accessor :text_column, :grid_height
+    attr_accessor :text_column, :grid_height, :article_type
     attr_accessor :body_line_height, :split, :line_count
     def initialize(options={})
       @tokens = []
       #simple, drop_cap, drop_cap_image, math, with_image, with_math
       @markup         = options.fetch(:markup, 'p')
       @para_string    = options.fetch(:para_string, "")
-      @line_count = 0
+      @line_count     = 0
+      @article_type   = options[:article_type]
       make_para_style
       # super doen't set @para_style values
       @space_width    = @para_style[:space_width]
@@ -212,7 +213,6 @@ module RLayout
           end
         else
           # line text with just noral text tokens
-          puts "token_group for plain: #{token_group}"
           create_plain_tokens(token_group)
         end
       end
@@ -262,8 +262,6 @@ module RLayout
             @tokens << RLayout::TextToken.new(emphasis_style)
           end
         else
-          # line text with just noral text tokens
-          # puts "token_group for plain: #{token_group}"
           create_plain_tokens(token_group)
         end
       end
@@ -323,8 +321,7 @@ module RLayout
         puts "first token is diamond_emphasis"
         # if first token is diamond emphasis, no head indent
         @current_line.set_paragraph_info(self, "middle_line")
-      elsif @markup == 'h2' || @markup == 'h3'
-
+      elsif @markup == 'h2' || @markup == 'h3' ||  @markup == 'h1'
         # puts "@current_line.line_index:#{@current_line.line_index}"
         # puts "@current_line.last_line_in_column?:#{@current_line.last_line_in_column?}"
         # puts "@current_line.first_line_in_column?:#{@current_line.first_line_in_column?}"
@@ -341,9 +338,9 @@ module RLayout
           text_box.current_column.go_to_next_line
         end
         @current_line = text_box.next_text_line
+        return true unless @current_line
         @current_line.set_paragraph_info(self, "middle_line")
 
-        # puts "@current_line.line_index:#{@current_line.line_index}"
       end
 
       while token
@@ -463,7 +460,11 @@ module RLayout
       end
       # h1 $ is  assigned as reporrter
       if @markup =='h1'
-        style_hash = current_style['reporter']
+        if @article_type == '사설' || @article_type == 'editorial'
+          style_hash = current_style['reporter_editorial']
+        else
+          style_hash = current_style['reporter']
+        end
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 

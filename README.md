@@ -117,6 +117,10 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2018_4_10
+	- # in editorial not showing
+		-should be larger than other reporter
+
 2018_4_5
 
 	- simple_text.rb
