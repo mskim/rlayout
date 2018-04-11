@@ -110,7 +110,6 @@ module RLayout
       end
       @height = @height_in_lines*@body_line_height - 1
       @height -= 3
-      puts "after @height:#{@height}"
     end
 
     def layout_tokens

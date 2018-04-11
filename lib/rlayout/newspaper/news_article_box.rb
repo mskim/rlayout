@@ -19,12 +19,12 @@ module RLayout
     attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines, :overflow_text
     attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :personal_image, :news_image
     attr_accessor :column_width, :starting_column_x, :gutter, :column_bottom
+    attr_accessor :overflow_column, :pushed_line_count, :extened_line_count
     # attr_accessor :story_path, :show_overflow_lines, :draw_gutter_stroke, , :v_gutter
     # attr_accessor :reporter, :email,
     # attr_accessor :before_lines, :after_lines,
     def initialize(options={}, &block)
       super
-
       if @kind == '사설' || @kind == 'editorial'
         @stroke.sides = [1,3,1,1]
         @left_inset   = @gutter
@@ -63,6 +63,7 @@ module RLayout
         g= NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: editorial_column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         g.parent_graphic = self
         @graphics << g
+        @overflow_column = NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @body_line_height*100, column_line_count: 100, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
       else
         @column_count.times do
           g= NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
@@ -70,6 +71,7 @@ module RLayout
           @graphics << g
           current_x += @column_width + @gutter
         end
+        @overflow_column = NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @body_line_height*100, column_line_count: 100, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
       end
       @column_bottom = max_y(@graphics.first.frame_rect)
       # @graphics.first.puts_frame
@@ -144,12 +146,15 @@ module RLayout
     end
 
     def save_article_info
-      article_info                  = {}
-      article_info[:column]         = @column_count
-      article_info[:row]            = @row_count
-      article_info[:is_front_page]  = @is_front_page
-      article_info[:top_story]      = @top_story
-      article_info[:top_position]   = @top_position
+      article_info                      = {}
+      article_info[:column]             = @column_count
+      article_info[:row]                = @row_count
+      article_info[:is_front_page]      = @is_front_page
+      article_info[:top_story]          = @top_story
+      article_info[:top_position]       = @top_position
+      article_info[:expanded_line_count]= @expanded_line_count if @expanded_line_count
+      article_info[:pushed_line_count]  = @pushed_line_count if @pushed_line_count
+
       if @underflow
         article_info[:underflow]              = @underflow
         article_info[:empty_lines]            = @empty_lines
@@ -421,16 +426,34 @@ module RLayout
     end
 
     def float_quote(options={})
-      options = {}
+      # binding.pry
+      text_options = {}
       frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
-      options[:x]       = frame_rect[0]
-      options[:y]       = frame_rect[1]
-      options[:width]   = frame_rect[2]
-      options[:height]  = frame_rect[3]
-      options[:layout_expand]   = nil
-      options[:is_float]        = true
-      options[:parent]          = self
-      SimpleText.new(options)
+      unless frame_rect
+        if @kind == '기고' || @kind == 'opinion'
+          text_options[:x]       = 0
+          text_options[:text_height_in_lines]  = 5
+          box_height = @body_line_height*5
+          text_options[:y]       = @height - box_height
+          text_options[:width]   = @grid_width*2 - @gutter
+          text_options[:left_margin]   = 3
+          text_options[:right_margin]  = 3
+          # text_options[:stroke_width]  = 1
+        else
+          text_options[:x]       = @grid_width*1 + @gutter
+          text_options[:height]  = @body_line_height*3
+          text_options[:y]       = @height - options[:height]
+          text_options[:width]   = @grid_width*2 + @gutter
+        end
+      end
+      text_options[:layout_expand]   = nil
+      text_options[:is_float]        = true
+      text_options[:text_string]     = options['quote']
+      text_options[:style_name]      = 'quote'
+      text_options[:parent]          = self
+      t = SimpleText.new(text_options)
+      box_height = @body_line_height*5
+      t.height = box_height
     end
 
     def float_personal_image(options={})
