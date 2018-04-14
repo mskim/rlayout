@@ -572,11 +572,11 @@ module RLayout
   end
 
   # Text Using NSText System
-  class Text < Graphic
+  class NSText < Graphic
     def initialize(options={})
       super
       @transform = options[:transform]
-      init_text(options)
+      init_ns_text(options)
       self
     end
 
