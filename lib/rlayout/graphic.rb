@@ -86,8 +86,8 @@ module RLayout
       init_shape(options)
       init_shadow(options)    if options[:shadow]
       init_rotation(options)  if options[:rotation] || options[:rotation_content]
-      init_text(options)
-      init_image(options)
+      # init_text(options)
+      # init_image(options)
       if @parent_graphic.nil?
         return self
       end
@@ -571,7 +571,6 @@ module RLayout
     end
   end
 
-  # Text Using NSText System
   class NSText < Graphic
     def initialize(options={})
       super

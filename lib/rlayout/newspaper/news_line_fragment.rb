@@ -38,6 +38,10 @@ module RLayout
       self
     end
 
+    def column
+      @parent_graphic
+    end
+
     def mark_overflow
       return if @floats.length > 0
       @stroke.color = 'red'
@@ -205,6 +209,7 @@ module RLayout
     end
 
     def line_string
+      return "" if @graphics.length == 0
       strings = []
       @graphics.each do |token|
         strings << token.string
@@ -213,7 +218,6 @@ module RLayout
     end
 
     def force_fit
-
       puts "in force fit!!!"
     end
 

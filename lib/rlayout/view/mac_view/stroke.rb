@@ -178,11 +178,13 @@ class GraphicViewMac < NSView
           path= NSBezierPath.bezierPath
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][3])
           # path.setLineWidth(2*@stroke[:sides][3])
-
           if @graphic.class == RLayout::NewsArticleBox
             # path.moveToPoint(NSPoint.new(@graphic.border_x, rect.origin.y + rect.size.height - 1.5))
             path.moveToPoint(NSPoint.new(@graphic.border_x, rect.origin.y + rect.size.height))
             path.lineToPoint(NSPoint.new(@graphic.border_x + @graphic.border_width, rect.origin.y + rect.size.height))
+            #TODO fix this
+            puts "@graphic.border_x + @graphic.border_width:#{@graphic.border_x + @graphic.border_width}"
+            puts "rect.origin.x + rect.size.width:#{rect.origin.x + rect.size.width}"
             path.stroke
           else
             path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + rect.size.height))

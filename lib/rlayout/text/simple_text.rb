@@ -110,7 +110,6 @@ module RLayout
       end
       @height = @height_in_lines*@body_line_height - 1
       @height -= 3
-      puts "after @height:#{@height}"
     end
 
     def layout_tokens
@@ -174,7 +173,7 @@ module RLayout
       @graphics.map{|t| t.width}.reduce(:+)
     end
 
-    def graphis_pace_width_sum
+    def space_width_sum
       (@graphics.length - 1)*@space_width
     end
 

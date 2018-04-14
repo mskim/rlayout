@@ -117,6 +117,17 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2018_4_11
+	- create overflow column with very long height
+		- so we can calculate exact overflowing lines
+		- save article_info
+			- save overflowing text line by line
+	- extened_line_count
+	- pushed_line_count
+	- fix page config.yml
+	- fix news_section_page to reflect extended and pushed box
+	- fix image line drawing when it is empty
+
 2018_4_10
 	- # in editorial not showing
 		-should be larger than other reporter

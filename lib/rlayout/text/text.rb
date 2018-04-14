@@ -9,6 +9,7 @@ module RLayout
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title
     def initialize(options={})
+      puts 'using Ruby text..'
       super
       @string                 = options.delete(:text_string)
       options[:fill_color]    = options.fetch(:line_color, 'clear')

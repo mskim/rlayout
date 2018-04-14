@@ -141,6 +141,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_heading_for_opinion'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_heading_for_editorial'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_image'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_column_image'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_image_box'
   require File.dirname(__FILE__) + '/rlayout/newspaper/profile_image'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_box'

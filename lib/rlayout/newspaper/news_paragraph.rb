@@ -262,6 +262,8 @@ module RLayout
             @tokens << RLayout::TextToken.new(emphasis_style)
           end
         else
+          # line text with just noral text tokens
+          # puts "token_group for plain: #{token_group}"
           create_plain_tokens(token_group)
         end
       end
@@ -322,6 +324,7 @@ module RLayout
         # if first token is diamond emphasis, no head indent
         @current_line.set_paragraph_info(self, "middle_line")
       elsif @markup == 'h2' || @markup == 'h3' ||  @markup == 'h1'
+        puts "we have h1"
         # puts "@current_line.line_index:#{@current_line.line_index}"
         # puts "@current_line.last_line_in_column?:#{@current_line.last_line_in_column?}"
         # puts "@current_line.first_line_in_column?:#{@current_line.first_line_in_column?}"
@@ -336,6 +339,7 @@ module RLayout
         # @current_line = text_box.go_to_next_line
         unless @current_line.first_text_line_in_column?
           text_box.current_column.go_to_next_line
+          text_box.current_column.layed_out_line_count += 1
         end
         @current_line = text_box.next_text_line
         return true unless @current_line
@@ -353,6 +357,8 @@ module RLayout
           if @current_line
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
+            @current_line.column.layed_out_line_count += 1
+
             token = result
           else
             tokens.unshift(result) #stick the unplace token back to the tokens
@@ -370,6 +376,7 @@ module RLayout
           if @current_line
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
+            @current_line.column.layed_out_line_count += 1
           else
             tokens.unshift(token) #stick the unplace token back to the tokens
             return true # overflow id true
