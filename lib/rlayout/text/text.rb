@@ -1,17 +1,18 @@
+#
 module RLayout
   MAX_SQUEEZE_LIMIT = 1.1
   # SimpleText single line uniform styled text
   # used for title, subject_head
   # It can squeeze text
-  class SimpleText < Container
+  class Text < Graphic
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title
     def initialize(options={})
+      super
       @string                 = options.delete(:text_string)
       options[:fill_color]    = options.fetch(:line_color, 'clear')
       # options[:stroke_width]  = 1
-      super
       @tokens                 = []
       @room                   = @width
       @single_line_title      = options[:single_line_title]
@@ -177,10 +178,46 @@ module RLayout
       (@graphics.length - 1)*@space_width
     end
 
-    def relayout!
+    def to_pgscript
+      if text_string && text_string.length > 0
+        variables = "\"#{text_string}\", font_size: #{font_size}, x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}"
+        #TODO
+        # variables += ", #{@text_color}" unless @text_color == "black"
+        variables += ", tag: \"#{@tag}\"" if @tag
+        "   text(#{variables})\n"
+      else
+        " "
+      end
+    end}
+
+    def self.sample(options={})
+      if options[:number] > 0
+        Text.new(text_string: "This is a sample text string"*options[:number])
+      else
+        Text.new(text_string: "This is a sample text string")
+      end
     end
 
 
+  end
+
+  class Quote < Text
+    def initialize(options={})
+      options[:text_string] = "“ #{options[:text_string]} ”" if options[:text_string]
+      options[:font_size]   = 24 unless options[:font_size]
+      super
+      self
+    end
+  end
+
+  class TableCell < Text
+    # lookup table style and applied the table_cell style
+    attr_accessor :h_span, :v_span, :text_direction
+    def initialize(options={})
+      # options[:text_font] = "smGothicP-W10"
+      super
+      self
+    end
   end
 
 end

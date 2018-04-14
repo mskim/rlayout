@@ -93,11 +93,17 @@ module RLayout
           info[:image_path] = @section_path + "/#{i + 1}/story.pdf"
         end
 
+
         # info[:x] = grid_frame[0]*(@grid_width + @gutter) + @left_margin
         info[:x]              = grid_frame[0]*@grid_width + @left_margin
-        info[:y]              = grid_frame[1]*@grid_height  + @top_margin
+        info[:y]              = grid_frame[1]*@grid_height + @top_margin
         info[:width]          = grid_frame[2]*@grid_width
         info[:height]         = grid_frame[3]*@grid_height
+        if grid_frame.last =~/^extend/
+          @extened_line_count = grid_frame.last.split("_")[1].to_i
+          info[:height] += @body_line_height*@extened_line_count
+        end
+
         info[:layout_expand]  = nil
         info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
         # info[:image_fit_type] = IMAGE_FIT_TYPE_ORIGINAL

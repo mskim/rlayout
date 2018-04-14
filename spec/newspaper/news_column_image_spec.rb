@@ -13,7 +13,7 @@ describe 'creaet NewsBoxMaker with Image' do
   end
 
   it 'should create NewsImage ' do
-    assert_equal NewsImage, @news_image.class
+    assert_equal NewsColumnImage, @news_image.class
     assert_equal Image, @news_image.image_box.class
     assert_equal NewsImage, @news_image.class
   end

@@ -9,7 +9,7 @@ module RLayout
     attr_accessor :text_fit_type, :text_alignment, :tracking, :text_first_line_head_indent, :text_head_indent, :text_tail_indent, :text_paragraph_spacing_before, :text_paragraph_spacing
     attr_accessor :text_layout_manager, :has_text, :body_line_height, :space_before_in_lines, :text_height_in_lines,  :space_after_in_lines
 
-    def init_text(options)
+    def init_ns_text(options)
       @has_text               = options[:string] ? true : false
       @body_line_height       = options.fetch(:body_line_height, 12)
       @space_before_in_lines  = 0

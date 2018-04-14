@@ -86,8 +86,8 @@ module RLayout
       init_shape(options)
       init_shadow(options)    if options[:shadow]
       init_rotation(options)  if options[:rotation] || options[:rotation_content]
-      init_text(options)
-      init_image(options)
+      # init_text(options)
+      # init_image(options)
       if @parent_graphic.nil?
         return self
       end
@@ -568,99 +568,6 @@ module RLayout
 
     def fit_text_to_box
       @text_layout_manager.fit_text_to_box  if @text_layout_manager
-    end
-  end
-
-  # Text Using NSText System
-  class Text < Graphic
-    def initialize(options={})
-      super
-      @transform = options[:transform]
-      init_text(options)
-      self
-    end
-
-    def set_attributed_string(new_att_string)
-      return unless @text_layout_manager
-      @text_layout_manager.setAttributedString(new_att_string)
-    end
-
-    def set_text_string(text_string)
-      if RUBY_ENGINE == "rubymotion"
-        return unless @text_layout_manager
-        @text_layout_manager.set_text_string(text_string)
-      else
-        @text_record.string = text_string
-      end
-    end
-
-    def set_text(text_string)
-      if RUBY_ENGINE == "rubymotion"
-        return unless @text_layout_manager
-        @text_layout_manager.set_text_string(text_string)
-      else
-        @text_record.string = text_string
-      end
-    end
-
-    def text_string
-      if @text_layout_manager
-        @text_layout_manager.att_string.string
-      elsif @text_record
-        @text_record.string
-      end
-    end
-
-    def font_size
-      unless @text_layout_manager
-        return 16.0
-      else
-        @text_layout_manager.font_size
-      end
-    end
-
-    def setAttributes(atts, range)
-      return unless @text_layout_manager
-      @text_layout_manager.att_string.setAttributes(atts, range: range)
-    end
-
-    def to_pgscript
-      if text_string && text_string.length > 0
-        variables = "\"#{text_string}\", font_size: #{font_size}, x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}"
-        #TODO
-        # variables += ", #{@text_color}" unless @text_color == "black"
-        variables += ", tag: \"#{@tag}\"" if @tag
-        "   text(#{variables})\n"
-      else
-        " "
-      end
-    end
-
-    def self.sample(options={})
-      if options[:number] > 0
-        Text.new(text_string: "This is a sample text string"*options[:number])
-      else
-        Text.new(text_string: "This is a sample text string")
-      end
-    end
-  end
-
-  class Quote < Text
-    def initialize(options={})
-      options[:text_string] = "“ #{options[:text_string]} ”" if options[:text_string]
-      options[:font_size]   = 24 unless options[:font_size]
-      super
-      self
-    end
-  end
-
-  class TableCell < Text
-    # lookup table style and applied the table_cell style
-    attr_accessor :h_span, :v_span, :text_direction
-    def initialize(options={})
-      # options[:text_font] = "smGothicP-W10"
-      super
-      self
     end
   end
 

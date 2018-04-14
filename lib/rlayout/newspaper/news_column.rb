@@ -23,12 +23,15 @@ module RLayout
     attr_accessor :grid_rects, :body_line_height
     attr_accessor :complex_rect, :align_body_text, :show_grid_rects
     attr_accessor :article_bottom_space_in_lines
+    attr_accessor :layed_out_line_count
+
     def initialize(options={}, &block)
       options[:width]     = 200 unless options[:width]
       options[:height]    = 500 unless options[:height]
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
+      @layed_out_line_count = 0
       @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
       @line_count         = options[:column_line_count] - @article_bottom_space_in_lines
       @show_grid_rects    = options[:show_grid_rects] || true
@@ -42,6 +45,17 @@ module RLayout
         instance_eval(&block)
       end
       self
+    end
+
+    def overflow_text
+      text = ""
+      @layed_out_line_count.times do |i|
+        line_text = "<p>"
+        line_text += @graphics[i].line_string
+        line_text += "</p>"
+        text      += line_text
+      end
+      text
     end
 
     def create_lines(options={})

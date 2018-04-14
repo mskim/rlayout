@@ -96,11 +96,10 @@ module RLayout
       @image_path             = options[:image_path]
       @column                 = options[:column]
       @row                    = options[:row]
-      options[:grid_frame]    = convert_size_position_to_frame(options)
+      options[:grid_frame]    = convert_size_position_to_frame(options) if options[:position]
       @position               = options[:position]
       options[:layout_expand] = nil
       options[:fill_color]    = 'clear'
-
       @fit_type               = options[:fit_type] if options[:fit_type]
       @expand                 = options[:expand] if options[:expand]
       @before_title           = options.fetch(:before_title, false)
@@ -110,9 +109,10 @@ module RLayout
       @y                      = frame_rect[1]
       @width                  = frame_rect[2]
       @height                 = frame_rect[3]
-      if options[:extra_height_in_lines] > 0
+      if options[:extra_height_in_lines] && options[:extra_height_in_lines] > 0
         @height += options[:extra_height_in_lines]*@parent_graphic.body_line_height
       end
+
       has_caption_text?(options)
       if @has_caption
         @caption_column         = CaptionColumn.new(parent:self, width: @width, top_space_in_lines: 0.3, caption_line_height: 12)
@@ -233,5 +233,4 @@ module RLayout
     end
 
   end
-
 end

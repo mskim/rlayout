@@ -16,13 +16,11 @@
 module RLayout
   class NewsArticleBox < NewsBox
     attr_accessor :heading_columns, :fill_up_enpty_lines
-    attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines, :overflow_text
+    attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines
     attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :personal_image, :news_image
     attr_accessor :column_width, :starting_column_x, :gutter, :column_bottom
-    attr_accessor :overflow_column, :pushed_line_count, :extened_line_count
-    # attr_accessor :story_path, :show_overflow_lines, :draw_gutter_stroke, , :v_gutter
-    # attr_accessor :reporter, :email,
-    # attr_accessor :before_lines, :after_lines,
+    attr_accessor :overflow_column
+
     def initialize(options={}, &block)
       super
       if @kind == '사설' || @kind == 'editorial'
@@ -128,6 +126,8 @@ module RLayout
       else
         # current position is before last column
         unoccupied_lines_count = 0
+        puts "column_index:#{column_index}"
+        puts "@column_count - 1:#{@column_count - 1}"
         (column_index..(@column_count - 1)).to_a.each do |column_index|
           column = @graphics[column_index]
           unoccupied_lines_count += column.empty_lines
@@ -156,11 +156,12 @@ module RLayout
       article_info[:pushed_line_count]  = @pushed_line_count if @pushed_line_count
 
       if @underflow
-        article_info[:underflow]              = @underflow
+        # article_info[:underflow]              = @underflow
         article_info[:empty_lines]            = @empty_lines
       elsif @overflow
-        article_info[:@overflow]              = true
-        article_info[:overflow_text]          = @overflow_text
+        # article_info[:overflow]              = true
+        article_info[:overflow_line_count]    = @overflow_column.layed_out_line_count
+        article_info[:overflow_text]          = overflow_text
       else
         # article_info[:lines_count]            = article_box_lines_count
         article_info[:current_characters]     = article_box_character_count
@@ -171,31 +172,20 @@ module RLayout
       File.open(info_path, 'w'){|f| f.write article_info.to_yaml}
     end
 
-    def overflow_box
-      # take the last columns last paragraphs
-      last_para = @graphics.last.graphics.last
-      if last_para && @graphics.last.graphics.last.overflow?
-        return last_para.split_overflowing_lines
-      end
-      nil
-    end
-
-    # get next line from curretn line
-
-    def reduce_lines(overflow_count)
-      paragraphs = []
-      @graphics.each do |column|
-        paragraphs += column.graphics
-      end
-      reduced_line = 0
-      paragraphs.reverse.each do |para|
-        exit if reduced_line == overflow_count
-        goal = overflow_count - reduced_line
-        result = para.try_reducing_line_numbers_by_changing_space_width(goal)
-      end
+    def overflow_text
+      return @overflow_column.overflow_text if @over_flow
+      ""
     end
 
     def go_to_next_line
+      if @overflow || @current_column_index >= @graphics.length
+        @current_column = @overflow_column
+        if next_line = @current_column.go_to_next_line
+          return next_line
+        else
+          return nil
+        end
+      end
       @current_column = @graphics[@current_column_index]
       if next_line = @current_column.go_to_next_line
         return next_line
@@ -238,6 +228,11 @@ module RLayout
 
     def next_text_line
       @current_column = @graphics[@current_column_index]
+      unless @current_column
+        @over_flow      = true
+        @current_column = @overflow_column
+      end
+
       return nil unless @current_column
       if line = @current_column.get_line_with_text_room
         return line
@@ -268,24 +263,22 @@ module RLayout
         break if @overflow = @item.layout_lines(self)
       end
       if @overflow
-        @empty_lines = 0
-        @overflow_text = ''
+        @current_column_index += 1
+        @current_column       = @overflow_column
+        @empty_lines          = 0
         if flowing_items.length > 1
-          flowing_items.each do |para|
-            @overflow_text += para.left_over_token_text
-            @overflow_text += '\n'
+          flowing_items.each do |overflow_para|
+            overflow_para.layout_lines(self)
           end
         else
-          @overflow_text += @item.left_over_token_text
-          @overflow_text += '\n'
-
+          @item.layout_lines(self)
         end
       else
         @current_column = @graphics[@current_column_index] unless @current_column
         @empty_lines    = article_box_unoccupied_lines_count
-        @underflow = true if @empty_lines > 0
+        @underflow      = true if @empty_lines > 0
       end
-      if !@fill_up_enpty_lines
+      unless @fill_up_enpty_lines
         save_article_info
       end
     end
@@ -476,6 +469,12 @@ module RLayout
       @news_image         = NewsImage.new(options)
     end
 
+    def news_column_image(options={})
+      options[:parent]    = self
+      options[:is_float]  = true
+      @news_image         = NewsColumnImage.new(options)
+    end
+
     def grid_frame_to_image_rect(grid_frame)
       return [0,0,100,100]    unless @graphics
       return [0,0,100,100]    if grid_frame.nil?
@@ -490,9 +489,13 @@ module RLayout
       else
         frame_x           = @graphics[grid_frame[0]].x
       end
-      #TODO
       frame_y             = @grid_size[1]*grid_frame[1]
-      frame_width         = @graphics[grid_frame[0] + grid_frame[2] - 1].x_max - frame_x
+      index = (grid_frame[0] + grid_frame[2] - 1).to_i
+      if @graphics[index]
+        frame_width         = @graphics[index].x_max - frame_x
+      else
+        frame_width         = @graphics[0].x_max - frame_x
+      end
       frame_height        = @grid_size[1]*grid_frame[3]
 
       # if image is on bottom, move up by @article_bottom_spaces_in_lines*@body_line_height
