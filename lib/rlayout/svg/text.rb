@@ -1,6 +1,6 @@
 module RLayout
 
-    class Text < Graphic
+    class Text < Container
       attr_reader :x, :y, :transform
       def self.from_svg(options={})
         text_options = Text.parse_svg(options)

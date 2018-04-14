@@ -1,68 +1,54 @@
 #
 module RLayout
-  MAX_SQUEEZE_LIMIT = 1.1
   # SimpleText single line uniform styled text
   # used for title, subject_head
   # It can squeeze text
-  class Text < Graphic
-    attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
+  class Text < Container
+    attr_accessor :tokens, :string, :para_style, :room, :text_alignment, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
-    attr_accessor :single_line_title, :force_fit_title
+    attr_accessor :single_line_title, :force_fit_title, :space_width
     def initialize(options={})
-      puts 'using Ruby text..'
       super
-      @string                 = options.delete(:text_string)
-      options[:fill_color]    = options.fetch(:line_color, 'clear')
-      # options[:stroke_width]  = 1
-      @tokens                 = []
-      @room                   = @width
-      @single_line_title      = options[:single_line_title]
-      @style_name             = options[:style_name]
-      if @style_name
-        @para_style             = RLayout::StyleService.shared_style_service.current_style[@style_name]
-        @para_style             = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
-        @space_width            = @para_style[:space_width] || @para_style[:font_size]/3
-      elsif options[:@para_style]
-        @para_style             = options[:@para_style]
+      @string                   = options.delete(:text_string)
+      if options[:para_style]
+        @para_style =  options[:para_style]
       else
         @para_style             = {}
-        @para_style[:font]      = options.fetch(:font, 'Times')
-        @para_style[:font_size] = options.fetch(:size, 16)
+        @para_style[:font]      = options[:font] || 'Times'
+        @para_style[:font_size] = options[:font_size] || 16
+        @para_style[:text_color]= options[:text_color] if options[:text_color]
+        @para_style[:tracking]  = options.fetch(:tracking, 0)
+        @para_style[:scale]     = options.fetch(:scale, 100)
       end
-      @text_alignment         = options[:text_alignment] || 'left'
-      @body_line_height       = options[:body_line_height] || 14
-      @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
-      @text_height_in_lines   = 2 if @text_height_in_lines == ""
-      @space_before_in_lines  = @para_style[:space_before_in_lines] || 0
-      @space_before_in_lines  = 1 if @space_before_in_lines == ""
-      # @top_inset              = @space_before_in_lines*@body_line_height
+      @font_size              = @para_style[:font_size]
+      @space_width            = @font_size/3
+      @line_space             = options[:line_apace] || @font_size/2
+      @line_height            = @font_size + @line_space
+
+      @text_fit_type          = options.fetch(:text_fit_type, 'keep_box_height')
+      @body_line_height       = options.fetch(:body_line_height, 12)
+      @space_before_in_lines  = 0
+      @space_before_in_lines  = options[:space_before_in_lines] if options[:space_before_in_lines]
+      @top_inset              = @space_before_in_lines*@body_line_height
       @top_inset              += options[:top_inset] if options[:top_inset]
-      @space_after_in_lines   = @para_style[:space_after_in_lines] || 0
-      @space_after_in_lines   = 0 if @space_after_in_lines == ""
-      @tracking               = @para_style.fetch(:tracking, 0)
+      @text_height_in_lines   = 0
+      @text_height_in_lines   = options[:text_height_in_lines] if options[:text_height_in_lines]
+      @space_after_in_lines   = 0
+      @space_after_in_lines   = options[:space_after_in_lines] if options[:space_after_in_lines]
+      @text_alignment         = options[:text_alignment] || 'left'
+      @top_inset              += options[:top_inset] if options[:top_inset]
       @bottom_inset           = @space_after_in_lines*@body_line_height
       @height_in_lines        = @space_before_in_lines + @text_height_in_lines + @space_after_in_lines
       @height                 = @height_in_lines*@body_line_height
-
-      if @para_style[:text_line_spacing] == "" || @para_style[:text_line_spacing].nil?
-        @line_space           =  @para_style[:font_size]*0.4
-      else
-        @line_space           = @para_style[:text_line_spacing]
-      end
-      @line_height            = @para_style[:font_size] + @line_space
-      # @current_line_y         = @top_inset + @space_before_in_lines*@body_line_height
+      @tokens                 = []
+      @room                   = @width
+      @single_line_title      = options[:single_line_title]
       @current_line_y         = @top_inset + @space_before_in_lines*@body_line_height
-      # @current_line_y         = @space_before_in_lines*@body_line_height
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @current_line           = NewsLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
-      @current_line_y         +=@current_line.height
-      # puts "@style_name:#{@style_name}"
-      # puts "@top_inset:#{@top_inset}"
-      # puts "@current_line_y:#{@current_line_y}"
-      # puts "@space_before_in_lines:#{@space_before_in_lines}"
-      # puts "@text_height_in_lines:#{@text_height_in_lines}"
-      # puts "@space_after_in_lines:#{@space_after_in_lines}"
+      @current_line           = LineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
+      @current_line_y         += @current_line.height
+
       create_tokens
       layout_tokens
       ajust_height_as_body_height_multiples
@@ -86,7 +72,7 @@ module RLayout
     end
 
     def add_new_line
-      @current_line       = NewsLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
+      @current_line       = LineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
       @current_line_y    += @current_line.height + @line_space
     end
 
@@ -181,8 +167,7 @@ module RLayout
 
     def to_pgscript
       if text_string && text_string.length > 0
-        variables = "\"#{text_string}\", font_size: #{font_size}, x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}"
-        #TODO
+        variables = "\"#{@string}\", font_size: #{@font_size}, x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}"
         # variables += ", #{@text_color}" unless @text_color == "black"
         variables += ", tag: \"#{@tag}\"" if @tag
         "   text(#{variables})\n"

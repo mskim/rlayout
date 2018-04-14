@@ -634,33 +634,6 @@ module RLayout
         " "
       end
     end
-
-    def self.sample(options={})
-      if options[:number] > 0
-        Text.new(text_string: "This is a sample text string"*options[:number])
-      else
-        Text.new(text_string: "This is a sample text string")
-      end
-    end
-  end
-
-  class Quote < Text
-    def initialize(options={})
-      options[:text_string] = "“ #{options[:text_string]} ”" if options[:text_string]
-      options[:font_size]   = 24 unless options[:font_size]
-      super
-      self
-    end
-  end
-
-  class TableCell < Text
-    # lookup table style and applied the table_cell style
-    attr_accessor :h_span, :v_span, :text_direction
-    def initialize(options={})
-      # options[:text_font] = "smGothicP-W10"
-      super
-      self
-    end
   end
 
   class Rectangle < Graphic
