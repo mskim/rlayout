@@ -124,11 +124,12 @@ module RLayout
 
 
     # return false if break_position < MinimunLineRoom
-    # split string into two and return split_second_half_attsting
+    # split string into two and return splited_second_half_attsting
     def break_attstring_at(break_position)
       # give a char_half_cushion
       return false if break_position < MinimunLineRoom
       string_length = @att_string.length
+      #TODO use ruby only not NS
       if RUBY_ENGINE == "rubymotion"
         initial_range = NSMakeRange(0,1)
         sub_string_before = @att_string.attributedSubstringFromRange(initial_range)

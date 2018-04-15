@@ -117,6 +117,13 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2018_4_15
+	- not allow . , ? ! and the the beginning of line
+	
+2018_4_14
+	- fix Text < Graphic to Text < Container
+		- use pure Ruby, get rid of NSTextLayoutManager
+
 2018_4_11
 	- create overflow column with very long height
 		- so we can calculate exact overflowing lines
