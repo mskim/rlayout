@@ -118,6 +118,7 @@ module RLayout
 
     def article_box_unoccupied_lines_count
       column_index = @current_column.graphics_index
+      return 0 unless column_index
       if @kind == '사설' || @kind == 'editorial'
         @graphics[0].empty_lines
       elsif column_index == (@column_count - 1)
@@ -126,8 +127,6 @@ module RLayout
       else
         # current position is before last column
         unoccupied_lines_count = 0
-        puts "column_index:#{column_index}"
-        puts "@column_count - 1:#{@column_count - 1}"
         (column_index..(@column_count - 1)).to_a.each do |column_index|
           column = @graphics[column_index]
           unoccupied_lines_count += column.empty_lines
