@@ -98,8 +98,8 @@ module RLayout
         # apply_fit_type
       end
 
-      if options[:image_caption] || options[:image_caption]
-        @image_caption = options[:image_caption] || options[:image_caption]
+      if options[:image_caption]
+        @image_caption = options[:image_caption]
       else
         return false unless @image_path
         ext = File.extname(@image_path)

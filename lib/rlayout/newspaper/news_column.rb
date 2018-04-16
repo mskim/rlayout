@@ -33,13 +33,14 @@ module RLayout
       super
       @layed_out_line_count = 0
       @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
-      @line_count         = options[:column_line_count] - @article_bottom_space_in_lines
+      @body_line_height   = options[:body_line_height]
+      @line_count         = options[:column_line_count]
+      @line_count         -= @article_bottom_space_in_lines
+      @height             -= @body_line_height*@article_bottom_space_in_lines
+      @current_position   = @top_margin + @top_inset
       @show_grid_rects    = options[:show_grid_rects] || true
       @layout_space       = options.fetch(:column_layout_space, 0)
       @complex_rect       = false
-      @body_line_height   = options[:body_line_height]
-      @height             -= @body_line_height*@article_bottom_space_in_lines
-      @current_position   = @top_margin + @top_inset
       create_lines
       if block
         instance_eval(&block)

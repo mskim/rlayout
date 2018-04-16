@@ -71,19 +71,6 @@
 # dropcap_area
 
 
-FIT_FONT_SIZE   = 0   # keep given font size
-FIT_TO_BOX      = 1   # change font size to fit text into box
-
-# 'fit_text_to_box'
-# 'adjust_box_height'
-
-#overflow or vertical adjustment
-
-# TODO
-FIT_EACH_LINE   = 2   # adjust font size for each line to fit text into lines.
-                      # So, fewer the text, larger the font size becomes in for each line
-                      # And reduce the size of the lines propotionally to fit the entire lines in text box.
-
 #TODO
 # text_vertical_alignment
 

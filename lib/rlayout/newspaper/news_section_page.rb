@@ -8,6 +8,7 @@ module RLayout
     attr_accessor :body_line_height, :ad_type, :page_heading_margin_in_lines, :lines_per_grid, :draw_divider_line, :divider_line_thickness
     def initialize(options={}, &block)
       super
+
       @section_path   = options[:section_path] if options[:section_path]
       @output_path    = @section_path + "/section.pdf"
       @output_path    = options[:output_path]   if options[:output_path]
@@ -87,18 +88,17 @@ module RLayout
         found_ad = false
         if grid_frame.length == 5 && grid_frame[4] =~/^광고/
           # found_ad = grid_frame[4][:광고] || grid_frame[4]['광고'] || grid_frame[4][:'광고'] || grid_frame[4]['광고']
-          puts "found_ad:#{found_ad}"
           info[:image_path] = ad_image_path
         else
           info[:image_path] = @section_path + "/#{i + 1}/story.pdf"
         end
-
 
         # info[:x] = grid_frame[0]*(@grid_width + @gutter) + @left_margin
         info[:x]              = grid_frame[0]*@grid_width + @left_margin
         info[:y]              = grid_frame[1]*@grid_height + @top_margin
         info[:width]          = grid_frame[2]*@grid_width
         info[:height]         = grid_frame[3]*@grid_height
+
         if grid_frame.last =~/^extend/
           @extened_line_count = grid_frame.last.split("_")[1].to_i
           info[:height] += @body_line_height*@extened_line_count
@@ -133,8 +133,9 @@ module RLayout
       @output_path = options[:output_path] if options[:output_path]
       #TODO update page fixtures
       # make_page_heading_image
-      make_layout_info.each_with_index do |info, i|
+      make_layout_info.reverse.each_with_index do |info, i|
         info[:parent] = self
+        # info[:stroke_width] = 1
 	      Image.new(info)
 	    end
       # page heading
@@ -158,11 +159,13 @@ module RLayout
       end
 
       @page_heading = Image.new(heading_info)
+
       if @output_path
         save_pdf(@output_path, options)
       else
         puts "No @output_path!!!"
       end
+
       self
     end
 

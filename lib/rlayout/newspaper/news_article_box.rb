@@ -151,7 +151,7 @@ module RLayout
       article_info[:is_front_page]      = @is_front_page
       article_info[:top_story]          = @top_story
       article_info[:top_position]       = @top_position
-      article_info[:expanded_line_count]= @expanded_line_count if @expanded_line_count
+      article_info[:extended_line_count]= @extended_line_count if @extended_line_count
       article_info[:pushed_line_count]  = @pushed_line_count if @pushed_line_count
 
       if @underflow
