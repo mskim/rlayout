@@ -135,10 +135,10 @@ module RLayout
         sub_string_before = @att_string.attributedSubstringFromRange(initial_range)
         (1..string_length).to_a.each do |i|
           front_range = NSMakeRange(0,i)
-          sub_string_after = @att_string.attributedSubstringFromRange(front_range)
-          if i == string_length && sub_string_after.string =~ /\.$/
+          sub_string_incremented = @att_string.attributedSubstringFromRange(front_range)
+          if i == string_length && sub_string_incremented.string =~ /\.$/
             return "period at the end of token"
-          elsif sub_string_after.size.width > (break_position + CharHalfWidthCushion)
+          elsif sub_string_incremented.size.width > (break_position + CharHalfWidthCushion)
             #TODO handle . , line ending rule. procenting orphan
             cut_index = i - 1 # pne before i
             back_range = NSMakeRange(cut_index,(string_length - cut_index))
@@ -149,7 +149,10 @@ module RLayout
             new_string  = original_string.attributedSubstringFromRange(back_range)
             return new_string
           else
-            sub_string_before = sub_string_after
+            # puts "sub_string_before.string:#{sub_string_before.string}"
+            sub_string_before = sub_string_incremented
+            # puts "after sub_string_before.string:#{sub_string_before.string}"
+
           end
         end
         return false
@@ -160,18 +163,20 @@ module RLayout
 
     # divide token at position
     def hyphenate_token(break_position)
+
       position = break_position
       if RUBY_ENGINE == "rubymotion"
         # break_attstring_at breaks original att_string into two
         # adjust first token width and result is second haldf att_string
         # or false is return if not abtle to brake the token
-        result = break_attstring_at(position)
-        if result == "period at the end of token"
+        hyphenated_result = break_attstring_at(position)
+        if hyphenated_result == "period at the end of token"
           return "period at the end of token"
-        elsif result.class == NSConcreteMutableAttributedString
+        elsif hyphenated_result.class == NSConcreteMutableAttributedString
           second_half = self.dup
-          second_half.att_string = result
-          second_half.width = result.size.width + @left_margin + @right_margin
+          second_half.att_string = hyphenated_result
+          second_half.string = hyphenated_result.string
+          second_half.width = hyphenated_result.size.width + @left_margin + @right_margin
           return second_half
           # return TextToken.new(att_string: result, atts: @atts)
         else

@@ -153,7 +153,6 @@ module RLayout
       article_info[:top_position]       = @top_position
       article_info[:extended_line_count]= @extended_line_count if @extended_line_count
       article_info[:pushed_line_count]  = @pushed_line_count if @pushed_line_count
-
       if @underflow
         # article_info[:underflow]              = @underflow
         article_info[:empty_lines]            = @empty_lines
@@ -261,16 +260,17 @@ module RLayout
       while @item = flowing_items.shift do
         break if @overflow = @item.layout_lines(self)
       end
+
       if @overflow
         @current_column_index += 1
         @current_column       = @overflow_column
         @empty_lines          = 0
-        if flowing_items.length > 1
+        @item.layout_lines(self)
+        flowing_items.shift
+        if flowing_items.length > 0
           flowing_items.each do |overflow_para|
             overflow_para.layout_lines(self)
           end
-        else
-          @item.layout_lines(self)
         end
       else
         @current_column = @graphics[@current_column_index] unless @current_column
@@ -418,7 +418,6 @@ module RLayout
     end
 
     def float_quote(options={})
-      # binding.pry
       text_options = {}
       frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
       unless frame_rect

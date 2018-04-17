@@ -82,7 +82,7 @@ module RLayout
     def char_count
       line_string.length
     end
-  
+
     # place tokens in the line, given tokens array
     # return loft over tokens array if not all tokens are layed out
     # return false if no leftvver tokens

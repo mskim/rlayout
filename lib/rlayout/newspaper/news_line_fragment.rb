@@ -134,17 +134,16 @@ module RLayout
       else
         return false if options[:do_not_break]
         # no more room, try hyphenating token
-        result = token.hyphenate_token(@room)
-        if result == "period at the end of token"
+        @result = token.hyphenate_token(@room)
+        if @result == "period at the end of token"
           # this ss when the last char is "." and we can sqeezed it into the line.
           # token is not broken
           @graphics << token
           @room = 0
           return true
-        elsif result.class == TextToken
-          # token is broken into two
+        elsif @result.class == TextToken
           @graphics << token  # insert front part to line_count
-          return result       # return second part
+          return @result       # return second part
         end
         # cound not break the token,
         return false

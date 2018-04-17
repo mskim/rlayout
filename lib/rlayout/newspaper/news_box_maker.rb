@@ -186,7 +186,6 @@ module RLayout
       @heading[:top_story]    = @news_box.top_story
       @heading[:top_position] = @news_box.top_position
       if @heading
-        # binding.pry
         @news_box.make_article_heading(@heading)
         # make other floats quotes, opinition writer's personal_picture
         @news_box.make_floats(@heading)

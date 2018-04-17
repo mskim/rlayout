@@ -357,7 +357,6 @@ module RLayout
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
             @current_line.column.layed_out_line_count += 1
-
             token = result
           else
             tokens.unshift(result) #stick the unplace token back to the tokens
@@ -378,7 +377,7 @@ module RLayout
             @current_line.column.layed_out_line_count += 1
           else
             tokens.unshift(token) #stick the unplace token back to the tokens
-            return true # overflow id true
+            return true # overflow is true
             # break #reached end of column
           end
         end
