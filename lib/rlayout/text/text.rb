@@ -183,7 +183,7 @@ module RLayout
     def to_pgscript
       if text_string && text_string.length > 0
         variables = "\"#{@string}\", font_size: #{@font_size}, x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}"
-        # variables += ", #{@text_color}" unless @text_color == "black"
+        # variables += ", #{@text_color}" unless @text_color == "CMYK=0,0,0,100"
         variables += ", tag: \"#{@tag}\"" if @tag
         "   text(#{variables})\n"
       else

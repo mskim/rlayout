@@ -44,18 +44,18 @@ class GraphicViewMac < NSView
       graphic.gutter_stroke.thickness = 1.0
     end
     if graphic.gutter_stroke.color.nil?
-      graphic.gutter_stroke.color = "black"
+      graphic.gutter_stroke.color = "CMYK=0,0,0,100"
     end
     space = graphic.layout_space/2.0
     if graphic.gutter_stroke.nil?
       gutter_stroke = {}
       gutter_stroke[:thickness] = 1.0
-      gutter_stroke[:color] = "black"
+      gutter_stroke[:color] = "CMYK=0,0,0,100"
       graphic.gutter_stroke = gutter_stroke
     elsif graphic.gutter_stroke.thickness.nil?
       graphic.gutter_stroke.thickness = 1.0
     elsif graphic.gutter_stroke.color.nil?
-      graphic.gutter_stroke.color = "black"
+      graphic.gutter_stroke.color = "CMYK=0,0,0,100"
     end
     width = graphic.gutter_stroke.thickness
     RLayout.convert_to_nscolor(graphic.gutter_stroke.color).set

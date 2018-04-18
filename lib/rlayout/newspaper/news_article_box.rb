@@ -424,8 +424,7 @@ module RLayout
       return if @quote_box_size == '0'
       #TODO handle case when quote_box_size if type as 2x3
       quote_text_lines = @quote_box_size.to_i
-      puts "quote_text_lines:#{quote_text_lines}"
-      box_height = quote_text_lines*2*@body_line_height
+      box_height = (quote_text_lines + QUOTE_BOX_SPACE_BEFORE)*@body_line_height
       # box_height += QUOTE_BOX_SPACE_BEFORE*@body_line_height
       y            = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
       x            = 0 #TODO
@@ -452,19 +451,10 @@ module RLayout
       text_options[:style_name]      = 'quote'
       text_options[:parent]          = self
       # text_options[:stroke_width]    = 1
-      text_options[:space_before_in_lines]  = QUOTE_BOX_SPACE_BEFORE
-      text_options[:text_height_in_lines]   = quote_text_lines
       text_options[:v_alignment]            = 'bottom'
-      text_options[:height_as_body_height_multiples] = false
       text_options[:height]                 = box_height
-
       @quote_box = QuoteText.new(text_options)
-      puts "@height:#{@height}"
-      puts "before"
-      @quote_box.puts_frame
-      @quote_box.y = @height - @quote_box.height
-      puts "after"
-      @quote_box.puts_frame
+      @quote_box.y = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
 
     end
 

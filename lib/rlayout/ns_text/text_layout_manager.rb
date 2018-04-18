@@ -317,7 +317,7 @@ module RLayout
       @text_string                   = options.fetch(:text_string, "")
       @font                          = options.fetch(:font, "Times")
       @font_size                     = options.fetch(:font_size, 16)
-      @text_color                    = options.fetch(:text_color, "black")
+      @text_color                    = options.fetch(:text_color, "CMYK=0,0,0,100")
       @text_line_spacing             = options.fetch(:text_line_spacing, 0)
       @text_fit_type                 = options.fetch(:text_fit_type, 0)
       @text_alignment                = options.fetch(:text_alignment, "left")

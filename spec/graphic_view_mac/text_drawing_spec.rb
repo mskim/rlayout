@@ -14,7 +14,7 @@
 #     @t.text_string.must_equal "This is a text"
 #     @t.font_size.must_equal 16
 #     @t.font.must_equal "Times"
-#     @t.text_color.must_equal "black"
+#     @t.text_color.must_equal "CMYK=0,0,0,100"
 #   end
 #   
 #   it 'should draw text' do

@@ -106,7 +106,7 @@
 #   row_line: {}
 #   first_column_line: {}
 #   column_line: {}
-#   body_cycling: {bgcolor:["black", "green"]}
+#   body_cycling: {bgcolor:["CMYK=0,0,0,100", "green"]}
 # }
 
 # It is tricky to layout multiple tables in a single page.

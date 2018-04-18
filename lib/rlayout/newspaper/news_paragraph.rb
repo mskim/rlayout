@@ -444,7 +444,7 @@ module RLayout
       h                           = {}
       h[:font]                    = "smSSMyungjoP-W30"
       h[:font_size]               = 9.2
-      h[:text_color]              = "black"
+      h[:text_color]              = "CMYK=0,0,0,100"
       h[:fill_color]              = "white"
       h[:text_style]              = "plain"
       h[:h_alignment]             = "justified"

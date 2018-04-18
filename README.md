@@ -677,7 +677,7 @@ TODO List
 	- markup2heading key_map
 	- style_run
 	# runs are separated by \t
-	# color_run: ["brown", "black"]
+	# color_run: ["brown", "CMYK=0,0,0,100"]
 	# size_run: [0, 5] add point size to current size
 	# size_run: [0, 10%] add % point size to current size
 
