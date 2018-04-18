@@ -13,11 +13,13 @@
 # 4.5*28.34646 = 12.755907
 # 15*28.34646 = 425.1969
 
+QUOTE_BOX_SPACE_BEFORE = 2
+
 module RLayout
   class NewsArticleBox < NewsBox
     attr_accessor :heading_columns, :fill_up_enpty_lines
     attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines
-    attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :personal_image, :news_image
+    attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :quote_box_size, :personal_image, :news_image
     attr_accessor :column_width, :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column
 
@@ -36,8 +38,9 @@ module RLayout
         @stroke.thickness = 0.3
       end
       @current_column_index   = 0
-      @heading_columns = @column_count
+      @heading_columns        = @column_count
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
+      @quote_box_size         = options[:quote_box_size] || 0
       create_columns
       if block
         instance_eval(&block)
@@ -418,33 +421,51 @@ module RLayout
     end
 
     def float_quote(options={})
-      text_options = {}
-      frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
-      unless frame_rect
-        if @kind == '기고' || @kind == 'opinion'
-          text_options[:x]       = 0
-          text_options[:text_height_in_lines]  = 5
-          box_height = @body_line_height*5
-          text_options[:y]       = @height - box_height
-          text_options[:width]   = @grid_width*2 - @gutter
-          text_options[:left_margin]   = 3
-          text_options[:right_margin]  = 3
-          # text_options[:stroke_width]  = 1
-        else
-          text_options[:x]       = @grid_width*1 + @gutter
-          text_options[:height]  = @body_line_height*3
-          text_options[:y]       = @height - options[:height]
-          text_options[:width]   = @grid_width*2 + @gutter
-        end
+      return if @quote_box_size == '0'
+      #TODO handle case when quote_box_size if type as 2x3
+      quote_text_lines = @quote_box_size.to_i
+      puts "quote_text_lines:#{quote_text_lines}"
+      box_height = quote_text_lines*2*@body_line_height
+      # box_height += QUOTE_BOX_SPACE_BEFORE*@body_line_height
+      y            = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
+      x            = 0 #TODO
+      text_options           = {}
+      if @kind == '기고' || @kind == 'opinion'
+        text_options[:x]       = x
+        text_options[:space_before_in_lines]  = quote_text_lines
+        text_options[:text_height_in_lines]  = quote_text_lines
+        text_options[:height] = box_height
+        text_options[:y]       = y
+        text_options[:width]   = @grid_width*2 - @gutter
+        text_options[:left_margin]   = 3
+        text_options[:right_margin]  = 3
+        # text_options[:stroke_width]  = 1
+      else
+        text_options[:x]       = @grid_width*1 + @gutter
+        text_options[:height]  = @body_line_height*3
+        text_options[:y]       = @height - options[:height]
+        text_options[:width]   = @grid_width*2 + @gutter
       end
       text_options[:layout_expand]   = nil
       text_options[:is_float]        = true
       text_options[:text_string]     = options['quote']
       text_options[:style_name]      = 'quote'
       text_options[:parent]          = self
-      t = SimpleText.new(text_options)
-      box_height = @body_line_height*5
-      t.height = box_height
+      # text_options[:stroke_width]    = 1
+      text_options[:space_before_in_lines]  = QUOTE_BOX_SPACE_BEFORE
+      text_options[:text_height_in_lines]   = quote_text_lines
+      text_options[:v_alignment]            = 'bottom'
+      text_options[:height_as_body_height_multiples] = false
+      text_options[:height]                 = box_height
+
+      @quote_box = SimpleText.new(text_options)
+      puts "@height:#{@height}"
+      puts "before"
+      @quote_box.puts_frame
+      @quote_box.y = @height - @quote_box.height
+      puts "after"
+      @quote_box.puts_frame
+
     end
 
     def float_personal_image(options={})
