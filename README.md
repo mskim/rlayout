@@ -742,7 +742,7 @@ TODO List
 	- quiz item path/to/quiz_item.yaml
 
 2016 8 28
-	- SimpleText
+	- TitleText
 		- set_text
 			text_layout_manager
 				- set_text_string

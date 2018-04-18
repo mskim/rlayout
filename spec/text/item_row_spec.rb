@@ -1,15 +1,15 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
-describe 'testing SimpleText creation' do
+describe 'testing TitleText creation' do
   before do
     text_options = {text_string: "Some Head Text Here!", font_size: 16, text_color: "brown", x:10, y: 10, width: 400, height: 80}
     image_path = "/Users/mskim/demo_rjob/title_text/tree.jpg"
     options = { width: 500, height: 100, image_path: image_path, text_options: text_options}
-    @tt = SimpleText.new(options)
+    @tt = TitleText.new(options)
   end
 
-  it 'should create SimpleText' do
-    assert @tt.class == SimpleText
+  it 'should create TitleText' do
+    assert @tt.class == TitleText
   end
 
   # it 'should create text_object' do

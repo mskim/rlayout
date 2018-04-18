@@ -103,7 +103,7 @@ module RLayout
       # atts[:layout_length_in_lines] = true
       atts[:single_line_title]    = true
       # options.delete(:parent)
-      @title_object               = SimpleText.new(atts)
+      @title_object               = TitleText.new(atts)
     end
 
     def top_subtitle(options={})
@@ -116,7 +116,7 @@ module RLayout
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       # atts                          = options.merge(atts)
       atts[:parent]               = self
-      @subtitle_object            = SimpleText.new(atts)
+      @subtitle_object            = TitleText.new(atts)
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object
@@ -135,7 +135,7 @@ module RLayout
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts[:parent]                 = self
-      @subtitle_object              = SimpleText.new(atts)
+      @subtitle_object              = TitleText.new(atts)
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object
@@ -163,7 +163,7 @@ module RLayout
       #TODO make this customizatble from font style
       atts[:stroke_sides]       = [0,1,0,0]
       atts[:stroke_width]       = 2
-      SimpleText.new(atts)
+      TitleText.new(atts)
     end
 
 

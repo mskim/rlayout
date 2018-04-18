@@ -417,7 +417,7 @@ module RLayout
       options[:is_float]      = true
       options[:parent]        = self
       #TODO put top_margin and bottom_margin
-      SimpleText.new(options)
+      TitleText.new(options)
     end
 
     def float_quote(options={})
@@ -458,7 +458,7 @@ module RLayout
       text_options[:height_as_body_height_multiples] = false
       text_options[:height]                 = box_height
 
-      @quote_box = SimpleText.new(text_options)
+      @quote_box = QuoteText.new(text_options)
       puts "@height:#{@height}"
       puts "before"
       @quote_box.puts_frame

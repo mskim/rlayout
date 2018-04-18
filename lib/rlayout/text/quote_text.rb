@@ -1,9 +1,8 @@
 module RLayout
-  MAX_SQUEEZE_LIMIT = 1.1
-  # SimpleText single line uniform styled text
+  # TitleText single line uniform styled text
   # used for title, subject_head
   # It can squeeze text
-  class SimpleText < Container
+  class QuoteText < Container
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title

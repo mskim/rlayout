@@ -85,7 +85,7 @@ module RLayout
       # atts[:layout_length_in_lines] = true
       atts[:single_line_title]    = true
       options.delete(:parent)
-      @title_object               = SimpleText.new(atts)
+      @title_object               = TitleText.new(atts)
     end
 
 
