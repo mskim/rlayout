@@ -503,16 +503,17 @@ module RLayout
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path, options)
       elsif RUBY_ENGINE == 'ruby'
-        unless @parent_graphic
-          doc       = HexaPDF::Document.new
-          page      = doc.pages.add
-          canvas    = page.canvas
-          # flip virtically canvas
-          canvas.translate(0.0, page.box.height)
-          canvas.scale(1.0, -1.0)
-          to_pdf(canvas)
-          doc.write(path, optimize: true)
-        end
+        puts "save pdf in ruby"
+        # unless @parent_graphic
+        #   doc       = HexaPDF::Document.new
+        #   page      = doc.pages.add
+        #   canvas    = page.canvas
+        #   # flip virtically canvas
+        #   canvas.translate(0.0, page.box.height)
+        #   canvas.scale(1.0, -1.0)
+        #   to_pdf(canvas)
+        #   doc.write(path, optimize: true)
+        # end
       end
     end
 

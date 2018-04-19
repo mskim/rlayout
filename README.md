@@ -117,9 +117,21 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+2018_4_19
+	- draw_divider_line
+	- fix overflow line count bug
+	- improve body text filtering
+	- fix page_heading
+	- fix editorial image size
+	- upload editorial image to graphic storage
+
+2018_4_19
+	- editorial_22
+	- fix less than a line overflow not showing
+
 2018_4_15
 	- not allow . , ? ! and the the beginning of line
-	
+
 2018_4_14
 	- fix Text < Graphic to Text < Container
 		- use pure Ruby, get rid of NSTextLayoutManager

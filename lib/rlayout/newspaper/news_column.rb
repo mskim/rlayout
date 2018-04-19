@@ -23,14 +23,16 @@ module RLayout
     attr_accessor :grid_rects, :body_line_height
     attr_accessor :complex_rect, :align_body_text, :show_grid_rects
     attr_accessor :article_bottom_space_in_lines
-    attr_accessor :layed_out_line_count
+    attr_accessor :layed_out_line_count, :column_type
 
     def initialize(options={}, &block)
+      # binding.pry
       options[:width]     = 200 unless options[:width]
       options[:height]    = 500 unless options[:height]
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
+      @column_type          = options[:column_type]
       @layed_out_line_count = 0
       @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
       @body_line_height   = options[:body_line_height]

@@ -5,10 +5,10 @@ module RLayout
     attr_accessor :section_path, :section_name, :output_path
     attr_accessor :kind, :is_front_page, :paper_size, :page_heading
     attr_accessor :story_frames, :grid_width, :grid_height, :number_of_stories
-    attr_accessor :body_line_height, :ad_type, :page_heading_margin_in_lines, :lines_per_grid, :draw_divider_line, :divider_line_thickness
+    attr_accessor :body_line_height, :ad_type, :page_heading_margin_in_lines, :lines_per_grid
+    attr_accessor :draw_divider, :divider_line_thickness
     def initialize(options={}, &block)
       super
-
       @section_path   = options[:section_path] if options[:section_path]
       @output_path    = @section_path + "/section.pdf"
       @output_path    = options[:output_path]   if options[:output_path]
@@ -49,16 +49,17 @@ module RLayout
         @top_margin     = section_config['top_margin'] if section_config['top_margin']
         @right_margin   = section_config['right_margin'] if section_config['right_margin']
         @bottom_margin  = section_config['bottom_margin'] if section_config['bottom_margin']
-        @grid_base      = section_config['grid_base'] if section_config['grid_base']
-        @grid_base      = @grid_base.map {|e| e.to_i}
         @ad_type        = section_config[:ad_type]
         @is_front_page  = section_config['is_front_page'] if section_config['is_front_page']
-        @grid_size      = section_config['grid_size']
+        @profile        = section_config['profile']
+        @grid_base      = @profile.split("_").first.split('x')
+        @grid_base      = @grid_base.map {|e| e.to_i}
         @grid_width     = @grid_size[0]
         @grid_height    = @grid_size[1]
         @story_frames   = section_config['story_frames']
         @lines_per_grid = section_config['lines_per_grid'].to_i
         @page_heading_margin_in_lines = section_config['page_heading_margin_in_lines'].to_i
+        @draw_divider   = true  if section_config['draw_divider'] == true
       end
 
       unless @story_frames
@@ -112,6 +113,7 @@ module RLayout
       @layout_info
     end
 
+
     def self.section_pdf(options)
       section_page = self.open(options)
       section_page.merge_layout_pdf(options)
@@ -159,6 +161,7 @@ module RLayout
       end
 
       @page_heading = Image.new(heading_info)
+      create_divider_lines if @draw_divider
 
       if @output_path
         save_pdf(@output_path, options)
@@ -167,6 +170,31 @@ module RLayout
       end
 
       self
+    end
+
+
+    def make_verticla_line(box_frame)
+      grid_max_x = box_frame[0] + box_frame[2]
+      grid_max_y = box_frame[1] + box_frame[3]
+      x_position = grid_max_x*@grid_width + (grid_max_x - 1)*@gutter + @gutter/2
+      y_position = box_frame[1]*@grid_height + @top_margin
+      box_height = box_frame[3]*@grid_height
+      if box_frame[1] == 0
+        heading_margin = @body_line_height*@page_heading_margin_in_lines
+        y_position +=  heading_margin
+        box_height -=  heading_margin
+      end
+      Rectangle.new(parent:self, x:x_position, y:y_position, width:0, height:box_height, stroke_thickness: 0.3)
+    end
+
+    def create_divider_lines
+      @story_frames.each do |box_frame|
+        grid_max_x = box_frame[0] + box_frame[2]
+        grid_max_y = box_frame[1] + box_frame[3]
+        if grid_max_x < @grid_base[0]
+          make_verticla_line(box_frame)
+        end
+      end
     end
 
   end
