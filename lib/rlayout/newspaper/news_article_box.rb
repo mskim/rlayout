@@ -21,14 +21,20 @@ module RLayout
     attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines
     attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :quote_box_size, :personal_image, :news_image
     attr_accessor :column_width, :starting_column_x, :gutter, :column_bottom
-    attr_accessor :overflow_column
+    attr_accessor :overflow_column, :page_number
 
     def initialize(options={}, &block)
       super
+      @page_number = options[:page_number]
       if @kind == '사설' || @kind == 'editorial'
-        @stroke.sides = [1,3,1,1]
-        @left_inset   = @gutter
-        @right_inset  = @gutter
+        if @page_number && @page_number == 22
+          @stroke.sides = [1,3,0,1]
+          @left_inset   = @gutter
+        else
+          @stroke.sides = [1,3,1,1]
+          @left_inset   = @gutter
+          @right_inset  = @gutter
+        end
       elsif @kind == '기고' || @kind == 'opinion'
         # @stroke.sides = [0,1,0,1]
         @stroke.sides = [0,1,0,1]
@@ -56,8 +62,14 @@ module RLayout
     def create_columns
       current_x = @starting_column_x
       if @kind == '사설' || @kind == 'editorial'
-        @left_inset   = EDITORIAL_MARGIN
-        @right_inset  = EDITORIAL_MARGIN
+        if @page_number && @page_number == 22
+          @left_inset   = EDITORIAL_MARGIN
+          @right_inset  = 0
+        else
+          @stroke.sides = [1,3,1,1]
+          @left_inset   = EDITORIAL_MARGIN
+          @right_inset  = EDITORIAL_MARGIN
+        end
         editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
         current_x += @left_inset
         # current_y += @top_margin + @top_inset
