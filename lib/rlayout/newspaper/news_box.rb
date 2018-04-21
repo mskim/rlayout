@@ -75,6 +75,7 @@ module RLayout
       @body_line_height     = @grid_height/@lines_per_grid
       @column_line_count    = @row_count*@lines_per_grid
       @column_line_count   += @extended_line_count
+      @column_line_count   -= @pushed_line_count
 
       if options[:height]
         @height = options[:height]
@@ -86,9 +87,6 @@ module RLayout
       if @page_heading_margin_in_lines > 0
         @page_heading_margin  = @body_line_height*@page_heading_margin_in_lines
         create_page_heading_place_holder(@page_heading_margin)
-      elsif @pushed_line_count > 0
-        @page_heading_margin  = @body_line_height*@pushed_line_count
-        @page_heading_place_holder = Graphic.new(parent:self, width: @width, height:@page_heading_margin, is_float:true)
       end
 
       self

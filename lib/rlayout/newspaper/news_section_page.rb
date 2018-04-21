@@ -103,8 +103,11 @@ module RLayout
         if grid_frame.last =~/^extend/
           @extened_line_count = grid_frame.last.split("_")[1].to_i
           info[:height] += @body_line_height*@extened_line_count
+        elsif grid_frame.last =~/^push/
+          @pushed_line_count = grid_frame.last.split("_")[1].to_i
+          info[:y]          += @body_line_height*@pushed_line_count
+          info[:height]     -= @body_line_height*@pushed_line_count
         end
-
         info[:layout_expand]  = nil
         info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
         # info[:image_fit_type] = IMAGE_FIT_TYPE_ORIGINAL
