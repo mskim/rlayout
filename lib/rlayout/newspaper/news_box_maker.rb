@@ -175,7 +175,6 @@ module RLayout
         # puts "@news_box.page_number.class:#{@news_box.page_number.class}"
         # puts "@news_box.kind:#{@news_box.kind}"
         if @news_box.is_a?(NewsArticleBox) && @news_box.respond_to?(:page_number) && @news_box.page_number == 22 # s&& @news_box.kind == '샤셜'
-          puts "we have 22"
           @news_box.stroke[:sides] = [0,1,0,1]
         else
           puts "we dont' haves"

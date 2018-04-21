@@ -102,7 +102,7 @@ module RLayout
     end
 
     def self.sample
-      frequncy = [1,2,2,3,3,3,3, 4,4,4,,4, 5,5,6]
+      frequncy = [1,2,2,3,3,3,3, 4,4,4,4, 5,5,6]
       #code
     end
 
