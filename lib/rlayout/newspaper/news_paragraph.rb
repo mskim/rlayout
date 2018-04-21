@@ -311,39 +311,23 @@ module RLayout
        # this is for variable line height
 	     # 3. Each time with new token, check the height change, tallest_token and adjust line height.
     # end
-    def layout_lines(text_box)
+    def layout_lines(current_line, options={})
+      @current_line = current_line
       # @current_line = text_column.current_line
-      @current_line = text_box.next_text_line
-      return true unless @current_line  # this mean overflow
-      if @line_count == 0
-        @current_line.set_paragraph_info(self, "first_line")
-      end
       token = tokens.shift
       if token && token.token_type == 'diamond_emphasis'
         puts "first token is diamond_emphasis"
         # if first token is diamond emphasis, no head indent
         @current_line.set_paragraph_info(self, "middle_line")
       elsif @markup == 'h2' || @markup == 'h3' ||  @markup == 'h1'
-        # puts "@current_line.line_index:#{@current_line.line_index}"
-        # puts "@current_line.last_line_in_column?:#{@current_line.last_line_in_column?}"
-        # puts "@current_line.first_line_in_column?:#{@current_line.first_line_in_column?}"
-        #TODO
-        # if @current_line.first_text_line_in_column?
-        #   puts "firtst line"
-        #   puts "@current_line:#{@current_line}"
-        # else
-        #   @current_line = text_box.go_to_next_line
-        #   puts "@current_line:#{@current_line}"
-        # end
-        # @current_line = text_box.go_to_next_line
+
         unless @current_line.first_text_line_in_column?
-          text_box.current_column.go_to_next_line
-          text_box.current_column.layed_out_line_count += 1
+          @current_line = @current_line.next_text_line
+          @current_line.column.layed_out_line_count += 1
         end
-        @current_line = text_box.next_text_line
+        @current_line = @current_line.next_text_line
         return true unless @current_line
         @current_line.set_paragraph_info(self, "middle_line")
-
       end
 
       while token
@@ -352,15 +336,19 @@ module RLayout
         if result.class == TextToken
           @current_line.align_tokens
           @current_line.room = 0
-          @current_line = text_box.next_text_line
-          if @current_line
+          new_line = @current_line.next_text_line
+
+          if new_line
+            @current_line = new_line
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
             @current_line.column.layed_out_line_count += 1
             token = result
           else
+            @current_line = @current_line.parent_graphic.add_new_line
             tokens.unshift(result) #stick the unplace token back to the tokens
-            return true # overflow
+            token = result
+
             # break #reached end of column
           end
         # entire token placed succefully, returned result is true
@@ -370,14 +358,15 @@ module RLayout
         else
           @current_line.align_tokens
           @current_line.room = 0
-          @current_line = text_box.next_text_line
-          if @current_line
+          new_line = @current_line.next_line
+          if new_line
+            @current_line = new_line
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
             @current_line.column.layed_out_line_count += 1
           else
+            @current_line = @current_line.parent_graphic.add_new_line
             tokens.unshift(token) #stick the unplace token back to the tokens
-            return true # overflow is true
             # break #reached end of column
           end
         end
@@ -385,9 +374,7 @@ module RLayout
       @current_line.set_paragraph_info(self, "last_line")
       @current_line.align_tokens
       # move cursor to new line
-      text_box.current_column.go_to_next_line
-      text_box.next_text_line
-      false # no  overflow
+      @current_line.next_line
     end
 
 
@@ -500,6 +487,22 @@ module RLayout
     def filter_list_options(h)
       list_only = Hash[h.select{|k,v| [k, v] if k=~/^list_/}]
       Hash[list_only.collect{|k,v| [k.to_s.sub("list_","").to_sym, v]}]
+    end
+
+    def self.sample
+      tokens = []
+      100.times do
+        tokens << TextToken.sample
+      end
+      NewsParagraph.new(token_array: tokens)
+    end
+
+    def self.sample_para_list(options={})
+      list = []
+      options[:count].times do
+        list << NewsParagraph.sample
+      end
+      list
     end
 
   end

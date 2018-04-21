@@ -53,7 +53,6 @@ module RLayout
 
 
     def editorial_title(options)
-      puts "we are at editorial_title"
       title_options = {}
       title_options[:parent]          = self
       title_options[:is_float]        = true
@@ -143,7 +142,6 @@ module RLayout
     end
 
     def subject_head(options={})
-      puts "we are at subject_head"
       atts = {}
       if @heading_columns > 5
         atts[:style_name] = 'subject_head_L'

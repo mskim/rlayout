@@ -18,6 +18,7 @@ module RLayout
     attr_accessor :left_indent, :right_indent, :para_style, :text_alignment, :starting_position
     attr_accessor :x, :y, :width, :height, :total_token_width, :room
     attr_accessor :text_area, :text_area_width, :has_text, :space_width, :debug
+    attr_accessor :next_line, :layed_out_line
     def	initialize(options={})
       # options[:stroke_color]      = 'red'
       # options[:stroke_width]      = 1
@@ -35,7 +36,15 @@ module RLayout
       @text_area        = [@x, @y, @width, @height]
       @text_area_width  = @width
       @room             = @text_area[2]
+      @layed_out_line   = false
       self
+    end
+
+    def next_text_line
+      return self if has_text_room?
+      next_text_line = next_line.next_text_line
+      return next_line.next_text_line if next_text_line
+      nil
     end
 
     def column
@@ -130,6 +139,7 @@ module RLayout
         @graphics << token
         @room -= token.width
         @room -= @space_width
+        @layed_out_line = true
         return true
       else
         return false if options[:do_not_break]
@@ -149,6 +159,10 @@ module RLayout
         return false
       end
       return false
+    end
+
+    def layed_out_line?
+      @layed_out_line == true
     end
 
     def token_width_sum

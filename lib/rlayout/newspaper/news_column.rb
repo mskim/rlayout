@@ -26,23 +26,23 @@ module RLayout
     attr_accessor :layed_out_line_count, :column_type
 
     def initialize(options={}, &block)
-      # binding.pry
       options[:width]     = 200 unless options[:width]
       options[:height]    = 500 unless options[:height]
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
       @column_type          = options[:column_type]
+      @current_line_index   = 0
       @layed_out_line_count = 0
       @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
-      @body_line_height   = options[:body_line_height]
-      @line_count         = options[:column_line_count]
-      @line_count         -= @article_bottom_space_in_lines
-      @height             -= @body_line_height*@article_bottom_space_in_lines
-      @current_position   = @top_margin + @top_inset
-      @show_grid_rects    = options[:show_grid_rects] || true
-      @layout_space       = options.fetch(:column_layout_space, 0)
-      @complex_rect       = false
+      @body_line_height     = options[:body_line_height]
+      @line_count           = options[:column_line_count]
+      @line_count           -= @article_bottom_space_in_lines
+      @height               -= @body_line_height*@article_bottom_space_in_lines
+      @current_position     = @top_margin + @top_inset
+      @show_grid_rects      = options[:show_grid_rects] || true
+      @layout_space         = options.fetch(:column_layout_space, 0)
+      @complex_rect         = false
       create_lines
       if block
         instance_eval(&block)
@@ -50,25 +50,51 @@ module RLayout
       self
     end
 
+    def column_index
+      return 0 unless @parent_graphic
+      @parent_graphic.graphics.index(self)
+    end
+
+    def unoccupied_lines_count
+      unoccupied_lines_count = 0
+      @graphics.reverse.each do |line_in_reverse|
+        break if line_in_reverse.layed_out_line?
+        unoccupied_lines_count += 1
+      end
+      unoccupied_lines_count
+    end
+
     def overflow_text
+      puts __method__
+      puts "@layed_out_line_count:#{@layed_out_line_count}"
       text = ""
-      @layed_out_line_count.times do |i|
+      @graphics.each do |line|
         line_text = "<p>"
-        line_text += @graphics[i].line_string
+        line_text += line.line_string
         line_text += "</p>"
         text      += line_text
       end
       text
     end
 
+    def column_text
+      column_text = []
+      @graohics.each do |line|
+        column_text << line.line_string
+      end
+    end
+
     def create_lines(options={})
       current_x   = 0
       current_y   = 0
       line_width  = @width - @left_inset - @right_inset
+      previoust_line = nil
       @line_count.times do
         options = {parent:self, x: current_x, y: current_y , width: line_width, height: @body_line_height}
         line = NewsLineFragment.new(options)        # @graphics << line
+        previoust_line.next_line = line if previoust_line
         current_y += @body_line_height
+        previoust_line = line
       end
       @current_line_index = 0
       @current_line       = @graphics[@current_line_index]
@@ -119,28 +145,6 @@ module RLayout
       end
     end
 
-    # def next_line(line)
-    #   line_index = @graphics.index(line)
-    #   next_line_index = line_index + 1
-    #   next_iind = @graphics[next_line_index]
-    # end
-    #
-    # def next_text_line(line)
-    #   puts __method__
-    #   line_index = @graphics.index(line)
-    #   next_line_index = line_index + 1
-    #   next_iine = next_line(line)
-    #   return nil unless next_iine
-    #   return next_iine if next_iine.has_text_room?
-    #   #TODO
-    #   line = next_iine
-    #   while line do
-    #     line = next_line(line)
-    #     return nil unless line
-    #     return line if line.has_text_room?
-    #   end
-    # end
-
     def get_line_with_text_room
       return nil unless @current_line
       if @current_line.has_text_room?
@@ -159,14 +163,6 @@ module RLayout
     def column_line_string
       line_text = @graphics.map{|l| l.line_string}
       line_text.join("\n")
-    end
-
-    # move the current_line to the next line
-    def go_to_next_line
-      return false       if @current_line_index >= @line_count
-      @current_line_index += 1
-      @current_line = @graphics[@current_line_index]
-      @current_line
     end
 
     def has_room?

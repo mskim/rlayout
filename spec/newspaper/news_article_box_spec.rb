@@ -25,11 +25,9 @@ describe 'overlapping floats' do
     @svg_path       = @article_path + "/output.svg"
     @maker          = NewsBoxMaker.new(article_path: @article_path)
     @news_box       = @maker.news_box
-    puts "@news_box.stroke:#{@news_box.stroke}"
     @heading        = @news_box.floats.first
     @image          = @news_box.floats[1]
     @first_column   = @news_box.graphics.first
-    puts "@first_column.stroke:#{@first_column.stroke}"
     @second_column  = @news_box.graphics[1]
     @third_column   = @news_box.graphics[2]
     @overflow_column = @news_box.overflow_column

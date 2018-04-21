@@ -21,15 +21,14 @@ module RLayout
     attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines
     attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :quote_box_size, :personal_image, :news_image
     attr_accessor :column_width, :starting_column_x, :gutter, :column_bottom
-    attr_accessor :overflow_column, :page_number
+    attr_accessor :overflow_column, :page_number, :char_count
 
     def initialize(options={}, &block)
       super
+      @overflow    = false
       @page_number = options[:page_number]
-      puts "@page_number:#{@page_number}"
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
-          puts "we have editorial at page 22"
           @stroke.sides = [0,1,0,1]
           @left_inset   = @gutter
         else
@@ -56,7 +55,6 @@ module RLayout
       if @floats.length > 0
         layout_floats!
       end
-      puts "in NewsArticleBox @stroke.sides:#{@stroke.sides}"
       self
     end
 
@@ -94,7 +92,19 @@ module RLayout
         @overflow_column = NewsColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @body_line_height*100, column_line_count: 100, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
       end
       @column_bottom = max_y(@graphics.first.frame_rect)
-      # @graphics.first.puts_frame
+      link_column_lines
+    end
+
+    def link_column_lines
+      previous_column_last_line = nil
+      @graphics.each do |column|
+        first_line                          = column.graphics.first
+        last_line                           = column.graphics.last
+        previous_column_last_line.next_line = first_line if previous_column_last_line
+        previous_column_last_line           = last_line
+      end
+
+      previous_column_last_line.next_line   = @overflow_column.graphics.first
     end
 
     def is_top_story?
@@ -139,22 +149,15 @@ module RLayout
     end
 
     def article_box_unoccupied_lines_count
-      column_index = @current_column.graphics_index
-      return 0 unless column_index
       if @kind == '사설' || @kind == 'editorial'
-        @graphics[0].empty_lines
-      elsif column_index == (@column_count - 1)
-        # current position is at last column
-        @current_column.empty_lines
-      else
-        # current position is before last column
-        unoccupied_lines_count = 0
-        (column_index..(@column_count - 1)).to_a.each do |column_index|
-          column = @graphics[column_index]
-          unoccupied_lines_count += column.empty_lines
-        end
-        unoccupied_lines_count
+        return @graphics[0].unoccupied_lines_count
       end
+      unoccupied_lines_count = 0
+      @graphics.reverse.each do |column_from_last|
+        break if column_from_last.graphics.last.layed_out_line?
+        unoccupied_lines_count += column_from_last.unoccupied_lines_count
+      end
+      unoccupied_lines_count
     end
 
     def article_box_lines_count
@@ -175,6 +178,7 @@ module RLayout
       article_info[:top_position]       = @top_position
       article_info[:extended_line_count]= @extended_line_count if @extended_line_count
       article_info[:pushed_line_count]  = @pushed_line_count if @pushed_line_count
+
       if @underflow
         # article_info[:underflow]              = @underflow
         article_info[:empty_lines]            = @empty_lines
@@ -184,7 +188,7 @@ module RLayout
         article_info[:overflow_text]          = overflow_text
       else
         # article_info[:lines_count]            = article_box_lines_count
-        article_info[:current_characters]     = article_box_character_count
+        # article_info[:current_characters]     = article_box_character_count
         # article_info[:suggested_characters]   = suggested_number_of_characters
         # article_info[:needed_chars]           = suggested_number_of_characters - article_box_character_count
       end
@@ -192,110 +196,38 @@ module RLayout
       File.open(info_path, 'w'){|f| f.write article_info.to_yaml}
     end
 
+    def count_chars
+      #code
+    end
+
     def overflow_text
-      return @overflow_column.overflow_text if @over_flow
+      return @overflow_column.overflow_text #if @over_flow
       ""
     end
 
-    def go_to_next_line
-      if @overflow || @current_column_index >= @graphics.length
-        @current_column = @overflow_column
-        if next_line = @current_column.go_to_next_line
-          return next_line
-        else
-          return nil
-        end
-      end
-      @current_column = @graphics[@current_column_index]
-      if next_line = @current_column.go_to_next_line
-        return next_line
-      else
-        @current_column_index += 1
-        @current_column = @graphics[@current_column_index]
-        if next_line = @current_column.go_to_next_line
-          return next_line
-        else
-          return nil
-        end
-        #code
-      end
-    end
-
     def first_text_line
-      @current_column = @graphics[@current_column_index]
-      if line = @current_column.get_line_with_text_room
-        return line
+      @graphics.each do |column|
+        line = column.first_text_line_in_column
+        return line if line
       end
-    end
-
-    # def next_text_line(current_line)
-    #   return nil unless current_line
-    #   return nil unless current_line.parent
-    #   @current_column = current_line.parent
-    #   if line = @current_column.next_text_line(current_line)
-    #     return line
-    #   else
-    #     @current_column_index +=1
-    #     return nil if @current_column_index >= @graphics.length
-    #     @current_column = @graphics[@current_column_index]
-    #     if line = @current_column.get_line_with_text_room
-    #       return line
-    #     end
-    #   end
-    #   nil
-    # end
-
-
-    def next_text_line
-      @current_column = @graphics[@current_column_index]
-      unless @current_column
-        @over_flow      = true
-        @current_column = @overflow_column
-      end
-
-      return nil unless @current_column
-      if line = @current_column.get_line_with_text_room
-        return line
-      else
-        @current_column_index +=1
-        return nil if @current_column_index >= @graphics.length
-        @current_column = @graphics[@current_column_index]
-        if line = @current_column.get_line_with_text_room
-          return line
-        end
-      end
-      nil
-    end
-
-    def current_location
-      [@current_column_index, @current_column.current_line_index]
+      @overflow_column.graphics.first
     end
 
     def save_appened_story
       #code
     end
 
-    def layout_items(flowing_items, options={})
-      @column_index       = 0
-      @current_column     = @graphics[@column_index]
-      @overflow = false
-      while @item = flowing_items.shift do
-        break if @overflow = @item.layout_lines(self)
-      end
 
+    def layout_items(flowing_items, options={})
+      current_line = first_text_line
+      while @item = flowing_items.shift do
+        current_line = @item.layout_lines(current_line)
+      end
+      @current_column  = current_line.column
+      @overflow  = true if @overflow_column.graphics.first.layed_out_line?
       if @overflow
-        @current_column_index += 1
-        @current_column       = @overflow_column
-        @empty_lines          = 0
-        @item.layout_lines(self)
-        flowing_items.shift
-        if flowing_items.length > 0
-          flowing_items.each do |overflow_para|
-            overflow_para.layout_lines(self)
-          end
-        end
+
       else
-        @current_column = @graphics[@current_column_index] unless @current_column
         @empty_lines    = article_box_unoccupied_lines_count
         @underflow      = true if @empty_lines > 0
       end

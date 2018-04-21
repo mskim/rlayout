@@ -83,9 +83,16 @@ module RLayout
 
     end
 
+    def column_index
+      0
+    end
+
     def add_new_line
-      @current_line       = NewsLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
+      new_line      = NewsLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
+      @current_line.next_line = new_line if @current_line
+      @current_line = new_line
       @current_line_y    += @current_line.height + @line_space
+      @current_line
     end
 
     def line_height_sum

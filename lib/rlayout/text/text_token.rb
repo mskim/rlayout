@@ -101,6 +101,11 @@ module RLayout
       self
     end
 
+    def self.sample
+      frequncy = [1,2,2,3,3,3,3, 4,4,4,,4, 5,5,6]
+      #code
+    end
+
     def tracking_count
       return 0 unless @string
       @string.length - 1
