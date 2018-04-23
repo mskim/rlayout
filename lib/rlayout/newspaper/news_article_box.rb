@@ -29,8 +29,9 @@ module RLayout
       @page_number = options[:page_number]
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
+          puts "@page_number:#{@page_number}"
           @stroke.sides = [0,1,0,1]
-          @left_inset   = @gutter*2
+          @left_inset   = @gutter
         else
           @stroke.sides = [1,3,1,1]
           @left_inset   = @gutter
@@ -64,12 +65,12 @@ module RLayout
       current_x = @starting_column_x
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
-          @left_inset   = 0
+          @left_inset   = @gutter*2
           @stroke_sides = [0,1,0,1]
           @right_inset  = 0
           @column_type = "editorial_22"
         else
-          @stroke.sides = [0,3,0,1]
+          @stroke_sides = [0,1,0,1]
           @left_inset   = EDITORIAL_MARGIN
           @right_inset  = EDITORIAL_MARGIN
           @column_type = "editorial"

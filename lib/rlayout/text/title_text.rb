@@ -6,12 +6,13 @@ module RLayout
   class TitleText < Container
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
-    attr_accessor :single_line_title, :force_fit_title
+    attr_accessor :single_line_title, :force_fit_title, :token_union_style
     def initialize(options={})
       @string                 = options.delete(:text_string)
       options[:fill_color]    = options.fetch(:line_color, 'clear')
       # options[:stroke_width]  = 1
       super
+      @token_union_style       = options[:token_union_style]
       @tokens                 = []
       @room                   = @width
       @single_line_title      = options[:single_line_title]

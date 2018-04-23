@@ -88,7 +88,7 @@ module RLayout
     attr_accessor :tokens, :token_heights_are_eqaul
     attr_accessor :para_string, :para_style, :list_style
     attr_accessor :text_column, :grid_height, :article_type
-    attr_accessor :body_line_height, :split, :line_count
+    attr_accessor :body_line_height, :split, :line_count, :token_union_style
     def initialize(options={})
       @tokens = []
       #simple, drop_cap, drop_cap_image, math, with_image, with_math
@@ -317,18 +317,14 @@ module RLayout
       # @current_line = text_column.current_line
       token = tokens.shift
       if token && token.token_type == 'diamond_emphasis'
-        puts "first token is diamond_emphasis"
+        # puts "first token is diamond_emphasis"
         # if first token is diamond emphasis, no head indent
-        puts @current_line.set_paragraph_info(self, "middle_line")
+        @current_line.set_paragraph_info(self, "middle_line")
       elsif @markup == 'h2' || @markup == 'h3' ||  @markup == 'h1'
-        puts "++++++++++ we have h2"
-        puts "@para_string:#{@para_string}"
-        puts "@current_line.first_text_line_in_column?:#{@current_line.first_text_line_in_column?}"
         unless @current_line.first_text_line_in_column?
-          puts "@current_line:#{@current_line}"
           @current_line = @current_line.next_text_line
           @current_line.layed_out_line = true
-          puts "after @current_line:#{@current_line}"
+          @current_line.token_union_style = @token_union_style if @token_union_style
         end
         # @current_line = @current_line.next_text_line
         # return true unless @current_line
@@ -457,6 +453,15 @@ module RLayout
       if @markup =='h1'
         if @article_type == '사설' || @article_type == 'editorial'
           style_hash = current_style['reporter_editorial']
+          @graphic_attributes = style_hash['graphic_attributes']
+          if @graphic_attributes == {}
+          elsif @graphic_attributes == ""
+          elsif @graphic_attributes.class == String
+            @graphic_attributes = eval(@graphic_attributes)
+          end
+          if @graphic_attributes.class == Hash
+            @token_union_style = @graphic_attributes['token_union_style']
+          end
         else
           style_hash = current_style['reporter']
         end

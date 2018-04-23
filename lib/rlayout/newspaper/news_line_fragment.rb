@@ -19,12 +19,15 @@ module RLayout
     attr_accessor :x, :y, :width, :height, :total_token_width, :room
     attr_accessor :text_area, :text_area_width, :has_text, :space_width, :debug
     attr_accessor :next_line, :layed_out_line
+    attr_accessor :line_style, :token_union_rect, :token_union_style, :token_style
+
     def	initialize(options={})
       # options[:stroke_color]      = 'red'
       # options[:stroke_width]      = 1
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
       # options[:fill_color]        = options.fetch(:line_color, 'lightGray')
+
       # options[:stroke_width]      = 0.5
       super
       @debug            = options[:debug]
@@ -37,6 +40,7 @@ module RLayout
       @text_area_width  = @width
       @room             = @text_area[2]
       @layed_out_line   = false
+      @token_union_style = @parent_graphic.token_union_style if @parent_graphic.respond_to?(:token_union_style)
       self
     end
 
@@ -46,6 +50,24 @@ module RLayout
       next_text_line = l_next.next_text_line
       return next_text_line if next_text_line
       nil
+    end
+
+    def create_tokens_frame
+      return unless @graphics
+      return if @graphics.length == 0
+      return unless @token_union_style
+      tokens = @graphics.dup
+      token_union_options               = {}
+      token_union_options               = @token_union_style.dup if @token_union_style
+      token_union_options[:fill_color]  = 'clear'
+      token_union_options[:x]           = tokens.first.x
+      token_union_options[:y]           = tokens.first.y
+      token_union_options[:y]           = tokens.first.y - token_union_options[:Line_sapce_befpre] if token_union_options[:Line_sapce_befpre]
+      max_x                             = tokens.last.x + tokens.last.width
+      token_union_options[:width]       = max_x - token_union_options[:x]
+      token_union_options[:height]      = tokens.first.height
+      token_union_options[:parent]      = self
+      @token_union_rect                 = Rectangle.new(token_union_options)
     end
 
     def column
@@ -219,7 +241,7 @@ module RLayout
           x += token.width + @space_width
         end
       end
-
+      create_tokens_frame
     end
 
     def line_string

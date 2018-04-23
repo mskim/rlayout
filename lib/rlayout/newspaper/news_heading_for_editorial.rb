@@ -18,6 +18,7 @@ module RLayout
     def set_editorial_heading_content(options)
       @height_in_lines            = 0
       if options['subject_head'] && options['subject_head'] != ""
+        options[:token_union_style] = {:stroke_width=> 2, :stroke_sides=>[0,1,0,0], :Line_sapce_befpre=> 13}
         @subject_head_object      = subject_head(options)
         @height_in_lines          +=@subject_head_object.height_in_lines    unless @subject_head_object.nil?
       end
@@ -143,6 +144,7 @@ module RLayout
 
     def subject_head(options={})
       atts = {}
+      atts[:token_union_style]   = options[:token_union_style]
       if @heading_columns > 5
         atts[:style_name] = 'subject_head_L'
       elsif @heading_columns > 3
@@ -162,7 +164,7 @@ module RLayout
       atts[:layout_length_in_lines] = true
       #TODO make this customizatble from font style
       atts[:stroke_sides]       = [0,1,0,0]
-      atts[:stroke_width]       = 2
+      atts[:stroke_width]       = 0.3
       TitleText.new(atts)
     end
 
