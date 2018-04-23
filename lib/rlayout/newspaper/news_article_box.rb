@@ -30,7 +30,7 @@ module RLayout
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
           @stroke.sides = [0,1,0,1]
-          @left_inset   = @gutter
+          @left_inset   = @gutter*2
         else
           @stroke.sides = [1,3,1,1]
           @left_inset   = @gutter

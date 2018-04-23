@@ -23,7 +23,7 @@ module RLayout
     attr_accessor :grid_rects, :body_line_height
     attr_accessor :complex_rect, :align_body_text, :show_grid_rects
     attr_accessor :article_bottom_space_in_lines
-    attr_accessor :layed_out_line_count, :column_type
+    attr_accessor :column_type
 
     def initialize(options={}, &block)
       options[:width]     = 200 unless options[:width]
@@ -33,7 +33,6 @@ module RLayout
       super
       @column_type          = options[:column_type]
       @current_line_index   = 0
-      @layed_out_line_count = 0
       @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
       @body_line_height     = options[:body_line_height]
       @line_count           = options[:column_line_count]
@@ -64,9 +63,13 @@ module RLayout
       unoccupied_lines_count
     end
 
+    def layed_out_line_count
+      @graphics.select{|line| line.layed_out_line}.length
+    end
+
     def overflow_text
       puts __method__
-      puts "@layed_out_line_count:#{@layed_out_line_count}"
+      puts "layed_out_line_count:#{layed_out_line_count}"
       text = ""
       @graphics.each do |line|
         line_text = "<p>"

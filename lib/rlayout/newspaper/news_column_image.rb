@@ -25,7 +25,7 @@ module RLayout
       @heading   = @parent_graphic.floats.first
       if options[:width_in_colum] == 'half'
         @first_column           = @parent_graphic.graphics.first
-        @x                      = @first_column.x + @first_column.width/2 - 20
+        @x                      = @first_column.x + @first_column.width/2
         @height                 = 85
         @width                  = 170
         bottom_room             = options[:bottom_room_margin]*@parent_graphic.body_line_height

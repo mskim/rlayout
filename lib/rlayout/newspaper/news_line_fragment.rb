@@ -41,9 +41,10 @@ module RLayout
     end
 
     def next_text_line
-      return self if has_text_room?
-      next_text_line = next_line.next_text_line
-      return next_line.next_text_line if next_text_line
+      l_next = next_line
+      return l_next if l_next.has_text_room?
+      next_text_line = l_next.next_text_line
+      return next_text_line if next_text_line
       nil
     end
 

@@ -313,20 +313,25 @@ module RLayout
     # end
     def layout_lines(current_line, options={})
       @current_line = current_line
+      @current_line.set_paragraph_info(self, "first_line")
       # @current_line = text_column.current_line
       token = tokens.shift
       if token && token.token_type == 'diamond_emphasis'
         puts "first token is diamond_emphasis"
         # if first token is diamond emphasis, no head indent
-        @current_line.set_paragraph_info(self, "middle_line")
+        puts @current_line.set_paragraph_info(self, "middle_line")
       elsif @markup == 'h2' || @markup == 'h3' ||  @markup == 'h1'
-
+        puts "++++++++++ we have h2"
+        puts "@para_string:#{@para_string}"
+        puts "@current_line.first_text_line_in_column?:#{@current_line.first_text_line_in_column?}"
         unless @current_line.first_text_line_in_column?
+          puts "@current_line:#{@current_line}"
           @current_line = @current_line.next_text_line
-          @current_line.column.layed_out_line_count += 1
+          @current_line.layed_out_line = true
+          puts "after @current_line:#{@current_line}"
         end
-        @current_line = @current_line.next_text_line
-        return true unless @current_line
+        # @current_line = @current_line.next_text_line
+        # return true unless @current_line
         @current_line.set_paragraph_info(self, "middle_line")
       end
 
@@ -342,7 +347,6 @@ module RLayout
             @current_line = new_line
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
-            @current_line.column.layed_out_line_count += 1
             token = result
           else
             @current_line = @current_line.parent_graphic.add_new_line
@@ -363,7 +367,6 @@ module RLayout
             @current_line = new_line
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
-            @current_line.column.layed_out_line_count += 1
           else
             @current_line = @current_line.parent_graphic.add_new_line
             tokens.unshift(token) #stick the unplace token back to the tokens
