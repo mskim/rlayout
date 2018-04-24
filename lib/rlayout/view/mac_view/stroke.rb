@@ -151,6 +151,13 @@ class GraphicViewMac < NSView
       end
       # stroke each side
       if @stroke[:sides] != [1,1,1,1] #TODO check for rectangle or roundrect
+        # open_left_inset_line do not draw top and bottom inset area
+
+        # TODO open_right_inset_line
+        @open_left_inset_line = @stroke[:sides].length >= 4 && @stroke[:sides].last == "open_left_inset_line"
+        puts "we have open_left_inset_line" if @open_left_inset_line
+        puts "rect.left_inset:#{@left_inset}"
+
         if @stroke[:sides][0] > 0
 
           # puts  "draw left side"
@@ -165,9 +172,7 @@ class GraphicViewMac < NSView
           # puts  "draw top"
           path= NSBezierPath.bezierPath
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][1])
-          if @stroke[:sides].length > 4 && @stroke[:sides][4] == "open_left_inset_area"
-            puts "we have open_left_inset_area"
-            puts "rect.left_inset:#{@left_inset}"
+          if @open_left_inset_line
             path.moveToPoint(NSPoint.new(rect.origin.x + @left_inset, rect.origin.y))
           else
             path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y))
@@ -187,9 +192,7 @@ class GraphicViewMac < NSView
           path= NSBezierPath.bezierPath
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][3])
           # path.setLineWidth(2*@stroke[:sides][3])
-          if @stroke[:sides].length > 4 && @stroke[:sides][4] == "open_left_inset_area"
-            puts "we have open_left_inset_area"
-            puts "rect.left_inset:#{@left_inset}"
+          if @open_left_inset_line
             path.moveToPoint(NSPoint.new(rect.origin.x + @left_inset, rect.origin.y + rect.size.height))
             path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
             path.stroke

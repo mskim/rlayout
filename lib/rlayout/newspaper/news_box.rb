@@ -116,7 +116,7 @@ module RLayout
           return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
         end
       else
-        puts "get_stroke_rect for ruby mode"
+        [@x, @y, @width, @height]
       end
     end
 
@@ -140,6 +140,4 @@ module RLayout
       self
     end
   end
-
-
 end
