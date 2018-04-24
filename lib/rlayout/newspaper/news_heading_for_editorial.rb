@@ -18,7 +18,7 @@ module RLayout
     def set_editorial_heading_content(options)
       @height_in_lines            = 0
       if options['subject_head'] && options['subject_head'] != ""
-        options[:token_union_style] = {:stroke_width=> 2, :stroke_sides=>[0,1,0,0], :Line_sapce_befpre=> 13}
+        options[:token_union_style] = {:stroke_width=> 2, :stroke_sides=>[0,1,0,0], :top_line_space=> 14}
         @subject_head_object      = subject_head(options)
         @height_in_lines          +=@subject_head_object.height_in_lines    unless @subject_head_object.nil?
       end

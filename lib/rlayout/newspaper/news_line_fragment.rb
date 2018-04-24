@@ -62,7 +62,7 @@ module RLayout
       token_union_options[:fill_color]  = 'clear'
       token_union_options[:x]           = tokens.first.x
       token_union_options[:y]           = tokens.first.y
-      token_union_options[:y]           = tokens.first.y - token_union_options[:Line_sapce_befpre] if token_union_options[:Line_sapce_befpre]
+      token_union_options[:y]           = tokens.first.y - token_union_options[:top_line_space] if token_union_options[:top_line_space]
       max_x                             = tokens.last.x + tokens.last.width
       token_union_options[:width]       = max_x - token_union_options[:x]
       token_union_options[:height]      = tokens.first.height

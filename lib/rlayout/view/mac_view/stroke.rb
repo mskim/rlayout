@@ -8,6 +8,7 @@ class GraphicViewMac < NSView
     @stroke         = graphic.stroke
     @stroke_rect    = graphic.get_stroke_rect
     @line_position  = 1
+    @left_inset     = graphic.left_inset + 2
     r               = ns_bounds_rect(graphic)
     drawLine(r, withTrap:0)
     draw_rules(r) if @stroke[:rule]
@@ -151,6 +152,7 @@ class GraphicViewMac < NSView
       # stroke each side
       if @stroke[:sides] != [1,1,1,1] #TODO check for rectangle or roundrect
         if @stroke[:sides][0] > 0
+
           # puts  "draw left side"
           path= NSBezierPath.bezierPath
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][0])
@@ -158,11 +160,18 @@ class GraphicViewMac < NSView
           path.lineToPoint(NSPoint.new(rect.origin.x , rect.origin.y + rect.size.height))
           path.stroke
         end
+
         if @stroke[:sides][1] > 0
           # puts  "draw top"
           path= NSBezierPath.bezierPath
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][1])
-          path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y))
+          if @stroke[:sides].length > 4 && @stroke[:sides][4] == "open_left_inset_area"
+            puts "we have open_left_inset_area"
+            puts "rect.left_inset:#{@left_inset}"
+            path.moveToPoint(NSPoint.new(rect.origin.x + @left_inset, rect.origin.y))
+          else
+            path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y))
+          end
           path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y))
           path.stroke
         end
@@ -178,6 +187,15 @@ class GraphicViewMac < NSView
           path= NSBezierPath.bezierPath
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][3])
           # path.setLineWidth(2*@stroke[:sides][3])
+          if @stroke[:sides].length > 4 && @stroke[:sides][4] == "open_left_inset_area"
+            puts "we have open_left_inset_area"
+            puts "rect.left_inset:#{@left_inset}"
+            path.moveToPoint(NSPoint.new(rect.origin.x + @left_inset, rect.origin.y + rect.size.height))
+            path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
+            path.stroke
+            return
+          end
+
           if @graphic.class == RLayout::NewsArticleBox
             # path.moveToPoint(NSPoint.new(@graphic.border_x, rect.origin.y + rect.size.height - 1.5))
             path.moveToPoint(NSPoint.new(@graphic.border_x, rect.origin.y + rect.size.height))
@@ -194,7 +212,7 @@ class GraphicViewMac < NSView
         end
 
         # if [1,1,1,1,1,1] drawing x mark
-        if @stroke[:sides][4] &&  @stroke[:sides][4] > 0
+        if @stroke[:sides][4] && @stroke[:sides][4].class != String && @stroke[:sides][4] > 0
           # puts  "draw top-left to bottom-right"
           path= NSBezierPath.bezierPath
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][3])

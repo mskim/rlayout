@@ -66,7 +66,7 @@ module RLayout
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
           @left_inset   = @gutter*2
-          @stroke_sides = [0,1,0,1]
+          @stroke_sides = [1,1,0,1]
           @right_inset  = 0
           @column_type = "editorial_22"
         else
