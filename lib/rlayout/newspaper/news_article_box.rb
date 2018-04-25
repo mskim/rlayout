@@ -29,7 +29,6 @@ module RLayout
       @page_number = options[:page_number]
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
-          puts "@page_number:#{@page_number}"
           @stroke.sides = [0,1,0,1]
           @left_inset   = @gutter
         else

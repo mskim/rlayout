@@ -345,10 +345,10 @@ module RLayout
             @line_count += 1
             token = result
           else
+            "XXXXXXXXXXX This shoule not happen in normal case, this happens when overflow text is really long."
             @current_line = @current_line.parent_graphic.add_new_line
             tokens.unshift(result) #stick the unplace token back to the tokens
             token = result
-
             # break #reached end of column
           end
         # entire token placed succefully, returned result is true
@@ -358,7 +358,7 @@ module RLayout
         else
           @current_line.align_tokens
           @current_line.room = 0
-          new_line = @current_line.next_line
+          new_line = @current_line.next_text_line
           if new_line
             @current_line = new_line
             @current_line.set_paragraph_info(self, "middle_line")
@@ -373,7 +373,7 @@ module RLayout
       @current_line.set_paragraph_info(self, "last_line")
       @current_line.align_tokens
       # move cursor to new line
-      @current_line.next_line
+      @current_line.next_text_line
     end
 
 

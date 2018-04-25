@@ -155,11 +155,8 @@ class GraphicViewMac < NSView
 
         # TODO open_right_inset_line
         @open_left_inset_line = @stroke[:sides].length >= 4 && @stroke[:sides].last == "open_left_inset_line"
-        puts "we have open_left_inset_line" if @open_left_inset_line
-        puts "rect.left_inset:#{@left_inset}"
 
         if @stroke[:sides][0] > 0
-
           # puts  "draw left side"
           path= NSBezierPath.bezierPath
           path.setLineWidth(@stroke[:thickness]*@stroke[:sides][0])

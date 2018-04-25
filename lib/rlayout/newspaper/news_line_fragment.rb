@@ -16,7 +16,7 @@ module RLayout
   class	NewsLineFragment < Container
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent, :para_style, :text_alignment, :starting_position
-    attr_accessor :x, :y, :width, :height, :total_token_width, :room
+    attr_accessor :x, :y, :width, :height, :total_token_width, :room, :overlap
     attr_accessor :text_area, :text_area_width, :has_text, :space_width, :debug
     attr_accessor :next_line, :layed_out_line
     attr_accessor :line_style, :token_union_rect, :token_union_style, :token_style
@@ -39,6 +39,7 @@ module RLayout
       @text_area        = [@x, @y, @width, @height]
       @text_area_width  = @width
       @room             = @text_area[2]
+      @overlap          = false
       @layed_out_line   = false
       @token_union_style = @parent_graphic.token_union_style if @parent_graphic.respond_to?(:token_union_style)
       self
@@ -88,12 +89,13 @@ module RLayout
       translated_rect[1] += @parent_graphic.y
       if intersects_rect(overlapping_float_rect, translated_rect)
         @text_area[2] = 0
-        @room         = @text_area[2]
+        @room         = 0
+        @overlap      = true
       end
     end
 
     def has_text_room?
-      @room > 10
+      @overlap == false && @room > 10
     end
 
     # is it the first line of the column

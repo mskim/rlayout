@@ -170,13 +170,16 @@ module RLayout
       else
         # puts "@news_box is Graphic..."
       end
+
       if RUBY_ENGINE =="rubymotion"
-        # puts "@news_box.page_number:#{@news_box.page_number}"
-        # puts "@news_box.page_number.class:#{@news_box.page_number.class}"
-        # puts "@news_box.kind:#{@news_box.kind}"
-        if @news_box.is_a?(NewsArticleBox) && @news_box.respond_to?(:page_number) && @news_box.page_number == 22 # s&& @news_box.kind == '샤셜'
-          @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
-        else
+        if @news_box.is_a?(NewsArticleBox)
+          if @news_box.graphics.first.column_type == 'editorial_22' # s&& @news_box.kind == '샤셜'
+            @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
+          elsif @news_box.kind == '사설' && @news_box.page_number == 23
+            @news_box.stroke[:sides] = [1,1,1,1]
+          else
+            @news_box.stroke[:sides] = [0,1,0,1]
+          end
         end
         @news_box.save_pdf(@output_path, :jpg=>true)
       else
