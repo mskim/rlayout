@@ -80,7 +80,7 @@ module RLayout
 
     if color_string =~ /^#/
       string = color_string[1..5]
-      if RUBY_ENGINE == "robymotion"
+      if RUBY_ENGINE == "rubymotion"
         color_values = RLayout.hex2rgb(string)
         color_values.map!{|v| v/100.0}
         return NSColor.colorWithCalibratedRed(color_values[0], green:color_values[1], blue:color_values[2], alpha:1.0)
