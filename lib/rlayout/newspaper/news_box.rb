@@ -129,8 +129,8 @@ module RLayout
       @layout_direction = 'vertical'
       @kind  = 'ad'
       @top_inset = @body_line_height
-      @x      += 1
-      @width  -= 2
+      @x      = 0
+      # @width  -= 2
       if block
         instance_eval(&block)
       end
