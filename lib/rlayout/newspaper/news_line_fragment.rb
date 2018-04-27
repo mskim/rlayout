@@ -250,11 +250,11 @@ module RLayout
       return "" if @graphics.length == 0
       strings = []
       @graphics.each do |token|
-        strings << token.string
+        strings << token.string if token.class != Rectangle
       end
       string = strings.join(" ")
     end
-
+    
     def force_fit
       puts "in force fit!!!"
     end
