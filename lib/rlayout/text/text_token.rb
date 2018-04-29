@@ -242,6 +242,17 @@ module RLayout
     end
   end
 
+
+  class NewLineToken < Graphic
+    attr_accessor :string
+    def initialize(options={})
+      super
+      @string = ""
+      @width  = 0
+      self
+    end
+  end
+
   # TextCell is used to set alignment for TextToken is a cell
   class TextCell < Container
     attr_accessor :h_alignment, :v_alignment, :token

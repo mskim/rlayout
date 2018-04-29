@@ -178,6 +178,7 @@ module RLayout
       article_info[:top_position]       = @top_position
       article_info[:extended_line_count]= @extended_line_count if @extended_line_count
       article_info[:pushed_line_count]  = @pushed_line_count if @pushed_line_count
+      article_info[:quote_box_size]     = @quote_box_size
 
       if @underflow
         # article_info[:underflow]              = @underflow
@@ -374,16 +375,16 @@ module RLayout
     def float_quote(options={})
       return if @quote_box_size == '0'
       #TODO handle case when quote_box_size if type as 2x3
-      quote_text_lines = @quote_box_size.to_i
-      box_height = (quote_text_lines + QUOTE_BOX_SPACE_BEFORE)*@body_line_height
+      text_height_in_lines  = @quote_box_size.to_i
+      box_height        = (text_height_in_lines + QUOTE_BOX_SPACE_BEFORE)*@body_line_height
       # box_height += QUOTE_BOX_SPACE_BEFORE*@body_line_height
-      y            = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
-      x            = 0 #TODO
+      y                 = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
+      x                 = 0 #TODO
       text_options           = {}
       if @kind == '기고' || @kind == 'opinion'
         text_options[:x]       = x
-        text_options[:space_before_in_lines]  = quote_text_lines
-        text_options[:text_height_in_lines]  = quote_text_lines
+        # text_options[:space_before_in_lines]  = text_height_in_lines
+        # text_options[:text_height_in_lines]  = text_height_in_lines
         text_options[:height] = box_height
         text_options[:y]       = y
         text_options[:width]   = @grid_width*2 - @gutter
@@ -396,6 +397,8 @@ module RLayout
         text_options[:y]       = @height - options[:height]
         text_options[:width]   = @grid_width*2 + @gutter
       end
+
+      text_options[:quote_text_lines]= text_height_in_lines
       text_options[:layout_expand]   = nil
       text_options[:is_float]        = true
       text_options[:text_string]     = options['quote']

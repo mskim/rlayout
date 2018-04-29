@@ -158,6 +158,8 @@ module RLayout
     # return false if no leftvver tokens
     # CharHalfWidthCushion = 5.0
     def place_token(token, options={})
+      return if token.nil?
+
       if @room + CharHalfWidthCushion >= token.width
         # place token in line.
         token.parent_graphic = self
@@ -254,7 +256,7 @@ module RLayout
       end
       string = strings.join(" ")
     end
-    
+
     def force_fit
       puts "in force fit!!!"
     end

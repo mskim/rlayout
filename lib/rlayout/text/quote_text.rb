@@ -4,7 +4,7 @@ module RLayout
   class QuoteText < Container
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
-    attr_accessor :single_line_title, :force_fit_title, :v_alignment
+    attr_accessor :single_line_title, :force_fit_title, :v_alignment, :quote_text_lines
     def initialize(options={})
       @string                 = options.delete(:text_string)
       options[:fill_color]    = options.fetch(:line_color, 'clear')
@@ -13,6 +13,7 @@ module RLayout
       @tokens                 = []
       @room                   = @width
       @v_alignment            = options.fetch(:v_alignment, 'top')
+      @quote_text_lines       = options[:quote_text_lines] || 2
       @single_line_title      = options[:single_line_title]
       @style_name             = options[:style_name]
       if @style_name
@@ -70,9 +71,9 @@ module RLayout
       0
     end
 
-    def create_tokens
-      return unless @string
-      @tokens += @string.split(" ").collect do |token_string|
+    def create_tokens_from_string(string)
+
+      @tokens += string.split(" ").collect do |token_string|
         options = {}
         options[:string]  = token_string
         options[:y]       = 0
@@ -82,6 +83,19 @@ module RLayout
         end
         # options[:stroke_width] = 1
         RLayout::TextToken.new(options)
+      end
+      #code
+    end
+
+    def create_tokens
+      return unless @string
+      if @string.include?("\r\n")
+        @string.split("\r\n").each do |line_string|
+          create_tokens_from_string(line_string)
+          @tokens <<  NewLineToken.new
+        end
+      else
+        create_tokens_from_string(@string)
       end
     end
 
@@ -131,8 +145,15 @@ module RLayout
     end
 
     def layout_tokens
-      token = tokens.shift
+      token = @tokens.shift
       while token
+        if token.is_a?(NewLineToken)
+          @current_line.align_tokens
+          return if @graphics.length >= @quote_text_lines
+          add_new_line
+          @current_line.line_type = 'middle_line'
+          token = @tokens.shift
+        end
         result = @current_line.place_token(token, do_not_break: @single_line_title)
         # result = @current_line.place_token(token)
         # forcing not to break the token
@@ -141,7 +162,7 @@ module RLayout
         # case 2. entire token is rejected from the line
         if result.class == TrueClass
           # entire token placed succefully, returned result is true
-          token = tokens.shift
+          token = @tokens.shift
         else  # case 2
           if @single_line_title
             # insert left over tokens to @current_line for fitting
@@ -154,9 +175,10 @@ module RLayout
               token = result
             end
             @current_line.align_tokens
+            return if @graphics.length >= @quote_text_lines
             add_new_line
             @current_line.place_token(token)
-            token = tokens.shift
+            token = @tokens.shift
           end
         end
       end
