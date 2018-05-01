@@ -177,8 +177,10 @@ module RLayout
             @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
           elsif @news_box.kind == '사설' && @news_box.page_number == 23
             @news_box.stroke[:sides] = [1,1,1,1]
-          else
+          elsif @news_box.bottom_article
             @news_box.stroke[:sides] = [0,1,0,1]
+          else
+            @news_box.stroke[:sides] = [0,1,0,0]
           end
         end
         @news_box.save_pdf(@output_path, :jpg=>true)

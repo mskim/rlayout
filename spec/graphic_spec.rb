@@ -1,5 +1,32 @@
-require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/spec_helper"
 
+describe ' create Graphic with from_right and from_bottom' do
+  before do
+    @c = Container.new(width:400, height: 400) do
+      rectangle(from_right:10, from_bottom: 100)
+    end
+    @r = @c.graphics.first
+  end
+  it 'should create Container' do
+    assert Container, @c.class
+  end
+
+  it 'should create Container' do
+    assert Rectangle, @r.class
+  end
+
+  it 'should have right x and y value' do
+    assert 290, @r.x
+    assert 100, @r.width
+    assert 200, @r.y
+    assert 100, @r.height
+
+  end
+
+end
+
+
+__END__
 describe ' create Graphic from yaml' do
   before do
 

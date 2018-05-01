@@ -1,6 +1,6 @@
 module RLayout
   class NewsBox < Container
-    attr_accessor :kind, :on_left_edge, :on_right_edge, :is_front_page, :top_story, :top_position,:grid_size, :grid_frame, :body_line_height
+    attr_accessor :kind, :on_left_edge, :on_right_edge, :is_front_page, :top_story, :top_position, :bottom_article, :grid_size, :grid_frame, :body_line_height
     attr_accessor :page_heading_margin_in_lines, :page_heading_place_holder, :article_bottom_spaces_in_lines
     attr_accessor :column_count, :row_count, :extended_line_count, :pushed_line_count
 
@@ -29,6 +29,7 @@ module RLayout
       @is_front_page          = options.fetch(:is_front_page, false)
       @top_story              = options.fetch(:top_story, false)
       @top_position           = options.fetch(:top_position, false)
+      @bottom_article         = options.fetch(:bottom_article, false)
       @article_bottom_spaces_in_lines = options.fetch(:article_bottom_spaces_in_lines, 2)
       if options[:grid_frame]
         @grid_frame = options[:grid_frame]

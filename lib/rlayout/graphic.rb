@@ -71,10 +71,23 @@ module RLayout
         # disable autolayout
         @layout_expand = nil
       else
-        @x              = options.fetch(:x, graphic_defaults[:x])
-        @y              = options.fetch(:y, graphic_defaults[:y])
-        @width          = options.fetch(:width, graphic_defaults[:width])
-        @height         = options.fetch(:height, graphic_defaults[:height])
+        @from_right     = options[:from_right]
+        @from_bottom    = options[:from_botto]
+        if @from_right && @parent_graphic
+          @width          = options.fetch(:width, graphic_defaults[:width])
+          @x              = @parent_graphic.width - @from_right - @width
+        else
+          @x              = options.fetch(:x, graphic_defaults[:x])
+          @width          = options.fetch(:width, graphic_defaults[:width])
+        end
+
+        if @from_bottom && @parent_graphic
+          @height         = options.fetch(:height, graphic_defaults[:height])
+          @y              = @parent_graphic.height - @from_bottom - @height
+        else
+          @y              = options.fetch(:y, graphic_defaults[:y])
+          @height         = options.fetch(:height, graphic_defaults[:height])
+        end
       end
       @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))
       @auto_save        = options[:auto_save]
