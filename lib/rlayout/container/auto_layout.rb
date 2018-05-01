@@ -19,7 +19,8 @@ module RLayout
     #  and in the first pass, if we detect andy expanding graphic, it is set to true
     def relayout!
       return unless @graphics
-      return if @graphics.length <= 0
+      return if @graphics.length  <= 0
+      return if @layout_expand    == nil
       vertical            = @layout_direction == "vertical"
       have_expanding_child = false # Do we have layout direction expending child?
       column_size         = [non_overlapping_frame[2], non_overlapping_frame[3]]

@@ -28,6 +28,7 @@ class GraphicViewMac < NSView
     @context  = NSGraphicsContext.currentContext
     transform = NSAffineTransform.transform
     @context.saveGraphicsState
+    graphic.y = 0 if graphic.y == nil
     transform.translateXBy(graphic.x, yBy: graphic.y)
 
     if graphic.rotation

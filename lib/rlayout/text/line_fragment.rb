@@ -22,7 +22,7 @@ module RLayout
       @debug            = options[:debug]
       @graphics         = options[:tokens] || []
       @space_width      = @parent_graphic.space_width
-      @text_alignment   = options.fetch(:text_alignment, 'left')
+      @text_alignment   = @parent_graphic.para_style[:text_alignment]
       @starting_position = @left_inset || 0
       @stroke_width     = 1
       @text_area        = [@x, @y, @width, @height]
@@ -128,8 +128,13 @@ module RLayout
       return if @graphics.length == 0
       @total_token_width = token_width_sum
       @total_space_width = (@graphics.length - 1)*@space_width if @graphics.length > 0
-      room  = @text_area_width - (@total_token_width + @total_space_width)
-      x     = @starting_position
+      room  = @width - (@total_token_width + @total_space_width)
+      x = @starting_position
+      @graphics.each do |token|
+        token.x = x
+        x += token.width + @space_width
+      end
+
       case @text_alignment
       when 'justified'
         # in justifed paragraph, we have to treat the last line as left aligned.
@@ -140,34 +145,25 @@ module RLayout
             x += token.width + @space_width
           end
         else
-          @space_width = (@text_area_width - @total_token_width)/(@graphics.length - 1)
+          x = 0
+          @space_width = (@width - @total_token_width)/(@graphics.length - 1)
           @graphics.each do |token|
             token.x = x
             x += token.width + @space_width
           end
         end
-      when 'left'
-        x = @starting_position
-        @graphics.each do |token|
-          token.x = x
-          x += token.width + @space_width
-        end
+
       when 'center'
         @graphics.map {|t| t.x += room/2.0}
       when 'right'
-        x = room
         @graphics.each do |token|
-          token.x += x
+          token.x += room
           token.y = @v_offset
-          x += token.width + @space_width
+          # x += token.width + @space_width
         end
       else
         # do as left
-        x = @starting_position
-        @graphics.each do |token|
-          token.x = x
-          x += token.width + @space_width
-        end
+
       end
 
     end
@@ -221,6 +217,11 @@ module RLayout
       end
       align_tokens
 
+    end
+
+    def relayout!
+      puts "in relayout! of LineFragment"
+      align_tokens
     end
 
   end

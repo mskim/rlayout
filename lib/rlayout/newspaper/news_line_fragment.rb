@@ -53,7 +53,7 @@ module RLayout
       nil
     end
 
-    def create_tokens_frame
+    def create_token_union_rect
       return unless @graphics
       return if @graphics.length == 0
       return unless @token_union_style
@@ -165,6 +165,8 @@ module RLayout
         token.parent_graphic = self
         @graphics << token
         @room -= token.width
+        puts "@room:#{@room}"
+        puts "@space_width:#{@space_width}"
         @room -= @space_width
         @layed_out_line = true
         return true
@@ -245,7 +247,7 @@ module RLayout
           x += token.width + @space_width
         end
       end
-      create_tokens_frame
+      create_token_union_rect
     end
 
     def line_string

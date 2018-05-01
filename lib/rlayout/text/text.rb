@@ -19,7 +19,7 @@ module RLayout
   # used for title, subject_head
   # It can squeeze text
   class Text < Container
-    attr_accessor :tokens, :string, :para_style, :room, :text_alignment, :height_in_lines
+    attr_accessor :tokens, :string, :para_style, :room, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title, :space_width
     def initialize(options={})
@@ -34,7 +34,9 @@ module RLayout
         @para_style[:text_color]= options[:text_color] if options[:text_color]
         @para_style[:tracking]  = options.fetch(:tracking, 0)
         @para_style[:scale]     = options.fetch(:scale, 100)
+        @para_style[:text_alignment] = options[:text_alignment] || 'left'
       end
+
       @font_size              = @para_style[:font_size]
       @space_width            = @font_size/3
       @line_space             = options[:line_apace] || @font_size/2
@@ -50,7 +52,6 @@ module RLayout
       @text_height_in_lines   = options[:text_height_in_lines] if options[:text_height_in_lines]
       @space_after_in_lines   = 0
       @space_after_in_lines   = options[:space_after_in_lines] if options[:space_after_in_lines]
-      @text_alignment         = options[:text_alignment] || 'left'
       @top_inset              += options[:top_inset] if options[:top_inset]
       @bottom_inset           = @space_after_in_lines*@body_line_height
       @height_in_lines        = @space_before_in_lines + @text_height_in_lines + @space_after_in_lines
@@ -63,7 +64,6 @@ module RLayout
       @line_width             = @width - @starting_x - @right_margin - @right_inset
       @current_line           = LineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
       @current_line_y         += @current_line.height
-
       create_tokens
       layout_tokens
       ajust_height_as_body_height_multiples
@@ -73,12 +73,14 @@ module RLayout
     def create_tokens
       return unless @string
       @tokens += @string.split(" ").collect do |token_string|
-        options = {}
-        options[:string]  = token_string
-        options[:y]       = 0
+        options                 = {}
+        options[:string]        = token_string
+        options[:layout_expand] = nil
+
+        options[:y]             = 0
         if RUBY_ENGINE == 'rubymotion'
-          options[:atts]    = NSUtils.ns_atts_from_style(@para_style)
-          @space_width      = options[:atts][:space_width]
+          options[:atts]        = NSUtils.ns_atts_from_style(@para_style)
+          @space_width          = options[:atts][:space_width]
         end
         # options[:stroke_width] = 1
         RLayout::TextToken.new(options)
@@ -198,7 +200,12 @@ module RLayout
         Text.new(text_string: "This is a sample text string")
       end
     end
-
+    def relayout!
+      @graphics.each do |line|
+        line.width = @width
+        line.align_tokens
+      end
+    end
 
   end
 
