@@ -1,5 +1,8 @@
 module RLayout
 
+NEWS_COLUMN_IMAGE_WIDTH   = 170
+NEWS_COLUMN_IMAGE_HEIGHT  = 85
+
   class NewsColumnImage < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :image_position, :caption_title
     attr_accessor :image_box, :position, :before_title, :fit_type, :expand, :has_caption
@@ -26,8 +29,8 @@ module RLayout
       if options[:width_in_colum] == 'half'
         @first_column           = @parent_graphic.graphics.first
         @x                      = @first_column.x + @first_column.width/2
-        @height                 = 85
-        @width                  = 170
+        @height                 = NEWS_COLUMN_IMAGE_HEIGHT
+        @width                  = NEWS_COLUMN_IMAGE_WIDTH
         bottom_room             = options[:bottom_room_margin]*@parent_graphic.body_line_height
         @y                      = @first_column.height - bottom_room*2 - @height
         @y                      += @heading.height if @heading
