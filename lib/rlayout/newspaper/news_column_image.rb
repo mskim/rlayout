@@ -1,7 +1,7 @@
 module RLayout
 
-NEWS_COLUMN_IMAGE_WIDTH   = 170
-NEWS_COLUMN_IMAGE_HEIGHT  = 85
+NEWS_COLUMN_IMAGE_WIDTH   = 158.737
+NEWS_COLUMN_IMAGE_HEIGHT  = 75
 
   class NewsColumnImage < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :image_position, :caption_title
@@ -114,9 +114,5 @@ NEWS_COLUMN_IMAGE_HEIGHT  = 85
       end
       [x_grid, y_grid, image_size[0], image_size[1]]
     end
-
   end
-
-
-
 end

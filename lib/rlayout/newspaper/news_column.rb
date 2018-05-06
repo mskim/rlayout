@@ -68,8 +68,6 @@ module RLayout
     end
 
     def overflow_text
-      puts __method__
-      puts "layed_out_line_count:#{layed_out_line_count}"
       text = ""
       @graphics.each do |line|
         line_text = "<p>"

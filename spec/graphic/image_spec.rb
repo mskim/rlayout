@@ -21,10 +21,6 @@ describe 'should process image_caption' do
     image = Image.new(:image_path=> @image_path, :image_caption=> "This is a image caption")
     image.image_caption.must_equal "This is a image caption"
   end
-
-
-
-
 end
 
 __END__

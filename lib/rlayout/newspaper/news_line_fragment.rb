@@ -61,10 +61,10 @@ module RLayout
       token_union_options               = {}
       token_union_options               = @token_union_style.dup if @token_union_style
       token_union_options[:fill_color]  = 'clear'
-      token_union_options[:x]           = tokens.first.x
+      token_union_options[:x]           = tokens.first.x - 0.85 #TODO
       token_union_options[:y]           = tokens.first.y
       token_union_options[:y]           = tokens.first.y - token_union_options[:top_line_space] if token_union_options[:top_line_space]
-      max_x                             = tokens.last.x + tokens.last.width
+      max_x                             = tokens.last.x + tokens.last.width + 1.5 #TODO
       token_union_options[:width]       = max_x - token_union_options[:x]
       token_union_options[:height]      = tokens.first.height
       token_union_options[:parent]      = self
@@ -165,8 +165,6 @@ module RLayout
         token.parent_graphic = self
         @graphics << token
         @room -= token.width
-        puts "@room:#{@room}"
-        puts "@space_width:#{@space_width}"
         @room -= @space_width
         @layed_out_line = true
         return true

@@ -117,6 +117,18 @@ TODO List
 			- glossary
 		- put templates under rubymotion app/resouces/
 
+- Graphic add from_bottom, from_right
+		instead of starting from x, or y
+		this will create graphic from right_space, and bottom_space
+
+2018_4_19
+	- newsman
+		- make_issue
+		- make_page
+		- make_article
+	- create issue_plan by week
+		- copy template and do make_issue
+
 2018_4_19
 	- draw_divider_line
 	- fix overflow line count bug
@@ -167,9 +179,6 @@ TODO List
 2018_2_27
 	- # extra space in ##, ### for news_paragraph
 
-	- Graphic add from_bottom, from_right
-			instead of starting from x, or y
-			this will create graphic from right_max_x, and bottom_max_y
 	- border line drawing at draw_on_inset, or draw_on_margin
 
 2017_11_18
