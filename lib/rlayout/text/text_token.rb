@@ -131,7 +131,7 @@ module RLayout
     # return false if break_position < MinimunLineRoom
     # split string into two and return splited_second_half_attsting
     def break_attstring_at(break_position)
-      # give a char_half_cushion
+      # give a char_half_c""
       return false if break_position < MinimunLineRoom
       string_length = @att_string.length
       #TODO use ruby only not NS
@@ -141,8 +141,9 @@ module RLayout
         (1..string_length).to_a.each do |i|
           front_range = NSMakeRange(0,i)
           sub_string_incremented = @att_string.attributedSubstringFromRange(front_range)
-          if i == string_length && sub_string_incremented.string =~ /\.$/
-            return "period at the end of token"
+          if i == string_length && sub_string_incremented.string =~ /[\.|\,|!|\?]$/
+            # we have forbidden character . ? , !
+            return "forbidden character at the end of token"
           elsif sub_string_incremented.size.width > (break_position + CharHalfWidthCushion)
             #TODO handle . , line ending rule. procenting orphan
             cut_index = i - 1 # pne before i
@@ -162,21 +163,23 @@ module RLayout
         end
         return false
 
+      else
+
       end
+
+
 
     end
 
     # divide token at position
     def hyphenate_token(break_position)
-
-      position = break_position
       if RUBY_ENGINE == "rubymotion"
         # break_attstring_at breaks original att_string into two
         # adjust first token width and result is second haldf att_string
         # or false is return if not abtle to brake the token
-        hyphenated_result = break_attstring_at(position)
-        if hyphenated_result == "period at the end of token"
-          return "period at the end of token"
+        hyphenated_result = break_attstring_at(break_position)
+        if hyphenated_result == "forbidden character at the end of token"
+          return "forbidden character at the end of token"
         elsif hyphenated_result.class == NSConcreteMutableAttributedString
           second_half = self.dup
           second_half.att_string = hyphenated_result
@@ -188,6 +191,7 @@ module RLayout
           return false
         end
       else
+
       end
       false
     end

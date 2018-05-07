@@ -3,6 +3,26 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create  TextToken' do
   before do
+    @string1 = 'end.'
+    @string2 = 'end?'
+    @string3 = 'end,'
+    @string4 = 'end!'
+  end
+
+
+  it 'should detect ' do
+    assert_equal 3, @string1 =~/[\.|\?|\,|!]$/
+    assert_equal 3, @string2 =~/[\.|\?|\,|!]$/
+    assert_equal 3, @string3 =~/[\.|\?|\,|!]$/
+    assert_equal 3, @string4 =~/[\.|\?|\,|!]$/
+  end
+
+
+end
+
+__END__
+describe 'create  TextToken' do
+  before do
     @text_string    = "This is number of differently labeled segments we use vary."
     @para           = Paragraph.new(para_string: @text_string, markup: "p")
     @para.tokens.each do |t|
@@ -17,7 +37,6 @@ describe 'create  TextToken' do
 
 end
 
-__END__
 describe 'create special TextToken' do
   before do
     @text_string    = "1	{The} number of differently labeled segments we use vary."

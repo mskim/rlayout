@@ -121,6 +121,9 @@ TODO List
 		instead of starting from x, or y
 		this will create graphic from right_space, and bottom_space
 
+2018_5_7
+		- add . , ! ? add forbidden first line character
+		
 2018_4_19
 	- newsman
 		- make_issue
