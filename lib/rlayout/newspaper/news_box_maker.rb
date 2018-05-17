@@ -81,9 +81,11 @@ module RLayout
     attr_accessor :article_path, :template, :story_path, :image_path
     attr_accessor :news_box, :style, :output_path, :project_path
     attr_reader :article_info_path, :paragraphs_copy, :fill_up_enpty_lines
-    attr_accessor :custom_style, :publication_name
+    attr_accessor :custom_style, :publication_name, :time_stamp
 
     def initialize(options={} ,&block)
+      @time_stamp = options[:time_stamp]
+      puts "@time_stamp:#{@time_stamp}"
       @story_path = options[:story_path]
       if options[:story_path]
         @story_path = options[:story_path]
@@ -182,6 +184,9 @@ module RLayout
           else
             @news_box.stroke[:sides] = [0,1,0,0]
           end
+        end
+        if @time_stamp
+          @output_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
         end
         @news_box.save_pdf(@output_path, :jpg=>true)
       else
