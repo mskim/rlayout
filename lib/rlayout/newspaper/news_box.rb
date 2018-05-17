@@ -75,6 +75,7 @@ module RLayout
 
       @body_line_height     = @grid_height/@lines_per_grid
       @column_line_count    = @row_count*@lines_per_grid
+      @column_line_count   -= @page_heading_margin_in_lines if @top_position
       @column_line_count   += @extended_line_count
       @column_line_count   -= @pushed_line_count
 
@@ -85,10 +86,10 @@ module RLayout
         @height             = @column_line_count*@body_line_height
       end
 
-      if @page_heading_margin_in_lines > 0
-        @page_heading_margin  = @body_line_height*@page_heading_margin_in_lines
-        create_page_heading_place_holder(@page_heading_margin)
-      end
+      # if @page_heading_margin_in_lines > 0
+      #   @page_heading_margin  = @body_line_height*@page_heading_margin_in_lines
+      #   create_page_heading_place_holder(@page_heading_margin)
+      # end
 
       self
     end

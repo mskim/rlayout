@@ -81,6 +81,12 @@ module RLayout
       image_path
     end
 
+    def top_position?(grid_frame)
+      return true if grid_frame[1] == 0
+      return true if @is_front_page && grid_frame[1] == 1
+      false
+    end
+
     # convert stopry frames into layout format
     def make_layout_info
       @layout_info = []
@@ -99,6 +105,12 @@ module RLayout
         info[:y]              = grid_frame[1]*@grid_height + @top_margin
         info[:width]          = grid_frame[2]*@grid_width
         info[:height]         = grid_frame[3]*@grid_height
+
+        if top_position?(grid_frame)
+          heading_space       = @body_line_height*@page_heading_margin_in_lines
+          info[:y]            += heading_space
+          info[:height]       -= heading_space
+        end
 
         if grid_frame.last =~/^extend/
           @extened_line_count = grid_frame.last.split("_")[1].to_i

@@ -345,7 +345,6 @@ module RLayout
             @line_count += 1
             token = result
           else
-            "XXXXXXXXXXX This shoule not happen in normal case, this happens when overflow text is really long."
             @current_line = @current_line.parent_graphic.add_new_line
             tokens.unshift(result) #stick the unplace token back to the tokens
             token = result
