@@ -185,10 +185,15 @@ module RLayout
             @news_box.stroke[:sides] = [0,1,0,0]
           end
         end
-        if @time_stamp
-          @output_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
-        end
         @news_box.save_pdf(@output_path, :jpg=>true)
+        if @time_stamp
+          stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
+          output_jpg_path = @output_path.sub(/pdf$/, "jpg")
+          stamped_jpg_path = stamped_path.sub(/pdf$/, "jpg")
+          system("cp #{@output_path} #{stamped_path}")
+          system("cp #{output_jpg_path} #{stamped_jpg_path}")
+        end
+        # delete old stamped
       else
         @news_box.save_svg(@svg_path)
       end

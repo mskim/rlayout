@@ -32,7 +32,7 @@ NEWS_COLUMN_IMAGE_HEIGHT  = 75
         @height                 = NEWS_COLUMN_IMAGE_HEIGHT
         @width                  = NEWS_COLUMN_IMAGE_WIDTH
         bottom_room             = options[:bottom_room_margin]*@parent_graphic.body_line_height
-        @y                      = @first_column.height - bottom_room*2 - @height
+        @y                      = @first_column.height - (bottom_room*2 + 8)- @height - @parent_graphic.body_line_height
         @y                      += @heading.height if @heading
       else
         @first_column           = @parent_graphic.graphics.first

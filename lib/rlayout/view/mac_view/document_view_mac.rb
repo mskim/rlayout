@@ -21,6 +21,7 @@ class DocumentViewMac
   end
 
   def save_pdf(path, options={})
+    puts "in save_pdf"
     pdf_path=path
     unless File.extname(path) == '.pdf'
       pdf_path=path + ".pdf"
@@ -30,6 +31,7 @@ class DocumentViewMac
     # if we have jpg option, save image as basename_(i+1).jpg format
     # if we have preview option save images in /preview/page_00(i+1).jpg
     if options[:jpg] || options[:preview]
+      puts "options[:jpg]:#{options[:jpg]}"
       if options[:preview]
         @preview_path = File.dirname(path) + "/preview"
         # if we have old version, clear the folder
@@ -38,10 +40,12 @@ class DocumentViewMac
         system("mkdir -p #{@preview_path}")
       end
       pdf_doc.pageCount.times do |i|
-        page      = pdf_doc.pageAtIndex i
+        page        = pdf_doc.pageAtIndex i
+        page_size   = page.page_size
         pdfdata     = page.dataRepresentation
         image       = NSImage.alloc.initWithData pdfdata
         imageData   = image.TIFFRepresentation
+        imageData   = high_res.TIFFRepresentation
         imageRep    = NSBitmapImageRep.imageRepWithData(imageData)
         imageProps  = {NSImageCompressionFactor=> 1.0}
         imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)

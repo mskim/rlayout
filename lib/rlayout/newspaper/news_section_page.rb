@@ -6,9 +6,10 @@ module RLayout
     attr_accessor :kind, :is_front_page, :paper_size, :page_heading
     attr_accessor :story_frames, :grid_width, :grid_height, :number_of_stories
     attr_accessor :body_line_height, :ad_type, :page_heading_margin_in_lines, :lines_per_grid
-    attr_accessor :draw_divider, :divider_line_thickness
+    attr_accessor :draw_divider, :divider_line_thickness, :time_stamp
     def initialize(options={}, &block)
       super
+      @time_stamp     = options[:time_stamp]
       @section_path   = options[:section_path] if options[:section_path]
       @output_path    = @section_path + "/section.pdf"
       @output_path    = options[:output_path]   if options[:output_path]
@@ -85,6 +86,10 @@ module RLayout
       return true if grid_frame[1] == 0
       return true if @is_front_page && grid_frame[1] == 1
       false
+    end
+
+    def latest_story_pdf(article_path)
+      Dir.glob("#{article_path}/story*.pdf").last
     end
 
     # convert stopry frames into layout format
@@ -180,13 +185,18 @@ module RLayout
 
       if @output_path
         save_pdf(@output_path, options)
+        if @time_stamp
+          output_jpg_path       = @output_path.sub(/\.pdf$/, ".jpg")
+          time_stamped_path     = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
+          time_stamped_jpg_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.jpg")
+          system("cp #{@output_path} #{time_stamped_path}")
+          system("cp #{output_jpg_path} #{time_stamped_jpg_path}")
+        end
       else
         puts "No @output_path!!!"
       end
-
       self
     end
-
 
     def make_verticla_line(box_frame)
       grid_max_x = box_frame[0] + box_frame[2]

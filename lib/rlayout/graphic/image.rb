@@ -63,7 +63,6 @@ module RLayout
           @local_image          = options[:local_image]
           puts "++++++ $ProjectPath:#{$ProjectPath}"
           options[:image_path]  = $ProjectPath + "/images/" + options[:local_image]
-
         else
         # elsif options[:local_image]
         #   @local_image          = options[:local_image]
@@ -96,7 +95,7 @@ module RLayout
         #   targetImage = NSImage.alloc.initWithData:targetImageData
         # end
         # @image_object = NSImage.alloc.initWithData:targetImageData
-        # 
+        #
         @image_dimension  = [@image_object.size.width, @image_object.size.height]
         if @image_object && options[:adjust_height_to_keep_ratio]
           @height *= image_object_height_to_width_ratio
@@ -250,7 +249,6 @@ module RLayout
       end
     end
 
-
     def fit_ignore_ratio
       @source_frame = [0,0,0,0]
     end
@@ -258,6 +256,17 @@ module RLayout
     def fit_by_changing_box_size
       puts "fit_by_changing_box_size"
     end
+
+    # Convert RGB to CMYK
+    # NSColorSpace *targetColorSpace = [NSColorSpace genericCMYKColorSpace];
+    # NSBitmapImageRep *targetImageRep;
+    # if ([sourceImageRep colorSpace] == targetColorSpace)
+    #   { targetImageRep = sourceImageRep; }
+    # else
+    #   { targetImageRep = [sourceImageRep bitmapImageRepByConvertingToColorSpace:targetColorSpace renderingIntent:NSColorRenderingIntentPerceptual]; }
+    # NSData *targetImageData = [targetImageRep representationUsingType:NSJPEGFileType properties:nil];
+    # NSImage *targetImage = [[NSImage alloc] initWithData:targetImageData];
+
 
   end
 end

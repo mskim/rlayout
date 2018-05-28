@@ -1,24 +1,50 @@
 
 module RLayout
-  
+
+
+  class Eps2jpg
+    attr_accessor :eps_path, :pdf_doc, :page_count, :jpg, :preview
+
+    def initialize(options={})
+      @eps_path = option[:path]
+      @jpg  = true
+      url           = NSURL.fileURLWithPath @eps_path
+      @pdf_doc      = PDFDocument.alloc.initWithURL url
+      self
+    end
+
+    def save_image
+      page        = @pdf_doc.pageAtIndex i
+      pdfdata     = page.dataRepresentation
+      image       = NSImage.alloc.initWithData pdfdata
+      imageData   = image.TIFFRepresentation
+      imageRep    = NSBitmapImageRep.imageRepWithData(imageData)
+      imageProps  = {NSImageCompressionFactor=> 1.0}
+      imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
+      jpg_path  = @pdf_path.sub(".eps", ".jpg")
+      imageData.writeToFile(jpg_path, atomically:false)
+    end
+
+  end
+
   # PDFChapter
   # processes pdf files in project folder to chapter format.
   # It takes care of multiple PDF files by merging and backup originals
-  # default is to merge pdf file and save it as single file called outout.pdf, 
+  # default is to merge pdf file and save it as single file called outout.pdf,
   #              create images in preview folder with page_001.jpg, page_002.jpg ...
   #              and create doc_info file with page_count, and other PDF informations
   # -jpg:true    generate jpg of first page only
   #              no preview folder nor doc_info is saved in this mode
   #              images are save with same name as pdf with .jpg extension
-  
+
   # pdf_chapter split path/to/pdf/file
   #             split PDF files into single page PDF's in pdf_name_single_page
   #
-  
+
   class PDFChapter
     attr_accessor :project_path, :merge, :original_pdf_files
     attr_accessor :pdf_path, :pdf_doc, :page_count, :jpg, :preview
-    
+
     def initialize(options={})
       if options[:jpg]
         @jpg            = true
@@ -37,7 +63,7 @@ module RLayout
           return
         end
         options.delete(:project_path)
-        @pdf_path = project_path + "/output.pdf" 
+        @pdf_path = project_path + "/output.pdf"
         @pdf_doc  = merge_pdf_files
       elsif options[:pdf_path]
         @pdf_path     = options[:pdf_path]
@@ -53,9 +79,9 @@ module RLayout
       save_image        if @jpg || @preview
       save_doc_info   if @doc_info
       self
-      
+
     end
-    
+
     # when output.pdf file is present, it is still merges with rest of pdf files
     # files are merged as file order, so name files as desired merge order
     def merge_pdf_files
@@ -76,27 +102,27 @@ module RLayout
           page=PDFDocument.alloc.initWithData(pdf_data).pageAtIndex(0)
           merged_pdf.insertPage(page, atIndex: merged_pdf.pageCount)
         end
-        # output.pdf is backed up overiding existing output.pdf backed up 
+        # output.pdf is backed up overiding existing output.pdf backed up
         # backup output.pdf is always the previous version
         system("mv #{path} #{pdf_backup}/")
       end
       merged_pdf.writeToFile(@pdf_path)
       merged_pdf
     end
-    
+
     def save_doc_info
       info_path = File.dirname(@pdf_path) + "/doc_info.yml"
       h         = {page_count: @page_count}
       File.open(info_path, 'w'){|f| f.write h.to_yaml}
     end
-    
+
     def save_image
       if @preview
         @preview_path = File.dirname(@pdf_path) + "/preview"
         if File.directory?(@preview_path)
           # if we have old version, clear the folder
           # don't went any left over page that is not over written
-          system("rm -r #{@preview_path}") 
+          system("rm -r #{@preview_path}")
         end
         #generate new preview folder
         system("mkdir -p #{@preview_path}")
@@ -107,7 +133,7 @@ module RLayout
         pdfdata     = page.dataRepresentation
         image       = NSImage.alloc.initWithData pdfdata
         imageData   = image.TIFFRepresentation
-        imageRep    = NSBitmapImageRep.imageRepWithData(imageData)  
+        imageRep    = NSBitmapImageRep.imageRepWithData(imageData)
         imageProps  = {NSImageCompressionFactor=> 1.0}
         imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
         if @preview
@@ -116,15 +142,15 @@ module RLayout
           jpg_path  = @pdf_path.sub(".pdf", ".jpg")
         end
         imageData.writeToFile(jpg_path, atomically:false)
-      end      
+      end
     end
-        
+
     def self.jpg_for_folder(folder)
       Dir.glob("#{folder}/*.pdf").each do |pdf|
         PDFChapter.new(pdf_path: pdf, jpg: true)
       end
     end
-    
+
     def self.split_pdf(pdf_path)
       project_path = File.dirname(pdf_path)
       base_name    = File.basename(pdf_path,".pdf")
@@ -135,7 +161,7 @@ module RLayout
         return
       end
       single_page_folder = project_path + "/#{base_name}_single_page"
-      system("mkdir -p #{single_page_folder}") unless File.directory?(single_page_folder)   
+      system("mkdir -p #{single_page_folder}") unless File.directory?(single_page_folder)
       pdf_doc.pageCount.times do |i|
         page = pdf_doc.pageAtIndex i
         single_page_pdf = PDFDocument.new
@@ -145,6 +171,6 @@ module RLayout
       end
     end
   end
-  
+
 
 end

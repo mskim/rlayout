@@ -109,6 +109,7 @@ class GraphicViewMac < NSView
   end
 
   def save_pdf(pdf_path, options={})
+    puts "in save_pdf of graphic_view_mac"
     pdf = pdf_data
     # save PDFDocument ?
     pdf_doc = PDFDocument.alloc.initWithData(pdf_data)
@@ -120,9 +121,11 @@ class GraphicViewMac < NSView
       compression = options[:compression] || 0.5
       compression = compression.to_f
       image       = NSImage.alloc.initWithData pdf
-      imageData   = image.TIFFRepresentation
+      hi_res_image = draw_it_on_larger_area(image)
+      imageData   = hi_res_image.TIFFRepresentation
+      # imageData   = image.TIFFRepresentation
       imageRep    = NSBitmapImageRep.imageRepWithData(imageData)
-      # imageProps  = {NSImageCompressionFactor=> 1.0}
+      imageProps  = {NSImageCompressionFactor=> 0.0}
       imageProps  = NSDictionary.dictionaryWithObject(NSNumber.numberWithFloat(compression), forKey:NSImageCompressionFactor)
       imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
       jpg_path    = pdf_path.sub(".pdf", ".jpg")
@@ -130,7 +133,6 @@ class GraphicViewMac < NSView
       if options[:jpg]
         imageData.writeToFile(jpg_path, atomically:false)
       end
-
       if options[:preview]
         preview_folder_path = File.dirname(pdf_path) + "/preview"
         system "mkdir -p #{preview_folder_path}" unless File.directory?(preview_folder_path)
@@ -138,7 +140,18 @@ class GraphicViewMac < NSView
         imageData.writeToFile(preview_path, atomically:false)
       end
     end
-
+  end
+  # 2x2
+  def draw_it_on_larger_area(image)
+    image_rect = NSMakeRect(0,0,image.size.width, image.size.height)
+    width   = image.size.width*2
+    height  = image.size.height*2
+    targetRect = NSMakeRect(0,0, width, height)
+    newImage = NSImage.alloc.initWithSize(targetRect.size)
+    newImage.lockFocus
+      image.drawInRect(targetRect, fromRect: image_rect, operation: NSCompositeSourceOver, fraction: 1.0)
+    newImage.unlockFocus
+    newImage
   end
 
   def save_jpg(path)
@@ -175,3 +188,62 @@ class GraphicViewMac < NSView
   end
 
 end
+
+
+
+#
+# @implementation NSImage (ProportionalScaling)
+#
+# - (NSImage*)imageByScalingProportionallyToSize:(NSSize)targetSize{
+#   NSImage* sourceImage = self;
+#   NSImage* newImage = nil;
+#
+#   if ([sourceImage isValid]){
+#     NSSize imageSize = [sourceImage size];
+#     float width  = imageSize.width;
+#     float height = imageSize.height;
+#
+#     float targetWidth  = targetSize.width;
+#     float targetHeight = targetSize.height;
+#
+#     float scaleFactor  = 0.0;
+#     float scaledWidth  = targetWidth;
+#     float scaledHeight = targetHeight;
+#
+#     NSPoint thumbnailPoint = NSZeroPoint;
+#
+#     if ( NSEqualSizes( imageSize, targetSize ) == NO )
+#     {
+#
+#       float widthFactor  = targetWidth / width;
+#       float heightFactor = targetHeight / height;
+#
+#       if ( widthFactor < heightFactor )
+#         scaleFactor = widthFactor;
+#       else
+#         scaleFactor = heightFactor;
+#
+#       scaledWidth  = width  * scaleFactor;
+#       scaledHeight = height * scaleFactor;
+#
+#       if ( widthFactor < heightFactor )
+#         thumbnailPoint.y = (targetHeight - scaledHeight) * 0.5;
+#
+#       else if ( widthFactor > heightFactor )
+#         thumbnailPoint.x = (targetWidth - scaledWidth) * 0.5;
+#     }
+#     newImage = [[NSImage alloc] initWithSize:targetSize];
+#     [newImage lockFocus];
+#       NSRect thumbnailRect;
+#       thumbnailRect.origin = thumbnailPoint;
+#       thumbnailRect.size.width = scaledWidth;
+#       thumbnailRect.size.height = scaledHeight;
+#       [sourceImage drawInRect: thumbnailRect
+#                      fromRect: NSZeroRect
+#                     operation: NSCompositeSourceOver
+#                      fraction: 1.0];
+#     [newImage unlockFocus];
+#   }
+#   return [newImage autorelease];
+# }
+# @end

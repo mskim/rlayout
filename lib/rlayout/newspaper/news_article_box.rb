@@ -73,7 +73,6 @@ module RLayout
           @left_inset   = EDITORIAL_MARGIN
           @right_inset  = EDITORIAL_MARGIN
           @column_type = "editorial"
-
         end
         editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
         current_x += @left_inset
@@ -394,7 +393,7 @@ module RLayout
       else
         text_options[:x]       = @grid_width*1 + @gutter
         text_options[:height]  = @body_line_height*3
-        text_options[:y]       = @height - options[:height]
+        text_options[:y]       = @height - options[:height] if options[:height]
         text_options[:width]   = @grid_width*2 + @gutter
       end
 
