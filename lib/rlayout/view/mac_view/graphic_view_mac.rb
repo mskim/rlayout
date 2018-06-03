@@ -109,7 +109,6 @@ class GraphicViewMac < NSView
   end
 
   def save_pdf(pdf_path, options={})
-    puts "in save_pdf of graphic_view_mac"
     pdf = pdf_data
     # save PDFDocument ?
     pdf_doc = PDFDocument.alloc.initWithData(pdf_data)
