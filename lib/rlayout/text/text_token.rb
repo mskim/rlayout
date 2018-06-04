@@ -40,12 +40,7 @@
 #
 #
 
-QUOTE_PLAIN_SINGLE         = 39
-QUOTE_PLAIN_DOUBLE         = 34
-QUOTE_SMART_SINGLE_OPEN    = 8216
-QUOTE_SMART_SINGLE_CLOSE   = 8217
-QUOTE_SMART_DOUBLE_OPEN    = 8220
-QUOTE_SMART_DOUBLE_CLOSE   = 8221
+
 
 module RLayout
   # token fill_color is set by optins[:token_color] or it is set to clear
@@ -126,6 +121,15 @@ module RLayout
       self
     end
 
+    # QUOTE_PLAIN_SINGLE         = "\u39"
+    # QUOTE_PLAIN_DOUBLE         = "\u34"
+    QUOTE_SMART_SINGLE_OPEN    = "\u8216"
+    QUOTE_SMART_SINGLE_CLOSE   = "\u8217"
+    QUOTE_SMART_DOUBLE_OPEN    = "\u8220"
+    QUOTE_SMART_DOUBLE_CLOSE   = "\u8221"
+
+    FORBIDDEN_FIRST_CHARS = /[\.|\,|!|\?|\)|}|\]|>|QUOTE_SMART_SINGLE_CLOSE|QUOTE_SMART_DOUBLE_CLOSE]$/
+    FORBIDDEN_LAST_CHARS  = /[\(|{|\[|<|QUOTE_SMART_SINGLE_OPEN|QUOTE_SMART_DOUBLE_OPEN]/
 
     # return false if break_position < MinimunLineRoom
     # split string into two and return splited_second_half_attsting
@@ -140,7 +144,7 @@ module RLayout
         (1..string_length).to_a.each do |i|
           front_range = NSMakeRange(0,i)
           sub_string_incremented = @att_string.attributedSubstringFromRange(front_range)
-          if i == string_length && sub_string_incremented.string =~ /[\.|\,|!|\?|\)]$/
+          if i == string_length && sub_string_incremented.string =~ FORBIDDEN_FIRST_CHARS
             # we have front forbidden character . ? , !
             return "front forbidden character at the end of token"
 
@@ -148,7 +152,7 @@ module RLayout
             cut_index = i - 1 # pne before i
             #handle line ending rule. chars that should not be at the end of line.
             front_string = sub_string_incremented.string
-            if i > 2 && front_string[-2] =~ /[\(|{|\]]/
+            if i > 2 && front_string[-2] =~ FORBIDDEN_LAST_CHARS
               # puts "we have on end-line char case at -2 position"
               cut_index = i - 2 # pne before i
             end
@@ -169,9 +173,8 @@ module RLayout
 
       end
 
-
-
     end
+
 
     # divide token at position
     def hyphenate_token(break_position)

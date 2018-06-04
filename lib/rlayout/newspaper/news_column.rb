@@ -70,7 +70,7 @@ module RLayout
     def overflow_text
       text = ""
       @graphics.each do |line|
-        line_text = "<p>"
+        line_text = "<p style='text-align:left;'>"
         line_text += line.line_string
         line_text += "</p>"
         text      += line_text
