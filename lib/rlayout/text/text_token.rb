@@ -121,8 +121,7 @@ module RLayout
       self
     end
 
-    # QUOTE_PLAIN_SINGLE         = "\u39"
-    # QUOTE_PLAIN_DOUBLE         = "\u34"
+q\u34"
     QUOTE_SMART_SINGLE_OPEN    = "\u8216"
     QUOTE_SMART_SINGLE_CLOSE   = "\u8217"
     QUOTE_SMART_DOUBLE_OPEN    = "\u8220"
