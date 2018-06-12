@@ -311,6 +311,7 @@ module RLayout
        # this is for variable line height
 	     # 3. Each time with new token, check the height change, tallest_token and adjust line height.
     # end
+
     def layout_lines(current_line, options={})
       @current_line = current_line
       @current_line.set_paragraph_info(self, "first_line")

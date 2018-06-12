@@ -180,7 +180,8 @@ module RLayout
       article_info[:quote_box_size]     = @quote_box_size
 
       if @underflow
-        # article_info[:underflow]              = @underflow
+        # if we have author image at the bottom from layout
+        @empty_lines -= 6 if @news_image
         article_info[:empty_lines]            = @empty_lines
       elsif @overflow
         # article_info[:overflow]              = true

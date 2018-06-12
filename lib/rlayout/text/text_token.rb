@@ -121,14 +121,13 @@ module RLayout
       self
     end
 
-q\u34"
     QUOTE_SMART_SINGLE_OPEN    = "\u8216"
     QUOTE_SMART_SINGLE_CLOSE   = "\u8217"
     QUOTE_SMART_DOUBLE_OPEN    = "\u8220"
     QUOTE_SMART_DOUBLE_CLOSE   = "\u8221"
 
-    FORBIDDEN_FIRST_CHARS = /[\.|\,|!|\?|\)|}|\]|>|QUOTE_SMART_SINGLE_CLOSE|QUOTE_SMART_DOUBLE_CLOSE]$/
-    FORBIDDEN_LAST_CHARS  = /[\(|{|\[|<|QUOTE_SMART_SINGLE_OPEN|QUOTE_SMART_DOUBLE_OPEN]/
+    FORBIDDEN_FIRST_CHARS = /[\.|\,|!|\?|\)|}|\]|>|\u8217|\u8221]$/
+    FORBIDDEN_LAST_CHARS  = /[\(|{|\[|<|\u8216|\u8220]/
 
     # return false if break_position < MinimunLineRoom
     # split string into two and return splited_second_half_attsting
@@ -139,16 +138,27 @@ q\u34"
       #TODO use ruby only not NS
       # puts "@att_string.string:#{@att_string.string}"
       if RUBY_ENGINE == "rubymotion"
-        initial_range = NSMakeRange(0,1)
         (1..string_length).to_a.each do |i|
           front_range = NSMakeRange(0,i)
           sub_string_incremented = @att_string.attributedSubstringFromRange(front_range)
           if i == string_length && sub_string_incremented.string =~ FORBIDDEN_FIRST_CHARS
             # we have front forbidden character . ? , !
             return "front forbidden character at the end of token"
+          elsif i == string_length && sub_string_incremented.string =~ FORBIDDEN_LAST_CHARS
+            cut_index = i - 1 # pne before i
+            front_range = NSMakeRange(0, cut_index)
+            sub_string_incremented = @att_string.attributedSubstringFromRange(front_range)
+            back_range  = NSMakeRange(cut_index,(string_length - cut_index))
+            original_string = @att_string
+            @att_string = sub_string_incremented
+            @string     = @att_string.string
+            @width      = @att_string.size.width + @left_margin + @right_margin
+            new_string  = original_string.attributedSubstringFromRange(back_range)
+            return new_string
 
           elsif sub_string_incremented.size.width > (break_position + CharHalfWidthCushion)
             cut_index = i - 1 # pne before i
+
             #handle line ending rule. chars that should not be at the end of line.
             front_string = sub_string_incremented.string
             if i > 2 && front_string[-2] =~ FORBIDDEN_LAST_CHARS
