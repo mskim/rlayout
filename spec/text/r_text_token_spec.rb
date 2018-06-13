@@ -1,6 +1,6 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
-describe "create RTextToekn" do
+describe "create RTextToken" do
   before do
     options                 = {}
     options[:string]        = 'This'

@@ -1,4 +1,5 @@
 
+
 # For text handling, Text and Paragraph are used
 # Text Object is used for simple text, usually for single page document or Ads.
 # Text is also used in Heading, HeadingContainer, where several short texts are used.
@@ -8,36 +9,18 @@
 # Paragraph holds data tokens and resposible for laying out them out in lines.
 
 module RLayout
-
   #TODO
   # tab stop
-  # implementing paragraph with tab
-  # if para_string.include?("\t")
-  # tab_group = para_string.split("\t")
-  # tokens = []
-  # tab_group.each do |sub_string|
-  #    tokens << create_tokens(sub_string)
-  #    tokens << TabToken.new
-  # end
-  # tokens.pop #pop the last TabToken
-
-  # tab Token
-
-  # list_styles option items are used in list type paragraphs, such as
-  # OrderedList, UnordersList, OrderedSection, UpperAlpaList
-  # they all have prefix of ":list_*" ,
-  # it is filtered using "filter_list_options(options)" and saved in @list_style
-  # @list_style is passed into Tokens as Graphic options.
 
   EMPASIS_STRONG = /(\*\*.*?\*\*)/
   EMPASIS_DIAMOND = /(\*.*?\*)/
 
-  class NewsParagraph
+  class RParagraph
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
-    attr_accessor :para_string, :para_style, :style_name
+    attr_accessor :para_string, :style_name
     attr_accessor :grid_height, :article_type
-    attr_accessor :body_line_height, :split, :line_count, :token_union_style
+    attr_accessor :body_line_height, :line_count, :token_union_style
 
     def initialize(options={})
       @tokens = []
@@ -46,7 +29,7 @@ module RLayout
       @para_string    = options.fetch(:para_string, "")
       @line_count     = 0
       @article_type   = options[:article_type]
-      make_para_style
+      parse_style_name
       # super doen't set @para_style values
       @space_width    = @para_style[:space_width]
       @grid_height    = options.fetch(:grid_height, 2)
@@ -73,9 +56,10 @@ module RLayout
       tokens_strings = para_string.split(" ")
       tokens_strings.each do |token_string|
         next unless token_string
-        @para_style[:string] = token_string
-        @para_style.delete(:parent) if @para_style[:parent]
-        @tokens << RLayout::TextToken.new(@para_style)
+        token_options = {}
+        token_options[:string] = token_string
+        token_options[:style_name] = @style_name
+        @tokens << RLayout::RTextToken.new(token_options)
       end
     end
 
@@ -138,28 +122,13 @@ module RLayout
       split_array.each do |token_group|
         if token_group =~EMPASIS_DIAMOND
           token_group.gsub!("**", "")
-          current_style             = RLayout::StyleService.shared_style_service.current_style
-          style_hash                = current_style['body_gothic']
-          style_hash                = Hash[style_hash.map{ |k, v| [k.to_sym, v] }] if style_hash
-          emphasis_style              = @para_style.dup
-          emphasis_style[:font]       = style_hash[:font] if style_hash[:font]
-          emphasis_style[:font_size]  = style_hash[:font_size] if style_hash[:font_size]
-          emphasis_style[:text_color] = style_hash[:text_color] if style_hash[:text_color]
-          atts = {}
-          if RUBY_ENGINE == 'rubymotion'
-            atts = NSUtils.ns_atts_from_style(emphasis_style)
-            @space_width = atts[:@space_width]
-            emphasis_style[:atts] = atts
-          else
-            unless @para_style[:space_width]
-              @space_width = @para_style[:space_width]  = @para_style[:font_size]/2
-            end
-          end
           # get font and size
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
+            emphasis_style = {}
             emphasis_style[:string] = token_string
-            @tokens << RLayout::TextToken.new(emphasis_style)
+            emphasis_style[:style_name] = 'body_gothic'
+            @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
           # line text with just noral text tokens
@@ -178,23 +147,6 @@ module RLayout
       split_array.each do |token_group|
         if token_group =~EMPASIS_DIAMOND
           token_group.gsub!("*", "")
-          current_style             = RLayout::StyleService.shared_style_service.current_style
-          style_hash                = current_style['running_head']
-          style_hash                = Hash[style_hash.map{ |k, v| [k.to_sym, v] }] if style_hash
-          emphasis_style              = @para_style.dup
-          emphasis_style[:font]       = style_hash[:font] if style_hash[:font]
-          emphasis_style[:font_size]  = style_hash[:font_size] if style_hash[:font_size]
-          emphasis_style[:text_color] = style_hash[:text_color] if style_hash[:text_color]
-          atts = {}
-          if RUBY_ENGINE == 'rubymotion'
-            atts = NSUtils.ns_atts_from_style(emphasis_style)
-            @space_width = atts[:@space_width]
-            emphasis_style[:atts] = atts
-          else
-            unless @para_style[:space_width]
-              @space_width = @para_style[:space_width]  = @para_style[:font_size]/2
-            end
-          end
           # get font and size
           unless token_group =~ /◆/
             token_group.strip!
@@ -204,12 +156,12 @@ module RLayout
             token_group.strip!
             token_group += " ="
           end
-
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
+            emphasis_style = {}
             emphasis_style[:string] = token_string
-            emphasis_style[:token_type] = 'diamond_emphasis'
-            @tokens << RLayout::TextToken.new(emphasis_style)
+            emphasis_style[:style_name] = 'diamond_emphasis'
+            @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
           # line text with just noral text tokens
@@ -218,49 +170,6 @@ module RLayout
         end
       end
     end
-
-    def room
-      @height
-    end
-
-    def number_of_tokens
-      number_of_tokens = 0
-      @graphics.each do |line|
-        number_of_tokens +=  line.graphics.count
-      end
-      number_of_tokens
-    end
-
-    # it makes sense to reduce space by the paragraph, since return key blocks the rippling effect.
-    # we reduce the paragraphs from the alst to first untill we have reduced desired number of lines.
-    def para_space_info
-      number_of_spaces = 0
-      number_of_tokens = 0
-      @graphics.each do |line|
-        number_of_spaces +=  line.graphics.count - 1
-        number_of_tokens +=  line.graphics.count
-      end
-      number_of_lines = @graphics.count
-      # number_of_spaces
-      # number_of_tokens
-      last_line_tokens = @graphics.last.graphics.count
-      if @tokens.length > 0
-        last_line_tokens = @tokens.lengt
-      end
-      {number_of_lines: number_of_lines, number_of_spaces: number_of_spaces, number_of_tokens: number_of_tokens, last_line_tokens: last_line_tokens}
-    end
-
-
-    # algorithm for laying out paragraph in TextColumn
-    # loop until we run out of tokens
-	  # 1. start at current_line
-	  # 2. keep filling up the line_tokens until the width total exceed the width of line.
-    # For fix line height layout
-    #
-    # else
-       # this is for variable line height
-	     # 3. Each time with new token, check the height change, tallest_token and adjust line height.
-    # end
 
     def layout_lines(current_line, options={})
       @current_line = current_line
@@ -288,7 +197,6 @@ module RLayout
           @current_line.align_tokens
           @current_line.room = 0
           new_line = @current_line.next_text_line
-
           if new_line
             @current_line = new_line
             @current_line.set_paragraph_info(self, "middle_line")
@@ -325,19 +233,6 @@ module RLayout
       @current_line.next_text_line
     end
 
-
-
-    # try reducing lines by using reducded space width
-    # the result would either succeed in reducing the number of lines
-    # or we just can't reduce the line numbers without going over the limit
-    # goal is given, so stop the process, if we have reached a goal
-    # return number of reduced lines
-    def try_reducing_line_numbers_by_changing_space_width(our_goal)
-      reduced_lines = 0
-      #TODO
-      reduced_lines
-    end
-
     def is_breakable?
       return true  if @graphics.length > 2
       false
@@ -352,90 +247,20 @@ module RLayout
       h
     end
 
-    # overflow is when we have breakable paragraph
-    # and partial lines are layout at current column.
-	  def overflow?
-	    @overflow == true
-	  end
-
-	  # underflow is when none of the lines can fit into a given column at the position
-	  # We move it to the item to the next column
-	  def underflow?
-	    @underflow == true
-	  end
-
-	  # I should read it from StyleService
-	  # list_* are for list item order token attributes
-    def make_para_style
-      h                           = {}
-      h[:font]                    = "smSSMyungjoP-W30"
-      h[:font_size]               = 9.2
-      h[:text_color]              = "CMYK=0,0,0,100"
-      h[:fill_color]              = "white"
-      h[:text_style]              = "plain"
-      h[:h_alignment]             = "justified"
-      h[:v_alignment]             = "center"
-      h[:first_line_indent]       = 10
-      h[:head_indent]             = 1
-      h[:tail_indent]             = 1
-      h[:space_before]            = 0
-      h[:space_after]             = 0
-      h[:tab_stops]               = [['left', 20], ['left', 40], ['left', 60],['left', 80]]
-      h[:double_emphasis]         = {stroke_sides: [1,1,1,1], stroke_thickness: 0.5}
-      h[:single_emphasis]         = {stroke_sides: [0,1,0,1], stroke_thickness: 0.5}
-
-      current_style = RLayout::StyleService.shared_style_service.current_style
+    def parse_style_name
       if @markup =='p'
         @style_name  = 'body'
-        style_hash = current_style['body']
-        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-      end
-      # h1 $ is  assigned as reporrter
-      if @markup =='h1'
+      elsif @markup =='h1'
         if @article_type == '사설' || @article_type == 'editorial'
-          style_hash = current_style['reporter_editorial']
           @style_name  = 'reporter_editorial'
-          @graphic_attributes = style_hash['graphic_attributes']
-          if @graphic_attributes == {}
-          elsif @graphic_attributes == ""
-          elsif @graphic_attributes.class == String
-            @graphic_attributes = eval(@graphic_attributes)
-          end
-          if @graphic_attributes.class == Hash
-            @token_union_style = @graphic_attributes['token_union_style']
-          end
         else
-          style_hash = current_style['reporter']
           @style_name  = 'reporter_editorial'
         end
-        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-      end
-
-      if @markup =='h2'
-        style_hash = current_style['running_head']
+      elsif @markup =='h2'
         @style_name  = 'running_head'
-        # style_hash = current_style['body_gothic']
-        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-      end
-
-      if @markup =='h3'
-        style_hash = current_style['body_gothic']
+      elsif @markup =='h3'
         @style_name  = 'body_gothic'
-
-        # style_hash = current_style['body_gothic']
-        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
-
-      # if @markup =='h3'
-      #   style_hash = current_style['running_head']
-      #   style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-      # end
-
-      style[:h_alignment]   = style[:alignment]   if style && style[:alignment]
-      if style
-        h.merge! style
-      end
-      @para_style = h
     end
 
     def filter_list_options(h)
