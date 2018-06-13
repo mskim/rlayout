@@ -86,9 +86,10 @@ module RLayout
   class NewsParagraph
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
-    attr_accessor :para_string, :para_style, :list_style
+    attr_accessor :para_string, :para_style, :list_style, :style_name
     attr_accessor :text_column, :grid_height, :article_type
     attr_accessor :body_line_height, :split, :line_count, :token_union_style
+
     def initialize(options={})
       @tokens = []
       #simple, drop_cap, drop_cap_image, math, with_image, with_math
@@ -446,6 +447,7 @@ module RLayout
 
       current_style = RLayout::StyleService.shared_style_service.current_style
       if @markup =='p'
+        @style_name  = 'body'
         style_hash = current_style['body']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
@@ -453,6 +455,7 @@ module RLayout
       if @markup =='h1'
         if @article_type == '사설' || @article_type == 'editorial'
           style_hash = current_style['reporter_editorial']
+          @style_name  = 'reporter_editorial'
           @graphic_attributes = style_hash['graphic_attributes']
           if @graphic_attributes == {}
           elsif @graphic_attributes == ""
@@ -464,18 +467,22 @@ module RLayout
           end
         else
           style_hash = current_style['reporter']
+          @style_name  = 'reporter_editorial'
         end
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
       if @markup =='h2'
         style_hash = current_style['running_head']
+        @style_name  = 'running_head'
         # style_hash = current_style['body_gothic']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
       if @markup =='h3'
         style_hash = current_style['body_gothic']
+        @style_name  = 'body_gothic'
+
         # style_hash = current_style['body_gothic']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end

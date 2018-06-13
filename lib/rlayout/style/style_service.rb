@@ -252,14 +252,20 @@ module RLayout
 
     def width_of_string(style_name, string)
       style = @current_style[style_name]
+      style = Hash[style.map{ |k, v| [k.to_sym, v] }]
       if RUBY_ENGINE == "rubymotion"
         atts = NSUtils.ns_atts_from_style(style)
         att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
         return att_string.size.width
       end
-
       rfont = RLayout::RFont.new(style[:font], style[:font_size])
       rfont.string_width(string)
+    end
+
+    def height_of_token(style_name)
+      style = @current_style[style_name]
+      style = Hash[style.map{ |k, v| [k.to_sym, v] }]
+      style[:font_size]
     end
 
     # get the height of body text by calling size method with sample text

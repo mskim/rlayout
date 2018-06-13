@@ -6,10 +6,15 @@ module RLayout
 
     def initialize(options={})
       #code
+      options[:fill_color] = options.fetch(:token_color, 'clear')
       super
-      @string       = options[:string]
-      @style_name   = options[:style_name]
-      @width        = width_of_string(@string)
+      @string           = options[:string]
+      @style_name       = options[:style_name]
+      @width            = width_of_string(@string)
+      @height_of_token  = height_of_token
+      if options[:text_line_spacing] && options[:text_line_spacing].class != String
+        @height += options[:text_line_spacing]
+      end
       self
     end
 
@@ -20,6 +25,11 @@ module RLayout
     def width_of_string(string)
       style = RLayout::StyleService.shared_style_service
       style.width_of_string(@style_name, string)
+    end
+
+    def height_of_token
+      style = RLayout::StyleService.shared_style_service
+      style.height_of_token(@style_name)
     end
 
     FORBIDDEN_FIRST_CHARS = /[\.|\,|!|\?|\)|}|\]|>|\u8217|\u8221]$/
