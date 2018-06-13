@@ -143,7 +143,7 @@ module RLayout
           sub_string_incremented = @att_string.attributedSubstringFromRange(front_range)
           if i == string_length && sub_string_incremented.string =~ FORBIDDEN_FIRST_CHARS
             # we have front forbidden character . ? , !
-            return "front forbidden character at the end of token"
+            return "front forbidden character"
           elsif i == string_length && sub_string_incremented.string =~ FORBIDDEN_LAST_CHARS
             cut_index = i - 1 # pne before i
             front_range = NSMakeRange(0, cut_index)
@@ -192,8 +192,8 @@ module RLayout
         # adjust first token width and result is second haldf att_string
         # or false is return if not abtle to brake the token
         hyphenated_result = break_attstring_at(break_position)
-        if hyphenated_result == "front forbidden character at the end of token"
-          return "front forbidden character at the end of token"
+        if hyphenated_result == "front forbidden character"
+          return "front forbidden character"
         elsif hyphenated_result.class == NSConcreteMutableAttributedString
           second_half = self.dup
           second_half.att_string = hyphenated_result

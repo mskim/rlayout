@@ -250,6 +250,18 @@ module RLayout
       self
     end
 
+    def width_of_string(style_name, string)
+      style = @current_style[style_name]
+      if RUBY_ENGINE == "rubymotion"
+        atts = NSUtils.ns_atts_from_style(style)
+        att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
+        return att_string.size.width
+      end
+
+      rfont = RLayout::RFont.new(style[:font], style[:font_size])
+      rfont.string_width(string)
+    end
+
     # get the height of body text by calling size method with sample text
     #
     def current_style_body_height
@@ -280,5 +292,6 @@ module RLayout
       end
       @@current_style_service
     end
+
   end
 end
