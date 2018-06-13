@@ -109,7 +109,7 @@ module RLayout
       @y                      = frame_rect[1]
       @width                  = frame_rect[2]
       @height                 = frame_rect[3]
-      if options[:extra_height_in_lines] && options[:extra_height_in_lines] > 0
+      if options[:extra_height_in_lines] # && options[:extra_height_in_lines] > 0
         @height += options[:extra_height_in_lines]*@parent_graphic.body_line_height
       end
 
