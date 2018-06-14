@@ -57,6 +57,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/text/quote_text'
   require File.dirname(__FILE__) + '/rlayout/text/title_text'
   require File.dirname(__FILE__) + '/rlayout/text/r_text_token'
+  require File.dirname(__FILE__) + '/rlayout/text/r_paragraph'
   require File.dirname(__FILE__) + "/rlayout/text/line_fragment"
   require File.dirname(__FILE__) + "/rlayout/text/text"
   require File.dirname(__FILE__) + '/rlayout/text/font'

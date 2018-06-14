@@ -12,28 +12,24 @@ module RLayout
   #TODO
   # tab stop
 
-  EMPASIS_STRONG = /(\*\*.*?\*\*)/
-  EMPASIS_DIAMOND = /(\*.*?\*)/
+  # EMPASIS_STRONG = /(\*\*.*?\*\*)/
+  # EMPASIS_DIAMOND = /(\*.*?\*)/
 
   class RParagraph
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
     attr_accessor :para_string, :style_name
-    attr_accessor :grid_height, :article_type
+    attr_accessor :article_type
     attr_accessor :body_line_height, :line_count, :token_union_style
 
     def initialize(options={})
       @tokens = []
-      #simple, drop_cap, drop_cap_image, math, with_image, with_math
       @markup         = options.fetch(:markup, 'p')
       @para_string    = options.fetch(:para_string, "")
       @line_count     = 0
       @article_type   = options[:article_type]
       parse_style_name
       # super doen't set @para_style values
-      @space_width    = @para_style[:space_width]
-      @grid_height    = options.fetch(:grid_height, 2)
-      @linked         = options.fetch(:linked, false)
       if @markup == 'br'
 
       elsif options[:tokens]
@@ -80,16 +76,7 @@ module RLayout
     # and do it recursively with split strings
     # and call create_plain_tokens for regular string segmnet
     def create_tokens
-      @atts = {}
-      if RUBY_ENGINE == 'rubymotion'
-        @atts = NSUtils.ns_atts_from_style(@para_style)
-        @space_width = @atts[:@space_width]
-        @para_style[:atts] = @atts
-      else
-        unless @para_style[:space_width]
-          @space_width = @para_style[:space_width]  = @para_style[:font_size]/2
-        end
-      end
+
       if @markup == "h3"
         unless @para_string =~/■/
           @para_string = "■" + @para_string
