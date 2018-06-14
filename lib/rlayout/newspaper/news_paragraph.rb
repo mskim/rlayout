@@ -451,7 +451,7 @@ module RLayout
       end
       # h1 $ is  assigned as reporrter
       if @markup =='h1'
-        if @article_type == '사설' || @article_type == 'editorial'
+        if @article_type == '사설' || @article_type == 'editorial' || @article_type == '기고'
           style_hash = current_style['reporter_editorial']
           @graphic_attributes = style_hash['graphic_attributes']
           if @graphic_attributes == {}
