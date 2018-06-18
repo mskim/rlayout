@@ -50,7 +50,7 @@
 module RLayout
 
   class Graphic
-    attr_accessor :parent_graphic, :x, :y, :width, :height, :tag, :ns_view, :pdf_view, :svg_view, :path
+    attr_accessor :parent, :x, :y, :width, :height, :tag, :ns_view, :pdf_view, :svg_view, :path
     attr_accessor :graphics, :fixtures, :floats, :grid_frame
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
@@ -58,14 +58,14 @@ module RLayout
     attr_accessor :overflow, :underflow
 
     def initialize(options={}, &block)
-      @parent_graphic = options[:parent]
-      # if @parent_graphic && @parent_graphic.class.kind_of?(Document)
-      #   set_frame(@parent_graphic.layout_rect)
+      @parent = options[:parent]
+      # if @parent && @parent.class.kind_of?(Document)
+      #   set_frame(@parent.layout_rect)
       @tag                  = options[:tag]
 
-      if @parent_graphic && options[:parent_frame]
-        set_frame(@parent_graphic.layout_rect)
-      elsif options[:grid_frame] && @parent_graphic && @parent_graphic.grid
+      if @parent && options[:parent_frame]
+        set_frame(@parent.layout_rect)
+      elsif options[:grid_frame] && @parent && @parent.grid
         # if options[:grid_frame] is given, convert grid_frame to x,y,width,height of parent's grid cordinate
         set_frame_in_parent_grid(options[:grid_frame])
         # disable autolayout
@@ -73,17 +73,17 @@ module RLayout
       else
         @from_right     = options[:from_right]
         @from_bottom    = options[:from_botto]
-        if @from_right && @parent_graphic
+        if @from_right && @parent
           @width          = options.fetch(:width, graphic_defaults[:width])
-          @x              = @parent_graphic.width - @from_right - @width
+          @x              = @parent.width - @from_right - @width
         else
           @x              = options.fetch(:x, graphic_defaults[:x])
           @width          = options.fetch(:width, graphic_defaults[:width])
         end
 
-        if @from_bottom && @parent_graphic
+        if @from_bottom && @parent
           @height         = options.fetch(:height, graphic_defaults[:height])
-          @y              = @parent_graphic.height - @from_bottom - @height
+          @y              = @parent.height - @from_bottom - @height
         else
           @y              = options.fetch(:y, graphic_defaults[:y])
           @height         = options.fetch(:height, graphic_defaults[:height])
@@ -101,25 +101,25 @@ module RLayout
       init_rotation(options)  if options[:rotation] || options[:rotation_content]
       # init_text(options)
       # init_image(options)
-      if @parent_graphic.nil?
+      if @parent.nil?
         return self
       end
-      if @parent_graphic.kind_of?(Document)
-        @parent_graphic.pages << self if  !parent_graphic.pages.include?(self)
+      if @parent.kind_of?(Document)
+        @parent.pages << self if  !parent.pages.include?(self)
       elsif options[:is_float]
-        @parent_graphic.floats << self if @parent_graphic.floats && !@parent_graphic.floats.include?(self)
+        @parent.floats << self if @parent.floats && !@parent.floats.include?(self)
         # init_float(options)
       elsif options[:is_fixture]
         #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics
-        @parent_graphic.fixtures << self if !@parent_graphic.fixtures.include?(self)
-      elsif @parent_graphi.respond_to?(:graphics) && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
-        @parent_graphic.graphics << self
+        @parent.fixtures << self if !@parent.fixtures.include?(self)
+      elsif @parent_graphi.respond_to?(:graphics) && @parent.graphics && !@parent.graphics.include?(self)
+        @parent.graphics << self
       end
       self
     end
 
     def set_frame_in_parent_grid(grid_frame)
-      set_frame(@parent_graphic.frame_for(grid_frame))
+      set_frame(@parent.frame_for(grid_frame))
     end
 
     def graphic_defaults
@@ -133,11 +133,11 @@ module RLayout
     end
 
     def graphics_index
-      @parent_graphic.graphics.index(self) if @parent_graphic && @parent_graphic.graphics
+      @parent.graphics.index(self) if @parent && @parent.graphics
     end
 
     def floats_index
-      @parent_graphic.floats.index(self) if @parent_graphic && @parent_graphic.floats
+      @parent.floats.index(self) if @parent && @parent.floats
     end
 
     def get_stroke_rect
@@ -241,7 +241,7 @@ module RLayout
     def to_data
       h = {}
       instance_variables.each do |a|
-        next if a == @parent_graphic
+        next if a == @parent
         next if a == @floats
         next if a == @graphics
         v = instance_variable_get a
@@ -498,9 +498,9 @@ module RLayout
     #/0/0/1/2/0
     def ancestry
       s = ""
-      if @parent_graphic
-        s += @parent_graphic.ancestry
-        s += "," + @parent_graphic.graphics.index(self).to_s
+      if @parent
+        s += @parent.ancestry
+        s += "," + @parent.graphics.index(self).to_s
       else
         s = ",0"
       end
@@ -517,7 +517,7 @@ module RLayout
         @ns_view.save_pdf(path, options)
       elsif RUBY_ENGINE == 'ruby'
         puts "save pdf in ruby"
-        # unless @parent_graphic
+        # unless @parent
         #   doc       = HexaPDF::Document.new
         #   page      = doc.pages.add
         #   canvas    = page.canvas

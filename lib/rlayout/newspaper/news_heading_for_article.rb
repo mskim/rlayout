@@ -11,7 +11,7 @@ module RLayout
       @heading_columns  = options[:column_count]
       # options[:stroke_width]    = 1
       super
-      @body_line_height = @parent_graphic.body_line_height
+      @body_line_height = @parent.body_line_height
       set_heading_content(options)
       self
     end
@@ -26,7 +26,7 @@ module RLayout
       options[:y] = y
       options[:x] = 0
       if options['title']
-        if @parent_graphic.top_story
+        if @parent.top_story
           @title_object = main_title(options)
           @title_object.adjust_height_as_height_in_lines
         else
@@ -35,8 +35,8 @@ module RLayout
         @height_in_lines  +=@title_object.height_in_lines    unless @title_object.nil?
       end
 
-      if options['subtitle'] && (@parent_graphic.top_story || @parent_graphic.subtitle_in_head)
-        if @parent_graphic.top_story
+      if options['subtitle'] && (@parent.top_story || @parent.subtitle_in_head)
+        if @parent.top_story
           @subtitle_object = top_subtitle(options)
         else
           @subtitle_object = subtitle(options)

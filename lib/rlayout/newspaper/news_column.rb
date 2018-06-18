@@ -51,8 +51,8 @@ module RLayout
     end
 
     def column_index
-      return 0 unless @parent_graphic
-      @parent_graphic.graphics.index(self)
+      return 0 unless @parent
+      @parent.graphics.index(self)
     end
 
     def unoccupied_lines_count

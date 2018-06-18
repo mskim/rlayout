@@ -173,7 +173,7 @@ module RLayout
     def insert_token(token)
       if (graphics_width_sum + token.width + @layout_space) < (@width - @left_margin - @right_margin)
         # insert the token into the line
-        token.parent_graphic = self
+        token.parent = self
         @graphics << token
 
         #TODO

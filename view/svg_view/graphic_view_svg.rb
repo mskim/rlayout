@@ -17,7 +17,7 @@ module RLayout
     end
 
     def to_svg
-      if @parent_graphic
+      if @parent
         return svg
       else
         svg_string = "<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>\n"

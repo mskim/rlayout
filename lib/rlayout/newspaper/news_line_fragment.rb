@@ -41,7 +41,7 @@ module RLayout
       @room             = @text_area[2]
       @overlap          = false
       @layed_out_line   = false
-      @token_union_style = @parent_graphic.token_union_style if @parent_graphic.respond_to?(:token_union_style)
+      @token_union_style = @parent.token_union_style if @parent.respond_to?(:token_union_style)
       self
     end
 
@@ -72,7 +72,7 @@ module RLayout
     end
 
     def column
-      @parent_graphic
+      @parent
     end
 
     def mark_overflow
@@ -85,8 +85,8 @@ module RLayout
     def adjust_text_area_away_from(overlapping_float_rect)
       #first adjust cordinate offset from pararent graphic
       translated_rect = frame_rect.dup
-      translated_rect[0] += @parent_graphic.x
-      translated_rect[1] += @parent_graphic.y
+      translated_rect[0] += @parent.x
+      translated_rect[1] += @parent.y
       if intersects_rect(overlapping_float_rect, translated_rect)
         @text_area[2] = 0
         @room         = 0
@@ -100,20 +100,20 @@ module RLayout
 
     # is it the first line of the column
     def first_line_in_column?
-      self == @parent_graphic.graphics.first
+      self == @parent.graphics.first
     end
 
     def first_text_line_in_column?
-      self == @parent_graphic.first_text_line_in_column
+      self == @parent.first_text_line_in_column
     end
 
     # is it the last line of the column
     def last_line_in_column?
-      self == @parent_graphic.graphics.last
+      self == @parent.graphics.last
     end
 
     def line_index
-      @parent_graphic.graphics.index(self)
+      @parent.graphics.index(self)
     end
 
     def text_line?
@@ -165,7 +165,7 @@ module RLayout
       return if token.nil?
       if @room + CharHalfWidthCushion >= token.width
         # place token in line.
-        token.parent_graphic = self
+        token.parent = self
         @graphics << token
         @room -= token.width
         @room -= @space_width
@@ -178,12 +178,12 @@ module RLayout
         if @result == "front forbidden character"
           # this ss when the last char is "." and we can sqeezed it into the line.
           # token is not broken
-          token.parent_graphic = self
+          token.parent = self
           @graphics << token
           @room = 0
           return true
         elsif @result.class == RTextToken || @result.class == TextToken
-          token.parent_graphic = self
+          token.parent = self
           @graphics << token  # insert front part to line_count
           return @result       # return second part
         end
@@ -311,8 +311,8 @@ module RLayout
       puts "in OverFlowMarker"
       options[:is_float] = true
       super
-      @x                = @parent_graphic.width - 8
-      @y                = @parent_graphic.height - 8
+      @x                = @parent.width - 8
+      @y                = @parent.height - 8
       @width            = 8
       @hwight           = 8
       @stroke_color     = 'red'

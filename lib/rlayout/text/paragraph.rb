@@ -606,7 +606,7 @@ module RLayout
       # @right_indent     = options.fetch(:right_indent, 0)
   	  @para_style       = options[:para_style]
   	  @graphics.each do |token|
-        token.parent_graphic = self
+        token.parent = self
       end
   		align_tokens
   		self

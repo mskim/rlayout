@@ -2,7 +2,7 @@ module RLayout
   class LineFragment
     def to_svg
       s = ""
-      if @parent_graphic
+      if @parent
         text_color_string = ""
         text_color_string += "fill_color: #{@text_color}" if @text_color
         font_size = @font_size || 10

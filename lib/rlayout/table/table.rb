@@ -110,7 +110,7 @@
 # }
 
 # It is tricky to layout multiple tables in a single page.
-# Tables first need to be placed with right frames in parent_graphics, before contents can be layed out.
+# Tables first need to be placed with right frames in parents, before contents can be layed out.
 # ???
 # I should devide Table init into two parts, first part init getting getting frame
 # Second part actually layout the data after proper size is set.

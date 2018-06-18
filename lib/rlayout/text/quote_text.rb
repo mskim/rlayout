@@ -193,7 +193,7 @@ module RLayout
     def place_token(token)
       if @room  >= token.width
         # place token in line.
-        token.parent_graphic = self
+        token.parent = self
         @graphics << token
         @room -= token.width
         @room -= @space_width

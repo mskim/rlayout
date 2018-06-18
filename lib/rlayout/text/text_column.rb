@@ -102,7 +102,7 @@ module RLayout
     def place_item(item)
       return if @graphics.include?(item)
       @graphics << item
-      item.parent_graphic = self
+      item.parent = self
       item.x              = @left_margin + @left_inset
       item.y              = @current_position
       @current_position   += item.height
@@ -215,7 +215,7 @@ module RLayout
     end
 
     def column_index
-      @parent_graphic.graphics.index(self)
+      @parent.graphics.index(self)
     end
 
     def text_width

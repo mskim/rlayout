@@ -933,7 +933,7 @@ TODO List
 	- min_y(grid_frame.rect)
 
 2016 4 21
-	- make parent_graphic as options parent
+	- make parent as options parent
 	- relayout image_fit when relayout!
 
 2016 2 23

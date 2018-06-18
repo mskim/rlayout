@@ -157,7 +157,7 @@ module RLayout
         @heading[:layout_expand] = [:width, :height]
         heading_object           = Heading.new(@heading)
         @first_page.graphics.unshift(heading_object)
-        heading_object.parent_graphic = @first_page
+        heading_object.parent = @first_page
       end
       unless @first_page.main_box
         @first_page.main_text

@@ -110,8 +110,8 @@ describe 'testing container with graphics' do
   end
 
   it 'added graphics should have self as parent' do
-    @container.graphics[0].parent_graphic.must_equal @container
-    @container.graphics[1].parent_graphic.must_equal @container
+    @container.graphics[0].parent.must_equal @container
+    @container.graphics[1].parent.must_equal @container
   end
 
   it 'should save pdf' do
@@ -156,8 +156,8 @@ describe 'testing container with graphics' do
   # end
   #
   # it 'added graphics should have self as parent' do
-  #   @container.graphics[0].parent_graphic.must_equal @container
-  #   @container.graphics[1].parent_graphic.must_equal @container
+  #   @container.graphics[0].parent.must_equal @container
+  #   @container.graphics[1].parent.must_equal @container
   # end
 
   it 'should save pdf' do

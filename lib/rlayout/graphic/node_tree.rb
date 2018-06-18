@@ -2,9 +2,9 @@ module RLayout
   class Graphic
     # graphic
     def node_path
-      return "0" unless @parent_graphic || @document
-      if @parent_graphic
-        return @parent_graphic.node_path + "_" + @parent_graphic.graphics.index(self).to_s 
+      return "0" unless @parent || @document
+      if @parent
+        return @parent.node_path + "_" + @parent.graphics.index(self).to_s 
       elsif @document
         return @document.pages.index(self).to_s 
       end

@@ -43,7 +43,7 @@ module RLayout
   # Each heading element layout_length is set to it's height
   # This way, parent can shrink or expand heading and maintain each elements's height propotion.
   # heading height should be multiles of body text height
-  class Heading < Container
+  class RHeading < Container
     attr_accessor :number_object, :title_object, :subtitle_object, :leading_object, :author_object
     attr_accessor :align_to_body_text
     def initialize(options={}, &block)
@@ -63,8 +63,8 @@ module RLayout
       @layout_space       = 3
       if options[:width]
         @width = options[:width]
-      elsif @parent_graphic
-        @width = @parent_graphic.layout_size[0]
+      elsif @parent
+        @width = @parent.layout_size[0]
       else
         @width = 600
       end

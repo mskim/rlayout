@@ -4,7 +4,7 @@ module RLayout
   class Container
     
     def adopt_children
-      @parent_graphics.graphics.each do |graphic|
+      @parents.graphics.each do |graphic|
         if in_my_area?(graphic)
           adap_graphic(graphic)
         end
@@ -16,8 +16,8 @@ module RLayout
     end
     
     def adapt_graphic(graphic)
-      @parent_graphics.delete(graphic)
-      graphic.parent_graphic = self
+      @parents.delete(graphic)
+      graphic.parent = self
       @graphics << graphic
     end
     

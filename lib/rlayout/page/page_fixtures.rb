@@ -14,19 +14,19 @@ module RLayout
       options[:font_size] = 8 unless options[:font_size]
       options[:font]    = 'Helvetica' unless options[:font_size]
       options[:text_string] = "" if options[:text_string].nil?
-      if @parent_graphic
-        options[:y]       = @parent_graphic.top_margin - options[:height]  
+      if @parent
+        options[:y]       = @parent.top_margin - options[:height]  
       else
         options[:y]       = 30 - options[:font_size]  
       end    
       options[:width]   = 300
       options[:height]  = 20
-      @parent_graphic   = options[:parent]
-      if @parent_graphic.left_page?
-        options[:x]     = @parent_graphic.left_margin
+      @parent   = options[:parent]
+      if @parent.left_page?
+        options[:x]     = @parent.left_margin
         options[:text_alignment] = 'left'
       else
-        options[:x]     = @parent_graphic.width - options[:width] - @parent_graphic.left_margin - @parent_graphic.left_inset
+        options[:x]     = @parent.width - options[:width] - @parent.left_margin - @parent.left_inset
         options[:text_alignment] = 'right'
       end
       super
@@ -42,29 +42,29 @@ module RLayout
     attr_accessor :pre_string, :post_string
     
     def initialize(options={})
-      @parent_graphic     = options[:parent]
+      @parent     = options[:parent]
       options[:font_size] = 8 unless options[:font_size]
       options[:font]      = 'Helvetica' unless options[:font_size]
       options[:width]     = 300
       options[:height]    = 20
       options[:text_string] = "" if options[:text_string].nil?
-      options[:y]         = @parent_graphic.height - @parent_graphic.bottom_margin + 4     
-      @page_number        = @parent_graphic.page_number
+      options[:y]         = @parent.height - @parent.bottom_margin + 4     
+      @page_number        = @parent.page_number
       @pre_string         = options.fetch(:pre_string, "-")
       @post_string        = options.fetch(:post_string, "-")
-      @parent_graphic     = options[:parent]
-      if @parent_graphic.page_number.even?
-        options[:x] = @parent_graphic.left_inset + @parent_graphic.left_margin
+      @parent     = options[:parent]
+      if @parent.page_number.even?
+        options[:x] = @parent.left_inset + @parent.left_margin
         options[:text_alignment] = 'left'
         options[:text_string] = @page_number.to_s + " " + options[:text_string]
       else
-        options[:x] = @parent_graphic.width - options[:width] - @parent_graphic.left_margin - @parent_graphic.left_inset
+        options[:x] = @parent.width - options[:width] - @parent.left_margin - @parent.left_inset
         options[:text_alignment] = 'right'
         options[:text_string] += " " + @page_number.to_s
       end
       super
-      if @parent_graphic && !@parent_graphic.floats.include?(self)
-        @parent_graphic.floats << self
+      if @parent && !@parent.floats.include?(self)
+        @parent.floats << self
       end
       self
     end
@@ -76,12 +76,12 @@ module RLayout
     
     def initialize(options={})
       super
-      if @parent_graphic.left_page?
+      if @parent.left_page?
         @x = 0
         @y = 30
         @rotation = -90
       else
-        @x = @parent_graphic.width - 30
+        @x = @parent.width - 30
         @y = 30
         @rotation = 90
       end

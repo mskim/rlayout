@@ -125,7 +125,7 @@ module RLayout
       else
         @column_count.times do
           g= TextColumn.new(:parent=>nil, layout_space: @column_layout_space)
-          g.parent_graphic = self
+          g.parent = self
           @graphics << g
         end
       end
@@ -141,15 +141,15 @@ module RLayout
     end
 
     def document
-      @parent_graphic.document if @parent_graphic
+      @parent.document if @parent
     end
 
     def page
-      @parent_graphic
+      @parent
     end
 
     def page_index
-      document.pages.index(@parent_graphic) if @parent_graphic
+      document.pages.index(@parent) if @parent
     end
 
     def empty?

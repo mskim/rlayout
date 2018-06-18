@@ -78,13 +78,13 @@ module RLayout
         current_x += @left_inset
         # current_y += @top_margin + @top_inset
         g= NewsColumn.new(:parent=>nil, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-        g.parent_graphic = self
+        g.parent = self
         @graphics << g
         @overflow_column = NewsColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @body_line_height*100, column_line_count: 100, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
       else
         @column_count.times do
           g= NewsColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-          g.parent_graphic = self
+          g.parent = self
           @graphics << g
           current_x += @column_width + @gutter
         end

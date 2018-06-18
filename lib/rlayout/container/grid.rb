@@ -18,7 +18,7 @@
 #       height: 122.23,
 #     }
 #  grid_color:         color of the grid lines
-#  grid_frame:         [x,y, width, height] frame in grid unit of parent_graphic's grid
+#  grid_frame:         [x,y, width, height] frame in grid unit of parent's grid
 #  grid_width:    unit grid with
 #  grid_height    unit grid height
 #  show_grid:          boolean whether to show or hide grid
@@ -36,7 +36,7 @@ module  RLayout
 
   class Container < Graphic
     attr_accessor :grid_base, :gutter, :v_gutter, :grid_cells, :grid_color, :show_grid
-    attr_accessor :grid_frame #[x,y, width, height] frame in grid unit of parent_graphic's grid
+    attr_accessor :grid_frame #[x,y, width, height] frame in grid unit of parent's grid
 
     def init_grid(options)
       @grid_frame     = options.fetch(:grid_frame,[0,0,3,3])
@@ -365,7 +365,7 @@ module  RLayout
         end
       end
 
-      # when some changes, we want to inform parent_graphic to auto_save
+      # when some changes, we want to inform parent to auto_save
       if @auto_save
         if @parent_grapic
           @parent_grapic.auto_save

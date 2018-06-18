@@ -63,8 +63,8 @@ module RLayout
       @layout_space       = 3
       if options[:width]
         @width = options[:width]
-      elsif @parent_graphic
-        @width = @parent_graphic.layout_size[0]
+      elsif @parent
+        @width = @parent.layout_size[0]
       else
         @width = 600
       end

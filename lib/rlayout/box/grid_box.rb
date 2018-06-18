@@ -104,7 +104,7 @@ module RLayout
         @item.y     = cell_frame[1]
         @item.width = cell_frame[2]
         @item.height= cell_frame[3]
-        @item.parent_graphic = self
+        @item.parent = self
         @graphics << @item
         index += 1
       end
@@ -136,7 +136,7 @@ module RLayout
 
 
     def document
-      @parent_graphic.document if @parent_graphic
+      @parent.document if @parent
     end
 
   end

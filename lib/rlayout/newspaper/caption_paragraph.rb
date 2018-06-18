@@ -107,7 +107,7 @@ module RLayout
         if (end_of_tokens + @source_space_width) < source_starting_x
           x = source_starting_x
           @source_tokens.each do |source_token|
-            source_token.parent_graphic = self
+            source_token.parent = self
             source_token.x = x
             token_list << source_token
             x              += source_token.width + @source_space_width
@@ -119,7 +119,7 @@ module RLayout
           caption_column.add_new_line
           x = source_starting_x + @source_space_width
           @source_tokens.each do |source_token|
-            source_token.parent_graphic = self
+            source_token.parent = self
             source_token.x = x
             token_list << source_token
             x              += source_token.width + @source_space_width

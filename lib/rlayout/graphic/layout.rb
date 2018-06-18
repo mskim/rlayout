@@ -33,15 +33,15 @@ module RLayout
       end
 
       # bottom_edge, right_edge
-      if @parent_graphic
+      if @parent
         if options[:bottom_edge]
           @bottom_edge  = options[:bottom_edge]
-          @x            = @parent_graphic.heihgt - @bottom_edge - @hwifhr
+          @x            = @parent.heihgt - @bottom_edge - @hwifhr
         end
 
         if options[:right_edge]
           @right_edge   = options[:right_edge]
-          @y            = @parent_graphic.width - @right_edge - @hwifhr
+          @y            = @parent.width - @right_edge - @hwifhr
         end
       end
 
@@ -51,8 +51,8 @@ module RLayout
       @layout_align     = options.fetch(:layout_align, "left")
       if options[:layout_expand]
         @layout_expand    = options.fetch(:layout_expand, layout_default[:layout_expand])
-      elsif @parent_graphic #&& @parent_graphic.respond_to?(:stack) && @parent_graphic.stack
-        # if @parent_graphic.respond_to?(:layout_direction) && @parent_graphic.layout_direction == 'vertical'
+      elsif @parent #&& @parent.respond_to?(:stack) && @parent.stack
+        # if @parent.respond_to?(:layout_direction) && @parent.layout_direction == 'vertical'
         #   @layout_expand = :width
         # else
         #   @layout_expand = :height

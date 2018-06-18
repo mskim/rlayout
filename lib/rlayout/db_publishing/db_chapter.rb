@@ -48,7 +48,7 @@ module RLayout
       #   # make head a as one of graphics
       #   heading_object = Heading.new(@heading)
       #   @first_page.graphics.unshift(heading_object)
-      #   heading_object.parent_graphic = @first_page
+      #   heading_object.parent = @first_page
       #   @first_page.relayout!
       # end
 

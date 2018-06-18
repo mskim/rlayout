@@ -15,7 +15,7 @@ module RLayout
 #  illegular shaped text flow
 #  each Container Object implements "overlapping_graphics"
 #  "overlapping_graphics" finds "Graphic/Container objects" that are sitting on top of current textContainer
-#  It is done by asking each @parent_graphics up to the Page for list of overlapping graphics that are sitting on top(by @graphics index as z-depth)
+#  It is done by asking each @parents up to the Page for list of overlapping graphics that are sitting on top(by @graphics index as z-depth)
 #  Only the overlapping graphics are set as "push content underneath" mode are considersed,  
 #  overlapping graphics that are "jsut floating" do not affect the text flow.
 #  after collecting overlapping graphics, change the textContainer to flow text avoiding othose graphics.

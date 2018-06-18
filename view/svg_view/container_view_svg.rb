@@ -2,7 +2,7 @@ module RLayout
 
   class Container < Graphic
     def to_svg
-      if @parent_graphic
+      if @parent
         s = svg + "\n"
         s += children_graphics_svg
       else

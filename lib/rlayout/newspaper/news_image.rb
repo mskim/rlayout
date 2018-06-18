@@ -104,13 +104,13 @@ module RLayout
       @expand                 = options[:expand] if options[:expand]
       @before_title           = options.fetch(:before_title, false)
       super
-      frame_rect              = @parent_graphic.grid_frame_to_image_rect(options[:grid_frame])
+      frame_rect              = @parent.grid_frame_to_image_rect(options[:grid_frame])
       @x                      = frame_rect[0]
       @y                      = frame_rect[1]
       @width                  = frame_rect[2]
       @height                 = frame_rect[3]
       if options[:extra_height_in_lines] # && options[:extra_height_in_lines] > 0
-        @height += options[:extra_height_in_lines]*@parent_graphic.body_line_height
+        @height += options[:extra_height_in_lines]*@parent.body_line_height
       end
 
       has_caption_text?(options)
@@ -125,8 +125,8 @@ module RLayout
       image_options[:height]       = @height - @caption_column.height if @caption_column
       #TODO if position is not top,(1,2,3,), we need space above the image
       unless top_position?
-        image_options[:y]          = @parent_graphic.body_line_height
-        image_options[:height]     -= @parent_graphic.body_line_height
+        image_options[:y]          = @parent.body_line_height
+        image_options[:height]     -= @parent.body_line_height
       end
       # IMAGE_FIT_TYPE_KEEP_RATIO     = 3
       # IMAGE_FIT_TYPE_IGNORE_RATIO   = 4
@@ -137,17 +137,17 @@ module RLayout
       image_options[:layout_expand]  = nil
       image_options[:layout_expand]  = @expand if @expand
       image_options[:parent]         = self
-      if @parent_graphic.kind == '기고' || @parent_graphic.kind == 'opinion'
+      if @parent.kind == '기고' || @parent.kind == 'opinion'
         image_options[:stroke_width]  = 0
       end
       @image_box                    = Image.new(image_options)
       if @caption_column
         @caption_column.y             = @image_box.height
-        @caption_column.y             += @parent_graphic.body_line_height unless top_position?
+        @caption_column.y             += @parent.body_line_height unless top_position?
       end
       # make space after the news_image when we have following text
       # for full sized news_image, this will be adjusted by adjust_image_height
-      @height                       += @parent_graphic.body_line_height
+      @height                       += @parent.body_line_height
       self
     end
 

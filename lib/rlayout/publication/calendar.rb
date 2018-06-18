@@ -327,7 +327,7 @@ module RLayout
         overflowing_row.graphics.each do |overflow_cell|
           last_row_cell  = last_row.graphics.shift
           dobule_cell =CalendarCell.merge_cells(last_row_cell, overflow_cell)
-          dobule_cell.parent_graphic = last_row
+          dobule_cell.parent = last_row
           double_cells << dobule_cell
         end
         last_row.graphics.length

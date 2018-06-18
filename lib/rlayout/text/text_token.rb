@@ -283,7 +283,7 @@ module RLayout
       @h_alignment    = options.fetch(:h_alignment, "left")
       @v_alignment    = options.fetch(:v_alignment, "top")
       @height         = @token.height
-      @token.parent_graphic = self
+      @token.parent = self
       @graphics << token
       align_token
       self

@@ -139,7 +139,7 @@ module RLayout
     def to_data
       h = {}
       instance_variables.each{|a|
-        next if a==@parent_graphic
+        next if a==@parent
         next if a==@graphics
         next if a==@floats
         next if a==@fixtures
@@ -192,11 +192,11 @@ module RLayout
       @graphics = [] unless @graphics
       if graphic.is_a?(Array)
         graphic.each do |item|
-          item.parent_graphic = self
+          item.parent = self
           @graphics << item unless @graphics.include?(graphic)
         end
       else
-        graphic.parent_graphic = self
+        graphic.parent = self
         @graphics << graphic unless @graphics.include?(graphic)
       end
     end
@@ -204,11 +204,11 @@ module RLayout
     def add_floats(float)
       if float.is_a?(Array)
         float.each do |item|
-          item.parent_graphic = self
+          item.parent = self
           @floats << item unless @floats.include?(float)
         end
       else
-        float.parent_graphic = self
+        float.parent = self
         @floats << float unless @floats.include?(float)
       end
     end

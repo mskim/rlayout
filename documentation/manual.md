@@ -2,7 +2,7 @@
 # RLayout
 
 ## Graphic
-- parent_graphic
+- parent
 
 ### Layout Attributes
 Graphic can be placed using x, y, width, height.

@@ -202,7 +202,7 @@ module RLayout
 
     def add_page(page, options={})
       if page.class == Page
-        page.parent_graphic = self
+        page.parent = self
         @pages << page
       elsif page.class == Array
         page.each do |p|

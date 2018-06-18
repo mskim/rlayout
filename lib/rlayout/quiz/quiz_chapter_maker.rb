@@ -488,7 +488,7 @@ module RLayout
         @data[:row1][:width]  = @width - row_indent - @left_margin - @right_margin
         @data[:row1][:left_margin] = row_indent
         @row1_object          = TableRow.new(@data[:row1])
-        @row1_object.parent_graphic = self
+        @row1_object.parent = self
         @graphics << @row1_object unless @graphics.include?(@row1_object)
         @row1_object.relayout!
       end
@@ -498,7 +498,7 @@ module RLayout
         @data[:row2][:width]  = @width - row_indent - @left_margin - @right_margin
         @data[:row2][:left_margin] = row_indent
         @row2_object          = TableRow.new(@data[:row2])
-        @row2_object.parent_graphic = self
+        @row2_object.parent = self
         @graphics << @row2_object unless @graphics.include?(@row2_object)
         @row2_object.relayout!
       end

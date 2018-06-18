@@ -43,7 +43,7 @@ module RLayout
 	    super
 	    @layout_direction   = "horizontal"
       @layout_expand      = :nil
-      @width              = @parent_graphic.width - @left_margin - @right_margin
+      @width              = @parent.width - @left_margin - @right_margin
       @markup             = para[:markup]
       @para_string        = para[:para_string]
       @items              = @para_string.split(INLINE_TAB_RX)
@@ -78,7 +78,7 @@ module RLayout
       @layout_length  = @width
       @h_alignment    = options.fetch(:h_alignment, "left")
       @height         = @token.height
-      @token.parent_graphic = self
+      @token.parent = self
       @graphics << token
       align_token
       self

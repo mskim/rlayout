@@ -14,8 +14,8 @@ module RLayout
       # options[:fill_color]    = 'blue'
       super
       # shift title to right by one column
-      # @x                      = @parent_graphic.column_width + @parent_graphic.gutter
-      @body_line_height       = @parent_graphic.body_line_height
+      # @x                      = @parent.column_width + @parent.gutter
+      @body_line_height       = @parent.body_line_height
       @height_in_lines        = 0
 
       if options['title']
@@ -39,9 +39,9 @@ module RLayout
       title_options[:is_float]        = true
       title_options[:x]               = 0
       title_options[:y]               = @body_line_height
-      title_options[:width]           = @width - @parent_graphic.column_width - @parent_graphic.right_margin
+      title_options[:width]           = @width - @parent.column_width - @parent.right_margin
       title_options[:height]          = @body_line_height*4
-      title_options[:inset]           = @parent_graphic.gutter
+      title_options[:inset]           = @parent.gutter
       title_options[:stroke_sides]    = [0,1,0,0] # draw line at top only
       title_options[:stroke_width]    = 0.3
       title_options[:stroke_color]    = 'red'
