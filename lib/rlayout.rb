@@ -34,7 +34,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/utility'
   require File.dirname(__FILE__) + '/rlayout/color'
 
-
   require File.dirname(__FILE__) + "/rlayout/graphic/fill"
   require File.dirname(__FILE__) + "/rlayout/graphic/graphic_struct"
   require File.dirname(__FILE__) + "/rlayout/graphic/image"
@@ -56,10 +55,9 @@ else
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'
   require File.dirname(__FILE__) + '/rlayout/text/quote_text'
   require File.dirname(__FILE__) + '/rlayout/text/title_text'
-  require File.dirname(__FILE__) + '/rlayout/text/r_text_token'
-  require File.dirname(__FILE__) + '/rlayout/text/r_paragraph'
   require File.dirname(__FILE__) + "/rlayout/text/line_fragment"
   require File.dirname(__FILE__) + "/rlayout/text/text"
+  require File.dirname(__FILE__) + "/rlayout/text/text_token"
   require File.dirname(__FILE__) + '/rlayout/text/font'
   require File.dirname(__FILE__) + '/rlayout/text/text_train'
   require File.dirname(__FILE__) + '/rlayout/text/ordered_list'
@@ -120,8 +118,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/story/reader'
   require File.dirname(__FILE__) + '/rlayout/story/remote_reader'
 
-  require File.dirname(__FILE__) + '/rlayout/article/pdf_chapter'
   require File.dirname(__FILE__) + '/rlayout/article/chapter'
+  require File.dirname(__FILE__) + '/rlayout/article/pdf_chapter'
   require File.dirname(__FILE__) + '/rlayout/article/spread_chapter'
   require File.dirname(__FILE__) + '/rlayout/article/toc_chapter'
   require File.dirname(__FILE__) + '/rlayout/article/float_group'
@@ -129,6 +127,16 @@ else
   require File.dirname(__FILE__) + '/rlayout/article/single_page_maker'
   require File.dirname(__FILE__) + '/rlayout/article/rjob'
   require File.dirname(__FILE__) + '/rlayout/article/item_chapter_maker'
+
+  require File.dirname(__FILE__) + '/rlayout/chapter/r_text_token'
+  require File.dirname(__FILE__) + '/rlayout/chapter/r_paragraph'
+  require File.dirname(__FILE__) + '/rlayout/chapter/r_heading'
+  require File.dirname(__FILE__) + '/rlayout/chapter/r_line_fragment'
+  require File.dirname(__FILE__) + '/rlayout/chapter/r_text_box'
+  require File.dirname(__FILE__) + '/rlayout/chapter/r_title_text'
+  require File.dirname(__FILE__) + '/rlayout/chapter/r_document'
+  require File.dirname(__FILE__) + '/rlayout/chapter/r_page'
+  require File.dirname(__FILE__) + '/rlayout/chapter/r_chapter'
 
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box'
   require File.dirname(__FILE__) + '/rlayout/newspaper/caption_paragraph'
