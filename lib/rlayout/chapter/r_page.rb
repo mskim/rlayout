@@ -12,8 +12,8 @@ module RLayout
 
     def initialize(options={}, &block)
       if options[:parent] || options[:document]
-        @parent = options[:parent] || options[:document]
-        @document       = @parent
+        @parent_graphic = options[:parent] || options[:document]
+        @document       = @parent_graphic
       end
       @column_count   = 1
       if @document
@@ -38,18 +38,18 @@ module RLayout
         options[:width]   = SIZES['A4'][0]
         options[:height]  = SIZES['A4'][1]
       end
-      if  @parent && !@parent.pages.include?(self)
-        @parent.pages << self
+      if  @parent_graphic && !@parent_graphic.pages.include?(self)
+        @parent_graphic.pages << self
       end
       super
-      if  @parent
-        @page_number = @parent.pages.index(self) + @parent.starting_page
+      if  @parent_graphic
+        @page_number = @parent_graphic.pages.index(self) + @parent_graphic.starting_page
       elsif options[:page_number]
         @page_number = options[:page_number]
       else
         @page_number = 1
       end
-      # if @parent && @parent.double_side
+      # if @parent_graphic && @parent_graphic.double_side
       @left_page  = @page_number.even?
       # else
       #   @left_page  = false
@@ -179,7 +179,7 @@ module RLayout
     end
 
     def document
-      @parent
+      @parent_graphic
     end
 
     def page_defaults
@@ -219,7 +219,7 @@ module RLayout
 
     def add_heading(heading_object)
       @heading_object = heading_object
-      @heading_object.parent = self
+      @heading_object.parent_graphic = self
       @graphics << @heading_object
     end
     # does current text_box include Heading in floats
@@ -292,7 +292,7 @@ module RLayout
     def to_data
       h = {}
       instance_variables.each{|a|
-        next if a==@parent
+        next if a==@parent_graphic
         next if a==@graphics
         next if a==@floats
         next if a==@fixtures
@@ -329,8 +329,8 @@ module RLayout
     end
 
     def first_page?
-      if @parent
-        return @parent.pages.index(self) == 0
+      if @parent_graphic
+        return @parent_graphic.pages.index(self) == 0
       end
       false
     end
@@ -340,13 +340,13 @@ module RLayout
     end
 
     def header_rule
-      return Hash.new unless @parent
-      @parent.header_rule.dup
+      return Hash.new unless @parent_graphic
+      @parent_graphic.header_rule.dup
     end
 
     def footer_rule
-      return Hash.new unless @parent
-      @parent.footer_rule.dup
+      return Hash.new unless @parent_graphic
+      @parent_graphic.footer_rule.dup
     end
 
     def save_yml(path)
