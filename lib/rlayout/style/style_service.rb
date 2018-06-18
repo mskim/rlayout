@@ -252,6 +252,8 @@ module RLayout
 
     def width_of_string(style_name, string)
       style = @current_style[style_name]
+      style = @current_style['body'] unless style
+
       style = Hash[style.map{ |k, v| [k.to_sym, v] }]
       if RUBY_ENGINE == "rubymotion"
         atts = NSUtils.ns_atts_from_style(style)
@@ -265,7 +267,7 @@ module RLayout
     def height_of_token(style_name)
       style = @current_style[style_name]
       style = Hash[style.map{ |k, v| [k.to_sym, v] }]
-      style[:font_size]
+      style[:font_size] || style[:text_size]
     end
 
     # get the height of body text by calling size method with sample text

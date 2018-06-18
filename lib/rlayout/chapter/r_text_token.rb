@@ -2,12 +2,13 @@ module RLayout
 
 
   class RTextToken < Graphic
-    attr_accessor :string, :style_name
+    attr_accessor :string, :token_type, :style_name, :has_text
 
     def initialize(options={})
       #code
       options[:fill_color] = options.fetch(:token_color, 'clear')
       super
+      @has_text         = true
       @string           = options[:string]
       @style_name       = options[:style_name]
       @width            = width_of_string(@string)
@@ -23,6 +24,8 @@ module RLayout
     end
 
     def width_of_string(string)
+      return 0 if string.nil?
+      return 0 if string == ""
       style = RLayout::StyleService.shared_style_service
       style.width_of_string(@style_name, string)
     end
@@ -85,15 +88,28 @@ module RLayout
       if hyphenated_result == "front forbidden character"
         return "front forbidden character"
       elsif hyphenated_result.class == String
-        second_half = self.dup
-        second_half.string = hyphenated_result
-        second_half.width = width_of_string(hyphenated_result) + @left_margin + @right_margin
+        second_half_width = width_of_string(hyphenated_result) + @left_margin + @right_margin
+        second_half = RTextToken.new(string: hyphenated_result, style_name: @style_name, width: second_half_width, height: @height)
         return second_half
         # return TextToken.new(att_string: result, atts: @atts)
       else
         return false
       end
       false
+    end
+
+    def draw_text
+      style = RLayout::StyleService.shared_style_service
+      style = style.current_style[@style_name]
+      style = Hash[style.map{ |k, v| [k.to_sym, v] }]
+      if RUBY_ENGINE == "rubymotion"
+        atts = NSUtils.ns_atts_from_style(style)
+        att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
+        att_string.drawAtPoint(NSMakePoint(@left_margin,0))
+      else
+        #TODO
+      #code
+      end
     end
 
 

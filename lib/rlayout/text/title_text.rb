@@ -12,7 +12,8 @@ module RLayout
       options[:fill_color]    = options.fetch(:line_color, 'clear')
       # options[:stroke_width]  = 1
       super
-      @token_union_style       = options[:token_union_style]
+      @style_name             = options[:style_name]
+      @token_union_style      = options[:token_union_style]
       @tokens                 = []
       @room                   = @width
       @single_line_title      = options[:single_line_title]
@@ -20,6 +21,7 @@ module RLayout
       if @style_name
         @para_style             = RLayout::StyleService.shared_style_service.current_style[@style_name]
         @para_style             = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
+        @para_style[:font_size] = @para_style[:text_size] if @para_style[:text_size]
         @space_width            = @para_style[:space_width] || @para_style[:font_size]/3
       elsif options[:@para_style]
         @para_style             = options[:@para_style]
@@ -34,7 +36,6 @@ module RLayout
       @text_height_in_lines   = 2 if @text_height_in_lines == ""
       @space_before_in_lines  = @para_style[:space_before_in_lines] || 0
       @space_before_in_lines  = 1 if @space_before_in_lines == ""
-      # @top_inset              = @space_before_in_lines*@body_line_height
       @top_inset              += options[:top_inset] if options[:top_inset]
       @space_after_in_lines   = @para_style[:space_after_in_lines] || 0
       @space_after_in_lines   = 0 if @space_after_in_lines == ""
@@ -72,14 +73,15 @@ module RLayout
       return unless @string
       @tokens += @string.split(" ").collect do |token_string|
         options = {}
-        options[:string]  = token_string
-        options[:y]       = 0
+        options[:string]      = token_string
+        options[:y]           = 0
+        options[:style_name]  = @style_name
         if RUBY_ENGINE == 'rubymotion'
           options[:atts]    = NSUtils.ns_atts_from_style(@para_style)
           @space_width      = options[:atts][:space_width]
         end
         # options[:stroke_width] = 1
-        RLayout::TextToken.new(options)
+        RLayout::RTextToken.new(options)
       end
 
     end
@@ -89,10 +91,10 @@ module RLayout
     end
 
     def add_new_line
-      new_line      = NewsLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
+      new_line                = NewsLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
       @current_line.next_line = new_line if @current_line
-      @current_line = new_line
-      @current_line_y    += @current_line.height + @line_space
+      @current_line           = new_line
+      @current_line_y         += @current_line.height + @line_space
       @current_line
     end
 
@@ -100,14 +102,19 @@ module RLayout
       @graphics.map{|line| line.height}.reduce(:+)
     end
 
+    def adjust_height_as_height_in_lines
+      @height = @height_in_lines*@body_line_height
+    end
+
     def ajust_height_as_body_height_multiples
       # We want to keeep it as multple of body_line_height
-      if @graphics.length == 1
+      if @graphics.length <= 1
         # to avoid edge case overloap adding 2 pixels would do it
         @height = @height_in_lines*@body_line_height - 2
         return
       end
-      natural_height          =  @top_inset + line_height_sum
+      binding.pry
+      natural_height          =  @top_inset + line_height_sum if line_height_sum
       body_height_multiples   = natural_height/@body_line_height
       @height_in_lines        = body_height_multiples.to_i
       float_delta             = body_height_multiples - body_height_multiples.to_i

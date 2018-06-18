@@ -76,7 +76,6 @@ module RLayout
     # and do it recursively with split strings
     # and call create_plain_tokens for regular string segmnet
     def create_tokens
-
       if @markup == "h3"
         unless @para_string =~/■/
           @para_string = "■" + @para_string
@@ -107,13 +106,13 @@ module RLayout
       split_array = para_string.split(EMPASIS_STRONG)
       # splited array contains strong content
       split_array.each do |token_group|
-        if token_group =~EMPASIS_DIAMOND
+        if token_group =~EMPASIS_STRONG
           token_group.gsub!("**", "")
           # get font and size
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
-            emphasis_style = {}
-            emphasis_style[:string] = token_string
+            emphasis_style              = {}
+            emphasis_style[:string]     = token_string
             emphasis_style[:style_name] = 'body_gothic'
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
@@ -126,7 +125,6 @@ module RLayout
 
 
     def create_tokens_with_emphasis_diamond(para_string)
-
       para_string.chomp!
       para_string.sub!(/^\s*/, "")
       split_array = para_string.split(EMPASIS_DIAMOND)
@@ -145,9 +143,9 @@ module RLayout
           end
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
-            emphasis_style = {}
-            emphasis_style[:string] = token_string
-            emphasis_style[:style_name] = 'diamond_emphasis'
+            emphasis_style              = {}
+            emphasis_style[:string]     = token_string
+            emphasis_style[:style_name] = 'body_gothic' #'diamond_emphasis'
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
@@ -180,7 +178,7 @@ module RLayout
       while token
         result = @current_line.place_token(token)
         # token is broken into two, second part is returned
-        if result.class == TextToken
+        if result.class == RTextToken
           @current_line.align_tokens
           @current_line.room = 0
           new_line = @current_line.next_text_line
@@ -191,7 +189,7 @@ module RLayout
             token = result
           else
             @current_line = @current_line.parent_graphic.add_new_line
-            tokens.unshift(result) #stick the unplace token back to the tokens
+            # tokens.unshift(result) #stick the unplace token back to the tokens
             token = result
             # break #reached end of column
           end
@@ -209,7 +207,7 @@ module RLayout
             @line_count += 1
           else
             @current_line = @current_line.parent_graphic.add_new_line
-            tokens.unshift(token) #stick the unplace token back to the tokens
+            # tokens.unshift(token) #stick the unplace token back to the tokens
             # break #reached end of column
           end
         end
@@ -248,6 +246,11 @@ module RLayout
       elsif @markup =='h3'
         @style_name  = 'body_gothic'
       end
+    end
+
+    def para_style
+      style = RLayout::StyleService.shared_style_service
+      style.current_style[@style_name]
     end
 
     def filter_list_options(h)

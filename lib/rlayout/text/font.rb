@@ -33,20 +33,26 @@ module RLayout
         @korean_fixed_width = @font_info[:korean_fixed_width]
       else
         unless FONT_WIDTH_TABLE.keys.include?(font_name)
-          @font_info  = FONT_WIDTH_TABLE["Times"]
-          @width_table= @font_info[:ascii_width]
+          @font_info    = FONT_WIDTH_TABLE["Times"]
+          @size         = 12
+          @width_table  = @font_info[:ascii_width]
         else
-          @font_info  = FONT_WIDTH_TABLE[font_name]
-          @width_table= font_info[:ascii_width]
+          @font_info    = FONT_WIDTH_TABLE[font_name]
+          @size         = 12
+          @width_table  = font_info[:ascii_width]
         end
       end
       self
     end
 
     def string_width(text_string)
-      w = text_string.width_with_font(@width_table, @size, korean_fixed_width: @korean_fixed_width)
+      text_string.width_with_font(@width_table, @size, korean_fixed_width: @korean_fixed_width)
+    end
+
+    def string_size(text_string)
+      w = string_width(text_string)
       h = @size
-      w
+      [w,h]
     end
 
     def space_char_width

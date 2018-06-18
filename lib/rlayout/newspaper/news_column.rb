@@ -34,8 +34,9 @@ module RLayout
       @column_type          = options[:column_type]
       @current_line_index   = 0
       @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
-      @body_line_height     = options[:body_line_height]
-      @line_count           = options[:column_line_count]
+      @body_line_height     = options[:body_line_height] || 14
+      @line_count           = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
+      @line_count           = options[:column_line_count] if options[:column_line_count]
       @line_count           -= @article_bottom_space_in_lines
       @height               -= @body_line_height*@article_bottom_space_in_lines
       @current_position     = @top_margin + @top_inset
@@ -137,6 +138,10 @@ module RLayout
         return 1
       end
       char_count/line_count
+    end
+
+    def first_line
+      @graphics.first
     end
 
     def first_text_line_in_column

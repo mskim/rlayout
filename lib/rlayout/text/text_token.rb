@@ -46,7 +46,7 @@ module RLayout
   # token fill_color is set by optins[:token_color] or it is set to clear
 
   class TextToken < Graphic
-    attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
+    attr_accessor :att_string, :tracking, :scale
     attr_accessor :string, :atts, :stroke, :has_text, :token_type # number, empasis, special
     # attr_accessor :width_array
     def initialize(options={})
@@ -384,9 +384,6 @@ module RLayout
       }
     end
 
-    def draw_text
-      @att_string.drawAtPoint(NSMakePoint(0,0))
-    end
   end
 
   class ImageToken < Graphic

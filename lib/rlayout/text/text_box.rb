@@ -293,22 +293,22 @@ module RLayout
           next
         elsif @item.is_a?(RLayout::Paragraph)
           @item.layout_lines(current_column)
-        elsif @item.is_a?(RLayout::ParagraphNSText) && @item.text_layout_manager
-          # We have text
-          @item.width  = current_column.text_width
-          if current_column.room < current_column.body_line_height || current_column.room < @item.text_line_height
-            # not enough room for even a line, no need to layout, go to next column
-            column_index +=1
-            if column_index < @column_count
-              current_column = @graphics[column_index]
-              flowing_items.unshift(@item)
-              next
-            else
-              flowing_items.unshift(@item)
-              return false
-            end
-          end
-          @item.layout_lines(:proposed_height=>current_column.room) # item.width is set already
+        # elsif @item.is_a?(RLayout::ParagraphNSText) && @item.text_layout_manager
+        #   # We have text
+        #   @item.width  = current_column.text_width
+        #   if current_column.room < current_column.body_line_height || current_column.room < @item.text_line_height
+        #     # not enough room for even a line, no need to layout, go to next column
+        #     column_index +=1
+        #     if column_index < @column_count
+        #       current_column = @graphics[column_index]
+        #       flowing_items.unshift(@item)
+        #       next
+        #     else
+        #       flowing_items.unshift(@item)
+        #       return false
+        #     end
+        #   end
+        #   @item.layout_lines(:proposed_height=>current_column.room) # item.width is set already
 
         elsif @item.class == RLayout::Table
           @item.width  = current_column.text_width
