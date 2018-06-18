@@ -91,7 +91,6 @@ module RLayout
       frame_rect            = @parent_graphic.grid_frame_to_image_rect(options[:grid_frame])
       @x                      = frame_rect[0]
       @y                      = frame_rect[1]
-      @width                  = frame_rect[2]
       @height                 = frame_rect[3]
 
       @caption_column         = CaptionColumn.new(parent:self, width: @width)

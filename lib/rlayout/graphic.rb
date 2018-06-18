@@ -50,7 +50,7 @@
 module RLayout
 
   class Graphic
-    attr_accessor :parent_graphic, :tag, :ns_view, :pdf_view, :svg_view, :path
+    attr_accessor :parent_graphic, :x, :y, :width, :height, :tag, :ns_view, :pdf_view, :svg_view, :path
     attr_accessor :graphics, :fixtures, :floats, :grid_frame
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
@@ -112,7 +112,7 @@ module RLayout
       elsif options[:is_fixture]
         #page fixtures, header, footer, side_bar are kept in fixtures array separate from other graphics
         @parent_graphic.fixtures << self if !@parent_graphic.fixtures.include?(self)
-      elsif @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
+      elsif @parent_graphi.respond_to?(:graphics) && @parent_graphic.graphics && !@parent_graphic.graphics.include?(self)
         @parent_graphic.graphics << self
       end
       self

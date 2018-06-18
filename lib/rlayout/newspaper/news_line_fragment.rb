@@ -15,7 +15,7 @@ module RLayout
   # line fill_color is set by optins[:line_color] or it is set to clear
   class	NewsLineFragment < Container
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
-    attr_accessor :left_indent, :right_indent, :para_style, :text_alignment, :starting_position
+    attr_accessor :left_indent, :right_indent, :para_style, :text_alignment, :starting_position, :first_line_indent, :tail_indent
     attr_accessor :x, :y, :width, :height, :total_token_width, :room, :overlap
     attr_accessor :text_area, :text_area_width, :has_text, :space_width, :debug
     attr_accessor :next_line, :layed_out_line
@@ -126,12 +126,16 @@ module RLayout
     # set line type, and paragraph information for line
     def set_paragraph_info(paragraph, line_type)
       para_style        = paragraph.para_style
-      @space_width      = para_style[:space_width]
-      @text_alignment   = para_style[:h_alignment]
+      para_style        = Hash[para_style.map{ |k, v| [k.to_sym, v] }] if para_style
+      @space_width      = para_style[:space_width] || 3.0
+      @text_alignment   = para_style[:alignment] || "left"
       @v_offset         = para_style[:v_offset] || 0
+      @first_line_indent = para_style[:first_line_indent] || para_style[:font_size]
+      @tail_indent      = para_style[:tail_indent] || 0
+      @head_indent      = para_style[:head_indent] || para_style[:font_size]
       if @text_alignment == "left" || @text_alignment == "justified"
-        @first_line_width   = @width - para_style[:first_line_indent] - para_style[:tail_indent]
-        @middle_line_width  = @width - para_style[:head_indent] - para_style[:tail_indent]
+        @first_line_width   = @width - @first_line_indent - @tail_indent
+        @middle_line_width  = @width - @head_indent - @tail_indent
       else
         @first_line_width   = @width
         @middle_line_width  = @width
@@ -143,10 +147,10 @@ module RLayout
 
       @line_type = line_type
       if @line_type == 'first_line'
-        @starting_position  = para_style[:first_line_indent]
+        @starting_position  = @first_line_indent
         @text_area_width    = @first_line_width
       else
-        @starting_position  = para_style[:head_indent]
+        @starting_position  = para_style[:head_indent] || para_style[:font_size]
         @text_area_width    = @middle_line_width
       end
       @room  = @text_area_width
@@ -159,7 +163,6 @@ module RLayout
     # CharHalfWidthCushion = 5.0
     def place_token(token, options={})
       return if token.nil?
-
       if @room + CharHalfWidthCushion >= token.width
         # place token in line.
         token.parent_graphic = self
@@ -172,13 +175,15 @@ module RLayout
         return false if options[:do_not_break]
         # no more room, try hyphenating token
         @result = token.hyphenate_token(@room)
-        if @result == "front forbidden character at the end of token"
+        if @result == "front forbidden character"
           # this ss when the last char is "." and we can sqeezed it into the line.
           # token is not broken
+          token.parent_graphic = self
           @graphics << token
           @room = 0
           return true
-        elsif @result.class == TextToken
+        elsif @result.class == RTextToken || @result.class == TextToken
+          token.parent_graphic = self
           @graphics << token  # insert front part to line_count
           return @result       # return second part
         end

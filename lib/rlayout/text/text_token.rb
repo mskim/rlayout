@@ -46,7 +46,7 @@ module RLayout
   # token fill_color is set by optins[:token_color] or it is set to clear
 
   class TextToken < Graphic
-    attr_accessor :att_string, :x,:y, :width, :height, :tracking, :scale
+    attr_accessor :att_string, :tracking, :scale
     attr_accessor :string, :atts, :stroke, :has_text, :token_type # number, empasis, special
     # attr_accessor :width_array
     def initialize(options={})
@@ -88,8 +88,6 @@ module RLayout
         #TODO fix this
         if options[:text_line_spacing] && options[:text_line_spacing].class != String
           @height += options[:text_line_spacing]
-        else
-          # @height += 10
         end
       end
       self
@@ -143,7 +141,7 @@ module RLayout
           sub_string_incremented = @att_string.attributedSubstringFromRange(front_range)
           if i == string_length && sub_string_incremented.string =~ FORBIDDEN_FIRST_CHARS
             # we have front forbidden character . ? , !
-            return "front forbidden character at the end of token"
+            return "front forbidden character"
           elsif i == string_length && sub_string_incremented.string =~ FORBIDDEN_LAST_CHARS
             cut_index = i - 1 # pne before i
             front_range = NSMakeRange(0, cut_index)
@@ -192,8 +190,8 @@ module RLayout
         # adjust first token width and result is second haldf att_string
         # or false is return if not abtle to brake the token
         hyphenated_result = break_attstring_at(break_position)
-        if hyphenated_result == "front forbidden character at the end of token"
-          return "front forbidden character at the end of token"
+        if hyphenated_result == "front forbidden character"
+          return "front forbidden character"
         elsif hyphenated_result.class == NSConcreteMutableAttributedString
           second_half = self.dup
           second_half.att_string = hyphenated_result
@@ -386,9 +384,6 @@ module RLayout
       }
     end
 
-    def draw_text
-      @att_string.drawAtPoint(NSMakePoint(0,0))
-    end
   end
 
   class ImageToken < Graphic

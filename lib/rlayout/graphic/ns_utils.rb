@@ -37,7 +37,6 @@ module RLayout
       atts
     end
 
-
     def self.attributes_of_attributed_string(att_str)
       att_run_array=[]
       range = Pointer.new(NSRange.type)

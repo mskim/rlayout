@@ -37,7 +37,7 @@ EDITORIAL_MARGIN                  = 14
 
 
 NEWSPAPER_STYLE = {
-"body"=>{"korean_name"=>"본문명조", "category"=>nil, "font_family"=>"조선일보명조", "font"=>"ChosunilboNM", "font_size"=>9.6, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"justified", "tracking"=>-0.4, "space_width"=>3.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "graphic_attributes"=>"", "publication_id"=>1},
+"body"=>{"korean_name"=>"본문명조", "category"=>nil, "font_family"=>"조선일보명조", "font"=>"Shinmoon", "font_size"=>9.6, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"justified", "tracking"=>-0.4, "space_width"=>3.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "graphic_attributes"=>"", "publication_id"=>1},
 "body_gothic"=>{"korean_name"=>"본문고딕", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Light", "font"=>"KoPubDotumPL", "font_size"=>9.4, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"justified", "tracking"=>-0.2, "space_width"=>3.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "graphic_attributes"=>"", "publication_id"=>1},
 "running_head"=>{"korean_name"=>"본문중제", "category"=>nil, "font_family"=>"KoPub돋움체_Pro Medium", "font"=>"KoPubDotumPM", "font_size"=>9.4, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.1, "space_width"=>3.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "graphic_attributes"=>"", "publication_id"=>1},
 "quote"=>{"korean_name"=>"발문", "category"=>nil, "font_family"=>"KoPub바탕체_Pro Medium", "font"=>"KoPubBatangPM", "font_size"=>12.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"center", "tracking"=>-0.5, "space_width"=>6.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>2, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "graphic_attributes"=>"", "publication_id"=>1},
@@ -137,7 +137,6 @@ module RLayout
       if options[:output_path]
         @output_path = options[:output_path]
       end
-
       unless @output_path
         @output_path = $ProjectPath + "/output.pdf"
       end
@@ -221,6 +220,7 @@ module RLayout
         para_options[:article_type]   = @news_box.kind
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
+        # @paragraphs << NewsParagraph.new(para_options)
         @paragraphs << NewsParagraph.new(para_options)
       end
     end

@@ -1,49 +1,11 @@
 
 # For text handling, Text and Paragraph are used
 # Text Object is used for simple text, usually for single page document or Ads.
-# Text uses NSTextSystem,
 # Text is also used in Heading, HeadingContainer, where several short texts are used.
+
 # Paragraph Object is used in middle to long document.
-
-# Paragraph uses our own text system.
-# Paragraph is not a Graphic eleemnt, it just holds data and tokens.
-# line layout is done in TextColumn
-
-
-# Emphasis Handling(2016_11)
-# inline emphasis are handled using double curl {{content}}, or single curl {content}
-# We want the emphasis mark to be simple as possible for writers.
-# This is work in process, it might change as we go!!!!
-# So, we limit the emphasis markup to those two only,
-# and how it is implement is left to designer, not to the writer.
-# It means designer need to provide custom style at run time for effected para styles.
-# There are two types of emphasis,  "text effect" and "special layout".
-# For text effect, such as italic, bold, boxed, underline, hidden_text, emphasis we can modify the @token_style to get the effect. So designer need to provide paragraph_styles paragraph style as hash.
-# For special layout tokens, such as ruby, reverse ruby,  we have to do some layout modification. In this case, desinger needs to proved the function name of the emphasis, such as ruby, reverse_ruby, icon: name . in custom paragraph style. as para_style[:double_emphasis]  = "reverse_ruby"
-#
-# {{base text}{top text}}
-# {{base text}{top text}}
-#
-
-# String#split
-# if we use String#split with match, we get the match as an Array eleemnt. I find it very useful.
-# I am using it to parse the inline style empasis and inline special empasis.
-
-# {{ruby sting, uppper}}
-
-# I am still toying with differnce syntexes to make it easy to write.
-# candidate 1
-#   def_box('boxed_text')
-#   def_ruby('base_text', 'top_text')
-#   def_undertag('base_text', 'under_text')
-
-# candidate 2
-#   {style empases}
-#   {{boxed_text}}
-#   {{base_text}{top_text}}
-#   for each document meaning of {{}} and {} are specified by designer
-#   to make writers not to be concered with design aspect
-#   writers should not be memprizing many many markups, just two or three.
+# Paragraph is not a Graphic subclass.
+# Paragraph holds data tokens and resposible for laying out them out in lines.
 
 module RLayout
 
@@ -61,24 +23,11 @@ module RLayout
 
   # tab Token
 
-  # we use three different string types in opions
-  # text_string for NSText
-  # string          Token
-  # para_string     For Paragraph, para_string is passed to Tokens as string
-  # so the text drawing take place only when option is text_string and string
-
   # list_styles option items are used in list type paragraphs, such as
   # OrderedList, UnordersList, OrderedSection, UpperAlpaList
   # they all have prefix of ":list_*" ,
   # it is filtered using "filter_list_options(options)" and saved in @list_style
   # @list_style is passed into Tokens as Graphic options.
-
-  # I will be using this "prefix filtering" convension through out rlayout.
-  # text_color => color of Text
-  # fill_color => color of Fill
-  # line_color => color of Line
-  # list_fill_color => fill_color of NumberToken
-  # list_line_color => line_color of NumberToken
 
   EMPASIS_STRONG = /(\*\*.*?\*\*)/
   EMPASIS_DIAMOND = /(\*.*?\*)/
@@ -86,9 +35,10 @@ module RLayout
   class NewsParagraph
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
-    attr_accessor :para_string, :para_style, :list_style
-    attr_accessor :text_column, :grid_height, :article_type
+    attr_accessor :para_string, :para_style, :style_name
+    attr_accessor :grid_height, :article_type
     attr_accessor :body_line_height, :split, :line_count, :token_union_style
+
     def initialize(options={})
       @tokens = []
       #simple, drop_cap, drop_cap_image, math, with_image, with_math
@@ -315,7 +265,6 @@ module RLayout
     def layout_lines(current_line, options={})
       @current_line = current_line
       @current_line.set_paragraph_info(self, "first_line")
-      # @current_line = text_column.current_line
       token = tokens.shift
       if token && token.token_type == 'diamond_emphasis'
         # puts "first token is diamond_emphasis"
@@ -389,15 +338,6 @@ module RLayout
       reduced_lines
     end
 
-	  # this is called when paragraph is splitted or moved to next column and have to be
-	  # relayed out at the carried over column
-	  # lines are already created, it might have to be layed out for complex column
-	  # or different column width,
-    # def re_layout_lines(text_column)
-    #   @overflow         = false
-    #       @underflow        = false
-    #   @height           = @graphics.map{|line| line.height}.inject(:+)
-    # end
     def is_breakable?
       return true  if @graphics.length > 2
       false
@@ -446,6 +386,7 @@ module RLayout
 
       current_style = RLayout::StyleService.shared_style_service.current_style
       if @markup =='p'
+        @style_name  = 'body'
         style_hash = current_style['body']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
@@ -453,6 +394,7 @@ module RLayout
       if @markup =='h1'
         if @article_type == '사설' || @article_type == 'editorial' || @article_type == '기고'
           style_hash = current_style['reporter_editorial']
+          @style_name  = 'reporter_editorial'
           @graphic_attributes = style_hash['graphic_attributes']
           if @graphic_attributes == {}
           elsif @graphic_attributes == ""
@@ -464,18 +406,22 @@ module RLayout
           end
         else
           style_hash = current_style['reporter']
+          @style_name  = 'reporter_editorial'
         end
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
       if @markup =='h2'
         style_hash = current_style['running_head']
+        @style_name  = 'running_head'
         # style_hash = current_style['body_gothic']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
       if @markup =='h3'
         style_hash = current_style['body_gothic']
+        @style_name  = 'body_gothic'
+
         # style_hash = current_style['body_gothic']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end

@@ -1,16 +1,16 @@
 
-# layout_content!
-# layout_content calls layout_content for each text_box, and table.
+# unless options[:text_box] == false
+# RPage creates @main_box(RTextBox)
+# main_box(RTextBox) is where body text will follow
 #
 module RLayout
 
-  class Page < Container
+  class RPage < Container
     attr_accessor :page_number, :left_page, :no_fixture_page
     attr_accessor :main_box, :heading_object, :header_object, :footer_object, :side_bar_object
     attr_accessor :fixtures, :document, :column_count
 
     def initialize(options={}, &block)
-
       if options[:parent] || options[:document]
         @parent_graphic = options[:parent] || options[:document]
         @document       = @parent_graphic
@@ -35,10 +35,9 @@ module RLayout
         options[:width]   = SIZES[options[:paper_size]][0]
         options[:height]  = SIZES[options[:paper_size]][1]
       else
-        options[:width]   = options.fetch(:width, page_defaults[:width])
-        options[:height]  = options.fetch(:height, page_defaults[:height])
+        options[:width]   = SIZES['A4'][0]
+        options[:height]  = SIZES['A4'][1]
       end
-
       if  @parent_graphic && !@parent_graphic.pages.include?(self)
         @parent_graphic.pages << self
       end
@@ -73,19 +72,31 @@ module RLayout
       if options[:text_box_options]
         main_box_options.merge!(options[:text_box_options])
       end
-      if options[:text_box]
-        @main_box = TextBox.new(main_box_options)
+      binding.pry
+      if  options[:text_box]
+          @main_box = TextBox.new(main_box_options)
       elsif options[:toc_table]
         @main_box = TocTable.new(main_box_options)
       elsif options[:grid_box]
         @main_box = GridBox.new(main_box_options)
       elsif options[:composite_box]
         @main_box = CompositeBox.new(main_box_options)
+      else
+        @main_box = TextBox.new(main_box_options)
       end
+      
       if block
         instance_eval(&block)
       end
       self
+    end
+
+    def first_line
+      @main_box.first_line
+    end
+
+    def first_text_line
+      @main_box.first_text_line
     end
 
     def adjust_page_size_to_document
@@ -214,7 +225,7 @@ module RLayout
     # does current text_box include Heading in floats
     def has_heading?
       @graphics.each do |g|
-        if g.class == RLayout::Heading || g.class == RLayout::HeadingContainer
+        if g.class == RLayout::RHeading || g.class == RLayout::HeadingContainer
           @heading_object = g unless @heading_object
           return true
         end

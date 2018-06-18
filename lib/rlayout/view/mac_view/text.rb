@@ -2,7 +2,7 @@
 class GraphicViewMac < NSView
   # draw only proposed_line
   def draw_text(graphic)
-    if graphic.is_a?(RLayout::TextToken) || graphic.is_a?(RLayout::LeaderToken)
+    if graphic.is_a?(RLayout::TextToken) || graphic.is_a?(RLayout::RTextToken) || graphic.is_a?(RLayout::LeaderToken)
       graphic.draw_text
       return
     end

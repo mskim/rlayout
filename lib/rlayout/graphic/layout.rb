@@ -98,7 +98,7 @@ module RLayout
         layout_direction: "vertical",
         layout_member: true,
         layout_expand: [:width, :height], # auto_layout expand
-        layout_length:  1,
+        layout_length:  1
       }
     end
 
