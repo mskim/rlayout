@@ -221,7 +221,7 @@ module RLayout
         para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:layout_lines]   = false
         # @paragraphs << NewsParagraph.new(para_options)
-        @paragraphs << RParagraph.new(para_options)
+        @paragraphs << NewsParagraph.new(para_options)
       end
     end
 
