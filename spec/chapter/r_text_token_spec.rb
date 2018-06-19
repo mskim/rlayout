@@ -17,13 +17,13 @@ describe "create RTextToken" do
   end
 
   it 'should have style_name' do
-    @r_token.width.must_equal 17.7783203125
+    @r_token.width.must_equal 21.333984375
   end
 
   it 'should have hyphenate token' do
     result = @r_token.hyphenate_token(10.0)
     result.class.must_equal RTextToken
-    @r_token.string.must_equal 'Thi'
-    result.string.must_equal 's'
+    @r_token.string.must_equal 'Th'
+    result.string.must_equal 'is'
   end
 end

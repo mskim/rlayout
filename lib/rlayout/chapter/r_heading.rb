@@ -43,28 +43,18 @@ module RLayout
   # Each heading element layout_length is set to it's height
   # This way, parent can shrink or expand heading and maintain each elements's height propotion.
   # heading height should be multiles of body text height
-  class Heading < Container
+  class RHeading < Container
     attr_accessor :number_object, :title_object, :subtitle_object, :leading_object, :author_object
     attr_accessor :align_to_body_text
     def initialize(options={}, &block)
       super
-      case $publication_type
-      when "magazine"
-        @current_style = RLayout::StyleService.shared_style_service.magazine_style
-      when "chapter"
-        @current_style = RLayout::StyleService.shared_style_service.chapter_style
-      when "news"
-        @current_style = RLayout::StyleService.shared_style_service.news_style
-      else
-        @current_style = RLayout::StyleService.shared_style_service.current_style
-      end
 
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
       @layout_space       = 3
       if options[:width]
         @width = options[:width]
-      elsif @parent_graphic
-        @width = @parent_graphic.layout_size[0]
+      elsif @parent
+        @width = @parent.layout_size[0]
       else
         @width = 600
       end
@@ -201,7 +191,7 @@ module RLayout
 
     ######## PageScript verbes
     def title(string, options={})
-      atts                        = @current_style["title"]
+      atts                        = {}
       atts[:style_name]           = 'title'
       atts[:text_string]          = string
       atts[:width]                = @width
@@ -211,13 +201,13 @@ module RLayout
       atts                        = options.merge(atts)
       atts[:parent]               = self
       # @title_object               = Text.new(atts)
-      @title_object               = TitleText.new(atts)
+      @title_object               = RTitleText.new(atts)
       @title_object.layout_length = @title_object.height
       @title_object
     end
 
     def subtitle(string, options={})
-      atts                          = @current_style["subtitle"]
+      atts                          = {}
       atts[:style_name]             = 'subtitle'
       atts[:text_string]            = string
       atts[:width]                  = @width
@@ -225,14 +215,14 @@ module RLayout
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts                          = options.merge(atts)
       atts[:parent]                 = self
-      @subtitle_object              = TitleText.new(atts)
+      @subtitle_object              = RTitleText.new(atts)
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object
     end
 
     def leading(string, options={})
-      atts                          = @current_style["leading"]
+      atts                          = {}
       atts[:style_name]             = 'leading'
       atts[:text_string]            = string
       atts[:width]                  = @width
@@ -240,14 +230,14 @@ module RLayout
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts                          = options.merge(atts)
       atts[:parent]                 = self
-      @leading_object               = TitleText.new(atts)
+      @leading_object               = RTitleText.new(atts)
       @leading_object.layout_expand = [:width]
       @leading_object.layout_length = @leading_object.height
       @leading_object
     end
 
     def author(string, options={})
-      atts                          = @current_style["author"]
+      atts                          = {}
       atts[:style_name]             = 'author'
       atts[:text_string]            = string
       atts[:width]                  = @width

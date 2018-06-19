@@ -100,19 +100,19 @@ module RLayout
       elsif options[:pages]
         options[:pages].each do |page_hash|
           page_hash[:parent]  = self
-          Page.new(page_hash)
+          RPage.new(page_hash)
         end
       elsif options[:page_objects]
         @pages = options[:page_objects]
       elsif options[:page_count]
         options[:page_count].times do
           options[:parent]  = self
-          Page.new(options)
+          RPage.new(options)
         end
       else
         # create single page as default initial page
         options[:parent]  = self
-        Page.new(options)
+        RPage.new(options)
       end
       @page_headings = options.fetch(:page_headings,[])
       @column_count = options.fetch(:column_count, 1)
@@ -147,19 +147,28 @@ module RLayout
       }
     end
 
+    def first_line
+      @main_box.graphics.first.graphics.first
+    end
+
     def layout_rect
       [@left_margin, @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
+    end
+
+    def add_new_page
+      new_page = page
+      new_page.first_line
     end
 
     def page(options={}, &block)
       options[:parent] = self
       options[:paper_size] = @paper_size
-      Page.new(options, &block)
+      RPage.new(options, &block)
     end
 
     def add_page(page, options={})
-      if page.class == Page
-        page.parent_graphic = self
+      if page.class == RPage
+        page.parent = self
         @pages << page
       elsif page.class == Array
         page.each do |p|
@@ -220,7 +229,7 @@ module RLayout
       new_pages = []
       new_hash[:pages].each do |page|
         page = Graphic.upgrade_format(page)
-        page[:klass] = "Page"
+        page[:klass] = "RPage"
         new_pages << page
       end
       new_hash[:version]  = "1.1"
@@ -275,9 +284,10 @@ module RLayout
         @ns_view = DocumentViewMac.new(self)
         @page_view_count = @ns_view.save_pdf(path, options)
       else
-        @document_view_pdf = DocumentViewPdf.new(self)
-        @document_view_pdf.save_pdf(path, options)
-        @pages.length
+        puts "in save_pdf"
+        # @document_view_pdf = DocumentViewPdf.new(self)
+        # @document_view_pdf.save_pdf(path, options)
+        # @pages.length
       end
     end
 

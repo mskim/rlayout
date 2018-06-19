@@ -12,8 +12,8 @@ module RLayout
 
     def initialize(options={}, &block)
       if options[:parent] || options[:document]
-        @parent_graphic = options[:parent] || options[:document]
-        @document       = @parent_graphic
+        @parent = options[:parent] || options[:document]
+        @document       = @parent
       end
       @column_count   = 1
       if @document
@@ -38,18 +38,18 @@ module RLayout
         options[:width]   = SIZES['A4'][0]
         options[:height]  = SIZES['A4'][1]
       end
-      if  @parent_graphic && !@parent_graphic.pages.include?(self)
-        @parent_graphic.pages << self
+      if  @parent && !@parent.pages.include?(self)
+        @parent.pages << self
       end
       super
-      if  @parent_graphic
-        @page_number = @parent_graphic.pages.index(self) + @parent_graphic.starting_page
+      if  @parent
+        @page_number = @parent.pages.index(self) + @parent.starting_page
       elsif options[:page_number]
         @page_number = options[:page_number]
       else
         @page_number = 1
       end
-      # if @parent_graphic && @parent_graphic.double_side
+      # if @parent && @parent.double_side
       @left_page  = @page_number.even?
       # else
       #   @left_page  = false
@@ -72,9 +72,8 @@ module RLayout
       if options[:text_box_options]
         main_box_options.merge!(options[:text_box_options])
       end
-      binding.pry
       if  options[:text_box]
-          @main_box = TextBox.new(main_box_options)
+          @main_box = RTextBox.new(main_box_options)
       elsif options[:toc_table]
         @main_box = TocTable.new(main_box_options)
       elsif options[:grid_box]
@@ -82,9 +81,9 @@ module RLayout
       elsif options[:composite_box]
         @main_box = CompositeBox.new(main_box_options)
       else
-        @main_box = TextBox.new(main_box_options)
+        @main_box = RTextBox.new(main_box_options)
       end
-      
+
       if block
         instance_eval(&block)
       end
@@ -93,6 +92,10 @@ module RLayout
 
     def first_line
       @main_box.first_line
+    end
+
+    def add_new_page
+      @parent.add_new_page
     end
 
     def first_text_line
@@ -114,12 +117,12 @@ module RLayout
     end
 
     def to_pgscript
-      pgscript =<<~EOF
-        page do
-      #{floats_pgscript}
-      #{graphics_pgscript}
-        end
-      EOF
+pgscript =<<EOF
+  page do
+#{floats_pgscript}
+#{graphics_pgscript}
+  end
+EOF
       pgscript
     end
 
@@ -175,11 +178,11 @@ module RLayout
       options[:grid_base]     = "3x3" unless options[:grid_base]
       options[:gutter]        = 10    unless options[:gutter]
       options[:parent]        = self
-      @main_box=TextBox.new(options, &block)
+      @main_box=RTextBox.new(options, &block)
     end
 
     def document
-      @parent_graphic
+      @parent
     end
 
     def page_defaults
@@ -219,7 +222,7 @@ module RLayout
 
     def add_heading(heading_object)
       @heading_object = heading_object
-      @heading_object.parent_graphic = self
+      @heading_object.parent = self
       @graphics << @heading_object
     end
     # does current text_box include Heading in floats
@@ -292,7 +295,7 @@ module RLayout
     def to_data
       h = {}
       instance_variables.each{|a|
-        next if a==@parent_graphic
+        next if a==@parent
         next if a==@graphics
         next if a==@floats
         next if a==@fixtures
@@ -329,8 +332,8 @@ module RLayout
     end
 
     def first_page?
-      if @parent_graphic
-        return @parent_graphic.pages.index(self) == 0
+      if @parent
+        return @parent.pages.index(self) == 0
       end
       false
     end
@@ -340,13 +343,13 @@ module RLayout
     end
 
     def header_rule
-      return Hash.new unless @parent_graphic
-      @parent_graphic.header_rule.dup
+      return Hash.new unless @parent
+      @parent.header_rule.dup
     end
 
     def footer_rule
-      return Hash.new unless @parent_graphic
-      @parent_graphic.footer_rule.dup
+      return Hash.new unless @parent
+      @parent.footer_rule.dup
     end
 
     def save_yml(path)
@@ -370,7 +373,7 @@ module RLayout
     ########### PageScritp Verbs #############
     def text_box(options={}, &block)
       options[:parent] = self
-      @main_box = TextBox.new(options) unless @main_box
+      @main_box = RTextBox.new(options) unless @main_box
     end
 
     def toc_table(options={}, &block)

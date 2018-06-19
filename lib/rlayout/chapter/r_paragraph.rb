@@ -188,10 +188,10 @@ module RLayout
             @line_count += 1
             token = result
           else
-            @current_line = @current_line.parent_graphic.add_new_line
+            # break #reached end of last column
+            @current_line = @current_line.parent.add_new_page
             # tokens.unshift(result) #stick the unplace token back to the tokens
             token = result
-            # break #reached end of column
           end
         # entire token placed succefully, returned result is true
         elsif result
@@ -206,7 +206,7 @@ module RLayout
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
           else
-            @current_line = @current_line.parent_graphic.add_new_line
+            @current_line = @current_line.parent.add_new_page
             # tokens.unshift(token) #stick the unplace token back to the tokens
             # break #reached end of column
           end

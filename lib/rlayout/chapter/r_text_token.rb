@@ -11,6 +11,7 @@ module RLayout
       @has_text         = true
       @string           = options[:string]
       @style_name       = options[:style_name]
+      @style_name       = 'body' unless @style_name
       @width            = width_of_string(@string)
       @height_of_token  = height_of_token
       if options[:text_line_spacing] && options[:text_line_spacing].class != String

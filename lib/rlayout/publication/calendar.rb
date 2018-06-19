@@ -23,15 +23,15 @@ CALENDAR_SYTYES = {
 # 2014 1 2
 # I should use "cal", "ncal" that does lots of stuff that I was doing.
 # Use cal, instaed of re-inventing the wheel.
-# 
+#
 # There are parts that make up the calendar
-# 1. CalendarMonth 
+# 1. CalendarMonth
 #   month_title, month, month_in_english
 #   days_of_the_week:  Sun Mon Tue Wed ...
 #   first_row:         29  30  1   2   3
 #   body_rows,          6  7   8   9   10
 #   last_row           25/30 26  27  it can have dobule dates cell
-# 2. Company Box 
+# 2. Company Box
 #   Compnay Name, Logo, tel, slogun
 # 3. Picture of the month
 # 4. Previous, Current, and Next month as mini month
@@ -40,7 +40,7 @@ CALENDAR_SYTYES = {
 # Desk Top Calenar with Paired page
 # 0-Cover
 # 0-Cover Back
-# 1-image page, 
+# 1-image page,
 # 1-calendar page
 # 2-image page
 # 2-calendar page
@@ -85,7 +85,7 @@ module RLayout
       @path             = options[:path]
       @events_path      = options.fetch(:path, default_events_path)
       @events           = CalendarEvents.new(@events_path)
-      
+
       info_path       = @path + "/info.yml"
       if File.exists?(info_path)
         @config           = YAML::load(File.open(info_path,'r'){|f| f.read})
@@ -111,12 +111,12 @@ module RLayout
       end
       self
     end
-                
+
     def save_info
       info_path     = @path + "/info.yaml"
       File.open(info_path, 'w'){|f| f.write to_hash.to_yaml}
     end
-    
+
     def to_hash
       h={}
       h[:type]              = @type
@@ -127,16 +127,16 @@ module RLayout
       h[:year]              = @year
       h
     end
-    
+
     def default_events_path
       "/Users/Shared/SoftwareLab/calendar/national_events.yml"
     end
-    
+
     def default_style
       "/Users/Shared/SoftwareLab/calendar/template/calendar1.rb"
     end
-    
-    
+
+
     def create_images
       image_files = []
       image_files =Dir.glob("#{@path}/*.jpg")
@@ -145,13 +145,13 @@ module RLayout
         @month_images << Image.new(:image_path=>image_files[i], :image_fit_type=>IMAGE_FIT_TYPE_KEEP_RATIO, :line_width=>3, :line_color=>'black') # 3
       end
     end
-        
-    def create_monthly_calendar      
+
+    def create_monthly_calendar
       @calendar_months  = []
       year              = @year.to_i
-      month             = @starting_month.to_i      
-      @number_of_months.times do        
-        @calendar_months << CalendarMonth.new(documnet:self, year:year, month:month)
+      month             = @starting_month.to_i
+      @number_of_months.times do
+        @calendar_months << CalendarMonth.new(document:self, year:year, month:month)
         month += 1
         if month == 13
           month = 1
@@ -159,24 +159,24 @@ module RLayout
         end
       end
     end
-    
-    def create_pages      
+
+    def create_pages
       @pages = []
       add_cover_page
       @number_of_months.times do |i|
         add_calenard_page(i+1)
       end
     end
-    
+
     def add_cover_page
       @pages << Page.new(self)
       # @pages << Page.new(self)
     end
-    
+
     def add_image_page(index)
       @pages << Page.new(self)
     end
-    
+
     def add_calenard_page(index)
       hash = {}
       hash[:year]  = @year
@@ -188,13 +188,13 @@ module RLayout
       p.add_graphic(@calendar_months[index]) if @calendar_months[index]
       p.relayout!
     end
-    
+
     def add_pair_page(index)
       # add_image_page(index)
       # make deep dup
       add_calenard_page(index)
     end
-    
+
     # genearate mini-month to use as images
     def self.save_mini_month(template, year, month, output_path)
       template_doc = Document.open(template)
@@ -204,22 +204,22 @@ module RLayout
       mini_month = CalendarMonth.new(page_template, starting_date_object, month_template, :mini_calendar=>true, :output_path=>output_path)
       mini_month.save_pdf(output_path)
     end
-    #     
+    #
     def self.save_mini_month_for(template, year, starting_month, number_of_months, output_path)
-    
+
     end
-    
+
     def self.create_year_page
-      
+
     end
   end
-  
+
   class CalendarPage < Page
     attr_accessor :page, :date, :month, :calendar, :image, :organization
     attr_accessor :picture, :month_title, :prev_month, :next_month, :company, :month_container
-    
+
     def initialize(document, options={})
-      super 
+      super
       @heading        = options[:heading]
       @month_image    = options[:month_image]
       @calendar_month = options[:calendar_month]
@@ -235,10 +235,10 @@ module RLayout
       year = @month_title.graphic_with_tag("year")
       year.set_new_text(@year.to_s) if year
     end
-    
+
 
   end
-  
+
 	class CalendarMonth < Container
     attr_accessor :year, :month, :company, :mini_month
     attr_accessor :heading_row, :rows, :document
@@ -249,11 +249,11 @@ module RLayout
       @month      = options[:month]
       text        = `cal #{@month} #{@year}`
       @rows       = text.split("\n")
-      # @days_of_the_week = @rows[1].split(" ") 
-      make_rows  
+      # @days_of_the_week = @rows[1].split(" ")
+      make_rows
       self
     end
-    
+
     def make_rows
       make_month_name_row
       make_heading_row
@@ -262,7 +262,7 @@ module RLayout
       adjust_last_row
       relayout!
     end
-    
+
     def make_month_name_row
       row_graphic = Container.new(:parent=>self, :layout_direction=>'horizontal', :layout_space=>5, :layout_length=>1)
       CalendarCell.new(:parent=>row_graphic, :layout_length=>1)
@@ -270,7 +270,7 @@ module RLayout
       CalendarCell.new(:parent=>row_graphic, :layout_length=>1)
       @graphics << row_graphic
     end
-    
+
     def make_heading_row
       row_graphic = Container.new(:parent=>self, :layout_direction=>'horizontal', :layout_space=>5, :layout_length=>0.7)
       DAYS_OF_THE_WEEK.each do |heading_cell_text|
@@ -278,12 +278,12 @@ module RLayout
       end
       @graphics << row_graphic
     end
-    
+
     def make_first_body_row
       row_graphic = Container.new(:parent=>self, :layout_direction=>'horizontal', :layout_space=>5)
       first_row_text_array = @rows[2].split(" ")
       unless first_row_text_array.length >= 7
-        previous_month_last_row.split(" ").each do |prev_month_day| 
+        previous_month_last_row.split(" ").each do |prev_month_day|
           CalendarCell.new(row_graphic, :text_string=> prev_month_day, :text_color=>'lightGray')
         end
       end
@@ -291,7 +291,7 @@ module RLayout
         CalendarCell.new(row_graphic, :text_string=> cell_text, )
       end
     end
-    
+
     def make_body_rows
       @rows.each_with_index do |row, i|
         next if i < 3
@@ -301,7 +301,7 @@ module RLayout
         end
       end
     end
-    
+
     def previous_month_last_row
       prv_month = @month.to_i - 1
       year  = @year
@@ -312,11 +312,11 @@ module RLayout
       text        = `cal #{prv_month} #{year}`
       text.split("\n").last
     end
-    
+
     def last_row_text_array
       @rows.last.split(" ")
     end
-    
+
     def adjust_last_row
       if has_six_rows?
         #if we have six rows(overflowing), merge overflowing cells with last row cells
@@ -334,7 +334,7 @@ module RLayout
         double_cells.each do |double_cell|
           last_row.graphics.unshift(double_cell)
         end
-        
+
       elsif last_row_text_array.length < 7
         last_row = @graphics.last
         (7 - last_row_text_array.length).times do |i|
@@ -348,14 +348,14 @@ module RLayout
       (@rows.length - 2) > 5
     end
 	end
-	
+
   class CalendarCell < Container
     attr_accessor :events, :month, :day
     attr_accessor :sharing_second_day, :slash_color, :slash_width
     attr_accessor :national, :personal, :luna, :current_month
     def initialize(options={})
       if options[:day]
-        options[:text_string] = options[:day] 
+        options[:text_string] = options[:day]
       elsif options[:day_of_the_week]
         options[:text_string] = options[:day_of_the_week]
       end
@@ -363,7 +363,7 @@ module RLayout
       @month        = options[:month] if options[:month]
       @events       = options[:events]
       @sharing_second_day   = nil     # for double cell
-      # 
+      #
       # if @events
       #   nationals       = @events.national_event_on(@month, @day)
       #   if nationals.length > 0
@@ -373,7 +373,7 @@ module RLayout
       #     end
       #   end
       #   personals       = @events.personal_event_on(@month, @day)
-      #   
+      #
       #   if personals.length > 0
       #     @personal = ""
       #     personals.each do |personal_event|
@@ -381,17 +381,17 @@ module RLayout
       #     end
       #   end
       # end
-      # 
+      #
       self
     end
-    
+
     def self.merge_cells(first, second_cell)
       dobule_cell =CalendarCell.new(nil)
       dobule_cell.add_graphic(first)
       dobule_cell.add_graphic(second_cell)
       dobule_cell
     end
-    
+
   end
 
   class CalendarEvents
@@ -401,7 +401,7 @@ module RLayout
       read_events
       self
     end
-    
+
     def national_event_on(month, day)
       events = []
       @national.each do |hash|
@@ -409,7 +409,7 @@ module RLayout
       end
       events
     end
-    
+
     def personal_event_on(month, day)
       events = []
       @personal.each do |hash|
@@ -417,36 +417,36 @@ module RLayout
       end
       events
     end
-    
+
     def save_default_events(path)
       national_path = path + "/national.yml"
       File.open(national_path, 'w'){|f| f.write(@national.to_yaml)}
     end
-    
+
     def self.national(country)
       KOREAN_HOLYDAYS
     end
-    
+
     def self.save_national(path)
-      
+
     end
-    
+
     def self.save_personal(path)
-      
+
     end
-    
+
     # Merge two events and return merged
     def self.merge_events(first_events, second_events)
-      
+
     end
-    
+
     def read_personal_events(path)
       personal_path = path + "/events.txt"
       @personal = []
-      
+
       if File.exists?(personal_path)
         data = ''
-        f = File.open(personal_path, "r") 
+        f = File.open(personal_path, "r")
         f.each_line do |line|
           data = line.chomp.split(",")
           hash = {
@@ -459,7 +459,7 @@ module RLayout
         end
         # puts "@personal:#{@personal}"
       end
-    
+
     end
     # parse event file
     def read_events
@@ -472,6 +472,6 @@ module RLayout
       read_personal_events(@path)
     end
   end
-  
+
 
 end

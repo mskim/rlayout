@@ -132,6 +132,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/chapter/r_paragraph'
   require File.dirname(__FILE__) + '/rlayout/chapter/r_heading'
   require File.dirname(__FILE__) + '/rlayout/chapter/r_line_fragment'
+  require File.dirname(__FILE__) + '/rlayout/chapter/r_column'
   require File.dirname(__FILE__) + '/rlayout/chapter/r_text_box'
   require File.dirname(__FILE__) + '/rlayout/chapter/r_title_text'
   require File.dirname(__FILE__) + '/rlayout/chapter/r_document'

@@ -41,7 +41,7 @@ class DocumentViewMac
       end
       pdf_doc.pageCount.times do |i|
         page        = pdf_doc.pageAtIndex i
-        page_size   = page.page_size
+        # page_size   = page.page_size
         pdfdata     = page.dataRepresentation
         image       = NSImage.alloc.initWithData pdfdata
         imageData   = image.TIFFRepresentation

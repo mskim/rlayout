@@ -23,7 +23,7 @@ describe "create RParagraph" do
 
   it 'should have RToken class' do
 
-    @first_token.must_be_kind_of RToken
+    @first_token.must_be_kind_of RTextToken
   end
 end
 

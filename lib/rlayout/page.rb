@@ -103,12 +103,12 @@ module RLayout
     end
 
     def to_pgscript
-      pgscript =<<~EOF
-        page do
-      #{floats_pgscript}
-      #{graphics_pgscript}
-        end
-      EOF
+pgscript =<<EOF
+  page do
+#{floats_pgscript}
+#{graphics_pgscript}
+  end
+EOF
       pgscript
     end
 

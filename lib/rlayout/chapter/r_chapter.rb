@@ -196,7 +196,7 @@ module RLayout
         puts "SyntaxError in #{@template_path} !!!!"
         return
       end
-      unless @document.kind_of?(RLayout::Document)
+      unless @document.kind_of?(RLayout::RDocument)
         puts "Not a @document kind created !!!"
         return
       end
@@ -265,48 +265,26 @@ module RLayout
       @heading[:layout_expand]  = [:width, :height]
       heading_object            = Heading.new(@heading)
       @first_page.graphics.unshift(heading_object)
-      heading_object.parent_graphic = @first_page
+      heading_object.parent = @first_page
       unless @first_page.main_box
         @first_page.main_text
       end
       @first_page.relayout!
-      @first_page.main_box.create_column_grid_rects
-      @first_page.main_box.set_overlapping_grid_rect
+      @first_page.main_box.adjust_overlapping_columns
       first_item = @paragraphs.first
       #TODO
       if first_item.is_a?(FloatGroup) # || first_item.is_a?(PdfInsert)
         first_item = @paragraphs.shift
         first_item.layout_page(document: @document, page_index: @page_index)
       end
-
-      @first_page.main_box.layout_items(@paragraphs)
+      @current_line = @first_page.first_line
       @page_index = 1
-      while @paragraphs.length > 0
-        if @page_index >= @document.pages.length
-          options               = {}
-          options[:parent]      = @document
-          options[:footer]      = true
-          options[:header]      = true
-          options[:text_box]    = true
-          options[:column_count]= @document.column_count
-          p = Page.new(options)
-          p.relayout!
-          p.main_box.create_column_grid_rects
+      while @paragraph = @paragraphs.shift
+        @current_line = @paragraph.layout_lines(@current_line)
+        unless @current_line
+          @current_line = @document.add_page
         end
-
-        if @document.pages[@page_index].main_box.nil?
-          @document.pages[@page_index].main_text
-          @document.pages[@page_index].relayout!
-        end
-        first_item = @paragraphs.first
-        if first_item.is_a?(FloatGroup) # || first_item.is_a?(PdfInsert)
-          first_item = @paragraphs.shift
-          first_item.layout_page(document: @document, page_index: @page_index)
-        end
-        @document.pages[@page_index].main_box.layout_items(@paragraphs)
-        @page_index += 1
       end
-
       update_header_and_footer
     end
 
