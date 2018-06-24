@@ -29,5 +29,25 @@ describe "create RDocument" do
   it 'should have margins' do
     @doc.left_margin.must_equal 50
   end
+end
+
+describe "create first page" do
+  before do
+    @doc = RDocument.new()
+    @pages = @doc.pages
+    @first_page = @pages.first
+  end
+
+  it 'should create a first page' do
+    @pages.length.must_equal 1
+  end
+
+  it 'should create a first page' do
+    @pages.first.must_be_kind_of RPage
+  end
+
+  it 'should create a first page' do
+    @first_page.must_be_kind_of RPage
+  end
 
 end

@@ -34,12 +34,13 @@ module RLayout
     attr_accessor :header_rule, :footer_rule, :gim
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_accessor :pdf_path, :jpg, :preview, :column_count, :layout_style
-    attr_accessor :page_headings, :document_view_pdf
+    attr_accessor :page_headings, :document_view_pdf, :heading_type
     def initialize(options={}, &block)
-      @pages      = []
-      @title      = "untitled"
-      @title      = options[:title] if options[:title]
-      @path       = options[:path]  if options[:path]
+      @pages        = []
+      @title        = "untitled"
+      @title        = options[:title] if options[:title]
+      @path         = options[:path]  if options[:path]
+      @heading_type = options[:heading_type]
       if options[:doc_info]
         @paper_size = options[:doc_info].fetch(:paper_size, "A4")
         @portrait   = options[:doc_info].fetch(:portrait, document_defaults[:portrait])
@@ -80,11 +81,11 @@ module RLayout
       if options[:preview]
         @preview = options[:preview]
       end
-      @column_count = options.fetch(:column_count, 1)
-      @left_margin  = options.fetch(:left_margin, document_defaults[:left_margin])
-      @top_margin    = options.fetch(:top_margin, document_defaults[:top_margin])
-      @right_margin = options.fetch(:right_margin, document_defaults[:right_margin])
-      @bottom_margin = options.fetch(:bottom_margin, document_defaults[:bottom_margin])
+      @column_count   = options.fetch(:column_count, 1)
+      @left_margin    = options.fetch(:left_margin, document_defaults[:left_margin])
+      @top_margin     = options.fetch(:top_margin, document_defaults[:top_margin])
+      @right_margin   = options.fetch(:right_margin, document_defaults[:right_margin])
+      @bottom_margin  = options.fetch(:bottom_margin, document_defaults[:bottom_margin])
       if options[:starting_page]
         @starting_page = options[:starting_page]
         if @starting_page.odd?
@@ -99,19 +100,24 @@ module RLayout
         # do not create any page
       elsif options[:pages]
         options[:pages].each do |page_hash|
-          page_hash[:parent]  = self
+          page_hash[:parent]      = self
           RPage.new(page_hash)
         end
       elsif options[:page_objects]
         @pages = options[:page_objects]
       elsif options[:page_count]
-        options[:page_count].times do
-          options[:parent]  = self
+        options[:page_count].times do |i|
+          h = {}
+          h[:parent]  = self
+          h[:first_page] = true if i == 0
           RPage.new(options)
         end
       else
         # create single page as default initial page
-        options[:parent]  = self
+        options[:parent]                  = self
+        options[:first_page]              = true
+        options[:heading_type]            = @heading_type
+        options[:fixed_height]            = true
         RPage.new(options)
       end
       @page_headings = options.fetch(:page_headings,[])

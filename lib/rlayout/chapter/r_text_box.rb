@@ -35,7 +35,7 @@ module RLayout
       @heading_columns        = @column_count
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
       @quote_box_size         = options[:quote_box_size] || 0
-      create_columns
+      create_columns          
       if block
         instance_eval(&block)
       end
@@ -57,13 +57,13 @@ module RLayout
     #  news_columns are different from text_column
     def create_columns
       current_x = @starting_column_x
+      column_height = @height
       @column_count.times do
-        g= RColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        g= RColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: column_height, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         g.parent = self
         @graphics << g
         current_x += @column_width + @gutter
       end
-      # @overflow_column = NewsColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @body_line_height*100, column_line_count: 100, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
       @column_bottom = max_y(@graphics.first.frame_rect)
       link_column_lines
     end

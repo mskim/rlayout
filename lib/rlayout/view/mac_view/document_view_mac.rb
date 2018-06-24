@@ -28,34 +28,22 @@ class DocumentViewMac
     end
     pdf_doc = pdf_document
     pdf_doc.writeToFile(pdf_path)
-    # if we have jpg option, save image as basename_(i+1).jpg format
-    # if we have preview option save images in /preview/page_00(i+1).jpg
-    if options[:jpg] || options[:preview]
-      puts "options[:jpg]:#{options[:jpg]}"
-      if options[:preview]
-        @preview_path = File.dirname(path) + "/preview"
-        # if we have old version, clear the folder
-        system("rm -r #{@preview_path}") if File.directory?(@preview_path)
-        #generate new folder
-        system("mkdir -p #{@preview_path}")
-      end
-      pdf_doc.pageCount.times do |i|
-        page        = pdf_doc.pageAtIndex i
-        # page_size   = page.page_size
-        pdfdata     = page.dataRepresentation
-        image       = NSImage.alloc.initWithData pdfdata
-        imageData   = image.TIFFRepresentation
-        imageData   = high_res.TIFFRepresentation
-        imageRep    = NSBitmapImageRep.imageRepWithData(imageData)
-        imageProps  = {NSImageCompressionFactor=> 1.0}
-        imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
-        if options[:preview]
-          jpg_path  =  @preview_path + "/page_#{(i+1).to_s.rjust(3,'0')}.jpg"
-        else
-          jpg_path  = pdf_path.sub(".pdf", "_#{(i+1).to_s.rjust(3,'0')}.jpg")
-        end
-        imageData.writeToFile(jpg_path, atomically:false)
-      end
+    chapter_path = File.dirname(pdf_path)
+
+    pdf_doc.pageCount.times do |i|
+      page        = pdf_doc.pageAtIndex i
+      pdfdata     = page.dataRepresentation
+      image       = NSImage.alloc.initWithData pdfdata
+      imageData   = image.TIFFRepresentation
+      # imageData   = high_res.TIFFRepresentation
+      imageRep    = NSBitmapImageRep.imageRepWithData(imageData)
+      imageProps  = {NSImageCompressionFactor=> 1.0}
+      imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
+      page_path   = chapter_path + "/page-#{(i+1).to_s.rjust(3,'0')}"
+      system("mkdir -p #{page_path}") unless File.exist?(page_path)
+      jpg_path    = page_path + "/ouput.jpg"
+      puts "jpg_path:#{jpg_path}"
+      imageData.writeToFile(jpg_path, atomically:false)
     end
     @page_views.length
   end

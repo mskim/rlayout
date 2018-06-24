@@ -82,7 +82,7 @@ module RLayout
           @space_width      = options[:atts][:space_width]
         end
         # options[:stroke_width] = 1
-        RLayout::TextToken.new(options)
+        RLayout::RTextToken.new(options)
       end
       #code
     end

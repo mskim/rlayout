@@ -3,7 +3,6 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe 'RTextBox creation' do
   before do
     @tb = RTextBox.new(column_count: 2, width:400, height: 700)
-
   end
 
   it 'should create RTextBox' do
@@ -12,6 +11,19 @@ describe 'RTextBox creation' do
 
   it 'should create two columns' do
     @tb.graphics.length.must_equal 2
+  end
+end
+
+describe 'RTextBox creation' do
+  before do
+    options = {}
+    options[:width] = 400
+    options[:height] = 700
+    @tb = RTextBox.new(options)
+  end
+
+  it 'should not create columns' do
+    @tb.must_be_kind_of RTextBox
   end
 end
 

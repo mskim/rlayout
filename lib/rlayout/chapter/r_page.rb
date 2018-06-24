@@ -8,16 +8,17 @@ module RLayout
   class RPage < Container
     attr_accessor :page_number, :left_page, :no_fixture_page
     attr_accessor :main_box, :heading_object, :header_object, :footer_object, :side_bar_object
-    attr_accessor :fixtures, :document, :column_count
+    attr_accessor :fixtures, :document, :column_count, :first_page
 
     def initialize(options={}, &block)
       if options[:parent] || options[:document]
-        @parent = options[:parent] || options[:document]
-        @document       = @parent
+        @parent       = options[:parent] || options[:document]
+        @document     = @parent
       end
+      @first_page     = options[:first_page]
       @column_count   = 1
       if @document
-        @column_count   = @document.column_count
+        @column_count = @document.column_count
       end
       @column_count  = options[:column_count] if options[:column_count]
       options[:left_margin]   = layout_default[:left_margin] unless options[:left_margin]
@@ -57,18 +58,18 @@ module RLayout
       @fixtures = []
       @floats   = []
 
-      main_box_options                = {}
-      main_box_options[:x]            = @left_margin
-      main_box_options[:y]            = @top_margin
-      main_box_options[:width]        = @width - @left_margin - @right_margin
-      main_box_options[:height]       = @height - @top_margin - @bottom_margin
-      main_box_options[:column_count] = @column_count if @column_count
-      main_box_options[:layout_space] = options.fetch(:layout_space, 10)
+      main_box_options                      = {}
+      main_box_options[:x]                  = @left_margin
+      main_box_options[:y]                  = @top_margin
+      main_box_options[:width]              = @width - @left_margin - @right_margin
+      main_box_options[:height]             = @height - @top_margin - @bottom_margin
+      main_box_options[:column_count]       = @column_count if @column_count
+      main_box_options[:layout_space]       = options.fetch(:layout_space, 10)
       main_box_options[:column_layout_space] = options.fetch(:column_layout_space, 10)
-      main_box_options[:layout_space] = options.fetch(:gutter, main_box_options[:layout_space])
-      main_box_options[:heading_columns]= options.fetch(:heading_columns, @column_count)
-      main_box_options[:grid_base]    = options.fetch(:grid_base,"3x4")
-      main_box_options[:parent] = self
+      main_box_options[:layout_space]       = options.fetch(:gutter, main_box_options[:layout_space])
+      main_box_options[:heading_columns]    = options.fetch(:heading_columns, @column_count)
+      main_box_options[:grid_base]          = options.fetch(:grid_base,"3x4")
+      main_box_options[:parent]             = self
       if options[:text_box_options]
         main_box_options.merge!(options[:text_box_options])
       end
@@ -88,6 +89,10 @@ module RLayout
         instance_eval(&block)
       end
       self
+    end
+
+    def is_first_page?
+      @first_page
     end
 
     def first_line
@@ -140,20 +145,6 @@ EOF
         script +=g.to_pgscript
       end
       script
-    end
-
-    # layout_content! should be called to layout out content
-    # after graphics positiona are settled from relayout!
-    # text_box and table should respond and layout content
-    def layout_content!
-      return unless @graphics
-      return if @graphics.length <= 0
-
-      @graphics.each do |graphic|
-        if graphic.respond_to?(:layout_content!)
-          graphic.layout_content!
-        end
-      end
     end
 
     def first_text_box

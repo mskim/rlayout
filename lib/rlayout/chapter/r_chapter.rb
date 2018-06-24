@@ -10,21 +10,29 @@
 # Chapter first look for template in local folder,
 # if it is not found, takes default template from library location.
 
+# Heading type
+# We have tow type of chapter heading, Heading and HeadingContainer.
+# for growing and fix height heading.
+
 # How to place images in long document?
+
 # There are three ways of placing images in the long document.
 # First method is to embed image markup in the text.
 # This will place image in the column along other text paragraphs,
 # We can set width of image as 1, 1/2, 1/3, 1/4 of column.
 # And text will flow around it.
-# The second way is to use float_group.
-# float_group markup should containe position information,
+
+# And second way is to use float_group.
+# Float_group is a floating images layout on top of a page,
+# where text flows aroud those images.
+# Float_group containes position information,
 # such as grid_frame, size, position attributes.
-# New page is triggered. pre-desinged layout pattern can also be used.
-# Images and floats are layed on top as floats allowing text to flow around it.
+# New page is triggered with Float_group. pre-desinged layout pattern can also be used.
+
 # And the third method is to use photo_page,
-# it is similar to image_group, but no text flowing.
-# New page is triggered for photo_page.
-# photo_page is pure photo only page, no text paragraph is layed out,
+# photo_page can containe more then one page.
+# New page section is triggered for photo_page.
+# photo_page is pure photo only page, no text flows in the page,
 # no header, no footer, no page number.
 # pre-desinged layout pattern can be pulled from pattern library
 # or positions can be set manually.
@@ -153,13 +161,17 @@
 #   end
 # end
 
+# heading_type
+#   fixed height: use HeightContent
+#   growing height: use Heading
+
 module RLayout
 
   class RChapter
     attr_accessor :project_path, :template_path, :story_path
     attr_accessor :document, :output_path, :column_count
     attr_accessor :doc_info, :toc_content
-    attr_reader :book_title, :title, :starting_page
+    attr_reader :book_title, :title, :starting_page, :heading_type
 
     def initialize(options={} ,&block)
       @project_path = options[:project_path] || options[:article_path]
@@ -187,11 +199,25 @@ module RLayout
       else
         @template_path = Dir.glob("#{@project_path}/*.{rb,script,pgscript}").first
       end
-      unless @template_path
-        @template_path = options.fetch(:template_path, "/Users/Shared/SoftwareLab/document_template/paperback/chapter/layout.rb")
+      doc_info_path = @project_path + "/doc_info.yml"
+      if File.exist?(doc_info_path)
+        yaml = File.open(doc_info_path, 'r'){|f| f.read}
+        @doc_info = YAML::load(yaml)
+        @starting_page = @doc_info[:starting_page] || 1
+        @paper_size = @doc_info[:paper_size] || 'A4'
+        @doc_info[:heading_type] = 'fixed_height'
+      else
+        @doc_info[:paper_size] = 'A4'
+        @doc_info[:starting_page] = 1
+        @doc_info[:heading_type] = 'fixed_height'
       end
-      template = File.open(@template_path,'r') { |f| f.read}
-      @document = eval(template)
+
+      if @template_path
+        template = File.open(@template_path,'r') { |f| f.read}
+        @document = eval(template)
+      else
+        @document = default_chapter_document
+      end
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return
@@ -201,14 +227,6 @@ module RLayout
         return
       end
       @starting_page = options.fetch(:starting_page,1)
-      doc_info_path = @project_path + "/doc_info.yml"
-      if File.exist?(doc_info_path)
-        yaml = File.open(doc_info_path, 'r'){|f| f.read}
-        @doc_info = YAML::load(yaml)
-        @starting_page = @doc_info[:starting_page] if @doc_info[:starting_page]
-      else
-        @doc_info = {}
-      end
       @document.starting_page = @starting_page
       @document.pages.each_with_index do |page, i|
         page.page_number = @starting_page + i
@@ -221,6 +239,10 @@ module RLayout
       @doc_info[:page_count] = @document.pages.length
       save_toc
       self
+    end
+
+    def default_chapter_document
+      RDocument.new(doc_info: @doc_info)
     end
 
     def read_story
@@ -259,6 +281,7 @@ module RLayout
       end
     end
 
+
     def layout_story
       @page_index               = 0
       @first_page               = @document.pages[0]
@@ -288,14 +311,23 @@ module RLayout
       update_header_and_footer
     end
 
+
     def next_chapter_starting_page
       @starting_page = 1 if @starting_page.nil?
       @page_view_count = 0   if @page_view_count.nil?
       @starting_page + @page_view_count
     end
 
+    def save_doc_info
+      doc_info_path   = @project_path + "/doc_info.yml"
+      @doc_info[:toc] = @toc_content
+      @doc_info[:toc] = @toc_content
+      File.open(toc_path, 'w') { |f| f.write @doc_info.to_yaml}
+    end
+
     def save_toc
-      toc_path = @project_path + "/doc_info.yml"
+      toc_path        = @project_path + "/doc_info.yml"
+      @doc_info[:paper_size] = @paper_size
       @doc_info[:toc] = @toc_content
       File.open(toc_path, 'w') { |f| f.write @doc_info.to_yaml}
     end
