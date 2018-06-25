@@ -28,7 +28,7 @@ NEWS_COLUMN_IMAGE_HEIGHT  = 75
       @heading   = @parent.floats.first
       if options[:width_in_colum] == 'half'
         @first_column           = @parent.graphics.first
-        @x                      = @first_column.x + @first_column.width/2
+        @x                      = @first_column.x + @first_column.width/2 - 6.77
         @height                 = NEWS_COLUMN_IMAGE_HEIGHT
         @width                  = NEWS_COLUMN_IMAGE_WIDTH
         bottom_room             = options[:bottom_room_margin]*@parent.body_line_height

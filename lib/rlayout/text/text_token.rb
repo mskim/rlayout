@@ -47,11 +47,12 @@ module RLayout
 
   class TextToken < Graphic
     attr_accessor :att_string, :tracking, :scale
-    attr_accessor :string, :atts, :stroke, :has_text, :token_type # number, empasis, special
+    attr_accessor :string, :atts, :stroke, :has_text, :token_type, :style_name# number, empasis, special
     # attr_accessor :width_array
     def initialize(options={})
       @token_type               = options[:token_type]
       @string                   = options[:string]
+      @style_name               = options[:style_name]
       options[:layout_expand]   = nil
       @has_text                 = true
       if RUBY_ENGINE == "rubymotion"

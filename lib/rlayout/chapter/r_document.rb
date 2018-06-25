@@ -171,18 +171,7 @@ module RLayout
       options[:paper_size] = @paper_size
       RPage.new(options, &block)
     end
-
-    def add_page(page, options={})
-      if page.class == RPage
-        page.parent = self
-        @pages << page
-      elsif page.class == Array
-        page.each do |p|
-          add_page(p)
-        end
-      end
-    end
-
+    
     def layout_page
       side_margin = 100
       top_margin = 50
@@ -290,7 +279,7 @@ module RLayout
         @ns_view = DocumentViewMac.new(self)
         @page_view_count = @ns_view.save_pdf(path, options)
       else
-        puts "in save_pdf"
+        puts "in save_pdf ruby mode"
         # @document_view_pdf = DocumentViewPdf.new(self)
         # @document_view_pdf.save_pdf(path, options)
         # @pages.length

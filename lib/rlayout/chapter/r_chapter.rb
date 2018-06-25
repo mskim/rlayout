@@ -42,7 +42,7 @@
 # And image info in specified in meta-data header
 # or design template by designer.
 
-# For book chapters, first, sencod and third methods are used.
+# For book chapters, first, second and third methods are used.
 
 # How to place image caption?
 # File that has same name with extension of .caption?
@@ -55,6 +55,7 @@
 # Inserting Pre-Made PDF Pages in the middle of the pages.
 
 # new page triggering
+
 # when we encounter page triggering node, add new page
 #    section_1, photo_page, image_group
 
@@ -164,6 +165,20 @@
 # heading_type
 #   fixed height: use HeightContent
 #   growing height: use Heading
+
+# chapter folder
+# config.yml
+# images/
+# story.md
+# output format
+# output.pdf
+# page_001
+# page_002
+# page_003
+
+
+
+
 
 module RLayout
 
@@ -305,7 +320,7 @@ module RLayout
       while @paragraph = @paragraphs.shift
         @current_line = @paragraph.layout_lines(@current_line)
         unless @current_line
-          @current_line = @document.add_page
+          @current_line = @document.add_new_page
         end
       end
       update_header_and_footer

@@ -2,7 +2,7 @@ module RLayout
 
 
   class RTextToken < Graphic
-    attr_accessor :string, :token_type, :style_name, :has_text
+    attr_accessor :string, :token_type, :style_name, :has_text, :style, :char_half_width_cushion
 
     def initialize(options={})
       #code
@@ -12,6 +12,8 @@ module RLayout
       @string           = options[:string]
       @style_name       = options[:style_name]
       @style_name       = 'body' unless @style_name
+      @style            = RLayout::StyleService.shared_style_service
+      @char_half_width_cushion = @style.space_width(@style_name)/2
       @width            = width_of_string(@string)
       @height_of_token  = height_of_token
       if options[:text_line_spacing] && options[:text_line_spacing].class != String
@@ -24,11 +26,14 @@ module RLayout
       [@width, @height]
     end
 
+    def space_width
+      @style.space_width(@style_name)
+    end
+
     def width_of_string(string)
       return 0 if string.nil?
       return 0 if string == ""
-      style = RLayout::StyleService.shared_style_service
-      style.width_of_string(@style_name, string)
+      @style.width_of_string(@style_name, string)
     end
 
     def height_of_token
@@ -45,8 +50,6 @@ module RLayout
       # give a char_half_c""
       return false if break_position < MinimunLineRoom
       string_length = @string.length
-      #TODO use ruby only not NS
-      # puts "@att_string.string:#{@att_string.string}"
       (1..string_length).to_a.each do |i|
         front_range = [0,i]
         sub_string_incremented = @string[0..i]
@@ -61,7 +64,7 @@ module RLayout
           @width      = width_of_string(@string) + @left_margin + @right_margin
           new_string  = original_string[cut_index..(string_length - cut_index)]
           return new_string
-        elsif width_of_string(sub_string_incremented) > (break_position + CharHalfWidthCushion)
+        elsif width_of_string(sub_string_incremented) > (break_position + @char_half_width_cushion)
           cut_index = i - 1 # pne before i
           #handle line ending rule. chars that should not be at the end of line.
           front_string = sub_string_incremented
@@ -89,6 +92,7 @@ module RLayout
       if hyphenated_result == "front forbidden character"
         return "front forbidden character"
       elsif hyphenated_result.class == String
+        @width = width_of_string(@string)
         second_half_width = width_of_string(hyphenated_result) + @left_margin + @right_margin
         second_half = RTextToken.new(string: hyphenated_result, style_name: @style_name, width: second_half_width, height: @height)
         return second_half

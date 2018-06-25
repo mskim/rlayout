@@ -17,7 +17,7 @@ module RLayout
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent, :para_style, :text_alignment, :starting_position, :first_line_indent, :tail_indent
     attr_accessor :x, :y, :width, :height, :total_token_width, :room, :overlap
-    attr_accessor :text_area, :text_area_width, :has_text, :space_width, :debug
+    attr_accessor :text_area, :text_area_width, :has_text, :space_width, :debug, :char_half_width_cushion
     attr_accessor :next_line, :layed_out_line
     attr_accessor :line_style, :token_union_rect, :token_union_style, :token_style
 
@@ -26,6 +26,7 @@ module RLayout
       options[:fill_color]        = options.fetch(:line_color, 'clear')
       @space_width                = options[:space_width]
       @space_width                = 3.0 unless @space_width
+      @char_half_width_cushion    = @space_width/2
       super
       @debug            = options[:debug]
       @graphics         = options[:tokens] || []

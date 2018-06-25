@@ -34,7 +34,7 @@ module RLayout
       @column_type          = options[:column_type]
       @current_line_index   = 0
       @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
-      @body_line_height     = options[:body_line_height] || 14
+      @body_line_height     = options[:body_line_height] || 24
       @line_count           = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
       @line_count           = options[:column_line_count] if options[:column_line_count]
       @line_count           -= @article_bottom_space_in_lines

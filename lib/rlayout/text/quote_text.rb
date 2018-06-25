@@ -3,7 +3,7 @@ module RLayout
   # used for quote,
   class QuoteText < Container
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
-    attr_accessor :current_line, :current_line_y, :starting_x, :line_width
+    attr_accessor :current_line, :current_line_y, :starting_x, :line_width, :ns_atts
     attr_accessor :single_line_title, :force_fit_title, :v_alignment, :quote_text_lines
     def initialize(options={})
       @string                 = options.delete(:text_string)
@@ -72,14 +72,15 @@ module RLayout
     end
 
     def create_tokens_from_string(string)
-
       @tokens += string.split(" ").collect do |token_string|
         options = {}
-        options[:string]  = token_string
+        options[:string]      = token_string
+        options[:style_name]  = @style_name
         options[:y]       = 0
         if RUBY_ENGINE == 'rubymotion'
+          @para_style       = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
           options[:atts]    = NSUtils.ns_atts_from_style(@para_style)
-          @space_width      = options[:atts][:space_width]
+          options[:atts]     = @ns_atts
         end
         # options[:stroke_width] = 1
         RLayout::RTextToken.new(options)
@@ -171,7 +172,7 @@ module RLayout
             @current_line.reduce_to_fit(force_fit: @force_fit_title)
             return
           else
-            if result.class == TextToken
+            if result.class == TextToken || result.class == RTextToken
               token = result
             end
             @current_line.align_tokens

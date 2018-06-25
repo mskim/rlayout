@@ -148,7 +148,7 @@ module RLayout
           atts = {}
           if RUBY_ENGINE == 'rubymotion'
             atts = NSUtils.ns_atts_from_style(emphasis_style)
-            @space_width = atts[:@space_width]
+            @space_width = atts[:space_width]
             emphasis_style[:atts] = atts
           else
             unless @para_style[:space_width]

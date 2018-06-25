@@ -39,7 +39,7 @@ class DocumentViewMac
       imageRep    = NSBitmapImageRep.imageRepWithData(imageData)
       imageProps  = {NSImageCompressionFactor=> 1.0}
       imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
-      page_path   = chapter_path + "/page-#{(i+1).to_s.rjust(3,'0')}"
+      page_path   = chapter_path + "/page_#{(i+1).to_s.rjust(3,'0')}"
       system("mkdir -p #{page_path}") unless File.exist?(page_path)
       jpg_path    = page_path + "/ouput.jpg"
       puts "jpg_path:#{jpg_path}"
