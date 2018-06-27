@@ -35,7 +35,8 @@ module RLayout
       @heading_columns        = @column_count
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
       @quote_box_size         = options[:quote_box_size] || 0
-      create_columns          
+      @body_line_height       = options[:body_line_height] || 24
+      create_columns
       if block
         instance_eval(&block)
       end
@@ -43,6 +44,10 @@ module RLayout
         layout_floats!
       end
       self
+    end
+
+    def relayout!
+      adjust_column_lines
     end
 
     def add_new_page
@@ -66,6 +71,12 @@ module RLayout
       end
       @column_bottom = max_y(@graphics.first.frame_rect)
       link_column_lines
+    end
+
+    def adjust_column_lines
+      @graphics.each do |col|
+        col.adjust_column_lines
+      end
     end
 
     def link_column_lines

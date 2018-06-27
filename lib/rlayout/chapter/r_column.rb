@@ -50,6 +50,11 @@ module RLayout
       self
     end
 
+    def adjust_column_lines
+      @line_count           = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
+      create_lines
+    end
+
     def add_new_page
       @parent.add_new_page
     end
@@ -91,6 +96,7 @@ module RLayout
     end
 
     def create_lines(options={})
+      @graphics = []
       current_x   = 0
       current_y   = 0
       line_width  = @width - @left_inset - @right_inset

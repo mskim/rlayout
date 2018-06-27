@@ -46,8 +46,11 @@ describe "create first page" do
     @pages.first.must_be_kind_of RPage
   end
 
-  it 'should create a first page' do
-    @first_page.must_be_kind_of RPage
+  it 'first page should have main_text and heading' do
+    @first_page.main_box.must_be_kind_of RTextBox
+    @first_page.graphics.length.must_equal 2
+
+    # @first_page.heading.must_be_kind_of RHeading
   end
 
 end

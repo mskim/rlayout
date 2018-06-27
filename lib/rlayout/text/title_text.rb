@@ -113,7 +113,6 @@ module RLayout
         @height = @height_in_lines*@body_line_height - 2
         return
       end
-      binding.pry
       natural_height          =  @top_inset + line_height_sum if line_height_sum
       body_height_multiples   = natural_height/@body_line_height
       @height_in_lines        = body_height_multiples.to_i

@@ -65,7 +65,7 @@ module RLayout
       @top_margin     = options.fetch(:top_margin,0)
       @bottom_margin  = options.fetch(:bottom_margin,0)
       @layout_align   = 'center'
-      @layout_expand  = options.fetch(:layout_expand,[:width])
+      @layout_expand  = options.fetch(:layout_expand,[:width, :height])
       @line_type=0
       #TODO
       options.delete(:stroke_width)

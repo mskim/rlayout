@@ -8,14 +8,14 @@ module RLayout
   class RPage < Container
     attr_accessor :page_number, :left_page, :no_fixture_page
     attr_accessor :main_box, :heading_object, :header_object, :footer_object, :side_bar_object
-    attr_accessor :fixtures, :document, :column_count, :first_page
+    attr_accessor :fixtures, :document, :column_count, :first_page, :body_line_count, :body_line_height
 
     def initialize(options={}, &block)
       if options[:parent] || options[:document]
         @parent       = options[:parent] || options[:document]
         @document     = @parent
       end
-      @first_page     = options[:first_page]
+      @first_page     = options[:first_page] || false
       @column_count   = 1
       if @document
         @column_count = @document.column_count
@@ -32,6 +32,8 @@ module RLayout
         options[:top_margin]    = @document.top_margin
         options[:right_margin]  = @document.right_margin
         options[:bottom_margin] = @document.bottom_margin
+        options[:heading_type]  = @document.heading_type
+        @body_line_count        = @document.body_line_count
       elsif options[:paper_size] && options[:paper_size] != "custom"
         options[:width]   = SIZES[options[:paper_size]][0]
         options[:height]  = SIZES[options[:paper_size]][1]
@@ -43,6 +45,8 @@ module RLayout
         @parent.pages << self
       end
       super
+      @body_line_count    = 30 unless @body_line_count
+      @body_line_height   = @height / @body_line_count
       if  @parent
         @page_number = @parent.pages.index(self) + @parent.starting_page
       elsif options[:page_number]
@@ -50,6 +54,11 @@ module RLayout
       else
         @page_number = 1
       end
+
+      if @first_page
+        @heading_object   = RHeading.new(parent:self, layout_length: 1)
+      end
+
       # if @parent && @parent.double_side
       @left_page  = @page_number.even?
       # else
@@ -57,7 +66,6 @@ module RLayout
       # end
       @fixtures = []
       @floats   = []
-
       main_box_options                      = {}
       main_box_options[:x]                  = @left_margin
       main_box_options[:y]                  = @top_margin
@@ -69,6 +77,9 @@ module RLayout
       main_box_options[:layout_space]       = options.fetch(:gutter, main_box_options[:layout_space])
       main_box_options[:heading_columns]    = options.fetch(:heading_columns, @column_count)
       main_box_options[:grid_base]          = options.fetch(:grid_base,"3x4")
+      main_box_options[:layout_length]      = 1
+      main_box_options[:layout_expand]      = [:height] if @first_page
+      main_box_options[:body_line_height]   = @body_line_height || 24
       main_box_options[:parent]             = self
       if options[:text_box_options]
         main_box_options.merge!(options[:text_box_options])
@@ -84,7 +95,7 @@ module RLayout
       else
         @main_box = RTextBox.new(main_box_options)
       end
-
+      relayout!
       if block
         instance_eval(&block)
       end

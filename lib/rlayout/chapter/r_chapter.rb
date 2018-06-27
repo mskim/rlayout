@@ -187,6 +187,7 @@ module RLayout
     attr_accessor :document, :output_path, :column_count
     attr_accessor :doc_info, :toc_content
     attr_reader :book_title, :title, :starting_page, :heading_type
+    attr_accessor :body_line_count, :body_line_height
 
     def initialize(options={} ,&block)
       @project_path = options[:project_path] || options[:article_path]
@@ -256,8 +257,16 @@ module RLayout
       self
     end
 
+    def default_doc_info
+      h = {}
+      h[:paper_size]      = 'A4'
+      h[:body_line_count] = 30
+      h[:heading_type]    = 'fixed_height'
+      h
+    end
+
     def default_chapter_document
-      RDocument.new(doc_info: @doc_info)
+      RDocument.new(doc_info: default_doc_info)
     end
 
     def read_story
@@ -301,14 +310,12 @@ module RLayout
       @page_index               = 0
       @first_page               = @document.pages[0]
       @heading[:layout_expand]  = [:width, :height]
-      heading_object            = Heading.new(@heading)
-      @first_page.graphics.unshift(heading_object)
-      heading_object.parent = @first_page
+      heading_object            = @first_page.heading_object
       unless @first_page.main_box
         @first_page.main_text
       end
-      @first_page.relayout!
-      @first_page.main_box.adjust_overlapping_columns
+      # @first_page.relayout!
+      # @first_page.main_box.adjust_overlapping_columns
       first_item = @paragraphs.first
       #TODO
       if first_item.is_a?(FloatGroup) # || first_item.is_a?(PdfInsert)
@@ -337,7 +344,7 @@ module RLayout
       doc_info_path   = @project_path + "/doc_info.yml"
       @doc_info[:toc] = @toc_content
       @doc_info[:toc] = @toc_content
-      File.open(toc_path, 'w') { |f| f.write @doc_info.to_yaml}
+      File.open(toc_path, 'w') { |f| f.write e@doc_info.to_yaml}
     end
 
     def save_toc

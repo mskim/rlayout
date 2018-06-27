@@ -252,7 +252,12 @@ module RLayout
 
     def space_width(style_name)
       style = @current_style[style_name]
-      style['space_width']
+      space_width = style['space_width'] || style[:space_width]
+      if space_width.nil?
+        fint_size  = style['font_size'] || style[:font_size]
+        return fint_size/2
+      end
+      space_width
     end
 
     def width_of_string(style_name, string)

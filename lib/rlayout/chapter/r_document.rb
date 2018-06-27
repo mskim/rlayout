@@ -34,29 +34,27 @@ module RLayout
     attr_accessor :header_rule, :footer_rule, :gim
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_accessor :pdf_path, :jpg, :preview, :column_count, :layout_style
-    attr_accessor :page_headings, :document_view_pdf, :heading_type
+    attr_accessor :page_headings, :document_view_pdf, :heading_type, :body_line_count, :body_line_height
     def initialize(options={}, &block)
       @pages        = []
       @title        = "untitled"
       @title        = options[:title] if options[:title]
       @path         = options[:path]  if options[:path]
-      @heading_type = options[:heading_type]
+      @heading_type = options[:heading_type] || "fixed_height"
       if options[:doc_info]
         @paper_size = options[:doc_info].fetch(:paper_size, "A4")
+        @body_line_count = options[:doc_info].fetch(:body_line_count, 30)
         @portrait   = options[:doc_info].fetch(:portrait, document_defaults[:portrait])
         @double_side= options[:doc_info].fetch(:double_side, document_defaults[:double_side])
         @starts_left= options[:doc_info].fetch(:starts_left, document_defaults[:starts_left])
-      elsif options[:layout_style]
-        @paper_size = options[:layout_style].fetch(:paper_size, "A4")
-        @portrait   = options[:layout_style].fetch(:portrait, document_defaults[:portrait])
-        @double_side= options[:layout_style].fetch(:double_side, document_defaults[:double_side])
-        @starts_left= options[:layout_style].fetch(:starts_left, document_defaults[:starts_left])
       else
         @paper_size = options.fetch(:paper_size, "A4")
+        @body_line_count   = options.fetch(:body_line_count, 30)
         @portrait   = options.fetch(:portrait, document_defaults[:portrait])
         @double_side= options.fetch(:double_side, document_defaults[:double_side])
         @starts_left= options.fetch(:starts_left, document_defaults[:starts_left])
       end
+
       if @paper_size && @paper_size != "custom"
         @width   = SIZES[@paper_size][0]
         @height  = SIZES[@paper_size][1]
@@ -74,7 +72,6 @@ module RLayout
       if options[:pdf_path]
         @pdf_path = options[:pdf_path]
       end
-
       if options[:jpg]
         @jpg = options[:jpg]
       end
@@ -100,7 +97,8 @@ module RLayout
         # do not create any page
       elsif options[:pages]
         options[:pages].each do |page_hash|
-          page_hash[:parent]      = self
+          page_hash[:parent]        = self
+          page_hash[:first_page]    = true
           RPage.new(page_hash)
         end
       elsif options[:page_objects]
@@ -116,7 +114,6 @@ module RLayout
         # create single page as default initial page
         options[:parent]                  = self
         options[:first_page]              = true
-        options[:heading_type]            = @heading_type
         options[:fixed_height]            = true
         RPage.new(options)
       end
@@ -150,6 +147,7 @@ module RLayout
         top_margin: 50,
         right_margin: 50,
         bottom_margin: 50,
+        heading_type: 'fixed_height'
       }
     end
 
@@ -171,7 +169,7 @@ module RLayout
       options[:paper_size] = @paper_size
       RPage.new(options, &block)
     end
-    
+
     def layout_page
       side_margin = 100
       top_margin = 50
