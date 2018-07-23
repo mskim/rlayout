@@ -2,7 +2,7 @@ module RLayout
   # caption_paragraph creates caption_title, cation, and source tokens
   # them it is layed out into the CaptionColumn
   # CaptionColumn grows upward from bottom with caption_paragraph content
-  class CaptionColumn < TextColumn
+  class CaptionColumn < Container
     attr_accessor :bottom_space_in_lines, :body_line_height, :current_line
     attr_reader :top_space_in_lines, :bottom_space_in_lines, :caption_line_height
 
@@ -28,7 +28,7 @@ module RLayout
         current_y   = @current_line.y_max
       end
       options       = {parent:self, x: current_x, y: current_y , width: @width, height: @caption_line_height, space_width: @space_width}
-      @current_line = NewsLineFragment.new(options)        # @graphics << line
+      @current_line = RLineFragment.new(options)        # @graphics << line
       @line_count   += 1
       @height       = @current_line.y_max
       @current_line

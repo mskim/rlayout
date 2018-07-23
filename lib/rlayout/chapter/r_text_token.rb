@@ -3,6 +3,7 @@ module RLayout
 
   class RTextToken < Graphic
     attr_accessor :string, :token_type, :style_name, :has_text, :style, :char_half_width_cushion
+    attr_accessor :tracking, :space_width
 
     def initialize(options={})
       #code
@@ -26,9 +27,9 @@ module RLayout
       [@width, @height]
     end
 
-    def space_width
-      @style.space_width(@style_name)
-    end
+    # def space_width
+    #   @style.space_width(@style_name)
+    # end
 
     def width_of_string(string)
       return 0 if string.nil?
@@ -47,10 +48,8 @@ module RLayout
     end
 
     # reduce the tracking value of token by 10%
-    def reduce_tracking_value(tracking_value)
-      font_size   = @style['font_size'] || @style[:ont_size]
-      delta       = font_size/10
-      @style['tracking'] -= delta
+    def reduce_token_width_with_new_tracking_value(tracking_value)
+      @width -= tracking_value*(@string.length - 1)
       self
     end
 

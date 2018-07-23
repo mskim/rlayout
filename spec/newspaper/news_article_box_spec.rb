@@ -39,7 +39,7 @@ describe 'overlapping floats' do
 
   it 'should create overflowing_column' do
     assert_equal 4, @news_box.graphics.length
-    assert_equal NewsColumn, @heading.class
+    assert_equal RColumn, @heading.class
   end
   #
   # it 'should create overflowing_column with many lines' do

@@ -1,7 +1,7 @@
 module RLayout
 
-  # NewsColumn
-  # NewsColumn is covered with series of "LineFragments".
+  # RColumn
+  # RColumn is covered with series of "LineFragments".
   # Unlike TextColunm, "LineFragments" are used to determine the shapes of text layout area, to avoid text from overlapping floats.
   # Complex_rect means column has overlapping graphic.
   # We need non-rectanglar shaped bezier path to flow text.
@@ -315,7 +315,7 @@ module RLayout
   # GridRect has two rectangle, rect and text_area
   # rect represents the position of grid_rect in TexBox cordinate.
   # rect is used to determine the overlappings with floats, which are in TexBox cordinate.
-  # and text_area represents non overlapping area for text layout in NewsColumn cordinate(local cordinate)
+  # and text_area represents non overlapping area for text layout in RColumn cordinate(local cordinate)
   # We have a case where the grid_rect is fully_covered covered by the float.
   # We also have a case where the grid_rect is partially covered on the left or right side
   # We also have a case where it is coverd in the middle, with room at each sides

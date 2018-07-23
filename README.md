@@ -400,7 +400,7 @@ TODO List
 
 2017_2_25
 	- news_article_box
-	- new lauyout for newspaper, NewsBoxMaker, NewsArticleBox, NewsColumn, NewsParagraph, NewsLineFragment
+	- new lauyout for newspaper, NewsBoxMaker, NewsArticleBox, RColumn, RParagraph, RLineFragment
 
 2017_2_5
 	- hexapdf Tj TJ, tm, tlm

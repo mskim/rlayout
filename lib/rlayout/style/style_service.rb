@@ -254,8 +254,8 @@ module RLayout
       style = @current_style[style_name]
       space_width = style['space_width'] || style[:space_width]
       if space_width.nil?
-        fint_size  = style['font_size'] || style[:font_size]
-        return fint_size/2
+        font_size  = style['font_size'] || style[:font_size]
+        return font_size/2
       end
       space_width
     end

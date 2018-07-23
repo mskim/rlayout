@@ -47,8 +47,8 @@ describe 'creaet document with NewsBoxMaker' do
 
 
 
-#   it 'shold create NewsColumn' do
-#     assert_equal NewsColumn, @first_column.class
+#   it 'shold create RColumn' do
+#     assert_equal RColumn, @first_column.class
 #     assert_equal 10, @news_box.gutter
 #     assert_equal @first_column.width, @second_column.width
 #     assert_equal (@second_column.x - @first_column.width), 15

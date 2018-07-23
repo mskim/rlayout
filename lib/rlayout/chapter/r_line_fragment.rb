@@ -1,12 +1,9 @@
 #
 #
-# CharHalfWidthCushion  = 5.0
-# MinimunLineRoom       = 4.0
-
-
+CharHalfWidthCushion  = 5.0
+MinimunLineRoom       = 4.0
 
 module RLayout
-
   # RLineFragment
   # RLineFragment are made up of TextTokens, ImageToken, MathToken etc....
   # When paragraph is created, TextTokenAtts is created for default att value for all TextTokena and they are all created using it as default.
@@ -24,8 +21,7 @@ module RLayout
     def	initialize(options={})
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
-      @space_width                = options[:space_width]
-      @space_width                = 3.0 unless @space_width
+      @space_width                = options[:space_width] || 3
       @char_half_width_cushion    = @space_width/2
       super
       @debug            = options[:debug]
@@ -213,8 +209,8 @@ module RLayout
       case @text_alignment
       when 'justified'
         # in justifed paragraph, we have to treat the last line as left aligned.
+        x = @starting_position
         if @line_type == "last_line" && room > 0
-          x = @starting_position
           @graphics.each do |token|
             token.x = x
             x += token.width + @space_width
@@ -270,10 +266,12 @@ module RLayout
     end
 
     def reduce_tracking_values_of_tokens_by(width_in_points)
-      # we have divide tracking evenly throughout all tokens
+      #TODO ruduce space width also
+      # divide tracking evenly throughout all tokens
       # tracking_positions_count: number of tracking applied positions
       per_tracking_value = width_in_points/tracking_positions_count
-      @graphics.map!{|t| t.reduce_tracking_value(per_tracking_value)}
+
+      @graphics.map!{|t| t.reduce_token_width_with_new_tracking_value(per_tracking_value)}
     end
 
     def space_width_sum

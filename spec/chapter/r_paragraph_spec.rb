@@ -29,7 +29,7 @@ end
 
 describe "layout lines" do
   before do
-    @col = NewsColumn.new()
+    @col = RColumn.new()
     @first_line = @col.first_line
     options                  = {}
     options[:para_string]    = 'This is a string. '*3

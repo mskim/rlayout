@@ -18,7 +18,7 @@ module RLayout
   class RParagraph
     attr_reader :markup
     attr_accessor :tokens, :token_heights_are_eqaul
-    attr_accessor :para_string, :style_name
+    attr_accessor :para_string, :style_name, :para_style, :space_width
     attr_accessor :article_type
     attr_accessor :body_line_height, :line_count, :token_union_style
 
@@ -246,12 +246,19 @@ module RLayout
       elsif @markup =='h3'
         @style_name  = 'body_gothic'
       end
+      style = RLayout::StyleService.shared_style_service
+      @para_style   = style.current_style[@style_name]
+      @space_width  = @para_style['space_width'] || style[:space_width]
+      if @space_width.nil?
+        font_size   = style['font_size'] || style[:font_size]
+        @space_width = font_size/2
+      end
     end
 
-    def para_style
-      style = RLayout::StyleService.shared_style_service
-      style.current_style[@style_name]
-    end
+    # def para_style
+    #   style = RLayout::StyleService.shared_style_service
+    #   style.current_style[@style_name]
+    # end
 
     def filter_list_options(h)
       list_only = Hash[h.select{|k,v| [k, v] if k=~/^list_/}]
@@ -261,15 +268,15 @@ module RLayout
     def self.sample
       tokens = []
       100.times do
-        tokens << TextToken.sample
+        tokens << RTextToken.sample
       end
-      NewsParagraph.new(token_array: tokens)
+      RParagraph.new(token_array: tokens)
     end
 
     def self.sample_para_list(options={})
       list = []
       options[:count].times do
-        list << NewsParagraph.sample
+        list << RParagraph.sample
       end
       list
     end

@@ -17,9 +17,9 @@ describe 'NewsBox extended_lines ' do
     assert_equal @news_box.pushed_line_count, 0
   end
 
-  it 'should create NewsColumn with extra line' do
+  it 'should create RColumn with extra line' do
     assert_equal NewsArticleBox, @news_box.class
-    assert_equal NewsColumn, @first_column.class
+    assert_equal RColumn, @first_column.class
     assert_equal @original_line_count + @news_box.extened_line_count, @first_column.graphics.length
   end
 
@@ -41,9 +41,9 @@ describe 'NewsBox pushed_lines ' do
     assert_equal @news_box.pushed_line_count, 1
   end
 
-  it 'should create NewsColumn with extra line' do
+  it 'should create RColumn with extra line' do
     assert_equal NewsArticleBox, @news_box.class
-    assert_equal NewsColumn, @first_column.class
+    assert_equal RColumn, @first_column.class
   end
 
 end
