@@ -281,6 +281,7 @@ module RLayout
     end
 
     def reduce_to_fit(options={})
+      puts __method__
       content_width = token_width_sum + space_width_sum
       over_width = content_width - @width
       if content_width < @width

@@ -123,7 +123,7 @@ TODO List
 
 2018_5_7
 		- add . , ! ? add forbidden first line character
-		
+
 2018_4_19
 	- newsman
 		- make_issue
@@ -381,16 +381,9 @@ TODO List
 	- email based workflow
 			to: layout_server@naeildesign
 			subject: url
-
-			---
 			title: this is title
 			subtitle: this is sub title
 			---
-
-			Put the content here.
-
-
-
 2017_2_28
 	- we should have news title, subtitle style for large article
 
@@ -407,7 +400,7 @@ TODO List
 
 2017_2_25
 	- news_article_box
-		- new lauyout for newspaper, NewsBoxMaker, NewsArticleBox, NewsColumn, NewsParagraph, NewsLineFragment
+	- new lauyout for newspaper, NewsBoxMaker, NewsArticleBox, NewsColumn, NewsParagraph, NewsLineFragment
 
 2017_2_5
 	- hexapdf Tj TJ, tm, tlm

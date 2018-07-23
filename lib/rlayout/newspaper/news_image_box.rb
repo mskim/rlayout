@@ -9,14 +9,17 @@ module RLayout
     # attr_accessor :page_heading_margin_in_lines, :article_bottom_spaces_in_lines
     # attr_accessor :column_count, :row_count
     # Use news_image instead of float_image
+    attr_accessor :news_image
     def initialize(options={}, &block)
       super
       if block
         instance_eval(&block)
       end
+
       if @floats.length > 0
-              # layout_floats!
+        # layout_floats!
       end
+      relayout!
       self
     end
 
@@ -26,14 +29,13 @@ module RLayout
       height      = @height - @article_bottom_spaces_in_lines*@body_line_height
       width       = @width
       if  @top_position
-        #TODO
-        y_position += @body_line_height*4 # Front_page migth be different from inner page
-        height     -= @body_line_height*4
+        y_position = 0
+        # y_position += @body_line_height*@page_heading_margin_in_lines
+        # height     -= @body_line_height*@page_heading_margin_in_lines
       else
         y_position += @body_line_height
         height     -= @body_line_height
       end
-
       unless @on_left_edge
         x_position += @gutter
         width -= @gutter
@@ -43,15 +45,14 @@ module RLayout
         width -= @gutter
         @right_margin = @gutter
       end
-
       [x_position, y_position, width, height]
-
     end
 
     # Use news_image instead of float_image
     def news_image(options={})
       options[:parent]    = self
-      options[:is_float]  = true
+      options[:y]         = 0
+      options[:height]    = @height
       @news_image         = NewsImage.new(options)
     end
   end

@@ -41,6 +41,20 @@ module RLayout
       style.height_of_token(@style_name)
     end
 
+    def tracking_count
+      return 0 unless @string
+      @string.length - 1
+    end
+
+    # reduce the tracking value of token by 10%
+    def reduce_tracking_value(tracking_value)
+      font_size   = @style['font_size'] || @style[:ont_size]
+      delta       = font_size/10
+      @style['tracking'] -= delta
+      self
+    end
+
+
     FORBIDDEN_FIRST_CHARS = /[\.|\,|!|\?|\)|}|\]|>|\u8217|\u8221]$/
     FORBIDDEN_LAST_CHARS  = /[\(|{|\[|<|\u8216|\u8220]/
 
