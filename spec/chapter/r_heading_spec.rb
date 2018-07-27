@@ -33,10 +33,10 @@ describe 'testing heading block' do
   end
 
   it 'should have default types' do
-    @h.title_object.must_be_kind_of RTitleText
-    @h.subtitle_object.must_be_kind_of RTitleText
-    @h.leading_object.must_be_kind_of RTitleText
-    @h.author_object.must_be_kind_of RTitleText
+    @h.title_object.must_be_kind_of TitleText
+    @h.subtitle_object.must_be_kind_of TitleText
+    @h.leading_object.must_be_kind_of TitleText
+    @h.author_object.must_be_kind_of TitleText
   end
 
 

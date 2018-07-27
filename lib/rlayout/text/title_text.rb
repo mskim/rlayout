@@ -76,10 +76,6 @@ module RLayout
         options[:string]      = token_string
         options[:y]           = 0
         options[:style_name]  = @style_name
-        if RUBY_ENGINE == 'rubymotion'
-          options[:atts]    = NSUtils.ns_atts_from_style(@para_style)
-          @space_width      = options[:atts][:space_width]
-        end
         # options[:stroke_width] = 1
         RLayout::RTextToken.new(options)
       end

@@ -51,8 +51,6 @@ module RLayout
     #   top_postion_height = @body_line_height*line_count
     #   Graphic.new(parent:self, width: @width, height:top_postion_height, fill_color: 'red')
     # end
-
-
     def editorial_title(options)
       title_options = {}
       title_options[:parent]          = self
@@ -167,7 +165,6 @@ module RLayout
       atts[:stroke_width]       = 0.3
       TitleText.new(atts)
     end
-
 
   end
 
