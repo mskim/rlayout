@@ -127,7 +127,7 @@ module RLayout
       @v_offset         = para_style[:v_offset] || 0
       @first_line_indent = para_style[:first_line_indent] || para_style[:font_size] || para_style[:text_size]
       @tail_indent      = para_style[:tail_indent] || 0
-      @head_indent      = para_style[:head_indent] || para_style[:font_size] || para_style[:text_size]
+      @head_indent      = para_style[:head_indent] || 0
       if @text_alignment == "left" || @text_alignment == "justified"
         @first_line_width   = @width - @first_line_indent - @tail_indent
         @middle_line_width  = @width - @head_indent - @tail_indent
