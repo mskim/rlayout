@@ -145,7 +145,7 @@ module RLayout
         @starting_position  = @first_line_indent
         @text_area_width    = @first_line_width
       else
-        @starting_position  = para_style[:head_indent] || para_style[:font_size] || para_style[:text_size]
+        @starting_position  = para_style[:head_indent] || 0
         @text_area_width    = @middle_line_width
       end
       @room  = @text_area_width
