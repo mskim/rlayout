@@ -12,8 +12,8 @@ module RLayout
   #TODO
   # tab stop
 
-  # EMPASIS_STRONG = /(\*\*.*?\*\*)/
-  # EMPASIS_DIAMOND = /(\*.*?\*)/
+  EMPASIS_STRONG = /(\*\*.*?\*\*)/
+  EMPASIS_DIAMOND = /(\*.*?\*)/
 
   class RParagraph
     attr_reader :markup
