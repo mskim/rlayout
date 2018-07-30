@@ -233,11 +233,14 @@ module RLayout
     end
 
     def parse_style_name
-      current_style = RLayout::StyleService.shared_style_service
-      @style_name  = 'body'
+      current_style = RLayout::StyleService.shared_style_service.current_style
       if @markup =='p'
         @style_name  = 'body'
-      elsif @markup =='h1'
+        style_hash = current_style['body']
+        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+      end
+      # h1 $ is  assigned as reporrter
+      if @markup =='h1'
         if @article_type == '사설' || @article_type == 'editorial' || @article_type == '기고'
           style_hash = current_style['reporter_editorial']
           @style_name  = 'reporter_editorial'
@@ -249,25 +252,30 @@ module RLayout
           end
           if @graphic_attributes.class == Hash
             @token_union_style = @graphic_attributes['token_union_style']
+            @token_union_style = Hash[@token_union_style.map{ |k, v| [k.to_sym, v] }]
           end
         else
           style_hash = current_style['reporter']
           @style_name  = 'reporter_editorial'
         end
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-      elsif @markup =='h2'
+      end
+
+      if @markup =='h2'
         style_hash = current_style['running_head']
         @style_name  = 'running_head'
         # style_hash = current_style['body_gothic']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-      elsif @markup =='h3'
+      end
+
+      if @markup =='h3'
         style_hash = current_style['body_gothic']
         @style_name  = 'body_gothic'
         # style_hash = current_style['body_gothic']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
-      @para_style   = current_style[@style_name]
-      @space_width  = @para_style['space_width'] || style[:space_width]
+
+      @space_width  = style[:space_width]
       if @space_width.nil?
         font_size   = style['font_size'] || style[:font_size]
         @space_width = font_size/2
