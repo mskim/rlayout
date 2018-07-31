@@ -31,8 +31,12 @@ else
   require 'xmlsimple'
 
   require File.dirname(__FILE__) + "/rlayout/version"
-  require File.dirname(__FILE__) + '/rlayout/utility'
-  require File.dirname(__FILE__) + '/rlayout/color'
+  require File.dirname(__FILE__) + '/rlayout/base/utility'
+  require File.dirname(__FILE__) + '/rlayout/base/color'
+  require File.dirname(__FILE__) + '/rlayout/base/graphic'
+  require File.dirname(__FILE__) + '/rlayout/base/container'
+  require File.dirname(__FILE__) + '/rlayout/base/page'
+  require File.dirname(__FILE__) + '/rlayout/base/document'
 
   require File.dirname(__FILE__) + "/rlayout/graphic/fill"
   require File.dirname(__FILE__) + "/rlayout/graphic/graphic_struct"
@@ -43,12 +47,10 @@ else
   require File.dirname(__FILE__) + "/rlayout/graphic/shadow"
   require File.dirname(__FILE__) + "/rlayout/graphic/shape"
   require File.dirname(__FILE__) + "/rlayout/graphic/stroke"
-  require File.dirname(__FILE__) + '/rlayout/graphic'
 
   require File.dirname(__FILE__) + '/rlayout/container/auto_layout'
   require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
-  require File.dirname(__FILE__) + '/rlayout/container'
 
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/heading_container'
@@ -90,7 +92,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/math/math_token'
   require File.dirname(__FILE__) + '/rlayout/math/latex_math'
 
-  require File.dirname(__FILE__) + '/rlayout/page'
   require File.dirname(__FILE__) + '/rlayout/page/page_fixtures'
   require File.dirname(__FILE__) + '/rlayout/page/composite_page'
   require File.dirname(__FILE__) + '/rlayout/page/page_variables_extend'
@@ -103,7 +104,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/page_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/graphic_view_pdf'
 
-  require File.dirname(__FILE__) + '/rlayout/document'
   require File.dirname(__FILE__) + '/rlayout/document_variables_extend'
   require File.dirname(__FILE__) + '/rlayout/story/story'
   require File.dirname(__FILE__) + '/rlayout/story/reader'

@@ -1,40 +1,5 @@
-# encoding: utf-8
-
-# NewsBoxMaker.
-# NewsBoxMaker works with given folder with story.md, layout.rb, and images
-# layout.rb defines the layout of the article.
-#
-# NEWSPAPER_STYLE = {"body"=>{"name"=>"본문명조", "font_family"=>"윤신문명조", "font"=>"YDVYSinStd", "font_size"=>9.6, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"justified", "tracking"=>-0.5, "space_width"=>5.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "body_gothic"=>{"name"=>"본문고딕", "font_family"=>"윤고딕120", "font"=>"YDVYGOStd12", "font_size"=>9.4, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"justified", "tracking"=>-0.5, "space_width"=>5.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "running_head"=>{"name"=>"본문중제", "font_family"=>"윤고딕130", "font"=>"YDVYGOStd13", "font_size"=>9.6, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>5.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "quote"=>{"name"=>"발문", "font_family"=>"윤명조130", "font"=>"YDVYMjOStd13", "font_size"=>12.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"center", "tracking"=>-0.5, "space_width"=>6.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "related_story"=>{"name"=>"관련기사", "font_family"=>"윤고딕120", "font"=>"YDVYGOStd12", "font_size"=>9.4, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"right", "tracking"=>-0.5, "space_width"=>5.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "caption_title"=>{"name"=>"사진제목", "font_family"=>"윤고딕140", "font"=>"YDVYGOStd14", "font_size"=>8.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>4.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "caption"=>{"name"=>"사진설명", "font_family"=>"윤고딕120", "font"=>"YDVYGOStd12", "font_size"=>8.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>4.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "source"=>{"name"=>"사진출처", "font_family"=>"윤고딕120", "font"=>"YDVYGOStd12", "font_size"=>7.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"right", "tracking"=>-0.5, "space_width"=>4.0, "scale"=>80.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "reporter"=>{"name"=>"기자명", "font_family"=>"윤고딕120", "font"=>"YDVYGOStd12", "font_size"=>8.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"right", "tracking"=>-0.5, "space_width"=>5.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-#
-# 'subject_head_L'  => {font: 'YDVYGOStd14', font_size: 18.0, alignment: 'left', tracking: -0.5, text_color: "CMYK=0,0,0,100", space_width: 9.0, space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-# 'subject_head_M'  => {font: 'YDVYGOStd14', font_size: 14.0, alignment: 'left', tracking: -0.5, text_color: "CMYK=0,0,0,100", space_width: 7.0, space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-# 'subject_head_S'  => {font: 'YDVYGOStd14', font_size: 12.0, alignment: 'left', tracking: -0.5, text_color: "CMYK=0,0,0,100", space_width: 5.0, space_before_in_lines: 0, text_height_in_lines: 1, space_after_in_lines: 0 },
-#
-# "title_main"=>{"name"=>"제목_메인", "font_family"=>"윤명조150", "font"=>"YDVYMjOStd15", "font_size"=>42.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>21.0, "scale"=>100.0, "text_line_spacing"=>20, "space_before_in_lines"=>1, "space_after_in_lines"=>0, "text_height_in_lines"=>3, "box_attributes"=>nil, "publication_id"=>1},
-# "title_4_5"=>{"name"=>"제목_4-5단", "font_family"=>"윤명조140", "font"=>"YDVYMjOStd14", "font_size"=>32.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>18.0, "scale"=>100.0, "text_line_spacing"=>16, "space_before_in_lines"=>1, "space_after_in_lines"=>2, "text_height_in_lines"=>3, "box_attributes"=>nil, "publication_id"=>1},
-# "title_3"=>{"name"=>"제목_3단", "font_family"=>"윤명조140", "font"=>"YDVYMjOStd14", "font_size"=>26.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>13.0, "scale"=>100.0, "text_line_spacing"=>13, "space_before_in_lines"=>1, "space_after_in_lines"=>2, "text_height_in_lines"=>2, "box_attributes"=>nil, "publication_id"=>1},
-# "title_2"=>{"name"=>"제목_2단", "font_family"=>"윤명조140", "font"=>"YDVYMjOStd14", "font_size"=>22.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>11.0, "scale"=>100.0, "text_line_spacing"=>11, "space_before_in_lines"=>1, "space_after_in_lines"=>2, "text_height_in_lines"=>2, "box_attributes"=>nil, "publication_id"=>1},
-# "title_1"=>{"name"=>"제목_1단", "font_family"=>"윤명조140", "font"=>"YDVYMjOStd14", "font_size"=>15.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>7.0, "scale"=>100.0, "text_line_spacing"=>7, "space_before_in_lines"=>1, "space_after_in_lines"=>2, "text_height_in_lines"=>2, "box_attributes"=>nil, "publication_id"=>1},
-# "subtitle_main"=>{"name"=>"부제_메인", "font_family"=>"윤명조140", "font"=>"YDVYMjOStd14", "font_size"=>18.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>9.0, "scale"=>100.0, "text_line_spacing"=>7.0, "space_before_in_lines"=>1, "space_after_in_lines"=>2, "text_height_in_lines"=>2, "box_attributes"=>nil, "publication_id"=>1},
-# "subtitle_M"=>{"name"=>"부제_14", "font_family"=>"윤명조140", "font"=>"YDVYMjOStd14", "font_size"=>14.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>7.0, "scale"=>100.0, "text_line_spacing"=>5, "space_before_in_lines"=>0, "space_after_in_lines"=>1, "text_height_in_lines"=>2, "box_attributes"=>nil, "publication_id"=>1},
-# "subtitle_S"=>{"name"=>"부제_12", "font_family"=>"윤명조140", "font"=>"YDVYMjOStd14", "font_size"=>12.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>6.0, "scale"=>100.0, "text_line_spacing"=>4, "space_before_in_lines"=>0, "space_after_in_lines"=>1, "text_height_in_lines"=>2, "box_attributes"=>nil, "publication_id"=>1},
-# "news_line_title"=>{"name"=>"뉴스라인_제목", "font_family"=>"윤고딕120", "font"=>"YDVYGOStd12", "font_size"=>13.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>6.0, "scale"=>nil, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "brand_name"=>{"name"=>"애드_브랜드명", "font_family"=>"윤고딕130", "font"=>"YDVYMjOStd13", "font_size"=>13.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"center", "tracking"=>-0.5, "space_width"=>6.0, "scale"=>nil, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "name_tag-18"=>{"name"=>"문패_18", "font_family"=>"윤고딕140", "font"=>"YDVYGOStd14", "font_size"=>18.0, "color"=>"CMYK=100,60,0,0", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>9.0, "scale"=>nil, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "name_tag-14"=>{"name"=>"문패_14", "font_family"=>"윤고딕140", "font"=>"YDVYGOStd14", "font_size"=>14.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>7.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "name_tag-12"=>{"name"=>"문패_12", "font_family"=>"윤고딕140", "font"=>"YDVYGOStd14", "font_size"=>12.0, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>6.0, "scale"=>nil, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1},
-# "editor_note"=>{"name"=>"편집자주", "font_family"=>"윤고딕130", "font"=>"YDVYGOStd13", "font_size"=>8.8, "color"=>"CMYK=0,0,0,80", "alignment"=>"left", "tracking"=>-0.5, "space_width"=>5.0, "scale"=>nil, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>nil, "publication_id"=>1}}
-
+# enco
 EDITORIAL_MARGIN                  = 14
-
 
 NEWSPAPER_STYLE = {
 "body"=>{"korean_name"=>"본문명조", "category"=>nil, "font_family"=>"조선일보명조", "font"=>"Shinmoon", "font_size"=>9.6, "text_color"=>"CMYK=0,0,0,100", "alignment"=>"justified", "tracking"=>-0.4, "space_width"=>3.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>nil, "space_after_in_lines"=>nil, "text_height_in_lines"=>nil, "box_attributes"=>"", "markup"=>"", "graphic_attributes"=>"", "publication_id"=>1},
@@ -79,8 +44,8 @@ module RLayout
 
   class NewsBoxMaker
     attr_accessor :article_path, :template, :story_path, :image_path
-    attr_accessor :news_box, :style, :output_path, :project_path
-    attr_reader :article_info_path, :paragraphs_copy, :fill_up_enpty_lines
+    attr_accessor :news_box, :output_path, :project_path
+    attr_reader :article_info_path
     attr_accessor :custom_style, :publication_name, :time_stamp
 
     def initialize(options={} ,&block)

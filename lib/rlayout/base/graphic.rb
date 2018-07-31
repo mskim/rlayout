@@ -1,52 +1,4 @@
-# Graphic
-# Create Graphic from hash
-#
-#
-# NAMECARD_1 = {
-#   doc_type: "NAMECARD",
-#   page_front:{
-#     image_logo: {
-#       grid: [0,0,1,1],
-#       image: '1.jpg'
-#     },
-#     stack_personal: {
-#       grid: [0,0,1,1],
-#       name: 'Min Soo Kim'
-#       email: 'Min Soo Kim'
-#     },
-#     stack_company: {
-#       grid: [0,0,1,1],
-#       address1: '10 Some Stree',
-#       address2: 'Seoul, Korea'
-#     }
-#   },
-#
-#   page_back: {
-#     image_logo: {
-#       grid: [0,0,1,1],
-#       image: '1.jpg'
-#     },
-#
-#     stack_personal: {
-#       grid: [0,0,1,1],
-#       name: 'Min Soo Kim'
-#       email: 'Min Soo Kim'
-#     },
-#
-#     stack_company: {
-#       grid: [0,0,1,1],
-#       address1: '10 Some Stree',
-#       address2: 'Seoul, Korea'
-#     }
-#   },
-#
-#
-# }
-# undefined key name in Container is conaidered as Text class with tag
-# We should predefine style for this.
-# this serves as text replacement as will as style tag.
-# name, email, address1, address2, title, subtitle, p,
-# #
+
 module RLayout
 
   class Graphic
@@ -55,7 +7,7 @@ module RLayout
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
     attr_accessor :frame_image, :shadow, :rotation
-    attr_accessor :overflow, :underflow
+    # attr_accessor :overflow, :underflow
 
     def initialize(options={}, &block)
       @parent = options[:parent]
@@ -91,8 +43,8 @@ module RLayout
       end
       @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))
       @auto_save        = options[:auto_save]
-      @overflow         = false
-      @underflow        = false
+      # @overflow         = false
+      # @underflow        = false
       init_layout(options)
       init_fill(options)
       init_stroke(options)
@@ -219,13 +171,13 @@ module RLayout
       h
     end
 
-    def overflow?
-      @overflow == true
-    end
-
-    def underflow?
-      @underflow == true
-    end
+    # def overflow?
+    #   @overflow == true
+    # end
+    #
+    # def underflow?
+    #   @underflow == true
+    # end
 
     def tag=(new_tag)
       @tag = new_tag

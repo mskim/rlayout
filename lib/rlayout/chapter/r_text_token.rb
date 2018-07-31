@@ -3,7 +3,6 @@ module RLayout
 
   class RTextToken < Graphic
     attr_accessor :string, :token_type, :style_name, :has_text, :style, :char_half_width_cushion
-    attr_accessor :tracking, :space_width
 
     def initialize(options={})
       #code
@@ -27,18 +26,15 @@ module RLayout
       [@width, @height]
     end
 
-    # def space_width
-    #   @style.space_width(@style_name)
-    # end
-
     def width_of_string(string)
       return 0 if string.nil?
       return 0 if string == ""
-      @style.width_of_string(@style_name, string)
+      style = @style || RLayout::StyleService.shared_style_service
+      style.width_of_string(@style_name, string)
     end
 
     def height_of_token
-      style = RLayout::StyleService.shared_style_service
+      style = @style || RLayout::StyleService.shared_style_service
       style.height_of_token(@style_name)
     end
 
@@ -134,4 +130,8 @@ module RLayout
 
   end
 
+
+  class VTextToken < RTextToken
+
+  end
 end
