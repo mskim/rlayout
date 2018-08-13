@@ -220,10 +220,10 @@ module RLayout
         yaml = File.open(doc_info_path, 'r'){|f| f.read}
         @doc_info = YAML::load(yaml)
         @starting_page = @doc_info[:starting_page] || 1
-        @paper_size = @doc_info[:paper_size] || 'A4'
+        @paper_size = @doc_info[:paper_size] || 'A5'
         @doc_info[:heading_type] = 'fixed_height'
       else
-        @doc_info[:paper_size] = 'A4'
+        @doc_info[:paper_size] = 'A5'
         @doc_info[:starting_page] = 1
         @doc_info[:heading_type] = 'fixed_height'
       end
@@ -259,8 +259,8 @@ module RLayout
 
     def default_doc_info
       h = {}
-      h[:paper_size]      = 'A4'
-      h[:body_line_count] = 30
+      h[:paper_size]      = 'A5'
+      h[:body_line_count] = 20
       h[:heading_type]    = 'fixed_height'
       h
     end

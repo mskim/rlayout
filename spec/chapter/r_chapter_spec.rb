@@ -14,4 +14,8 @@ describe "create RChapter" do
   it 'shoud have RDocument' do
     @doc.must_be_kind_of RDocument
   end
+
+  it 'shoud create RDocument with paper_size' do
+    @doc.paper_size.must_equal 'A5'
+  end
 end
