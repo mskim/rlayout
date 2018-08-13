@@ -49,9 +49,13 @@ module RLayout
       self
     end
 
+    FORBIDDEN_FIRST_CHARS_AT_END = /[\.|\,|!|\?|\)|}|\]|>|’|”]$/
+    FORBIDDEN_FIRST_CHARS_AT_FRONT = /^[\.|\,|!|\?|\)|}|\]|>|’|”]/
+    FORBIDDEN_FIRST_CHARS = /[\.|\,|!|\?|\)|}|\]|>|’|”]/
 
-    FORBIDDEN_FIRST_CHARS = /[\.|\,|!|\?|\)|}|\]|>|\u8217|\u8221]$/
-    FORBIDDEN_LAST_CHARS  = /[\(|{|\[|<|\u8216|\u8220]/
+    FORBIDDEN_LAST_CHARS  = /[\(|{|\[|<|‘|“]/
+    FORBIDDEN_LAST_CHARS_AT_END  = /[\(|{|\[|<|‘|“]$/
+
 
     # return false if break_position < MinimunLineRoom
     # split string into two and return splited_second_half_attsting
@@ -62,31 +66,46 @@ module RLayout
       (1..string_length).to_a.each do |i|
         front_range = [0,i]
         sub_string_incremented = @string[0..i]
-        if i == string_length && sub_string_incremented =~ FORBIDDEN_FIRST_CHARS
+        if i == (string_length - 1) && sub_string_incremented =~ FORBIDDEN_FIRST_CHARS_AT_END
+          puts "FORBIDDEN_FIRST_CHARS_AT_END"
           # we have front forbidden character . ? , !
           return "front forbidden character"
-        elsif i == string_length && sub_string_incremented =~ FORBIDDEN_LAST_CHARS
+        elsif i == (string_length - 1) && sub_string_incremented =~ FORBIDDEN_LAST_CHARS_AT_END
+          puts "forbidden last char at the end"
           cut_index = i - 1 # pne before i
           sub_string_incremented = @string[0..cut_index]
           original_string = @string
           @string     = sub_string_incremented
           @width      = width_of_string(@string) + @left_margin + @right_margin
-          new_string  = original_string[cut_index..(string_length - cut_index)]
-          return new_string
+          second_half_string  = original_string[(cut_index + 1)..(string_length - 1)]
+          return second_half_string
         elsif width_of_string(sub_string_incremented) > (break_position + @char_half_width_cushion)
-          cut_index = i - 1 # pne before i
+          cut_off_string = sub_string_incremented
+          cut_index = i - 1 # use one before cut_off_string
           #handle line ending rule. chars that should not be at the end of line.
-          front_string = sub_string_incremented
-          if i > 2 && front_string[-2] =~ FORBIDDEN_LAST_CHARS
-            # puts "we have on end-line char case at -2 position"
-            cut_index = i - 2 # pne before i
+          if i <= 2 && cut_off_string[-2] =~ FORBIDDEN_LAST_CHARS
+            puts "FORBIDDEN_LAST_CHARS at cut_off_string[-2] move it to right"
+            cut_index = i  # move one before FORBIDDEN_LAST_CHAR
+          elsif i > 2 && cut_off_string[-2] =~ FORBIDDEN_LAST_CHARS
+            puts "FORBIDDEN_LAST_CHARS at cut_off_string[-2]"
+            cut_index = i - 2 # move one before FORBIDDEN_LAST_CHAR
           end
           sub_string_incremented = @string[0..cut_index]
-          original_string = @string
-          @string         = sub_string_incremented
-          @width          = width_of_string(@string) + @left_margin + @right_margin
-          new_string      = original_string[(cut_index + 1)..(string_length - cut_index + 1)]
-          return new_string
+          original_string        = @string
+          @string                = sub_string_incremented
+          @width                 = width_of_string(@string) + @left_margin + @right_margin
+          second_half_string     = original_string[(cut_index + 1)..(string_length - 1)]
+          if second_half_string[0] =~ FORBIDDEN_FIRST_CHARS
+            puts "FORBIDDEN_FIRST_CHARS at front of second string"
+            if cut_index >= 2
+              cut_index -= 1
+            end
+            sub_string_incremented  = original_string[0..cut_index]
+            @string                 = sub_string_incremented
+            @width                  = width_of_string(@string) + @left_margin + @right_margin
+            second_half_string      = original_string[(cut_index + 1)..(string_length - 1)]
+          end
+          return second_half_string
         end
       end
       return false

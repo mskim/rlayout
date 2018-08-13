@@ -218,6 +218,9 @@ module RLayout
       #code
     end
 
+    def last_line_of_box
+      @graphics.last.graphics.last
+    end
 
     def layout_items(flowing_items, options={})
       current_line = first_text_line
@@ -227,7 +230,7 @@ module RLayout
       @current_column  = current_line.column
       @overflow  = true if @overflow_column.graphics.first.layed_out_line?
       if @overflow
-
+        last_line_of_box.fill.color = 'red'
       else
         @empty_lines    = article_box_unoccupied_lines_count
         @underflow      = true if @empty_lines > 0
