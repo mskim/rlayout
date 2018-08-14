@@ -78,7 +78,7 @@ module RLayout
         alternative_path = @section_path + "/ad/images"
         image_path = Dir.glob("#{alternative_path}/*[.jpg,.pdf]").first
       end
-      puts "image_path:#{image_path}"
+      # puts "image_path:#{image_path}"
       image_path
     end
 

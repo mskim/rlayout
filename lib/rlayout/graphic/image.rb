@@ -82,34 +82,37 @@ module RLayout
       # @image_path
       #TODO Get rid of this and do it for MRI
       if RUBY_ENGINE == 'rubymotion'
+        # puts "@image_path:#{@image_path}"
         @image_object  = NSImage.alloc.initByReferencingFile(@image_path)
-        #
-        # sourceImageRep = NSBitmapImageRep.imageRepWithData(@image_object.TIFFRepresentation)
+        sourceImageRep = NSBitmapImageRep.imageRepWithData(@image_object.TIFFRepresentation)
         # puts "sourceImageRep.colorSpaceName:#{sourceImageRep.colorSpaceName}"
-        # targetColorSpace = NSColorSpace.genericCMYKColorSpace
-        # if (sourceImageRep.colorSpace == targetColorSpace)
-        #   targetImageRep = sourceImageRep
-        # else
-        #   targetImageRep = sourceImageRep.bitmapImageRepByConvertingToColorSpace(targetColorSpace, renderingIntent:NSColorRenderingIntentPerceptual)
-        #   targetImageData = targetImageRep.representationUsingType:NSJPEGFileType, properties:nil)
-        #   targetImage = NSImage.alloc.initWithData:targetImageData
-        # end
-        # @image_object = NSImage.alloc.initWithData:targetImageData
-        #
+        targetColorSpace = NSColorSpace.genericCMYKColorSpace
+        if (sourceImageRep.colorSpace == targetColorSpace)
+          # puts "targetColorSpace:#{targetColorSpace}"
+          # puts "target color space is same as source color space"
+          targetImageRep = sourceImageRep
+        else
+          # puts "we have difference color space"
+          targetImageRep = sourceImageRep.bitmapImageRepByConvertingToColorSpace(targetColorSpace, renderingIntent:NSColorRenderingIntentPerceptual)
+          # puts "converted targetImageRep.colorSpaceName:#{targetImageRep.colorSpaceName}"
+          targetImageData = targetImageRep.representationUsingType(NSJPEGFileType, properties:nil)
+          # puts "targetImageData.class:#{targetImageData.class}"
+          @image_object = NSImage.alloc.initWithData(targetImageData)
+          # puts "converted @image_object:#{@image_object}"
+        end
         @image_dimension  = [@image_object.size.width, @image_object.size.height]
         if @image_object && options[:adjust_height_to_keep_ratio]
           @height *= image_object_height_to_width_ratio
         end
         apply_fit_type
       else
-        # @image_object     = MiniMagick::Image.open(@image_path)
-        # @image_dimension  = @image_object.dimensions
-        # if @image_object && options[:adjust_height_to_keep_ratio]
-        #   @height *= image_object_height_to_width_ratio
-        # end
-        # apply_fit_type
+        @image_object     = MiniMagick::Image.open(@image_path)
+        @image_dimension  = @image_object.dimensions
+        if @image_object && options[:adjust_height_to_keep_ratio]
+          @height *= image_object_height_to_width_ratio
+        end
+        apply_fit_type
       end
-
       if options[:image_caption]
         @image_caption = options[:image_caption]
       else
