@@ -158,6 +158,7 @@ module RLayout
 
     def layout_lines(current_line, options={})
       @current_line = current_line
+      @line_count = 1
       @current_line.set_paragraph_info(self, "first_line")
       token = tokens.shift
       if token && token.token_type == 'diamond_emphasis'
@@ -193,8 +194,8 @@ module RLayout
             # tokens.unshift(result) #stick the unplace token back to the tokens
             token = result
           end
-        # entire token placed succefully, returned result is true
         elsif result
+          puts "entire token placed succefully, returned result is true"
           token = tokens.shift
         # entire token was rejected,
         else
@@ -212,7 +213,11 @@ module RLayout
           end
         end
       end
-      @current_line.set_paragraph_info(self, "last_line")
+      if @line_count == 1 && @current_line.line_type == 'first_line'
+        @current_line.text_alignment = 'left'
+      else
+        @current_line.set_paragraph_info(self, "last_line")
+      end
       @current_line.align_tokens
       # move cursor to new line
       @current_line.next_text_line

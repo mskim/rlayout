@@ -84,21 +84,25 @@ module RLayout
       if RUBY_ENGINE == 'rubymotion'
         # puts "@image_path:#{@image_path}"
         @image_object  = NSImage.alloc.initByReferencingFile(@image_path)
-        sourceImageRep = NSBitmapImageRep.imageRepWithData(@image_object.TIFFRepresentation)
-        # puts "sourceImageRep.colorSpaceName:#{sourceImageRep.colorSpaceName}"
-        targetColorSpace = NSColorSpace.genericCMYKColorSpace
-        if (sourceImageRep.colorSpace == targetColorSpace)
-          # puts "targetColorSpace:#{targetColorSpace}"
-          # puts "target color space is same as source color space"
-          targetImageRep = sourceImageRep
+        if @image_path =~/pdf$/ || @image_path =~/eps$/
+          # do not convert color space for pdf and eps
         else
-          # puts "we have difference color space"
-          targetImageRep = sourceImageRep.bitmapImageRepByConvertingToColorSpace(targetColorSpace, renderingIntent:NSColorRenderingIntentPerceptual)
-          # puts "converted targetImageRep.colorSpaceName:#{targetImageRep.colorSpaceName}"
-          targetImageData = targetImageRep.representationUsingType(NSJPEGFileType, properties:nil)
-          # puts "targetImageData.class:#{targetImageData.class}"
-          @image_object = NSImage.alloc.initWithData(targetImageData)
-          # puts "converted @image_object:#{@image_object}"
+          sourceImageRep = NSBitmapImageRep.imageRepWithData(@image_object.TIFFRepresentation)
+          # puts "sourceImageRep.colorSpaceName:#{sourceImageRep.colorSpaceName}"
+          targetColorSpace = NSColorSpace.genericCMYKColorSpace
+          if (sourceImageRep.colorSpace == targetColorSpace)
+            # puts "targetColorSpace:#{targetColorSpace}"
+            # puts "target color space is same as source color space"
+            targetImageRep = sourceImageRep
+          else
+            # puts "we have difference color space"
+            targetImageRep = sourceImageRep.bitmapImageRepByConvertingToColorSpace(targetColorSpace, renderingIntent:NSColorRenderingIntentPerceptual)
+            # puts "converted targetImageRep.colorSpaceName:#{targetImageRep.colorSpaceName}"
+            targetImageData = targetImageRep.representationUsingType(NSJPEGFileType, properties:nil)
+            # puts "targetImageData.class:#{targetImageData.class}"
+            @image_object = NSImage.alloc.initWithData(targetImageData)
+            # puts "converted @image_object:#{@image_object}"
+          end
         end
         @image_dimension  = [@image_object.size.width, @image_object.size.height]
         if @image_object && options[:adjust_height_to_keep_ratio]
