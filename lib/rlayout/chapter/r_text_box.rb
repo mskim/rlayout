@@ -75,6 +75,7 @@ module RLayout
 
     def adjust_column_lines
       @graphics.each do |col|
+        col.height = @height
         col.adjust_column_lines
       end
     end

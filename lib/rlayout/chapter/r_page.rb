@@ -17,15 +17,15 @@ module RLayout
       end
       @first_page     = options[:first_page] || false
       @column_count   = 1
+      @column_count   = options[:column_count] if options[:column_count]
+      options[:left_margin]     = layout_default[:left_margin] unless options[:left_margin]
+      options[:top_margin]      = layout_default[:top_margin] unless options[:top_margin]
+      options[:right_margin]    = layout_default[:right_margin] unless options[:right_margin]
+      options[:bottom_margin]   = layout_default[:bottom_margin] unless options[:bottom_margin]
       if @document
-        @column_count = @document.column_count
-      end
-      @column_count  = options[:column_count] if options[:column_count]
-      options[:left_margin]   = layout_default[:left_margin] unless options[:left_margin]
-      options[:top_margin]    = layout_default[:top_margin] unless options[:top_margin]
-      options[:right_margin]  = layout_default[:right_margin] unless options[:right_margin]
-      options[:bottom_margin] = layout_default[:bottom_margin] unless options[:bottom_margin]
-      if @document
+        @column_count           = @document.column_count
+        @body_line_height       = @document.body_line_height
+        @body_line_count        = @document.body_line_count
         options[:width]         = @document.width
         options[:height]        = @document.height
         options[:left_margin]   = @document.left_margin
@@ -33,20 +33,21 @@ module RLayout
         options[:right_margin]  = @document.right_margin
         options[:bottom_margin] = @document.bottom_margin
         options[:heading_type]  = @document.heading_type
-        @body_line_count        = @document.body_line_count
       elsif options[:paper_size] && options[:paper_size] != "custom"
-        options[:width]   = SIZES[options[:paper_size]][0]
-        options[:height]  = SIZES[options[:paper_size]][1]
+        options[:width]         = SIZES[options[:paper_size]][0]
+        options[:height]        = SIZES[options[:paper_size]][1]
+        @body_line_height       = 18
+        @body_line_count        = options[:height] / @body_line_height
       else
         options[:width]   = SIZES['A4'][0]
         options[:height]  = SIZES['A4'][1]
+        @body_line_height       = 18
+        @body_line_count        = options[:height] / @body_line_height
       end
       if  @parent && !@parent.pages.include?(self)
         @parent.pages << self
       end
       super
-      @body_line_count    = 30 unless @body_line_count
-      @body_line_height   = @height / @body_line_count
       if  @parent
         @page_number = @parent.pages.index(self) + @parent.starting_page
       elsif options[:page_number]
@@ -54,11 +55,9 @@ module RLayout
       else
         @page_number = 1
       end
-
       if @first_page
         @heading_object   = RHeading.new(parent:self, layout_length: 1)
       end
-
       # if @parent && @parent.double_side
       @left_page  = @page_number.even?
       # else
@@ -79,13 +78,13 @@ module RLayout
       main_box_options[:grid_base]          = options.fetch(:grid_base,"3x4")
       main_box_options[:layout_length]      = 1
       main_box_options[:layout_expand]      = [:height] if @first_page
-      main_box_options[:body_line_height]   = @body_line_height || 24
+      main_box_options[:body_line_height]   = @body_line_height || 18
       main_box_options[:parent]             = self
       if options[:text_box_options]
         main_box_options.merge!(options[:text_box_options])
       end
       if  options[:text_box]
-          @main_box = RTextBox.new(main_box_options)
+        @main_box = RTextBox.new(main_box_options)
       elsif options[:toc_table]
         @main_box = TocTable.new(main_box_options)
       elsif options[:grid_box]
@@ -361,15 +360,8 @@ EOF
 
     def save_json(path)
       # my_json = { :array => [1, 2, 3, { :sample => "hash"} ], :foo => "bar" }
-
       h = to_hash
       File.open(path, 'w'){|f| f.write JSON.pretty_generate(h)}
-    end
-
-
-    ##########  sample ###########
-    def self.sample_page
-
     end
 
     ########### PageScritp Verbs #############
@@ -400,22 +392,21 @@ EOF
 
     def header(options={})
       #TODO
-      Header.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
+      # Header.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
+      TitleText.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
     end
 
     def footer(options={})
-      Footer.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
+      # Footer.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
+      TitleText.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
     end
 
     def side_bar(options={})
       SideBar.new(:parent=>self, :text_string=>options[:text_string], :is_fixture=>true)
     end
 
-
     def self.magazine_page(document)
       Page.new(:parent=>document, :header=>true, :footer=>true, :text_box=>true)
     end
   end
-
-
 end

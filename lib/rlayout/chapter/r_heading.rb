@@ -47,6 +47,8 @@ module RLayout
     attr_accessor :number_object, :title_object, :subtitle_object, :leading_object, :author_object
     attr_accessor :align_to_body_text
     def initialize(options={}, &block)
+      # options[:stroke_width] = 1.0
+      # options[:stroke_width] = 1
       super
 
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
@@ -65,6 +67,7 @@ module RLayout
       @top_margin     = options.fetch(:top_margin,0)
       @bottom_margin  = options.fetch(:bottom_margin,0)
       @layout_align   = 'center'
+      @align_to_body_text = options[:align_to_body_text] || true
       @layout_expand  = options.fetch(:layout_expand,[:width, :height])
       @line_type=0
       #TODO

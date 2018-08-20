@@ -121,6 +121,10 @@ TODO List
 		instead of starting from x, or y
 		this will create graphic from right_space, and bottom_space
 
+2018_8_20
+
+	- fix image cmyk, convert color space except for pdf or eps
+
 2018_5_7
 		- add . , ! ? add forbidden first line character
 

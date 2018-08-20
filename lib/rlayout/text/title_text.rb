@@ -17,12 +17,11 @@ module RLayout
       @tokens                 = []
       @room                   = @width
       @single_line_title      = options[:single_line_title]
-      @style_name             = options[:style_name]
       if @style_name
         @para_style             = RLayout::StyleService.shared_style_service.current_style[@style_name]
         @para_style             = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
-        @graphic_attributes    = @para_style[:graphic_attributes]
-        if @graphic_attributes['token_union_style']
+        @graphic_attributes     = @para_style[:graphic_attributes]
+        if @graphic_attributes && @graphic_attributes['token_union_style']
           @token_union_style      = Hash[@graphic_attributes['token_union_style'].map{ |k, v| [k.to_sym, v] }]
         end
         @para_style[:font_size] = @para_style[:text_size] if @para_style[:text_size]

@@ -36,24 +36,36 @@ module RLayout
     attr_accessor :pdf_path, :jpg, :preview, :column_count, :layout_style
     attr_accessor :page_headings, :document_view_pdf, :heading_type, :body_line_count, :body_line_height
     def initialize(options={}, &block)
-      @pages        = []
-      @title        = "untitled"
-      @title        = options[:title] if options[:title]
-      @path         = options[:path]  if options[:path]
-      @heading_type = options[:heading_type] || "fixed_height"
+      @pages            = []
+      @title            = "untitled"
+      @title            = options[:title] if options[:title]
+      @path             = options[:path]  if options[:path]
+      @heading_type     = options[:heading_type] || "fixed_height"
+      @body_line_height = document_defaults[:body_line_height]
+
       if options[:doc_info]
-        @paper_size = options[:doc_info].fetch(:paper_size, "A4")
-        @body_line_count = options[:doc_info].fetch(:body_line_count, 30)
-        @portrait   = options[:doc_info].fetch(:portrait, document_defaults[:portrait])
-        @double_side= options[:doc_info].fetch(:double_side, document_defaults[:double_side])
-        @starts_left= options[:doc_info].fetch(:starts_left, document_defaults[:starts_left])
+        @paper_size       = options[:doc_info].fetch(:paper_size, "A4")
+        @body_line_count  = options[:doc_info].fetch(:body_line_count, 30)
+        @portrait         = options[:doc_info].fetch(:portrait, document_defaults[:portrait])
+        @double_side      = options[:doc_info].fetch(:double_side, document_defaults[:double_side])
+        @starts_left      = options[:doc_info].fetch(:starts_left, document_defaults[:starts_left])
+        @body_line_height = options[:doc_info][:body_line_height] if options[:doc_info][:body_line_height]
       else
-        @paper_size = options.fetch(:paper_size, "A4")
-        @body_line_count   = options.fetch(:body_line_count, 30)
-        @portrait   = options.fetch(:portrait, document_defaults[:portrait])
-        @double_side= options.fetch(:double_side, document_defaults[:double_side])
-        @starts_left= options.fetch(:starts_left, document_defaults[:starts_left])
+        @paper_size       = options.fetch(:paper_size, "A4")
+        @body_line_count  = options.fetch(:body_line_count, 30)
+        @portrait         = options.fetch(:portrait, document_defaults[:portrait])
+        @double_side      = options.fetch(:double_side, document_defaults[:double_side])
+        @starts_left      = options.fetch(:starts_left, document_defaults[:starts_left])
       end
+
+      @left_margin      =  document_defaults[:left_margin]
+      @left_inset       =  document_defaults[:left_inset]
+      @top_margin       =  document_defaults[:top_margin]
+      @top_inset        =  document_defaults[:top_margin]
+      @right_margin     =  document_defaults[:right_margin]
+      @right_inset      =  document_defaults[:right_inset]
+      @bottom_margin    =  document_defaults[:bottom_margin]
+      @bottom_inset     =  document_defaults[:bottom_inset]
 
       if @paper_size && @paper_size != "custom"
         @width   = SIZES[@paper_size][0]
@@ -68,6 +80,8 @@ module RLayout
         @width  = @height
         @height = temp
       end
+      @body_line_count   = ((@height - @top_margin - @top_inset - @bottom_margin - @bottom_inset)/@body_line_height).to_i
+
       # for printing
       if options[:pdf_path]
         @pdf_path = options[:pdf_path]
@@ -144,10 +158,15 @@ module RLayout
         width: 595.28,
         height: 841.89,
         left_margin: 50,
+        left_inset: 0,
         top_margin: 50,
+        top_inset: 0,
         right_margin: 50,
+        right_inset: 0,
         bottom_margin: 50,
-        heading_type: 'fixed_height'
+        bottom_inset: 0,
+        heading_type: 'fixed_height',
+        body_line_height: 18
       }
     end
 
