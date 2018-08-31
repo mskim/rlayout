@@ -31,7 +31,7 @@ module RLayout
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
-      @column_type          = options[:column_type]
+      @column_type          = options[:column_type] || 'resular_column'
       @current_line_index   = 0
       @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
       @body_line_height     = options[:body_line_height] || 24
@@ -56,7 +56,7 @@ module RLayout
     end
 
     def add_new_page
-      @parent.add_new_page
+      @parent.add_new_page if @parent
     end
 
     def column_index
@@ -163,6 +163,7 @@ module RLayout
       @graphics.each do |line|
         return line if line.text_line? || line.graphics.length > 0
       end
+      nil
     end
 
     def get_line_with_text_room

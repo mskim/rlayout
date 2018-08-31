@@ -207,6 +207,7 @@ module RLayout
     end
 
     def first_text_line
+      line = nil
       @graphics.each do |column|
         line = column.first_text_line_in_column
         return line if line
@@ -224,10 +225,13 @@ module RLayout
 
     def layout_items(flowing_items, options={})
       current_line = first_text_line
+
       while @item = flowing_items.shift do
         current_line = @item.layout_lines(current_line)
       end
-      @current_column  = current_line.column
+      if  current_line
+        @current_column  = current_line.column
+      end
       @overflow  = true if @overflow_column.graphics.first.layed_out_line?
       if @overflow
         last_line_of_box.fill.color = 'red'

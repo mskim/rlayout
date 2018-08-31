@@ -10,7 +10,10 @@ class GraphicViewMac < NSView
       unless fill_color.class == NSColor
         fill_color = RLayout.convert_to_nscolor(fill_color)
       end
-
+      # if graphic.class == RLayout::RTextToken || graphic.class == RLayout::RLineFragment
+      # else
+      #   puts "+++++++++  graphic.class:#{graphic.class} fill_color:#{fill_color}"
+      # end
       fill_color.set if fill_color
       path.fill
 

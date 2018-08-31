@@ -95,16 +95,29 @@ module RLayout
           @string                = sub_string_incremented
           @width                 = width_of_string(@string) + @left_margin + @right_margin
           second_half_string     = original_string[(cut_index + 1)..(string_length - 1)]
-          if second_half_string[0] =~ FORBIDDEN_FIRST_CHARS
+          if second_half_string =~ FORBIDDEN_FIRST_CHARS_AT_FRONT
             puts "FORBIDDEN_FIRST_CHARS at front of second string"
+            #TODO
+            puts "original_string:#{original_string}"
+            puts "before cut_index:#{cut_index}"
             if cut_index >= 2
               cut_index -= 1
+            elsif second_half_string.length >=2
+              cut_index += 1
             end
+            puts "after cut_index:#{cut_index}"
             sub_string_incremented  = original_string[0..cut_index]
             @string                 = sub_string_incremented
             @width                  = width_of_string(@string) + @left_margin + @right_margin
             second_half_string      = original_string[(cut_index + 1)..(string_length - 1)]
+            puts "second_half_string:#{second_half_string}"
+          elsif sub_string_incremented =~ FORBIDDEN_FIRST_CHARS_AT_END
+            #TODO
+            puts "FORBIDDEN_FIRST_CHARS_AT_END of first string"
+
           end
+
+
           return second_half_string
         end
       end

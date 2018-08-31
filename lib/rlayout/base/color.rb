@@ -112,13 +112,16 @@ module RLayout
   def color_from_name(name)
     case name
     when "black"
-      return NSColor.blackColor
+      # return NSColor.blackColor
+      return NSColor.colorWithDeviceCyan(0.0, magenta:0.0, yellow:0.0, black:1.0, alpha: 1.0)
     when "blue"
       return NSColor.blueColor
     when "brown"
       return NSColor.brownColor
     when "clear"
-      return NSColor.clearColor
+      return NSColor.colorWithDeviceCyan(0.0, magenta:0.0, yellow:0.0, black:0.0, alpha: 0.0)
+      # return NSColor.colorWithDeviceRed(0, green: 0, blue: 0, alpha: 0)
+      # return NSColor.clearColor
     when "cyan"
       return NSColor.cyanColor
     when "dark_gray", "darkGray"
@@ -138,7 +141,9 @@ module RLayout
     when "red"
       return NSColor.redColor
     when "white"
-      return NSColor.whiteColor
+      return NSColor.colorWithDeviceCyan(0.0, magenta:0.0, yellow:0.0, black:0.0, alpha: 1.0)
+
+      # return NSColor.whiteColor
     when "yellow"
       return NSColor.yellowColor
     else

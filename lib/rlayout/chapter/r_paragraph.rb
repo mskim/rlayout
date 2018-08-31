@@ -157,6 +157,7 @@ module RLayout
     end
 
     def layout_lines(current_line, options={})
+      return unless current_line
       @current_line = current_line
       @line_count = 1
       @current_line.set_paragraph_info(self, "first_line")
@@ -177,6 +178,7 @@ module RLayout
       end
 
       while token
+        return unless @current_line
         result = @current_line.place_token(token)
         # token is broken into two, second part is returned
         if result.class == RTextToken
@@ -195,7 +197,7 @@ module RLayout
             token = result
           end
         elsif result
-          puts "entire token placed succefully, returned result is true"
+          # puts "entire token placed succefully, returned result is true"
           token = tokens.shift
         # entire token was rejected,
         else

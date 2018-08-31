@@ -120,6 +120,15 @@ TODO List
 - Graphic add from_bottom, from_right
 		instead of starting from x, or y
 		this will create graphic from right_space, and bottom_space
+- manual hyphenation with - in the middle of English and number, break at hyphen
+
+2018_8_31
+  - fix line_space of subtitle after two lines
+
+2018_8_23
+	- fix first_text_line returning Array
+	- fix hyphenate_token to check for forbidden first and and
+	- fix image color_space conversion with non-existing image
 
 2018_5_7
 		- add . , ! ? add forbidden first line character

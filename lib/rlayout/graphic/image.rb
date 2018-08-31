@@ -84,12 +84,13 @@ module RLayout
       if RUBY_ENGINE == 'rubymotion'
         # puts "@image_path:#{@image_path}"
         @image_object  = NSImage.alloc.initByReferencingFile(@image_path)
-        if @image_path =~/pdf$/ || @image_path =~/eps$/
+        if @image_path =~/pdf$/ || @image_path =~/eps$/ || @image_path =~/dummy\.jpg$/
           # do not convert color space for pdf and eps
         else
           sourceImageRep = NSBitmapImageRep.imageRepWithData(@image_object.TIFFRepresentation)
           # puts "sourceImageRep.colorSpaceName:#{sourceImageRep.colorSpaceName}"
-          targetColorSpace = NSColorSpace.genericCMYKColorSpace
+          # targetColorSpace = NSColorSpace.genericCMYKColorSpace
+          targetColorSpace = NSColorSpace.deviceCMYKColorSpace
           if (sourceImageRep.colorSpace == targetColorSpace)
             # puts "targetColorSpace:#{targetColorSpace}"
             # puts "target color space is same as source color space"
