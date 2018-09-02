@@ -67,6 +67,7 @@ module RLayout
       # puts "@space_before_in_lines:#{@space_before_in_lines}"
       # puts "@text_height_in_lines:#{@text_height_in_lines}"
       # puts "@space_after_in_lines:#{@space_after_in_lines}"
+      puts "@current_line.height:#{@current_line.height}"
       create_tokens
       layout_tokens
       ajust_height_as_body_height_multiples
@@ -94,7 +95,7 @@ module RLayout
       new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
       @current_line.next_line = new_line if @current_line
       @current_line           = new_line
-      @current_line_y         += @current_line.height + @line_space
+      @current_line_y         += @current_line.height
       @current_line
     end
 

@@ -160,6 +160,7 @@ module RLayout
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts[:parent]                 = self
       @subtitle_object              = TitleText.new(atts)
+      puts "@subtitle_object.graphics.length:#{@subtitle_object.graphics.lengt}"
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object
