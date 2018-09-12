@@ -22,7 +22,7 @@ module RLayout
         @para_style             = RLayout::StyleService.shared_style_service.current_style[@style_name]
         @para_style             = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
         @graphic_attributes    = @para_style[:graphic_attributes]
-        if @graphic_attributes['token_union_style']
+        if @graphic_attributes && @graphic_attributes['token_union_style']
           @token_union_style      = Hash[@graphic_attributes['token_union_style'].map{ |k, v| [k.to_sym, v] }]
         end
         @para_style[:font_size] = @para_style[:text_size] if @para_style[:text_size]
@@ -61,13 +61,6 @@ module RLayout
       @line_width             = @width - @starting_x - @right_margin - @right_inset
       @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
       @current_line_y         +=@current_line.height
-      # puts "@style_name:#{@style_name}"
-      # puts "@top_inset:#{@top_inset}"
-      # puts "@current_line_y:#{@current_line_y}"
-      # puts "@space_before_in_lines:#{@space_before_in_lines}"
-      # puts "@text_height_in_lines:#{@text_height_in_lines}"
-      # puts "@space_after_in_lines:#{@space_after_in_lines}"
-      puts "@current_line.height:#{@current_line.height}"
       create_tokens
       layout_tokens
       ajust_height_as_body_height_multiples

@@ -46,7 +46,7 @@ module RLayout
       end
       super
       @body_line_count    = 30 unless @body_line_count
-      @body_line_height   = @height / @body_line_count
+      @body_line_height   = (@height - @top_margin - @bottom_margin)/ @body_line_count
       if  @parent
         @page_number = @parent.pages.index(self) + @parent.starting_page
       elsif options[:page_number]
@@ -55,9 +55,6 @@ module RLayout
         @page_number = 1
       end
 
-      if @first_page
-        @heading_object   = RHeading.new(parent:self, layout_length: 1)
-      end
 
       # if @parent && @parent.double_side
       @left_page  = @page_number.even?
@@ -175,7 +172,7 @@ EOF
       nil
     end
 
-    def main_text(options={}, &block)
+    def create_main_text(options={}, &block)
       options[:parent_frame]  = true # fit to page's layout_frame
       options[:grid_base]     = "3x3" unless options[:grid_base]
       options[:gutter]        = 10    unless options[:gutter]

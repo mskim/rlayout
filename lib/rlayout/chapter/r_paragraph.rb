@@ -76,11 +76,11 @@ module RLayout
     # and do it recursively with split strings
     # and call create_plain_tokens for regular string segmnet
     def create_tokens
-      if @markup == "h3"
-        unless @para_string =~/■/
-          @para_string = "■" + @para_string
-        end
-      end
+      # if @markup == "h3"
+      #   unless @para_string =~/■/
+      #     @para_string = "■" + @para_string
+      #   end
+      # end
       if @para_string =~EMPASIS_STRONG
         create_tokens_with_emphasis_strong(@para_string)
       elsif @para_string =~EMPASIS_DIAMOND
@@ -241,7 +241,7 @@ module RLayout
 
     def parse_style_name
       current_style = RLayout::StyleService.shared_style_service.current_style
-      if @markup =='p'
+      if @markup =='p' || @markup =='br'
         @style_name  = 'body'
         style_hash = current_style['body']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
@@ -271,14 +271,12 @@ module RLayout
       if @markup =='h2'
         style_hash = current_style['running_head']
         @style_name  = 'running_head'
-        # style_hash = current_style['body_gothic']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
       if @markup =='h3'
         style_hash = current_style['body_gothic']
         @style_name  = 'body_gothic'
-        # style_hash = current_style['body_gothic']
         style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 

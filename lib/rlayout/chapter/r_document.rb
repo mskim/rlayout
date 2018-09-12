@@ -277,7 +277,6 @@ module RLayout
         @ns_view = DocumentViewMac.new(self)
         @page_view_count = @ns_view.save_pdf(path, options)
       else
-        puts "in save_pdf ruby mode"
         # @document_view_pdf = DocumentViewPdf.new(self)
         # @document_view_pdf.save_pdf(path, options)
         # @pages.length

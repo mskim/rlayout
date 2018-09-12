@@ -21,7 +21,6 @@ class DocumentViewMac
   end
 
   def save_pdf(path, options={})
-    puts "in save_pdf"
     pdf_path=path
     unless File.extname(path) == '.pdf'
       pdf_path=path + ".pdf"
@@ -42,7 +41,6 @@ class DocumentViewMac
       page_path   = chapter_path + "/page_#{(i+1).to_s.rjust(3,'0')}"
       system("mkdir -p #{page_path}") unless File.exist?(page_path)
       jpg_path    = page_path + "/ouput.jpg"
-      puts "jpg_path:#{jpg_path}"
       imageData.writeToFile(jpg_path, atomically:false)
     end
     @page_views.length

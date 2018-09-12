@@ -31,7 +31,7 @@ module RLayout
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
-      @column_type          = options[:column_type] || 'resular_column'
+      @column_type          = options[:column_type] || 'regular_column'
       @current_line_index   = 0
       @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
       @body_line_height     = options[:body_line_height] || 24

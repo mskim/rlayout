@@ -223,16 +223,14 @@ module RLayout
         @paper_size = @doc_info[:paper_size] || 'A5'
         @doc_info[:heading_type] = 'fixed_height'
       else
-        @doc_info[:paper_size] = 'A5'
-        @doc_info[:starting_page] = 1
-        @doc_info[:heading_type] = 'fixed_height'
+        @doc_info = default_doc_info
       end
 
       if @template_path
         template = File.open(@template_path,'r') { |f| f.read}
         @document = eval(template)
       else
-        @document = default_chapter_document
+        @document =  RDocument.new(doc_info: @doc_info)
       end
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
@@ -260,7 +258,7 @@ module RLayout
     def default_doc_info
       h = {}
       h[:paper_size]      = 'A5'
-      h[:body_line_count] = 20
+      h[:body_line_count] = 25
       h[:heading_type]    = 'fixed_height'
       h
     end
@@ -310,10 +308,17 @@ module RLayout
       @page_index               = 0
       @first_page               = @document.pages[0]
       @heading[:layout_expand]  = [:width, :height]
-      heading_object            = @first_page.heading_object
+      @heading[:parent]         = @first_page
+      @heading[:layout_length]  = 1
+      @heading[:v_alignment]    = 'center'
+      @heading_object           = RHeading.new(@heading)
+      @first_page.heading_object = @heading_object
       unless @first_page.main_box
-        @first_page.main_text
+        @first_page.create_main_text
+      else
+        @first_page.graphics = @first_page.graphics.reverse
       end
+      @first_page.relayout!
       # @first_page.relayout!
       # @first_page.main_box.adjust_overlapping_columns
       first_item = @paragraphs.first

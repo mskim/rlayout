@@ -12,7 +12,7 @@ describe 'create TItleText' do
   end
 
   it 'should create three lines' do
-    assert_equal @lines.length, 3
+    assert_equal @lines.length, 2
   end
 
 end

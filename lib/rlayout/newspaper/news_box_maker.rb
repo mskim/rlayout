@@ -1,4 +1,4 @@
-# enco
+
 EDITORIAL_MARGIN                  = 14
 
 NEWSPAPER_STYLE = {

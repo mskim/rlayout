@@ -48,6 +48,7 @@ module RLayout
     attr_accessor :align_to_body_text
     def initialize(options={}, &block)
       super
+      @layout_alignment  = options[:v_alignment]
 
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
       @layout_space       = 3
@@ -100,10 +101,16 @@ module RLayout
       # elsif options["number"]
       #   @number_object = title(options["number"], options)
       # end
-
       if options[:title]
-        @title_object = title(options[:title], options)
+        if @title_object
+          @title_object.set_text(options[:title])
+        else
+          @title_object = title(options[:title], options)
+        end
+      else
+        @title_object = title('Untitled', options)
       end
+
       if options[:subtitle]
         @subtitle_object = subtitle(options[:subtitle], options)
       end

@@ -266,10 +266,10 @@ module RLayout
       @first_page.graphics.unshift(heading_object)
       heading_object.parent = @first_page
       unless @first_page.main_box
-        @first_page.main_text
+        @first_page.create_main_text
       end
       @first_page.relayout!
-      @first_page.main_box.create_column_grid_rects
+      @first_page.main_box.adjust_column_lines
       @first_page.main_box.set_overlapping_grid_rect
       first_item = @paragraphs.first
       #TODO

@@ -24,12 +24,13 @@ module RLayout
     attr_accessor :page_number, :char_count, :gutter
 
     def initialize(options={}, &block)
+      # options[:stroke_width] = 1
       super
       @overflow               = false
       @column_count           = options[:column] || options[:column_count] || 1
       @starting_column_x      = @left_margin
       @gutter                 = options[:gutter] || 10
-      @column_width           = (@width - @column_count*@gutter)/@column_count
+      @column_width           = (@width - (@column_count - 1)*@gutter)/@column_count
       @page_number            = options[:page_number]
       @current_column_index   = 0
       @heading_columns        = @column_count
@@ -75,6 +76,7 @@ module RLayout
 
     def adjust_column_lines
       @graphics.each do |col|
+        col.height = @height
         col.adjust_column_lines
       end
     end

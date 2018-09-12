@@ -127,30 +127,6 @@ module RLayout
           end
         end
 
-        # layout alignment
-        if vertical
-          if @layout_alignment == 'justify'
-
-
-
-          elsif @layout_alignment == 'bottom'
-
-
-
-          end
-        else
-          if @layout_alignment == 'justify'
-
-
-
-          elsif @layout_alignment == 'bottom'
-
-
-
-          end
-
-        end
-
         graphic.set_frame(graphic_frame)
         # recursive layout_member for child graphics
         if graphic.layout_expand.nil?
@@ -158,6 +134,26 @@ module RLayout
          graphic.relayout! if graphic.kind_of?(Container)
         end
       end
+
+      # layout vertical alignment
+
+      # layout alignment
+        if vertical
+          if @layout_alignment == 'justify'
+          elsif @layout_alignment == 'center'
+            room = @height - @graphics.last.y_max
+            top_space = room/2
+            @graphics.each {|g| g.x += top_space}
+          elsif @layout_alignment == 'bottom'
+          end
+        else
+          if @layout_alignment == 'justify'
+          elsif @layout_alignment == 'center'
+          elsif @layout_alignment == 'bottom'
+          end
+        end
+
+
       @graphics.each do |graphic|
         graphic.update_shape
         graphic.update_grid if graphic.respond_to?(:update_grid)
