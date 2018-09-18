@@ -123,7 +123,11 @@ module RLayout
         return
       end
       if @news_box.is_a?(NewsImageBox)
-        @news_box.stroke.sides = [0,0,0,1]
+        # @news_box.stroke.sides = [0,0,0,1]
+        @news_box.stroke.sides = [0,0,0,0]
+        @news_box.stroke.thickness = 0.3
+      elsif @news_box.is_a?(NewsAdBox)
+        @news_box.stroke.sides = [0,0,0,0]
         @news_box.stroke.thickness = 0.3
       elsif @news_box.is_a?(NewsComicBox)
       elsif @news_box.is_a?(NewsArticleBox)
@@ -143,10 +147,16 @@ module RLayout
             @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
           elsif @news_box.kind == '사설' && @news_box.page_number == 23
             @news_box.stroke[:sides] = [1,1,1,1]
+          elsif @news_box.kind == '기고'
+            if @news_box.bottom_article
+              @news_box.stroke[:sides] = [0,1,0,1]
+            else
+              @news_box.stroke[:sides] = [0,1,0,0]
+            end
           elsif @news_box.bottom_article
-            @news_box.stroke[:sides] = [0,1,0,1]
+            @news_box.stroke[:sides] = [0,0,0,1]
           else
-            @news_box.stroke[:sides] = [0,1,0,0]
+            @news_box.stroke[:sides] = [0,0,0,1]
           end
         end
         @news_box.save_pdf(@output_path, :jpg=>true)

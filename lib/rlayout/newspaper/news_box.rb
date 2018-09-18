@@ -85,21 +85,7 @@ module RLayout
         # @height             = @row_count*@grid_height + @extended_line_count*@body_line_height
         @height             = @column_line_count*@body_line_height
       end
-
-      # if @page_heading_margin_in_lines > 0
-      #   @page_heading_margin  = @body_line_height*@page_heading_margin_in_lines
-      #   create_page_heading_place_holder(@page_heading_margin)
-      # end
-
       self
-    end
-
-    def create_page_heading_place_holder(page_heading_height)
-      if self.class == NewsAdBox
-        @page_heading_place_holder = Graphic.new(parent:self, width: @width, height:page_heading_height, is_float:false, layout_expand: :width)
-      else
-        @page_heading_place_holder = Graphic.new(parent:self, width: @width, height:page_heading_height, is_float:true)
-      end
     end
 
     def get_stroke_rect
@@ -129,9 +115,11 @@ module RLayout
     def initialize(options={}, &block)
       super
       @layout_direction = 'vertical'
-      @kind  = 'ad'
-      @top_inset = @body_line_height
-      @x      = 0
+      @kind             = 'ad'
+      unless @top_position
+        @top_inset        = @body_line_height
+      end
+      @x                = 0
       # @width  -= 2
       if block
         instance_eval(&block)

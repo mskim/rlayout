@@ -122,6 +122,16 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_9_14
+ - top_position ad not top_margig
+
+ - paragraph style
+ - line
+	line_color
+	line_thickness
+	line_type
+	line_position: baseline, bottom, middle, x_mark
+	line_range: word, text
 
 2018_9_3
   - fix chapter Heading
