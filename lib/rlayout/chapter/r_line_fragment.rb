@@ -47,6 +47,12 @@ module RLayout
       nil
     end
 
+    def width_of_token_union
+      return 0 if @graphics.length == 0
+      max_x = @graphics.last.x + @graphics.last.width #TODO
+      max_x - @graphics.first.x
+    end
+
     def create_token_union_rect
       return unless @graphics
       return if @graphics.length == 0

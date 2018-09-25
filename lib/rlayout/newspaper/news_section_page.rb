@@ -6,7 +6,7 @@ module RLayout
     attr_accessor :kind, :is_front_page, :paper_size, :page_heading
     attr_accessor :story_frames, :grid_width, :grid_height, :number_of_stories
     attr_accessor :body_line_height, :ad_type, :page_heading_margin_in_lines, :lines_per_grid
-    attr_accessor :draw_divider, :divider_line_thickness, :time_stamp
+    attr_accessor :draw_divider, :divider_line_thickness, :time_stamp, :reduced_size
     def initialize(options={}, &block)
       super
       @time_stamp     = options[:time_stamp]
@@ -133,7 +133,6 @@ module RLayout
       @layout_info
     end
 
-
     def self.section_pdf(options)
       section_page = self.open(options)
       section_page.merge_layout_pdf(options)
@@ -184,6 +183,7 @@ module RLayout
       create_divider_lines if @draw_divider
 
       if @output_path
+        # options[:thumbnail] = false
         save_pdf(@output_path, options)
         if @time_stamp
           output_jpg_path       = @output_path.sub(/\.pdf$/, ".jpg")

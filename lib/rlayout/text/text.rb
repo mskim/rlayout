@@ -3,30 +3,27 @@
 
 FIT_FONT_SIZE   = 0   # keep given font size
 FIT_TO_BOX      = 1   # change font size to fit text into box
-
-# 'fit_text_to_box'
-# 'adjust_box_height'
-
-#overflow or vertical adjustment
-
-# TODO
 FIT_EACH_LINE   = 2   # adjust font size for each line to fit text into lines.
                       # So, fewer the text, larger the font size becomes in for each line
                       # And reduce the size of the lines propotionally to fit the entire lines in text box.
+FIT_BOX_TO_TEXT = 3    
 
+           
 module RLayout
   # uniform styled text
   # used for title, subject_head
   # It can squeeze text
   class Text < Container
     attr_accessor :tokens, :string, :para_style, :room, :height_in_lines
-    attr_accessor :current_line, :current_line_y, :starting_x, :line_width
-    attr_accessor :single_line_title, :force_fit_title, :space_width
+    attr_accessor :current_line, :current_line_y, :starting_x, :line_width, :space_width
+    attr_accessor :single_line_title, :force_fit_title,  :text_fit_type
+    attr_accessor :anchor_type #center_anchor, right_anchor
+    attr_accessor :from_right, :from_bottom
     def initialize(options={})
       super
       @string                   = options.delete(:text_string)
       if options[:para_style]
-        @para_style =  options[:para_style]
+        @para_style             = options[:para_style]
       else
         @para_style             = {}
         @para_style[:font]      = options[:font] || 'Times'
@@ -36,13 +33,14 @@ module RLayout
         @para_style[:scale]     = options.fetch(:scale, 100)
         @para_style[:text_alignment] = options[:text_alignment] || 'left'
       end
-
       @font_size              = @para_style[:font_size]
       @space_width            = @font_size/3
       @line_space             = options[:line_apace] || @font_size/2
       @line_height            = @font_size + @line_space
-
-      @text_fit_type          = options.fetch(:text_fit_type, 'keep_box_height')
+      @text_fit_type          = options[:text_fit_type]
+      @anchor_type            = options.fetch(:anchor_type, 'left_anchor')
+      @from_right             = options.fetch(:from_right, 5)
+      @from_bottom            = options.fetch(:from_bottom, 5)
       @body_line_height       = options.fetch(:body_line_height, 12)
       @space_before_in_lines  = 0
       @space_before_in_lines  = options[:space_before_in_lines] if options[:space_before_in_lines]
@@ -62,12 +60,29 @@ module RLayout
       @current_line_y         = @top_inset + @space_before_in_lines*@body_line_height
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @current_line           = LineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
+      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
       @current_line_y         += @current_line.height
       create_tokens
       layout_tokens
       ajust_height_as_body_height_multiples
+      adjust_box_width if @text_fit_type == 'fit_box_to_text'
+      adjust_box_x if @parent && (@anchor_type == 'right_anchor' || @anchor_type == 'center_anchor')
       self
+    end
+
+    def adjust_box_width
+      return if @graphics.length == 0
+      longest_line = @graphics.sort_by{|line| line.width}.last
+      @width = longest_line.width_of_token_union
+    end
+
+    def adjust_box_x
+      if @anchor_type == 'right_anchor'
+        @x = @parent.width - @from_right - @width
+      elsif @anchor_type == 'center_anchor'
+        center = @parent.width/2.0
+        @x = center - @width/2.0
+      end
     end
 
     def create_tokens

@@ -122,8 +122,21 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_9_23
+ - merge rjob into newsman so that "cd path && newsman ." would do the same as "cd path && rjob ." 
+	so we don't have to have twp apps, rjob and newsman app.
+	fit_text_to_box
+2018_9_21
+ - 	{right_anchor: 30, bottom_anchor: 20, center_anchor: true, fit_box_to_text}
+
+2018_9_19
+	- text_fit_type: 'fit_text_to_box', 'fit_box_to_height
+	- anchor_type: 'right_anchor', center_anchor'
+ 	- include rjob fundction into  newsman
+ 	- fix number of lines error when underflow
+
 2018_9_14
- - top_position ad not top_margig
+ - top_position ad not top_margin
 
  - paragraph style
  - line
@@ -1065,7 +1078,8 @@ TODO List
 	- flowing_item
 		member_item, product_item,
 	- anchor
-	  {from_right: 30, from_bottom: 20}
+	    attr_accessor :frame_image, :shadow, :rotation, :right_anchor, :center_anchor_at, :bottom_anchor
+
 	- center[:vertical, :horizontal]
 	- page_count, scale, fit text to text_box
 

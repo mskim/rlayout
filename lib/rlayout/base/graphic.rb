@@ -6,7 +6,7 @@ module RLayout
     attr_accessor :graphics, :fixtures, :floats, :grid_frame
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
-    attr_accessor :frame_image, :shadow, :rotation
+    attr_accessor :frame_image, :shadow, :rotation, :right_anchor, :center_anchor_at, :bottom_anchor
     # attr_accessor :overflow, :underflow
 
     def initialize(options={}, &block)
@@ -23,8 +23,8 @@ module RLayout
         # disable autolayout
         @layout_expand = nil
       else
-        @from_right     = options[:from_right]
-        @from_bottom    = options[:from_botto]
+        @anchor_right_at     = options[:from_right] || options[:right_anchor]
+        @anchor_bottom_at    = options[:from_bottom] || options[:bottom_anchor]
         if @from_right && @parent
           @width          = options.fetch(:width, graphic_defaults[:width])
           @x              = @parent.width - @from_right - @width

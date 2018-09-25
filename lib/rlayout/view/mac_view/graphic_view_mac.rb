@@ -6,6 +6,7 @@ CIRCULAR    = 2
 
 class GraphicViewMac < NSView
   attr_accessor :graphic
+
   def self.from_graphic(graphic)
     frame_rect = graphic.frame_rect
     frame = NSMakeRect(frame_rect[0], frame_rect[1], frame_rect[2], frame_rect[3])
@@ -110,25 +111,32 @@ class GraphicViewMac < NSView
 
   def save_pdf(pdf_path, options={})
     pdf = pdf_data
-    # save PDFDocument ?
     pdf_doc = PDFDocument.alloc.initWithData(pdf_data)
-
     unless options[:pdf] == false
       pdf_doc.writeToFile(pdf_path, atomically:false)
     end
+    image       = NSImage.alloc.initWithData pdf
+    if options[:thumbnail]
+      low_res_image = draw_it_on_smaller_area(image)
+      imageData   = low_res_image.TIFFRepresentation
+      imageRep    = NSBitmapImageRep.imageRepWithData(imageData)
+      imageProps  = {NSImageCompressionFactor=> 0.5}
+      imageProps  = NSDictionary.dictionaryWithObject(NSNumber.numberWithFloat(0.5), forKey:NSImageCompressionFactor)
+      imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
+      reduced_path    = pdf_path.sub(".pdf", "_thumb.jpg")
+      imageData.writeToFile(reduced_path, atomically:false)
+    end
+    
     if options[:jpg] || options[:preview]
       compression = options[:compression] || 0.5
       compression = compression.to_f
-      image       = NSImage.alloc.initWithData pdf
       hi_res_image = draw_it_on_larger_area(image)
       imageData   = hi_res_image.TIFFRepresentation
-      # imageData   = image.TIFFRepresentation
       imageRep    = NSBitmapImageRep.imageRepWithData(imageData)
       imageProps  = {NSImageCompressionFactor=> 0.0}
       imageProps  = NSDictionary.dictionaryWithObject(NSNumber.numberWithFloat(compression), forKey:NSImageCompressionFactor)
       imageData   = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
       jpg_path    = pdf_path.sub(".pdf", ".jpg")
-      # puts "imageData.class:#{imageData}.class"
       if options[:jpg]
         imageData.writeToFile(jpg_path, atomically:false)
       end
@@ -141,6 +149,19 @@ class GraphicViewMac < NSView
     end
   end
   # 2x2
+
+  def draw_it_on_smaller_area(image)
+    image_rect  = NSMakeRect(0,0,image.size.width, image.size.height)
+    width       = image.size.width/2
+    height      = image.size.height/2
+    targetRect  = NSMakeRect(0,0, width, height)
+    newImage    = NSImage.alloc.initWithSize(targetRect.size)
+    newImage.lockFocus
+      image.drawInRect(targetRect, fromRect: image_rect, operation: NSCompositeSourceOver, fraction: 1.0)
+    newImage.unlockFocus
+    newImage
+  end
+
   def draw_it_on_larger_area(image)
     image_rect = NSMakeRect(0,0,image.size.width, image.size.height)
     width   = image.size.width*2
