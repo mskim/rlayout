@@ -8,6 +8,11 @@ FIT_EACH_LINE   = 2   # adjust font size for each line to fit text into lines.
                       # And reduce the size of the lines propotionally to fit the entire lines in text box.
 FIT_BOX_TO_TEXT = 3    
 
+# anchor_type 
+# 'left', 'center', 'right'
+# v_anchor_type 
+# 'top', 'center', bottom'
+# 
            
 module RLayout
   # uniform styled text
@@ -17,7 +22,7 @@ module RLayout
     attr_accessor :tokens, :string, :para_style, :room, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width, :space_width
     attr_accessor :single_line_title, :force_fit_title,  :text_fit_type
-    attr_accessor :anchor_type #center_anchor, right_anchor
+    attr_accessor :anchor_type, :v_anchor_type
     attr_accessor :from_right, :from_bottom
     def initialize(options={})
       super
@@ -39,8 +44,8 @@ module RLayout
       @line_height            = @font_size + @line_space
       @text_fit_type          = options[:text_fit_type]
       @anchor_type            = options.fetch(:anchor_type, 'left_anchor')
-      @from_right             = options.fetch(:from_right, 5)
-      @from_bottom            = options.fetch(:from_bottom, 5)
+      @right_margin           = options.fetch(:from_right, 0)
+      @bottom_margin          = options.fetch(:from_bottom, 0)
       @body_line_height       = options.fetch(:body_line_height, 12)
       @space_before_in_lines  = 0
       @space_before_in_lines  = options[:space_before_in_lines] if options[:space_before_in_lines]
@@ -66,7 +71,8 @@ module RLayout
       layout_tokens
       ajust_height_as_body_height_multiples
       adjust_box_width if @text_fit_type == 'fit_box_to_text'
-      adjust_box_x if @parent && (@anchor_type == 'right_anchor' || @anchor_type == 'center_anchor')
+      adjust_box_x if @parent && (@anchor_type == 'right' || @anchor_type == 'center')
+      adjust_box_y if @parent && (@v_anchor_type == 'bottom' || @v_anchor_type == 'center')
       self
     end
 
@@ -77,11 +83,20 @@ module RLayout
     end
 
     def adjust_box_x
-      if @anchor_type == 'right_anchor'
-        @x = @parent.width - @from_right - @width
-      elsif @anchor_type == 'center_anchor'
+      if @anchor_type == 'right'
+        @x = @parent.width - @right_margin - @width
+      elsif @anchor_type == 'center'
         center = @parent.width/2.0
         @x = center - @width/2.0
+      end
+    end
+
+    def adjust_box_y
+      if @v_anchor_type == 'bottom'
+        @y = @parent.height- @bottom_margin - @height
+      elsif @v_anchor_type == 'center'
+        center = @parent.height/2.0
+        @y = center - @height/2.0
       end
     end
 
