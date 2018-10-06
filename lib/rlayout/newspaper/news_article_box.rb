@@ -38,7 +38,7 @@ module RLayout
         end
       elsif @kind == '기고' || @kind == 'opinion'
         # @stroke.sides = [0,1,0,1]
-        @stroke.sides = [0,1,0,1]
+        @stroke.sides = [0,1,0,1] 
         @stroke.thickness = 0.3
       else
         @stroke.sides = [0,0,0,1]
@@ -63,23 +63,34 @@ module RLayout
     def create_columns
       current_x = @starting_column_x
       if @kind == '사설' || @kind == 'editorial'
-        if @page_number && @page_number == 22
-          @left_inset   = @gutter*2
-          @stroke_sides = [1,1,0,1]
-          @right_inset  = 0
-          @column_type = "editorial_22"
-        else
-          @stroke_sides = [0,1,0,1]
-          @left_inset   = EDITORIAL_MARGIN
-          @right_inset  = EDITORIAL_MARGIN
-          @column_type = "editorial"
-        end
         editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
+        @column_type = "editorial"
         current_x += @left_inset
+        if @heading_columns == 6
+          editorial_column_width = @column_width
+          @column_count.times do
+            g= RColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+            g.parent = self
+            @graphics << g
+            current_x += @column_width + @gutter
+          end
+        else
+          if @page_number && @page_number == 22
+            @left_inset   = @gutter*2
+            @stroke_sides = [1,1,0,1]
+            @right_inset  = 0
+            @column_type = "editorial_22"
+          else
+            @stroke_sides = [0,1,0,1]
+            @left_inset   = EDITORIAL_MARGIN
+            @right_inset  = EDITORIAL_MARGIN
+          end
+          g= RColumn.new(:parent=>nil, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+          g.parent = self
+          @graphics << g
+
+        end
         # current_y += @top_margin + @top_inset
-        g= RColumn.new(:parent=>nil, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-        g.parent = self
-        @graphics << g
         @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @body_line_height*100, column_line_count: 100, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
       else
         @column_count.times do
@@ -274,7 +285,15 @@ module RLayout
         @stroke.thickness = 0.3
         h_options[:x]     += @left_margin + @column_width + @gutter
         h_options[:y]     = 2
-        h_options[:width] -= (h_options[:x] + @right_inset + @right_margin )
+        if @column_count == 2 
+          h_options[:x]     = @left_margin
+          h_options[:width] -= @left_margin +  @gutter
+        elsif @column_count == 6
+            h_options[:x]     = @left_margin  + @gutter
+            h_options[:width] -= @left_margin +  @gutter 
+        else
+          h_options[:width] -= (h_options[:x] + @right_inset + @right_margin )
+        end
         @heading = NewsHeadingForOpinion.new(h_options)
       else
         @stroke.sides = [0,0,0,1]
@@ -282,9 +301,9 @@ module RLayout
         # @stroke.color = 'red'
         @heading = NewsHeadingForArticle.new(h_options)
       end
-      # check if we have page_heading_place_holder
-      # put heading after page_heading_place_holder
-      if @page_heading_place_holder
+      # check if we have 2 단 기고
+      # put heading after personal image
+      if @kind == "기고" && @column_count == 2
         unless @heading == @floats[1]
           # make heading as second one in floats
           @heading = @floats.pop
@@ -516,6 +535,8 @@ module RLayout
         @float_rect = float.frame_rect
         if i==0
           @occupied_rects << float.frame_rect
+        elsif @column_count == 2 || float.class == RLayout::NewsHeadingForOpinion
+          next
         elsif intersects_with_occupied_rects?(@occupied_rects, @float_rect)
           # move to some place
           move_float_to_unoccupied_area(@occupied_rects, float)

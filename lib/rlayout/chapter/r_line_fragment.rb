@@ -9,7 +9,6 @@ module RLayout
   # When paragraph is created, TextTokenAtts is created for default att value for all TextTokena and they are all created using it as default.
   # Whenever there is differnce TextTokenAtts in the paragraph, new TextTokenAtts is created and different TextToken ponts to that one.
 
-  # line fill_color is set by optins[:line_color] or it is set to clear
   class	RLineFragment < Container
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent, :para_style, :text_alignment, :starting_position, :first_line_indent, :tail_indent
@@ -235,7 +234,12 @@ module RLayout
           x += token.width + @space_width
         end
       when 'center'
-        @graphics.map {|t| t.x += room/2.0}
+        shift = room/2.0
+        x = @starting_position + shift
+        @graphics.each do |token|
+          token.x = x
+          x += token.width + @space_width
+        end
       when 'right'
         x = room
         @graphics.each do |token|

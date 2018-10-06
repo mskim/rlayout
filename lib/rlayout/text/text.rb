@@ -76,6 +76,7 @@ module RLayout
       self
     end
 
+    ## called when text_fit_type == 'fix_box_to_text' 
     def adjust_box_width
       return if @graphics.length == 0
       longest_line = @graphics.sort_by{|line| line.width}.last

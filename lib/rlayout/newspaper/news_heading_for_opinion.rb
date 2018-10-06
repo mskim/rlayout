@@ -9,9 +9,7 @@ module RLayout
     def initialize(options={})
       @grid_width             = options.fetch(:grid_width, 2)
       @heading_columns        = options[:column_count]
-      # options[:stroke_width]  = 1
-      # options[:stroke_color]  = 'red'
-      # options[:fill_color]    = 'blue'
+      options[:fill_color]    = 'clear'
       super
       # shift title to right by one column
       # @x                      = @parent.column_width + @parent.gutter
@@ -68,14 +66,13 @@ module RLayout
       # when 1
       #   atts[:style_name] = 'title_1'
       # end
-      atts[:style_name] = 'title_opinion'
+      atts[:style_name]           = 'title_opinion'
       atts[:text_string]          = options['title']
-      if atts[:text_string] =~/\n/
-        atts[:text_fit_type]        = 'adjust_box_height'
+      if atts[:text_string]       =~/\n/
+        atts[:text_fit_type]      = 'adjust_box_height'
       else
-        atts[:text_fit_type]        = 'fit_text_to_box' #
+        atts[:text_fit_type]      = 'fit_text_to_box' #
       end
-
       atts[:body_line_height]     = @body_line_height
       atts[:width]                = @width
       atts[:layout_expand]        = [:width]
@@ -84,6 +81,11 @@ module RLayout
       # atts[:stroke_width]         = 1
       # atts[:layout_length_in_lines] = true
       atts[:single_line_title]    = true
+      if @heading_columns == 2
+        atts[:alignment]          = 'right'
+      elsif @heading_columns == 6
+        atts[:alignment]          = 'center'
+      end
       options.delete(:parent)
       @title_object               = TitleText.new(atts)
     end

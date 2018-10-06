@@ -27,6 +27,7 @@ module RLayout
         end
         @para_style[:font_size] = @para_style[:text_size] if @para_style[:text_size]
         @space_width            = @para_style[:space_width] || @para_style[:font_size]/3
+        puts "@para_style:#{@para_style}"
       elsif options[:@para_style]
         @para_style             = options[:@para_style]
       else
@@ -34,7 +35,9 @@ module RLayout
         @para_style[:font]      = options.fetch(:font, 'Times')
         @para_style[:font_size] = options.fetch(:size, 16)
       end
-      @text_alignment         = options[:text_alignment] || 'left'
+      @text_alignment         = 'left'      
+      @text_alignment         = @para_style[:alignmewnt] if @para_style[:alignmewnt]
+      @text_alignment         = options[:alignment] if options[:alignment]   
       @body_line_height       = options[:body_line_height] || 14
       @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
       @text_height_in_lines   = 2 if @text_height_in_lines == ""
@@ -54,12 +57,10 @@ module RLayout
         @line_space           = @para_style[:text_line_spacing]
       end
       @line_height            = @para_style[:font_size] + @line_space
-      # @current_line_y         = @top_inset + @space_before_in_lines*@body_line_height
       @current_line_y         = @top_inset + @space_before_in_lines*@body_line_height
-      # @current_line_y         = @space_before_in_lines*@body_line_height
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
+      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, text_alignment: @text_alignment, space_width: @space_width, debug: true, top_margin: @top_margin)
       @current_line_y         +=@current_line.height
       create_tokens
       layout_tokens
@@ -85,7 +86,7 @@ module RLayout
     end
 
     def add_new_line
-      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
+      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, text_alignment: @text_alignment, space_width: @space_width, debug: true)
       @current_line.next_line = new_line if @current_line
       @current_line           = new_line
       @current_line_y         += @current_line.height

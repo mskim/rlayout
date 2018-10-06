@@ -65,6 +65,7 @@ module RLayout
       title_options[:stroke_color]    = 'red'
       title_options['title']          = options['title']
       title_options[:style_name]      = 'title_editorial'
+
       title(title_options)
       #code
     end
@@ -101,6 +102,8 @@ module RLayout
       # atts[:stroke_width]         = 1
       # atts[:layout_length_in_lines] = true
       atts[:single_line_title]    = true
+      atts[:alignment] = 'center' if @heading_columns == 6
+
       # options.delete(:parent)
       @title_object               = TitleText.new(atts)
     end
