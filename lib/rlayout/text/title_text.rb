@@ -27,7 +27,6 @@ module RLayout
         end
         @para_style[:font_size] = @para_style[:text_size] if @para_style[:text_size]
         @space_width            = @para_style[:space_width] || @para_style[:font_size]/3
-        puts "@para_style:#{@para_style}"
       elsif options[:@para_style]
         @para_style             = options[:@para_style]
       else
