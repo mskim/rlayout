@@ -21,7 +21,7 @@ module RLayout
     attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines
     attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :quote_box_size, :personal_image, :news_image
     attr_accessor :column_width, :starting_column_x, :gutter, :column_bottom
-    attr_accessor :overflow_column, :page_number, :char_count
+    attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
 
     def initialize(options={}, &block)
       super
@@ -75,11 +75,11 @@ module RLayout
             current_x += @column_width + @gutter
           end
         else
-          if @page_number && @page_number == 22
+          if @has_profile_image || (@page_number && @page_number == 22)
             @left_inset   = @gutter*2
             @stroke_sides = [1,1,0,1]
             @right_inset  = 0
-            @column_type = "editorial_22"
+            @column_type = "editorial_with_profile_image"
           else
             @stroke_sides = [0,1,0,1]
             @left_inset   = EDITORIAL_MARGIN

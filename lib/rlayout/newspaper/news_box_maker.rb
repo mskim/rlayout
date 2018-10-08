@@ -143,7 +143,7 @@ module RLayout
 
       if RUBY_ENGINE =="rubymotion"
         if @news_box.is_a?(NewsArticleBox)
-          if @news_box.graphics.first.column_type == 'editorial_22' # s&& @news_box.kind == '샤셜'
+          if @news_box.graphics.first.column_type == 'editorial_with_profile_image' # s&& @news_box.kind == '샤셜'
             @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
           elsif @news_box.kind == '사설' && @news_box.page_number == 23
             @news_box.stroke[:sides] = [1,1,1,1]

@@ -179,7 +179,7 @@ TODO List
 	- upload editorial image to graphic storage
 
 2018_4_19
-	- editorial_22
+	- editorial_with_profile_image
 	- fix less than a line overflow not showing
 
 2018_4_15
