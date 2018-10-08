@@ -67,9 +67,6 @@ module RLayout
       current_x = @starting_column_x
       if @kind == '사설' || @kind == 'editorial'
         editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
-        @column_type  = "editorial"
-        @left_inset   = EDITORIAL_MARGIN
-        current_x += @left_inset
         if @heading_columns == 6
           editorial_column_width = @column_width
           @column_count.times do
@@ -77,23 +74,33 @@ module RLayout
             g.parent = self
             @graphics << g
             current_x += @column_width + @gutter
+            @column_type  = "editorial"
           end
         else
           if @has_profile_image || (@page_number && @page_number == 22)
-            puts "if @has_profile_image || (@page_number && @page_number == 22)"
-            @left_inset   = @gutter*2
-            @stroke_sides = [1,1,0,1]
-            @right_inset  = 0
-            @column_type  = "editorial_with_profile_image"
-            @left_inset   = EDITORIAL_MARGIN
-            editorial_column_width = @column_width*2 + @gutter
-          else
-            @stroke_sides = [0,1,0,1]
-            @right_inset  = EDITORIAL_MARGIN
-          end
-          g= RColumn.new(:parent=>nil, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-          g.parent = self
-          @graphics << g
+              puts 
+              @left_inset   = @gutter*2
+              @stroke_sides = [1,1,0,1]
+              @right_inset  = 0
+              @column_type = "editorial_with_profile_image"
+              editorial_column_width = @column_width*2 + @gutter*2 - @left_inset - @right_inset
+              current_x += @left_inset
+              # current_y += @top_margin + @top_inset
+              g= RColumn.new(:parent=>nil, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+              g.parent = self
+              @graphics << g
+            else
+              @stroke_sides = [0,1,0,1]
+              @left_inset   = EDITORIAL_MARGIN
+              @right_inset  = EDITORIAL_MARGIN
+              @column_type = "editorial"
+              editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
+              current_x += @left_inset
+              # current_y += @top_margin + @top_inset
+              g= RColumn.new(:parent=>nil, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+              g.parent = self
+              @graphics << g
+            end
 
         end
         # current_y += @top_margin + @top_inset
