@@ -124,9 +124,7 @@ module RLayout
     end
     # set line type, and paragraph information for line
     def set_paragraph_info(paragraph, line_type)
-      style_name        = paragraph.style_name
-      para_style        = RLayout::StyleService.shared_style_service.current_style[style_name]
-      para_style        = Hash[para_style.map{ |k, v| [k.to_sym, v] }] if para_style
+      para_style        = paragraph.para_style
       @space_width      = para_style[:space_width] || 3.0
       @text_alignment   = para_style[:alignment] || "left"
       @v_offset         = para_style[:v_offset] || 0

@@ -122,8 +122,34 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_10_13
+	- TextBox
+		- sides
+			- sides_with_rect
+			- sides_with_margin
+			- sides_with_inset
+
+		- column
+			- column_offset
+			- column_width
+			- column_width_array
+			- column_gutter_array
+
+		- heading
+			- heading_offset
+		- profile_image
+			- profile_image_at_first_column_top
+			- profile_image_at_last_column_bottom
+		- image
+			image_position
+		- quote
+			quote_position
+
+2018_10_10
+ - editorial_with_profile_image
+
 2018_9_23
- - merge rjob into newsman so that "cd path && newsman ." would do the same as "cd path && rjob ." 
+ - merge rjob into newsman so that "cd path && newsman ." would do the same as "cd path && rjob ."
 	so we don't have to have twp apps, rjob and newsman app.
 	fit_text_to_box
 2018_9_21

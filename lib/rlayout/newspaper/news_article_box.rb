@@ -62,8 +62,6 @@ module RLayout
     # create news_columns
     #  news_columns are different from text_column
     def create_columns
-      puts __method__
-      puts "@has_profile_image:#{@has_profile_image}"
       current_x = @starting_column_x
       if @kind == '사설' || @kind == 'editorial'
         editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
@@ -77,30 +75,20 @@ module RLayout
             @column_type  = "editorial"
           end
         else
+          @left_inset   = @gutter*2
+          @stroke_sides = [1,1,0,1]
+          @right_inset  = 0
           if @has_profile_image || (@page_number && @page_number == 22)
-              puts 
-              @left_inset   = @gutter*2
-              @stroke_sides = [1,1,0,1]
-              @right_inset  = 0
-              @column_type = "editorial_with_profile_image"
-              editorial_column_width = @column_width*2 + @gutter*2 - @left_inset - @right_inset
-              current_x += @left_inset
-              # current_y += @top_margin + @top_inset
-              g= RColumn.new(:parent=>nil, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-              g.parent = self
-              @graphics << g
-            else
-              @stroke_sides = [0,1,0,1]
-              @left_inset   = EDITORIAL_MARGIN
-              @right_inset  = EDITORIAL_MARGIN
-              @column_type = "editorial"
-              editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
-              current_x += @left_inset
-              # current_y += @top_margin + @top_inset
-              g= RColumn.new(:parent=>nil, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-              g.parent = self
-              @graphics << g
-            end
+            @column_type = "editorial_with_profile_image"
+            editorial_column_width = @column_width*2 + @gutter*2 - @left_inset - @right_inset
+          else
+            @column_type = "editorial"
+            editorial_column_width = @column_width*2 + @gutter*2 - @left_inset - @right_inset
+          end
+          current_x += @left_inset
+          g= RColumn.new(:parent=>nil, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+          g.parent = self
+          @graphics << g
 
         end
         # current_y += @top_margin + @top_inset
@@ -316,6 +304,7 @@ module RLayout
       end
       # check if we have 2 단 기고
       # put heading after personal image
+
       if @kind == "기고" && @column_count == 2
         unless @heading == @floats[1]
           # make heading as second one in floats
@@ -392,7 +381,6 @@ module RLayout
     def float_subtitle(subtitle_string)
       options = {}
       options[:style_name] = 'subtitle_S'
-
       if @column_count > 3
         options[:style_name] = 'subtitle_M'
       end
@@ -452,6 +440,8 @@ module RLayout
     end
 
     def float_personal_image(options={})
+      puts "++++++++++"
+      puts __method__
       options = options.dup
       frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
       options[:x]       = frame_rect[0]
@@ -548,7 +538,7 @@ module RLayout
         @float_rect = float.frame_rect
         if i==0
           @occupied_rects << float.frame_rect
-        elsif @column_count == 2 || float.class == RLayout::NewsHeadingForOpinion
+        elsif @column_count == 2 && float.class == RLayout::NewsHeadingForOpinion
           next
         elsif intersects_with_occupied_rects?(@occupied_rects, @float_rect)
           # move to some place

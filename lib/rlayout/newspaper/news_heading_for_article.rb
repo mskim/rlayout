@@ -49,6 +49,7 @@ module RLayout
     end
 
     def subject_head(options={})
+      puts "subject_head in article heading"
       atts = {}
       if @heading_columns > 5
         atts[:style_name] = 'subject_head_L'
@@ -147,6 +148,7 @@ module RLayout
     end
 
     def subtitle(options={})
+      puts "subtitle in article heading"
       atts = {}
       if @heading_columns >= 3
         atts[:style_name] = 'subtitle_M'

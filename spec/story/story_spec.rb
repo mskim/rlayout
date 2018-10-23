@@ -12,17 +12,21 @@ describe 'read markdown story' do
     assert @story.class == Story
   end
 
-  # it 'shold create story' do
-  #   assert @para_data.class == Hash
-  # end
-  #
-  # it 'should return :heading Hash' do
-  #   assert @para_data[:heading].class == Hash
-  # end
-  #
-  # it 'should return :heading Array' do
-  #   assert @para_data[:paragraphs].class == Array
-  # end
+  it 'shold create story' do
+    assert @para_data.class == Hash
+  end
+  
+  it 'should return :heading Hash' do
+    assert @para_data[:heading].class == Hash
+  end
+  
+  it 'should return :heading Array' do
+    assert @para_data[:paragraphs].class == Array
+  end
+
+  it 'last should be h4' do
+    assert @para_data[:paragraphs].last[:markup] == 'h4'
+  end
 end
 
 __END__

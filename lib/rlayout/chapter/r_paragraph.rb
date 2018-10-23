@@ -1,23 +1,21 @@
 
-
-# For text handling, Text and Paragraph are used
-# Text Object is used for simple text, usually for single page document or Ads.
-# Text is also used in Heading, HeadingContainer, where several short texts are used.
-
 # Paragraph Object is used in middle to long document.
 # Paragraph is not a Graphic subclass.
 # Paragraph holds data tokens and resposible for laying out them out in lines.
 
+# announcement paragragraph
+# line takes up 2 or multples of body_line_height
+# it has line space of 1 before
+
 module RLayout
   #TODO
   # tab stop
-
   EMPASIS_STRONG = /(\*\*.*?\*\*)/
   EMPASIS_DIAMOND = /(\*.*?\*)/
 
   class RParagraph
     attr_reader :markup
-    attr_accessor :tokens, :token_heights_are_eqaul
+    attr_accessor :tokens, :token_heights_are_equal
     attr_accessor :para_string, :style_name, :para_style, :space_width
     attr_accessor :article_type
     attr_accessor :body_line_height, :line_count, :token_union_style
@@ -89,12 +87,12 @@ module RLayout
         create_plain_tokens(@para_string)
       end
       # create_plain_tokens(@para_string)
-      token_heights_are_eqaul = true
+      token_heights_are_equal = true
       return unless  @tokens.length > 0
       tallest_token_height = @tokens.first.height
       @tokens.each do |token|
         if token.height > tallest_token_height
-          token_heights_are_eqaul = false
+          token_heights_are_equal = false
           return
         end
       end
@@ -168,6 +166,7 @@ module RLayout
         @current_line.set_paragraph_info(self, "middle_line")
       elsif @markup == 'h2' || @markup == 'h3' ||  @markup == 'h1'
         unless @current_line.first_text_line_in_column?
+          @current_line.layed_out_line = true
           @current_line = @current_line.next_text_line
           @current_line.layed_out_line = true
           @current_line.token_union_style = @token_union_style if @token_union_style
@@ -175,6 +174,22 @@ module RLayout
         # @current_line = @current_line.next_text_line
         # return true unless @current_line
         @current_line.set_paragraph_info(self, "middle_line")
+
+      elsif @markup == 'h3'
+        @current_line.layed_out_line = true
+        @current_line = @current_line.next_text_line
+        @current_line.layed_out_line = true
+        @current_line.set_paragraph_info(self, "middle_line")
+        # finish the line layout here
+        #TODO for 
+        while token
+          @current_line.place_token(token)
+          token = tokens.shift
+        end
+        @current_line.align_tokens
+        @current_line = @current_line.next_text_line
+        @current_line.fill.color = @para_style[:bg_color] || 'magenta'
+        return @current_line.next_text_line
       end
 
       while token
@@ -244,7 +259,7 @@ module RLayout
       if @markup =='p' || @markup =='br'
         @style_name  = 'body'
         style_hash = current_style['body']
-        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+        @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
       # h1 $ is  assigned as reporrter
       if @markup =='h1'
@@ -265,32 +280,33 @@ module RLayout
           style_hash = current_style['reporter']
           @style_name  = 'reporter_editorial'
         end
-        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+        @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
       if @markup =='h2'
         style_hash = current_style['running_head']
         @style_name  = 'running_head'
-        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+        @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
       if @markup =='h3'
         style_hash = current_style['body_gothic']
         @style_name  = 'body_gothic'
-        style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+        @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
-      @space_width  = style[:space_width]
+      if @markup =='h4'
+        style_hash = current_style['announcement']
+        @style_name  = 'announcement'
+        @para_style  = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+      end
+
+      @space_width  = @para_style[:space_width]
       if @space_width.nil?
-        font_size   = style['font_size'] || style[:font_size]
+        font_size   = @para_style[:font_size]
         @space_width = font_size/2
       end
     end
-
-    # def para_style
-    #   style = RLayout::StyleService.shared_style_service
-    #   style.current_style[@style_name]
-    # end
 
     def filter_list_options(h)
       list_only = Hash[h.select{|k,v| [k, v] if k=~/^list_/}]
