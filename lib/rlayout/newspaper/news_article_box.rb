@@ -63,6 +63,7 @@ module RLayout
     #  news_columns are different from text_column
     def create_columns
       current_x = @starting_column_x
+      puts "current_x:#{current_x}"
       if @kind == '사설' || @kind == 'editorial'
         editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
         if @heading_columns == 6
@@ -539,6 +540,8 @@ module RLayout
         if i==0
           @occupied_rects << float.frame_rect
         elsif @column_count == 2 && float.class == RLayout::NewsHeadingForOpinion
+          # when we have 2 column opinion, width gets too small for title
+          # so we are overlapping title on top of the image
           next
         elsif intersects_with_occupied_rects?(@occupied_rects, @float_rect)
           # move to some place

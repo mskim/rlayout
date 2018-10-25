@@ -51,7 +51,8 @@ module RLayout
         @right_margin   = section_config['right_margin'] if section_config['right_margin']
         @bottom_margin  = section_config['bottom_margin'] if section_config['bottom_margin']
         @ad_type        = section_config[:ad_type]
-        @is_front_page  = section_config['is_front_page'] if section_config['is_front_page']
+        @is_front_page  = false
+        @is_front_page  = true if section_config['is_front_page'] == true
         @profile        = section_config['profile']
         @grid_base      = @profile.split("_").first.split('x')
         @grid_base      = @grid_base.map {|e| e.to_i}
@@ -168,8 +169,9 @@ module RLayout
       heading_info[:width]      = @width - @left_margin - @right_margin
       heading_info[:layout_expand]  = nil
       heading_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
-      # heading_info[:image_fit_type] = IMAGE_FIT_TYPE_ORIGINAL
+      # heading_info[:stroke_width] = 1
 
+      # heading_info[:image_fit_type] = IMAGE_FIT_TYPE_ORIGINAL
       if @is_front_page
         #TODO
         # NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES     = 1
@@ -178,8 +180,10 @@ module RLayout
       else
         heading_info[:height]   = @page_heading_margin_in_lines * @body_line_height
       end
-
+      # puts "heading_info[:height]:#{heading_info[:height]}"
       @page_heading = Image.new(heading_info)
+
+
       create_divider_lines if @draw_divider
 
       if @output_path

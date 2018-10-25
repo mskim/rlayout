@@ -8,7 +8,7 @@ describe 'creaet document with NewsBoxMaker' do
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/22/3"
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2018-06-08/1/1"
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2018-08-22/10/1" 
-    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/2/4"
+    @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/2"
     @maker          = NewsBoxMaker.new(article_path: @article_path, fill_up_enpty_lines: true)
     @news_box       = @maker.news_box
     @heading        = @news_box.heading

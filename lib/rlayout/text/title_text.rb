@@ -67,17 +67,31 @@ module RLayout
       self
     end
 
-    def create_tokens
-      return unless @string
-      @tokens += @string.split(" ").collect do |token_string|
+    def create_tokens_from_string(string)
+      @tokens += string.split(" ").collect do |token_string|
         options = {}
         options[:string]      = token_string
-        options[:y]           = 0
         options[:style_name]  = @style_name
+        options[:y]       = 0
         # options[:stroke_width] = 1
         RLayout::RTextToken.new(options)
       end
+      #code
+    end
 
+
+    def create_tokens
+      return unless @string
+      if @string.include?("\r\n")
+        force_broken_blocks = @string.split("\r\n")
+        @string.split("\r\n").each do |line_string|
+          create_tokens_from_string(line_string)
+          @tokens <<  NewLineToken.new
+        end
+        @tokens.pop # delete last NewLineToken
+      else
+        create_tokens_from_string(@string)
+      end
     end
 
     def column_index
@@ -123,6 +137,13 @@ module RLayout
     def layout_tokens
       token = tokens.shift
       while token
+        if token.is_a?(NewLineToken)
+          @current_line.align_tokens
+          # return if @graphics.length >= @quote_text_lines
+          add_new_line
+          @current_line.line_type = 'middle_line'
+          token = @tokens.shift
+        end
         result = @current_line.place_token(token, do_not_break: @single_line_title)
         # result = @current_line.place_token(token)
         # forcing not to break the token

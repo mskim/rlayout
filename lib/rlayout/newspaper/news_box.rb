@@ -52,22 +52,25 @@ module RLayout
       else
         @width  = @column_count*@grid_width # we have @gutter/2 on each side
       end
+
       if @on_left_edge && @on_right_edge
         # touching both edge
-        # @right_margin      = @gutter
-        # @left_margin       = @gutter
+        @right_margin      = 0.0
+        @left_margin       = 0.0
         @column_width      = (@width - @gutter*2 - (@column_count - 1)*@gutter)/@column_count
         @starting_column_x = 0.0
       elsif @on_left_edge
         # touching left edge
         @column_width       = (@width - @column_count*@gutter)/@column_count
         @starting_column_x  = 0.0
+        @left_margin        = 0.0
         @right_margin       = @gutter
       elsif @on_right_edge
         # touching right edge
         @column_width       = (@width - @column_count*@gutter)/@column_count
         @starting_column_x  = @gutter
         @left_margin        = @gutter
+        @right_margin       = 0.0
       else
         @column_width       = (@width - (@column_count + 1)*@gutter)/@column_count
         @starting_column_x  = @gutter

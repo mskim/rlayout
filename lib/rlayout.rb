@@ -26,9 +26,9 @@ else
   require 'base64'
   require 'json'
   require 'hexapdf'
-
   require 'awesome_print'
   require 'xmlsimple'
+  require 'mini_magick'
 
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/base/utility'

@@ -1,4 +1,3 @@
-
 # Inserting Images in Markdown
 # Image can be inserted in couple of ways,
 # For magazine_article and news_article, common way is to have images data hash defined in the meda-data area above markdown.
