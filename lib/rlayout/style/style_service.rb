@@ -250,20 +250,25 @@ module RLayout
       self
     end
 
-    def space_width(style_name)
+    def space_width(style_name, adjust_size)
       style = @current_style[style_name]
-      space_width = style['space_width'] || style[:space_width]
+      space_width = style['space_width']
+      font_size  = style['font_size'] 
+
       if space_width.nil?
-        font_size  = style['font_size'] || style[:font_size]
+         font_size += adjust_size if adjust_size
         return font_size/2
+      elsif adjust_size && adjust_size != 0
+        space_width*(font_size + adjust_size)/font_size
       end
       space_width
     end
 
-    def width_of_string(style_name, string)
+    def width_of_string(style_name, string, adjust_size)
       style = @current_style[style_name]
       style = @current_style['body'] unless style
       style = Hash[style.map{ |k, v| [k.to_sym, v] }]
+      style[:font_size] += adjust_size if adjust_size
       if RUBY_ENGINE == "rubymotion"
         atts = NSUtils.ns_atts_from_style(style)
         att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
@@ -273,10 +278,11 @@ module RLayout
       rfont.string_width(string)
     end
 
-    def height_of_token(style_name)
+    def height_of_token(style_name, adjust_size)
       style = @current_style[style_name]
       style = Hash[style.map{ |k, v| [k.to_sym, v] }]
-      style[:font_size] || style[:text_size]
+      style[:font_size] += adjust_size if adjust_size
+      style[:font_size] 
     end
 
     # get the height of body text by calling size method with sample text

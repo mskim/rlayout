@@ -6,9 +6,13 @@ module RLayout
   class TitleText < Container
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
-    attr_accessor :single_line_title, :force_fit_title, :token_union_style
+    attr_accessor :single_line_title, :force_fit_title, :token_union_style, :adjust_size
     def initialize(options={})
       @string                 = options.delete(:text_string)
+      if @string =~/\{\s?(-?\d)\s?\}\s?$/
+        @adjust_size = $1.to_i
+        @string = @string.sub(/\{\s?(-?\d)\s?\}\s?$/, "")
+      end
       options[:fill_color]    = options.fetch(:line_color, 'clear')
       # options[:stroke_width]  = 1
       super
@@ -19,14 +23,17 @@ module RLayout
       @single_line_title      = options[:single_line_title]
       @style_name             = options[:style_name]
       if @style_name
-        @para_style             = RLayout::StyleService.shared_style_service.current_style[@style_name]
-        @para_style             = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
-        @graphic_attributes    = @para_style[:graphic_attributes]
+        @para_style           = RLayout::StyleService.shared_style_service.current_style[@style_name]
+        @para_style           = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
+        @graphic_attributes   = @para_style[:graphic_attributes]
         if @graphic_attributes && @graphic_attributes['token_union_style']
           @token_union_style      = Hash[@graphic_attributes['token_union_style'].map{ |k, v| [k.to_sym, v] }]
         end
-        @para_style[:font_size] = @para_style[:text_size] if @para_style[:text_size]
-        @space_width            = @para_style[:space_width] || @para_style[:font_size]/3
+        @space_width            = @para_style[:space_width] || @para_style[:font_size]/2
+        if @adjust_size && @adjust_size != 0
+          @space_width = @space_width*(@para_style[:font_size] + @adjust_size)/@para_style[:font_size]
+        end
+
       elsif options[:@para_style]
         @para_style             = options[:@para_style]
       else
@@ -34,6 +41,7 @@ module RLayout
         @para_style[:font]      = options.fetch(:font, 'Times')
         @para_style[:font_size] = options.fetch(:size, 16)
       end
+      @para_style[:font_size] += @adjust_size if @adjust_size
       @text_alignment         = 'left'      
       @text_alignment         = @para_style[:alignmewnt] if @para_style[:alignmewnt]
       @text_alignment         = options[:alignment] if options[:alignment]   
@@ -72,7 +80,9 @@ module RLayout
         options = {}
         options[:string]      = token_string
         options[:style_name]  = @style_name
-        options[:y]       = 0
+        options[:para_style]  = @para_style
+        options[:y]           = 0
+        options[:adjust_size] = @adjust_size if @adjust_size
         # options[:stroke_width] = 1
         RLayout::RTextToken.new(options)
       end

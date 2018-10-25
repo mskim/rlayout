@@ -107,6 +107,10 @@ module RLayout
       frame_rect              = @parent.grid_frame_to_image_rect(options[:grid_frame])
       @x                      = frame_rect[0]
       @y                      = frame_rect[1]
+      # adjust y position if position is bottom
+      if @image_position =~/^bottom/ && @parent.extended_line_count
+        @y += @parent.extended_line_count*@parent.body_line_height
+      end
       @width                  = frame_rect[2]
       @height                 = frame_rect[3]
       if options[:extra_height_in_lines] # && options[:extra_height_in_lines] > 0
@@ -194,14 +198,23 @@ module RLayout
       default_image_options   = IMAGE_SIZE_POSITION_TABLE["#{@article_column}x#{@article_row}"]
       default_image_options   = IMAGE_COLUMN_POSITION_TABLE[@article_column.to_s] unless default_image_options
       image_size              = options.fetch(:size, default_image_options[:size])
-      image_position          = "top_right"
-      image_position          = NUMBER_TO_POSITION[options[:position].to_s] if options[:position]
+      @image_position          = "top_right"
+      if options[:position]
+        position_number = options[:position].to_i
+        # fix invalid numbers
+        if position_number > 9
+          position_number = 9 
+        elsif position_number < 1
+          position_number = 1
+        end
+        @image_position = NUMBER_TO_POSITION[position_number.to_s]
+      end
       #TODO this is only for upper right, do it for other positions as well
       if options[:column] && options[:row]
         image_size[0] = options[:column]
         image_size[1] = options[:row]
       end
-      position_array = image_position.split("_")
+      position_array = @image_position.split("_")
       v_position = position_array[0]
       h_position = position_array[1]
       x_grid = @article_column - image_size[0]

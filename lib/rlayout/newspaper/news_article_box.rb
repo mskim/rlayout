@@ -63,7 +63,6 @@ module RLayout
     #  news_columns are different from text_column
     def create_columns
       current_x = @starting_column_x
-      puts "current_x:#{current_x}"
       if @kind == '사설' || @kind == 'editorial'
         editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
         if @heading_columns == 6

@@ -3,7 +3,7 @@ module RLayout
 
   class RTextToken < Graphic
     attr_accessor :string, :token_type, :style_name, :has_text, :style, :char_half_width_cushion
-
+    attr_reader :adjust_size
     def initialize(options={})
       #code
       options[:fill_color] = options.fetch(:token_color, 'clear')
@@ -12,8 +12,9 @@ module RLayout
       @string           = options[:string]
       @style_name       = options[:style_name]
       @style_name       = 'body' unless @style_name
+      @adjust_size      = options[:adjust_size] if options[:adjust_size]
       @style            = RLayout::StyleService.shared_style_service
-      @char_half_width_cushion = @style.space_width(@style_name)/2
+      @char_half_width_cushion = @style.space_width(@style_name, @adjust_size)/2
       @width            = width_of_string(@string)
       @height_of_token  = height_of_token
       if options[:text_line_spacing] && options[:text_line_spacing].class != String
@@ -30,12 +31,12 @@ module RLayout
       return 0 if string.nil?
       return 0 if string == ""
       style = @style || RLayout::StyleService.shared_style_service
-      style.width_of_string(@style_name, string)
+      style.width_of_string(@style_name, string, @adjust_size)
     end
 
     def height_of_token
       style = @style || RLayout::StyleService.shared_style_service
-      style.height_of_token(@style_name)
+      style.height_of_token(@style_name, @adjust_size)
     end
 
     def tracking_count
@@ -148,6 +149,7 @@ module RLayout
       style = RLayout::StyleService.shared_style_service
       style = style.current_style[@style_name]
       style = Hash[style.map{ |k, v| [k.to_sym, v] }]
+      style[:font_size] += @adjust_size if @adjust_size
       if RUBY_ENGINE == "rubymotion"
         atts = NSUtils.ns_atts_from_style(style)
         att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
