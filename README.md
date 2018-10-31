@@ -122,6 +122,10 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_10_30
+	- add flaot_announcement 안내문
+
+
 2018_10_13
 	- TextBox
 		- sides

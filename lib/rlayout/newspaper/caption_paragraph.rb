@@ -62,9 +62,8 @@ module RLayout
     def layout_lines(caption_column)
       @current_line               = caption_column.graphics.first
       @current_line.space_width   = @space_width
-      @current_line.text_alignment = 'left'
+      @current_line.text_alignment = 'justified'
       @current_line.room          = @current_line.width
-
       token = @tokens.shift
       while token
         result = @current_line.place_token(token)
@@ -72,10 +71,10 @@ module RLayout
         # case 1. token is broken into two, second part is returned
         # case 2. entire token placed succefully, returned result is true
         # case 3. entire token is rejected from the line
-
         if result.class == RTextToken # case 1
           @current_line.align_tokens
           @current_line = caption_column.add_new_line
+          @current_line.text_alignment = 'justified'
           @current_line.place_token(result)
           token = tokens.shift
         elsif result # case 2
@@ -85,6 +84,7 @@ module RLayout
           # entire token was rejected,
           @current_line.align_tokens
           @current_line = caption_column.add_new_line
+          @current_line.text_alignment = 'justified'
           @current_line.place_token(token)
           token = tokens.shift
         end

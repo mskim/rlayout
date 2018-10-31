@@ -5,7 +5,7 @@ class GraphicViewMac < NSView
     return if graphic.nil?
 
     if graphic.fill.class == RLayout::FillStruct
-      path       = ns_bounds_path_for_graphic(graphic)
+      path       = ns_fill_path_for_graphic(graphic)
       fill_color = graphic.fill.color
       unless fill_color.class == NSColor
         fill_color = RLayout.convert_to_nscolor(fill_color)

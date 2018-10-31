@@ -164,32 +164,18 @@ module RLayout
         # puts "first token is diamond_emphasis"
         # if first token is diamond emphasis, no head indent
         @current_line.set_paragraph_info(self, "middle_line")
-      elsif @markup == 'h2' || @markup == 'h3' ||  @markup == 'h1'
+      elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4'
         unless @current_line.first_text_line_in_column?
-          @current_line.layed_out_line = true
-          @current_line = @current_line.next_text_line
+          if @para_style[:space_before_in_lines] == 1
+            @current_line.layed_out_line = true
+            @current_line = @current_line.next_text_line
+          end
           @current_line.layed_out_line = true
           @current_line.token_union_style = @token_union_style if @token_union_style
         end
         # @current_line = @current_line.next_text_line
         # return true unless @current_line
         @current_line.set_paragraph_info(self, "middle_line")
-
-      elsif @markup == 'h3'
-        @current_line.layed_out_line = true
-        @current_line = @current_line.next_text_line
-        @current_line.layed_out_line = true
-        @current_line.set_paragraph_info(self, "middle_line")
-        # finish the line layout here
-        #TODO for 
-        while token
-          @current_line.place_token(token)
-          token = tokens.shift
-        end
-        @current_line.align_tokens
-        @current_line = @current_line.next_text_line
-        @current_line.fill.color = @para_style[:bg_color] || 'magenta'
-        return @current_line.next_text_line
       end
 
       while token
@@ -278,7 +264,7 @@ module RLayout
           end
         else
           style_hash = current_style['reporter']
-          @style_name  = 'reporter_editorial'
+          @style_name  = 'reporter'
         end
         @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
@@ -296,8 +282,8 @@ module RLayout
       end
 
       if @markup =='h4'
-        style_hash = current_style['announcement']
-        @style_name  = 'announcement'
+        style_hash = current_style['linked_story']
+        @style_name  = 'linked_story'
         @para_style  = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 

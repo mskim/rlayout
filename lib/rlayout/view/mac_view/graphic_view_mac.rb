@@ -100,6 +100,11 @@ class GraphicViewMac < NSView
     NSMakeRect(0, 0,r[2],r[3])
   end
 
+  def ns_fill_rect(graphic)
+    # r = graphic.fill_rect
+    NSMakeRect(graphic.left_margin, graphic.top_margin,graphic.width - graphic.left_margin - graphic.right_margin,graphic.height - graphic.top_margin - graphic.bottom_margin)
+  end
+
   def ns_frame_rect(graphic)
     r = graphic.frame_rect
     NSMakeRect(r[0],r[1],r[2],r[3])

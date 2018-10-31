@@ -153,7 +153,9 @@ module RLayout
       if RUBY_ENGINE == "rubymotion"
         atts = NSUtils.ns_atts_from_style(style)
         att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
-        att_string.drawAtPoint(NSMakePoint(@left_margin,0))
+        # att_string.drawAtPoint(NSMakePoint(@left_margin,0))
+        att_string.drawAtPoint(NSMakePoint(@left_margin,-3.0))
+
       else
         #TODO
       #code

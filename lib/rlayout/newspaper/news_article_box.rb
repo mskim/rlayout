@@ -20,9 +20,10 @@ module RLayout
     attr_accessor :heading_columns, :fill_up_enpty_lines
     attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines
     attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :quote_box_size, :personal_image, :news_image
-    attr_accessor :column_width, :starting_column_x, :gutter, :column_bottom
+    attr_accessor :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
-
+    attr_accessor :announcement_box, :announcement_text, :announcement_column, :announcement_color
+    
     def initialize(options={}, &block)
       super
       @overflow           = false
@@ -49,6 +50,9 @@ module RLayout
       @heading_columns        = @column_count
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
       @quote_box_size         = options[:quote_box_size] || 0
+      @announcement_column    = options[:announcement_column]
+      @announcement_color     = options[:announcement_color] || 'red' if @announcement_column
+
       create_columns
       if block
         instance_eval(&block)
@@ -80,12 +84,13 @@ module RLayout
           @right_inset  = 0
           if @has_profile_image || (@page_number && @page_number == 22)
             @column_type = "editorial_with_profile_image"
-            editorial_column_width = @column_width*2 + @gutter*2 - @left_inset - @right_inset
+            editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
+            current_x += @left_inset
           else
             @column_type = "editorial"
-            editorial_column_width = @column_width*2 + @gutter*2 - @left_inset - @right_inset
+            editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
+            current_x += @gutter
           end
-          current_x += @left_inset
           g= RColumn.new(:parent=>nil, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
           g.parent = self
           @graphics << g
@@ -278,7 +283,11 @@ module RLayout
       when 'editorial', "사설"
         @stroke.sides = [1,1,1,1]
         @stroke.thickness = 0.3
-        h_options[:x]     += @left_inset
+        if @has_profile_image
+          h_options[:x]     += @left_inset 
+        else
+          h_options[:x]     += @gutter 
+        end
         h_options[:width] -= (@left_margin + @left_inset + @right_margin + @right_inset)
         @heading = NewsHeadingForEditorial.new(h_options)
       when 'opinion', "기고"
@@ -367,9 +376,14 @@ module RLayout
       end
 
       if heading_hash['quote']
-        hash = {}
         float_quote(heading_hash)
       end
+
+      if heading_hash['announcement']
+        float_announcement(heading_hash)
+      end
+
+
       #
       # if heading_hash['image']
       #   float_image(heading_hash)
@@ -436,12 +450,36 @@ module RLayout
       text_options[:height]                 = box_height
       @quote_box = QuoteText.new(text_options)
       @quote_box.y = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
+    end
 
+
+    def float_announcement(options={})
+      box_height                    = 3*@body_line_height
+      text_options                  = {}
+      text_options[:height]         = box_height
+      text_options[:y]              = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
+      text_options[:top_margin]     = @body_line_height
+      text_options[:x]              = @graphics.last.x
+      text_options[:width]          = @graphics.last.width
+      text_options[:style_name]     = 'announcement_1'
+      if @announcement_column == 2 
+        text_options[:width]        = @graphics.last.width*2 + @gutter
+        text_options[:x]            = @graphics[-2].x
+        text_options[:style_name]   = 'announcement_2'
+      end
+      text_options[:left_margin]    = 0
+      text_options[:right_margin]   = 0
+      text_options[:quote_text_lines]= @announcement_column
+      text_options[:layout_expand]  = nil
+      text_options[:is_float]       = true
+      text_options[:text_string]    = options['announcement']
+      text_options[:parent]         = self
+      text_options[:v_alignment]    = 'bottom'
+      text_options[:height]         = box_height
+      @announcement_box             = AnnouncementText.new(text_options)
     end
 
     def float_personal_image(options={})
-      puts "++++++++++"
-      puts __method__
       options = options.dup
       frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
       options[:x]       = frame_rect[0]

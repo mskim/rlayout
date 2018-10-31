@@ -332,12 +332,7 @@ module RLayout
 
     def relayout!
       return unless @grid_frame
-
     end
-
-    # def graphic_rect
-    #   [@x,@y,@width,@height]
-    # end
 
     def frame_rect
       [@x,@y,@width,@height]
@@ -345,6 +340,10 @@ module RLayout
 
     def bounds_rect
       [0,0,@width,@height]
+    end
+
+    def fill_rect
+      [@x + @left_margin, @y + @top_margin, @width - left_margin - @right_margin, @height - @top_margin - @bottom_margin]
     end
 
     def layout_rect
@@ -469,16 +468,15 @@ module RLayout
         @ns_view.save_pdf(path, options)
       elsif RUBY_ENGINE == 'ruby'
         puts "save pdf in ruby"
-        # unless @parent
-        #   doc       = HexaPDF::Document.new
-        #   page      = doc.pages.add
-        #   canvas    = page.canvas
-        #   # flip virtically canvas
-        #   canvas.translate(0.0, page.box.height)
-        #   canvas.scale(1.0, -1.0)
-        #   to_pdf(canvas)
-        #   doc.write(path, optimize: true)
-        # end
+        unless @parent
+          doc       = HexaPDF::Document.new
+          page      = doc.pages.add
+          canvas    = page.canvas
+          # # flip canvas virtically 
+          canvas.transform(1,0,0,-1,0,@height)
+          to_pdf(canvas)
+          doc.write(path, optimize: true)
+        end
       end
     end
 
@@ -639,6 +637,7 @@ module RLayout
     def frame_rect
       [@x,@y,@width,@height]
     end
+
 
     def to_pgscript
       variables = "x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}, image_path: \"#{@image_path}\""

@@ -21,7 +21,8 @@ module RLayout
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
       @space_width                = options[:space_width] || 3
-      @char_half_width_cushion    = @space_width/2
+      @char_half_width_cushion    = @space_width/3
+      options[:right_margin]      = 2
       super
       @debug            = options[:debug]
       @graphics         = options[:tokens] || []
@@ -29,8 +30,8 @@ module RLayout
       @starting_position = @left_inset || 0
       @stroke_width     = 1
       @text_area        = [@x, @y, @width, @height]
-      @text_area_width  = @width
-      @room             = @text_area[2]
+      @text_area_width  = @width - 2.0
+      @room             = @width - 2.0
       @overlap          = false
       @layed_out_line   = false
       @token_union_style = @parent.token_union_style if @parent.respond_to?(:token_union_style)
@@ -161,7 +162,9 @@ module RLayout
     # CharHalfWidthCushion = 5.0
     def place_token(token, options={})
       return if token.nil?
-      if @room + CharHalfWidthCushion >= token.width
+      # if @room + CharHalfWidthCushion >= token.width
+      if @room + @char_half_width_cushion >= token.width
+        
         # place token in line.
         token.parent = self
         @graphics << token
@@ -204,9 +207,9 @@ module RLayout
     end
 
     def align_tokens
-      return if @graphics.length == 0
+      return if @graphics.length <= 0
       @total_token_width = token_width_sum
-      @total_space_width = (@graphics.length - 1)*@space_width if @graphics.length > 0
+      @total_space_width = (@graphics.length - 1)*@space_width
       room  = @text_area_width - (@total_token_width + @total_space_width)
       x     = @starting_positions
       case @text_alignment
@@ -219,10 +222,14 @@ module RLayout
             x += token.width + @space_width
           end
         else
-          @space_width = (@text_area_width - @total_token_width)/(@graphics.length - 1)
+          @space_width = (@text_area_width - 1  - @total_token_width)/(@graphics.length - 1)
+          puts "+++++++++++ @space_width:#{@space_width}"
+          puts "starting x:#{x}"
           @graphics.each do |token|
             token.x = x
+            puts "token.width:#{token.width}"
             x += token.width + @space_width
+            puts "x:#{x}"
           end
         end
       when 'left'

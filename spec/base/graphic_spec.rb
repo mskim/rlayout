@@ -1,4 +1,23 @@
-require File.dirname(File.expand_path(__FILE__)) + "/spec_helper"
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
+
+
+describe ' save_pdf of Graphic' do
+  before do
+    @g = Graphic.new(width:400, height: 400)
+  end
+  it 'should create Container' do
+    assert Graphic, @g.class
+  end
+
+  it 'should save Container' do
+    path = File.dirname(__FILE__) + "/saving_from_hexa.pdf"
+    @g.save_pdf(path)
+    assert File.exist?(path), true
+  end
+end
+
+__END__
+
 
 describe ' create Graphic with from_right and from_bottom' do
   before do
@@ -20,13 +39,10 @@ describe ' create Graphic with from_right and from_bottom' do
     assert 100, @r.width
     assert 200, @r.y
     assert 100, @r.height
-
   end
-
 end
 
 
-__END__
 describe ' create Graphic from yaml' do
   before do
 

@@ -151,7 +151,7 @@ module RLayout
       elsif @heading_columns > 3
         atts[:style_name] = 'subject_head_M'
       else
-        atts[:style_name] = 'subject_head_S'
+        atts[:style_name] = 'subject_head_editorial'
       end
       #todo second half string
       atts[:text_string]        = options['subject_head']
