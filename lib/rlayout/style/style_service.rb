@@ -119,6 +119,8 @@ DEFAULT_STYLES={
   "upper_alpha_list"  =>"h5",
   "ordered_list_item" => "p",
   "unordered_list_item" => "p",
+  "announcement_1"=>{"korean_name"=>"안내문", "category"=>nil, "font_family"=>"KoPub바탕체_Pro Bold", "font"=>"KoPubBatangPB", "font_size"=>14.0, "text_color"=>"CMYK=0,0,0,100", "bg_color"=>"CMYK=100,100,0,0", "alignment"=>"center", "tracking"=>-1.0, "space_width"=>10.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>"", "markup"=>"####", "graphic_attributes"=>"", "publication_id"=>1},
+  "announcement_2"=>{"korean_name"=>"안내문", "category"=>nil, "font_family"=>"KoPub바탕체_Pro Bold", "font"=>"KoPubBatangPB", "font_size"=>9.6, "text_color"=>"CMYK=0,0,0,100", "bg_color"=>"CMYK=100,100,0,0", "alignment"=>"center", "tracking"=>-1.0, "space_width"=>10.0, "scale"=>100.0, "text_line_spacing"=>nil, "space_before_in_lines"=>0, "space_after_in_lines"=>0, "text_height_in_lines"=>1, "box_attributes"=>"", "markup"=>"####", "graphic_attributes"=>"", "publication_id"=>1}
 
 }
 
@@ -215,6 +217,7 @@ NEWS_STYLES={
   "upper_alpha_list"=>{:font => 'Helvetica', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
   "ordered_list_item"=>{:font => 'Helvetica', :font_size=>0.0, :text_line_spacing=>5, :text_color => 'black'},
   "unordered_list_item"=>{:font => 'Helvetica', :font_size=>0.0, :text_line_spacing=>5, :text_color => 'black'},
+  
 }
 
 HEADING_KIND  = %w[h1 h2 h3 h4 title subtitle author lead]

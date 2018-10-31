@@ -52,6 +52,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
 
+  require File.dirname(__FILE__) + '/rlayout/text/announcement_text'
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + '/rlayout/text/heading_container'
   require File.dirname(__FILE__) + '/rlayout/text/paragraph'

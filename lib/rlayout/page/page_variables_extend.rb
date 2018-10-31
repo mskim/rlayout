@@ -20,7 +20,6 @@ module RLayout
       project_path = File.dirname(File.dirname(options[:output_path]))
       project_path = options[:project_path] if options[:project_path]      
       template     = options[:template_hash].dup
-      puts "template:#{template}"
       Page.replace_tagged_hash(@keys, @data, template[:graphics]) if template[:graphics]
       Page.replace_image_hash(template[:graphics], project_path) if template[:graphics]
 

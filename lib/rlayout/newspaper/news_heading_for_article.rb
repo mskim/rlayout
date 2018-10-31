@@ -68,8 +68,6 @@ module RLayout
       atts[:fill_color]         = options.fetch(:fill_color, 'clear')
       atts[:parent]             = self
       atts[:layout_length_in_lines] = true
-      puts "atts.keys:#{atts.keys}"
-      puts 'before TitleText.new(atts)'
       TitleText.new(atts)
     end
 

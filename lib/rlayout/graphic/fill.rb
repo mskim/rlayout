@@ -21,6 +21,7 @@ module RLayout
       else
         @fill                   = FillStruct.new("CMYK=0,0,0,0")
         @fill[:color]           = options[:fill_color]        if options[:fill_color]
+        puts "++++ @fill[:color]:#{@fill[:color] }" if @fill[:color] == "CMYK=20,100,50,10"
       end
 
     end

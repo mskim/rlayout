@@ -29,6 +29,9 @@ module RLayout
       @string                   = options.delete(:text_string)
       if options[:para_style]
         @para_style             = options[:para_style]
+      elsif options[:style_name]
+        @para_style           = RLayout::StyleService.shared_style_service.current_style[options[:style_name]]
+        @para_style           = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
       else
         @para_style             = {}
         @para_style[:font]      = options[:font] || 'Times'
@@ -49,6 +52,7 @@ module RLayout
       @body_line_height       = options.fetch(:body_line_height, 12)
       @space_before_in_lines  = 0
       @space_before_in_lines  = options[:space_before_in_lines] if options[:space_before_in_lines]
+      @top_inset              = 0
       @top_inset              = @space_before_in_lines*@body_line_height
       @top_inset              += options[:top_inset] if options[:top_inset]
       @text_height_in_lines   = 0
@@ -67,6 +71,7 @@ module RLayout
       @line_width             = @width - @starting_x - @right_margin - @right_inset
       @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
       @current_line_y         += @current_line.height
+      @height                 = @current_line_y
       create_tokens
       layout_tokens
       ajust_height_as_body_height_multiples
@@ -132,7 +137,7 @@ module RLayout
       # We want to keeep it as multple of body_line_height
       if @graphics.length == 1
         # to avoid edge case overloap adding 2 pixels would do it
-        @height = @height_in_lines*@body_line_height - 2
+        @height = @height_in_lines*@body_line_height - 2 if @height_in_lines > 0
         return
       end
       natural_height          =  @top_inset + line_height_sum

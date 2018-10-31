@@ -124,6 +124,9 @@ TODO List
 
 2018_10_30
 	- add flaot_announcement 안내문
+		- background_color
+		- prefix
+		- alt_font_size
 
 
 2018_10_13

@@ -64,7 +64,6 @@ module RLayout
     color
   end
 
-
   def color_from_string(color_string)
     if color_string == nil
       return NSColor.whiteColor
@@ -96,7 +95,7 @@ module RLayout
     if color_kind=~/RGB/
         @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
     elsif color_kind=~/CMYK/
-        color_values.map!{|v| v.to_f/100.0} if color_values[0].to_i < 2
+        color_values.map!{|v| v.to_f/100.0} if color_values[0].to_i > 1 || color_values[1].to_i > 1 || color_values[2].to_i > 1 || color_values[3].to_i > 1
         color_values << 1.0 if color_values.length == 4
         @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
     elsif color_kind=~/NSCalibratedWhiteColorSpace/

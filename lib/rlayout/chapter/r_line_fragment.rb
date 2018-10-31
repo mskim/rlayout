@@ -30,8 +30,8 @@ module RLayout
       @starting_position = @left_inset || 0
       @stroke_width     = 1
       @text_area        = [@x, @y, @width, @height]
-      @text_area_width  = @width - 2.0
-      @room             = @width - 2.0
+      @text_area_width  = @width
+      @room             = @width
       @overlap          = false
       @layed_out_line   = false
       @token_union_style = @parent.token_union_style if @parent.respond_to?(:token_union_style)
@@ -162,8 +162,8 @@ module RLayout
     # CharHalfWidthCushion = 5.0
     def place_token(token, options={})
       return if token.nil?
-      # if @room + CharHalfWidthCushion >= token.width
-      if @room + @char_half_width_cushion >= token.width
+      if @room + CharHalfWidthCushion >= token.width
+      # if @room + @char_half_width_cushion >= token.width
         
         # place token in line.
         token.parent = self
@@ -223,13 +223,9 @@ module RLayout
           end
         else
           @space_width = (@text_area_width - 1  - @total_token_width)/(@graphics.length - 1)
-          puts "+++++++++++ @space_width:#{@space_width}"
-          puts "starting x:#{x}"
           @graphics.each do |token|
             token.x = x
-            puts "token.width:#{token.width}"
             x += token.width + @space_width
-            puts "x:#{x}"
           end
         end
       when 'left'
