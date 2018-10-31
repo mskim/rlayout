@@ -10,7 +10,6 @@ module RLayout
       if options[:fill_color] == '파랑'
         options[:fill_color] = "CMYK=100,50,0,10"
       end
-    #   options[:fill_color] = 'red'
       super
       if @string.include?("\r\n")
         s               = @string.split("\r\n")
@@ -28,7 +27,7 @@ module RLayout
       atts = {}
       atts[:x]                  = 8
       atts[:text_fit_type]      = 'fit_box_to_text'
-      atts[:y]                  = @top_margin + 5
+      atts[:y]                  = @top_margin + 2
       atts[:style_name]         = 'announcement_1'
       atts[:text_string]        = @title
       atts[:body_line_height]   = @body_line_height if @body_line_height
@@ -44,7 +43,7 @@ module RLayout
       atts[:from_right]         = 10
       atts[:anchor_type]        = 'right'
     #   atts[:alignment]          = 'right'
-      atts[:y]                  = @top_margin + 10
+      atts[:y]                  = @top_margin + 7
       atts[:style_name]         = 'announcement_2'
       atts[:text_string]        = @linked_page
       atts[:body_line_height]   = @body_line_height if @body_line_height

@@ -46,8 +46,6 @@ module RLayout
       @line_space             = options[:line_apace] || @font_size/2
       @line_height            = @font_size + @line_space
       @text_fit_type          = options[:text_fit_type]
-      @anchor_type            = options.fetch(:anchor_type, 'left_anchor')
-      @right_margin           = options.fetch(:from_right, 0)
       @bottom_margin          = options.fetch(:from_bottom, 0)
       @body_line_height       = options.fetch(:body_line_height, 12)
       @space_before_in_lines  = 0
@@ -75,6 +73,14 @@ module RLayout
       create_tokens
       layout_tokens
       ajust_height_as_body_height_multiples
+      if options[:from_right]
+        @right_margin         = options[:from_right]
+        @anchor_type          = 'right'
+      end
+      if options[:from_bottom]
+        @bottom_margin         = options[:from_bottom]
+        @anchor_type          = 'bottom'
+      end
       adjust_box_width if @text_fit_type == 'fit_box_to_text'
       adjust_box_x if @parent && (@anchor_type == 'right' || @anchor_type == 'center')
       adjust_box_y if @parent && (@v_anchor_type == 'bottom' || @v_anchor_type == 'center')
