@@ -470,13 +470,14 @@ module RLayout
         puts "save pdf in ruby"
         unless @parent
           doc       = HexaPDF::Document.new
-          page      = doc.pages.add
+          page = doc.pages.add([@x, @y, @width, @height])
           canvas    = page.canvas
-          # # flip canvas virtically 
-          canvas.transform(1,0,0,-1,0,@height)
-          to_pdf(canvas)
-          doc.write(path, optimize: true)
         end
+        # # flip canvas virtically 
+        canvas.transform(1,0,0,-1,0,@height)
+        to_pdf(canvas)
+        doc.write(path, optimize: true)
+        
       end
     end
 

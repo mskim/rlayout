@@ -89,6 +89,7 @@ module RLayout
           token = tokens.shift
         end
       end
+      @current_line.text_alignment = 'left' # align left for last line
       @current_line.align_tokens
       if @source
         line_width                = @current_line.width

@@ -80,6 +80,8 @@ module RLayout
 
       @body_line_height     = @grid_height/@lines_per_grid
       @column_line_count    = @row_count*@lines_per_grid
+      puts "@page_heading_margin_in_lines:#{@page_heading_margin_in_lines}"
+      puts "@top_position:#{@top_position}"
       @column_line_count   -= @page_heading_margin_in_lines if @top_position
       @column_line_count   += @extended_line_count
       @column_line_count   -= @pushed_line_count

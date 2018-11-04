@@ -39,8 +39,12 @@ module RLayout
         @para_style[:text_color]= options[:text_color] if options[:text_color]
         @para_style[:tracking]  = options.fetch(:tracking, 0)
         @para_style[:scale]     = options.fetch(:scale, 100)
-        @para_style[:text_alignment] = options[:text_alignment] || 'left'
+        @para_style[:alignment] =  'left'
+        @para_style[:alignment] = options[:text_alignment] if options[:text_alignment]
+        @para_style[:alignment] = options[:alignment] if options[:alignment]
       end
+      @anchor_type            = options[:anchor_type]
+      @v_anchor_type          = options[:v_anchor_type]
       @font_size              = @para_style[:font_size]
       @space_width            = @font_size/3
       @line_space             = options[:line_apace] || @font_size/2
@@ -67,7 +71,7 @@ module RLayout
       @current_line_y         = @top_inset + @space_before_in_lines*@body_line_height
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
+      @current_line           = RLineFragment.new(parent:self, text_alignment: @para_style[:alignment], x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
       @current_line_y         += @current_line.height
       @height                 = @current_line_y
       create_tokens
@@ -131,7 +135,7 @@ module RLayout
     end
 
     def add_new_line
-      @current_line       = LineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
+      @current_line       = RLineFragment.new(parent:self, text_alignment: @para_style[:alignment],  x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
       @current_line_y    += @current_line.height + @line_space
     end
 

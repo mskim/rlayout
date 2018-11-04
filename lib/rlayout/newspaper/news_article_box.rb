@@ -22,7 +22,6 @@ module RLayout
     attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :quote_box_size, :personal_image, :news_image
     attr_accessor :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
-    attr_accessor :announcement_box, :announcement_text, :announcement_column, :announcement_color
     
     def initialize(options={}, &block)
       super
@@ -51,8 +50,7 @@ module RLayout
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
       @quote_box_size         = options[:quote_box_size] || 0
       @announcement_column    = options[:announcement_column]
-      @announcement_color     = options[:announcement_color] || 'red' if @announcement_column
-
+      @announcement_color     = options[:announcement_color] || 'red'
       create_columns
       if block
         instance_eval(&block)
@@ -462,17 +460,18 @@ module RLayout
       text_options[:x]              = @graphics.last.x
       text_options[:width]          = @graphics.last.width
       text_options[:style_name]     = 'announcement_1'
+      text_options[:left_margin]    = 0
+      text_options[:right_margin]   = 0
+      text_options[:layout_expand]  = nil
+      text_options[:is_float]       = true
+      text_options[:text_string]    = options['announcement']
+      text_options[:announcement_color]  = @announcement_color
+      text_options[:announcement_column] = @announcement_column
       if @announcement_column == 2 
         text_options[:width]        = @graphics.last.width*2 + @gutter
         text_options[:x]            = @graphics[-2].x
         text_options[:style_name]   = 'announcement_2'
       end
-      text_options[:left_margin]    = 0
-      text_options[:right_margin]   = 0
-      text_options[:quote_text_lines]= @announcement_column
-      text_options[:layout_expand]  = nil
-      text_options[:is_float]       = true
-      text_options[:text_string]    = options['announcement']
       text_options[:parent]         = self
       text_options[:v_alignment]    = 'bottom'
       text_options[:height]         = box_height

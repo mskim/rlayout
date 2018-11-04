@@ -26,7 +26,7 @@ module RLayout
       super
       @debug            = options[:debug]
       @graphics         = options[:tokens] || []
-      @text_alignment   = options.fetch(:text_alignment, 'left')
+      @text_alignment   = options[:text_alignment] || 'left'
       @starting_position = @left_inset || 0
       @stroke_width     = 1
       @text_area        = [@x, @y, @width, @height]

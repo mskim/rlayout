@@ -3,11 +3,12 @@ module RLayout
   # used for Announcement
   class AnnouncementText < Container
     attr_accessor :string, :title, :linked_page, :title_object, :link_object
-
+    attr_accessor :column_count
     def initialize(options={})
       @string                 = options.delete(:text_string)
-      options[:fill_color] = "CMYK=20,100,50,10"
-      if options[:fill_color] == '파랑'
+      @column_count           = options.fetch(:column_count, 1)
+      options[:fill_color]    = "CMYK=20,100,50,10"
+      if options[:announcement_color] == '파랑' || options[:announcement_color] == 'blue'
         options[:fill_color] = "CMYK=100,50,0,10"
       end
       super
@@ -25,13 +26,16 @@ module RLayout
 
     def make_title
       atts = {}
-      atts[:x]                  = 8
+      if @column_count == 2
+        atts[:x]                = 8
+      else
+        atts[:anchor_type]      = 'center'
+      end
       atts[:text_fit_type]      = 'fit_box_to_text'
       atts[:y]                  = @top_margin + 2
       atts[:style_name]         = 'announcement_1'
       atts[:text_string]        = @title
       atts[:body_line_height]   = @body_line_height if @body_line_height
-      atts[:text_fit_type]      = 'adjust_box_height'
       atts[:fill_color]         = 'clear'
       atts[:parent]             = self
       Text.new(atts)
@@ -41,7 +45,7 @@ module RLayout
       atts = {}
       atts[:text_fit_type]      = 'fit_box_to_text'
       atts[:from_right]         = 10
-      atts[:anchor_type]        = 'right'
+    #   atts[:anchor_type]        = 'right'
     #   atts[:alignment]          = 'right'
       atts[:y]                  = @top_margin + 7
       atts[:style_name]         = 'announcement_2'

@@ -3,29 +3,35 @@ module RLayout
   class Graphic
 
     def to_pdf(canvas)
-        if @fill
-          canvas.fill_color('ddddff')
-          canvas.rectangle(@x, @y, @width, @height).fill
-          # @fill.to_pdf(canvas)
-          # @shape.to_pdf(canvas)
-          puts "+++ draw fill"
-        end
+ 
+      if @fill
 
-        if @image_path
-          puts "+++ draw image"
-        end
+        # canvas.stroke_color([255, 0, 0]).line_width(10).line_cap_style(:butt).
+        canvas.fill_color([255, 0, 0]).line_width(10).rectangle(@x, @y, @width, @height).fill
+        # @fill.to_pdf(canvas)
+        # @shape.to_pdf(canvas)
 
-        if @text_string
-          string = "Some text!!"
-          canvas.font('Helvetica', size: 16)
-          canvas.text_matrix(16, 0, 0, -16, 100, 400)
-          canvas.text(string, at: [100, 400])
-          canvas.end_text
-        end
+        puts "+++ draw fill"
+        canvas.fill_color('ddddff')
+        canvas.line_width(1).rectangle(@x + 5, @y + 5, @width -10 , @height - 10).stroke
+        puts canvas.contents
+      end
 
-        if @stroke
-          canvas.rectangle(@x, @y, @width, @height).stroke
-        end
+      if @image_path
+        puts "+++ draw image"
+      end
+
+      if @text_string
+        string = "Some text!!"
+        canvas.font('Helvetica', size: 16)
+        canvas.text_matrix(16, 0, 0, -16, 100, 400)
+        canvas.text(string, at: [100, 400])
+        canvas.end_text
+      end
+
+      if @stroke
+        canvas.rectangle(@x, @y, @width, @height).stroke
+      end
     end
 
     def draw_fixtures(fixtures)
