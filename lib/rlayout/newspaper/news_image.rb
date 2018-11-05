@@ -177,9 +177,9 @@ module RLayout
     end
 
     def adjust_image_height
-      @image_box.height  = @height - @caption_column.height
+      @image_box.height  = @height - @caption_column.height if @caption_column
       @image_box.apply_fit_type
-      @caption_column.y  = @image_box.height
+      @caption_column.y  = @image_box.height if @caption_column
     end
 
     def size_to_grid(size)
