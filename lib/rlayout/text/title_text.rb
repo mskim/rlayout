@@ -23,6 +23,7 @@ module RLayout
       @single_line_title      = options[:single_line_title]
       @style_name             = options[:style_name]
       if @style_name
+        puts "@style_name:#{@style_name}"
         @para_style           = RLayout::StyleService.shared_style_service.current_style[@style_name]
         @para_style           = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
         @graphic_attributes   = @para_style[:graphic_attributes]

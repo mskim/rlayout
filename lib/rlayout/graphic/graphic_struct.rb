@@ -10,7 +10,6 @@ SIDE_SHAPE_TYPES    = %w[round inverted_round ribbon roman_knife]
 
 module RLayout
 
-
   FillStruct      = Struct.new(:color) do
     def to_svg
       color
@@ -59,7 +58,7 @@ module RLayout
     end
 
     def to_pdf(canvas)
-      canvas.stroke
+      canvas.stroke_color(color).stroke
     end
 
   end
@@ -145,9 +144,9 @@ module RLayout
     end
 
     def to_pdf(canvas)
-      # center_x = @x + @width/2.0
-      # center_y = @y + @height/2.0
-      # r = (@width <= @height)?  @width/2 :  @height/2
+      cx = @x + @width/2.0
+      cy = @y + @height/2.0
+      r = (@width <= @height)?  @width/2 :  @height/2
       canvas.circle(cx, cy, r)
     end
 

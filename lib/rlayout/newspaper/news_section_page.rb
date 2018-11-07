@@ -96,6 +96,7 @@ module RLayout
     # convert stopry frames into layout format
     def make_layout_info
       @layout_info = []
+      story_count = 0
       @story_frames.each_with_index do |grid_frame, i|
         info = {}
         found_ad = false
@@ -103,7 +104,8 @@ module RLayout
           # found_ad = grid_frame[4][:광고] || grid_frame[4]['광고'] || grid_frame[4][:'광고'] || grid_frame[4]['광고']
           info[:image_path] = ad_image_path
         else
-          info[:image_path] = @section_path + "/#{i + 1}/story.pdf"
+          story_count += 1
+          info[:image_path] = @section_path + "/#{story_count}/story.pdf"
         end
 
         # info[:x] = grid_frame[0]*(@grid_width + @gutter) + @left_margin

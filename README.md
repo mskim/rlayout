@@ -122,6 +122,28 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_11_7
+	- 사진기사
+		사진제목 과 설명 간격
+		상단 사진기사 page_head_marigin
+		및줄치기
+		사진설명과 이미지 사이 3pt
+	- 사진 포지션 0
+	- 사진 7,8,9 grow from right
+	- 안내문
+	- 고딕 부제
+	- 안내문 박스 크기
+	
+2018_11_6
+	- fix news_section_page story_count
+		there was a bug when order of ad comes before the story_count
+		it cound not display the artice properly
+		
+2018_11_5
+	
+	- fix caption_column last line alignment to left
+	- fix caption_column source overlapping with last line text
+	- fix NewsArticle box fill_color to white from clear
 2018_11_4
 	- fix caption_column last line alignment to left
 

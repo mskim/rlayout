@@ -30,8 +30,10 @@ module RLayout
       if options[:para_style]
         @para_style             = options[:para_style]
       elsif options[:style_name]
+        puts "+++++++ options[:style_name]:#{options[:style_name]}"
         @para_style           = RLayout::StyleService.shared_style_service.current_style[options[:style_name]]
         @para_style           = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
+        puts "+++++++ @para_style[:text_color]#{@para_style[:text_color]}"
       else
         @para_style             = {}
         @para_style[:font]      = options[:font] || 'Times'
@@ -78,6 +80,7 @@ module RLayout
       layout_tokens
       ajust_height_as_body_height_multiples
       if options[:from_right]
+        puts "++++++++ from_right"
         @right_margin         = options[:from_right]
         @anchor_type          = 'right'
       end
@@ -86,7 +89,10 @@ module RLayout
         @anchor_type          = 'bottom'
       end
       adjust_box_width if @text_fit_type == 'fit_box_to_text'
+      puts "@width:#{@width}"
+      puts "@anchor_type:#{@anchor_type}"
       adjust_box_x if @parent && (@anchor_type == 'right' || @anchor_type == 'center')
+      puts "@x:#{@x}"
       adjust_box_y if @parent && (@v_anchor_type == 'bottom' || @v_anchor_type == 'center')
       self
     end
@@ -101,6 +107,10 @@ module RLayout
     def adjust_box_x
       if @anchor_type == 'right'
         @x = @parent.width - @right_margin - @width
+        puts "@parent.width:#{@parent.width}"
+        puts "@right_margin:#{@right_margin}"
+        puts "@width:#{@width}"
+        
       elsif @anchor_type == 'center'
         center = @parent.width/2.0
         @x = center - @width/2.0

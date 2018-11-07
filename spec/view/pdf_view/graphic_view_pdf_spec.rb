@@ -3,8 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../../spec_helper"
 describe 'save pdf pdf in Ruby mode rectangle' do
   before do
     @g        = Graphic.new(x:0, y:0, width: 300, height: 300, fill_color: 'ff0000')
-    @pdf_path = "/Users/Shared/rlayout/pdf_output/graphic.pdf"
-    puts "++++++++++"
+    @pdf_path = "/Users/Shared/rlayout/pdf_output/rectangle.pdf"
   end
 
   it 'should save rectagle' do
@@ -16,7 +15,7 @@ end
 
 describe 'save pdf circle' do
   before do
-    @circle = Circle.new(x:30, y:30, width: 300, height: 300, fill_color: 'green')
+    @circle = Circle.new(x:30, y:30, width: 300, height: 300, fill_color: '00ff00')
     @circle_pdf_path = "/Users/Shared/rlayout/pdf_output/circle.pdf"
   end
 

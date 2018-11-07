@@ -3,19 +3,10 @@ module RLayout
   class Graphic
 
     def to_pdf(canvas)
- 
-      if @fill
+      puts @shape
 
-        # canvas.stroke_color([255, 0, 0]).line_width(10).line_cap_style(:butt).
-        canvas.fill_color([255, 0, 0]).line_width(10).rectangle(@x, @y, @width, @height).fill
-        # @fill.to_pdf(canvas)
-        # @shape.to_pdf(canvas)
-
-        puts "+++ draw fill"
-        canvas.fill_color('ddddff')
-        canvas.line_width(1).rectangle(@x + 5, @y + 5, @width -10 , @height - 10).stroke
-        puts canvas.contents
-      end
+      @shape.to_pdf(canvas)
+      @fill.to_pdf(canvas)
 
       if @image_path
         puts "+++ draw image"
@@ -28,10 +19,7 @@ module RLayout
         canvas.text(string, at: [100, 400])
         canvas.end_text
       end
-
-      if @stroke
-        canvas.rectangle(@x, @y, @width, @height).stroke
-      end
+      @stroke.to_pdf(canvas)
     end
 
     def draw_fixtures(fixtures)

@@ -25,7 +25,7 @@ module RLayout
       @tokens += @caption_title.split(" ").collect do |token_string|
         options = {}
         options[:style_name]  = 'caption_title'
-        options[:string]      = token_string
+        options[:string]      = token_string + " "
         RLayout::RTextToken.new(options)
       end
 
@@ -94,12 +94,14 @@ module RLayout
       if @source
         line_width                = @current_line.width
         token_list                = @current_line.graphics
-        source_tokens_space_sum   = @source_tokens.length*@space_width
+        source_tokens_space_sum   = (@source_tokens.length - 1)*@space_width
         source_tokens_width_sum   = @source_tokens.map{|x| x.width}.reduce(0, :+)
-        source_tokens_area_width  = source_tokens_width_sum + source_tokens_space_sum + 2
-        source_starting_x         = line_width - source_tokens_area_width + @space_width
+        source_tokens_area_width  = source_tokens_width_sum + source_tokens_space_sum
+        source_starting_x         = line_width - source_tokens_area_width #+ @space_width
         end_of_tokens             = 0
         end_of_tokens             = token_list.last.x_max if token_list.length > 0
+        puts "end_of_tokens:#{end_of_tokens}"
+        puts "source_starting_x:#{source_starting_x}"
         if (end_of_tokens + @space_width) < source_starting_x
           x = source_starting_x
           @source_tokens.each do |source_token|
@@ -112,14 +114,15 @@ module RLayout
 
         else
           # create one more line
-          caption_column.add_new_line
-          x = source_starting_x + @space_width
+          @current_line = caption_column.add_new_line
+          # caption_column.add_new_line
+          x = source_starting_x #+ @space_width
           @source_tokens.each do |source_token|
-            source_token.parent = self
+            # source_token.parent = self
             source_token.x = x
-            token_list << source_token
-            x              += source_token.width + @space_width
             source_token.y = 0
+            @current_line.place_token(source_token)
+            x += source_token.width + @space_width
           end
         end
       end

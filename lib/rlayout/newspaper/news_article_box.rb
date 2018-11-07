@@ -22,7 +22,8 @@ module RLayout
     attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :quote_box_size, :personal_image, :news_image
     attr_accessor :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
-    
+    attr_reader :announcement_column, :announcement_color
+
     def initialize(options={}, &block)
       super
       @overflow           = false
