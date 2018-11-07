@@ -146,7 +146,7 @@ module RLayout
       end
 
       if RUBY_ENGINE =="rubymotion"
-        if @news_box.is_a?(NewsArticleBox)
+        if @news_box.is_a?(NewsArticleBox) 
           if @news_box.graphics.first.column_type == 'editorial_with_profile_image' # s&& @news_box.kind == '샤셜'
             @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
           elsif @news_box.kind == '사설' && @news_box.page_number == 23
@@ -164,7 +164,10 @@ module RLayout
           else
             @news_box.stroke[:sides] = [0,0,0,1]
           end
+        elsif @news_box.is_a?(NewsImageBox)
+            @news_box.stroke[:sides] = [0,0,0,1]
         end
+
         @news_box.save_pdf(@output_path, :jpg=>true)
         if @time_stamp
           stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
