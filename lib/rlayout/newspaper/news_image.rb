@@ -69,6 +69,7 @@ IMAGE_SIZE_POSITION_TABLE = {
 }
 
 NUMBER_TO_POSITION = {
+  '0'=> 'before_title',
   '1'=> 'top_left',
   '2'=> 'top_center',
   '3'=> 'top_right',
@@ -108,8 +109,10 @@ module RLayout
       @x                      = frame_rect[0]
       @y                      = frame_rect[1]
       # adjust y position if position is bottom
-      if @image_position =~/^bottom/ && @parent.extended_line_count
-        @y += @parent.extended_line_count*@parent.body_line_height
+      if @image_position =~/^bottom/ 
+        bottom_space_in_lines = @parent.article_bottom_spaces_in_lines + 1 # add one for space above
+        @y -= bottom_space_in_lines*@parent.body_line_height
+        @y += @parent.extended_line_count*@parent.body_line_height if @parent.extended_line_count
       end
       @width                  = frame_rect[2]
       @height                 = frame_rect[3]
@@ -204,7 +207,7 @@ module RLayout
         # fix invalid numbers
         if position_number > 9
           position_number = 9 
-        elsif position_number < 1
+        elsif position_number < 0
           position_number = 1
         end
         @image_position = NUMBER_TO_POSITION[position_number.to_s]

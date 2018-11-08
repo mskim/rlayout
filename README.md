@@ -123,17 +123,17 @@ TODO List
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
 2018_11_7
+	- 안내문
 	- 사진기사
 		사진제목 과 설명 간격
-		상단 사진기사 page_head_marigin
+		상단 사진기사 align with top title
 		및줄치기
 		사진설명과 이미지 사이 3pt
 	- 사진 포지션 0
-	- 사진 7,8,9 grow from right
-	- 안내문
-	- 고딕 부제
-	- 안내문 박스 크기
+	- 사진 7,8,9 grow from bottom
 	
+	- 고딕 부제
+
 2018_11_6
 	- fix news_section_page story_count
 		there was a bug when order of ad comes before the story_count

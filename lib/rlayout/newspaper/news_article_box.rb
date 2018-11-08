@@ -23,12 +23,14 @@ module RLayout
     attr_accessor :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
     attr_reader :announcement_column, :announcement_color
+    attr_reader :subtitle_style
 
     def initialize(options={}, &block)
       super
       @overflow           = false
       @page_number        = options[:page_number]
       @has_profile_image  = options[:has_profile_image]
+      @subtitle_style     = options[:subtitle_style]
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
           @stroke.sides = [0,1,0,1]
@@ -320,7 +322,13 @@ module RLayout
           @floats.insert(1,@heading)
         end
       else
-        unless @heading == @floats.first
+        puts "@floats.first.class:#{@floats.first.class}"
+        if @floats.first.class == NewsImage
+          puts "@floats.first.position:#{@floats.first.position}"
+        end
+        if @floats.first.class == NewsImage && @floats.first.position == 0
+          # position 0 image is at first, so leave it.
+        elsif @heading != @floats.first
           # make heading as first one in floats
           @heading = @floats.pop
           @floats.unshift(@heading)
@@ -408,6 +416,13 @@ module RLayout
       options[:layout_expand] = nil
       options[:is_float]      = true
       options[:parent]        = self
+      if @subtitle_style == '고딕_회색바탕'
+        options[:fill_color]  = 'CMYK=0,0,0,20'
+        options[:style_name] = 'subtitle_s_gothic'
+      elsif @subtitle_style == '테두리'
+        options[:sides]        = [1,1,1,1]
+        options[:stroke_width] = 1.0
+      end
       #TODO put top_margin and bottom_margin
       TitleText.new(options)
     end
@@ -497,6 +512,13 @@ module RLayout
       options[:parent]    = self
       options[:is_float]  = true
       @news_image         = NewsImage.new(options)
+      if options[:position] == 0
+        # make iit the first item in floats
+        if @floats.length > 1
+          @floats.pop
+          @floats.unshift(@news_image)
+        end
+      end
     end
 
     def news_column_image(options={})

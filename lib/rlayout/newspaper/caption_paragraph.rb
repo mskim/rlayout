@@ -100,8 +100,6 @@ module RLayout
         source_starting_x         = line_width - source_tokens_area_width #+ @space_width
         end_of_tokens             = 0
         end_of_tokens             = token_list.last.x_max if token_list.length > 0
-        puts "end_of_tokens:#{end_of_tokens}"
-        puts "source_starting_x:#{source_starting_x}"
         if (end_of_tokens + @space_width) < source_starting_x
           x = source_starting_x
           @source_tokens.each do |source_token|

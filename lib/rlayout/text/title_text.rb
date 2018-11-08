@@ -13,7 +13,7 @@ module RLayout
         @adjust_size = $1.to_i
         @string = @string.sub(/\{\s?(-?\d)\s?\}\s?$/, "")
       end
-      options[:fill_color]    = options.fetch(:line_color, 'clear')
+      options[:fill_color]    = options.fetch(:fill_color, 'clear')
       # options[:stroke_width]  = 1
       super
       @style_name             = options[:style_name]
@@ -23,7 +23,6 @@ module RLayout
       @single_line_title      = options[:single_line_title]
       @style_name             = options[:style_name]
       if @style_name
-        puts "@style_name:#{@style_name}"
         @para_style           = RLayout::StyleService.shared_style_service.current_style[@style_name]
         @para_style           = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
         @graphic_attributes   = @para_style[:graphic_attributes]
@@ -43,8 +42,7 @@ module RLayout
         @para_style[:font_size] = options.fetch(:size, 16)
       end
       @para_style[:font_size] += @adjust_size if @adjust_size
-      @text_alignment         = 'left'      
-      @text_alignment         = @para_style[:alignmewnt] if @para_style[:alignmewnt]
+      @text_alignment         = @para_style[:alignment] if @para_style[:alignment]
       @text_alignment         = options[:alignment] if options[:alignment]   
       @body_line_height       = options[:body_line_height] || 14
       @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
