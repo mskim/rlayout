@@ -85,6 +85,7 @@ module RLayout
   class NewsImage < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :image_position, :caption_title
     attr_accessor :image_box, :caption_column, :caption_paragraph, :position, :before_title, :fit_type, :expand, :has_caption
+    attr_reader   :image_kind
 
     def initialize(options={})
       if options[:parent]
@@ -95,10 +96,11 @@ module RLayout
         @article_row          = 3
       end
       @image_path             = options[:image_path]
+      @image_kind             = options[:image_kind]
       @column                 = options[:column]
       @row                    = options[:row]
-      options[:grid_frame]    = convert_size_position_to_frame(options) if options[:position]
       @position               = options[:position]
+      options[:grid_frame]    = convert_column_row_position_to_frame(options) if @position
       options[:layout_expand] = nil
       options[:fill_color]    = 'clear'
       @fit_type               = options[:fit_type] if options[:fit_type]
@@ -108,15 +110,10 @@ module RLayout
       frame_rect              = @parent.grid_frame_to_image_rect(options[:grid_frame])
       @x                      = frame_rect[0]
       @y                      = frame_rect[1]
-      # adjust y position if position is bottom
-      if @image_position =~/^bottom/ 
-        bottom_space_in_lines = @parent.article_bottom_spaces_in_lines + 1 # add one for space above
-        @y -= bottom_space_in_lines*@parent.body_line_height
-        @y += @parent.extended_line_count*@parent.body_line_height if @parent.extended_line_count
-      end
       @width                  = frame_rect[2]
       @height                 = frame_rect[3]
       if options[:extra_height_in_lines] # && options[:extra_height_in_lines] > 0
+        @y -= options[:extra_height_in_lines]*@parent.body_line_height #if @image_position =~/^bottom/ 
         @height += options[:extra_height_in_lines]*@parent.body_line_height
       end
 
@@ -130,7 +127,7 @@ module RLayout
       image_options[:width]        = @width
       image_options[:height]       = @height
       image_options[:height]       = @height - @caption_column.height if @caption_column
-      #TODO if position is not top,(1,2,3,), we need space above the image
+
       unless top_position?
         image_options[:y]          = @parent.body_line_height
         image_options[:height]     -= @parent.body_line_height
@@ -138,6 +135,7 @@ module RLayout
       # IMAGE_FIT_TYPE_KEEP_RATIO     = 3
       # IMAGE_FIT_TYPE_IGNORE_RATIO   = 4
       image_options[:stroke_width]   = 0.3
+      image_options[:stroke_width]   = 0.0 if @image_kind == 'graphic'
       image_options[:image_fit_type] = 3 #IMAGE_FIT_TYPE_KEEP_RATIO
       image_options[:image_fit_type] = @fit_type if @fit_type
       image_options[:image_path]     = @image_path
@@ -172,7 +170,8 @@ module RLayout
     end
 
     def top_position?
-      @position == 1 || @position == 2 || @position == 3
+      @image_position =~/top/
+      # @position == 1 || @position == 2 || @position == 3
     end
 
     def before_title?
@@ -196,12 +195,12 @@ module RLayout
       end
     end
 
-    # convert size, position into x,y,width, and height
-    def convert_size_position_to_frame(options={})
+    # convert column, row, and position into x,y,width, and height
+    def convert_column_row_position_to_frame(options={})
       default_image_options   = IMAGE_SIZE_POSITION_TABLE["#{@article_column}x#{@article_row}"]
       default_image_options   = IMAGE_COLUMN_POSITION_TABLE[@article_column.to_s] unless default_image_options
       image_size              = options.fetch(:size, default_image_options[:size])
-      @image_position          = "top_right"
+      @image_position         = "top_right"
       if options[:position]
         position_number = options[:position].to_i
         # fix invalid numbers

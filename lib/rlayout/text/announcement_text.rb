@@ -12,7 +12,6 @@ module RLayout
       if options[:announcement_color] == '파랑' || options[:announcement_color] == 'blue'
         options[:fill_color] = "CMYK=100,50,0,10"
       end
-
       super
       if @string.include?("\r\n")
         s               = @string.split("\r\n")
@@ -39,6 +38,7 @@ module RLayout
       atts[:text_string]        = @title
       atts[:body_line_height]   = @body_line_height if @body_line_height
       atts[:fill_color]         = 'clear'
+      atts[:width]              = @width
       atts[:parent]             = self
       Text.new(atts)
     end

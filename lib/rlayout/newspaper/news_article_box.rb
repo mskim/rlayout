@@ -322,10 +322,6 @@ module RLayout
           @floats.insert(1,@heading)
         end
       else
-        puts "@floats.first.class:#{@floats.first.class}"
-        if @floats.first.class == NewsImage
-          puts "@floats.first.position:#{@floats.first.position}"
-        end
         if @floats.first.class == NewsImage && @floats.first.position == 0
           # position 0 image is at first, so leave it.
         elsif @heading != @floats.first
@@ -417,11 +413,12 @@ module RLayout
       options[:is_float]      = true
       options[:parent]        = self
       if @subtitle_style == '고딕_회색바탕'
-        options[:fill_color]  = 'CMYK=0,0,0,20'
+        options[:fill_color]  = 'CMYK=0,0,0,10'
         options[:style_name] = 'subtitle_s_gothic'
-      elsif @subtitle_style == '테두리'
+      elsif @subtitle_style == '고딕_테두리'
+        options[:style_name] = 'subtitle_s_gothic'
         options[:sides]        = [1,1,1,1]
-        options[:stroke_width] = 1.0
+        options[:stroke_width] = 0.3
       end
       #TODO put top_margin and bottom_margin
       TitleText.new(options)
@@ -468,7 +465,7 @@ module RLayout
 
 
     def float_announcement(options={})
-      box_height                    = 3*@body_line_height
+      box_height                    = 3*@body_line_height - 3
       text_options                  = {}
       text_options[:height]         = box_height
       text_options[:y]              = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
@@ -548,12 +545,13 @@ module RLayout
       else
         frame_width         = @graphics[0].x_max - frame_x
       end
-      frame_height        = @grid_size[1]*grid_frame[3]
-
+      frame_height          = @grid_size[1]*grid_frame[3]
       # if image is on bottom, move up by @article_bottom_spaces_in_lines*@body_line_height
       if (grid_frame[1] + grid_frame[3]) == @row_count
-        frame_height      -= @article_bottom_spaces_in_lines*@body_line_height
-        # frame_y             = @grid_size[1]*grid_frame[1] - @article_bottom_spaces_in_lines*@body_line_height
+        puts "+++++++++ At the bottom"
+        puts "@article_bottom_spaces_in_lines:#{@article_bottom_spaces_in_lines}"
+        puts "@body_line_height:#{@body_line_height}"
+        frame_y            = @height - frame_height - @article_bottom_spaces_in_lines*@body_line_height
       end
       [frame_x, frame_y, frame_width, frame_height]
     end

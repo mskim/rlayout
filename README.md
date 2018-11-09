@@ -122,6 +122,24 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_11_9
+	- image crop
+		- zoom_level
+		- direction
+	- 안내문 넘침박스
+	- story swap
+
+2018_11_8
+	- 그래픽 상단 1행 여백 수정
+	- 안내문 넘침
+	- 안내문 박스 하단 마진
+	- 안내문 2단 잘림
+	- 부제목 스타일
+
+	- 이미지 상세설정
+	- 이미지 줄
+	- 이미지/그래픽 하단 행 추가시 및으로 되는것을 
+
 2018_11_7
 	- 안내문
 	- 사진기사
@@ -131,7 +149,7 @@ TODO List
 		사진설명과 이미지 사이 3pt
 	- 사진 포지션 0
 	- 사진 7,8,9 grow from bottom
-	
+
 	- 고딕 부제
 
 2018_11_6
