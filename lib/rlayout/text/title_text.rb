@@ -178,7 +178,6 @@ module RLayout
             end
             @current_line.align_tokens
             add_new_line
-            adjust_height_after_adding_line
             @current_line.place_token(token)
             token = tokens.shift
           end
@@ -186,10 +185,6 @@ module RLayout
       end
       @current_line.align_tokens
 
-    end
-
-    def adjust_height_after_adding_line
-      @heigth += @body_line_height if @heigth < line_height_sum + @space_before
     end
 
     # place tokens in the line, given tokens array
