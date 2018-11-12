@@ -113,8 +113,8 @@ module RLayout
       @width                  = frame_rect[2]
       @height                 = frame_rect[3]
       if options[:extra_height_in_lines] # && options[:extra_height_in_lines] > 0
-        @y -= options[:extra_height_in_lines]*@parent.body_line_height #if @image_position =~/^bottom/ 
         @height += options[:extra_height_in_lines]*@parent.body_line_height
+        @y -= options[:extra_height_in_lines]*@parent.body_line_height if @image_position =~/^bottom/ 
       end
 
       has_caption_text?(options)

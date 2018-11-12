@@ -544,6 +544,7 @@ module RLayout
     end
 
     def grid_frame_to_image_rect(grid_frame)
+      puts __method__
       return [0,0,100,100]    unless @graphics
       return [0,0,100,100]    if grid_frame.nil?
       return [0,0,100,100]    if grid_frame == ""
@@ -567,9 +568,6 @@ module RLayout
       frame_height          = @grid_size[1]*grid_frame[3]
       # if image is on bottom, move up by @article_bottom_spaces_in_lines*@body_line_height
       if (grid_frame[1] + grid_frame[3]) == @row_count
-        puts "+++++++++ At the bottom"
-        puts "@article_bottom_spaces_in_lines:#{@article_bottom_spaces_in_lines}"
-        puts "@body_line_height:#{@body_line_height}"
         frame_y            = @height - frame_height - @article_bottom_spaces_in_lines*@body_line_height
       end
       [frame_x, frame_y, frame_width, frame_height]
