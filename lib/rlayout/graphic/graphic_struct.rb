@@ -144,9 +144,6 @@ module RLayout
     end
 
     def to_pdf(canvas)
-      cx = @x + @width/2.0
-      cy = @y + @height/2.0
-      r = (@width <= @height)?  @width/2 :  @height/2
       canvas.circle(cx, cy, r)
     end
 

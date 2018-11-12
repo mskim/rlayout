@@ -7,6 +7,7 @@ module RLayout
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title, :token_union_style, :adjust_size
+
     def initialize(options={})
       @string                 = options.delete(:text_string)
       if @string =~/\{\s?(-?\d)\s?\}\s?$/
@@ -16,12 +17,12 @@ module RLayout
       options[:fill_color]    = options.fetch(:fill_color, 'clear')
       # options[:stroke_width]  = 1
       super
+      @body_line_height       = options[:body_line_height] || 14
       @style_name             = options[:style_name]
       @token_union_style      = options[:token_union_style]
       @tokens                 = []
       @room                   = @width
       @single_line_title      = options[:single_line_title]
-      @style_name             = options[:style_name]
       if @style_name
         @para_style           = RLayout::StyleService.shared_style_service.current_style[@style_name]
         @para_style           = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
@@ -44,26 +45,25 @@ module RLayout
       @para_style[:font_size] += @adjust_size if @adjust_size
       @text_alignment         = @para_style[:alignment] if @para_style[:alignment]
       @text_alignment         = options[:alignment] if options[:alignment]   
-      @body_line_height       = options[:body_line_height] || 14
       @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
       @text_height_in_lines   = 2 if @text_height_in_lines == ""
       @space_before_in_lines  = @para_style[:space_before_in_lines] || 0
-      @space_before_in_lines  = 1 if @space_before_in_lines == ""
+      @space_before_in_lines  = 0 if @space_before_in_lines == ""
+      @top_inset              = @space_before_in_lines*@body_line_height
       @top_inset              += options[:top_inset] if options[:top_inset]
       @space_after_in_lines   = @para_style[:space_after_in_lines] || 0
       @space_after_in_lines   = 0 if @space_after_in_lines == ""
-      @tracking               = @para_style.fetch(:tracking, 0)
       @bottom_inset           = @space_after_in_lines*@body_line_height
+      @tracking               = @para_style.fetch(:tracking, 0)
       @height_in_lines        = @space_before_in_lines + @text_height_in_lines + @space_after_in_lines
       @height                 = @height_in_lines*@body_line_height
-
       if @para_style[:text_line_spacing] == "" || @para_style[:text_line_spacing].nil?
         @line_space           =  @para_style[:font_size]*0.4
       else
         @line_space           = @para_style[:text_line_spacing]
       end
       @line_height            = @para_style[:font_size] + @line_space
-      @current_line_y         = @top_inset + @space_before_in_lines*@body_line_height
+      @current_line_y         = @top_margin + @top_inset
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
       @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, text_alignment: @text_alignment, space_width: @space_width, debug: true, top_margin: @top_margin)
@@ -127,17 +127,20 @@ module RLayout
       # We want to keeep it as multple of body_line_height
       if @graphics.length <= 1
         # to avoid edge case overloap adding 2 pixels would do it
-        @height = @height_in_lines*@body_line_height - 2
+        @height = @height_in_lines*@body_line_height + @bottom_margin - 2
         return
       end
-      natural_height          =  @top_inset + line_height_sum if line_height_sum
+
+      natural_height          =  @top_margin + @top_inset +  line_height_sum + @bottom_inset + @bottom_margin if line_height_sum
       body_height_multiples   = natural_height/@body_line_height
       @height_in_lines        = body_height_multiples.to_i
       float_delta             = body_height_multiples - body_height_multiples.to_i
       if float_delta > 0.7
-        @height_in_lines += (@space_after_in_lines + 1)
+        # @height_in_lines      += (@space_after_in_lines + 1)
+        @height_in_lines      += @space_before_in_lines + @space_after_in_lines + 1
+        @bottom_margin        += @body_line_height - float_delta
       else
-        @height_in_lines += @space_after_in_lines
+        @height_in_lines      += @space_after_in_lines
       end
       @height = @height_in_lines*@body_line_height - 1
       @height -= 3
@@ -175,6 +178,7 @@ module RLayout
             end
             @current_line.align_tokens
             add_new_line
+            adjust_height_after_adding_line
             @current_line.place_token(token)
             token = tokens.shift
           end
@@ -182,6 +186,10 @@ module RLayout
       end
       @current_line.align_tokens
 
+    end
+
+    def adjust_height_after_adding_line
+      @heigth += @body_line_height if @heigth < line_height_sum + @space_before
     end
 
     # place tokens in the line, given tokens array

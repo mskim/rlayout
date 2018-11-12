@@ -123,6 +123,11 @@ TODO List
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
 2018_11_9
+	- 홀짝광고 입력
+		name, column, row, page_column, odd_even, x_grid
+
+	- 면배열표에서 레이아웃 수정/저장/생성
+
 	- image crop
 		- zoom_level
 		- direction

@@ -13,13 +13,20 @@ module RLayout
       end
 
       if @text_string
-        string = "Some text!!"
-        canvas.font('Helvetica', size: 16)
-        canvas.text_matrix(16, 0, 0, -16, 100, 400)
-        canvas.text(string, at: [100, 400])
+        string = @text_string
+        canvas.font(@font, font: @font_size)
+        canvas.text_matrix(1, 0, 0, 1, @X, flipped_y)
+        canvas.text(@text_string, at: [100, 400])
         canvas.end_text
       end
       @stroke.to_pdf(canvas)
+    end
+
+    def flipped_y
+      if @parent
+      else
+        @height - @top_margin - @top_inset
+      end
     end
 
     def draw_fixtures(fixtures)

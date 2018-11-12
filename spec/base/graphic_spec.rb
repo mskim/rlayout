@@ -9,15 +9,12 @@ describe ' save_pdf of Graphic' do
     assert Graphic, @g.class
   end
 
-  it 'should save Container' do
-    path = File.dirname(__FILE__) + "/saving_from_hexa.pdf"
-    @g.save_pdf(path)
-    assert File.exist?(path), true
-  end
+  # it 'should save Container' do
+  #   path = File.dirname(__FILE__) + "/saving_from_hexa.pdf"
+  #   @g.save_pdf(path)
+  #   assert File.exist?(path), true
+  # end
 end
-
-__END__
-
 
 describe ' create Graphic with from_right and from_bottom' do
   before do
@@ -125,7 +122,7 @@ describe 'create Graphic ' do
 
   it 'should have stroke' do
     @g.stroke.class.must_equal StrokeStruct
-    @g.stroke.color.must_equal 'black'
+    @g.stroke.color.must_equal 'CMYK=0,0,0,100'
     @g.stroke.thickness.must_equal 0
   end
 
@@ -172,11 +169,11 @@ describe 'create Circle' do
   end
   it 'should have fill' do
     @c.fill.class.must_equal FillStruct
-    @c.fill.color.must_equal 'white'
+    @c.fill.color.must_equal "CMYK=0,0,0,0"
   end
   it 'should have stroke' do
     @c.stroke.class.must_equal StrokeStruct
-    @c.stroke.color.must_equal 'black'
+    @c.stroke.color.must_equal 'CMYK=0,0,0,100'
     @c.stroke.thickness.must_equal 0
   end
 end
@@ -202,13 +199,13 @@ describe 'create Ellipse' do
 
   it 'should have stroke' do
     @c.stroke.class.must_equal StrokeStruct
-    @c.stroke.color.must_equal 'black'
+    @c.stroke.color.must_equal 'CMYK=0,0,0,100'
     @c.stroke.thickness.must_equal 0
   end
 
   it 'should have stroke' do
     @c.stroke.class.must_equal StrokeStruct
-    @c.stroke.color.must_equal 'black'
+    @c.stroke.color.must_equal 'CMYK=0,0,0,100'
     @c.stroke.thickness.must_equal 0
   end
 
@@ -235,11 +232,11 @@ describe 'create RoundRect' do
   end
   it 'should have fill' do
     @c.fill.class.must_equal FillStruct
-    @c.fill.color.must_equal 'white'
+    @c.fill.color.must_equal "CMYK=0,0,0,0"
   end
   it 'should have stroke' do
     @c.stroke.class.must_equal StrokeStruct
-    @c.stroke.color.must_equal 'black'
+    @c.stroke.color.must_equal 'CMYK=0,0,0,100'
     @c.stroke.thickness.must_equal 0
   end
 end
@@ -260,12 +257,12 @@ describe 'create Image' do
   end
   it 'should have fill' do
     @c.fill.class.must_equal FillStruct
-    @c.fill.color.must_equal 'white'
+    @c.fill.color.must_equal "CMYK=0,0,0,10"
   end
   it 'should have stroke' do
     @c.stroke.class.must_equal StrokeStruct
-    @c.stroke.color.must_equal 'black'
-    @c.stroke.thickness.must_equal 0
+    @c.stroke.color.must_equal 'CMYK=0,0,0,100'
+    @c.stroke.thickness.must_equal 1
   end
 end
 
@@ -278,7 +275,7 @@ describe 'create Text' do
   end
   it 'should create text_record' do
 
-    @c.text_record.string.must_equal "This is my text string."
+    @c.string.must_equal "This is my text string."
   end
 
   it 'should create Text shape' do
@@ -288,11 +285,11 @@ describe 'create Text' do
   end
   it 'should have fill' do
     @c.fill.class.must_equal FillStruct
-    @c.fill.color.must_equal 'white'
+    @c.fill.color.must_equal "CMYK=0,0,0,0"
   end
   it 'should have stroke' do
     @c.stroke.class.must_equal StrokeStruct
-    @c.stroke.color.must_equal 'black'
+    @c.stroke.color.must_equal 'CMYK=0,0,0,100'
     @c.stroke.thickness.must_equal 0
   end
 end
@@ -316,7 +313,6 @@ describe 'testing Text ' do
 
   it 'should create heading' do
     @t.must_be_kind_of Text
-    @t.text_record.size.must_equal 24
   end
 
   it 'should save Text' do

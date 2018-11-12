@@ -23,17 +23,15 @@ module RLayout
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width, :space_width
     attr_accessor :single_line_title, :force_fit_title,  :text_fit_type
     attr_accessor :anchor_type, :v_anchor_type
-    attr_accessor :from_right, :from_bottom
+    attr_accessor :from_right, :from_bottom, :line_after
     def initialize(options={})
       super
       @string                   = options.delete(:text_string)
       if options[:para_style]
         @para_style             = options[:para_style]
       elsif options[:style_name]
-        puts "+++++++ options[:style_name]:#{options[:style_name]}"
         @para_style           = RLayout::StyleService.shared_style_service.current_style[options[:style_name]]
         @para_style           = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
-        puts "+++++++ @para_style[:text_color]#{@para_style[:text_color]}"
       else
         @para_style             = {}
         @para_style[:font]      = options[:font] || 'Times'
@@ -49,6 +47,7 @@ module RLayout
       @v_anchor_type          = options[:v_anchor_type]
       @font_size              = @para_style[:font_size]
       @space_width            = @font_size/3
+      @line_after             = options[:line_after]
       @line_space             = options[:line_apace] || @font_size/2
       @line_height            = @font_size + @line_space
       @text_fit_type          = options[:text_fit_type]
@@ -66,7 +65,7 @@ module RLayout
       @top_inset              += options[:top_inset] if options[:top_inset]
       @bottom_inset           = @space_after_in_lines*@body_line_height
       @height_in_lines        = @space_before_in_lines + @text_height_in_lines + @space_after_in_lines
-      @height                 = @height_in_lines*@body_line_height
+      @height                 = @height_in_lines*@body_line_height 
       @tokens                 = []
       @room                   = @width
       @single_line_title      = options[:single_line_title]
@@ -89,10 +88,7 @@ module RLayout
         @anchor_type          = 'bottom'
       end
       adjust_box_width if @text_fit_type == 'fit_box_to_text'
-      puts "@width:#{@width}"
-      puts "@anchor_type:#{@anchor_type}"
       adjust_box_x if @parent && (@anchor_type == 'right' || @anchor_type == 'center')
-      puts "@x:#{@x}"
       adjust_box_y if @parent && (@v_anchor_type == 'bottom' || @v_anchor_type == 'center')
       self
     end
@@ -170,6 +166,7 @@ module RLayout
         @height_in_lines += @space_after_in_lines
       end
       @height = @height_in_lines*@body_line_height - 1
+      @height += @line_after*@body_line_height if @line_after
       @height -= 3
     end
 

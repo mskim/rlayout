@@ -22,15 +22,13 @@ module RLayout
     attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :quote_box_size, :personal_image, :news_image
     attr_accessor :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
-    attr_reader :announcement_column, :announcement_color
-    attr_reader :subtitle_style
+    attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type
 
     def initialize(options={}, &block)
       super
       @overflow           = false
       @page_number        = options[:page_number]
       @has_profile_image  = options[:has_profile_image]
-      @subtitle_style     = options[:subtitle_style]
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
           @stroke.sides = [0,1,0,1]
@@ -52,6 +50,8 @@ module RLayout
       @heading_columns        = @column_count
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
       @quote_box_size         = options[:quote_box_size] || 0
+      @boxed_subtitle_type    = options[:boxed_subtitle_type]
+      puts "@boxed_subtitle_type:#{@boxed_subtitle_type}"
       @announcement_column    = options[:announcement_column]
       @announcement_color     = options[:announcement_color] || 'red'
       create_columns
@@ -369,6 +369,10 @@ module RLayout
     end
 
     def make_floats(heading_hash)
+      puts "heading_hash['boxed_subtitle_text']:#{heading_hash['boxed_subtitle_text']}"
+      if @boxed_subtitle_type
+        float_boxed_subtitle(heading_hash)
+      end
       # don't create another subtitle, if it is top_story, It is created by heading
       if !@top_story && heading_hash['subtitle'] && heading_hash['subtitle'] != ""
         float_subtitle(heading_hash['subtitle'])
@@ -395,6 +399,32 @@ module RLayout
     end
 
     # text_height_in_lines should be calculated dynamically
+    def float_boxed_subtitle(heading_hash)
+      boxed_subtitle_text     = heading_hash['boxed_subtitle_text']
+      options = {}
+      options[:style_name] = 'subtitle_s_gothic'
+      options[:text_string]   = boxed_subtitle_text
+      options[:text_fit_type] = 'adjust_box_height'
+      options[:x]             = @starting_column_x
+      options[:y]             = 0
+      options[:top_inset]     = 0 if options[:space_before_in_lines] == 0
+      options[:width]         = @column_width
+      options[:layout_expand] = nil
+      options[:is_float]      = true
+      options[:line_after]    = 1
+      options[:parent]        = self
+      if @boxed_subtitle_type == 1 #'고딕_회색바탕'
+        options[:fill_color]  = 'CMYK=0,0,0,10'
+      elsif @boxed_subtitle_type == 2 #'고딕_테두리'
+        options[:sides]        = [1,1,1,1]
+        options[:stroke_width] = 0.3
+      end
+      # have one extra line after the box
+      options[:bottom_margin]  = @body_line_height
+      TitleText.new(options)
+    end
+
+    # text_height_in_lines should be calculated dynamically
     def float_subtitle(subtitle_string)
       options = {}
       options[:style_name] = 'subtitle_S'
@@ -403,24 +433,13 @@ module RLayout
       end
       options[:text_string]   = subtitle_string
       options[:text_fit_type] = 'adjust_box_height'
-      # options[:body_line_height] = @body_line_height
       options[:x]             = @starting_column_x
       options[:y]             = 0
       options[:top_inset]     = 0 if options[:space_before_in_lines] == 0
-      # options[:grid_frame]    = [0,0,1,0.5]
       options[:width]         = @column_width
       options[:layout_expand] = nil
       options[:is_float]      = true
       options[:parent]        = self
-      if @subtitle_style == '고딕_회색바탕'
-        options[:fill_color]  = 'CMYK=0,0,0,10'
-        options[:style_name] = 'subtitle_s_gothic'
-      elsif @subtitle_style == '고딕_테두리'
-        options[:style_name] = 'subtitle_s_gothic'
-        options[:sides]        = [1,1,1,1]
-        options[:stroke_width] = 0.3
-      end
-      #TODO put top_margin and bottom_margin
       TitleText.new(options)
     end
 

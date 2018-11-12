@@ -35,6 +35,6 @@ describe 'save pdf in ruby mode' do
   it 'should save graphic pdf' do
     @graphic.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
-    # system "open #{@pdf_path}"
+    system "open #{@pdf_path}"
   end
 end
