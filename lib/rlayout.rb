@@ -104,6 +104,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/document_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/page_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/graphic_view_pdf'
+  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/container_view_pdf'
+  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/line_fragment_view_pdf'
 
   # require File.dirname(__FILE__) + '/rlayout/document_variables_extend'
   require File.dirname(__FILE__) + '/rlayout/story/story'

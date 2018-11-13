@@ -2,31 +2,32 @@
 module RLayout
   class Graphic
 
-    def to_pdf(canvas)
-      puts @shape
-
-      @shape.to_pdf(canvas)
-      @fill.to_pdf(canvas)
-
-      if @image_path
-        puts "+++ draw image"
+    def flipped_origin
+      if @parent
+        p_origin = @parent.flipped_origin
+        [ p_origin[0] + @left_margin + @x, p_origin[1] + @height - (@top_margin  + @y + @height)]
+      else
+        [@left_margin + @x, @height - (@top_margin  + @y + @height)]
       end
-
-      if @text_string
-        string = @text_string
-        canvas.font(@font, font: @font_size)
-        canvas.text_matrix(1, 0, 0, 1, @X, flipped_y)
-        canvas.text(@text_string, at: [100, 400])
-        canvas.end_text
-      end
-      @stroke.to_pdf(canvas)
     end
 
-    def flipped_y
-      if @parent
-      else
-        @height - @top_margin - @top_inset
+    def to_pdf(canvas)
+      # puts @shape
+      # @shape.to_pdf(canvas)
+      # @fill.to_pdf(canvas)
+
+      if @image_path
+        canvas.image(@image_path, at: flipped_origin, width: @width, height: @height)
       end
+
+      # if @text_string
+      #   string = @text_string
+      #   # canvas.font(@font, font: @font_size)
+      #   # canvas.text_matrix(1, 0, 0, 1, @X, flipped_y)
+      #   canvas.text(@text_string, at: flipped_origin)
+      #   # canvas.end_text
+      # end
+      # @stroke.to_pdf(canvas)
     end
 
     def draw_fixtures(fixtures)

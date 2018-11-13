@@ -1,5 +1,20 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../../spec_helper"
 
+describe 'save pdf in ruby mode' do
+  before do
+    @graphic   = Text.new(text_string: "Some text goes here!", font: "Helvetica", font_size: 12, x: 20, y:10, width: 300, height: 300, stroke_thickness: 5)
+    @pdf_path = "/Users/Shared/rlayout/pdf_output/text_test.pdf"
+  end
+
+  it 'should save graphic pdf' do
+    @graphic.save_pdf(@pdf_path)
+    assert File.exist?(@pdf_path)
+    system "open #{@pdf_path}"
+  end
+end
+
+__END__
+
 describe 'save pdf pdf in Ruby mode rectangle' do
   before do
     @g        = Graphic.new(x:0, y:0, width: 300, height: 300, fill_color: 'ff0000')
@@ -28,8 +43,10 @@ end
 
 describe 'save pdf in ruby mode' do
   before do
-     @graphic   = Text.new(text_string: "Some text goes here!", font: "Helvetica", font_size: 12, x: 20, y:10, width: 300, height: 300, stroke_thickness: 5)
-     @pdf_path = "/Users/Shared/rlayout/pdf_output/text_test.pdf"
+    #  @graphic   = Text.new(text_string: "Some text goes here!", font: "Helvetica", font_size: 12, x: 20, y:10, width: 300, height: 300, stroke_thickness: 5)
+    image_path = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/1/story.pdf"
+    @graphic   = Image.new(image_path: image_path, x: 20, y:10, width: 300, height: 300, stroke_thickness: 5)
+    @pdf_path = "/Users/Shared/rlayout/pdf_output/image_test.pdf"
   end
 
   it 'should save graphic pdf' do
@@ -38,3 +55,4 @@ describe 'save pdf in ruby mode' do
     system "open #{@pdf_path}"
   end
 end
+

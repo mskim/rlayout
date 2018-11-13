@@ -13,10 +13,8 @@ module RLayout
     attr_accessor :text_area, :text_area_width, :has_text, :space_width, :debug
     def	initialize(options={})
       # options[:stroke_color]      = 'red'
-      # options[:stroke_width]      = 1
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
-      # options[:fill_color]        = options.fetch(:line_color, 'lightGray')
       # options[:stroke_width]      = 0.5
       super
       @debug            = options[:debug]

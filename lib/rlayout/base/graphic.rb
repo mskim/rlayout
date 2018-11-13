@@ -474,7 +474,7 @@ module RLayout
         end
         puts "@shape"
         # # flip canvas virtically 
-        canvas.transform(1,0,0,-1,0,@height)
+        # canvas.transform(1,0,0,-1,0,@height)
         to_pdf(canvas)
         doc.write(path, optimize: true)
       end
