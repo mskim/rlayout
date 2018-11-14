@@ -10,12 +10,13 @@ module RLayout
   # Whenever there is differnce TextTokenAtts in the paragraph, new TextTokenAtts is created and different TextToken ponts to that one.
 
   class	RLineFragment < Container
-    attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
-    attr_accessor :left_indent, :right_indent, :para_style, :text_alignment, :starting_position, :first_line_indent, :tail_indent
+    attr_accessor :next_line, :layed_out_line
     attr_accessor :total_token_width, :room, :overlap
     attr_accessor :text_area, :text_area_width, :space_width, :debug, :char_half_width_cushion
-    attr_accessor :next_line, :layed_out_line
-    attr_accessor :token_union_rect, :token_union_style
+    attr_reader :line_type #first_line, last_line, drop_cap, drop_cap_side
+    attr_reader :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent, :tail_indent
+    attr_reader :token_union_rect, :token_union_style
+    attr_reader :font, :font_sizw, :para_style
 
     def	initialize(options={})
       options[:layout_direction]  = 'horizontal'
@@ -24,9 +25,18 @@ module RLayout
       @char_half_width_cushion    = @space_width/3
       options[:right_margin]      = 2
       super
+      if options[:parent] && options[:parent].respond_to?(:para_style)
+        @para_style       = options[:parent].para_style
+      elsif options[:para_style]
+        @para_style       = options[:para_style]
+      end
+      if @para_style
+        @font             = @para_style[:font]
+        @font_size        = @para_style[:font_size]
+        @text_alignment   = @para_style[:text_alignment]
+      end
       @debug            = options[:debug]
       @graphics         = options[:tokens] || []
-      @text_alignment   = options[:text_alignment] || 'left'
       @starting_position = @left_inset || 0
       @stroke_width     = 1
       @text_area        = [@x, @y, @width, @height]
@@ -125,13 +135,15 @@ module RLayout
     end
     # set line type, and paragraph information for line
     def set_paragraph_info(paragraph, line_type)
-      para_style        = paragraph.para_style
-      @space_width      = para_style[:space_width] || 3.0
-      @text_alignment   = para_style[:alignment] || "left"
-      @v_offset         = para_style[:v_offset] || 0
-      @first_line_indent = para_style[:first_line_indent] || para_style[:font_size] || para_style[:text_size]
-      @tail_indent      = para_style[:tail_indent] || 0
-      @head_indent      = para_style[:head_indent] || 0
+      @para_style       = paragraph.para_style
+      @font             = @para_style[:font]
+      @font_size        = @para_style[:font_size]
+      @space_width      = @para_style[:space_width] || 3.0
+      @text_alignment   = @para_style[:alignment] || "left"
+      @v_offset         = @para_style[:v_offset] || 0
+      @first_line_indent = @para_style[:first_line_indent] || para_style[:font_size] || para_style[:text_size]
+      @tail_indent      = @para_style[:tail_indent] || 0
+      @head_indent      = @para_style[:head_indent] || 0
       if @text_alignment == "left" || @text_alignment == "justified"
         @first_line_width   = @width - @first_line_indent - @tail_indent
         @middle_line_width  = @width - @head_indent - @tail_indent
@@ -164,7 +176,6 @@ module RLayout
       return if token.nil?
       if @room + CharHalfWidthCushion >= token.width
       # if @room + @char_half_width_cushion >= token.width
-        
         # place token in line.
         token.parent = self
         @graphics << token
@@ -281,7 +292,6 @@ module RLayout
       # divide tracking evenly throughout all tokens
       # tracking_positions_count: number of tracking applied positions
       per_tracking_value = width_in_points/tracking_positions_count
-
       @graphics.map!{|t| t.reduce_token_width_with_new_tracking_value(per_tracking_value)}
     end
 
@@ -309,9 +319,7 @@ module RLayout
         reduce_tracking_values_of_tokens_by(reduce_amount)
       end
       align_tokens
-
     end
-
   end
 
   class OverFlowMarker < Graphic

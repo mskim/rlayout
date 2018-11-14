@@ -122,6 +122,21 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_11_12
+	- RubyPDF
+		- Text
+		- Image
+
+		- fill
+		- stroke
+		- shape
+
+		- multiple font suppoert
+		- check color_space
+		
+	- rails integration
+		- generate_pdf without writing layout_rb and story.md, just write PDF
+
 2018_11_9
 	- 홀짝광고 입력
 		name, column, row, page_column, odd_even, x_grid

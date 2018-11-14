@@ -46,7 +46,7 @@ module RLayout
     end
 
     def string_width(text_string)
-      text_string.width_with_font(@width_table, @size, korean_fixed_width: @korean_fixed_width)
+      text_string.width_with_font(@width_table, @size, korean_fixed_width: @korean_fixed_width)/1000*@size
     end
 
     def string_size(text_string)
