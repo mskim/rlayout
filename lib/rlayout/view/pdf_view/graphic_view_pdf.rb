@@ -5,18 +5,20 @@ module RLayout
     def flipped_origin
       if @parent
         p_origin = @parent.flipped_origin
-        [ p_origin[0] + @left_margin + @x, p_origin[1] + @height - (@top_margin  + @y + @height)]
+       [ p_origin[0] + @left_margin + @x, p_origin[1] + @parent.height - @height - @top_margin - @y]
       else
-        [@left_margin + @x, @height - (@top_margin  + @y + @height)]
+        [@left_margin + @x, @top_margin  + @y]
       end
     end
 
-    def to_pdf(canvas)
+    def to_pdf(canvas, font_wapper)
+
       # puts @shape
       # @shape.to_pdf(canvas)
       # @fill.to_pdf(canvas)
 
       if @image_path
+        puts "image self.class:#{self.class}"
         canvas.image(@image_path, at: flipped_origin, width: @width, height: @height)
       end
 

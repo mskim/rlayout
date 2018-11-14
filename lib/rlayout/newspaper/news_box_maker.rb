@@ -53,6 +53,8 @@ module RLayout
     attr_accessor :custom_style, :publication_name, :time_stamp
 
     def initialize(options={} ,&block)
+      time_start = Time.now
+
       @time_stamp = options[:time_stamp]
       puts "@time_stamp:#{@time_stamp}"
       @story_path = options[:story_path]
@@ -178,8 +180,19 @@ module RLayout
         end
         # delete old stamped
       else
-        @news_box.save_svg(@svg_path)
+        @output_path  = @article_path + "/pdf.pdf"
+        @news_box.save_pdf(@output_path, :jpg=>true)
+        if @time_stamp
+          stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
+          output_jpg_path = @output_path.sub(/pdf$/, "jpg")
+          stamped_jpg_path = stamped_path.sub(/pdf$/, "jpg")
+          system("cp #{@output_path} #{stamped_path}")
+          system("cp #{output_jpg_path} #{stamped_jpg_path}")
+        end
+        # @news_box.save_svg(@svg_path)
       end
+      time_end = Time.now
+      puts "++++++++ it took:#{time_end - time_start}"
       self
     end
 

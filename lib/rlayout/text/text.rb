@@ -23,10 +23,13 @@ module RLayout
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width, :space_width
     attr_accessor :single_line_title, :force_fit_title,  :text_fit_type
     attr_accessor :anchor_type, :v_anchor_type
-    attr_accessor :from_right, :from_bottom, :line_after
+    attr_accessor :from_right, :from_bottom, :line_after, :font, :font_size
     def initialize(options={})
       super
       @string                   = options.delete(:text_string)
+      @font                     = options.fetch(:font, 'Times')
+      @font_size                = options.fetch(:font_size, 16)
+
       if options[:para_style]
         @para_style             = options[:para_style]
       elsif options[:style_name]

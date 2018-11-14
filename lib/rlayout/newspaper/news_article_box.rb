@@ -51,7 +51,6 @@ module RLayout
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
       @quote_box_size         = options[:quote_box_size] || 0
       @boxed_subtitle_type    = options[:boxed_subtitle_type]
-      puts "@boxed_subtitle_type:#{@boxed_subtitle_type}"
       @announcement_column    = options[:announcement_column]
       @announcement_color     = options[:announcement_color] || 'red'
       create_columns
@@ -369,7 +368,6 @@ module RLayout
     end
 
     def make_floats(heading_hash)
-      puts "heading_hash['boxed_subtitle_text']:#{heading_hash['boxed_subtitle_text']}"
       if @boxed_subtitle_type
         float_boxed_subtitle(heading_hash)
       end
@@ -544,7 +542,6 @@ module RLayout
     end
 
     def grid_frame_to_image_rect(grid_frame)
-      puts __method__
       return [0,0,100,100]    unless @graphics
       return [0,0,100,100]    if grid_frame.nil?
       return [0,0,100,100]    if grid_frame == ""

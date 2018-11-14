@@ -46,7 +46,8 @@ module RLayout
     def make_linked_page
       atts = {}
       atts[:text_fit_type]      = 'fit_box_to_text'
-      atts[:x]                  = 244
+      atts[:from_right]         = 10
+      atts[:anchor_type]        = 'right'
       atts[:y]                  = @top_margin + 5
       atts[:style_name]         = 'announcement_2'
       atts[:text_string]        = @linked_page

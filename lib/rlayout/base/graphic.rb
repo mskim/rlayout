@@ -7,6 +7,8 @@ module RLayout
     attr_accessor :non_overlapping_rect
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
     attr_accessor :frame_image, :shadow, :rotation, :right_anchor, :center_anchor_at, :bottom_anchor
+    attr_reader   :pdf_doc
+
     # attr_accessor :overflow, :underflow
 
     def initialize(options={}, &block)

@@ -68,7 +68,7 @@ module RLayout
         front_range = [0,i]
         sub_string_incremented = @string[0..i]
         if i == (string_length - 1) && sub_string_incremented =~ FORBIDDEN_FIRST_CHARS_AT_END
-          puts "FORBIDDEN_FIRST_CHARS_AT_END"
+          # puts "FORBIDDEN_FIRST_CHARS_AT_END"
           # we have front forbidden character . ? , !
           return "front forbidden character"
         elsif i == (string_length - 1) && sub_string_incremented =~ FORBIDDEN_LAST_CHARS_AT_END

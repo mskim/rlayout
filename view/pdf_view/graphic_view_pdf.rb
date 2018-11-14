@@ -2,7 +2,7 @@
 #shape
 module RLayout
   class Graphic
-    def to_pdf(canvas)
+    def to_pdf(canvas, font_wapper)
       puts canvas.class
       # @fill.to_pdf(canvas) if @fill
       puts "@x, #{@x}"

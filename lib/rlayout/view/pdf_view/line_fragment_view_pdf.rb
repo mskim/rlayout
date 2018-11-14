@@ -1,8 +1,8 @@
 module RLayout
   class LineFragment < Container
-    def to_pdf(canvas)
-      binding.pry
-      canvas.text(line_string, at: flipped_origin)
+
+    def draw_text(canvas)
+      puts "draw_text in LineFragment"
     end
   end
 end

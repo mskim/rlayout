@@ -1,21 +1,40 @@
 require 'minitest/autorun'
 require 'pry'
+require 'hexapdf'
+
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '../..', 'lib')
 require 'rlayout/style/style_service'
 require 'rlayout/text/font'
 include RLayout
 
-describe 'string with of a style' do
+describe 'load font of current_style' do
   before do
     @sr = RLayout::StyleService.shared_style_service
-    @news_style = @sr.news_style
   end
-  it 'should calculate the width of a string' do
-    width = @sr.width_of_string('body', "this is a string")
-    width.must_be_close_to 55.8349609375
+  it 'should get the font list in array' do
+    list = @sr.current_style_font_list
+    list.include?('Shinmoon').must_equal true
+  end
+
+  it 'should read the font from file' do
+    doc = HexaPDF::Document.new
+    @sr.load_fonts(doc)
+    # puts "@sr.font_wrapper:#{@sr.font_wrapper}"
+    # @sr.font_wrapper['Shinmmon'].class.must_be HexaPDF::Font
   end
 
 end
+
+# describe 'string width of a style' do
+#   before do
+#     @sr = RLayout::StyleService.shared_style_service
+#     @news_style = @sr.news_style
+#   end
+#   it 'should calculate the width of a string' do
+#     width = @sr.width_of_string('body', "this is a string", 0)
+#     width.must_be_close_to 55.8349609375
+#   end
+# end
 
 describe 'newspaper body text' do
   before do
