@@ -50,8 +50,7 @@ module RLayout
       atts[:anchor_type]        = 'right'
       atts[:y]                  = @top_margin + 5
       atts[:style_name]         = 'announcement_2'
-      atts[:text_string]        = @linked_page
-      puts "atts[:text_string]#{atts[:text_string]}"
+      atts[:text_string]        = "▸▸" + @linked_page
       atts[:body_line_height]   = @body_line_height if @body_line_height
       atts[:fill_color]         = 'clear'
       atts[:parent]             = self

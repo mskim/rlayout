@@ -122,6 +122,9 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_11_13
+	- overflow mark with announcement_box
+
 2018_11_12
 	- RubyPDF
 		- Text
@@ -140,13 +143,13 @@ TODO List
 2018_11_9
 	- 홀짝광고 입력
 		name, column, row, page_column, odd_even, x_grid
+	- 안내문 넘침박스
 
 	- 면배열표에서 레이아웃 수정/저장/생성
 
 	- image crop
 		- zoom_level
 		- direction
-	- 안내문 넘침박스
 	- story swap
 
 2018_11_8

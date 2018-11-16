@@ -237,7 +237,11 @@ module RLayout
     end
 
     def last_line_of_box
-      @graphics.last.graphics.last
+      if @announcement_box
+        @graphics.last.graphics[-4]
+      else
+        @graphics.last.graphics.last
+      end
     end
 
     def layout_items(flowing_items, options={})
@@ -419,6 +423,7 @@ module RLayout
       end
       # have one extra line after the box
       options[:bottom_margin]  = @body_line_height
+      puts "options[:style_name]:#{options[:style_name]}"
       TitleText.new(options)
     end
 

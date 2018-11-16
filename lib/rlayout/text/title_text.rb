@@ -4,12 +4,13 @@ module RLayout
   # used for title, subject_head
   # It can squeeze text
   class TitleText < Container
-    attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
+    attr_accessor :tokens, :string, :style_name, :para_style, :room, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title, :token_union_style, :adjust_size
 
     def initialize(options={})
       @string                 = options.delete(:text_string)
+      # [arse for adjust_size pattern 
       if @string =~/\{\s?(-?\d)\s?\}\s?$/
         @adjust_size = $1.to_i
         @string = @string.sub(/\{\s?(-?\d)\s?\}\s?$/, "")
@@ -41,10 +42,10 @@ module RLayout
         @para_style             = {}
         @para_style[:font]      = options.fetch(:font, 'Times')
         @para_style[:font_size] = options.fetch(:size, 16)
+        @para_style[:alignment] = options[:alignment] || 'left'
       end
       @para_style[:font_size] += @adjust_size if @adjust_size
-      @text_alignment         = @para_style[:alignment] if @para_style[:alignment]
-      @text_alignment         = options[:alignment] if options[:alignment]   
+      @para_style[:alignment] = options[:text_alignment] if options[:text_alignment]
       @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
       @text_height_in_lines   = 2 if @text_height_in_lines == ""
       @space_before_in_lines  = @para_style[:space_before_in_lines] || 0
@@ -66,7 +67,7 @@ module RLayout
       @current_line_y         = @top_margin + @top_inset
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, text_alignment: @text_alignment, space_width: @space_width, debug: true, top_margin: @top_margin)
+      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin)
       @current_line_y         +=@current_line.height
       create_tokens
       layout_tokens
@@ -108,7 +109,7 @@ module RLayout
     end
 
     def add_new_line
-      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, text_alignment: @text_alignment, space_width: @space_width, debug: true)
+      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin)
       @current_line.next_line = new_line if @current_line
       @current_line           = new_line
       @current_line_y         += @current_line.height
@@ -183,6 +184,7 @@ module RLayout
           end
         end
       end
+
       @current_line.align_tokens
 
     end
@@ -220,8 +222,6 @@ module RLayout
 
     def relayout!
     end
-
-
   end
 
 end

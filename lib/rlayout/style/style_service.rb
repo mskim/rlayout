@@ -893,7 +893,7 @@ LIST_KIND     = %w[ordered_list ordered_list_item unordered_list unordered_list_
 module RLayout
   class StyleService
     attr_accessor :current_style, :default_style, :chapter_style, :news_style, :magazine_style, :quiz_item_style
-    attr_accessor :custom_style, :pdf_doc
+    attr_accessor :custom_style, :pdf_doc, :font_wrappers
     def initialize
       @custom_style   = nil
       @current_style  = DEFAULT_STYLES
@@ -927,24 +927,6 @@ module RLayout
         font_list << font_name unless font_list.include?(font_name)
       end
       font_list
-    end
-
-    # read fonts from disk
-    def load_fonts(pdf_doc)
-      @pdf_doc = pdf_doc
-      font_foleder = "/Library/fonts/newspaper"
-      puts "font_foleder:#{font_foleder}"
-      Dir.glob("#{font_foleder}/*.ttf").each do |font_file|
-        wrapper = @pdf_doc.fonts.add(font_file)
-        puts "wrapper.wrapped_font.full_name:#{wrapper.wrapped_font.full_name}"
-        puts "wrapper.wrapped_font.font_name:#{wrapper.wrapped_font.font_name}"
-      end
-      # binding.pry
-      # wrapper = doc.fonts.add(font_file)
-      # max_gid = wrapper.wrapped_font[:maxp].num_glyphs
-      # canvas.text("Font: #{wrapper.wrapped_font.full_name}", at: [50, 825])
-
-      @pdf_doc.fonts
     end
 
     def space_width(style_name, adjust_size)

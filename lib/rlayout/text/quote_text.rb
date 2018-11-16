@@ -2,7 +2,7 @@ module RLayout
   # QuoteText uniform styled text
   # used for quote,
   class QuoteText < Container
-    attr_accessor :tokens, :string, :style_name, :para_style, :room, :text_alignment, :height_in_lines
+    attr_accessor :tokens, :string, :style_name, :para_style, :room, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width, :ns_atts
     attr_accessor :single_line_title, :force_fit_title, :v_alignment, :quote_text_lines
     def initialize(options={})
@@ -28,7 +28,7 @@ module RLayout
         @para_style[:text_height_in_lines]  = options.fetch(:text_height_in_lines, 1)
         @para_style[:space_before_in_lines] = options.fetch(:space_before_in_lines, 1)
       end
-      @text_alignment         = options[:text_alignment] if options[:text_alignment]
+      @para_style[:alignment] = options[:text_alignment] if options[:text_alignment]
       @body_line_height       = options[:body_line_height] || 14
       @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
       @text_height_in_lines   = 1 if @text_height_in_lines == ""
@@ -53,7 +53,7 @@ module RLayout
       # @current_line_y         = @space_before_in_lines*@body_line_height
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, space_width: @space_width, debug: true, top_margin: @top_margin)
+      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width,  para_style: @para_style,  debug: true, top_margin: @top_margin)
       create_tokens
       layout_tokens
       # ajust_height_as_body_height_multiples unless @height_as_body_height_multiples == false
@@ -110,6 +110,8 @@ module RLayout
 
     def add_new_line
       new_line      = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
+      new_line      = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width,  para_style: @para_style,  debug: true, top_margin: @top_margin)
+
       @current_line.next_line = new_line if @current_line
       @current_line = new_line
       @current_line_y    += @current_line.height + @line_space

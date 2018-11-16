@@ -13,10 +13,10 @@ module RLayout
     attr_accessor :next_line, :layed_out_line
     attr_accessor :total_token_width, :room, :overlap
     attr_accessor :text_area, :text_area_width, :space_width, :debug, :char_half_width_cushion
-    attr_reader :line_type #first_line, last_line, drop_cap, drop_cap_side
-    attr_reader :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent, :tail_indent
-    attr_reader :token_union_rect, :token_union_style
-    attr_reader :font, :font_sizw, :para_style
+    attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
+    attr_accessor :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent, :tail_indent
+    attr_accessor :token_union_rect, :token_union_style
+    attr_accessor :font, :font_size, :para_style
 
     def	initialize(options={})
       options[:layout_direction]  = 'horizontal'
@@ -25,16 +25,19 @@ module RLayout
       @char_half_width_cushion    = @space_width/3
       options[:right_margin]      = 2
       super
-      if options[:parent] && options[:parent].respond_to?(:para_style)
-        @para_style       = options[:parent].para_style
-      elsif options[:para_style]
+
+      if options[:para_style]
         @para_style       = options[:para_style]
+      elsif options[:parent] && options[:parent].respond_to?(:para_style)
+        @para_style       = options[:parent].para_style
       end
+
       if @para_style
         @font             = @para_style[:font]
         @font_size        = @para_style[:font_size]
-        @text_alignment   = @para_style[:text_alignment]
+        @text_alignment   = @para_style[:alignment]
       end
+      @text_alignment   = options[:text_alignment] if options[:text_alignment]
       @debug            = options[:debug]
       @graphics         = options[:tokens] || []
       @starting_position = @left_inset || 0

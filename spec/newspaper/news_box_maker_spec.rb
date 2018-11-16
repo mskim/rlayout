@@ -1,5 +1,25 @@
 require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
+describe 'testing save_pdf with ruby_pdf' do
+  before do
+    @article_path    = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/22/1"
+    @maker           = NewsBoxMaker.new(article_path: @article_path)
+    @article_box     = @maker.news_box
+    @pdf_path        = @article_path + "/pdf.pdf"
+  end
+
+  # it 'should have extended_line_count' do
+  #   assert_equal 2, @article_box.extended_line_count
+  # end
+
+  it 'should save pdf' do
+    assert true,  File.exist?(@pdf_path)
+    system("open #{@pdf_path}")
+  end
+
+end
+
+__END__
 
 describe 'creaet document with NewsBoxMaker' do
   before do

@@ -285,6 +285,7 @@ module RLayout
         style_hash = current_style['linked_story']
         @style_name  = 'linked_story'
         @para_style  = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+        @para_string = "▸▸" + @para_string
       end
 
       @space_width  = @para_style[:space_width]

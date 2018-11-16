@@ -19,8 +19,9 @@ describe 'load font of current_style' do
   it 'should read the font from file' do
     doc = HexaPDF::Document.new
     @sr.load_fonts(doc)
+    shinmoon_font = @sr.wrapper_for('Shinmoon')
     # puts "@sr.font_wrapper:#{@sr.font_wrapper}"
-    # @sr.font_wrapper['Shinmmon'].class.must_be HexaPDF::Font
+    shinmoon_font.must_be_kind_of HexaPDF::Font
   end
 
 end

@@ -51,10 +51,10 @@ module RLayout
     attr_accessor :news_box, :output_path, :project_path
     attr_reader :article_info_path
     attr_accessor :custom_style, :publication_name, :time_stamp
+    attr_accessor :pdf_doc
 
     def initialize(options={} ,&block)
       time_start = Time.now
-
       @time_stamp = options[:time_stamp]
       puts "@time_stamp:#{@time_stamp}"
       @story_path = options[:story_path]
@@ -82,7 +82,6 @@ module RLayout
           @output_path  = @article_path + "/output.pdf"
         end
       end
-
       $ProjectPath      = @article_path
       @custom_style     = options[:custom_style] if options[:custom_style]
       @publication_name = options[:publication_name] if options[:publication_name]
@@ -98,6 +97,20 @@ module RLayout
           puts "No custom style file :#{@custom_style_path} found !!!"
           return
         end
+      end
+
+      # read fonts from disk
+      def load_fonts(pdf_doc)
+        font_foleder = "/Users/Shared/SoftwareLab/font_width"
+        Dir.glob("#{font_foleder}/*.ttf").each do |font_file|
+          pdf_doc.fonts.add(font_file)
+        end
+      end
+
+      if RUBY_ENGINE == 'ruby'
+        require 'hexapdf'
+        @pdf_doc = HexaPDF::Document.new
+        load_fonts(@pdf_doc)
       end
 
       if options[:image_path]
@@ -181,7 +194,7 @@ module RLayout
         # delete old stamped
       else
         @output_path  = @article_path + "/pdf.pdf"
-        @news_box.save_pdf(@output_path, :jpg=>true)
+        @news_box.save_pdf(@output_path, pdf_doc:@pdf_doc, :jpg=>true)
         if @time_stamp
           stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
           output_jpg_path = @output_path.sub(/pdf$/, "jpg")
