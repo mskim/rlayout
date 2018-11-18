@@ -45,9 +45,6 @@ module RLayout
         @para_style[:alignment] =  'left'
       end
       @para_style[:alignment] = options[:text_alignment] if options[:text_alignment]
-      puts "++++++++++ options[:text_alignment]:#{options[:text_alignment]}"
-      puts "++++++++++ @para_style[:alignment] :#{@para_style[:alignment]}"
-
       @anchor_type            = options[:anchor_type]
       @v_anchor_type          = options[:v_anchor_type]
       @font_size              = @para_style[:font_size]

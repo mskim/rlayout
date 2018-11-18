@@ -109,7 +109,6 @@ module RLayout
           return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
         end
       else
-        puts "get_stroke_rect for ruby mode"
       end
     end
 
@@ -474,7 +473,6 @@ module RLayout
           page      = doc.pages.add([@x, @y, @width, @height])
           canvas    = page.canvas
         end
-        puts "@shape"
         # # flip canvas virtically 
         # canvas.transform(1,0,0,-1,0,@height)
         to_pdf(canvas)

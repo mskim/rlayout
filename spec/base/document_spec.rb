@@ -58,19 +58,19 @@ describe "document" do
       page do
         rect :fill_color=> "green"
         rect :fill_color=> "red", x:200, y:200
-        rect :fill_color=> "CMYK=0,0,0,100" , x:200, y:300
+        rect :fill_color=> black_color , x:200, y:300
         rect :fill_color=> "blue", x:200, y:500
       end
       page do
         rect :fill_color=> "green"
         rect :fill_color=> "red", x:400, y:200
-        rect :fill_color=> "CMYK=0,0,0,100" , x:400, y:300
+        rect :fill_color=> black_color , x:400, y:300
         rect :fill_color=> "blue", x:400, y:500
       end
       page do
         rect :fill_color=> "green"
         rect :fill_color=> "red", x:200, y:200
-        rect :fill_color=> "CMYK=0,0,0,100" , x:300, y:300
+        rect :fill_color=> black_color , x:300, y:300
         rect :fill_color=> "blue", x:500, y:500
       end
 

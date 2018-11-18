@@ -14,7 +14,7 @@
 #     @para.markup.must_equal "p"
 #     @para.font_size.must_equal 12
 #     @para.font.must_equal "Times"
-#     @para.text_color.must_equal "CMYK=0,0,0,100"
+#     @para.text_color.must_equal black_color
 #   end
 #   
 #     it 'should save pdf' do

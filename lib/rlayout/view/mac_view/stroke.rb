@@ -11,30 +11,7 @@ class GraphicViewMac < NSView
     @left_inset     = graphic.left_inset + 2
     r               = ns_bounds_rect(graphic)
     drawLine(r, withTrap:0)
-    draw_rules(r) if @stroke[:rule]
     # drawArrow if @start_arrow && @owner_graphic
-  end
-
-  def draw_rules(rect)
-    if @stroke[:rule] == "horizontal_rule"
-      # puts  "draw bottom"
-      path= NSBezierPath.bezierPath
-      path.setLineWidth(@stroke[:thickness])
-      path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + rect.size.height/2.0))
-      path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height/2.0))
-      path.stroke
-    end
-    if @stroke[:rule] == "vertical_rule"
-      # puts  "draw bottom"
-      path= NSBezierPath.bezierPath
-      path.setLineWidth(@stroke[:thickness])
-      path.moveToPoint(NSPoint.new(rect.origin.x + rect.size.width/2.0, rect.origin.y ))
-      path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width/2.0, rect.origin.y + + rect.size.height))
-      path.stroke
-    end
-    #TODO
-    # if @stroke[:rule]  == "top_left_to_bottom_right"
-    # if @stroke[:rule]  == "top_right_to_bottom_left"
   end
 
   def draw_gutter_stroke(graphic)
@@ -45,18 +22,18 @@ class GraphicViewMac < NSView
       graphic.gutter_stroke.thickness = 1.0
     end
     if graphic.gutter_stroke.color.nil?
-      graphic.gutter_stroke.color = "CMYK=0,0,0,100"
+      graphic.gutter_stroke.color = black_color
     end
     space = graphic.layout_space/2.0
     if graphic.gutter_stroke.nil?
       gutter_stroke = {}
       gutter_stroke[:thickness] = 1.0
-      gutter_stroke[:color] = "CMYK=0,0,0,100"
+      gutter_stroke[:color] = black_color
       graphic.gutter_stroke = gutter_stroke
     elsif graphic.gutter_stroke.thickness.nil?
       graphic.gutter_stroke.thickness = 1.0
     elsif graphic.gutter_stroke.color.nil?
-      graphic.gutter_stroke.color = "CMYK=0,0,0,100"
+      graphic.gutter_stroke.color = black_color
     end
     width = graphic.gutter_stroke.thickness
     RLayout.convert_to_nscolor(graphic.gutter_stroke.color).set
