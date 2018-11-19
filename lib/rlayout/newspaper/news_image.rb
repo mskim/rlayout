@@ -111,7 +111,7 @@ module RLayout
       @x                      = frame_rect[0]
       @y                      = frame_rect[1]
       @width                  = frame_rect[2]
-      @height                 = frame_rect[3]
+      @height                 = frame_rect[3] - 4 #TODO body_leading
       if options[:extra_height_in_lines] # && options[:extra_height_in_lines] > 0
         @height += options[:extra_height_in_lines]*@parent.body_line_height
         @y -= options[:extra_height_in_lines]*@parent.body_line_height if @image_position =~/^bottom/ 
