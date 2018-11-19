@@ -21,7 +21,9 @@ module RLayout
     end
 
     def to_pdf(canvas)
-      canvas.fill_color= RLayout.color2hex(color)
+      self.color = CMYK=0,0,0,0 unless self.color
+      self.color = color_from_string(color) if self.color=~/^CMYK=/
+      canvas.fill_color(self.color)
     end
   end
 
@@ -37,7 +39,7 @@ module RLayout
     end
   end
 
-  StrokeStruct   = Struct.new(:color, :thickness, :dash, :line_cap, :line_join, :type, :sides, :rule) do
+  StrokeStruct   = Struct.new(:color, :thickness, :dash, :line_cap, :line_join, :type, :sides) do
     def to_svg
       s = "stroke:#{color};"
       s += "stroke-width:#{thickness}" if thickness > 0
@@ -57,8 +59,11 @@ module RLayout
       h
     end
 
-    def to_pdf(canvas)
-      canvas.stroke_color(color).stroke
+    def to_pdf(canvas)      
+      color = CMYK=0,0,0,100 unless color
+      color = color_from_string(color) if color=~/^CMYK=/
+      canvas.stroke_color(color)
+      canvas.line_width(thickness)
     end
 
   end

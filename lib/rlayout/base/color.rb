@@ -8,6 +8,27 @@ module RLayout
     COLOR_LIST.keys.sample
   end
 
+  def CMYK=0,0,0,10 
+   if RUBY_ENGINE == 'rubymotion'
+      "CMYK=0,0,0,10"
+    else
+      [0,0,0,25]
+    end
+  end
+
+  def clear_color
+    if RUBY_ENGINE == 'rubymotion'
+      NSColor.whiteColor
+    else
+      [0,0,0,0,0]
+    end
+  end
+
+  def color_from_cmyk_to_float(cmyk_color_string)
+    cmyk_array = cmyk_color_string.split("=")
+    values = cmyk_array[1].split(",")
+    values.map{|e| e.to_i/100.0}
+  end
 
   def color_from_hex(color_string)
     hex_color = color_string.gsub("#", "")
@@ -65,12 +86,8 @@ module RLayout
   end
 
   def color_from_string(color_string)
-    if color_string == nil
-      return NSColor.whiteColor
-    end
-
-    if color_string==""
-      return NSColor.whiteColor
+    if color_string == nil || color_string==""
+      return CMYK=0,0,0,0
     end
 
     if COLOR_NAMES.include?(color_string)
@@ -87,6 +104,10 @@ module RLayout
       return RLayout.color_from_hex(color_string)
     end
 
+    # if COLOR_NAME.include?(color_string)
+    #   return 
+    # end
+
     color_array=color_string.split("=")
     color_kind=color_array[0]
     # retrun black color unless color_array[1]
@@ -95,9 +116,13 @@ module RLayout
     if color_kind=~/RGB/
         @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
     elsif color_kind=~/CMYK/
+      if RUBY_ENGINE == 'rubymotion'
         color_values.map!{|v| v.to_f/100.0} if color_values[0].to_i > 1 || color_values[1].to_i > 1 || color_values[2].to_i > 1 || color_values[3].to_i > 1
         color_values << 1.0 if color_values.length == 4
         @color = NSColor.colorWithDeviceCyan(color_values[0].to_f, magenta:color_values[1].to_f, yellow:color_values[2].to_f, black:color_values[3].to_f, alpha:color_values[4].to_f)
+      else
+        return color_values.map{|e| e.to_i/100.0}  
+      end
     elsif color_kind=~/NSCalibratedWhiteColorSpace/
         @color = NSColor.colorWithCalibratedWhite(color_values[0].to_f, alpha:color_values[1].to_f)
     elsif color_kind=~/NSCalibratedBlackColorSpace/
@@ -141,7 +166,6 @@ module RLayout
       return NSColor.redColor
     when "white"
       return NSColor.colorWithDeviceCyan(0.0, magenta:0.0, yellow:0.0, black:0.0, alpha: 1.0)
-
       # return NSColor.whiteColor
     when "yellow"
       return NSColor.yellowColor

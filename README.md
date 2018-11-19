@@ -122,6 +122,14 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_11_16
+	- add ruby_pdf
+		- fill
+		- stroke
+		- cicle, rectangle, round_rect, path
+		
+	- test for graphic
+
 2018_11_13
 	- overflow mark with announcement_box
 
@@ -833,7 +841,7 @@ TODO List
 	- markup2heading key_map
 	- style_run
 	# runs are separated by \t
-	# color_run: ["brown", "CMYK=0,0,0,100"]
+	# color_run: ["brown", CMYK=0,0,0,100]
 	# size_run: [0, 5] add point size to current size
 	# size_run: [0, 10%] add % point size to current size
 
