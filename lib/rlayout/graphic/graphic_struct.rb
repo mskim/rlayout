@@ -21,7 +21,7 @@ module RLayout
     end
 
     def to_pdf(canvas)
-      self.color = white_color unless self.color
+      self.color = CMYK=0,0,0,0 unless self.color
       self.color = color_from_string(color) if self.color=~/^CMYK=/
       canvas.fill_color(self.color)
     end
@@ -60,7 +60,7 @@ module RLayout
     end
 
     def to_pdf(canvas)      
-      color = black_color unless color
+      color = CMYK=0,0,0,100 unless color
       color = color_from_string(color) if color=~/^CMYK=/
       canvas.stroke_color(color)
       canvas.line_width(thickness)

@@ -73,10 +73,10 @@ module RLayout
       @image_fit_type   = @image_fit_type.to_i
       unless File.exists?(@image_path)
         @image_path = "/Users/Shared/SoftwareLab/images/dummy.jpg"
-        @stroke[:color] = black_color
+        @stroke[:color] = CMYK=0,0,0,100
         @stroke[:thickness] = 1.0
         @stroke[:sides] = [1,1,1,1,1,1]
-        @fill[:color] = light_gray_color
+        @fill[:color] = CMYK=0,0,0,10
       end
       # @image_path
       #TODO Get rid of this and do it for MRI

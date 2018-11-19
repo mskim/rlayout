@@ -8,24 +8,7 @@ module RLayout
     COLOR_LIST.keys.sample
   end
 
-  def white_color
-    if RUBY_ENGINE == 'rubymotion'
-
-      "CMYK=0,0,0,0"
-    else
-      [0,0,0,0]
-    end
-  end
-
-  def black_color
-    if RUBY_ENGINE != 'rubymotion'
-      "CMYK=0,0,0,100"
-    else
-      [0,0,0,255]
-    end
-  end
-
-  def light_gray_color 
+  def CMYK=0,0,0,10 
    if RUBY_ENGINE == 'rubymotion'
       "CMYK=0,0,0,10"
     else
@@ -104,7 +87,7 @@ module RLayout
 
   def color_from_string(color_string)
     if color_string == nil || color_string==""
-      return white_color
+      return CMYK=0,0,0,0
     end
 
     if COLOR_NAMES.include?(color_string)

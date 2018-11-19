@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe 'text_string_array and text_atts_array' do
   before do
     @text_string_array  = ["This is a", "String"]
-    @text_atts_array    = [{font_size:24, text_color: "red"}, {font_size:16, text_color: black_color} ]
+    @text_atts_array    = [{font_size:24, text_color: "red"}, {font_size:16, text_color: CMYK=0,0,0,100} ]
     @text               = Text.new(text_string_array: @text_string_array, text_atts_array: @text_atts_array)
 
   end

@@ -4,7 +4,7 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 describe 'shoud save pdf text' do
   before do
     @c =  RLayout::Container.new(width: 1028.976498, height: 41.70979114285714, layout_direction: 'horinoztal') do
-          text('This is  very long string and I like it\nthis is the second line.', x: 464.0, y: -4, width: 100, font: 'Shinmoon',  font_size: 20, text_color: black_color, text_alignment: 'center', fill_color:'clear', text_fit_type: 'fit_box_to_text', anchor_type: 'center_anchor')
+          text('This is  very long string and I like it\nthis is the second line.', x: 464.0, y: -4, width: 100, font: 'Shinmoon',  font_size: 20, text_color: CMYK=0,0,0,100, text_alignment: 'center', fill_color:'clear', text_fit_type: 'fit_box_to_text', anchor_type: 'center_anchor')
         end
     @text = @c.graphics.first
     @pdf_path = "/Users/Shared/rlayout/pdf_output/text/text.pdf"
@@ -24,7 +24,7 @@ __END__
 describe 'shoud fit_box_to_text' do
   before do
     @c =  RLayout::Container.new(width: 1028.976498, height: 41.70979114285714, layout_direction: 'horinoztal') do
-          text('전 면 광 고', x: 464.0, y: -4, width: 100, font: 'KoPubBatangPM',  font_size: 20, text_color: black_color, text_alignment: 'center', fill_color:'clear', text_fit_type: 'fit_box_to_text', anchor_type: 'center_anchor')
+          text('전 면 광 고', x: 464.0, y: -4, width: 100, font: 'KoPubBatangPM',  font_size: 20, text_color: CMYK=0,0,0,100, text_alignment: 'center', fill_color:'clear', text_fit_type: 'fit_box_to_text', anchor_type: 'center_anchor')
         end
     @text = @c.graphics.first
   end
