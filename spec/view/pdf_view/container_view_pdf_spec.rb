@@ -20,7 +20,7 @@ describe 'save pdf pdf in Ruby mode rectangle' do
   end
 end
 
-__END__
+
 
 describe 'save pdf art' do
   before do
@@ -39,7 +39,7 @@ describe 'save pdf art' do
         thickness = (0..20).to_a.sample
         random_color = "CMYK=#{color_1},#{color_2},#{color_3},#{color_4}"
         random_color_2 = "CMYK=#{color_4},#{color_1},#{color_2},#{color_3}"
-        rectangle(x:r_x, y:r_y, width: r_width, height: r_height, fill_color:random_color, stroke_width: thickness, stroke_sides:[1,1,1,1])
+        # rectangle(x:r_x, y:r_y, width: r_width, height: r_height, fill_color:random_color, stroke_width: thickness, stroke_sides:[1,1,1,1])
         circle(x:r_x_2, y:r_y, width: r_width, height: r_height, fill_color:random_color, stroke_width: thickness, stroke_color: random_color_2)
       end
     end
