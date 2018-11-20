@@ -42,12 +42,12 @@ module RLayout
 
     def to_pdf(canvas)
       if !@fill.color
-        @fill.color = CMYK=0,0,0,0 
+        @fill.color = 'CMYK=0,0,0,0 '
       elsif @fill.color.class == String
         @fill.color = color_from_string(@fill.color)
       end
       if !@stroke.color
-        @stroke.color = CMYK=0,0,0,0 
+        @stroke.color = 'CMYK=0,0,0,0 '
       elsif @stroke.color.class == String
         @stroke.color = color_from_string(@stroke.color)
       end

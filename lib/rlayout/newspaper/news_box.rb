@@ -5,7 +5,7 @@ module RLayout
     attr_accessor :column_width, :column_count, :row_count, :extended_line_count, :pushed_line_count
 
     def initialize(options={}, &block)
-      # @is_ad_box              = options[:is_ad_box] || false
+      # @is_ad_box            = options[:is_ad_box] || false
       options[:left_margin]   = 0
       options[:right_margin]  = 0
       options[:top_margin]    = options.fetch(:top_margin, 0)

@@ -8,22 +8,6 @@ module RLayout
     COLOR_LIST.keys.sample
   end
 
-  def CMYK=0,0,0,10 
-   if RUBY_ENGINE == 'rubymotion'
-      "CMYK=0,0,0,10"
-    else
-      [0,0,0,25]
-    end
-  end
-
-  def clear_color
-    if RUBY_ENGINE == 'rubymotion'
-      NSColor.whiteColor
-    else
-      [0,0,0,0,0]
-    end
-  end
-
   def color_from_cmyk_to_float(cmyk_color_string)
     cmyk_array = cmyk_color_string.split("=")
     values = cmyk_array[1].split(",")
@@ -87,7 +71,7 @@ module RLayout
 
   def color_from_string(color_string)
     if color_string == nil || color_string==""
-      return CMYK=0,0,0,0
+      return 'CMYK=0,0,0,0'
     end
 
     if COLOR_NAMES.include?(color_string)
