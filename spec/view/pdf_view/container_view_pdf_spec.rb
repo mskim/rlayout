@@ -2,7 +2,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../../spec_helper"
 
 describe 'save pdf pdf in Ruby mode rectangle' do
   before do
-    @c = Container.new(x:0, y:0, width: 600, height: 800) do
+    @c = Page.new(x:0, y:0, width: 600, height: 800, stroke_width: 1, stroke_color: [0,0,0,0]) do
         image_path = "/Users/mskim/Pictures/1.jpg"
         rectangle(x:0, y:10, width: 100, height: 100, fill_color:'CMYK=0,100,0,0', stroke_width: 0.3, stroke_sides:[1,1,1,1])
         image(image_path:image_path, x:300, y:10, width: 100, height: 100, stroke_width: 0.3, stroke_sides:[1,1,1,1])
@@ -33,13 +33,18 @@ describe 'save pdf art' do
         r_width = (2..200).to_a.sample
         r_height = (2..200).to_a.sample
         color_1 = (0..100).to_a.sample
-        color_2 = (0..100).to_a.sample
+        color_1 = 'red'
+        # color_2 = (0..100).to_a.sample
+        color_2 = 'yellow'
+        # color_3 = (0..100).to_a.sample
         color_3 = (0..100).to_a.sample
-        color_4 = (0..50).to_a.sample
+        # color_4 = (0..50).to_a.sample
+        color_4 = 'green'
+
         thickness = (0..20).to_a.sample
         random_color = "CMYK=#{color_1},#{color_2},#{color_3},#{color_4}"
         random_color_2 = "CMYK=#{color_4},#{color_1},#{color_2},#{color_3}"
-        # rectangle(x:r_x, y:r_y, width: r_width, height: r_height, fill_color:random_color, stroke_width: thickness, stroke_sides:[1,1,1,1])
+        rectangle(x:r_x, y:r_y, width: r_width, height: r_height, fill_color:random_color, stroke_width: thickness, stroke_sides:[1,1,1,1])
         circle(x:r_x_2, y:r_y, width: r_width, height: r_height, fill_color:random_color, stroke_width: thickness, stroke_color: random_color_2)
       end
     end

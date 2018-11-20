@@ -2,16 +2,6 @@ module RLayout
   class Container < Graphic
     attr_reader :pdf_doc
 
-
-    def flipped_origin
-      if @parent
-        p_origin = @parent.flipped_origin
-        [ p_origin[0] + @left_margin + @x, p_origin[1] + @parent.height - @height - @top_margin - @y]
-      else
-        [@left_margin + @x, @top_margin  + @y]
-      end
-    end
-
     def save_pdf(output_path, options={})
       # Containernex
       if RUBY_ENGINE == 'rubymotion'

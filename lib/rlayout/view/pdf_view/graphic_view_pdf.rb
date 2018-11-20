@@ -2,41 +2,12 @@
 module RLayout
   class Graphic
 
-    def flipped_point(x, y)
-      if @parent
-        f_point = @parent.flipped_point(x,y)
-       [ f_point[0] + x, f_point[1] + @parent.height - y]
-      else
-        [x, y]
-      end
-    end
-
     def flipped_origin
       if @parent
         p_origin = @parent.flipped_origin
-       [ p_origin[0] + @left_margin + @x, p_origin[1] + @parent.height - @height - @top_margin - @y]
+        [p_origin[0] + @left_margin + @x, p_origin[1] + @parent.height - @height - @top_margin - @y]
       else
-        [@left_margin + @x, @top_margin  - @y]
-      end
-    end
-
-
-    def flipped_y(y_position)
-      if @parent
-        p_origin = @parent.flipped_origin
-        p_origin[1] + @parent.height  - y_position
-      else
-        @top_margin + y_position
-      end
-    end
-
-
-    def flipped_x(x_position)
-      if @parent
-        p_origin = @parent.flipped_origin
-        p_origin[0] + x_position
-      else
-        @left_margin + x_position
+        [@left_margin + @x, - @top_margin  - @y]
       end
     end
 

@@ -1,7 +1,8 @@
 module RLayout
 class Graphic
-  attr_accessor :line_position, :stroke_rect
+  attr_accessor :line_position, :stroke_rect, :flipped
   def draw_stroke(canvas)
+    @flipped = flipped_origin
     draw_gutter_stroke(canvas) if self.respond_to?(:gutter_stroke) && @draw_gutter_stroke
     return if @stroke[:thickness].nil? || @stroke[:thickness] == 0
     @stroke_rect    = get_stroke_rect
@@ -17,9 +18,6 @@ class Graphic
   end 
   
   def draw_line(canvas, starting_x, starting_y, ending_x, ending_y, thickness)
-    flipped_start = flipped_point(starting_x, starting_y)
-    flipped_end = flipped_point(ending_x, ending_y)
-    flipped = flipped_origin
     canvas.line_width(thickness).line(flipped[0] + starting_x, flipped[1] - starting_y, flipped[0] + ending_x, flipped[1] - ending_y).stroke
     # canvas.line_width(thickness).line(flipped_start[0], flipped_start[1], flipped_end[0], flipped_end[1]).stroke
   end
@@ -88,7 +86,7 @@ class Graphic
         end
 
       else
-        canvas.line_width(@stroke[:thickness]).rectangle(@x + @left_margin, flipped_origin[1] + @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
+        canvas.line_width(@stroke[:thickness]).rectangle(flipped[0] + @left_margin, flipped_origin[1] + @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
         # canvas.line_width(@stroke[:thickness]).rectangle(@x + @left_margin, @y + @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
       end
     else
