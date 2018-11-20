@@ -1,7 +1,7 @@
 
 module RLayout
   class Graphic
-
+    attr_accessor :flipped 
     def flipped_origin
       if @parent
         p_origin = @parent.flipped_origin
@@ -12,35 +12,27 @@ module RLayout
     end
 
     def to_pdf(canvas)
+      @flipped = flipped_origin
+
       if !@fill.color
         @fill.color = 'CMYK=0,0,0,0 '
-      elsif @fill.color.class == String
-        @fill.color = color_from_string(@fill.color)
       end
+      @fill.color = color_from_string(@fill.color) if @fill.color.class == String
       if !@stroke.color
         @stroke.color = 'CMYK=0,0,0,0 '
-      elsif @stroke.color.class == String
-        @stroke.color = color_from_string(@stroke.color)
       end
+      @stroke.color = color_from_string(@stroke.color) if @stroke.color.class == String
 
       case @shape
       when RLayout::RectStruct
-
-        flipped_x = flipped_origin[0]
-        flipped_y = flipped_origin[1]
-        canvas.fill_color(@fill.color).rectangle(flipped_x ,  flipped_y , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+        canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
         # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
         draw_stroke(canvas)
       when RoundRectStruct
       when RoundRectStruct
       when RLayout::CircleStruct
-        # puts "@fill.color:#{@fill.color}"
-        # fill_color = @fill.color
-
-        circle = canvas.fill_color(@fill.color).stroke_color(@stroke.color).line_width(@stroke.thickness).circle(@shape.cx, flipped_y(@shape.cy), @shape.r).fill_stroke
-        # puts "@x/2:#{@x/2}"
-        # puts "@y/2:#{@x/2}"
-        # canvas.circle(440, 50, 30).fill_stroke
+        @flipped = flipped_origin
+        circle = canvas.fill_color(@fill.color).stroke_color(@stroke.color).line_width(@stroke.thickness).circle(flipped[0] + @shape.r, flipped[1] + @shape.r, @shape.r).fill_stroke
       when EllipseStruct
       when PoligonStruct
       when PathStruct

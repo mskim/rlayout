@@ -51,30 +51,33 @@ module RLayout
     attr_accessor :news_box, :output_path, :project_path
     attr_reader :article_info_path
     attr_accessor :custom_style, :publication_name, :time_stamp
-    attr_accessor :pdf_doc
+    attr_accessor :pdf_doc, :story_md, :layout_rb
 
-    def initialize(options={} ,&block)
-      time_start = Time.now
+    def initialize(options={})
+      time_start    = Time.now
       @time_stamp = options[:time_stamp]
-      puts "@time_stamp:#{@time_stamp}"
-      @story_path = options[:story_path]
-      if options[:story_path]
-        @story_path = options[:story_path]
+      @story_md     = options[:story_md]
+      @layout_rb    = options[:layout_rb]
+      @article_path = options[:article_path]
+      @story_path   = options[:story_path]
+      if @story_md && @article_path
+        # when content is passed from rails
+        @output_path  = @article_path + "/story.pdf"
+      elsif @story_path
+        # when reading content from file system
         unless File.exist?(@story_path)
           puts "No story_path doen't exist !!!"
           return
         end
         @article_path = File.dirname(@story_path)
         @output_path  = @article_path + "/story.pdf"
-      elsif options[:article_path]
-        @article_path = options[:article_path]
+      elsif @article_path
+        # when reading content from file system
         unless File.directory?(@article_path)
           puts "article_path doesn't exit !!!"
           return
         end
-
         @story_path = Dir.glob("#{@article_path}/*{.md, .markdown}").first
-
         if @story_path
           ext = File.extname(@story_path)
           @output_path  = @article_path + "/#{File.basename(@story_path, ext)}" + ".pdf"
@@ -86,7 +89,6 @@ module RLayout
       @custom_style     = options[:custom_style] if options[:custom_style]
       @publication_name = options[:publication_name] if options[:publication_name]
       RLayout::StyleService.shared_style_service.current_style = NEWSPAPER_STYLE
-
       if @custom_style && @publication_name
         @custom_style_path = "/Users/Shared/SoftwareLab/newsman/#{@publication_name}/text_style.yml"
         if File.exist?(@custom_style_path)
@@ -98,15 +100,6 @@ module RLayout
           return
         end
       end
-
-      # read fonts from disk
-      def load_fonts(pdf_doc)
-        font_foleder = "/Users/Shared/SoftwareLab/font_width"
-        Dir.glob("#{font_foleder}/*.ttf").each do |font_file|
-          pdf_doc.fonts.add(font_file)
-        end
-      end
-
       if RUBY_ENGINE == 'ruby'
         require 'hexapdf'
         @pdf_doc = HexaPDF::Document.new
@@ -122,21 +115,27 @@ module RLayout
         @output_path = options[:output_path]
       end
       unless @output_path
-        @output_path = $ProjectPath + "/output.pdf"
+        @output_path = @article_path + "/output.pdf"
       end
       @svg_path           = @output_path.sub(".pdf", ".svg")
       @article_info_path  = @article_path + "/article_info.yml"
-      if options[:template_path] && File.exist?(options[:template_path])
+      if @layout_rb
+          @news_box   = eval(@layout_rb)
+      elsif options[:template_path] && File.exist?(options[:template_path])
         @template_path = options[:template_path]
+        template    = File.open(@template_path,'r'){|f| f.read}
+        @news_box   = eval(template)
       else
         @template_path = Dir.glob("#{@article_path}/*.{rb,script,pgscript}").first
-      end
-      unless @template_path
+        unless @template_path
         puts "No layout  found !!!"
         return
+        else
+          template    = File.open(@template_path,'r'){|f| f.read}
+          @news_box   = eval(template)
+        end
       end
-      template    = File.open(@template_path,'r'){|f| f.read}
-      @news_box   = eval(template)
+      
       if @news_box.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return
@@ -160,53 +159,46 @@ module RLayout
         # puts "@news_box is Graphic..."
       end
 
-      if RUBY_ENGINE =="rubymotion"
-        if @news_box.is_a?(NewsArticleBox) 
-          if @news_box.graphics.first.column_type == 'editorial_with_profile_image' # s&& @news_box.kind == '샤셜'
-            @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
-          elsif @news_box.kind == '사설' && @news_box.page_number == 23
-            @news_box.stroke[:sides] = [1,1,1,1]
-          elsif @news_box.kind == '기고'
-            if  @news_box.column_count == 6       
-              @news_box.stroke[:sides] = [1,1,1,1] 
-            elsif @news_box.bottom_article
-              @news_box.stroke[:sides] = [0,1,0,1]
-            else
-              @news_box.stroke[:sides] = [0,1,0,0]
-            end
+      if @news_box.is_a?(NewsArticleBox) 
+        if @news_box.graphics.first.column_type == 'editorial_with_profile_image' # s&& @news_box.kind == '샤셜'
+          @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
+        elsif @news_box.kind == '사설' && @news_box.page_number == 23
+          @news_box.stroke[:sides] = [1,1,1,1]
+        elsif @news_box.kind == '기고'
+          if  @news_box.column_count == 6       
+            @news_box.stroke[:sides] = [1,1,1,1] 
           elsif @news_box.bottom_article
-            @news_box.stroke[:sides] = [0,0,0,1]
+            @news_box.stroke[:sides] = [0,1,0,1]
           else
-            @news_box.stroke[:sides] = [0,0,0,1]
+            @news_box.stroke[:sides] = [0,1,0,0]
           end
-        elsif @news_box.is_a?(NewsImageBox)
-            @news_box.stroke[:sides] = [0,0,0,1]
+        elsif @news_box.bottom_article
+          @news_box.stroke[:sides] = [0,0,0,1]
+        else
+          @news_box.stroke[:sides] = [0,0,0,1]
         end
-
-        @news_box.save_pdf(@output_path, :jpg=>true)
-        if @time_stamp
-          stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
-          output_jpg_path = @output_path.sub(/pdf$/, "jpg")
-          stamped_jpg_path = stamped_path.sub(/pdf$/, "jpg")
-          system("cp #{@output_path} #{stamped_path}")
-          system("cp #{output_jpg_path} #{stamped_jpg_path}")
-        end
-        # delete old stamped
-      else
-        @output_path  = @article_path + "/pdf.pdf"
-        @news_box.save_pdf(@output_path, pdf_doc:@pdf_doc, :jpg=>true)
-        if @time_stamp
-          stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
-          output_jpg_path = @output_path.sub(/pdf$/, "jpg")
-          stamped_jpg_path = stamped_path.sub(/pdf$/, "jpg")
-          system("cp #{@output_path} #{stamped_path}")
-          system("cp #{output_jpg_path} #{stamped_jpg_path}")
-        end
-        # @news_box.save_svg(@svg_path)
+      elsif @news_box.is_a?(NewsImageBox)
+          @news_box.stroke[:sides] = [0,0,0,1]
+      end
+      @news_box.save_pdf(@output_path, :jpg=>true)
+      if @time_stamp
+        stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
+        output_jpg_path = @output_path.sub(/pdf$/, "jpg")
+        stamped_jpg_path = stamped_path.sub(/pdf$/, "jpg")
+        system("cp #{@output_path} #{stamped_path}")
+        system("cp #{output_jpg_path} #{stamped_jpg_path}")
       end
       time_end = Time.now
       puts "++++++++ it took:#{time_end - time_start}"
       self
+    end
+
+    # read fonts from disk
+    def load_fonts(pdf_doc)
+      font_foleder = "/Users/Shared/SoftwareLab/font_width"
+      Dir.glob("#{font_foleder}/*.ttf").each do |font_file|
+        pdf_doc.fonts.add(font_file)
+      end
     end
 
     def read_story

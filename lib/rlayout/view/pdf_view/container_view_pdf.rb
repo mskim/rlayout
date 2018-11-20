@@ -3,6 +3,7 @@ module RLayout
     attr_reader :pdf_doc
 
     def save_pdf(output_path, options={})
+      binding.pry
       # Containernex
       if RUBY_ENGINE == 'rubymotion'
         @ns_view ||= GraphicViewMac.from_graphic(self)

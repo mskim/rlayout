@@ -1,8 +1,7 @@
 module RLayout
 class Graphic
-  attr_accessor :line_position, :stroke_rect, :flipped
+  attr_accessor :line_position, :stroke_rect
   def draw_stroke(canvas)
-    @flipped = flipped_origin
     draw_gutter_stroke(canvas) if self.respond_to?(:gutter_stroke) && @draw_gutter_stroke
     return if @stroke[:thickness].nil? || @stroke[:thickness] == 0
     @stroke_rect    = get_stroke_rect

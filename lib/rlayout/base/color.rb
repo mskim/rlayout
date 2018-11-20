@@ -95,7 +95,11 @@ module RLayout
     color_array=color_string.split("=")
     color_kind=color_array[0]
     # retrun black color unless color_array[1]
-    return NSColor.blackColor unless color_array[1]
+    if RUBY_ENGINE == 'rubymotion'
+      return NSColor.blackColor unless color_array[1]
+    else
+      return [0,0,0,1.0]
+    end
     color_values=color_array[1].split(",")
     if color_kind=~/RGB/
         @color = NSColor.colorWithCalibratedRed(color_values[0].to_f, green:color_values[1].to_f, blue:color_values[2].to_f, alpha:color_values[3].to_f)
@@ -118,43 +122,50 @@ module RLayout
   end
 
   def color_from_name(name)
-    case name
-    when "black"
-      # return NSColor.blackColor
-      return NSColor.colorWithDeviceCyan(0.0, magenta:0.0, yellow:0.0, black:1.0, alpha: 1.0)
-    when "blue"
-      return NSColor.blueColor
-    when "brown"
-      return NSColor.brownColor
-    when "clear"
-      return NSColor.colorWithDeviceCyan(0.0, magenta:0.0, yellow:0.0, black:0.0, alpha: 0.0)
-      # return NSColor.colorWithDeviceRed(0, green: 0, blue: 0, alpha: 0)
-      # return NSColor.clearColor
-    when "cyan"
-      return NSColor.cyanColor
-    when "dark_gray", "darkGray"
-      return NSColor.darkGrayColor
-    when "gray"
-      return NSColor.grayColor
-    when "green"
-      return NSColor.greenColor
-    when "light_gray", "lightGray"
-      return NSColor.lightGrayColor
-    when "magenta"
-      return NSColor.magentaColor
-    when "orange"
-      return NSColor.orangeColor
-    when "purple"
-      return NSColor.purpleColor
-    when "red"
-      return NSColor.redColor
-    when "white"
-      return NSColor.colorWithDeviceCyan(0.0, magenta:0.0, yellow:0.0, black:0.0, alpha: 1.0)
-      # return NSColor.whiteColor
-    when "yellow"
-      return NSColor.yellowColor
+    if RUBY_ENGINE == 'rubymotion'
+      case name
+      when "black"
+        # return NSColor.blackColor
+        return NSColor.colorWithDeviceCyan(0.0, magenta:0.0, yellow:0.0, black:1.0, alpha: 1.0)
+      when "blue"
+        return NSColor.blueColor
+      when "brown"
+        return NSColor.brownColor
+      when "clear"
+        return NSColor.colorWithDeviceCyan(0.0, magenta:0.0, yellow:0.0, black:0.0, alpha: 0.0)
+        # return NSColor.colorWithDeviceRed(0, green: 0, blue: 0, alpha: 0)
+        # return NSColor.clearColor
+      when "cyan"
+        return NSColor.cyanColor
+      when "dark_gray", "darkGray"
+        return NSColor.darkGrayColor
+      when "gray"
+        return NSColor.grayColor
+      when "green"
+        return NSColor.greenColor
+      when "light_gray", "lightGray"
+        return NSColor.lightGrayColor
+      when "magenta"
+        return NSColor.magentaColor
+      when "orange"
+        return NSColor.orangeColor
+      when "purple"
+        return NSColor.purpleColor
+      when "red"
+        return NSColor.redColor
+      when "white"
+        return NSColor.colorWithDeviceCyan(0.0, magenta:0.0, yellow:0.0, black:0.0, alpha: 1.0)
+        # return NSColor.whiteColor
+      when "yellow"
+        return NSColor.yellowColor
+      else
+        return NSColor.whiteColor
+      end
     else
-      return NSColor.whiteColor
+      name = name.capitalize
+      color = COLOR_LIST[name]
+      return [0,0,0] unless color
+      color
     end
   end
 
