@@ -2,10 +2,10 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'testing saveing ad_box ruby_pdf' do
   before do
-    @article_path    = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/ad"
+    @article_path    = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/2"
     @maker           = NewsBoxMaker.new(article_path: @article_path)
     @article_box     = @maker.news_box
-    @pdf_path        = @article_path + "/pdf.pdf"
+    @pdf_path        = @article_path + "/story.pdf"
   end
 
   it 'should save pdf' do

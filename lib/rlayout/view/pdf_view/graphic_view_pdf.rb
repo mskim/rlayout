@@ -5,9 +5,9 @@ module RLayout
     def flipped_origin
       if @parent
         p_origin = @parent.flipped_origin
-        [p_origin[0] + @left_margin + @x, p_origin[1] + @parent.height - @height - @top_margin - @y]
+        [p_origin[0] + @left_margin + @x, p_origin[1] + @parent.height - @height - @top_margin - @top_inset - @y]
       else
-        [@left_margin + @x, - @top_margin  - @y]
+        [@left_margin + @x, - @top_margin - @top_inset - @y]
       end
     end
 
@@ -17,11 +17,11 @@ module RLayout
       if !@fill.color
         @fill.color = 'CMYK=0,0,0,0 '
       end
-      @fill.color = color_from_string(@fill.color) if @fill.color.class == String
+      @fill.color = RLayout.color_from_string(@fill.color) if @fill.color.class == String
       if !@stroke.color
         @stroke.color = 'CMYK=0,0,0,0 '
       end
-      @stroke.color = color_from_string(@stroke.color) if @stroke.color.class == String
+      @stroke.color = RLayout.color_from_string(@stroke.color) if @stroke.color.class == String
 
       case @shape
       when RLayout::RectStruct

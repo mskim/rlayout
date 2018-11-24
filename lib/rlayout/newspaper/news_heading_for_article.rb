@@ -9,7 +9,7 @@ module RLayout
     def initialize(options={})
       @grid_width       = options.fetch(:grid_width, 2)
       @heading_columns  = options[:column_count]
-      # options[:stroke_width]    = 1
+      options[:stroke_width]    = 1
       super
       @body_line_height = @parent.body_line_height
       set_heading_content(options)
@@ -49,9 +49,10 @@ module RLayout
     end
 
     def subject_head(options={})
-      puts "subject_head in article heading"
       atts = {}
-      if @heading_columns > 5
+      if @parent.top_story
+        atts[:style_name] = 'subject_head_main'
+      elsif @heading_columns > 5
         atts[:style_name] = 'subject_head_L'
       elsif @heading_columns > 3
         atts[:style_name] = 'subject_head_M'

@@ -122,6 +122,11 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_11_23
+	- TitleText 
+		space_before, space_after
+
+
 2018_11_16
 	- add ruby_pdf
 		- fill

@@ -7,7 +7,7 @@ class String
     (self.length).times do |i|
       # if the char is a unicode make the width same as font_size
       if self[i].ord <= 256
-        char_width_sum += width_table[self[i].ord]*font_size/1000.0 if width_table[self[i].ord]
+        char_width_sum += width_table[self[i].ord] if width_table[self[i].ord]
       elsif options[:korean_fixed_width]
         char_width_sum += options[:korean_fixed_width]
       else

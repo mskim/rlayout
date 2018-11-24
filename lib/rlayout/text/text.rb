@@ -130,8 +130,8 @@ module RLayout
         options                 = {}
         options[:string]        = token_string
         options[:layout_expand] = nil
-
         options[:y]             = 0
+        options[:para_style]    = @para_style
         if RUBY_ENGINE == 'rubymotion'
           options[:atts]        = NSUtils.ns_atts_from_style(@para_style)
           @space_width          = options[:atts][:space_width]

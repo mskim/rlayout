@@ -46,13 +46,13 @@ module RLayout
   # token fill_color is set by optins[:token_color] or it is set to clear
 
   class TextToken < Graphic
-    attr_accessor :att_string, :tracking, :scale
-    attr_accessor :string, :atts, :stroke, :has_text, :token_type, :style_name# number, empasis, special
+    attr_accessor :att_string, :tracking, :scale, :para_style
+    attr_accessor :string, :atts, :stroke, :has_text, :token_type # number, empasis, special
     # attr_accessor :width_array
     def initialize(options={})
       @token_type               = options[:token_type]
       @string                   = options[:string]
-      @style_name               = options[:style_name]
+      @para_style               = options[:para_style]
       options[:layout_expand]   = nil
       @has_text                 = true
       if RUBY_ENGINE == "rubymotion"
@@ -74,8 +74,9 @@ module RLayout
         end
       else
         # TODO fix get string with from Rfont
-        font_size = options[:font_size] || 10
-        size = RFont.string_size(@string, options[:font], font_size)
+        font_size = @para_style[:font_size] || 10
+        font      = @para_style[:font] || 'shinmoon'
+        size      = RFont.string_size(@string, font, font_size)
         options[:width]  = size[0]
         options[:height] = size[1]
       end

@@ -1,9 +1,10 @@
 module RLayout
   class RLineFragment < Container
     def draw_text(canvas)
+
       if @graphics.length > 0 && @para_style
         font_name = @para_style[:font] 
-        size = @para_style[:font_size] if @para_style
+        size = @para_style[:font_size]
         if canvas.font
           canvase_font_name = canvas.font.wrapped_font.font_name
           canvas_font_size = canvas.font_size
@@ -15,7 +16,10 @@ module RLayout
             font_wapper   = doc.fonts.add(font_file)
             canvas.font(font_wapper, size: size)
           elsif size != canvas_font_size
-              canvas.font(font_wapper, size: size)
+            # ################## bug here
+            # font size not changed 
+              puts "before #"
+              canvas.font(canvas.font, size: size)
           else
             font_foleder  = "/Users/Shared/SoftwareLab/font_width"
             font_file     = font_foleder + "/#{font_name}.ttf"

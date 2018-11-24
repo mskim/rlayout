@@ -3,7 +3,6 @@ module RLayout
     attr_reader :pdf_doc
 
     def save_pdf(output_path, options={})
-      binding.pry
       # Containernex
       if RUBY_ENGINE == 'rubymotion'
         @ns_view ||= GraphicViewMac.from_graphic(self)
@@ -21,10 +20,11 @@ module RLayout
           g.to_pdf(canvas)
         end
         @floats.each do |f|
-          f.to_pdf(canvas,)
+          f.to_pdf(canvas)
         end
         doc.write(output_path)
       end
+      self
     end
 
 
@@ -47,6 +47,9 @@ module RLayout
         draw_text(canvas)
       else
         @graphics.each do |g|
+          g.to_pdf(canvas)
+        end
+        @floats.each do |g|
           g.to_pdf(canvas)
         end
       end
