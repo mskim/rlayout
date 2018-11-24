@@ -1051,7 +1051,7 @@ TODO List
 	- make long document grid_based, based on body grid
 	- Paragraph
 		- first_line_indent
-		- head_indent, tail_indent
+		- left_indent, right_indent
 
 2016 5 14
 	- Paragraph

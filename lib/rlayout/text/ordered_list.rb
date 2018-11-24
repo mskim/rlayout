@@ -95,7 +95,7 @@ module RLayout
       else
         @first_line_indent  = @level*@indent
       end
-      @head_indent        = @first_line_indent + @indent
+      @left_indent        = @first_line_indent + @indent
       # puts the list style in @list_style
       # @list_style[:font]
       # @list_style[:font_size]
@@ -106,7 +106,7 @@ module RLayout
       # number attributea are passed in @para_stye[:list_style]
       # make first token into NumberToken and insert a TabToken into tokens
       # tab_token.width = list_text_indent - number_token.width
-      # and for the rest of the lines, head_indent is set same as list_text_indent
+      # and for the rest of the lines, left_indent is set same as list_text_indent
       
       # 
       @list_style = @para_style[:list_style].dup if @para_style[:list_style]
@@ -123,7 +123,7 @@ module RLayout
         @tokens.unshift(tab_token)
         @tokens.unshift(number_token)
         #TODO this is a quick fix, I should implement tob stop.
-        @para_style[:head_indent] = para_style[:first_line_indent] + text_indent +   @para_style[:space_width]*2
+        @para_style[:left_indent] = para_style[:first_line_indent] + text_indent +   @para_style[:space_width]*2
       end
 
 
@@ -272,7 +272,7 @@ module RLayout
       @level              = options[:level]
       @h_alignment        = "left"
       @first_line_indent  = @level*@indent
-      @head_indent        = @first_line_indent + @indent
+      @left_indent        = @first_line_indent + @indent
       self
     end
     

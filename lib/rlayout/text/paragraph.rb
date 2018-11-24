@@ -339,12 +339,12 @@ module RLayout
       @first_line_width = @column_width
       @text_line_width  = @column_width
       if @para_style[:h_alignment] == "left" || @para_style[:h_alignment] == "justified"
-        @first_line_width = @column_width - @para_style[:first_line_indent] - @para_style[:tail_indent]
-        @text_line_width  = @column_width - @para_style[:head_indent] - @para_style[:tail_indent]
+        @first_line_width = @column_width - @para_style[:first_line_indent] - @para_style[:right_indent]
+        @text_line_width  = @column_width - @para_style[:left_indent] - @para_style[:right_indent]
 
       else
-        @first_line_width = @column_width - @para_style[:head_indent] - @para_style[:tail_indent]
-        @text_line_width  = @column_width - @para_style[:head_indent] - @para_style[:tail_indent]
+        @first_line_width = @column_width - @para_style[:left_indent] - @para_style[:right_indent]
+        @text_line_width  = @column_width - @para_style[:left_indent] - @para_style[:right_indent]
       end
       @body_line_height = @text_column.body_line_height
       @line_y_offset    = 0
@@ -374,7 +374,7 @@ module RLayout
           @line_x     = @para_style[:first_line_indent]
           @line_width = @first_line_width
         else
-          @line_x     = @para_style[:head_indent]
+          @line_x     = @para_style[:left_indent]
           @line_width = @text_line_width
         end
         # make @line_rectangle for LineFragment
@@ -418,14 +418,14 @@ module RLayout
             @line_y_offset += @tallest_token_height
             next
           else
-            if @line_rectangle[0] > @para_style[:head_indent]
-              #TODO tail_indent
+            if @line_rectangle[0] > @para_style[:left_indent]
+              #TODO right_indent
               @line_x     = @line_rectangle[0]
             else
-              # @para_style[:head_indent] is right of line origin
-              # use head_indent, adjust width as @line_rectangle[2] - (@para_style[:head_indent] - @line_rectangle[0])
-              @line_x     = @para_style[:head_indent]
-              @line_width = @line_rectangle[2] - (@para_style[:head_indent] - @line_rectangle[0])
+              # @para_style[:left_indent] is right of line origin
+              # use left_indent, adjust width as @line_rectangle[2] - (@para_style[:left_indent] - @line_rectangle[0])
+              @line_x     = @para_style[:left_indent]
+              @line_width = @line_rectangle[2] - (@para_style[:left_indent] - @line_rectangle[0])
             end
           end
         end
@@ -557,8 +557,8 @@ module RLayout
       h[:h_alignment]             = "left"
       h[:v_alignment]             = "center"
       h[:first_line_indent]       = 20
-      h[:head_indent]             = 3
-      h[:tail_indent]             = 3
+      h[:left_indent]             = 3
+      h[:right_indent]             = 3
       h[:space_before]            = 0
       h[:space_after]             = 0
       h[:tab_stops]               = [['left', 20], ['left', 40], ['left', 60],['left', 80]]

@@ -14,7 +14,7 @@ module RLayout
     attr_accessor :total_token_width, :room, :overlap
     attr_accessor :text_area, :text_area_width, :space_width, :debug, :char_half_width_cushion
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
-    attr_accessor :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent, :tail_indent
+    attr_accessor :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent, :right_indent
     attr_accessor :token_union_rect, :token_union_style
     attr_accessor :font, :font_size, :para_style
 
@@ -145,17 +145,17 @@ module RLayout
       @text_alignment   = @para_style[:alignment] || "left"
       @v_offset         = @para_style[:v_offset] || 0
       @first_line_indent = @para_style[:first_line_indent] || para_style[:font_size] || para_style[:text_size]
-      @tail_indent      = @para_style[:tail_indent] || 0
-      @head_indent      = @para_style[:head_indent] || 0
+      @right_indent      = @para_style[:right_indent] || 0
+      @left_indent      = @para_style[:left_indent] || 0
       if @text_alignment == "left" || @text_alignment == "justified"
-        @first_line_width   = @width - @first_line_indent - @tail_indent
-        @middle_line_width  = @width - @head_indent - @tail_indent
+        @first_line_width   = @width - @first_line_indent - @right_indent
+        @middle_line_width  = @width - @left_indent - @right_indent
       else
         @first_line_width   = @width
         @middle_line_width  = @width
-        if para_style[:head_indent] && para_style[:tail_indent]
-          @first_line_width   = @width - para_style[:head_indent] - para_style[:tail_indent]
-          @middle_line_width  = @width - para_style[:head_indent] - para_style[:tail_indent]
+        if para_style[:left_indent] && para_style[:right_indent]
+          @first_line_width   = @width - para_style[:left_indent] - para_style[:right_indent]
+          @middle_line_width  = @width - para_style[:left_indent] - para_style[:right_indent]
         end
       end
 
@@ -164,7 +164,7 @@ module RLayout
         @starting_position  = @first_line_indent
         @text_area_width    = @first_line_width
       else
-        @starting_position  = para_style[:head_indent] || 0
+        @starting_position  = para_style[:left_indent] || 0
         @text_area_width    = @middle_line_width
       end
       @room  = @text_area_width

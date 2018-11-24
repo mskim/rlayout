@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../../spec_helper"
 
 describe 'save pdf pdf in Ruby mode rectangle' do
   before do
-    @g        = Graphic.new(x:0, y:0, width: 300, height: 300, fill_color:'CMYK=0,100,0,0', stroke_width: 5, stroke_sides:[0,1,0,1])
+    @g        = Graphic.new(x:0, y:0, width: 300, height: 300, fill_color:'CMYK=0,100,0,0', stroke_width: 5, stroke_color:'CMYK=0,0,100,0', stroke_sides:[0,1,0,1])
     @pdf_path = "/Users/Shared/rlayout/pdf_output/rectangle.pdf"
   end
 

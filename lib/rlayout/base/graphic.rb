@@ -247,13 +247,22 @@ module RLayout
       rect[0] + rect[2]
     end
 
+    def x_max
+      @x + @width
+    end
+
+    def x_mid
+      @x + @width/2
+    end
+
     def y_max
       @y + @height
     end
 
-    def x_max
-      @x + @width
+    def y_mid
+      @y + @height/2
     end
+
 
     def max_y(rect)
       rect[1] + rect[3]

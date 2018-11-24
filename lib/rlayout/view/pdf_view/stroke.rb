@@ -17,14 +17,12 @@ class Graphic
   end 
   
   def draw_line(canvas, starting_x, starting_y, ending_x, ending_y, thickness)
-    canvas.line_width(thickness).line(flipped[0] + starting_x, flipped[1] - starting_y, flipped[0] + ending_x, flipped[1] - ending_y).stroke
-    # canvas.line_width(thickness).line(flipped_start[0], flipped_start[1], flipped_end[0], flipped_end[1]).stroke
+    canvas.line_width(thickness).stroke_color(@stroke[:color]).line(flipped[0] + starting_x, flipped[1] + starting_y, flipped[0] + ending_x, flipped[1] + ending_y).stroke
   end
 
   def draw_sides(canvas)
     rect = @stroke_rect
     @stroke[:color]  = color_from_string(@stroke[:color])    if  @stroke[:color] =~ /^CMYK/
-    canvas.fill_color(@stroke[:color])
     if @stroke[:type]==nil
       @stroke[:type] = 0
     end
@@ -45,12 +43,10 @@ class Graphic
         # TODO open_right_inset_line
         @open_left_inset_line = @stroke[:sides].length >= 4 && @stroke[:sides].last == "open_left_inset_line"
         
-        # "draw left side"
         if @stroke[:sides][0] > 0
-          draw_line(canvas, [@x,@y] , [@x,y_max], @stroke[:thickness]*@stroke[:sides][0])
+          draw_line(canvas, @x, @y , @x, y_max, @stroke[:thickness]*@stroke[:sides][0])
         end
 
-        # "draw top"
         if @stroke[:sides][1] > 0
           if @open_left_inset_line
             draw_line(canvas, @x + @left_inset, @y , x_max, @y, @stroke[:thickness]*@stroke[:sides][1])
@@ -59,12 +55,10 @@ class Graphic
           end
         end
 
-        # "draw right"
         if @stroke[:sides][2] > 0
           draw_line(canvas, x_max, @y , x_max, y_max, @stroke[:thickness]*@stroke[:sides][2])
         end
 
-        # "draw bottom"
         if @stroke[:sides][3] > 0
           if @open_left_inset_line
             draw_line(canvas, @x + @left_inset,y_max, x_max, y_max, @stroke[:thickness]*@stroke[:sides][3])
@@ -85,7 +79,7 @@ class Graphic
         end
 
       else
-        canvas.line_width(@stroke[:thickness]).rectangle(flipped[0] + @left_margin, flipped_origin[1] + @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
+        canvas.line_width(@stroke[:thickness]).stroke_color(@stroke[:color]).rectangle(flipped[0] + @left_margin, flipped_origin[1] + @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
         # canvas.line_width(@stroke[:thickness]).rectangle(@x + @left_margin, @y + @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
       end
     else
