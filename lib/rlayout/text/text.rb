@@ -138,7 +138,6 @@ module RLayout
         end
         # options[:stroke_width] = 1
         RLayout::RTextToken.new(options)
-        # RLayout::TextToken.new(options)
       end
 
     end

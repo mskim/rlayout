@@ -53,7 +53,6 @@ module RLayout
         token_options = {}
         token_options[:string] = token_string
         token_options[:para_style] = @para_style
-        # token_options[:style_name] = @style_name
         @tokens << RLayout::RTextToken.new(token_options)
       end
     end
@@ -108,11 +107,14 @@ module RLayout
         if token_group =~EMPASIS_STRONG
           token_group.gsub!("**", "")
           # get font and size
+          current_style = RLayout::StyleService.shared_style_service.current_style
+          style_hash = current_style['body_gothic'] #'strong_emphasis'
+          @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
-            emphasis_style[:style_name] = 'body_gothic'
+            emphasis_style[:para_style] = @para_style
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
@@ -140,11 +142,14 @@ module RLayout
             token_group.strip!
             token_group += " ="
           end
+          current_style = RLayout::StyleService.shared_style_service.current_style
+          style_hash = current_style['body_gothic'] #'diamond_emphasis'
+          @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
-            emphasis_style[:style_name] = 'body_gothic' #'diamond_emphasis'
+            emphasis_style[:para_style] = @para_style
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else

@@ -4,7 +4,9 @@ describe "FORBIDDEN_FIRST_CHARS_AT_END test" do
   before do
     options                 = {}
     options[:string]        = 'Th)'
-    options[:style_name]     = 'body'
+    @current_style          = RLayout::StyleService.shared_style_service.current_style
+    @para_style             = @current_style['body']
+    options[:para_style]    = @para_style
     @r_token = RTextToken.new(options)
   end
 
@@ -27,8 +29,9 @@ describe "FORBIDDEN_FIRST_CHARS at firtt char of second string" do
   before do
     options                 = {}
     options[:string]        = 'Thi)s'
-    options[:style_name]     = 'body'
-    @r_token = RTextToken.new(options)
+    @current_style          = RLayout::StyleService.shared_style_service.current_style
+    @para_style             = @current_style['body']
+    options[:para_style]    = @para_style    @r_token = RTextToken.new(options)
   end
 
   it 'should create RTextToken' do
@@ -51,16 +54,13 @@ describe "FORBIDDEN_LAST_CHARS at front_string[-2]" do
   before do
     options                 = {}
     options[:string]        = 'Th(is'
-    options[:style_name]     = 'body'
-    @r_token = RTextToken.new(options)
+    @current_style          = RLayout::StyleService.shared_style_service.current_style
+    @para_style             = @current_style['body']
+    options[:para_style]    = @para_style    @r_token = RTextToken.new(options)
   end
 
   it 'should create RTextToken' do
     @r_token.class.must_equal RTextToken
-  end
-
-  it 'should have style_name' do
-    @r_token.style_name.must_equal 'body'
   end
 
   it 'should have hyphenate token' do

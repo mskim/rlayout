@@ -1,7 +1,7 @@
 module RLayout
   class CaptionParagraph
     attr_accessor :caption_title, :caption, :source
-    attr_accessor :tokens, :source_tokens, :current_style
+    attr_accessor :tokens, :source_tokens, :current_style, :para_style
     attr_accessor :space_width
     def initialize(options={})
       @caption_title  = options[:caption_title]
@@ -22,18 +22,18 @@ module RLayout
 
     def make_caption_title_tokens
       @caption_title_style  = @current_style['caption_title']
+      @para_style           = Hash[@caption_title_style.map{ |k, v| [k.to_sym, v] }]
       @tokens += @caption_title.split(" ").collect do |token_string|
         options = {}
-        # options[:style_name]  = 'caption_title'
-        options[:para_style]  = @caption_title_style
+        options[:para_style]  = @para_style
         options[:string]      = token_string + " "
         RLayout::RTextToken.new(options)
       end
-
     end
 
     def make_caption_tokens
       @caption_style  = @current_style['caption']
+      @para_style = Hash[@caption_style.map{ |k, v| [k.to_sym, v] }]
       @space_width  = @caption_title_style['space_width']
       if @space_width.nil?
         font_size   = @caption_style['font_size']
@@ -42,20 +42,19 @@ module RLayout
       end
       @tokens += @caption.split(" ").collect do |token_string|
         options = {}
-        options[:string]  = token_string
-        options[:para_style]  = @caption_style
-        # options[:style_name]  = 'caption'
+        options[:string]      = token_string
+        options[:para_style]  = @para_style
         RLayout::RTextToken.new(options)
       end
     end
 
     def make_source_tokens
       @source_style  = @current_style['source']
+      @para_style = Hash[@source_style.map{ |k, v| [k.to_sym, v] }]
       @source_tokens += @source.split(" ").collect do |token_string|
         options = {}
         options[:string]      = token_string
-        options[:para_style]  = @source_style
-        # options[:style_name]  = 'source'
+        options[:para_style]  = @para_style
         RLayout::RTextToken.new(options)
       end
     end

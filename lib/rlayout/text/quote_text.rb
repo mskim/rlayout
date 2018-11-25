@@ -76,9 +76,7 @@ module RLayout
         options = {}
         options[:string]      = token_string
         options[:para_style]  = @para_style
-        # options[:style_name]  = @style_name
         options[:y]       = 0
-        # options[:stroke_width] = 1
         RLayout::RTextToken.new(options)
       end
       #code
