@@ -24,7 +24,8 @@ module RLayout
       @caption_title_style  = @current_style['caption_title']
       @tokens += @caption_title.split(" ").collect do |token_string|
         options = {}
-        options[:style_name]  = 'caption_title'
+        # options[:style_name]  = 'caption_title'
+        options[:para_style]  = @caption_title_style
         options[:string]      = token_string + " "
         RLayout::RTextToken.new(options)
       end
@@ -42,7 +43,8 @@ module RLayout
       @tokens += @caption.split(" ").collect do |token_string|
         options = {}
         options[:string]  = token_string
-        options[:style_name]  = 'caption'
+        options[:para_style]  = @caption_style
+        # options[:style_name]  = 'caption'
         RLayout::RTextToken.new(options)
       end
     end
@@ -51,8 +53,9 @@ module RLayout
       @source_style  = @current_style['source']
       @source_tokens += @source.split(" ").collect do |token_string|
         options = {}
-        options[:string]  = token_string
-        options[:style_name]  = 'source'
+        options[:string]      = token_string
+        options[:para_style]  = @source_style
+        # options[:style_name]  = 'source'
         RLayout::RTextToken.new(options)
       end
     end

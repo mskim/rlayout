@@ -137,7 +137,8 @@ module RLayout
           @space_width          = options[:atts][:space_width]
         end
         # options[:stroke_width] = 1
-        RLayout::TextToken.new(options)
+        RLayout::RTextToken.new(options)
+        # RLayout::TextToken.new(options)
       end
 
     end
@@ -192,7 +193,8 @@ module RLayout
             @current_line.reduce_to_fit(force_fit: @force_fit_title)
             return
           else
-            if result.class == TextToken
+            # if result.class == TextToken
+            if result.class == RTextToken
               token = result
             end
             @current_line.align_tokens

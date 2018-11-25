@@ -61,7 +61,6 @@ module RLayout
         else
           @atts       = default_atts
         end
-
         if options[:att_string]
           @attrs        = options[:atts] #TODO?
           @att_string   = options[:att_string]
@@ -91,6 +90,9 @@ module RLayout
         if options[:text_line_spacing] && options[:text_line_spacing].class != String
           @height += options[:text_line_spacing]
         end
+      else
+      #TODO
+      
       end
       self
     end

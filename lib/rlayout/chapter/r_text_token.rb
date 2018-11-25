@@ -10,11 +10,15 @@ module RLayout
       super
       @has_text         = true
       @string           = options[:string]
-      @style_name       = options[:style_name]
-      @style_name       = 'body' unless @style_name
+      if options[:style_name]
+        @style_name       = options[:style_name]
+        @style            = RLayout::StyleService.shared_style_service
+        @char_half_width_cushion = @style.space_width(@style_name, @adjust_size)/2
+      elsif options[:para_style]
+        @para_style = options[:para_style]
+        @char_half_width_cushion  = @para_style[:font_size]/2
+      end
       @adjust_size      = options[:adjust_size] if options[:adjust_size]
-      @style            = RLayout::StyleService.shared_style_service
-      @char_half_width_cushion = @style.space_width(@style_name, @adjust_size)/2
       @width            = width_of_string(@string)
       @height_of_token  = height_of_token
       if options[:text_line_spacing] && options[:text_line_spacing].class != String
@@ -30,13 +34,28 @@ module RLayout
     def width_of_string(string)
       return 0 if string.nil?
       return 0 if string == ""
-      style = @style || RLayout::StyleService.shared_style_service
-      style.width_of_string(@style_name, string, @adjust_size)
+      if @style_name
+        style = @style || RLayout::StyleService.shared_style_service
+        style.width_of_string(@style_name, string, @adjust_size)
+      else
+        font_size = @para_style[:font_size] || 10
+        font      = @para_style[:font] || 'shinmoon'
+        size      = RFont.string_size(@string, font, font_size)
+        size[0]
+      end
     end
 
     def height_of_token
-      style = @style || RLayout::StyleService.shared_style_service
-      style.height_of_token(@style_name, @adjust_size)
+      if @style_name
+        style = @style || RLayout::StyleService.shared_style_service
+        style.height_of_token(@style_name, @adjust_size)
+      else
+        font_size = @para_style[:font_size] || 10
+        font      = @para_style[:font] || 'shinmoon'
+        size      = RFont.string_size(@string, font, font_size)
+        size[1]
+      end
+
     end
 
     def tracking_count
@@ -138,7 +157,6 @@ module RLayout
         second_half_width = width_of_string(hyphenated_result) + @left_margin + @right_margin
         second_half = RTextToken.new(string: hyphenated_result, style_name: @style_name, width: second_half_width, height: @height)
         return second_half
-        # return TextToken.new(att_string: result, atts: @atts)
       else
         return false
       end
@@ -146,16 +164,20 @@ module RLayout
     end
 
     def draw_text
-      style = RLayout::StyleService.shared_style_service
-      style = style.current_style[@style_name]
-      style = Hash[style.map{ |k, v| [k.to_sym, v] }]
+      if @style_name
+        style = RLayout::StyleService.shared_style_service
+        style = style.current_style[@style_name]
+        style = Hash[style.map{ |k, v| [k.to_sym, v] }]
+      else
+        style = @para_style
+      end
       style[:font_size] += @adjust_size if @adjust_size
+
       if RUBY_ENGINE == "rubymotion"
         atts = NSUtils.ns_atts_from_style(style)
         att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
         # att_string.drawAtPoint(NSMakePoint(@left_margin,0))
         att_string.drawAtPoint(NSMakePoint(@left_margin,-3.0))
-
       else
         #TODO
       #code

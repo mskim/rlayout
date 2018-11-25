@@ -18,7 +18,6 @@ module RLayout
           elsif size != canvas_font_size
             # ################## bug here
             # font size not changed 
-              puts "before #"
               canvas.font(canvas.font, size: size)
           else
             font_foleder  = "/Users/Shared/SoftwareLab/font_width"
@@ -40,6 +39,7 @@ module RLayout
         f = flipped_origin
         x = flipped_origin[0]
         y = f[1] + 3
+        #TODO
         @graphics.each do |token|
           canvas.text(token.string, at: [x + token.x, y])
         end

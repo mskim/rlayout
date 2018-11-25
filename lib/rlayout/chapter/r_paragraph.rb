@@ -52,7 +52,8 @@ module RLayout
         next unless token_string
         token_options = {}
         token_options[:string] = token_string
-        token_options[:style_name] = @style_name
+        token_options[:para_style] = @para_style
+        # token_options[:style_name] = @style_name
         @tokens << RLayout::RTextToken.new(token_options)
       end
     end

@@ -79,7 +79,7 @@ module RLayout
       @tokens += string.split(" ").collect do |token_string|
         options = {}
         options[:string]      = token_string
-        options[:style_name]  = @style_name
+        # options[:style_name]  = @style_name
         options[:para_style]  = @para_style
         options[:y]           = 0
         options[:adjust_size] = @adjust_size if @adjust_size
