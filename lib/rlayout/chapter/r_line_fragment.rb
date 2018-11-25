@@ -14,7 +14,7 @@ module RLayout
     attr_accessor :total_token_width, :room, :overlap
     attr_accessor :text_area, :text_area_width, :space_width, :debug, :char_half_width_cushion
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
-    attr_accessor :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent, :right_indent
+    attr_accessor :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent
     attr_accessor :token_union_rect, :token_union_style
     attr_accessor :font, :font_size, :para_style
 
