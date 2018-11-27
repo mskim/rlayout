@@ -99,8 +99,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/view/svg_view/document_view_svg'
   require File.dirname(__FILE__) + '/rlayout/view/svg_view/paragraph_view_svg'
   require File.dirname(__FILE__) + "/rlayout/view/svg_view/graphic_view_svg"
-
-  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/line_fragment_view_pdf'
+  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_text_token_view_pdf'
+  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_line_fragment_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/document_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/page_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/stroke'

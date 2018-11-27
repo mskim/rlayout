@@ -1,8 +1,8 @@
-module RLayout
-  class RLineFragment < Container
-    def draw_text(canvas)
 
-      if @graphics.length > 0 && @para_style
+module RLayout
+  class RTextToken < Graphic
+    def draw_text_in_ruby(canvas)
+      if @string.length > 0 && @para_style
         font_name = @para_style[:font] 
         size = @para_style[:font_size]
         if canvas.font
@@ -37,12 +37,10 @@ module RLayout
           canvas.font(font_wapper, size: size)
         end
         f = flipped_origin
-        x = flipped_origin[0]
-        y = f[1] + 3
+        x_offset = f[0]
+        y_offset = f[1] + 3
         #TODO
-        @graphics.each do |token|
-          canvas.text(token.string, at: [x + token.x, y])
-        end
+        canvas.text(@string, at: [x_offset, y_offset + @y])
       end
     end
   end

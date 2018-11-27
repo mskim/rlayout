@@ -1,9 +1,18 @@
 module RLayout
   class Container < Graphic
     attr_reader :pdf_doc
+    attr_accessor :flipped 
+    def flipped_origin
+      if @parent
+        p_origin = @parent.flipped_origin
+        [p_origin[0] + @left_margin + @x, p_origin[1] + @parent.height - @height - @top_margin - @top_inset - @y]
+      else
+        [@left_margin + @x, - @top_margin - @top_inset - @y]
+      end
+    end
 
     def save_pdf(output_path, options={})
-      # Containernex
+      
       if RUBY_ENGINE == 'rubymotion'
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(output_path, options)
@@ -42,17 +51,17 @@ module RLayout
     # [:encode, :subset?, :wrapped_font, :dict, :font_type, :scaling_factor, :glyph, :decode_utf8]
 
     def to_pdf(canvas)
-      case self
-      when  RLayout::RLineFragment 
-        draw_text(canvas)
-      else
+      # case self
+      # when  RLayout::RLineFragment 
+      #   draw_text(canvas)
+      # else
         @graphics.each do |g|
           g.to_pdf(canvas)
         end
         @floats.each do |g|
           g.to_pdf(canvas)
         end
-      end
+      # end
     end
   end
 end

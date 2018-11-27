@@ -17,7 +17,14 @@ module RLayout
       if !@fill.color
         @fill.color = 'CMYK=0,0,0,0 '
       end
-      @fill.color = RLayout.color_from_string(@fill.color) if @fill.color.class == String
+      if @fill.color.class == String
+        if @fill.color == 'clear'
+          #TODO set opacity
+          # @fill.color = [0.0, 0.0, 0.0, 0.0]
+        else
+          @fill.color = RLayout.color_from_string(@fill.color) 
+        end
+      end
       if !@stroke.color
         @stroke.color = 'CMYK=0,0,0,0 '
       end
@@ -25,8 +32,10 @@ module RLayout
 
       case @shape
       when RLayout::RectStruct
-        canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
-        # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+        unless @fill.color == 'clear'
+          canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+        end
+          # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
         draw_stroke(canvas)
       when RoundRectStruct
       when RoundRectStruct
@@ -38,10 +47,15 @@ module RLayout
       when PathStruct
       when LineStruct
       end
-
-
       if @image_path
         canvas.image(@image_path, at: flipped_origin, width: @width, height: @height)
+      end
+      if @has_text
+        if RUBY_ENGINE == "ruby"
+          draw_text_in_ruby(canvas) 
+        elsif RUBY_ENGINE == "rubymotion"
+          draw_text
+        end
       end
     end
 

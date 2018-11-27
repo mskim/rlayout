@@ -161,15 +161,10 @@ module RLayout
         # att_string.drawAtPoint(NSMakePoint(@left_margin,0))
         att_string.drawAtPoint(NSMakePoint(@left_margin,-3.0))
       else
-        #TODO
-      #code
+        # draw_text(canvas) is called when RUBY_ENGINE == 'ruby'
       end
     end
-
-
-
   end
-
 
   class VTextToken < RTextToken
 

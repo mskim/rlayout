@@ -105,7 +105,7 @@ module RLayout
         if (end_of_tokens + @space_width) < source_starting_x
           x = source_starting_x
           @source_tokens.each do |source_token|
-            source_token.parent = self
+            source_token.parent = @current_line
             source_token.x = x
             token_list << source_token
             x              += source_token.width + @space_width
@@ -126,7 +126,6 @@ module RLayout
           end
         end
       end
-
     end
 
   end
