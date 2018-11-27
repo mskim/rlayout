@@ -22,7 +22,7 @@ module RLayout
     attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :quote_box_size, :personal_image, :news_image
     attr_accessor :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
-    attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type
+    attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
 
     def initialize(options={}, &block)
       super
@@ -46,6 +46,7 @@ module RLayout
         @stroke.sides = [0,0,0,1]
         @stroke.thickness = 0.3
       end
+      @subtitle_type = options[:subtitle_type] || '1단'
       @current_column_index   = 0
       @heading_columns        = @column_count
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
@@ -264,14 +265,15 @@ module RLayout
         save_article_info
       end
     end
-
+""
     # make heading as float
     def make_article_heading(options={})
+      puts __method__
       @is_front_page            = options['is_front_page'] || options[:is_front_page]
       @top_story                = options['top_story'] || options[:top_story]
       @top_position             = options['top_position'] || options[:top_position]
-      @subtitle_in_head         = options['subtitle_in_head'] || options[:subtitle_in_head]
-
+      @subtitle_in_head         = false
+      @subtitle_in_head         = true if @subtitle_type == '제목밑 가로'
       h_options = options.dup
       h_options[:is_float]      = true
       h_options[:parent]        = self
@@ -279,6 +281,7 @@ module RLayout
       h_options[:column_count]  = @column_count
       h_options[:x]             = @starting_column_x
       h_options[:y]             = 0
+      h_options[:subtitle_type] = @subtitle_type
 
       if @heading_columns       != @column_count
         h_options[:width]       = @heading_columns+@column_width
@@ -376,7 +379,8 @@ module RLayout
         float_boxed_subtitle(heading_hash)
       end
       # don't create another subtitle, if it is top_story, It is created by heading
-      if !@top_story && heading_hash['subtitle'] && heading_hash['subtitle'] != ""
+      # if !@top_story && heading_hash['subtitle'] && heading_hash['subtitle'] != ""
+      if @subtitle_type != '제목밑 가로'
         float_subtitle(heading_hash['subtitle'])
       end
 
@@ -423,7 +427,6 @@ module RLayout
       end
       # have one extra line after the box
       options[:bottom_margin]  = @body_line_height
-      puts "options[:style_name]:#{options[:style_name]}"
       TitleText.new(options)
     end
 
@@ -437,9 +440,11 @@ module RLayout
       options[:text_string]   = subtitle_string
       options[:text_fit_type] = 'adjust_box_height'
       options[:x]             = @starting_column_x
+      options[:x]             += @column_width + @gutter if @subtitle_type == "2단-2단시작"
       options[:y]             = 0
       options[:top_inset]     = 0 if options[:space_before_in_lines] == 0
       options[:width]         = @column_width
+      options[:width]         += @column_width + @gutter if @subtitle_type == "2단" || @subtitle_type == "2단-2단시작"
       options[:layout_expand] = nil
       options[:is_float]      = true
       options[:parent]        = self

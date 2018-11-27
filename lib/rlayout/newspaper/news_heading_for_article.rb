@@ -33,9 +33,10 @@ module RLayout
           @title_object = title(options)
         end
         @height_in_lines  +=@title_object.height_in_lines    unless @title_object.nil?
+        y += @height_in_lines*@body_line_height
       end
-
-      if options['subtitle'] && (@parent.top_story || @parent.subtitle_in_head)
+      # if options['subtitle'] && (@parent.top_story && @parent.subtitle_in_head)
+      if options['subtitle'] && @parent.subtitle_type == '제목밑 가로'
         if @parent.top_story
           @subtitle_object = top_subtitle(options)
         else
@@ -122,11 +123,8 @@ module RLayout
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts[:parent]               = self
-      # atts[:stroke_width]         = 1
-      # atts[:layout_length_in_lines] = true
       atts[:single_line_title]    = true
-      options.delete(:parent)
-      atts.merge!(options)
+      # atts.merge!(options)
       @title_object               = TitleText.new(atts)
     end
 
@@ -161,7 +159,6 @@ module RLayout
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts[:parent]                 = self
       @subtitle_object              = TitleText.new(atts)
-      puts "@subtitle_object.graphics.length:#{@subtitle_object.graphics.lengt}"
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object
