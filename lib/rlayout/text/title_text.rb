@@ -17,6 +17,8 @@ module RLayout
       end
       options[:fill_color]    = options.fetch(:fill_color, 'clear')
       # options[:stroke_width]  = 1
+      # options[:stroke_color]  = "CMYK=0,0,0,100"
+      # options[:fill_color]    = "CMYK=0,0,100,0"
       super
       @body_line_height       = options[:body_line_height] || 14
       @style_name             = options[:style_name]
@@ -35,7 +37,6 @@ module RLayout
         if @adjust_size && @adjust_size != 0
           @space_width = @space_width*(@para_style[:font_size] + @adjust_size)/@para_style[:font_size]
         end
-
       elsif options[:@para_style]
         @para_style             = options[:@para_style]
       else
@@ -82,6 +83,7 @@ module RLayout
         options[:para_style]  = @para_style
         options[:y]           = 0
         options[:adjust_size] = @adjust_size if @adjust_size
+        options[:height]      = para_style[:font_size]
         RLayout::RTextToken.new(options)
       end
       #code

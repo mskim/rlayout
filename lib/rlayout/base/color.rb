@@ -167,7 +167,7 @@ module RLayout
     else
       name = name.capitalize
       color = COLOR_LIST[name]
-      return [0,0,0] unless color
+      return [0,0,0,0] unless color
       color
     end
   end

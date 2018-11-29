@@ -17,7 +17,7 @@ class Graphic
   end 
   
   def draw_line(canvas, starting_x, starting_y, ending_x, ending_y, thickness)
-    canvas.line_width(thickness).stroke_color(@stroke[:color]).line(flipped[0] + starting_x, flipped[1] + starting_y, flipped[0] + ending_x, flipped[1] + ending_y).stroke
+    canvas.line_width(thickness).stroke_color(@stroke[:color]).line(starting_x, starting_y , ending_x, ending_y).stroke
   end
 
   def draw_sides(canvas)
@@ -28,7 +28,7 @@ class Graphic
     end
 
     if @graphic.class == RLayout::Line
-      draw_line(canvas, @x, flip_y(@y), x_max, y_max, @stroke[:thickness])
+      draw_line(canvas, @x, flip_y(@y), x_max, @height, @stroke[:thickness])
       return
     end
 
@@ -44,38 +44,38 @@ class Graphic
         @open_left_inset_line = @stroke[:sides].length >= 4 && @stroke[:sides].last == "open_left_inset_line"
         
         if @stroke[:sides][0] > 0
-          draw_line(canvas, @x, @y , @x, y_max, @stroke[:thickness]*@stroke[:sides][0])
+          draw_line(canvas, flipped[0] + @left_margin, flipped_origin[1] + @top_margin + @height , flipped[0] - @left_margin - @right_margin, flipped_origin[1] + @top_margin, @stroke[:thickness]*@stroke[:sides][0])
         end
 
         if @stroke[:sides][1] > 0
           if @open_left_inset_line
-            draw_line(canvas, @x + @left_inset, @y , x_max, @y, @stroke[:thickness]*@stroke[:sides][1])
+            draw_line(canvas, flipped[0] + @left_margin + @left_inset, @y , x_max, @y, @stroke[:thickness]*@stroke[:sides][1])
           else
-            draw_line(canvas, @x, @y , x_max, @y, @stroke[:thickness]*@stroke[:sides][1])
+            draw_line(canvas, flipped[0] + @left_margin, flipped_origin[1] + @top_margin + @height, flipped[0] + @left_margin + @width, flipped_origin[1] + @top_margin + @height, @stroke[:thickness]*@stroke[:sides][1])
           end
         end
 
         if @stroke[:sides][2] > 0
-          draw_line(canvas, x_max, @y , x_max, y_max, @stroke[:thickness]*@stroke[:sides][2])
+          draw_line(canvas, flipped[0] + @left_margin + @width, flipped_origin[1] + @top_margin + @height , flipped[0] - @left_margin - @right_margin + @width, flipped_origin[1] + @top_margin, @stroke[:thickness]*@stroke[:sides][2])
         end
 
         if @stroke[:sides][3] > 0
           if @open_left_inset_line
-            draw_line(canvas, @x + @left_inset,y_max, x_max, y_max, @stroke[:thickness]*@stroke[:sides][3])
+            draw_line(canvas, @x + @left_inset, flipped_origin[1] + @top_margin + @height, @width, flipped_origin[1] + @top_margin + @height, @stroke[:thickness]*@stroke[:sides][3])
           else
-            draw_line(canvas, @x, y_max , x_max, y_max, @stroke[:thickness]*@stroke[:sides][3])
+            draw_line(canvas, flipped[0] + @left_margin, flipped_origin[1] + @top_margin , flipped[0] + @left_margin + @width, flipped_origin[1] + @top_margin, @stroke[:thickness]*@stroke[:sides][3])
           end
         end
 
         # if [1,1,1,1,1,1] drawing x mark
         # draw top-left to bottom-right
         if @stroke[:sides][4] && @stroke[:sides][4].class != String && @stroke[:sides][4] > 0
-          draw_line(canvas, @x, @y, x_max, y_max, @stroke[:thickness]*@stroke[:sides][4])
+          draw_line(canvas, @x, @y, x_max, @height, @stroke[:thickness]*@stroke[:sides][4])
         end
 
         # draw bottom-left to top-right
         if @stroke[:sides][5] &&  @stroke[:sides][5] > 0
-          draw_line(canvas, x_max, @y, @x, y_max, @stroke[:thickness]*@stroke[:sides][5])
+          draw_line(canvas, x_max, @y, @x, @height, @stroke[:thickness]*@stroke[:sides][5])
         end
 
       else

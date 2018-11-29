@@ -27,6 +27,7 @@ module RLayout
         options = {}
         options[:para_style]  = @para_style
         options[:string]      = token_string + " "
+        options[:height]      = para_style[:font_size]
         RLayout::RTextToken.new(options)
       end
     end
@@ -44,6 +45,7 @@ module RLayout
         options = {}
         options[:string]      = token_string
         options[:para_style]  = @para_style
+        options[:height]      = para_style[:font_size]
         RLayout::RTextToken.new(options)
       end
     end
@@ -55,6 +57,7 @@ module RLayout
         options = {}
         options[:string]      = token_string
         options[:para_style]  = @para_style
+        options[:height]      = para_style[:font_size]
         RLayout::RTextToken.new(options)
       end
     end

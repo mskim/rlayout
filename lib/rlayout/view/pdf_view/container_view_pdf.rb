@@ -2,14 +2,6 @@ module RLayout
   class Container < Graphic
     attr_reader :pdf_doc
     attr_accessor :flipped 
-    def flipped_origin
-      if @parent
-        p_origin = @parent.flipped_origin
-        [p_origin[0] + @left_margin + @x, p_origin[1] + @parent.height - @height - @top_margin - @top_inset - @y]
-      else
-        [@left_margin + @x, - @top_margin - @top_inset - @y]
-      end
-    end
 
     def save_pdf(output_path, options={})
       
@@ -29,6 +21,9 @@ module RLayout
           g.to_pdf(canvas)
         end
         @floats.each do |f|
+          # if f.class == RLayout::TitleText
+          #   binding.pry
+          # end 
           f.to_pdf(canvas)
         end
         doc.write(output_path)
@@ -51,16 +46,75 @@ module RLayout
     # [:encode, :subset?, :wrapped_font, :dict, :font_type, :scaling_factor, :glyph, :decode_utf8]
 
     def to_pdf(canvas)
+      # @flipped = flipped_origin
+
+      # if !@fill.color
+      #   @fill.color = 'CMYK=0,0,0,0 '
+      # end
+      # if @fill.color.class == String
+      #   if @fill.color == 'clear'
+      #     #TODO set opacity
+      #     # @fill.color = [0.0, 0.0, 0.0, 0.0]
+      #   else
+      #     @fill.color = RLayout.color_from_string(@fill.color) 
+      #   end
+      # end
+      # if !@stroke.color
+      #   @stroke.color = 'CMYK=0,0,0,0 '
+      # end
+      # @stroke.color = RLayout.color_from_string(@stroke.color) if @stroke.color.class == String
+      # @stroke.color = RLayout.color_from_string(@stroke.color) if @stroke.color.class == String
+
+      # case @shape
+      # when RLayout::RectStruct
+      #   unless @fill.color == 'clear'
+      #     canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+      #   end
+      #     # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+      #   draw_stroke(canvas)
+      # when RoundRectStruct
+      # when RoundRectStruct
+      # when RLayout::CircleStruct
+      #   @flipped = flipped_origin
+      #   circle = canvas.fill_color(@fill.color).stroke_color(@stroke.color).line_width(@stroke.thickness).circle(flipped[0] + @shape.r, flipped[1] + @shape.r, @shape.r).fill_stroke
+      # when EllipseStruct
+      # when PoligonStruct
+      # when PathStruct
+      # when LineStruct
+      # end
+
       # case self
       # when  RLayout::RLineFragment 
       #   draw_text(canvas)
       # else
-        @graphics.each do |g|
-          g.to_pdf(canvas)
-        end
-        @floats.each do |g|
-          g.to_pdf(canvas)
-        end
+
+      # if self.class == RLayout::TitleText && @parent.class == RLayout::NewsArticleBox
+      #   @flipped = flipped_origin
+      #   puts "@parent.class:#{@parent.class}"
+      #   # puts_frame
+      #   @stroke.color = 'CMYK=0,0,0,100'
+      #   @fill.color   = 'CMYK=0,0,100,0'
+      #   @stroke.color = RLayout.color_from_string(@stroke.color) if @stroke.color.class == String
+      #   @fill.color = RLayout.color_from_string(@fill.color) if @fill.color.class == String
+      #   # canvas.stroke_color(@stroke.color).fill_color(@fill.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill_stroke
+      # end
+
+      # if @parent.class == RLayout::TitleText && @parent.class == RLayout::NewsArticleBox
+      #   binding.pry
+      #   @flipped = flipped_origin
+      #   puts "@parent.class:#{@parent.class}"
+      #   # puts_frame
+      #   @stroke.color = 'CMYK=0,0,0,100'
+      #   @stroke.color = RLayout.color_from_string(@stroke.color) if @stroke.color.class == String
+      #   # canvas.stroke_color(@stroke.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
+      # end
+
+      @graphics.each do |g|
+        g.to_pdf(canvas)
+      end
+      @floats.each do |g|
+        g.to_pdf(canvas)
+      end
       # end
     end
   end

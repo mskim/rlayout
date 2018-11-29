@@ -107,7 +107,7 @@ module RLayout
       @expand                 = options[:expand] if options[:expand]
       @before_title           = options.fetch(:before_title, false)
       super
-      frame_rect              = @parent.grid_frame_to_image_rect(options[:grid_frame])
+      frame_rect              = @parent.grid_frame_to_image_rect(options[:grid_frame], bottom_position: bottom_position?)
       @x                      = frame_rect[0]
       @y                      = frame_rect[1]
       @width                  = frame_rect[2]
@@ -170,8 +170,13 @@ module RLayout
     end
 
     def top_position?
-      @image_position =~/top/
+      @image_position.include?('top')
       # @position == 1 || @position == 2 || @position == 3
+    end
+
+    def bottom_position?
+      @image_position.include?('bottom')
+      # @position == 7 || @position == 8|| @position == 9
     end
 
     def before_title?

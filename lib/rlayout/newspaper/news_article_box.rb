@@ -268,7 +268,6 @@ module RLayout
 ""
     # make heading as float
     def make_article_heading(options={})
-      puts __method__
       @is_front_page            = options['is_front_page'] || options[:is_front_page]
       @top_story                = options['top_story'] || options[:top_story]
       @top_position             = options['top_position'] || options[:top_position]
@@ -381,7 +380,7 @@ module RLayout
       # don't create another subtitle, if it is top_story, It is created by heading
       # if !@top_story && heading_hash['subtitle'] && heading_hash['subtitle'] != ""
       if @subtitle_type != '제목밑 가로'
-        float_subtitle(heading_hash['subtitle'])
+        float_subtitle(heading_hash['subtitle']) if heading_hash['subtitle'] && heading_hash['subtitle'] != ""
       end
 
       if heading_hash['personal_image']
@@ -448,6 +447,9 @@ module RLayout
       options[:layout_expand] = nil
       options[:is_float]      = true
       options[:parent]        = self
+      # options[:stroke_width]  = 1
+      options[:stroke_color]  = "CMYK=0,0,0,100"
+
       TitleText.new(options)
     end
 
@@ -552,7 +554,7 @@ module RLayout
       @news_image         = NewsColumnImage.new(options)
     end
 
-    def grid_frame_to_image_rect(grid_frame)
+    def grid_frame_to_image_rect(grid_frame, options={})
       return [0,0,100,100]    unless @graphics
       return [0,0,100,100]    if grid_frame.nil?
       return [0,0,100,100]    if grid_frame == ""
@@ -567,16 +569,26 @@ module RLayout
         frame_x           = @graphics[grid_frame[0]].x
       end
       frame_y             = @grid_size[1]*grid_frame[1]
-      index = (grid_frame[0] + grid_frame[2] - 1).to_i
-      if @graphics[index]
-        frame_width         = @graphics[index].x_max - frame_x
+      # if @pushed_line_count && @pushed_line_count != 0
+      #   puts frame_y
+      #   puts "@pushed_line_count:#{@pushed_line_count}"
+      #   frame_y += @pushed_line_count*@body_line_height
+      # end
+
+      column_index = (grid_frame[0] + grid_frame[2] - 1).to_i
+      if @graphics[column_index]
+        frame_width         = @graphics[column_index].x_max - frame_x
       else
         frame_width         = @graphics[0].x_max - frame_x
       end
       frame_height          = @grid_size[1]*grid_frame[3]
       # if image is on bottom, move up by @article_bottom_spaces_in_lines*@body_line_height
-      if (grid_frame[1] + grid_frame[3]) == @row_count
-        frame_y            = @height - frame_height - @article_bottom_spaces_in_lines*@body_line_height
+      # height_in_lines = @row_count*7
+      # height_in_lines += @extended_line_count if  @extended_line_count
+      # height_in_lines -= @pushed_line_count if  @pushed_line_count
+      # bottom   = (grid_frame[1] + grid_frame[3])*7
+      if options[:bottom_position] == true
+        frame_y  = @height - frame_height - @article_bottom_spaces_in_lines*@body_line_height
       end
       [frame_x, frame_y, frame_width, frame_height]
     end

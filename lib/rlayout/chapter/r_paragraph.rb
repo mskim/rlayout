@@ -53,6 +53,7 @@ module RLayout
         token_options = {}
         token_options[:string] = token_string
         token_options[:para_style] = @para_style
+        token_options[:height] = @para_style[:font_size]
         @tokens << RLayout::RTextToken.new(token_options)
       end
     end
@@ -115,6 +116,7 @@ module RLayout
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
             emphasis_style[:para_style] = @para_style
+            emphasis_style[:height] = @para_style[:font_size]
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
@@ -150,6 +152,7 @@ module RLayout
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
             emphasis_style[:para_style] = @para_style
+            emphasis_style[:height]     = @para_style[:font_size]
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
