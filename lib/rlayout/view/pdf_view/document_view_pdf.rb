@@ -1,23 +1,21 @@
+module RLayout
 
-class DocumentViewPdf
-  attr_accessor :document, :pdf_doc
+class RDocument
 
-  def initialize(document)
-    @document = document
+  attr_accessor :pdf_doc
+
+  def save_pdf_in_ruby(path, options={})
     @pdf_doc = HexaPDF::Document.new
-    @document.pages.each do |page|
-      pdf_page = @pdf_doc.pages.add
-      page.to_pdf(pdf_page)
+    @pages.each do |page|
+      pdf_page = @pdf_doc.pages.add([0,0,@width,@height])
+      canvas = pdf_page.canvas
+      page.to_pdf(canvas)
     end
-    self
-  end
-
-
-  def save_pdf(path, options={})
     pdf_path=path
     unless File.extname(path) == '.pdf'
       pdf_path=path + ".pdf"
     end
+    puts "++++++++ writing @pdf_doc.write(pdf_path, optimize: true)"
     @pdf_doc.write(pdf_path, optimize: true)
     # if we have jpg option, save image as basename_(i+1).jpg format
     # if we have preview option save images in /preview/page_00(i+1).jpg
@@ -45,6 +43,8 @@ class DocumentViewPdf
         imageData.writeToFile(jpg_path, atomically:false)
       end
     end
-    @document.pages.length
+    @pages.length
   end
+end
+
 end
