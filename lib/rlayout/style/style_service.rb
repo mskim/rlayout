@@ -919,6 +919,10 @@ module RLayout
       self
     end
 
+    def set_chapter_style
+      @current_style = @chapter_style
+    end
+
     def current_style_font_list
       font_list = []
       @current_style = YAML::load(DEFAULT_STYLES)

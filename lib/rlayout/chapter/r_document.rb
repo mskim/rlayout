@@ -58,6 +58,12 @@ module RLayout
         @starts_left      = options.fetch(:starts_left, document_defaults[:starts_left])
       end
 
+      if options[:current_style]
+        RLayout::StyleService.shared_style_service.current_style = options[:current_style]
+      else
+        RLayout::StyleService.shared_style_service.set_chapter_style
+      end
+
       @left_margin      =  document_defaults[:left_margin]
       @left_inset       =  document_defaults[:left_inset]
       @top_margin       =  document_defaults[:top_margin]
@@ -133,11 +139,7 @@ module RLayout
       end
       @page_headings = options.fetch(:page_headings,[])
       @column_count = options.fetch(:column_count, 1)
-      if proposed_style = options[:current_style]
-        if proposed_style.is_a?(Hash) && proposed_style != {}
-          RLayout::StyleService.shared_style_service.current_style.merge! proposed_style
-        end
-      end
+ 
 
       if @toc_on
         # save_toc elements for this document
@@ -179,7 +181,9 @@ module RLayout
     end
 
     def add_new_page
-      new_page = page
+      options[:parent] = self
+      options[:paper_size] = @paper_size
+      new_page =RPage.new(options, &block)
       new_page.first_line
     end
 
@@ -296,9 +300,7 @@ module RLayout
         @ns_view = DocumentViewMac.new(self)
         @page_view_count = @ns_view.save_pdf(path, options)
       else
-        # @document_view_pdf = DocumentViewPdf.new(self)
-        # @document_view_pdf.save_pdf(path, options)
-        # @pages.length
+        save_pdf_in_ruby(path, options={})
       end
     end
 

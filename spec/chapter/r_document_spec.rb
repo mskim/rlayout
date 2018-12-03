@@ -49,8 +49,13 @@ describe "create first page" do
   it 'first page should have main_text and heading' do
     @first_page.main_box.must_be_kind_of RTextBox
     @first_page.graphics.length.must_equal 2
+  end
 
-    # @first_page.heading.must_be_kind_of RHeading
+  it 'should save pdf' do
+    @pdf_path = "/Users/Shared/rlayout/pdf_output/r_document.pdf"
+    @doc.save_pdf(@pdf_path)
+    File.exist?(@pdf_path).must_equal true
+    system "open #{@pdf_path}"
   end
 
 end
