@@ -34,7 +34,7 @@ module RLayout
       @column_type          = options[:column_type] || 'regular_column'
       @current_line_index   = 0
       @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
-      @body_line_height     = options[:body_line_height] || 24
+      @body_line_height     = options[:body_line_height] || 18
       @line_count           = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
       @line_count           = options[:column_line_count] if options[:column_line_count]
       @line_count           -= @article_bottom_space_in_lines
@@ -52,6 +52,7 @@ module RLayout
 
     def adjust_column_lines
       @line_count           = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
+      @line_count           -= @article_bottom_space_in_lines if @article_bottom_space_in_lines
       create_lines
     end
 
@@ -100,6 +101,7 @@ module RLayout
       current_x   = 0
       current_y   = 0
       line_width  = @width - @left_inset - @right_inset
+      @line_count = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
       previoust_line = nil
       @line_count.times do
         options = {parent:self, x: current_x, y: current_y , width: line_width, height: @body_line_height}

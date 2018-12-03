@@ -23,7 +23,7 @@ module RLayout
       self
     end
 
-    def grid_frame_to_image_rect(grid_frame)
+    def grid_frame_to_image_rect(grid_frame, bottom_position=false)
       x_position  = 0
       y_position  = 0
       height      = @height - @article_bottom_spaces_in_lines*@body_line_height

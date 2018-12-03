@@ -273,6 +273,10 @@ TODO List
 	- fix hyphenate_token to check for forbidden first and and
 	- fix image color_space conversion with non-existing image
 
+2018_8_20
+
+	- fix image cmyk, convert color space except for pdf or eps
+
 2018_5_7
 		- add . , ! ? add forbidden first line character
 

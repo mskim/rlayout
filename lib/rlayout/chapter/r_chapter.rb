@@ -186,7 +186,7 @@ module RLayout
     attr_accessor :project_path, :template_path, :story_path
     attr_accessor :document, :output_path, :column_count
     attr_accessor :doc_info, :toc_content
-    attr_reader :book_title, :title, :starting_page, :heading_type
+    attr_reader :book_title, :title, :starting_page, :heading_type, :heading
     attr_accessor :body_line_count, :body_line_height
 
     def initialize(options={} ,&block)
@@ -257,9 +257,10 @@ module RLayout
 
     def default_doc_info
       h = {}
-      h[:paper_size]      = 'A5'
-      h[:body_line_count] = 25
-      h[:heading_type]    = 'fixed_height'
+      h[:paper_size]        = 'A5'
+      h[:body_line_count]   = 20
+      h[:body_line_height]  = 18
+      h[:heading_type]      = 'fixed_height'
       h
     end
 
