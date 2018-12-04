@@ -136,8 +136,6 @@ module RLayout
         return NSColor.brownColor
       when "clear"
         return NSColor.colorWithDeviceCyan(0.0, magenta:0.0, yellow:0.0, black:0.0, alpha: 0.0)
-        # return NSColor.colorWithDeviceRed(0, green: 0, blue: 0, alpha: 0)
-        # return NSColor.clearColor
       when "cyan"
         return NSColor.cyanColor
       when "dark_gray", "darkGray"
@@ -165,10 +163,40 @@ module RLayout
         return NSColor.whiteColor
       end
     else
-      name = name.capitalize
-      color = COLOR_LIST[name]
-      return [0,0,0,0] unless color
-      color
+      case name
+      when "black"
+        return [0,0,0,100].map{|e| e.to_i/100.0} 
+      when "blue"
+        return [100,100,0,0].map{|e| e.to_i/100.0} 
+      when "brown"
+       return [0,33.7,67.3,60.4].map{|e| e.to_i/100.0} 
+      when "clear"
+        return "clear"
+      when "cyan"
+        return [100,0,0,0].map{|e| e.to_i/100.0} 
+      when "dark_gray", "darkGray"
+        return [0,0,0,33.7].map{|e| e.to_i/100.0}
+      when "gray"
+        return [0,0,0,25].map{|e| e.to_i/100.0}
+      when "green"
+        return [100,0,100,0].map{|e| e.to_i/100.0}
+      when "light_gray", "lightGray"
+        return [0,0,0,17.3].map{|e| e.to_i/100.0}
+      when "magenta"
+        return [0,100,0,0].map{|e| e.to_i/100.0}
+      when "orange"
+        return [0,69,100,0].map{|e| e.to_i/100.0}
+      when "purple"
+        return [29,52,0,33.7].map{|e| e.to_i/100.0}
+      when "red"
+        return [0,84.5,80.1,19.2].map{|e| e.to_i/100.0} 
+      when "white"
+        return [0,0,0,0].map{|e| e.to_i/100.0}
+      when "yellow"
+        return [0,0,100,0].map{|e| e.to_i/100.0}
+      else
+        return [0,0,0,0]
+      end
     end
   end
 

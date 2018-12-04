@@ -135,6 +135,8 @@ module RLayout
         options[:parent]                  = self
         options[:first_page]              = true
         options[:fixed_height]            = true
+        options[:page_number]             = 1
+        options[:page_number]             = @starting_page if @starting_page
         RPage.new(options)
       end
       @page_headings = options.fetch(:page_headings,[])
@@ -155,7 +157,7 @@ module RLayout
       {
         portrait: true,
         double_side: false,
-        starts_left: true,
+        starts_left: false,
         paper_size: "A4",
         width: 595.28,
         height: 841.89,
@@ -181,8 +183,10 @@ module RLayout
     end
 
     def add_new_page
-      options[:parent] = self
-      options[:paper_size] = @paper_size
+      options[:parent]        = self
+      options[:paper_size]    = @paper_size
+      options[:page_numver]   = @pages.length
+      options[:page_numver]   += @starting_page
       new_page =RPage.new(options, &block)
       new_page.first_line
     end

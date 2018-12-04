@@ -11,11 +11,11 @@ class RDocument
       canvas = pdf_page.canvas
       page.to_pdf(canvas)
     end
+    puts "++++++ @pages.length:#{@pages.length}"
     pdf_path=path
     unless File.extname(path) == '.pdf'
       pdf_path=path + ".pdf"
     end
-    puts "++++++++ writing @pdf_doc.write(pdf_path, optimize: true)"
     @pdf_doc.write(pdf_path, optimize: true)
     # if we have jpg option, save image as basename_(i+1).jpg format
     # if we have preview option save images in /preview/page_00(i+1).jpg
