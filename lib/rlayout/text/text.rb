@@ -27,7 +27,7 @@ module RLayout
     def initialize(options={})
       super
       @string                   = options.delete(:text_string)
-      @font                     = options.fetch(:font, 'Times')
+      @font                     = options.fetch(:font, 'KoPubBatangPM')
       @font_size                = options.fetch(:font_size, 16)
 
       if options[:para_style]
@@ -37,7 +37,7 @@ module RLayout
         @para_style           = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
       else
         @para_style             = {}
-        @para_style[:font]      = options[:font] || 'Times'
+        @para_style[:font]      = options[:font] || 'KoPubBatangPM'
         @para_style[:font_size] = options[:font_size] || 16
         @para_style[:text_color]= options[:text_color] if options[:text_color]
         @para_style[:tracking]  = options.fetch(:tracking, 0)

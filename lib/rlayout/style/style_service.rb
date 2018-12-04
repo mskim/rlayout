@@ -806,50 +806,50 @@ EOF
 
 MAGAZINE_STYLES={
   "heading_columns" => [1,2,2,2,3,4,4],
-  "title"   =>{:font => 'Times',     :font_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
-  "subtitle"=>{:font => 'Times',     :font_size=>20.0, :text_color => 'black'},
-  "author"  =>{:font => 'Helvetica', :font_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
-  "lead"    =>{:font => 'Helvetica', :font_size=>24.0, :text_color => 'black'},
-  "leading" =>{:font => 'Times',     :font_size=>24.0, :text_color => 'black'},
-  "h1"      =>{:font => 'Helvetica', :font_size=>70.0, :text_color => 'black'},
-  "h2"      =>{:font => 'Helvetica', :font_size=>36.0, :text_color => 'black'},
-  "h3"      =>{:font => 'Helvetica', :font_size=>24.0, :text_color => 'black'},
-  "h4"      =>{:font => 'Helvetica', :font_size=>16.0, :text_color => 'darkGray'},
-  "h5"      =>{:font => 'Helvetica', :font_size=>16.0, :text_color => 'darkGray'},
-  "Head"    =>{:font => 'Helvetica', :font_size=>12.0, :text_color => 'black'},
-  "head"    =>{:font => 'Helvetica', :font_size=>12.0, :text_color => 'black'},
-  "h6"      =>{:font => 'Helvetica', :font_size=>12.0, :text_color => 'black'},
-  "p"       =>{:font => 'Times',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "body"    =>{:font => 'Times',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "caption" =>{:font => 'Times',     :font_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
-  "header"  =>{:font => 'Times', :font_size=>8.0, :text_color => 'black'},
-  "footer"  =>{:font => 'Times', :font_size=>8.0, :text_color => 'black', :footer_margin=>30},
-  "page_number" =>{:font => 'Times', :font_size=>10.0, :text_color => 'black'},
+  "title"   =>{:font => 'KoPubBatangPM',     :font_size=>24.0, :text_color => 'black', :text_alignment=>'center'},
+  "subtitle"=>{:font => 'KoPubBatangPM',     :font_size=>20.0, :text_color => 'black'},
+  "author"  =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
+  "lead"    =>{:font => 'KoPubDotumPM', :font_size=>24.0, :text_color => 'black'},
+  "leading" =>{:font => 'KoPubBatangPM',     :font_size=>24.0, :text_color => 'black'},
+  "h1"      =>{:font => 'KoPubDotumPM', :font_size=>70.0, :text_color => 'black'},
+  "h2"      =>{:font => 'KoPubDotumPM', :font_size=>36.0, :text_color => 'black'},
+  "h3"      =>{:font => 'KoPubDotumPM', :font_size=>24.0, :text_color => 'black'},
+  "h4"      =>{:font => 'KoPubDotumPM', :font_size=>16.0, :text_color => 'darkGray'},
+  "h5"      =>{:font => 'KoPubDotumPM', :font_size=>16.0, :text_color => 'darkGray'},
+  "Head"    =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black'},
+  "head"    =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black'},
+  "h6"      =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black'},
+  "p"       =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+  "body"    =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+  "caption" =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+  "header"  =>{:font => 'KoPubBatangPM', :font_size=>8.0, :text_color => 'black'},
+  "footer"  =>{:font => 'KoPubBatangPM', :font_size=>8.0, :text_color => 'black', :footer_margin=>30},
+  "page_number" =>{:font => 'KoPubBatangPM', :font_size=>10.0, :text_color => 'black'},
 }
 
 CHAPTER_STYLES={
 
   "heading_columns" => [1,2,3,4,4,4,4],
-  "title"   =>{:font => 'Times',     :font_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
-  "subtitle"=>{:font => 'Times',     :font_size=>16.0, :text_color => 'black'},
-  "author"  =>{:font => 'Helvetica', :font_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
-  "Lead"    =>{:font => 'Helvetica', :font_size=>14.0, :text_color => 'black'},
-  "lead"    =>{:font => 'Helvetica', :font_size=>14.0, :text_color => 'black'},
-  "leading" =>{:font => 'Times',     :font_size=>18.0, :text_color => 'black'},
-  "h1"      =>{:font => 'Helvetica', :font_size=>18.0, :text_color => 'black'},
-  "h2"      =>{:font => 'Helvetica', :font_size=>18.0, :text_color => 'black'},
-  "h3"      =>{:font => 'Helvetica', :font_size=>16.0, :text_color => 'black'},
-  "h4"      =>{:font => 'Helvetica', :font_size=>14.0, :text_color => 'black'},
-  "h5"      =>{:font => 'Helvetica', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
-  "head"    =>{:font => 'Helvetica', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
-  "h6"      =>{:font => 'Helvetica', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray", :text_head_indent=>0, :text_tail_indent=>0},
+  "title"   =>{:font => 'KoPubBatangPM',     :font_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
+  "subtitle"=>{:font => 'KoPubBatangPM',     :font_size=>16.0, :text_color => 'black'},
+  "author"  =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
+  "Lead"    =>{:font => 'KoPubDotumPM', :font_size=>14.0, :text_color => 'black'},
+  "lead"    =>{:font => 'KoPubDotumPM', :font_size=>14.0, :text_color => 'black'},
+  "leading" =>{:font => 'KoPubBatangPM',     :font_size=>18.0, :text_color => 'black'},
+  "h1"      =>{:font => 'KoPubDotumPM', :font_size=>18.0, :text_color => 'black'},
+  "h2"      =>{:font => 'KoPubDotumPM', :font_size=>18.0, :text_color => 'black'},
+  "h3"      =>{:font => 'KoPubDotumPM', :font_size=>16.0, :text_color => 'black'},
+  "h4"      =>{:font => 'KoPubDotumPM', :font_size=>14.0, :text_color => 'black'},
+  "h5"      =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
+  "head"    =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
+  "h6"      =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray", :text_head_indent=>0, :text_tail_indent=>0},
   # "p"       =>{:font => 'SDMyoungjo',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "p"       =>{:font => 'smSSMyungjoP-W30',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "body"    =>{:font => 'Times',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "caption" =>{:font => 'Times',     :font_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
-  "header"  =>{:font => 'Times',     :font_size=>8.0, :text_color => 'black'},
-  "footer"  =>{:font => 'Times',     :font_size=>8.0, :text_color => 'black', :footer_margin=>30},
-  "page_number" =>{:font => 'Times', :font_size=>10.0, :text_color => 'black'},
+  "body"    =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+  "caption" =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+  "header"  =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black'},
+  "footer"  =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black', :footer_margin=>30},
+  "page_number" =>{:font => 'KoPubBatangPM', :font_size=>10.0, :text_color => 'black'},
   "ordered_list"      =>"h5",
   "unordered_list"    =>"h5",
   "ordered_section"   =>"h5",
@@ -859,31 +859,31 @@ CHAPTER_STYLES={
 }
 
 NEWS_STYLES={
-  "title"   =>{:font => 'Times',     :font_size=>36.0, :text_color => 'black', :text_alignment=>'center',:text_line_spacing=>10 },
-  "subtitle"=>{:font => 'Times',     :font_size=>36.0, :text_color => 'black'},
-  "author"  =>{:font => 'Helvetica', :font_size=>10.0, :text_color => 'black', :text_alignment=>'center'},
-  "lead"    =>{:font => 'Helvetica', :font_size=>24.0, :text_color => 'black', :text_alignment=>'right'},
-  "Leading" =>{:font => 'Times',     :font_size=>24.0, :text_color => 'black'},
-  "leading" =>{:font => 'Times',     :font_size=>24.0, :text_color => 'black'},
-  "h1"      =>{:font => 'Helvetica', :font_size=>24.0, :text_color => 'black'},
-  "h2"      =>{:font => 'Helvetica', :font_size=>20.0, :text_color => 'black'},
-  "h3"      =>{:font => 'Helvetica', :font_size=>18.0, :text_color => 'black'},
-  "h4"      =>{:font => 'Helvetica', :font_size=>12.0, :text_color => 'black'},
-  "h5"      =>{:font => 'Helvetica', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
-  "head"    =>{:font => 'Helvetica', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
-  "h6"      =>{:font => 'Helvetica', :font_size=>10.0, :text_line_spacing=>5, :text_color => 'black'},
-  "p"       =>{:font => 'Times',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black'},
-  "body"    =>{:font => 'Times',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black', :text_first_line_head_indent=>9},
-  "caption" =>{:font => 'Times',     :font_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
-  "header"  =>{:font => 'Times', :font_size=>8.0, :text_color => 'black'},
-  "footer"  =>{:font => 'Times', :font_size=>8.0, :text_color => 'black'},
-  "page_number" =>{:font => 'Times', :font_size=>10.0, :text_color => 'black'},
-  "ordered_list"  =>{:font => 'Helvetica', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
-  "unordered_list"=>{:font => 'Helvetica', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
-  "ordered_section" =>{:font => 'Helvetica', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
-  "upper_alpha_list"=>{:font => 'Helvetica', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
-  "ordered_list_item"=>{:font => 'Helvetica', :font_size=>0.0, :text_line_spacing=>5, :text_color => 'black'},
-  "unordered_list_item"=>{:font => 'Helvetica', :font_size=>0.0, :text_line_spacing=>5, :text_color => 'black'},
+  "title"   =>{:font => 'KoPubBatangPM',     :font_size=>36.0, :text_color => 'black', :text_alignment=>'center',:text_line_spacing=>10 },
+  "subtitle"=>{:font => 'KoPubBatangPM',     :font_size=>36.0, :text_color => 'black'},
+  "author"  =>{:font => 'KoPubDotumPM', :font_size=>10.0, :text_color => 'black', :text_alignment=>'center'},
+  "lead"    =>{:font => 'KoPubDotumPM', :font_size=>24.0, :text_color => 'black', :text_alignment=>'right'},
+  "Leading" =>{:font => 'KoPubBatangPM',     :font_size=>24.0, :text_color => 'black'},
+  "leading" =>{:font => 'KoPubBatangPM',     :font_size=>24.0, :text_color => 'black'},
+  "h1"      =>{:font => 'KoPubDotumPM', :font_size=>24.0, :text_color => 'black'},
+  "h2"      =>{:font => 'KoPubDotumPM', :font_size=>20.0, :text_color => 'black'},
+  "h3"      =>{:font => 'KoPubDotumPM', :font_size=>18.0, :text_color => 'black'},
+  "h4"      =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black'},
+  "h5"      =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "head"    =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "h6"      =>{:font => 'KoPubDotumPM', :font_size=>10.0, :text_line_spacing=>5, :text_color => 'black'},
+  "p"       =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black'},
+  "body"    =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black', :text_first_line_head_indent=>9},
+  "caption" =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+  "header"  =>{:font => 'KoPubBatangPM', :font_size=>8.0, :text_color => 'black'},
+  "footer"  =>{:font => 'KoPubBatangPM', :font_size=>8.0, :text_color => 'black'},
+  "page_number" =>{:font => 'KoPubBatangPM', :font_size=>10.0, :text_color => 'black'},
+  "ordered_list"  =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "unordered_list"=>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "ordered_section" =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "upper_alpha_list"=>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "ordered_list_item"=>{:font => 'KoPubDotumPM', :font_size=>0.0, :text_line_spacing=>5, :text_color => 'black'},
+  "unordered_list_item"=>{:font => 'KoPubDotumPM', :font_size=>0.0, :text_line_spacing=>5, :text_color => 'black'},
 }
 
 HEADING_KIND  = %w[h1 h2 h3 h4 title subtitle author lead]
@@ -898,15 +898,15 @@ module RLayout
       @custom_style   = nil
       @current_style  = DEFAULT_STYLES
       @chapter_style  = CHAPTER_STYLES
-      @chapter_style_path = "/Users/Shared/SoftwareLab/article_template/chapter_style.rb"
-      if File.exist?(@chapter_style_path)
-        @chapter_style = eval(File.open(@chapter_style_path,'r'){|f| f.read})
-      end
+      # @chapter_style_path = "/Users/Shared/SoftwareLab/article_template/chapter_style.rb"
+      # if File.exist?(@chapter_style_path)
+      #   @chapter_style = eval(File.open(@chapter_style_path,'r'){|f| f.read})
+      # end
       @news_style     = NEWS_STYLES
-      @news_style_path = "/Users/Shared/SoftwareLab/article_template/news_style.rb"
-      if File.exist?(@news_style_path)
-        @news_style = eval(File.open(@news_style_path,'r'){|f| f.read})
-      end
+      # @news_style_path = "/Users/Shared/SoftwareLab/article_template/news_style.rb"
+      # if File.exist?(@news_style_path)
+      #   @news_style = eval(File.open(@news_style_path,'r'){|f| f.read})
+      # end
       @magazine_style = MAGAZINE_STYLES
       @magazine_style_path = "/Users/Shared/SoftwareLab/article_template/magazine_style.rb"
       if File.exist?(@magazine_style_path)

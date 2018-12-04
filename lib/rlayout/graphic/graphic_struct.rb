@@ -282,7 +282,7 @@ module RLayout
     end
 
     def to_pdf(canvas)
-      font = 'Times' unless font
+      font = 'KoPubBatangPM' unless font
       size = 16 unless size
       canvas.font(font, size: size)
       canvas.text(string, at:[100,100])

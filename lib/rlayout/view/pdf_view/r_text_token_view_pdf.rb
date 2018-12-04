@@ -35,6 +35,9 @@ module RLayout
           font_file     = font_foleder + "/Shinmoon.ttf"
           font_file     = font_foleder + "/#{font_name}.ttf" if font_name
           doc           = canvas.context.document
+          if font_name == "Times"
+            binding.pry
+          end
           font_wapper   = doc.fonts.add(font_file)
           canvas.font(font_wapper, size: size)
         end
