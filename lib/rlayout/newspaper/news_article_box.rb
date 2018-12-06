@@ -276,12 +276,15 @@ module RLayout
       h_options = options.dup
       h_options[:is_float]      = true
       h_options[:parent]        = self
-      h_options[:width]         = @width # - @gutter
       h_options[:column_count]  = @column_count
       h_options[:x]             = @starting_column_x
       h_options[:y]             = 0
+      h_options[:width]         = @width - 2
+      h_options[:width]         = @width - @gutter unless @on_left_edge
+      h_options[:width]         = @width - @gutter unless @on_right_edge
       h_options[:subtitle_type] = @subtitle_type
-
+      puts "++++++ @on_left_edge:#{@on_left_edge}"
+      puts "++++++ @on_right_edge:#{@on_right_edge}"
       if @heading_columns       != @column_count
         h_options[:width]       = @heading_columns+@column_width
       end

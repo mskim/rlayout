@@ -1,6 +1,6 @@
 #
 #
-CharHalfWidthCushion  = 5.0
+CharHalfWidthCushion  = 2.0
 MinimunLineRoom       = 4.0
 
 module RLayout

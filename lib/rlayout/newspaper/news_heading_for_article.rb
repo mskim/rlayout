@@ -19,23 +19,26 @@ module RLayout
     end
 
     def set_heading_content(options)
-      @height_in_lines            = 0
+      # @height_in_lines            = 0
+      @height_sum                 = 0
       if options['subject_head'] && options['subject_head'] != ""
         @subject_head_object      = subject_head(options)
-        @height_in_lines          +=@subject_head_object.height_in_lines    unless @subject_head_object.nil?
+        # @height_in_lines          +=@subject_head_object.height_in_lines    unless @subject_head_object.nil?
+        @height_sum               +=@subject_head_object.height    unless @subject_head_object.nil?
       end
-      y = @height_in_lines*@body_line_height
+      # y = @height_in_lines*@body_line_height
+      y = @height_sum
       options[:y] = y
       options[:x] = 0
       if options['title']
         if @parent.top_story
           @title_object = main_title(options)
-          @title_object.adjust_height_as_height_in_lines
         else
           @title_object = title(options)
         end
-        @height_in_lines  +=@title_object.height_in_lines    unless @title_object.nil?
-        y += @height_in_lines*@body_line_height
+        # @height_in_lines  +=@title_object.height_in_lines    unless @title_object.nil?
+        @height_sum       +=@title_object.height    unless @title_object.nil?
+        y += @height_sum
       end
       # if options['subtitle'] && (@parent.top_story && @parent.subtitle_in_head)
       if options['subtitle'] && @parent.subtitle_type == '제목밑 가로'
@@ -44,9 +47,16 @@ module RLayout
         else
           @subtitle_object = subtitle(options)
         end
-        @height_in_lines += @subtitle_object.height_in_lines unless @subtitle_object.nil?
+        # @height_in_lines += @subtitle_object.height_in_lines unless @subtitle_object.nil?
+        @height_sum       +=@subtitle_object.height    unless @subtitle_object.nil?
       end
-      @height = @height_in_lines*@body_line_height
+
+      #TODO calculate with actual sum of heigh and make body_line multiple
+      # in and verticslly center it?
+      @line_multiple  = @height_sum/@body_line_height
+      @delta          = @line_multiple - @line_multiple.to_i
+      @height         = @line_multiple.to_i*@body_line_height
+      @height         += @body_line_height if @delta >= 0.5
       relayout!
       self
     end
