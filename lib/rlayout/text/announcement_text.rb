@@ -33,7 +33,7 @@ module RLayout
         atts[:anchor_type]      = 'center'
       end
       atts[:text_fit_type]      = 'fit_box_to_text'
-      atts[:y]                  = @top_margin + 2
+      atts[:y]                  = @top_margin + 5
       atts[:style_name]         = 'announcement_1'
       atts[:text_string]        = @title
       atts[:body_line_height]   = @body_line_height if @body_line_height

@@ -101,7 +101,6 @@ module RLayout
       current_x   = 0
       current_y   = 0
       line_width  = @width - @left_inset - @right_inset
-      @line_count = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
       previoust_line = nil
       @line_count.times do
         options = {parent:self, x: current_x, y: current_y , width: line_width, height: @body_line_height}

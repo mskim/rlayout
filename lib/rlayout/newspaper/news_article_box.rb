@@ -500,6 +500,8 @@ module RLayout
       box_height                    = 3*@body_line_height 
       text_options                  = {}
       text_options[:height]         = box_height
+      puts "@article_bottom_spaces_in_lines:#{@article_bottom_spaces_in_lines}"
+      puts "@height/@body_line_height:#{@height/@body_line_height}"
       text_options[:y]              = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
       text_options[:top_margin]     = @body_line_height
       text_options[:bottom_margin]  = 4 #TODO body_leading
