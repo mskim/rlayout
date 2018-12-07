@@ -11,7 +11,6 @@ class RDocument
       canvas = pdf_page.canvas
       page.to_pdf(canvas)
     end
-    puts "++++++ @pages.length:#{@pages.length}"
     pdf_path=path
     unless File.extname(path) == '.pdf'
       pdf_path=path + ".pdf"

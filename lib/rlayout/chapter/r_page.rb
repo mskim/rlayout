@@ -68,8 +68,8 @@ module RLayout
       @fixtures = []
       @floats   = []
       main_box_options                      = {}
-      main_box_options[:x]                  = @left_margin
-      main_box_options[:y]                  = @top_margin
+      main_box_options[:x]                  = @left_inset
+      main_box_options[:y]                  = @top_inset
       main_box_options[:width]              = @width - @left_margin - @right_margin
       main_box_options[:height]             = @height - @top_margin - @bottom_margin
       main_box_options[:column_count]       = @column_count if @column_count

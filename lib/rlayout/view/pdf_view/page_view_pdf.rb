@@ -8,8 +8,6 @@ module RLayout
     end
 
     def to_pdf(canvas)
-      puts "+++++++++++ in page to_pdf"
-      puts "@page_number:#{@page_number}"
       super
     end
   end

@@ -42,7 +42,6 @@ module RLayout
       @path             = options[:path]  if options[:path]
       @heading_type     = options[:heading_type] || "fixed_height"
       @body_line_height = document_defaults[:body_line_height]
-
       if options[:doc_info]
         @paper_size       = options[:doc_info].fetch(:paper_size, "A4")
         @body_line_count  = options[:doc_info].fetch(:body_line_count, 30)
@@ -138,11 +137,10 @@ module RLayout
         options[:page_number]             = 1
         options[:page_number]             = @starting_page if @starting_page
         RPage.new(options)
+        
       end
       @page_headings = options.fetch(:page_headings,[])
       @column_count = options.fetch(:column_count, 1)
- 
-
       if @toc_on
         # save_toc elements for this document
         @toc_elements = []
@@ -183,19 +181,20 @@ module RLayout
     end
 
     def add_new_page
+      options                 = {}
       options[:parent]        = self
       options[:paper_size]    = @paper_size
       options[:page_numver]   = @pages.length
       options[:page_numver]   += @starting_page
-      new_page =RPage.new(options, &block)
+      new_page =RPage.new(options)
       new_page.first_line
     end
 
-    def page(options={}, &block)
-      options[:parent] = self
-      options[:paper_size] = @paper_size
-      RPage.new(options, &block)
-    end
+    # def page(options={}, &block)
+    #   options[:parent] = self
+    #   options[:paper_size] = @paper_size
+    #   RPage.new(options, &block)
+    # end
 
     def layout_page
       side_margin = 100
