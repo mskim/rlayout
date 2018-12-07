@@ -76,6 +76,20 @@ module RLayout
       self
     end
 
+    def set_text(new_sting)
+      @string    = new_sting
+      @tokens    = []
+      clear_lines
+      create_tokens
+      layout_tokens
+    end
+
+    def clear_lines
+      @graphics.each do |line|
+        line.clear_tokens
+      end
+    end
+
     def create_tokens_from_string(string)
       @tokens += string.split(" ").collect do |token_string|
         options = {}

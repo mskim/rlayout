@@ -7,6 +7,7 @@ module RLayout
         font_name = @para_style[:font] 
         size = @para_style[:font_size]
         text_color = @para_style[:text_color]
+        text_color = "CMYK=0,0,0,100" unless text_color
         text_color = RLayout::color_from_string(text_color)
         canvas.fill_color(text_color) if text_color
         if canvas.font

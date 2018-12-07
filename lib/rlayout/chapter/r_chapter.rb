@@ -304,7 +304,6 @@ module RLayout
       end
     end
 
-
     def layout_story
       @page_index               = 0
       @first_page               = @document.pages[0]
@@ -312,14 +311,15 @@ module RLayout
       @heading[:parent]         = @first_page
       @heading[:layout_length]  = 1
       @heading[:v_alignment]    = 'center'
-      @heading_object           = RHeading.new(@heading)
-      @first_page.heading_object = @heading_object
+      heading_object            = @first_page.heading_object
+      heading_object.set_heading_content(@heading)
+      binding.pry
+      heading_object.align_vertically
       unless @first_page.main_box
         @first_page.create_main_text
       else
         @first_page.graphics = @first_page.graphics.reverse
       end
-      @first_page.relayout!
       # @first_page.relayout!
       # @first_page.main_box.adjust_overlapping_columns
       first_item = @paragraphs.first

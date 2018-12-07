@@ -51,7 +51,6 @@ module RLayout
       # options[:stroke_width] = 1
       super
       @layout_alignment  = options[:v_alignment]
-
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
       @layout_space       = 3
       if options[:width]
@@ -77,7 +76,6 @@ module RLayout
       if block
         instance_eval(&block)
       end
-
       self
     end
 
@@ -94,7 +92,6 @@ module RLayout
         # This is when pre-made Heading is provided as pdf file using other app.
         return
       end
-
       if options[:background]
         # place image in the background, change size, width, or height as instructed
       end
@@ -124,27 +121,20 @@ module RLayout
         @author_object = author(options[:author], options)
       end
 
-      height_sum = 0
-      height_sum +=@title_object.height    unless @title_object.nil?
-      height_sum += 5
-      height_sum +=@subtitle_object.height unless @subtitle_object.nil?
-      height_sum += 5
-      height_sum +=@leading_object.height  unless @leading_object.nil?
-      height_sum += 5
-      height_sum +=@author_object.height   unless @author_object.nil?
-      height_sum += 5
-      # @height = height_sum + graphics_space_sum + @top_inset + @bottom_inset + @top_margin + @bottom_margin
-      @height = height_sum
-      if @align_to_body_text
-        mutiple           = (@height/body_height).to_i
-        mutiple_height    = mutiple*body_height
-        room              = mutiple_height - @height
-        @top_inset        +=  room/2
-        @bottom_inset     +=  room/2
-        @height           = mutiple_height
+      @graphics.each do |g|
+        y             = 0
+        g.y           = y             
+        y             += g.height + 5
       end
-      relayout!
       self
+    end
+
+    def align_vertically
+      hight_sum = @graphics.map{|g| g.height}.reduce(:+)
+      top_position = (height - hight_sum)/2
+      @graphics.each do |g|
+        g.y += top_position
+      end
     end
 
     # create container with template and replace variavle data to get our heaing
@@ -205,6 +195,7 @@ module RLayout
       atts[:style_name]           = 'title'
       atts[:text_string]          = string
       atts[:width]                = @width
+      atts[:text_alignment]            = 'center'
       atts[:text_fit_type]        = 'adjust_box_height'
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')

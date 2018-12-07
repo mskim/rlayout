@@ -51,6 +51,10 @@ module RLayout
       self
     end
 
+    def clear_tokens
+      @graphics = []
+    end
+
     def next_text_line
       l_next = next_line
       return nil if l_next.nil?

@@ -25,7 +25,8 @@ module RLayout
       have_expanding_child = false # Do we have layout direction expending child?
       column_size         = [non_overlapping_frame[2], non_overlapping_frame[3]]
       starting_y          = non_overlapping_frame[1] # i need non_overlapping_bounds, not non_overlapping_frame
-      current_position    = vertical ? (starting_y + @top_margin +  @top_inset) : (@left_margin + @left_inset)
+      # current_position    = vertical ? (starting_y + @top_margin +  @top_inset) : (@left_margin + @left_inset)
+      current_position    = vertical ? (starting_y +  @top_inset) : @left_inset
       ending_position     = vertical ? (column_size[1] - @top_margin - @bottom_margin - @top_inset - @bottom_inset)  : (column_size[0] - @left_margin - @right_margin - @left_inset - @right_inset)
       column_room         = ending_position
       expandable_length   = ending_position
@@ -119,7 +120,8 @@ module RLayout
         if (vertical ? graphic.expand_width? : graphic.expand_height?)
           # for vertical mode, align graphic in left, center, right
           if vertical
-            graphic_frame[0]  = (@left_margin  + @left_inset)
+            # graphic_frame[0]  = (@left_margin  + @left_inset)
+            graphic_frame[0]  = @left_inset
             graphic_frame[2]  = column_size[0] - (@left_margin + @right_margin + @right_inset + @left_inset) #- graphic.right_margin - graphic.left_margin
           else
             graphic_frame[1]  = (@top_margin + @top_inset)
