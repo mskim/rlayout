@@ -313,7 +313,6 @@ module RLayout
       @heading[:v_alignment]    = 'center'
       heading_object            = @first_page.heading_object
       heading_object.set_heading_content(@heading)
-      binding.pry
       heading_object.align_vertically
       unless @first_page.main_box
         @first_page.create_main_text

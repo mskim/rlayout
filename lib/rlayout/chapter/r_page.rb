@@ -97,7 +97,6 @@ module RLayout
         @main_box = RTextBox.new(main_box_options)
       end
       relayout!
-      # binding.pry
       if block
         instance_eval(&block)
       end
