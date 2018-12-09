@@ -23,7 +23,7 @@ module RLayout
     attr_accessor :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
-
+    attr_reader :overlap
     def initialize(options={}, &block)
       super
       @overflow           = false
@@ -46,7 +46,8 @@ module RLayout
         @stroke.sides = [0,0,0,1]
         @stroke.thickness = 0.3
       end
-      @subtitle_type = options[:subtitle_type] || '1단'
+      @subtitle_type          = options[:subtitle_type] || '1단'
+      @overlap                = options[:overlap]
       @current_column_index   = 0
       @heading_columns        = @column_count
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
@@ -58,6 +59,7 @@ module RLayout
       if block
         instance_eval(&block)
       end
+      make_overlap(@overlap) if @overlap
       if @floats.length > 0
         layout_floats!
       end
@@ -397,13 +399,21 @@ module RLayout
       if heading_hash['announcement']
         float_announcement(heading_hash)
       end
-
-
       #
       # if heading_hash['image']
       #   float_image(heading_hash)
       # end
       layout_floats!
+    end
+
+    def make_overlap(rect)
+      rect = eval(rect) if rect.class == String
+      o_x       = rect[0]*grid_width
+      o_y       = rect[1]*grid_height - @page_heading_margin_in_lines*@body_line_height
+      o_width   = rect[2]*grid_width
+      o_height  = rect[3]*grid_height
+      # Rectangle.new(parent:self, is_float: true, stroke_width: 1, x:o_x, y:o_y, width:o_width, height:o_height, layout_expand: nil)
+      Rectangle.new(parent:self, is_float: true, x:o_x, y:o_y, width:o_width, height:o_height, layout_expand: nil)
     end
 
     # text_height_in_lines should be calculated dynamically
