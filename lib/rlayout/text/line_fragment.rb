@@ -96,7 +96,9 @@ module RLayout
       else
         return false if options[:do_not_break]
         # no more room, try hyphenating token
-        result = token.hyphenate_token(@room)
+        options = {}
+        options[:cushion] = 0 if @graphics.length < 4
+        result = token.hyphenate_token(@room, options)
         if result == "front forbidden character"
           # this ss when the last char is "." and we can sqeezed it into the line.
           # token is not broken

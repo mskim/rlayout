@@ -104,11 +104,7 @@ module RLayout
 
     def adjust_box_x
       if @anchor_type == 'right'
-        @x = @parent.width - @right_margin - @width
-        puts "@parent.width:#{@parent.width}"
-        puts "@right_margin:#{@right_margin}"
-        puts "@width:#{@width}"
-        
+        @x = @parent.width - @right_margin - @width        
       elsif @anchor_type == 'center'
         center = @parent.width/2.0
         @x = center - @width/2.0
@@ -205,7 +201,6 @@ module RLayout
         end
       end
       @current_line.align_tokens
-
     end
 
     # place tokens in the line, given tokens array

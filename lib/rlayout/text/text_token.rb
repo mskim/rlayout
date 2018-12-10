@@ -133,9 +133,11 @@ module RLayout
 
     # return false if break_position < MinimunLineRoom
     # split string into two and return splited_second_half_attsting
-    def break_attstring_at(break_position)
+    def break_attstring_at(break_position, options={})
       # give a char_half_c""
       return false if break_position < MinimunLineRoom
+      allowed_cushion = CharHalfWidthCushion
+      allowed_cushion = options[:cushion] if options[:cushion]
       string_length = @att_string.length
       #TODO use ruby only not NS
       # puts "@att_string.string:#{@att_string.string}"
@@ -158,7 +160,7 @@ module RLayout
             new_string  = original_string.attributedSubstringFromRange(back_range)
             return new_string
 
-          elsif sub_string_incremented.size.width > (break_position + CharHalfWidthCushion)
+          elsif sub_string_incremented.size.width > (break_position + allowed_cushion)
             cut_index = i - 1 # pne before i
 
             #handle line ending rule. chars that should not be at the end of line.
@@ -188,12 +190,12 @@ module RLayout
 
 
     # divide token at position
-    def hyphenate_token(break_position)
+    def hyphenate_token(break_position, options={})
       if RUBY_ENGINE == "rubymotion"
         # break_attstring_at breaks original att_string into two
         # adjust first token width and result is second haldf att_string
         # or false is return if not abtle to brake the token
-        hyphenated_result = break_attstring_at(break_position)
+        hyphenated_result = break_attstring_at(break_position, options={})
         if hyphenated_result == "front forbidden character"
           return "front forbidden character"
         elsif hyphenated_result.class == NSConcreteMutableAttributedString

@@ -399,10 +399,7 @@ module RLayout
       if heading_hash['announcement']
         float_announcement(heading_hash)
       end
-      #
-      # if heading_hash['image']
-      #   float_image(heading_hash)
-      # end
+
       layout_floats!
     end
 
@@ -410,9 +407,9 @@ module RLayout
       rect = eval(rect) if rect.class == String
       o_x       = rect[0]*grid_width
       o_y       = rect[1]*grid_height - @page_heading_margin_in_lines*@body_line_height
+      o_y      += @extended_line_count * @body_line_height if @extended_line_count 
       o_width   = rect[2]*grid_width
       o_height  = rect[3]*grid_height
-      # Rectangle.new(parent:self, is_float: true, stroke_width: 1, x:o_x, y:o_y, width:o_width, height:o_height, layout_expand: nil)
       Rectangle.new(parent:self, is_float: true, x:o_x, y:o_y, width:o_width, height:o_height, layout_expand: nil)
     end
 
