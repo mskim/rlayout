@@ -23,7 +23,7 @@ module RLayout
     attr_accessor :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
-    attr_reader :overlap
+    attr_reader :overlap, :overlap_rect, :embedded
     def initialize(options={}, &block)
       super
       @overflow           = false
@@ -48,6 +48,7 @@ module RLayout
       end
       @subtitle_type          = options[:subtitle_type] || '1단'
       @overlap                = options[:overlap]
+      @embedded               = options[:embedded]
       @current_column_index   = 0
       @heading_columns        = @column_count
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
@@ -240,7 +241,10 @@ module RLayout
     end
 
     def last_line_of_box
-      if @announcement_box
+      if @overlap_rect
+        overlap_rect_height_in_lines = @overlap_rect.height/@body_line_height.to_i - 1
+        @graphics.last.graphics[-overlap_rect_height_in_lines] 
+      elsif @announcement_box
         @graphics.last.graphics[-4]
       else
         @graphics.last.graphics.last
@@ -285,8 +289,7 @@ module RLayout
       h_options[:width]         = @width - @gutter unless @on_left_edge
       h_options[:width]         = @width - @gutter unless @on_right_edge
       h_options[:subtitle_type] = @subtitle_type
-      puts "++++++ @on_left_edge:#{@on_left_edge}"
-      puts "++++++ @on_right_edge:#{@on_right_edge}"
+
       if @heading_columns       != @column_count
         h_options[:width]       = @heading_columns+@column_width
       end
@@ -405,12 +408,17 @@ module RLayout
 
     def make_overlap(rect)
       rect = eval(rect) if rect.class == String
+      space_above = @body_line_height*2
       o_x       = rect[0]*grid_width
       o_y       = rect[1]*grid_height - @page_heading_margin_in_lines*@body_line_height
       o_y      += @extended_line_count * @body_line_height if @extended_line_count 
+      o_y      -= space_above
       o_width   = rect[2]*grid_width
+      o_width  -= @gutter if on_left_edge
+      o_width  -= @gutter if on_right_edge
       o_height  = rect[3]*grid_height
-      Rectangle.new(parent:self, is_float: true, x:o_x, y:o_y, width:o_width, height:o_height, layout_expand: nil)
+      o_height += space_above
+      @overlap_rect = Rectangle.new(parent:self, is_float: true, x:o_x, y:o_y, width:o_width, height:o_height, layout_expand: nil, top_margin:space_above, stroke_sides:[0,1,0,2], stroke_width: 0.3)
     end
 
     # text_height_in_lines should be calculated dynamically

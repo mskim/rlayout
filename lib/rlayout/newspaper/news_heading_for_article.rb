@@ -14,7 +14,6 @@ module RLayout
       super
       @body_line_height = @parent.body_line_height
       set_heading_content(options)
-      
       self
     end
 
@@ -96,7 +95,7 @@ module RLayout
         atts[:text_fit_type]      = 'fit_text_to_box' #
       end
       atts[:body_line_height]     = @body_line_height
-      atts[:width]                = @width
+      atts[:width]                = @width - 2
       # atts[:text_fit_type]        = 'adjust_box_height'
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
@@ -131,7 +130,7 @@ module RLayout
       end
 
       atts[:body_line_height]     = @body_line_height
-      atts[:width]                = @width
+      atts[:width]                = @width - 2
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts[:parent]               = self

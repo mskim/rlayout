@@ -98,6 +98,8 @@ module RLayout
         # no more room, try hyphenating token
         options = {}
         options[:cushion] = 0 if @graphics.length < 4
+        options[:cushion] = 0 if @style_name != 'body'
+
         result = token.hyphenate_token(@room, options)
         if result == "front forbidden character"
           # this ss when the last char is "." and we can sqeezed it into the line.

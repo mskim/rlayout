@@ -96,7 +96,9 @@ module RLayout
     def make_layout_info
       @layout_info = []
       story_count = 0
-      @story_frames.each_with_index do |grid_frame, i|
+      @sorted_story_frames = @story_frames.sort_by{|r| [r[1], r[0]]}
+      # @story_frames.each_with_index do |grid_frame, i|
+      @sorted_story_frames.each_with_index do |grid_frame, i|
         info = {}
         found_ad = false
         if grid_frame.length == 5 && grid_frame[4] =~/^광고/
@@ -154,11 +156,8 @@ module RLayout
 
     def merge_layout_pdf(options={})
       @output_path = options[:output_path] if options[:output_path]
-      #TODO update page fixtures
-      # make_page_heading_image
-      make_layout_info.reverse.each_with_index do |info, i|
+      make_layout_info.each_with_index do |info, i|
         info[:parent] = self
-        # info[:stroke_width] = 1
 	      Image.new(info)
 	    end
       # page heading
@@ -171,7 +170,6 @@ module RLayout
       heading_info[:layout_expand]  = nil
       heading_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
       # heading_info[:stroke_width] = 1
-
       # heading_info[:image_fit_type] = IMAGE_FIT_TYPE_ORIGINAL
       if @is_front_page
         #TODO
@@ -183,8 +181,6 @@ module RLayout
       end
       # puts "heading_info[:height]:#{heading_info[:height]}"
       @page_heading = Image.new(heading_info)
-
-
       create_divider_lines if @draw_divider
 
       if @output_path

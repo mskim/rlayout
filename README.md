@@ -122,6 +122,11 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+
+
+2018_12_11
+  - draw overflow mark with overlap
+
 2018_11_23
 	- TitleText 
 		space_before, space_after

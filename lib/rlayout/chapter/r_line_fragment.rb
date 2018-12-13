@@ -193,6 +193,10 @@ module RLayout
       else
         return false if options[:do_not_break]
         # no more room, try hyphenating token
+        options = {}
+        options[:cushion] = 0 if @graphics.length < 4
+        #Todo fix this so that only body has cushion
+        options[:cushion] = 0 if  @font_size && @font_size > 10
         @result = token.hyphenate_token(@room)
         if @result == "front forbidden character"
           # this ss when the last char is "." and we can sqeezed it into the line.

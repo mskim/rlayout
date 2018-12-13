@@ -48,7 +48,7 @@ module RLayout
       atts[:text_fit_type]      = 'fit_box_to_text'
       atts[:from_right]         = 10
       atts[:anchor_type]        = 'right'
-      atts[:y]                  = @top_margin + 5
+      atts[:y]                  = @top_margin + 8
       atts[:style_name]         = 'announcement_2'
       atts[:text_string]        = "▸▸" + @linked_page
       atts[:body_line_height]   = @body_line_height if @body_line_height
