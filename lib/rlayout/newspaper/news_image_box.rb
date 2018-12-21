@@ -30,8 +30,8 @@ module RLayout
       width       = @width
       if  @top_position
         y_position = 0
-        y_position += @body_line_height*2 #top_title_space_before_in_lines
-        height     -= @body_line_height*2 #top_title_space_before_in_lines
+        # y_position += @body_line_height*2 #top_title_space_before_in_lines
+        # height     -= @body_line_height*2 #top_title_space_before_in_lines
       else
         y_position += @body_line_height
         height     -= @body_line_height
