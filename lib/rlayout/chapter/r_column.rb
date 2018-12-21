@@ -50,6 +50,10 @@ module RLayout
       self
     end
 
+    def column_grid_rect
+      @parent.column_grid_rect(self)
+    end
+
     def adjust_column_lines
       @line_count           = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
       @line_count           -= @article_bottom_space_in_lines if @article_bottom_space_in_lines

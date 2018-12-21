@@ -3,7 +3,7 @@ module RLayout
   # used for quote,
   class QuoteText < Container
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :height_in_lines
-    attr_accessor :current_line, :current_line_y, :starting_x, :line_width, :ns_atts
+    attr_accessor :current_line, :current_line_y, :line_width, :ns_atts
     attr_accessor :single_line_title, :force_fit_title, :v_alignment, :quote_text_lines
     def initialize(options={})
       @string                 = options.delete(:text_string)
@@ -47,13 +47,11 @@ module RLayout
       else
         @line_space           = @para_style[:text_line_spacing]
       end
+      
       @line_height            = @para_style[:font_size] + @line_space
-      # @current_line_y         = @top_inset + @space_before_in_lines*@body_line_height
       @current_line_y         = @top_inset + @space_before_in_lines*@body_line_height
-      # @current_line_y         = @space_before_in_lines*@body_line_height
-      @starting_x             = @left_margin + @left_inset
-      @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width,  para_style: @para_style,  debug: true, top_margin: @top_margin)
+      @line_width             = @width - @left_margin + @left_inset - @right_margin - @right_inset
+      @current_line           = RLineFragment.new(parent:self, x: 0, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width,  para_style: @para_style,  debug: true, top_margin: @top_margin)
       create_tokens
       layout_tokens
       # ajust_height_as_body_height_multiples unless @height_as_body_height_multiples == false
@@ -96,7 +94,9 @@ module RLayout
     end
 
     def vertical_align_lines_bottom
-      current_y = @height - 5
+      # current_y = @height - 5
+      current_y = @height - 2
+      current_y -= @text_line_spacing if @text_line_spacing
       @graphics.reverse.each do |line|
         current_y -= line.height
         line.y = current_y
@@ -109,8 +109,7 @@ module RLayout
     end
 
     def add_new_line
-      new_line      = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width, debug: true)
-      new_line      = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width,  para_style: @para_style,  debug: true, top_margin: @top_margin)
+      new_line      = RLineFragment.new(parent:self, x: 0, y:@current_line_y,  width: @line_width, height:@line_height, space_width: @space_width,  para_style: @para_style,  debug: true, top_margin: @top_margin)
 
       @current_line.next_line = new_line if @current_line
       @current_line = new_line

@@ -209,7 +209,7 @@ linked_story:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
-  publication_id: 1s
+  publication_id: 1
 reporter_editorial:
   korean_name: 논설기자
   category:
@@ -753,8 +753,8 @@ module RLayout
     attr_reader :article_info_path
     attr_accessor :custom_style, :publication_name, :time_stamp
     attr_accessor :pdf_doc, :story_md, :layout_rb
-
     def initialize(options={})
+
       time_start    = Time.now
       @time_stamp   = options[:time_stamp]
       @story_md     = options[:story_md]
@@ -846,6 +846,7 @@ module RLayout
         @news_box.stroke.sides = [0,0,0,0]
         @news_box.stroke.thickness = 0.3
       elsif @news_box.is_a?(NewsAdBox)
+        image = @news_box.graphics.first
         @news_box.stroke.sides = [0,0,0,0]
         @news_box.stroke.thickness = 0.3
       elsif @news_box.is_a?(NewsComicBox)
@@ -857,6 +858,7 @@ module RLayout
       else
         # puts "@news_box is Graphic..."
       end
+
       if @news_box.is_a?(NewsArticleBox) 
         if @news_box.graphics.first.column_type == 'editorial_with_profile_image' # s&& @news_box.kind == '샤셜'
           @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
@@ -866,19 +868,14 @@ module RLayout
           if  @news_box.column_count == 6       
             @news_box.stroke[:sides] = [1,1,1,1] 
           elsif @news_box.bottom_article
-            if @news_box.embedded
-              puts "+++++ we have embedded"
-              @news_box.stroke[:sides] = [0,1,0,1]
-            else
-              @news_box.stroke[:sides] = [0,1,0,1]
-            end
+            @news_box.stroke[:sides] = [0,1,0,1]
           else
             @news_box.stroke[:sides] = [0,1,0,0]
           end
+        elsif @news_box.embedded
+            @news_box.stroke[:sides] = [0,1,0,1]
         elsif @news_box.bottom_article
           @news_box.stroke[:sides] = [0,0,0,1]
-        elsif @news_box.embedded
-          @news_box.stroke[:sides] = [0,1,0,1]
         else
           @news_box.stroke[:sides] = [0,0,0,1]
         end

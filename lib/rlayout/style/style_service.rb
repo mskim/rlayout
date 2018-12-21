@@ -139,11 +139,11 @@ quote:
   font: KoPubBatangPM
   font_size: 12.0
   text_color: CMYK=0,0,0,100
-  alignment: center
+  alignment: left
   tracking: -0.5
   space_width: 6.0
   scale: 100.0
-  text_line_spacing:
+  text_line_spacing: 2
   space_before_in_lines: 2
   space_after_in_lines: 0
   text_height_in_lines: 1

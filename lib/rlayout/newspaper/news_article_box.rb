@@ -24,6 +24,9 @@ module RLayout
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
     attr_reader :overlap, :overlap_rect, :embedded
+    # if RUBY_ENGINE == 'ruby'
+    #   include Celluloid
+    # end
     def initialize(options={}, &block)
       super
       @overflow           = false
@@ -241,7 +244,9 @@ module RLayout
     end
 
     def last_line_of_box
-      if @overlap_rect
+      overlap_array = @overlap
+      overlap_array = eval(@overlap) if @overlap.class == String
+      if @overlap && intersects_rect(overlap_array, @graphics.last.column_grid_rect)
         overlap_rect_height_in_lines = @overlap_rect.height/@body_line_height.to_i - 1
         @graphics.last.graphics[-overlap_rect_height_in_lines] 
       elsif @announcement_box

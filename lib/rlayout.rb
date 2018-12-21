@@ -28,6 +28,7 @@ else
   require 'hexapdf'
   # require 'xml-simple'
   require 'mini_magick'
+  require 'celluloid'
 
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/base/utility'

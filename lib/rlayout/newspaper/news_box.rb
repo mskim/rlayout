@@ -52,7 +52,6 @@ module RLayout
       else
         @width  = @column_count*@grid_width # we have @gutter/2 on each side
       end
-
       if @on_left_edge && @on_right_edge
         # touching both edge
         @right_margin      = 0.0
@@ -93,6 +92,11 @@ module RLayout
       self
     end
 
+    def column_grid_rect(column)
+      grid_x = @graphics.index(column)
+      [grid_x, 0, 1, row_count]
+    end
+
     def get_stroke_rect
       if RUBY_ENGINE == "rubymotion"
         # r = NSMakeRect(@x,@y,@width,@height)
@@ -119,6 +123,16 @@ module RLayout
     # Use news_image instead of float_image
     def initialize(options={}, &block)
       super
+      if @on_right_edge && @on_left_edge
+        @left_margin = 0 
+        @right_margin = 0
+      elsif @on_left_edge
+        @left_margin = 0 
+        @right_margin = @gutter
+      elsif @on_right_edge
+        @left_margin = @gutter 
+        @right_margin = 0
+      end
       @layout_direction = 'vertical'
       @kind             = 'ad'
       unless @top_position
@@ -126,6 +140,7 @@ module RLayout
       end
       @x                = 0
       # @width  -= 2
+
       if block
         instance_eval(&block)
       end

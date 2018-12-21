@@ -121,7 +121,7 @@ module RLayout
           # for vertical mode, align graphic in left, center, right
           if vertical
             # graphic_frame[0]  = (@left_margin  + @left_inset)
-            graphic_frame[0]  = @left_inset
+            graphic_frame[0]  = @left_margin            
             graphic_frame[2]  = column_size[0] - (@left_margin + @right_margin + @right_inset + @left_inset) #- graphic.right_margin - graphic.left_margin
           else
             graphic_frame[1]  = (@top_margin + @top_inset)

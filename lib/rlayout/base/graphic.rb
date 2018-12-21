@@ -630,6 +630,7 @@ module RLayout
         @bleed = options[:bleed]
       end
       super
+
       init_image(options)
       if options[:local_image]
         @local_image = options[:local_image]
@@ -644,7 +645,7 @@ module RLayout
     end
 
     def frame_rect
-      [@x,@y,@width,@height]
+      [@x + @left_margin,@y + top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
     end
 
 
