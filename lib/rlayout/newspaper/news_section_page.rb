@@ -163,7 +163,9 @@ module RLayout
       # page heading
       heading_info = {}
       heading_info[:parent] = self
-      heading_info[:image_path] = @section_path + "/heading/layout.pdf"
+      new_heading_path = heading_info[:image_path] = @section_path + "/heading/output.pdf" 
+      #TODO delete this after settling to new
+      heading_info[:image_path] = @section_path + "/heading/layout.pdf" unless File.exist?(new_heading_path)
       heading_info[:x]          = @left_margin
       heading_info[:y]          = @top_margin
       heading_info[:width]      = @width - @left_margin - @right_margin
