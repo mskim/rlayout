@@ -123,7 +123,9 @@ TODO List
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
 2018_12_21
-  - top image_box, no space above  
+  - top image_box, no space above
+  
+  - *, ** 수정  
 
 2018_12_11
   - draw overflow mark with overlap
