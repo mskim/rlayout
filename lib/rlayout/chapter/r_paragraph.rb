@@ -110,13 +110,13 @@ module RLayout
           # get font and size
           current_style = RLayout::StyleService.shared_style_service.current_style
           style_hash = current_style['body_gothic'] #'strong_emphasis'
-          @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+          @emphasis_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
-            emphasis_style[:para_style] = @para_style
-            emphasis_style[:height] = @para_style[:font_size]
+            emphasis_style[:para_style] = @emphasis_para_style
+            emphasis_style[:height]     = @emphasis_para_style[:font_size]
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
@@ -146,13 +146,13 @@ module RLayout
           end
           current_style = RLayout::StyleService.shared_style_service.current_style
           style_hash = current_style['body_gothic'] #'diamond_emphasis'
-          @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+          @diamond_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
-            emphasis_style[:para_style] = @para_style
-            emphasis_style[:height]     = @para_style[:font_size]
+            emphasis_style[:para_style] = @diamond_para_style
+            emphasis_style[:height]     = @diamond_para_style[:font_size]
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else

@@ -122,10 +122,18 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_12_23
+  - # 기자이름
+  - ## 중간제목
+  - ###
+  - #### 연결기사
+
+  - *, 디이아몬스 강조 
+  - ** 고딕강조 
+
 2018_12_21
   - top image_box, no space above
   
-  - *, ** 수정  
 
 2018_12_11
   - draw overflow mark with overlap

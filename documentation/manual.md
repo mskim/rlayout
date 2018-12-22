@@ -131,3 +131,12 @@ COLOR_NAMES =%w[black blue brown clear cyan darkGray gray green lightGray magent
 ### inch
 	string ending with "inch" will be considered as inch
 	"12inch"
+
+### markup
+	"# 기자명"
+	"## 중간제목"
+	"### "
+	"#### 관련기사"
+
+	"*내용* 	다이아몬드 강조"
+	"**내용** 	본문고딕 강조"

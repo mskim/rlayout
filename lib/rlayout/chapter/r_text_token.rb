@@ -155,6 +155,8 @@ module RLayout
     def draw_text
       style = @para_style
       style[:font_size] += @adjust_size if @adjust_size
+      # puts "@string:#{@string}"
+      # puts "style[:font]:#{style[:font]}"
       if RUBY_ENGINE == "rubymotion"
         atts = NSUtils.ns_atts_from_style(style)
         att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
