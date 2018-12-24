@@ -69,6 +69,13 @@ module RLayout
       @parent.graphics.index(self)
     end
 
+    def previous_column
+      i = column_index
+      i -= 1
+      return @parent.graphics[i] if 1 >= 0
+      nil
+    end
+
     def unoccupied_lines_count
       unoccupied_lines_count = 0
       @graphics.reverse.each do |line_in_reverse|

@@ -14,7 +14,7 @@ module RLayout
   EMPASIS_DIAMOND = /(\*.*?\*)/
 
   class RParagraph
-    attr_reader :markup
+    attr_reader :markup, :move_up_if_room
     attr_accessor :tokens, :token_heights_are_equal
     attr_accessor :para_string, :style_name, :para_style, :space_width
     attr_accessor :article_type
@@ -75,11 +75,12 @@ module RLayout
     # and do it recursively with split strings
     # and call create_plain_tokens for regular string segmnet
     def create_tokens
-      # if @markup == "h3"
-      #   unless @para_string =~/■/
-      #     @para_string = "■" + @para_string
-      #   end
-      # end
+      if @markup == "h4" || @markup == "h1"
+        if  @para_string =~/\^$/
+          @para_string = @para_string.sub(/\^$/, "")
+          @move_up_if_room = true
+        end
+      end
       if @para_string =~EMPASIS_STRONG
         create_tokens_with_emphasis_strong(@para_string)
       elsif @para_string =~EMPASIS_DIAMOND
@@ -153,6 +154,7 @@ module RLayout
             emphasis_style[:string]     = token_string
             emphasis_style[:para_style] = @diamond_para_style
             emphasis_style[:height]     = @diamond_para_style[:font_size]
+            emphasis_style[:token_type] = 'diamond_emphasis'
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
@@ -170,10 +172,14 @@ module RLayout
       @current_line.set_paragraph_info(self, "first_line")
       token = tokens.shift
       if token && token.token_type == 'diamond_emphasis'
-        # puts "first token is diamond_emphasis"
         # if first token is diamond emphasis, no head indent
+        unless @current_line.first_text_line_in_column?
+          @current_line = @current_line.next_text_line
+        end
+        @current_line.layed_out_line = true
         @current_line.set_paragraph_info(self, "middle_line")
       elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4'
+        
         unless @current_line.first_text_line_in_column?
           if @para_style[:space_before_in_lines] == 1
             @current_line.layed_out_line = true
@@ -231,8 +237,30 @@ module RLayout
         @current_line.set_paragraph_info(self, "last_line")
       end
       @current_line.align_tokens
-      # move cursor to new line
-      @current_line.next_text_line
+      if @move_up_if_room 
+        if found_previous_line = previous_line_has_room(@current_line)
+          move_tokens_to_previous_line(@current_line, found_previous_line)
+          @current_line
+        else
+          @current_line.next_text_line
+        end
+      else
+        @current_line.next_text_line
+      end
+    end
+
+    def previous_line_has_room(current_line)
+      previous_line = current_line.previous_text_line
+      return previous_line if previous_line.room > current_line.text_length
+      false
+    end
+
+    def move_tokens_to_previous_line(line, p_line)
+      line.graphics.each do |token|
+        token.parent = p_line
+        p_line.graphics << token
+      end
+      line.graphics = []
     end
 
     def is_breakable?

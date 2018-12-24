@@ -94,7 +94,7 @@ module RLayout
 
     color_array=color_string.split("=")
     color_kind=color_array[0]
-    # retrun black color unless color_array[1]
+    # return black color unless color_array[1]
     unless color_kind 
       if RUBY_ENGINE == 'rubymotion'
         return NSColor.blackColor unless color_array[1]

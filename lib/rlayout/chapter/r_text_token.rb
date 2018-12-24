@@ -9,6 +9,7 @@ module RLayout
       super
       @has_text         = true
       @string           = options[:string]
+      @token_type       = options[:token_type] if options[:token_type]
       @para_style       = options[:para_style]
       # @para_style[:font_size] += options[:adjust_size] if options[:adjust_size]
       @char_half_width_cushion = 0

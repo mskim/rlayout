@@ -55,15 +55,6 @@ module RLayout
       @graphics = []
     end
 
-    def next_text_line
-      l_next = next_line
-      return nil if l_next.nil?
-      return l_next if l_next.has_text_room?
-      next_text_line = l_next.next_text_line
-      return next_text_line if next_text_line
-      nil
-    end
-
     def width_of_token_union
       return 0 if @graphics.length == 0
       max_x = @graphics.last.x + @graphics.last.width #TODO
@@ -135,6 +126,40 @@ module RLayout
 
     def text_line?
       @room > 10 || @graphics.length > 0
+    end
+
+    def previous_line
+      i = line_index
+      i -= 1
+      unless i < 0
+        return @parent.graphics[i]
+      end
+      p_column = @parent.previous_column
+      return p_column.graphics.last if p_column
+      nil
+    end
+
+    def next_text_line
+      l_next = next_line
+      return nil if l_next.nil?
+      return l_next if l_next.has_text_room?
+      next_text_line = l_next.next_text_line
+      return next_text_line if next_text_line
+      nil
+    end
+
+    def previous_text_line
+      l_prev = previous_line
+      return nil if l_prev.nil?
+      return l_prev if l_prev.graphics.length > 0
+      p_text_line = l_prev.previous_text_line
+      return p_text_line if p_text_line
+      nil
+    end
+
+    # sum of text length + extra space
+    def text_length
+      @graphics.map{|t| t.width + @space_width}.reduce(:+) + @space_width
     end
 
     def char_count
@@ -232,13 +257,13 @@ module RLayout
       return if @graphics.length <= 0
       @total_token_width = token_width_sum
       @total_space_width = (@graphics.length - 1)*@space_width
-      room  = @text_area_width - (@total_token_width + @total_space_width)
+      @room  = @text_area_width - (@total_token_width + @total_space_width)
       x     = @starting_positions
       case @text_alignment
       when 'justified'
         # in justifed paragraph, we have to treat the last line as left aligned.
         x = @starting_position
-        if @line_type == "last_line" && room > 0
+        if @line_type == "last_line" && @room > 0
           @graphics.each do |token|
             token.x = x
             x += token.width + @space_width
@@ -257,14 +282,14 @@ module RLayout
           x += token.width + @space_width
         end
       when 'center'
-        shift = room/2.0
+        shift = @room/2.0
         x = @starting_position + shift
         @graphics.each do |token|
           token.x = x
           x += token.width + @space_width
         end
       when 'right'
-        x = room
+        x = @room
         @graphics.each do |token|
           token.x += x
           token.y = @v_offset

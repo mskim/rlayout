@@ -122,6 +122,10 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_12_24
+  - # 기자이름^
+  - #### 관련기사^
+
 2018_12_23
   - # 기자이름
   - ## 중간제목
