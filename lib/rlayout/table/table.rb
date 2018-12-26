@@ -148,7 +148,6 @@ DEFAULT_TABLE_STYLE = {
     attr_accessor :title, :source, :category_level
     attr_accessor :has_head_row, :can_grow
     attr_accessor :column_width_array, :column_alignment, :column_v_alignment
-    attr_accessor :column_v_alignment
     attr_accessor :table_data, :rows, :body
     attr_accessor :table_style, :csv
     attr_accessor :column_count, :next_link, :prev_link

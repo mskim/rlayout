@@ -76,8 +76,9 @@ module RLayout
     # and call create_plain_tokens for regular string segmnet
     def create_tokens
       if @markup == "h4" || @markup == "h1"
-        if  @para_string =~/\^$/
-          @para_string = @para_string.sub(/\^$/, "")
+        # for author and linked to page, check if there is markup for moving up the text, if there is enoung room
+        if  @para_string =~/\s?\^\s?$/
+          @para_string = @para_string.sub(/\s?\^\s?$/, "")
           @move_up_if_room = true
         end
       end
