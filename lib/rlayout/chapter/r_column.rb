@@ -70,6 +70,9 @@ module RLayout
     end
 
     def previous_column
+      if @column_type == 'overflow_column'
+        return @parent.graphics.last
+      end
       i = column_index
       i -= 1
       return @parent.graphics[i] if 1 >= 0
