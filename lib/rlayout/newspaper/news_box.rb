@@ -54,9 +54,10 @@ module RLayout
       end
       if @on_left_edge && @on_right_edge
         # touching both edge
+        puts 
         @right_margin      = 0.0
         @left_margin       = 0.0
-        @column_width      = (@width - @gutter*2 - (@column_count - 1)*@gutter)/@column_count
+        @column_width      = (@width - (@column_count - 1)*@gutter)/@column_count
         @starting_column_x = 0.0
       elsif @on_left_edge
         # touching left edge

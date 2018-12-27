@@ -53,7 +53,9 @@ module RLayout
       @overlap                = options[:overlap]
       @embedded               = options[:embedded]
       @current_column_index   = 0
-      @heading_columns        = @column_count
+      @heading_columns        = @column_count      
+      @heading_columns        = 4 if @column_count == 7 || @column_count == 6
+      @heading_columns        = options[:heading_columns] if options[:heading_columns]
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
       @quote_box_size         = options[:quote_box_size] || 0
       @boxed_subtitle_type    = options[:boxed_subtitle_type]
@@ -295,11 +297,8 @@ module RLayout
       h_options[:width]         = @width - 2
       h_options[:width]         = @width - @gutter unless @on_left_edge
       h_options[:width]         = @width - @gutter unless @on_right_edge
+      h_options[:width]         = @heading_columns*@column_width if @heading_columns != @column_count
       h_options[:subtitle_type] = @subtitle_type
-
-      if @heading_columns       != @column_count
-        h_options[:width]       = @heading_columns+@column_width
-      end
       case @kind
       when 'editorial', "사설"
         @stroke.sides = [1,1,1,1]
@@ -330,7 +329,18 @@ module RLayout
         @stroke.sides = [0,0,0,1]
         @stroke.thickness = 0.3
         # @stroke.color = 'red'
+        #TODO fix this
         @heading = NewsHeadingForArticle.new(h_options)
+        if  @column_count != @heading_columns
+          place_holder_options               = {}   
+          place_holder_options[:is_float]    = true
+          place_holder_options[:parent]      = self
+          place_holder_options[:x]           = @column_width*4 + @gutter*4
+          place_holder_options[:y]           = 0
+          place_holder_options[:width]       = @column_width*(@column_count - @heading_columns) + @gutter*(@column_count - @heading_columns - 1)
+          place_holder_options[:height]      = @body_line_height
+          @heading_right_side_one_line_space = Rectangle.new(place_holder_options)
+        end
       end
       # check if we have 2 단 기고
       # put heading after personal image
@@ -522,8 +532,6 @@ module RLayout
       box_height                    = 3*@body_line_height 
       text_options                  = {}
       text_options[:height]         = box_height
-      puts "@article_bottom_spaces_in_lines:#{@article_bottom_spaces_in_lines}"
-      puts "@height/@body_line_height:#{@height/@body_line_height}"
       text_options[:y]              = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
       text_options[:top_margin]     = @body_line_height
       text_options[:bottom_margin]  = 4 #TODO body_leading
@@ -596,12 +604,6 @@ module RLayout
         frame_x           = @graphics[grid_frame[0]].x
       end
       frame_y             = @grid_size[1]*grid_frame[1]
-      # if @pushed_line_count && @pushed_line_count != 0
-      #   puts frame_y
-      #   puts "@pushed_line_count:#{@pushed_line_count}"
-      #   frame_y += @pushed_line_count*@body_line_height
-      # end
-
       column_index = (grid_frame[0] + grid_frame[2] - 1).to_i
       if @graphics[column_index]
         frame_width         = @graphics[column_index].x_max - frame_x

@@ -122,9 +122,21 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_12_27
+  - fix bug column_width for both edge
+  - heading_columns for column_count == 7
+
+
+2018_12_26
+  - previous_column for overflow_column
+  - set overflow_column parent
+  - align text height for email, caption 
+  
 2018_12_24
   - # 기자이름^
   - #### 관련기사^
+  - 넘친기사에 ^ 경우 수정
+
 
 2018_12_23
   - # 기자이름

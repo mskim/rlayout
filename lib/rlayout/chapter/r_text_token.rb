@@ -66,12 +66,12 @@ module RLayout
     FORBIDDEN_LAST_CHARS  = /[\(|{|\[|<|‘|“]/
     FORBIDDEN_LAST_CHARS_AT_END  = /[\(|{|\[|<|‘|“]$/
 
-
     # return false if break_position < MinimunLineRoom
     # split string into two and return splited_second_half_attsting
-    def break_attstring_at(break_position)
+    def break_attstring_at(break_position, options={})
       # give a char_half_c""
       return false if break_position < MinimunLineRoom
+      @char_half_width_cushion = options[:char_half_width_cushion] if options[:char_half_width_cushion]
       string_length = @string.length
       (1..string_length).to_a.each do |i|
         front_range = [0,i]
@@ -81,7 +81,6 @@ module RLayout
           # we have front forbidden character . ? , !
           return "front forbidden character"
         elsif i == (string_length - 1) && sub_string_incremented =~ FORBIDDEN_LAST_CHARS_AT_END
-          puts "forbidden last char at the end"
           cut_index = i - 1 # pne before i
           sub_string_incremented = @string[0..cut_index]
           original_string = @string
@@ -94,10 +93,10 @@ module RLayout
           cut_index = i - 1 # use one before cut_off_string
           #handle line ending rule. chars that should not be at the end of line.
           if i <= 2 && cut_off_string[-2] =~ FORBIDDEN_LAST_CHARS
-            puts "FORBIDDEN_LAST_CHARS at cut_off_string[-2] move it to right"
+            # puts "FORBIDDEN_LAST_CHARS at cut_off_string[-2] move it to right"
             cut_index = i  # move one before FORBIDDEN_LAST_CHAR
           elsif i > 2 && cut_off_string[-2] =~ FORBIDDEN_LAST_CHARS
-            puts "FORBIDDEN_LAST_CHARS at cut_off_string[-2]"
+            # puts "FORBIDDEN_LAST_CHARS at cut_off_string[-2]"
             cut_index = i - 2 # move one before FORBIDDEN_LAST_CHAR
           end
           sub_string_incremented = @string[0..cut_index]
@@ -106,24 +105,24 @@ module RLayout
           @width                 = width_of_string(@string) + @left_margin + @right_margin
           second_half_string     = original_string[(cut_index + 1)..(string_length - 1)]
           if second_half_string =~ FORBIDDEN_FIRST_CHARS_AT_FRONT
-            puts "FORBIDDEN_FIRST_CHARS at front of second string"
+            # puts "FORBIDDEN_FIRST_CHARS at front of second string"
             #TODO
-            puts "original_string:#{original_string}"
-            puts "before cut_index:#{cut_index}"
+            # puts "original_string:#{original_string}"
+            # puts "before cut_index:#{cut_index}"
             if cut_index >= 2
               cut_index -= 1
             elsif second_half_string.length >=2
               cut_index += 1
             end
-            puts "after cut_index:#{cut_index}"
+            # puts "after cut_index:#{cut_index}"
             sub_string_incremented  = original_string[0..cut_index]
             @string                 = sub_string_incremented
             @width                  = width_of_string(@string) + @left_margin + @right_margin
             second_half_string      = original_string[(cut_index + 1)..(string_length - 1)]
-            puts "second_half_string:#{second_half_string}"
+            # puts "second_half_string:#{second_half_string}"
           elsif sub_string_incremented =~ FORBIDDEN_FIRST_CHARS_AT_END
             #TODO
-            puts "FORBIDDEN_FIRST_CHARS_AT_END of first string"
+            # puts "FORBIDDEN_FIRST_CHARS_AT_END of first string"
 
           end
 
@@ -135,11 +134,11 @@ module RLayout
     end
 
     # divide token at position
-    def hyphenate_token(break_position)
+    def hyphenate_token(break_position, options={})
       # break_attstring_at breaks original att_string into two
       # adjust first token width and result is second haldf att_string
       # or false is return if not abtle to brake the token
-      hyphenated_result = break_attstring_at(break_position)
+      hyphenated_result = break_attstring_at(break_position, options={})
       if hyphenated_result == "front forbidden character"
         return "front forbidden character"
       elsif hyphenated_result.class == String
@@ -156,8 +155,6 @@ module RLayout
     def draw_text
       style = @para_style
       style[:font_size] += @adjust_size if @adjust_size
-      # puts "@string:#{@string}"
-      # puts "style[:font]:#{style[:font]}"
       if RUBY_ENGINE == "rubymotion"
         atts = NSUtils.ns_atts_from_style(style)
         att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)

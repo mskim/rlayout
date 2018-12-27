@@ -1,6 +1,7 @@
 #
 #
-CharHalfWidthCushion  = 5.0
+# CharHalfWidthCushion  = 5.0
+CharHalfWidthCushion  = 4.0
 MinimunLineRoom       = 4.0
 
 module RLayout
@@ -201,12 +202,12 @@ module RLayout
     end
 
     # place tokens in the line, given tokens array
-    # return loft over tokens array if not all tokens are layed out
+    # return left over tokens array if not all tokens are layed out
     # return false if no leftvver tokens
     # CharHalfWidthCushion = 5.0
     def place_token(token, options={})
       return if token.nil?
-      if @room + CharHalfWidthCushion >= token.width
+      if (@room + CharHalfWidthCushion >= token.width)
       # if @room + @char_half_width_cushion >= token.width
         # place token in line.
         token.parent = self
@@ -218,11 +219,20 @@ module RLayout
       else
         return false if options[:do_not_break]
         # no more room, try hyphenating token
-        options = {}
-        options[:cushion] = 0 if @graphics.length < 4
+        # give custion only when there are more than 4 tokens
+        if @graphics.length <= 4
+          options[:char_half_width_cushion] = 0
+        else
+          options[:char_half_width_cushion] = @graphics.length 
+        end
         #Todo fix this so that only body has cushion
-        options[:cushion] = 0 if  @font_size && @font_size > 10
-        @result = token.hyphenate_token(@room)
+        options[:char_half_width_cushion] = 0 if  @font_size && @font_size > 10
+        if @graphics.length < 4
+          @result = token.hyphenate_token(@room - 2, options)
+        else
+          @result = token.hyphenate_token(@room, options)
+        end
+
         if @result == "front forbidden character"
           # this ss when the last char is "." and we can sqeezed it into the line.
           # token is not broken
@@ -360,7 +370,6 @@ module RLayout
 
   class OverFlowMarker < Graphic
     def initialize(options)
-      puts "in OverFlowMarker"
       options[:is_float] = true
       super
       @x                = @parent.width - 8

@@ -226,9 +226,10 @@ module RLayout
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
           else
-            @current_line = @current_line.parent.add_new_page
+            @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
             # tokens.unshift(token) #stick the unplace token back to the tokens
             # break #reached end of column
+            
           end
         end
       end
