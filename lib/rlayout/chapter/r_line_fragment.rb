@@ -223,7 +223,7 @@ module RLayout
         if @graphics.length <= 4
           options[:char_half_width_cushion] = 0
         else
-          options[:char_half_width_cushion] = @graphics.length 
+          options[:char_half_width_cushion] = 5
         end
         #Todo fix this so that only body has cushion
         options[:char_half_width_cushion] = 0 if  @font_size && @font_size > 10

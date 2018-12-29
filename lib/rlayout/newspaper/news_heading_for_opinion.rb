@@ -9,6 +9,7 @@ module RLayout
     def initialize(options={})
       @grid_width             = options.fetch(:grid_width, 2)
       @heading_columns        = options[:column_count]
+      puts "@heading_columns:#{@heading_columns}"
       options[:fill_color]    = 'clear'
       super
       # shift title to right by one column
@@ -42,7 +43,7 @@ module RLayout
       title_options[:inset]           = @parent.gutter
       title_options[:stroke_sides]    = [0,1,0,0] # draw line at top only
       title_options[:stroke_width]    = 0.3
-      title_options[:stroke_color]    = 'red'
+      title_options[:stroke_color]    = 'black'
       title_options['title']          = options['title']
       title_options[:style_name]      = 'title_opinion'
       title(title_options)

@@ -54,7 +54,7 @@ module RLayout
       @embedded               = options[:embedded]
       @current_column_index   = 0
       @heading_columns        = @column_count      
-      @heading_columns        = 4 if @column_count == 7 || @column_count == 6
+      @heading_columns        = 4 if @column_count == 7 #|| @column_count == 6
       @heading_columns        = options[:heading_columns] if options[:heading_columns]
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
       @quote_box_size         = options[:quote_box_size] || 0
@@ -318,9 +318,9 @@ module RLayout
         if @column_count == 2 
           h_options[:x]     = @left_margin
           h_options[:width] -= @left_margin +  @gutter
-        elsif @column_count == 6
-            h_options[:x]     = @left_margin  + @gutter
-            h_options[:width] -= @left_margin +  @gutter 
+        # elsif @column_count == 6
+        #     h_options[:x]     = @left_margin  + @gutter
+        #     h_options[:width] -= @left_margin +  @gutter 
         else
           h_options[:width] -= (h_options[:x] + @right_inset + @right_margin )
         end
@@ -498,7 +498,7 @@ module RLayout
       x                 = 0 #TODO
       text_options           = {}
       if @kind == '기고' || @kind == 'opinion'
-        text_options[:x]       = x
+        text_options[:x]       = x + @left_margin
         # text_options[:space_before_in_lines]  = text_height_in_lines
         # text_options[:text_height_in_lines]  = text_height_in_lines
         text_options[:height] = box_height

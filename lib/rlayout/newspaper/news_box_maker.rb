@@ -866,7 +866,7 @@ module RLayout
           @news_box.stroke[:sides] = [1,1,1,1]
         elsif @news_box.kind == '기고'
           if  @news_box.column_count == 6       
-            @news_box.stroke[:sides] = [1,1,1,1] 
+            @news_box.stroke[:sides] = [0,1,0,0] 
           elsif @news_box.bottom_article
             @news_box.stroke[:sides] = [0,1,0,1]
           else
