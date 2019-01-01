@@ -242,6 +242,7 @@ module RLayout
       if @move_up_if_room 
         if found_previous_line = previous_line_has_room(@current_line)
           move_tokens_to_previous_line(@current_line, found_previous_line)
+          @current_line.layed_out_line = false
           @current_line
         else
           @current_line.next_text_line

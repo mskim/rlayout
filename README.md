@@ -122,6 +122,9 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2018_12_31
+	- token text v_alignment for reporter, caption
+
 2018_12_27
   - fix bug column_width for both edge
   - heading_columns for column_count == 7
