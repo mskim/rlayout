@@ -1,6 +1,6 @@
 # NewsImage
-# there are couple of ways to specify size aize ans location
-# surest way is to use grid_frame, but grid_frames are hard to generalize,
+# there are couple of ways to specify size aize and location
+# surest way is to use grid_frame, but grid_frames are hard to specify by users,
 # so we use size, and position to translate those values to grid_fgram at run time
 
 #IMAGE_HEIGHT_TYPES = ['full', 'fit', 'half', 'balanced']

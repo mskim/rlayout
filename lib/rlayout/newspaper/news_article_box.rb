@@ -352,7 +352,8 @@ module RLayout
           @floats.insert(1,@heading)
         end
       else
-        if @floats.first.class == NewsImage && @floats.first.position == 0
+        if @floats.first.class == NewsImage && @floats.first.position.to_i == 0
+          # puts "++++++++++ we have NewsImage at position == 0"
           # position 0 image is at first, so leave it.
         elsif @heading != @floats.first
           # make heading as first one in floats

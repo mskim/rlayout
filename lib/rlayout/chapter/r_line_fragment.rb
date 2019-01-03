@@ -220,7 +220,7 @@ module RLayout
         return false if options[:do_not_break]
         # no more room, try hyphenating token
         # give custion only when there are more than 4 tokens
-        if @graphics.length <= 4
+        if @graphics.length < 4
           options[:char_half_width_cushion] = 0
         else
           options[:char_half_width_cushion] = 5
