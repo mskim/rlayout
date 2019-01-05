@@ -220,14 +220,39 @@ module RLayout
         return false if options[:do_not_break]
         # no more room, try hyphenating token
         # give custion only when there are more than 4 tokens
+        # puts "++++++++ token.string:#{token.string}"
+        # puts "@graphics.length:#{@graphics.length}"
+        # puts "@room:#{@room}"
+        # puts "token.width:#{token.width}"
         if @graphics.length < 4
-          options[:char_half_width_cushion] = 0
+          options[:char_half_width_cushion] = @graphics.length
+        elsif @graphics.length <= 5
+          # puts "in @graphics.length <= 5"
+          options[:char_half_width_cushion] = @graphics.length
         else
-          options[:char_half_width_cushion] = 5
+          options[:char_half_width_cushion] = @graphics.length + 3
         end
+        
+        # options[:char_half_width_cushion] = @graphics.length
+
+        # puts "options[:char_half_width_cushion]:#{options[:char_half_width_cushion]}"
         #Todo fix this so that only body has cushion
-        options[:char_half_width_cushion] = 0 if  @font_size && @font_size > 10
-        if @graphics.length < 4
+        # puts "@room + options[:char_half_width_cushion]:#{@room + options[:char_half_width_cushion]}"
+        if @room + options[:char_half_width_cushion] >= token.width
+          # puts "+++++++++ stuffing token into line"
+          token.parent = self
+          @graphics << token
+          @room -= token.width
+          @room -= @space_width
+          @layed_out_line = true
+          return true
+        end
+        options[:char_half_width_cushion] = 0 # if  @font_size && @font_size > 10
+        over_line = @room + options[:char_half_width_cushion] - token.width
+        if over_line < @space_width && token.width > @space_width*4
+          # this is case where token width slightly exceeds room, make sure that this token is cut
+          @result = token.hyphenate_token(@room - @space_width, options)
+        elsif @graphics.length < 4
           @result = token.hyphenate_token(@room - 2, options)
         else
           @result = token.hyphenate_token(@room, options)
