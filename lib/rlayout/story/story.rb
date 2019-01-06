@@ -189,10 +189,13 @@ module RLayout
       # And Create Heading from this
       reader = RLayout::Reader.new @contents, nil
       paragraphs = reader.text_blocks.map do |lines_block|
-        block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
+        if lines_block[0]=~TABLE_PIPE_CHECK
+          {markup:'table', rows:lines_block}
+        else
+          block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
+        end
       end
       @para_data = {:heading=>@metadata, :paragraphs =>paragraphs}
-      # {:heading=>@metadata, :paragraphs =>paragraphs}
     end
 
     # markdown2section_data

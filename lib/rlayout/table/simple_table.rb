@@ -1,69 +1,41 @@
 module RLayout
   
-  # uses TextCell
-  
-  # item_row
-  class SimpleTableRow < Container
-    attr_accessor :items, :head_row, :has_head_column, :column_width_array, :column_align_array
-    def initialize(options={})
-      super
-      @quiz_item_style = 
-      RLayout::StyleService.shared_style_service.quiz_item_style
-      
-      @layout_direction   = "horizontal"
-      @layout_expand      = :width
-      @items              = options[:items]
-      @head_row           = options.fetch(:head_row, false)
-      @column_width_array = @quiz_item_style[:column_width_array]
-      @column_align_array = @quiz_item_style[:column_align_array]
-      @table_head_style   = @quiz_item_style[:table_head_style].dup
-      @table_body_style   = @quiz_item_style[:table_body_style].dup
-      @items.each_with_index do |item, i|
-        if @head_row
-          token = TextToken.new(string: item, atts: @table_head_style, layout_expand: :width)
-          TextCell.new(parent: self, width: @column_width_array[i], token: token, h_alignment: "center", atts: @table_head_style)
-        else
-          token = TextToken.new(string:item, atts: @table_body_style, layout_expand: :width)
-          TextCell.new(parent: self, width: @column_width_array[i], token: token, h_alignment: @column_align_array[i], insert_leader_token: true, atts: @table_body_style)
-        end
-      end
-      self
-    end
-  end
-  
-  # similar to Table, but simpler
-  # uniform cell atts using TextToken
-  # comma separated file as input
+
+INDENT = /^(?:\t| {4})/
+OPT_SPACE = / {0,3}/
+TABLE_SEP_LINE = /^([+|: \t-]*?-[+|: \t-]*?)[ \t]*\n/
+TABLE_HSEP_ALIGN = /[ \t]?(:?)-+(:?)[ \t]?/
+TABLE_FSEP_LINE = /^[+|: \t=]*?=[+|: \t=]*?[ \t]*\n/
+TABLE_ROW_LINE = /^(.*?)[ \t]*\n/
+TABLE_PIPE_CHECK = /(?:\||.*?[^\\\n]\|)/
+TABLE_LINE = /#{TABLE_PIPE_CHECK}.*?\n/
+TABLE_START = /^#{OPT_SPACE}(?=\S)#{TABLE_LINE}/
+
   class SimpleTable < Container
-    attr_accessor :has_heading, :header, :rows
+    attr_accessor :has_head, :header, :rows
     attr_accessor :body_styles, :has_head_column, :header_array
+    attr_reader   :column_align_array
+
     def initialize(options={})
       super
-      @csv_text           = options[:csv]
-      @has_heading        = options.fetch(:has_heading, true)
-      @has_head_column    = options.fetch(:has_head_column, false)
-      if RUBY_ENGINE == 'rubymotion'
-        @csv                 = MotionCSV.parse(@csv_text)
-      else
-        @csv                 = CSV.parse(@csv_text, headers: true)
-        @header_array       = @csv.headers
+      @has_head         = false
+      @row_data         = options[:rows]
+      @rows = []
+      if @row_data 
+        if @row_data[1].include?("---")
+          @has_head_column = true
+          make_column_align_array(@row_data[1])
+          @row_data.delete_at(1)
+        end
+        # delete divider row
       end
-      @header_array       = @csv.headers
-      if options[:column_width_array]
-        @column_width_array = options[:column_width_array]
-      else
-        @column_width_array = make_column_width_array
-      end
-      if options[:column_align_array]
-        @column_align_array = options[:column_align_array]
-      else
-        @column_align_array = make_column_align_array
-      end
-      # head row
-      SimpleTableRow.new(parent: self, width: @width, height: 20, head_row: true, items: @header_array, column_width_array: @column_width_array, column_align_array: @column_align_array)
-      # body rows
-      @csv.each do |row|
-        SimpleTableRow.new(parent: self, width: @width, height: 20, items: row, column_width_array: @column_width_array, column_align_array: @column_align_array)
+
+      @row_data.each_with_index do |row, i|
+        if i == 0 && @has_head_column
+          SimpleTableRow.new(parent: self, fill_color: 'gray', stroke_sides:[1,1,1,], stroke_width: 1, head_row: @has_head_column, width: @width, height: 20, items: row)
+        else
+          SimpleTableRow.new(parent: self, fill_color: 'yellow', stroke_sides:[1,1,1,], stroke_width: 1, width: @width, height: 25, items: row)
+        end
       end
       layout_items
       self
@@ -71,7 +43,7 @@ module RLayout
     
     def layout_items
       height_sum = @graphics.map{|g| g.height}.reduce(:+)
-      @height   = height_sum + 4
+      @height   = height_sum + height_sum
       relayout!
     end
     
@@ -85,46 +57,44 @@ module RLayout
       width_ratio.map{|w| w*@width/ratio_sum}
     end
     
-    def make_column_align_array
-      column_align_array = @header_array.map{|c| c="center"}
-      row_count = column_align_array.length
-      column_align_array = []
-      if row_count == 1
-        return column_align_array << 'center'
+    def make_column_align_array(divider_string)
+      @column_align_array = []
+      divider_array = divider_string.split("|")
+      divider_array.shift
+      divider_array.each do |cell_string|
+        if cell_string =~/^\S*:/ && cell_string =~/:\S*$/
+          @column_align_array << 'justified'
+        elsif cell_string =~/^\S*:/
+          @column_align_array << 'left'
+        elsif cell_string =~/:\S*$/
+          @column_align_array << 'right'
+        else
+          @column_align_array << 'center'
+        end
       end
-      if row_count == 2
-        column_align_array << 'center'
-        column_align_array << 'center'
-        return column_align_array
+    end
+  end
+  
+  class SimpleTableRow < Container
+    attr_accessor :items, :head_row, :column_width_array, :column_align_array
+    def initialize(options={})
+      super
+      @table_style    = RLayout::StyleService.shared_style_service.chapter_style
+      @layout_direction   = "horizontal"
+      @layout_expand      = :width
+      @items              = options[:items].split("|")
+      @items.shift
+      @head_row           = options.fetch(:head_row, false)
+      @column_align_array = @parent.column_align_array if @parent.column_align_array
+      @table_head_style   = @table_style[:table_head_style].dup
+      @items.each_with_index do |item, i|
+        if @head_row
+          token = RTextToken.new(parent: self,string: item.strip, para_style: @table_style['h4'], layout_expand: :width)
+        else
+          token = RTextToken.new(parent: self, string:item.strip, para_style: @table_style['body'], layout_expand: :width)
+        end
       end
-      if row_count == 3
-        column_align_array << 'right'
-        column_align_array << 'left'
-        column_align_array << 'left'
-        return column_align_array
-      end
-      if row_count == 4
-        column_align_array << 'right'
-        column_align_array << 'left'
-        column_align_array << 'left'
-        column_align_array << 'right'
-        return column_align_array
-      end
-      if @has_head_column
-        column_align_array << 'right'
-        column_align_array << 'left'
-        row_count -=3
-      else
-        column_align_array << 'left'
-        row_count -=2
-      end
-      if (row_count - 1) > 1
-        (row_count - 1).times do
-          column_align_array << 'center'
-        end        
-      end
-      column_align_array << 'right'
-      column_align_array
+      self
     end
   end
   
