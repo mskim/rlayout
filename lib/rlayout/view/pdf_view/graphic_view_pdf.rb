@@ -5,9 +5,9 @@ module RLayout
     def flipped_origin
       if @parent
         p_origin = @parent.flipped_origin
-        [p_origin[0] + @left_margin + @x, p_origin[1] + @parent.height - @height - @top_margin - @top_inset - @y]
+        [p_origin[0] + @x, p_origin[1] + @parent.height - @height - @top_margin - @top_inset - @y]
       else
-        [@left_margin + @x, - @top_margin - @top_inset - @y]
+        [@x, - @top_margin - @top_inset - @y]
       end
     end
 
