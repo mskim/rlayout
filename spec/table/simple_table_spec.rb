@@ -12,7 +12,7 @@ describe 'create simple_table' do
     story_path    = "/Users/mskim/demo/demo_table/story.md"
     @story        = Story.new(story_path).markdown2para_data
     @para_data    = @story[:paragraphs].first
-    @table        = SimpleTable.new(width: 500, height: 600, rows: @para_data[:rows])
+    @table        = SimpleTable.new( width: 500, height: 600, rows: @para_data[:rows])
     @head_row     = @table.graphics.first
     @body_row     = @table.graphics[1]
     @pdf_path     = "/Users/mskim/demo/demo_table/story.pdf"
@@ -54,7 +54,6 @@ describe 'create simple_table' do
     @table.save_pdf(@pdf_path)
     File.exist?(@pdf_path).must_equal true
     system "open #{@pdf_path}"
-
   end
 
 end

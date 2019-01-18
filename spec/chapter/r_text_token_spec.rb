@@ -1,5 +1,35 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
+describe "save r_text_token" do
+  before do
+    options                 = {}
+    options[:string]        = '여기는'
+    @c = RLayout::Container.new(width:400, height:400, fill_color: 'yellow') do
+      options                 = {}
+      options[:string]        = '여기는'
+      @current_style          = RLayout::StyleService.shared_style_service.current_style
+      if @current_style.class == String
+        @current_style        = YAML::load(@current_style)
+      end
+      @para_style             = @current_style['body']
+      @para_style             = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
+      options[:para_style]    = @para_style
+      options[:height]        = 20
+      options[:parent]        = self
+      RTextToken.new(options)
+    end
+    @pdf_path = "/Users/Shared/rlayout/output/r_text_token_test.pdf"
+  end
+
+  it 'should save pdf' do
+    @c.save_pdf(@pdf_path)
+    File.exist?(@pdf_path).must_equal true
+    system("open #{@pdf_path}")
+  end
+end
+
+__END__
+
 describe "FORBIDDEN_FIRST_CHARS_AT_END test" do
   before do
     options                 = {}

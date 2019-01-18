@@ -122,6 +122,17 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2019_1_11
+	- update caption_paragraph
+		- make separate line for caption_title and caption
+	
+	- update hypenation algorithm for front, ending rule for more case
+		- update rule
+
+
+2019_1_10
+	- fix to_pdf
+
 2018_12_31
 	- token text v_alignment for reporter, caption
 
