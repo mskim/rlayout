@@ -48,11 +48,11 @@ class GraphicViewMac < NSView
     # I only want frame to be shadowed
     # draw_shadow should be called at last
     # TODO  how about text shadow???
-    draw_shadow(graphic)          if graphic.shadow
+    draw_shadow(graphic)               if graphic.shadow
     draw_fixtures(graphic.fixtures)    if !graphic.fixtures.nil? && graphic.fixtures.length > 0
     draw_graphics(graphic.graphics)    if !graphic.graphics.nil? && graphic.graphics.length > 0
     draw_floats(graphic.floats)        if !graphic.floats.nil? && graphic.floats.length > 0
-    draw_stroke(graphic)          if graphic.stroke
+    draw_stroke(graphic)               if graphic.stroke
     @context.restoreGraphicsState
   end
 
@@ -209,9 +209,7 @@ class GraphicViewMac < NSView
       imageData = imageRep.representationUsingType(NSJPEGFileType, properties:imageProps)
       imageData.writeToFile(outfile, atomically:false)
     end
-
   end
-
 end
 
 

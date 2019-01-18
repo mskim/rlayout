@@ -42,8 +42,8 @@ module RLayout
 
         f = flipped_origin
         x_offset = f[0]
-        y_offset = f[1] + 3
-        canvas.text(@string, at: [x_offset, y_offset + @y])
+        y_offset = f[1]
+        canvas.text(@string, at: [x_offset, y_offset - size])
       end
     end
   

@@ -17,6 +17,7 @@ TABLE_START = /^#{OPT_SPACE}(?=\S)#{TABLE_LINE}/
     attr_reader   :column_align_array
 
     def initialize(options={})
+      options[:fill_color] = 'gray'
       super
       @has_head         = false
       @row_data         = options[:rows]
@@ -29,12 +30,13 @@ TABLE_START = /^#{OPT_SPACE}(?=\S)#{TABLE_LINE}/
         end
         # delete divider row
       end
+      @colors = %w[yellow red orange green blue white]
 
       @row_data.each_with_index do |row, i|
         if i == 0 && @has_head_column
-          SimpleTableRow.new(parent: self, fill_color: 'gray', stroke_sides:[1,1,1,], stroke_width: 1, head_row: @has_head_column, width: @width, height: 20, items: row)
+          SimpleTableRow.new(parent: self, fill_color: @colors[i], stroke_sides:[1,1,1,1], stroke_width: 1, head_row: @has_head_column, width: @width, height: 30, items: row)
         else
-          SimpleTableRow.new(parent: self, fill_color: 'yellow', stroke_sides:[1,1,1,], stroke_width: 1, width: @width, height: 25, items: row)
+          SimpleTableRow.new(parent: self, fill_color: @colors[i], stroke_sides:[1,1,1,1], stroke_width: 1, width: @width, height: 25, items: row)
         end
       end
       layout_items
@@ -43,7 +45,7 @@ TABLE_START = /^#{OPT_SPACE}(?=\S)#{TABLE_LINE}/
     
     def layout_items
       height_sum = @graphics.map{|g| g.height}.reduce(:+)
-      @height   = height_sum + height_sum
+      @height   = height_sum
       relayout!
     end
     
@@ -89,9 +91,11 @@ TABLE_START = /^#{OPT_SPACE}(?=\S)#{TABLE_LINE}/
       @table_head_style   = @table_style[:table_head_style].dup
       @items.each_with_index do |item, i|
         if @head_row
-          token = RTextToken.new(parent: self,string: item.strip, para_style: @table_style['h4'], layout_expand: :width)
+          # token = Rectangle.new(parent: self, fill_color: @colors[i], stroke_width: 1, layout_expand: :width)
+          token = RTextToken.new(parent: self, fill_color: 'clear', string: item.strip, para_style: @table_style['h4'], layout_expand: :width)
         else
-          token = RTextToken.new(parent: self, string:item.strip, para_style: @table_style['body'], layout_expand: :width)
+          # token = Rectangle.new(parent: self, fill_color: 'clear',  stroke_width: 1, layout_expand: :width)
+          token = RTextToken.new(parent: self, fill_color: 'clear', string:item.strip, para_style: @table_style['body'], layout_expand: :width)
         end
       end
       self
