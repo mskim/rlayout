@@ -802,7 +802,7 @@ module RLayout
         end
       end
       if RUBY_ENGINE == 'ruby'
-        require 'hexapdf'
+        # require 'hexapdf'
         @pdf_doc = HexaPDF::Document.new
         load_fonts(@pdf_doc)
       end
