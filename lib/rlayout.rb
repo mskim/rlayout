@@ -18,17 +18,16 @@ elsif RUBY_ENGINE == "opal"
   #
 else
   # puts RUBY_ENGINE
-  require 'pry'
+  # require 'pry'
   require 'strscan'
   require 'yaml'
   require 'csv'
   require 'erb'
   require 'base64'
   require 'json'
-  require 'hexapdf'
+  # require 'hexapdf'
   # require 'xml-simple'
-  require 'mini_magick'
-  # require 'celluloid'
+  # require 'mini_magick'
 
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/base/utility'
