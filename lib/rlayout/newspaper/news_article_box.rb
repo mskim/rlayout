@@ -106,7 +106,7 @@ module RLayout
 
         end
         # current_y += @top_margin + @top_inset
-        @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @body_line_height*100, column_line_count: 100, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
       else
         @column_count.times do
@@ -115,7 +115,7 @@ module RLayout
           @graphics << g
           current_x += @column_width + @gutter
         end
-        @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @body_line_height*100, column_line_count: 100, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
       end
       @column_bottom = max_y(@graphics.first.frame_rect)
