@@ -85,7 +85,7 @@ module RLayout
   class NewsImage < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :image_position, :caption_title
     attr_accessor :image_box, :caption_column, :caption_paragraph, :position, :before_title, :fit_type, :expand, :has_caption
-    attr_reader   :image_kind
+    attr_reader   :image_kind, :x_grid
 
     def initialize(options={})
       if options[:parent]
@@ -97,10 +97,12 @@ module RLayout
       end
       @image_path             = options[:image_path]
       @image_kind             = options[:image_kind]
+      @x_grid                 = options[:x_grid]
       @column                 = options[:column]
       @row                    = options[:row]
       @position               = options[:position]
       options[:grid_frame]    = convert_column_row_position_to_frame(options) if @position
+      options[:grid_frame][0] = @x_grid if @x_grid 
       options[:layout_expand] = nil
       options[:fill_color]    = 'clear'
       @fit_type               = options[:fit_type] if options[:fit_type]

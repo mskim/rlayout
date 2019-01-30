@@ -123,6 +123,10 @@ TODO List
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
 2019_1_11
+	- NewsAdBox unless top_positin make top_margin as body_line_height
+	- for head without title, make height as body_line_height
+
+2019_1_11
 	- update caption_paragraph
 		- make separate line for caption_title and caption
 	

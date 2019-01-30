@@ -299,10 +299,10 @@ module RLayout
       h_options[:width]         = @width - @gutter unless @on_right_edge
       h_options[:width]         = @heading_columns*@column_width if @heading_columns != @column_count
       h_options[:subtitle_type] = @subtitle_type
+      @stroke.thickness = 0.3
       case @kind
       when 'editorial', "사설"
         @stroke.sides = [1,1,1,1]
-        @stroke.thickness = 0.3
         if @has_profile_image
           h_options[:x]     += @left_inset 
         else
@@ -312,26 +312,29 @@ module RLayout
         @heading = NewsHeadingForEditorial.new(h_options)
       when 'opinion', "기고"
         @stroke.sides = [0,1,0,1]
-        @stroke.thickness = 0.3
         h_options[:x]     += @left_margin + @column_width + @gutter
         h_options[:y]     = 2
         if @column_count == 2 
           h_options[:x]     = @left_margin
           h_options[:width] -= @left_margin +  @gutter
-        # elsif @column_count == 6
-        #     h_options[:x]     = @left_margin  + @gutter
-        #     h_options[:width] -= @left_margin +  @gutter 
         else
           h_options[:width] -= (h_options[:x] + @right_inset + @right_margin )
         end
         @heading = NewsHeadingForOpinion.new(h_options)
+      when 'reporter_opinion', '기자_기고'
+        @stroke.sides = [1,2,1,1]
+        @heading = NewsHeadingForReporterOpinion.new(h_options)
+
+      when 'obituary_promotion', '부고-인사'
+        @stroke.sides = [0,0,0,1]
+        @heading = NewsHeadingForObituary.new(h_options)
+
       else
         @stroke.sides = [0,0,0,1]
         @stroke.thickness = 0.3
-        # @stroke.color = 'red'
-        #TODO fix this
         @heading = NewsHeadingForArticle.new(h_options)
         if  @column_count != @heading_columns
+          # make top margin at the right side of shortened heading
           place_holder_options               = {}   
           place_holder_options[:is_float]    = true
           place_holder_options[:parent]      = self

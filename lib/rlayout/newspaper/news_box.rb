@@ -136,8 +136,8 @@ module RLayout
       end
       @layout_direction = 'vertical'
       @kind             = 'ad'
-      unless @top_position
-        @top_inset        = @body_line_height
+      unless @top_position == true
+        @top_margin        = @body_line_height
       end
       @x                = 0
       # @width  -= 2

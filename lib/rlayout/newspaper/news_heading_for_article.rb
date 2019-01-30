@@ -29,7 +29,7 @@ module RLayout
       y = @height_sum
       options[:y] = y
       options[:x] = 0
-      if options['title']
+      if options['title'] && options['title'] != ""
         if @parent.top_story
           @title_object = main_title(options)
         else
@@ -55,8 +55,11 @@ module RLayout
       @line_multiple  = @height_sum/@body_line_height
       @delta          = @line_multiple - @line_multiple.to_i
       @height         = @line_multiple.to_i*@body_line_height
+      puts "++++++++ @height:#{@height}"
       @height         += @body_line_height if @delta >= 0.5
       relayout!
+      puts "++++++++ @height:#{@height}"
+
       self
     end
 

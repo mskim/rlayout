@@ -90,8 +90,6 @@ module RLayout
       options.delete(:parent)
       @title_object               = TitleText.new(atts)
     end
-
-
   end
 
 end

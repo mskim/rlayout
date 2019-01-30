@@ -424,7 +424,7 @@ module RLayout
       @news_image         = NewsColumnImage.new(options)
     end
 
-    def grid_frame_to_image_rect(grid_frame)
+    def grid_frame_to_image_rect(grid_frame, options={})
       return [0,0,100,100]    unless @graphics
       return [0,0,100,100]    if grid_frame.nil?
       return [0,0,100,100]    if grid_frame == ""
