@@ -23,7 +23,7 @@ module RLayout
     attr_accessor :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
-    attr_reader :overlap, :overlap_rect, :embedded
+    attr_reader :overlap, :overlap_rect, :embedded, :has_left_side_bar
     # if RUBY_ENGINE == 'ruby'
     #   include Celluloid
     # end
@@ -45,6 +45,13 @@ module RLayout
         # @stroke.sides = [0,1,0,1]
         @stroke.sides = [0,1,0,1] 
         @stroke.thickness = 0.3
+      elsif @kind == '책소개' || @kind == 'book_review'
+        @has_left_side_bar = true
+      elsif @kind == '특집' || @kind == 'special'
+        @has_left_side_bar = true
+        @stroke.sides = [1,2,1,1]
+      elsif @kind == '부고-인사' || @kind == 'obitualry'
+
       else
         @stroke.sides = [0,0,0,1]
         @stroke.thickness = 0.3
@@ -321,7 +328,7 @@ module RLayout
           h_options[:width] -= (h_options[:x] + @right_inset + @right_margin )
         end
         @heading = NewsHeadingForOpinion.new(h_options)
-      when 'reporter_opinion', '기자_기고'
+      when 'box_opinion', '박스_기고'
         @stroke.sides = [1,2,1,1]
         @heading = NewsHeadingForReporterOpinion.new(h_options)
 
