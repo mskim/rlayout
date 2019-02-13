@@ -120,14 +120,27 @@ module RLayout
           info[:y]            += heading_space
           info[:height]       -= heading_space
         end
-
-        if grid_frame.last =~/^extend/
-          @extened_line_count = grid_frame.last.split("_")[1].to_i
-          info[:height] += @body_line_height*@extened_line_count
-        elsif grid_frame.last =~/^push/
-          @pushed_line_count = grid_frame.last.split("_")[1].to_i
-          info[:y]          += @body_line_height*@pushed_line_count
-          info[:height]     -= @body_line_height*@pushed_line_count
+        if grid_frame.last.class == Hash
+          if grid_frame.last['extend']
+            @extened_line_count = grid_frame.last['extend'].to_i
+            info[:height] += @body_line_height*@extened_line_count
+          end
+          if grid_frame.last['push']
+            @pushed_line_count = grid_frame.last['push'].to_i
+            info[:y]          += @body_line_height*@pushed_line_count
+            info[:height]     -= @body_line_height*@pushed_line_count
+          end
+        elsif grid_frame.length > 4
+          # support legacy format
+          # TODO deprecate this at next upgrading
+          if grid_frame.last =~/^extend/
+            @extened_line_count = grid_frame.last.split("_")[1].to_i
+            info[:height] += @body_line_height*@extened_line_count
+          elsif grid_frame.last =~/^push/
+            @pushed_line_count = grid_frame.last.split("_")[1].to_i
+            info[:y]          += @body_line_height*@pushed_line_count
+            info[:height]     -= @body_line_height*@pushed_line_count
+          end
         end
         info[:layout_expand]  = nil
         info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO

@@ -1,6 +1,5 @@
 module RLayout
-  # 박스_기고
-
+  # 특집
   class NewsHeadingForSpecial < Container
 
   end
