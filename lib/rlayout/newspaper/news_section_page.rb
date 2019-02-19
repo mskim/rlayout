@@ -151,8 +151,11 @@ module RLayout
     end
 
     def self.section_pdf(options)
+      time_start = Time.now
       section_page = self.open(options)
       section_page.merge_layout_pdf(options)
+      time_end = Time.now
+      puts "++++++++ section_pdf took:#{time_end - time_start}"
     end
 
     def self.open(options={})

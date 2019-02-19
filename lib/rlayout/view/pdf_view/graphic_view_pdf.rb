@@ -41,7 +41,16 @@ module RLayout
           # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
       end
       if @image_path
-        canvas.image(@image_path, at: flipped_origin, width: @width, height: @height)
+        puts "++++++ we have image!"
+        puts "self.class:#{self.class}"
+        # graphic_view_pdf
+        puts "flipped_origin:#{flipped_origin}"
+        puts "@y:#{@y}"
+        image_origin = flipped_origin
+        image_origin[0] += @x
+        image_origin[1] -= @y
+        puts "image_origin:#{image_origin}"
+        canvas.image(@image_path, at: image_origin, width: @width, height: @height)
       end
       if @has_text
         if RUBY_ENGINE == "ruby"

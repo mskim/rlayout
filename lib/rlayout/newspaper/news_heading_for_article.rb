@@ -55,11 +55,8 @@ module RLayout
       @line_multiple  = @height_sum/@body_line_height
       @delta          = @line_multiple - @line_multiple.to_i
       @height         = @line_multiple.to_i*@body_line_height
-      puts "++++++++ @height:#{@height}"
       @height         += @body_line_height if @delta >= 0.5
       relayout!
-      puts "++++++++ @height:#{@height}"
-
       self
     end
 

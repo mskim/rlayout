@@ -484,6 +484,7 @@ module RLayout
         end
         # # flip canvas virtically 
         # canvas.transform(1,0,0,-1,0,@height)
+        bindng.pry
         to_pdf(canvas)
         doc.write(path, optimize: true)
       end

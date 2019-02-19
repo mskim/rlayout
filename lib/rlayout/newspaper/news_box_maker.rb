@@ -794,10 +794,25 @@ module RLayout
         @custom_style_path = "/Users/Shared/SoftwareLab/newsman/#{@publication_name}/text_style.yml"
         if File.exist?(@custom_style_path)
           custom_style_yaml = File.open(@custom_style_path, 'r'){|f| f.read}
-          @custom_style = YAML::load(custom_style_yaml)
-          RLayout::StyleService.shared_style_service.current_style = @custom_style
+          RLayout::StyleService.shared_style_service.current_style = YAML::load(custom_style_yaml)
         else
           puts "No custom style file :#{@custom_style_path} found !!!"
+          return
+        end
+      elsif $ProjectPath
+        a = $ProjectPath.split("/")
+        a.pop
+        a.pop
+        a.pop
+        a.pop
+        style_path = a.join("/")
+        @local_style_path = style_path + "/text_style/text_style.yml"
+        puts "++++++++ @local_style_path:#{@local_style_path}"
+        if File.exist?(@local_style_path)
+          local_style_yaml = File.open(@local_style_path, 'r'){|f| f.read}
+          RLayout::StyleService.shared_style_service.current_style =  YAML::load(local_style_yaml)
+        else
+          puts "No local style file :#{@local_style_path} found !!!"
           return
         end
       end
