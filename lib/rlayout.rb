@@ -18,7 +18,7 @@ elsif RUBY_ENGINE == "opal"
   #
 else
   # puts RUBY_ENGINE
-  # require 'pry'
+  require 'pry'
   require 'strscan'
   require 'yaml'
   require 'csv'
@@ -27,7 +27,7 @@ else
   require 'json'
   # require 'hexapdf'
   # require 'xml-simple'
-  # require 'mini_magick'
+  require 'mini_magick'
 
   require File.dirname(__FILE__) + "/rlayout/version"
   require File.dirname(__FILE__) + '/rlayout/base/utility'
@@ -147,6 +147,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_heading_for_obituary'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_heading_for_book_review'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_image'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_image_group'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_column_image'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_image_box'
   require File.dirname(__FILE__) + '/rlayout/newspaper/profile_image'

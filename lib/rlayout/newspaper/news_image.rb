@@ -100,7 +100,7 @@ module RLayout
       @x_grid                 = options[:x_grid]
       @column                 = options[:column]
       @row                    = options[:row]
-      @position               = options[:position]
+      @position               = options[:position] || 3
       options[:grid_frame]    = convert_column_row_position_to_frame(options) if @position
       options[:grid_frame][0] = @x_grid if @x_grid 
       options[:layout_expand] = nil
@@ -109,7 +109,11 @@ module RLayout
       @expand                 = options[:expand] if options[:expand]
       @before_title           = options.fetch(:before_title, false)
       super
-      frame_rect              = @parent.grid_frame_to_image_rect(options[:grid_frame], bottom_position: bottom_position?)
+      if @parent
+        frame_rect              = @parent.grid_frame_to_image_rect(options[:grid_frame], bottom_position: bottom_position?)
+      else
+        frame_rect              = [0,0, 400, 100]
+      end
       @x                      = frame_rect[0]
       @y                      = frame_rect[1]
       @width                  = frame_rect[2]
@@ -144,7 +148,7 @@ module RLayout
       image_options[:layout_expand]  = nil
       image_options[:layout_expand]  = @expand if @expand
       image_options[:parent]         = self
-      if @parent.kind == '기고' || @parent.kind == 'opinion'
+      if @parent && (@parent.kind == '기고' || @parent.kind == 'opinion')
         image_options[:stroke_width]  = 0
       end
       @image_box                    = Image.new(image_options)
@@ -154,7 +158,7 @@ module RLayout
       end
       # make space after the news_image when we have following text
       # for full sized news_image, this will be adjusted by adjust_image_height
-      @height                       += @parent.body_line_height
+      @height                       += @parent.body_line_height if @parent
       self
     end
 
@@ -217,6 +221,7 @@ module RLayout
           position_number = 1
         end
         @image_position = NUMBER_TO_POSITION[position_number.to_s]
+        puts "+++++++++++++ @image_position:#{@image_position}"
       end
       #TODO this is only for upper right, do it for other positions as well
       if options[:column] && options[:row]

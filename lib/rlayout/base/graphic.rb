@@ -477,6 +477,7 @@ module RLayout
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path, options)
       elsif RUBY_ENGINE == 'ruby'
+        require 'HexaPDF'
         unless @parent
           doc       = HexaPDF::Document.new
           page      = doc.pages.add([@x, @y, @width, @height])
@@ -484,7 +485,7 @@ module RLayout
         end
         # # flip canvas virtically 
         # canvas.transform(1,0,0,-1,0,@height)
-        bindng.pry
+        # binding.pry
         to_pdf(canvas)
         doc.write(path, optimize: true)
       end

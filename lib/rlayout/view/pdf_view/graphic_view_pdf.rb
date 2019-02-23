@@ -7,58 +7,41 @@ module RLayout
         p_origin = @parent.flipped_origin
         [p_origin[0] + @x, p_origin[1]  - @y]
       else
-        [@x, @height - @top_margin - @top_inset - @y]
+        # [@x, @height - @top_margin - @top_inset - @y]
+        [@x, @y]
       end
     end
 
     def to_pdf(canvas)
       @flipped = flipped_origin
-
       draw_fill(canvas)
-      if !@stroke.color
-        @stroke.color = 'CMYK=0,0,0,0 '
-      end
-      @stroke.color = RLayout.color_from_string(@stroke.color) if @stroke.color.class == String
+      # if !@stroke.color
+      #   @stroke.color = 'CMYK=0,0,0,0 '
+      # end
+      # @stroke.color = RLayout.color_from_string(@stroke.color) if @stroke.color.class == String
 
-      case @shape
-      when RLayout::RectStruct
-        @fill.color == 'red'
-        unless @fill.color == 'clear'
-          canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] - @height, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
-        end
-          # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
-      when RoundRectStruct
-      when RLayout::CircleStruct
-        circle = canvas.fill_color(@fill.color).stroke_color(@stroke.color).line_width(@stroke.thickness).circle(flipped[0] + @shape.r, flipped[1] + @shape.r, @shape.r).fill_stroke
-      when EllipseStruct
-      when PoligonStruct
-      when PathStruct
-      when LineStruct
-      else
-        unless @fill.color == 'clear'
-          canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
-        end
-          # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
-      end
-      if @image_path
-        puts "++++++ we have image!"
-        puts "self.class:#{self.class}"
-        # graphic_view_pdf
-        puts "flipped_origin:#{flipped_origin}"
-        puts "@y:#{@y}"
-        image_origin = flipped_origin
-        image_origin[0] += @x
-        image_origin[1] -= @y
-        puts "image_origin:#{image_origin}"
-        canvas.image(@image_path, at: image_origin, width: @width, height: @height)
-      end
-      if @has_text
-        if RUBY_ENGINE == "ruby"
-          draw_text_in_ruby(canvas) 
-        elsif RUBY_ENGINE == "rubymotion"
-          draw_text
-        end
-      end
+      # case @shape
+      # when RLayout::RectStruct
+      #   @fill.color == 'red'
+      #   unless @fill.color == 'clear'
+      #     canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] - @height, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+      #   end
+      #     # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+      # when RoundRectStruct
+      # when RLayout::CircleStruct
+      #   circle = canvas.fill_color(@fill.color).stroke_color(@stroke.color).line_width(@stroke.thickness).circle(flipped[0] + @shape.r, flipped[1] + @shape.r, @shape.r).fill_stroke
+      # when EllipseStruct
+      # when PoligonStruct
+      # when PathStruct
+      # when LineStruct
+      # else
+      #   unless @fill.color == 'clear'
+      #     canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+      #   end
+      #     # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+      # end
+      draw_image(canvas) if @image_path
+      draw_text_in_ruby(canvas)  if @has_text
       draw_stroke(canvas)
     end
 
