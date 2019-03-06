@@ -193,7 +193,9 @@ module RLayout
         # return true unless @current_line
         @current_line.set_paragraph_info(self, "middle_line")
       end
-
+      if @current_line.room != @current_line.text_area[2]
+        @current_line.room = @current_line.text_area[2]
+      end
       while token
         return unless @current_line
         result = @current_line.place_token(token)

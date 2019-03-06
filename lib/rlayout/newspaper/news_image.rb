@@ -81,6 +81,8 @@ NUMBER_TO_POSITION = {
   '9'=> 'bottom_right',
 }
 
+PERSONAL_IMAGE_MARGIN = 10
+PERSONAL_IMAGE_HEIGHT_IN_LINES = 5.5
 module RLayout
   class NewsImage < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :image_position, :caption_title
@@ -114,11 +116,27 @@ module RLayout
       else
         frame_rect              = [0,0, 400, 100]
       end
-      @x                      = frame_rect[0]
-      @y                      = frame_rect[1]
-      @width                  = frame_rect[2]
-      @height                 = frame_rect[3] - 4 #TODO body_leading
-      if options[:extra_height_in_lines] # && options[:extra_height_in_lines] > 0
+
+      if @image_kind == '인물_좌'  || @image_kind == 'person_image_left'
+        # handle images that are less than column
+        # binding.pry
+        #TODO take care when not at the edge 
+        unless @parent.on_left_edge
+          @x = @parent.gutter
+        end
+        @width                  = @parent.column_width*0.5 + PERSONAL_IMAGE_MARGIN
+        @height                 = @parent.body_line_height*PERSONAL_IMAGE_HEIGHT_IN_LINES
+      elsif @image_kind == '인물_우' || @image_kind == 'person_image_right'
+        @x                      = @parent.column_width*0.5 - PERSONAL_IMAGE_MARGIN
+        @width                  = @parent.column_width*0.5 + PERSONAL_IMAGE_MARGIN
+        @height                 = @parent.body_line_height*PERSONAL_IMAGE_HEIGHT_IN_LINES
+      else
+        @x                      = frame_rect[0]
+        @y                      = frame_rect[1]
+        @width                  = frame_rect[2]
+        @height                 = frame_rect[3] - 4 #TODO body_leading
+      end
+      if options[:extra_height_in_lines]  && options[:extra_height_in_lines] > 0
         @height += options[:extra_height_in_lines]*@parent.body_line_height
         @y -= options[:extra_height_in_lines]*@parent.body_line_height if @image_position =~/^bottom/ 
       end
@@ -133,6 +151,14 @@ module RLayout
       image_options[:width]        = @width
       image_options[:height]       = @height
       image_options[:height]       = @height - @caption_column.height if @caption_column
+      if @image_kind == '인물_좌'  || @image_kind == 'person_image_left'
+        image_options[:x]          = 0
+        image_options[:width]      = @width - PERSONAL_IMAGE_MARGIN
+      elsif @image_kind == '인물_우' || @image_kind == 'person_image_right'
+        image_options[:x]         = PERSONAL_IMAGE_MARGIN
+        image_options[:width]     = @width - PERSONAL_IMAGE_MARGIN
+      end
+
 
       unless top_position?
         image_options[:y]          = @parent.body_line_height
@@ -221,7 +247,6 @@ module RLayout
           position_number = 1
         end
         @image_position = NUMBER_TO_POSITION[position_number.to_s]
-        puts "+++++++++++++ @image_position:#{@image_position}"
       end
       #TODO this is only for upper right, do it for other positions as well
       if options[:column] && options[:row]

@@ -25,7 +25,7 @@ else
   require 'erb'
   require 'base64'
   require 'json'
-  # require 'hexapdf'
+  require 'hexapdf'
   # require 'xml-simple'
   require 'mini_magick'
 

@@ -61,7 +61,7 @@ module RLayout
       @embedded               = options[:embedded]
       @current_column_index   = 0
       @heading_columns        = @column_count      
-      @heading_columns        = 4 if @column_count == 7 #|| @column_count == 6
+      # @heading_columns        = 4 if @column_count == 7 #|| @column_count == 6
       @heading_columns        = options[:heading_columns] if options[:heading_columns]
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
       @quote_box_size         = options[:quote_box_size] || 0
@@ -115,6 +115,7 @@ module RLayout
         # current_y += @top_margin + @top_inset
         @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
+
       else
         @column_count.times do
           g= RColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
@@ -243,7 +244,8 @@ module RLayout
 
     def first_text_line
       line = nil
-      @graphics.each do |column|
+      @graphics.each_with_index do |column, i|
+        next if @has_left_side_bar && i == 0
         line = column.first_text_line_in_column
         return line if line
       end
@@ -287,7 +289,15 @@ module RLayout
         save_article_info
       end
     end
-""
+    
+    def second_column_x
+      @graphics[1].x
+    end
+    
+    def has_left_side_bar_heading_width
+      @graphics.last.x_max - second_column_x
+    end
+
     # make heading as float
     def make_article_heading(options={})
       @is_front_page            = options['is_front_page'] || options[:is_front_page]
@@ -328,14 +338,13 @@ module RLayout
           h_options[:width] -= (h_options[:x] + @right_inset + @right_margin )
         end
         @heading = NewsHeadingForOpinion.new(h_options)
-      when 'box_opinion', '박스_기고'
+      when 'box_opinion', '박스기고'
         @stroke.sides = [1,2,1,1]
-        @heading = NewsHeadingForReporterOpinion.new(h_options)
-
+        @heading = NewsHeadingForArticle.new(h_options)
       when 'obituary_promotion', '부고-인사'
-        @stroke.sides = [0,0,0,1]
         @heading = NewsHeadingForObituary.new(h_options)
-
+      when '특집', '책소개'
+        @heading          = NewsHeadingForArticle.new(h_options)
       else
         @stroke.sides = [0,0,0,1]
         @stroke.thickness = 0.3
@@ -419,9 +428,9 @@ module RLayout
         float_subtitle(heading_hash['subtitle']) if heading_hash['subtitle'] && heading_hash['subtitle'] != ""
       end
 
-      if heading_hash['personal_image']
-        float_personal_image(heading_hash)
-      end
+      # if heading_hash['personal_image']
+      #   float_personal_image(heading_hash)
+      # end
 
       if heading_hash['quote']
         float_quote(heading_hash)
@@ -457,6 +466,7 @@ module RLayout
       options[:text_string]   = boxed_subtitle_text
       options[:text_fit_type] = 'adjust_box_height'
       options[:x]             = @starting_column_x
+      options[:x]             += @column_width + @gutter if @has_left_side_bar
       options[:y]             = 0
       options[:top_inset]     = 0 if options[:space_before_in_lines] == 0
       options[:width]         = @column_width
@@ -486,6 +496,7 @@ module RLayout
       options[:text_fit_type] = 'adjust_box_height'
       options[:x]             = @starting_column_x
       options[:x]             += @column_width + @gutter if @subtitle_type == "2단-2단시작"
+      options[:x]             += @column_width + @gutter if @has_left_side_bar
       options[:y]             = 0
       options[:top_inset]     = 0 if options[:space_before_in_lines] == 0
       options[:width]         = @column_width
@@ -495,8 +506,11 @@ module RLayout
       options[:parent]        = self
       # options[:stroke_width]  = 1
       options[:stroke_color]  = "CMYK=0,0,0,100"
-
+      if @floats.last.class == NewsImage && floats.last.image_kind =~/^인물/
+        personal_image = floats.pop
+      end
       TitleText.new(options)
+      @floats << personal_image if personal_image
     end
 
     def float_quote(options={})
@@ -632,7 +646,6 @@ module RLayout
       end
       [frame_x, frame_y, frame_width, frame_height]
     end
-
 
     # layout_floats!
     # Floats are Heading, Image, Quotes, SideBox ...

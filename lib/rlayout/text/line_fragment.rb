@@ -10,7 +10,7 @@ module RLayout
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent, :para_style, :text_alignment, :starting_position
     attr_accessor :x, :y, :width, :height, :total_token_width, :room
-    attr_accessor :text_area, :text_area_width, :has_text, :space_width, :debug
+    attr_accessor :text_area, :has_text, :space_width, :debug
     def	initialize(options={})
       # options[:stroke_color]      = 'red'
       options[:layout_direction]  = 'horizontal'
@@ -24,7 +24,6 @@ module RLayout
       @starting_position = @left_inset || 0
       @stroke_width     = 1
       @text_area        = [@x, @y, @width, @height]
-      @text_area_width  = @width
       @room             = @text_area[2]
       self
     end

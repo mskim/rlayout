@@ -12,7 +12,7 @@ module RLayout
       @string                 = options.delete(:text_string)
       # parse for adjust_size pattern 
       # if @string =~/\{\s*(-?\d)\s?\}\s?$/
-      if @string =~/\{\s*(-*+*\d)\s*\}\s*$/
+      if @string =~/\{\s*(-*\+*\d)\s*\}\s*$/
         @adjust_size = $1.to_i
         @string = @string.sub(/\{\s?(-?\d)\s?\}\s?$/, "")
       end

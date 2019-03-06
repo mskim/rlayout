@@ -800,14 +800,9 @@ module RLayout
           return
         end
       elsif $ProjectPath
-        a = $ProjectPath.split("/")
-        a.pop
-        a.pop
-        a.pop
-        a.pop
-        style_path = a.join("/")
-        @local_style_path = style_path + "/text_style/text_style.yml"
-        puts "++++++++ @local_style_path:#{@local_style_path}"
+        a = $ProjectPath.split("public/1")
+        publication_path = a[0] + "public/1"
+        @local_style_path = publication_path + "/text_style/text_style.yml"
         if File.exist?(@local_style_path)
           local_style_yaml = File.open(@local_style_path, 'r'){|f| f.read}
           RLayout::StyleService.shared_style_service.current_style =  YAML::load(local_style_yaml)
@@ -887,6 +882,14 @@ module RLayout
           else
             @news_box.stroke[:sides] = [0,1,0,0]
           end
+        elsif @news_box.kind == '박스기고'
+          @news_box.stroke[:sides] = [1,6,1,1]
+          @news_box.left_margin = 0
+          @news_box.right_margin = 0
+        elsif @news_box.kind == '부고-인사'
+          @news_box.left_margin = 0
+          @news_box.right_margin = 0
+          @news_box.stroke[:sides] = [0,1,0,0]
         elsif @news_box.embedded
             @news_box.stroke[:sides] = [0,1,0,1]
         elsif @news_box.bottom_article

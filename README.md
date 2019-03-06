@@ -122,6 +122,8 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2019_2_27
+
 2019_1_11
 	- NewsAdBox unless top_positin make top_margin as body_line_height
 	- for head without title, make height as body_line_height

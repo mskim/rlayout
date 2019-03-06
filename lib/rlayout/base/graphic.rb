@@ -4,7 +4,7 @@ module RLayout
   class Graphic
     attr_accessor :parent, :x, :y, :width, :height, :tag, :ns_view, :pdf_view, :svg_view, :path
     attr_accessor :graphics, :fixtures, :floats, :grid_frame
-    attr_accessor :non_overlapping_rect
+    attr_accessor :non_overlapping_rect, :z_order
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
     attr_accessor :frame_image, :shadow, :rotation, :right_anchor, :center_anchor_at, :bottom_anchor
     attr_reader   :pdf_doc
@@ -309,8 +309,6 @@ module RLayout
         if klass_name == "Text"
           data[:text_string] = TEXT_STRING_SAMPLES.sample
         elsif klass_name == "Image"
-          # puts path = File.dirname(__FILE__) + "/../../spec/image/1.jpg"
-          # puts File.exists?(path)
           data[:image_path] = File.dirname(__FILE__) + "/../../spec/image/1.jpg"
         end
         samples << Graphic.klass_of(klass_name, data)
@@ -625,6 +623,7 @@ module RLayout
   class Image < Graphic
     attr_accessor :caption , :bleed
     def initialize(options={})
+      # binding.pry
       if options[:caption]
         @caption = options[:caption]
       end
@@ -632,8 +631,8 @@ module RLayout
         @bleed = options[:bleed]
       end
       super
-
       init_image(options)
+
       if options[:local_image]
         @local_image = options[:local_image]
       end

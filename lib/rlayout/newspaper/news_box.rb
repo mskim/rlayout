@@ -52,6 +52,7 @@ module RLayout
       else
         @width  = @column_count*@grid_width # we have @gutter/2 on each side
       end
+      
       if @on_left_edge && @on_right_edge
         # touching both edge
         puts 

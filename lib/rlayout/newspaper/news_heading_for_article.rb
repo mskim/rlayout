@@ -47,12 +47,12 @@ module RLayout
           @subtitle_object = subtitle(options)
         end
         # @height_in_lines += @subtitle_object.height_in_lines unless @subtitle_object.nil?
-        @height_sum       +=@subtitle_object.height    unless @subtitle_object.nil?
+        @height_sum       +=@subtitle_object.height    if @subtitle_object
       end
-
       #TODO calculate with actual sum of heigh and make body_line multiple
       # in and verticslly center it?
       @line_multiple  = @height_sum/@body_line_height
+      @line_multiple  = 1 if @line_multiple < 1
       @delta          = @line_multiple - @line_multiple.to_i
       @height         = @line_multiple.to_i*@body_line_height
       @height         += @body_line_height if @delta >= 0.5
