@@ -583,7 +583,7 @@ module RLayout
 
     def float_personal_image(options={})
       options = options.dup
-      frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
+      frame_rect = grid_frame_to_rect(options[:grid_frame]) if options[:grid_frame]
       options[:x]       = frame_rect[0]
       options[:y]       = frame_rect[1]
       options[:width]   = frame_rect[2]
@@ -614,7 +614,7 @@ module RLayout
       @news_image         = NewsColumnImage.new(options)
     end
 
-    def grid_frame_to_image_rect(grid_frame, options={})
+    def grid_frame_to_rect(grid_frame, options={})
       return [0,0,100,100]    unless @graphics
       return [0,0,100,100]    if grid_frame.nil?
       return [0,0,100,100]    if grid_frame == ""

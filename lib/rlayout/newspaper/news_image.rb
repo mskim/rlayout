@@ -112,7 +112,7 @@ module RLayout
       @before_title           = options.fetch(:before_title, false)
       super
       if @parent
-        frame_rect              = @parent.grid_frame_to_image_rect(options[:grid_frame], bottom_position: bottom_position?)
+        frame_rect              = @parent.grid_frame_to_rect(options[:grid_frame], bottom_position: bottom_position?)
       else
         frame_rect              = [0,0, 400, 100]
       end

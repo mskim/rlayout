@@ -462,7 +462,7 @@ module RLayout
 
     def float_leading(options={})
       leading_options = {}
-      frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
+      frame_rect = grid_frame_to_rect(options[:grid_frame]) if options[:grid_frame]
       leading_options[:x]       = frame_rect[0]
       leading_options[:y]       = frame_rect[1]
       leading_options[:width]   = frame_rect[2]
@@ -475,7 +475,7 @@ module RLayout
 
     def float_quote(options={})
       quote_options = options.dup
-      frame_rect = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
+      frame_rect = grid_frame_to_rect(options[:grid_frame]) if options[:grid_frame]
       quote_options[:x]       = frame_rect[0]
       quote_options[:y]       = frame_rect[1]
       quote_options[:width]   = frame_rect[2]
@@ -491,8 +491,8 @@ module RLayout
       image_options = {}
       image_options[:image_path] = "#{options[:image_path]}" if options[:image_path]
       image_options[:image_path] = "#{$ProjectPath}/images/#{options[:local_image]}" if options[:local_image]
-      frame_rect              = grid_frame_to_image_rect([0,0,1,1])
-      frame_rect              = grid_frame_to_image_rect(options[:grid_frame]) if options[:grid_frame]
+      frame_rect              = grid_frame_to_rect([0,0,1,1])
+      frame_rect              = grid_frame_to_rect(options[:grid_frame]) if options[:grid_frame]
       image_options[:x]       = frame_rect[0]
       image_options[:y]       = frame_rect[1]
       image_options[:width]   = frame_rect[2]
@@ -519,7 +519,7 @@ module RLayout
       end
     end
 
-    def grid_frame_to_image_rect(grid_frame, options={})
+    def grid_frame_to_rect(grid_frame, options={})
       return [0,0,100,100]    unless @graphics
       return [0,0,100,100]    if grid_frame.nil?
       return [0,0,100,100]    if grid_frame == ""
