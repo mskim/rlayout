@@ -19,73 +19,12 @@ RIGHT_LEFT    = 6
 RIGHT_MIDDLE  = 7
 RIGHT_RIGHT   = 8
 
-# minimum image height in grid? 3?
-
-IMAGE_COLUMN_POSITION_TABLE = {
-  '1'=> {size: [1,1], position: 'top_right'},
-  '2'=> {size: [2,2], position: 'top_right'},
-  '3'=> {size: [2,2], position: 'top_right'},
-  '4'=> {size: [3,3], position: 'top_right'},
-  '5'=> {size: [3,3], position: 'top_center'},
-  '6'=> {size: [3,3], position: 'top_right'},
-  '7'=> {size: [3,3], position: 'top_right'},
-}
-
-IMAGE_SIZE_POSITION_TABLE = {
-  '1x1'=> {size: [1,1], position: 'top_right'},
-  '1x2'=> {size: [1,1], position: 'top_right'},
-  '1x3'=> {size: [1,1], position: 'top_right'},
-
-  '2x2'=> {size: [2,2], position: 'top_right'},
-  '2x3'=> {size: [2,2], position: 'top_right'},
-  '2x4'=> {size: [2,2], position: 'top_right'},
-  '2x5'=> {size: [2,2], position: 'top_right'},
-
-  '3x3'=> {size: [2,2], position: 'top_right'},
-  '3x4'=> {size: [2,2], position: 'top_right'},
-  '3x5'=> {size: [2,2], position: 'top_right'},
-  '3x6'=> {size: [2,2], position: 'top_right'},
-
-  '4x4'=> {size: [2,4], position: 'top_right'},
-  '4x5'=> {size: [2,5], position: 'top_right'},
-  '4x6'=> {size: [2,6], position: 'top_right'},
-  '4x7'=> {size: [2,3], position: 'top_right'},
-  '4x3'=> {size: [2,3], position: 'top_right'},
-
-  '5x5'=> {size: [3,3], position: 'top_center'},
-  '5x6'=> {size: [3,3], position: 'top_center'},
-  '5x7'=> {size: [3,3], position: 'top_center'},
-  '5x4'=> {size: [3,3], position: 'top_center'},
-  '5x3'=> {size: [3,3], position: 'top_center'},
-
-  '6x6'=> {size: [3,3], position: 'top_right'},
-  '6x5'=> {size: [3,3], position: 'top_right'},
-  '6x4'=> {size: [3,3], position: 'top_right'},
-
-  '7x7'=> {size: [3,3], position: 'top_right'},
-  '7x6'=> {size: [3,3], position: 'top_right'},
-  '7x5'=> {size: [3,3], position: 'top_right'},
-  '7x4'=> {size: [3,3], position: 'top_right'},
-}
-
-NUMBER_TO_POSITION = {
-  '0'=> 'before_title',
-  '1'=> 'top_left',
-  '2'=> 'top_center',
-  '3'=> 'top_right',
-  '4'=> 'center_left',
-  '5'=> 'center_center',
-  '6'=> 'center_right',
-  '7'=> 'bottom_left',
-  '8'=> 'bottom_center',
-  '9'=> 'bottom_right',
-}
 
 PERSONAL_IMAGE_MARGIN = 10
 PERSONAL_IMAGE_HEIGHT_IN_LINES = 5.5
 module RLayout
   class NewsImage < Container
-    attr_accessor :article_column, :column, :article_row, :row, :image_size, :image_position, :caption_title
+    attr_accessor :article_column, :column, :article_row, :row, :image_size, :caption_title
     attr_accessor :image_box, :caption_column, :caption_paragraph, :position, :before_title, :fit_type, :expand, :has_caption
     attr_reader   :image_kind, :x_grid
 
@@ -103,6 +42,8 @@ module RLayout
       @column                 = options[:column]
       @row                    = options[:row]
       @position               = options[:position] || 3
+      @position               = 9  if @position > 9
+      @position               = 1  if @position < 0
       options[:grid_frame]    = convert_column_row_position_to_frame(options) if @position
       options[:grid_frame][0] = @x_grid if @x_grid 
       options[:layout_expand] = nil
@@ -138,7 +79,7 @@ module RLayout
       end
       if options[:extra_height_in_lines]  && options[:extra_height_in_lines] > 0
         @height += options[:extra_height_in_lines]*@parent.body_line_height
-        @y -= options[:extra_height_in_lines]*@parent.body_line_height if @image_position =~/^bottom/ 
+        @y -= options[:extra_height_in_lines]*@parent.body_line_height if bottom_position?
       end
 
       has_caption_text?(options)
@@ -202,17 +143,31 @@ module RLayout
     end
 
     def top_position?
-      @image_position.include?('top')
-      # @position == 1 || @position == 2 || @position == 3
+      @position == 1 || @position == 2 || @position == 3
     end
 
     def bottom_position?
-      @image_position.include?('bottom')
-      # @position == 7 || @position == 8|| @position == 9
+      @position == 7 || @position == 8|| @position == 9
     end
 
     def before_title?
       @before_title
+    end
+
+    def horizontal_center?
+      @position == 2 || @position == 5 || @position == 8
+    end
+    
+    def horizontal_left?
+      @position == 1 || @position == 4 || @position == 7
+    end
+
+    def vertical_center?
+      @position == 4 || @position == 5 || @position == 6
+    end
+
+    def vertical_bottom?
+      bottom_position?
     end
 
     def adjust_image_height
@@ -221,67 +176,42 @@ module RLayout
       @caption_column.y  = @image_box.height if @caption_column
     end
 
-    def size_to_grid(size)
-      mid_column      = @article_column/2
-      large_column    = mid_column + 1
-      small_column    = mid_column - 1
-      case size
-      when 'large'
-      when 'medium'
-      when 'small'
-      end
-    end
-
     # convert column, row, and position into x,y,width, and height
     def convert_column_row_position_to_frame(options={})
-      default_image_options   = IMAGE_SIZE_POSITION_TABLE["#{@article_column}x#{@article_row}"]
-      default_image_options   = IMAGE_COLUMN_POSITION_TABLE[@article_column.to_s] unless default_image_options
-      image_size              = options.fetch(:size, default_image_options[:size])
-      @image_position         = "top_right"
-      if options[:position]
-        position_number = options[:position].to_i
-        # fix invalid numbers
-        if position_number > 9
-          position_number = 9 
-        elsif position_number < 0
-          position_number = 1
-        end
-        @image_position = NUMBER_TO_POSITION[position_number.to_s]
-      end
+
       #TODO this is only for upper right, do it for other positions as well
       if options[:column] && options[:row]
-        image_size[0] = options[:column]
-        image_size[1] = options[:row]
+        @image_size[0] = options[:column]
+        @image_size[1] = options[:row]
+      else
+        @image_size = [1,1]
       end
-      position_array = @image_position.split("_")
-      v_position = position_array[0]
-      h_position = position_array[1]
-      x_grid = @article_column - image_size[0]
+      x_grid = @article_column - @image_size[0]
       y_grid = 0 #@article_row - image_size[1]
 
       # horizontal posiion
-      if h_position == 'center'
-        diff   = @article_column - image_size[0]
+      if horizontal_center?
+        diff   = @article_column - @image_size[0]
         if diff.odd?
           x_grid = (diff + 1)/2
         else
           x_grid = diff/2
         end
-      elsif h_position == 'left'
+      elsif horizontal_left?
         x_grid = 0
       end
       # veritical posiion
-      if v_position == 'center'
-        diff   = @article_row - image_size[1]
+      if vertical_center?
+        diff   = @article_row - @image_size[1]
         if diff.odd?
           y_grid = (diff + 1)/2
         else
           y_grid = diff/2
         end
-      elsif v_position == 'bottom'
-        y_grid = @article_row - image_size[1]
+      elsif vertical_bottom?
+        y_grid = @article_row - @image_size[1]
       end
-      [x_grid, y_grid, image_size[0], image_size[1]]
+      [x_grid, y_grid, @image_size[0], @image_size[1]]
     end
 
   end
