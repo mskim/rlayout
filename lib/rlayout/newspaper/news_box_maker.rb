@@ -987,7 +987,7 @@ module RLayout
     end
 
     def draw_line_grids
-      @graphics.each do |column|
+      @news_box.graphics.each do |column|
         column.draw_line_rect
       end
     end

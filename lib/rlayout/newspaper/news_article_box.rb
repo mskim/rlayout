@@ -19,7 +19,8 @@ module RLayout
   class NewsArticleBox < NewsBox
     attr_accessor :heading_columns, :fill_up_enpty_lines
     attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines
-    attr_accessor :heading, :subtitle_box, :subtitle_in_head, :quote_box, :quote_box_size, :personal_image, :news_image
+    attr_accessor :heading, :subtitle_box, :subtitle_in_head, :personal_image, :news_image
+    attr_accessor :quote_box, :quote_box_size, :quote_position, :quote_x_grid, :quote_x_grid, :quote_v_extra_space, :quote_alignment, :quote_line_type 
     attr_accessor :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
@@ -61,13 +62,18 @@ module RLayout
       @embedded               = options[:embedded]
       @current_column_index   = 0
       @heading_columns        = @column_count      
-      # @heading_columns        = 4 if @column_count == 7 #|| @column_count == 6
       @heading_columns        = options[:heading_columns] if options[:heading_columns]
       @fill_up_enpty_lines    = options[:fill_up_enpty_lines] || false
-      @quote_box_size         = options[:quote_box_size] || 0
       @boxed_subtitle_type    = options[:boxed_subtitle_type]
       @announcement_column    = options[:announcement_column]
       @announcement_color     = options[:announcement_color] || 'red'
+      @quote_box_size         = options[:quote_box_size] || 0
+      @quote_position         = options[:quote_position] || 3
+      @quote_x_grid           = options[:quote_x_grid] || 1
+      @quote_v_extra_space    = options[:quote_v_extra_space] || 0
+      @quote_alignment        = options[:quote_alignment] || 'left'
+      @quote_line_type        = options[:quote_line_type] || '상하' #'박스'
+
       create_columns
       if block
         instance_eval(&block)
@@ -515,41 +521,45 @@ module RLayout
 
     def float_quote(options={})
       return if @quote_box_size == '0'
-      #TODO handle case when quote_box_size if type as 2x3
-      text_height_in_lines  = @quote_box_size.to_i
-      box_height        = (text_height_in_lines + QUOTE_BOX_SPACE_BEFORE)*@body_line_height
-      # box_height += QUOTE_BOX_SPACE_BEFORE*@body_line_height
-      y                 = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
-      x                 = 0 #TODO
-      text_options           = {}
       if @kind == '기고' || @kind == 'opinion'
-        text_options[:x]       = x + @left_margin
-        # text_options[:space_before_in_lines]  = text_height_in_lines
-        # text_options[:text_height_in_lines]  = text_height_in_lines
-        text_options[:height] = box_height
-        text_options[:y]       = y
-        text_options[:width]   = @grid_width*2 - @gutter
-        text_options[:left_margin]   = 3
-        text_options[:right_margin]  = 3
-        # text_options[:stroke_width]  = 1
+        box_height                      = (@quote_box_size.to_i + QUOTE_BOX_SPACE_BEFORE)*@body_line_height
+        text_options                    = {}
+        text_options[:x]                = @left_margin
+        text_options[:height]           = box_height
+        text_options[:y]                = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
+        text_options[:width]            = @grid_width*2 - @gutter
+        text_options[:left_margin]      = 3
+        text_options[:right_margin]     = 3
+        text_options[:quote_text_lines] = text_height_in_lines
+        text_options[:layout_expand]    = nil
+        text_options[:is_float]         = true
+        text_options[:text_string]      = options['quote']
+        text_options[:style_name]       = 'quote'
+        text_options[:parent]           = self
+        text_options[:v_alignment]      = 'bottom'
+        text_options[:height]           = box_height
+        @quote_box = QuoteText.new(text_options)
+        @quote_box.y = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
       else
-        text_options[:x]       = @grid_width*1 + @gutter
-        text_options[:height]  = @body_line_height*3
-        text_options[:y]       = @height - options[:height] if options[:height]
-        text_options[:width]   = @grid_width*2 + @gutter
+        box_height                      = (@quote_box_size.to_i + QUOTE_BOX_SPACE_BEFORE)*@body_line_height
+        text_options                    = {}
+        text_options[:x]                = @left_margin
+        text_options[:height]           = box_height
+        text_options[:y]                = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
+        text_options[:width]            = @grid_width*2 - @gutter
+        text_options[:left_margin]      = 3
+        text_options[:right_margin]     = 3
+        text_options[:quote_text_lines] = text_height_in_lines
+        text_options[:layout_expand]    = nil
+        text_options[:is_float]         = true
+        text_options[:text_string]      = options['quote']
+        text_options[:style_name]       = 'quote'
+        text_options[:parent]           = self
+        text_options[:v_alignment]      = 'bottom'
+        text_options[:height]           = box_height
+        @quote_box = TitleText.new(text_options)
+        @quote_box.y = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
       end
-
-      text_options[:quote_text_lines]= text_height_in_lines
-      text_options[:layout_expand]   = nil
-      text_options[:is_float]        = true
-      text_options[:text_string]     = options['quote']
-      text_options[:style_name]      = 'quote'
-      text_options[:parent]          = self
-      # text_options[:stroke_width]    = 1
-      text_options[:v_alignment]            = 'bottom'
-      text_options[:height]                 = box_height
-      @quote_box = QuoteText.new(text_options)
-      @quote_box.y = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
     end
 
 

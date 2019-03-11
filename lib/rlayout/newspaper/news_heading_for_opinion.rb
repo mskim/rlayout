@@ -9,7 +9,6 @@ module RLayout
     def initialize(options={})
       @grid_width             = options.fetch(:grid_width, 2)
       @heading_columns        = options[:column_count]
-      puts "@heading_columns:#{@heading_columns}"
       options[:fill_color]    = 'clear'
       super
       # shift title to right by one column
