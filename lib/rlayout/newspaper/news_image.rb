@@ -180,6 +180,7 @@ module RLayout
     def convert_column_row_position_to_frame(options={})
 
       #TODO this is only for upper right, do it for other positions as well
+      @image_size = {}
       if options[:column] && options[:row]
         @image_size[0] = options[:column]
         @image_size[1] = options[:row]

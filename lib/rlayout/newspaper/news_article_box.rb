@@ -557,7 +557,7 @@ module RLayout
         text_options[:parent]           = self
         text_options[:v_alignment]      = 'bottom'
         text_options[:height]           = box_height
-        @quote_box = TitleText.new(text_options)
+        @quote_box = NewsQuote.new(text_options)
         @quote_box.y = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
       end
     end

@@ -121,7 +121,7 @@ module RLayout
 
     def has_text_room?
       # @overlap == false && @room > 10
-      @room > 10
+      @room > 20
     end
 
     # is it the first line of the column
