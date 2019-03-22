@@ -46,6 +46,13 @@ module RLayout
         # @stroke.sides = [0,1,0,1]
         @stroke.sides = [0,1,0,1] 
         @stroke.thickness = 0.3
+      elsif @kind == '박스기고' || @kind == 'box_opinion'
+        # @stroke.sides = [0,1,0,1]
+        if @top_position
+          @top_margin += @body_line_height
+        end
+        @stroke.sides = [0,1,0,1] 
+        @stroke.thickness = 0.3
       elsif @kind == '책소개' || @kind == 'book_review'
         @has_left_side_bar = true
       elsif @kind == '특집' || @kind == 'special'
@@ -345,7 +352,18 @@ module RLayout
         end
         @heading = NewsHeadingForOpinion.new(h_options)
       when 'box_opinion', '박스기고'
-        @stroke.sides = [1,2,1,1]
+        @stroke.sides     = [1,2,1,1]
+        if @top_position
+          place_holder_options               = {}   
+          place_holder_options[:is_float]    = true
+          place_holder_options[:parent]      = self
+          place_holder_options[:x]           = 0
+          place_holder_options[:y]           = 0
+          place_holder_options[:width]       = @width
+          place_holder_options[:height]      = @body_line_height
+          @top_line_space                    = Rectangle.new(place_holder_options)
+          h_options[:top_margin]             = @body_line_height 
+        end
         @heading = NewsHeadingForArticle.new(h_options)
       when 'obituary_promotion', '부고-인사'
         @heading = NewsHeadingForObituary.new(h_options)
@@ -541,24 +559,23 @@ module RLayout
         @quote_box = QuoteText.new(text_options)
         @quote_box.y = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
       else
-        box_height                      = (@quote_box_size.to_i + QUOTE_BOX_SPACE_BEFORE)*@body_line_height
-        text_options                    = {}
-        text_options[:x]                = @left_margin
-        text_options[:height]           = box_height
-        text_options[:y]                = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
-        text_options[:width]            = @grid_width*2 - @gutter
-        text_options[:left_margin]      = 3
-        text_options[:right_margin]     = 3
-        text_options[:quote_text_lines] = text_height_in_lines
-        text_options[:layout_expand]    = nil
-        text_options[:is_float]         = true
-        text_options[:text_string]      = options['quote']
-        text_options[:style_name]       = 'quote'
-        text_options[:parent]           = self
-        text_options[:v_alignment]      = 'bottom'
-        text_options[:height]           = box_height
-        @quote_box = NewsQuote.new(text_options)
-        @quote_box.y = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
+        quote_options                     = {}
+        quote_options[:column]            = options[:quote_box_size] || 1
+        quote_options[:row]               = 1
+        quote_options[:layout_expand]     = nil
+        quote_options[:is_float]          = true
+        quote_options[:text_string]       = options['quote']
+        quote_options[:parent]            = self
+        quote_options[:quote_positon]     = @quote_positon || 5
+        quote_options[:quote]             = options['quote']
+        quote_options[:quote_position]    = @quote_position || 3
+        quote_options[:quote_box_size]    = @quote_box_size || 4
+        quote_options[:quote_x_grid]      = @quote_x_grid || 1
+        quote_options[:quote_v_extra_space] = @quote_v_extra_space || 0
+        quote_options[:quote_alignment]   = @quote_alignment || 'left'
+        quote_options[:quote_line_type]   = @quote_line_type || '상하' #'박스'
+        quote_options[:quote_x_grid]      = @quote_x_grid 
+        @quote_box = NewsQuote.new(quote_options)
       end
     end
 

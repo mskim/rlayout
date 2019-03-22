@@ -30,7 +30,7 @@ module RLayout
   class NewsQuote < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :caption_title
     attr_accessor :quote_box, :caption_paragraph, :position, :before_title, :fit_type, :expand, :has_caption
-    attr_reader   :x_grid, :quote
+    attr_reader   :x_grid, :quote, :alignment
 
     def initialize(options={})
       if options[:parent]
@@ -47,37 +47,36 @@ module RLayout
       @position               = 9  if @position > 9
       @position               = 1  if @position < 0
       @x_grid                 = options[:quote_x_grid]
-
-      options[:grid_frame]    = convert_column_row_position_to_frame(options) if @position
-      options[:grid_frame][0] = @x_grid if @x_grid 
+      @alignment              = options[:quote_alignment] || 'left'
+      @alignment              = 'left'    if @alignment == '좌측'
+      @alignment              = 'right'   if @alignment == '우측'
+      @alignment              = 'center'  if @alignment == '중간'
+      @line_type              = options[:quote_line_type] || '상하'
+      @grid_frame             = convert_column_row_position_to_frame(options) if @position
+      @grid_frame[0]          = @x_grid if @x_grid 
       options[:layout_expand] = nil
       options[:fill_color]    = 'clear'
       @fit_type               = options[:fit_type] if options[:fit_type]
       @expand                 = options[:expand] if options[:expand]
       @before_title           = options.fetch(:before_title, false)
+      if @line_type == '상하'
+        options[:sides] = [0,1,0,1]
+      elsif @line_type == '테두리'
+        options[:sides] = [1,1,1,1]
+      end
       super
       if @parent
-        frame_rect              = @parent.grid_frame_to_rect(options[:grid_frame], bottom_position: bottom_position?)
+        frame_rect              = @parent.grid_frame_to_rect(@grid_frame, bottom_position: bottom_position?)
       else
         frame_rect              = [0,0, 400, 100]
       end
       @x                      = frame_rect[0]
       @y                      = frame_rect[1]
       @width                  = frame_rect[2]
-      @height                 = frame_rect[3] - 4 #TODO body_leading
-      if options[:quote_v_extra_space]  && options[:quote_v_extra_space] > 0
-        @height += options[:quote_v_extra_space]*@parent.body_line_height
-        @y -= options[:quote_v_extra_space]*@parent.body_line_height if bottom_position?
-      end
-
+      @height                 = frame_rect[3] #TODO body_leading
       quote_options                = {}
       quote_options[:width]        = @width
       quote_options[:height]       = @height
-
-      unless top_position?
-        quote_options[:y]          = @parent.body_line_height
-        quote_options[:height]     -= @parent.body_line_height
-      end
       quote_options[:stroke_width]   = 0.3
       quote_options[:stroke_width]   = 0.0 if @image_kind == 'graphic'
       quote_options[:image_fit_type] = 3 #IMAGE_FIT_TYPE_KEEP_RATIO
@@ -88,9 +87,16 @@ module RLayout
       quote_options[:parent]         = self
       quote_options[:text_string]    = @quote
       quote_options[:style_name]     = 'quote'
-      @image_box                     = TitleText.new(quote_options)
-      # make space after the news_image when we have following text
-      @height                       += @parent.body_line_height if @parent
+      quote_options[:text_alignment] = text_alignment
+      quote_options[:y]              = @y + @parent.body_line_height*2
+      if options[:quote_v_extra_space]  && options[:quote_v_extra_space] > 0
+        quote_options[:y]            = @parent.body_line_height*options[:quote_v_extra_space]
+        @image_box                   = TitleText.new(quote_options)
+        @height = @image_box.height + options[:quote_v_extra_space]*@parent.body_line_height*4
+      else
+        @image_box                   = TitleText.new(quote_options)
+        @height = @image_box.height + options[:quote_v_extra_space]*@parent.body_line_height*4
+      end
       self
     end
 
@@ -127,6 +133,7 @@ module RLayout
     def convert_column_row_position_to_frame(options={})
 
       #TODO this is only for upper right, do it for other positions as well
+      @image_size = []
       if options[:column] && options[:row]
         @image_size[0] = options[:column]
         @image_size[1] = options[:row]

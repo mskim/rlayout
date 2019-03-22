@@ -224,7 +224,6 @@ module RLayout
     # CharHalfWidthCushion = 5.0
     def place_token(token, options={})
       return if token.nil?
-      # binding.pry if token.string == '111111'
       if (@room + CharHalfWidthCushion >= token.width)
       # if @room + @char_half_width_cushion >= token.width
         # place token in line.

@@ -21,7 +21,7 @@ RIGHT_RIGHT   = 8
 
 
 PERSONAL_IMAGE_MARGIN = 10
-PERSONAL_IMAGE_HEIGHT_IN_LINES = 5.5
+PERSONAL_IMAGE_HEIGHT_IN_LINES = 6.5
 module RLayout
   class NewsImage < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :caption_title
@@ -60,7 +60,6 @@ module RLayout
 
       if @image_kind == '인물_좌'  || @image_kind == 'person_image_left'
         # handle images that are less than column
-        # binding.pry
         #TODO take care when not at the edge 
         unless @parent.on_left_edge
           @x = @parent.gutter
@@ -77,7 +76,7 @@ module RLayout
         @width                  = frame_rect[2]
         @height                 = frame_rect[3] - 4 #TODO body_leading
       end
-      if options[:extra_height_in_lines]  && options[:extra_height_in_lines] > 0
+      if options[:extra_height_in_lines]  && options[:extra_height_in_lines] != 0
         @height += options[:extra_height_in_lines]*@parent.body_line_height
         @y -= options[:extra_height_in_lines]*@parent.body_line_height if bottom_position?
       end

@@ -884,8 +884,10 @@ module RLayout
           end
         elsif @news_box.kind == '박스기고'
           @news_box.stroke[:sides] = [1,6,1,1]
-          @news_box.left_margin = 0
-          @news_box.right_margin = 0
+          @news_box.left_margin   = 0
+          @news_box.right_margin  = 0
+          @news_box.left_inset    = 0
+          @news_box.right_inset   = 0
         elsif @news_box.kind == '부고-인사'
           @news_box.left_margin = 0
           @news_box.right_margin = 0

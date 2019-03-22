@@ -483,7 +483,6 @@ module RLayout
         end
         # # flip canvas virtically 
         # canvas.transform(1,0,0,-1,0,@height)
-        # binding.pry
         to_pdf(canvas)
         doc.write(path, optimize: true)
       end
@@ -623,7 +622,6 @@ module RLayout
   class Image < Graphic
     attr_accessor :caption , :bleed
     def initialize(options={})
-      # binding.pry
       if options[:caption]
         @caption = options[:caption]
       end

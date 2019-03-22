@@ -566,12 +566,14 @@ module RLayout
     def border_x
       return @x  if @on_left_edge
       @x + @gutter
+      @x + @left_margin
+
     end
 
     def border_width
       width = @width
-      width -=@gutter unless @on_left_edge
-      width -=@gutter unless @on_right_edge
+      width -=@left_margin #unless @on_left_edge
+      width -=@right_margin #unless @on_right_edge
       width
     end
 
