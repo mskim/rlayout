@@ -2,7 +2,7 @@ module RLayout
   class NewsBox < Container
     attr_accessor :kind, :on_left_edge, :on_right_edge, :is_front_page, :top_story, :top_position, :bottom_article, :grid_size, :grid_frame, :body_line_height
     attr_accessor :page_heading_margin_in_lines, :page_heading_place_holder, :article_bottom_spaces_in_lines
-    attr_accessor :column_width, :column_count, :row_count, :extended_line_count, :pushed_line_count
+    attr_accessor :column_width, :column_count, :row_count, :extended_line_count, :pushed_line_count, :draw_frame
 
     def initialize(options={}, &block)
       # @is_ad_box            = options[:is_ad_box] || false
@@ -17,6 +17,7 @@ module RLayout
       end
       options[:stroke_width]  = options.fetch(:article_line_thickness,0.3)
       super
+      @draw_frame             = options[:draw_frame] || true
       @kind                   = options.fetch(:kind, 'article')
       @gutter                 = options.fetch(:gutter, 10)
       @on_left_edge           = options.fetch(:on_left_edge, false)
