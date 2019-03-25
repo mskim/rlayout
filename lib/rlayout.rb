@@ -120,7 +120,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/article/spread_chapter'
   require File.dirname(__FILE__) + '/rlayout/article/toc_chapter'
   require File.dirname(__FILE__) + '/rlayout/article/float_group'
-  require File.dirname(__FILE__) + '/rlayout/article/magazine_article_maker'
   require File.dirname(__FILE__) + '/rlayout/article/single_page_maker'
   require File.dirname(__FILE__) + '/rlayout/article/rjob'
   require File.dirname(__FILE__) + '/rlayout/article/item_chapter_maker'
@@ -156,6 +155,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box_maker'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_section_page'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_make_tasks'
+
+  require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article_maker'
 
   require File.dirname(__FILE__) + '/rlayout/publication/book'
   require File.dirname(__FILE__) + '/rlayout/publication/book_plan'

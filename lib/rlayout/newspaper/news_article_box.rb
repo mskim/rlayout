@@ -650,6 +650,7 @@ module RLayout
       column_frame        = @graphics.first.frame_rect
       # when grid_frame[0] is greater than columns
       frame_x             = column_frame[0]
+      puts "grid_frame:#{grid_frame}"
       if grid_frame[0] >= @graphics.length
         frame_x           = @graphics.last.x_max
       else

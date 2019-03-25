@@ -39,7 +39,7 @@ module RLayout
       @image_path             = options[:image_path]
       @image_kind             = options[:image_kind]
       @x_grid                 = options[:x_grid]
-      @x_grid                 = options[:draw_frame] || true
+      @draw_frame             = options[:draw_frame] || true
       @column                 = options[:column]
       @row                    = options[:row]
       @position               = options[:position] || 3

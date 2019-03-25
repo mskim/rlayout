@@ -3,51 +3,36 @@
 # MagazineArticleMaker should be able to support highly customizable designs.
 # MagazineArticleMaker works with given folder with story, layout.rb, and images
 # layout.rb defines layout and styles
-# if layout.rb doesn't exist in article folder,
-# default layout is used, "/Users/Shared/SoftwareLab/article_template/magazine.rb" is used.
 # Image layout can be set using GIM
 # Images can be stored in images folder by page and image size
 # making image in the article controlable.
-
 # Page Count is usually fixed for magazine, default is 2
 
 module RLayout
 
   class MagazineArticleMaker
     attr_accessor :article_path, :template, :story_path, :images_dir, :tables_dir
-    attr_accessor :document, :style, :starting_page, :no_story
+    attr_accessor :document, :style, :starting_page, :page_count
     attr_accessor :output_path
 
     def initialize(options={} ,&block)
-      puts "2016 6 17"
       $publication_type = "magazine"
-      @article_path = options[:article_path] || options[:project_path]
-      @starting_page = options.fetch(:starting_page, 1)
-      @article_path = options[:article_path]
-      @story_path   = Dir.glob("#{@article_path}/*.{md,markdown}").first
+      @article_path     = options[:article_path] || options[:project_path]
+      @starting_page    = options.fetch(:starting_page, 1)
+      @page_count       = options.fetch(:page_count, 2)
+      @article_path     = options[:article_path]
+      @story_path       = Dir.glob("#{@article_path}/*.{md,markdown}").first
       if !@story_path && @article_path
         puts "No story_path !!!"
         return
       end
-      @no_story     = true unless @story_path
       @template     = Dir.glob("#{@article_path}/*.{rb,pgscript}").first
       $ProjectPath  = @article_path
       @style_path   = @article_path + "/style.rb"
       @output_path  = @article_path + "/output.pdf"
-      if options[:images_dir]
-        @images_dir = options[:images_dir]
-      else
-        @images_dir = @article_path + "/images"
-      end
-      if options[:tables_dir]
-        @tables_dir = @article_path + "/tables"
-      else
-        @tables_dir = @article_path + "/tables"
-      end
 
-      unless File.exist?(@template)
-        @template   = "/Users/Shared/SoftwareLab/article_template/magazine.rb"
-      end
+      @images_dir = @article_path + "/images"
+      @tables_dir = @article_path + "/tables"
       @document     = eval(File.open(@template,'r'){|f| f.read})
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@template} !!!!"
@@ -58,10 +43,8 @@ module RLayout
         return
       end
 
-      unless @no_story == true
-        read_story
-        layout_story
-      end
+      read_story
+      layout_story
 
       if @output_path
         if RUBY_ENGINE =="rubymotion"
