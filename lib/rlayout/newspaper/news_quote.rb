@@ -33,6 +33,7 @@ module RLayout
     attr_reader   :x_grid, :quote, :alignment
 
     def initialize(options={})
+      
       if options[:parent]
         @article_column       = options[:parent].column_count
         @article_row          = options[:parent].row_count
@@ -40,8 +41,14 @@ module RLayout
         @article_column       = 3
         @article_row          = 3
       end
+      options[:layout_expand] = nil
+      options[:fill_color]    = 'clear'
+      super
       @column                 = options[:column]
       @row                    = options[:row]
+      @quote                  = options[:quote]
+      @top_margin             = @parent.body_line_height
+      @bottom_margin          = @parent.body_line_height
       @quote                  = options[:quote]
       @position               = options[:quote_position] || 3
       @position               = 9  if @position > 9
@@ -54,48 +61,43 @@ module RLayout
       @line_type              = options[:quote_line_type] || '상하'
       @grid_frame             = convert_column_row_position_to_frame(options) if @position
       @grid_frame[0]          = @x_grid if @x_grid 
-      options[:layout_expand] = nil
-      options[:fill_color]    = 'clear'
       @fit_type               = options[:fit_type] if options[:fit_type]
       @expand                 = options[:expand] if options[:expand]
       @before_title           = options.fetch(:before_title, false)
+      @stroke.thickness       = 0.3
       if @line_type == '상하'
-        options[:sides] = [0,1,0,1]
+        @stroke.sides = [0,1,0,1]
       elsif @line_type == '테두리'
-        options[:sides] = [1,1,1,1]
+        @stroke.sides = [1,1,1,1]
       end
-      super
       if @parent
         frame_rect              = @parent.grid_frame_to_rect(@grid_frame, bottom_position: bottom_position?)
       else
         frame_rect              = [0,0, 400, 100]
       end
-      @x                      = frame_rect[0]
-      @y                      = frame_rect[1]
-      @width                  = frame_rect[2]
-      @height                 = frame_rect[3] #TODO body_leading
-      quote_options                = {}
-      quote_options[:width]        = @width
-      quote_options[:height]       = @height
-      quote_options[:stroke_width]   = 0.3
-      quote_options[:stroke_width]   = 0.0 if @image_kind == 'graphic'
-      quote_options[:image_fit_type] = 3 #IMAGE_FIT_TYPE_KEEP_RATIO
-      quote_options[:image_fit_type] = @fit_type if @fit_type
-      quote_options[:image_path]     = @image_path
+      @x                            = frame_rect[0]
+      @y                            = frame_rect[1]
+      @width                        = frame_rect[2]
+      @height                       = frame_rect[3] #TODO body_leading
+      quote_options                 = {}
+      quote_options[:width]         = @width
+      quote_options[:height]        = @height
+      quote_options[:stroke_thickness]   = 0
       quote_options[:layout_expand]  = nil
       quote_options[:layout_expand]  = @expand if @expand
-      quote_options[:parent]         = self
       quote_options[:text_string]    = @quote
       quote_options[:style_name]     = 'quote'
       quote_options[:text_alignment] = text_alignment
       quote_options[:y]              = @y + @parent.body_line_height*2
+      quote_options[:top_margin]     = @parent.body_line_height
+      quote_options[:parent]         = self
       if options[:quote_v_extra_space]  && options[:quote_v_extra_space] > 0
         quote_options[:y]            = @parent.body_line_height*options[:quote_v_extra_space]
-        @image_box                   = TitleText.new(quote_options)
-        @height = @image_box.height + options[:quote_v_extra_space]*@parent.body_line_height*4
+        @quote_text_box              = TitleText.new(quote_options)
+        @height = @quote_text_box.height + options[:quote_v_extra_space]*@parent.body_line_height*4
       else
-        @image_box                   = TitleText.new(quote_options)
-        @height = @image_box.height + options[:quote_v_extra_space]*@parent.body_line_height*4
+        @quote_text_box              = TitleText.new(quote_options)
+        @height                      = @quote_text_box.height + options[:quote_v_extra_space]*@parent.body_line_height*4
       end
       self
     end

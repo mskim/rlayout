@@ -25,9 +25,7 @@ module RLayout
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
     attr_reader :overlap, :overlap_rect, :embedded, :has_left_side_bar
-    # if RUBY_ENGINE == 'ruby'
-    #   include Celluloid
-    # end
+
     def initialize(options={}, &block)
       super
       @overflow           = false
@@ -43,7 +41,6 @@ module RLayout
           @right_inset  = @gutter
         end
       elsif @kind == '기고' || @kind == 'opinion'
-        # @stroke.sides = [0,1,0,1]
         @stroke.sides = [0,1,0,1] 
         @stroke.thickness = 0.3
       elsif @kind == '박스기고' || @kind == 'box_opinion'
@@ -80,6 +77,7 @@ module RLayout
       @quote_v_extra_space    = options[:quote_v_extra_space] || 0
       @quote_alignment        = options[:quote_alignment] || 'left'
       @quote_line_type        = options[:quote_line_type] || '상하' #'박스'
+      @quote_box_column       = options[:quote_box_column] || 1
 
       create_columns
       if block
@@ -353,17 +351,7 @@ module RLayout
         @heading = NewsHeadingForOpinion.new(h_options)
       when 'box_opinion', '박스기고'
         @stroke.sides     = [1,2,1,1]
-        if @top_position
-          place_holder_options               = {}   
-          place_holder_options[:is_float]    = true
-          place_holder_options[:parent]      = self
-          place_holder_options[:x]           = 0
-          place_holder_options[:y]           = 0
-          place_holder_options[:width]       = @width
-          place_holder_options[:height]      = @body_line_height
-          @top_line_space                    = Rectangle.new(place_holder_options)
-          h_options[:top_margin]             = @body_line_height 
-        end
+        h_options[:top_margin] = @body_line_height  if @top_position
         @heading = NewsHeadingForArticle.new(h_options)
       when 'obituary_promotion', '부고-인사'
         @heading = NewsHeadingForObituary.new(h_options)
@@ -387,7 +375,6 @@ module RLayout
       end
       # check if we have 2 단 기고
       # put heading after personal image
-
       if @kind == "기고" && @column_count == 2
         unless @heading == @floats[1]
           # make heading as second one in floats
@@ -501,7 +488,7 @@ module RLayout
       if @boxed_subtitle_type == 1 #'고딕_회색바탕'
         options[:fill_color]  = 'CMYK=0,0,0,10'
       elsif @boxed_subtitle_type == 2 #'고딕_테두리'
-        options[:sides]        = [1,1,1,1]
+        options[:stroke_sides]        = [1,1,1,1]
         options[:stroke_width] = 0.3
       end
       # have one extra line after the box
@@ -524,7 +511,8 @@ module RLayout
       options[:y]             = 0
       options[:top_inset]     = 0 if options[:space_before_in_lines] == 0
       options[:width]         = @column_width
-      options[:width]         += @column_width + @gutter if @subtitle_type == "2단" || @subtitle_type == "2단-2단시작"
+      options[:width]         += @column_width + @gutter      if @subtitle_type == "2단" || @subtitle_type == "2단-2단시작"
+      options[:width]         += @column_width*2 + @gutter*2  if @subtitle_type == "3단"
       options[:layout_expand] = nil
       options[:is_float]      = true
       options[:parent]        = self
@@ -560,7 +548,7 @@ module RLayout
         @quote_box.y = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
       else
         quote_options                     = {}
-        quote_options[:column]            = options[:quote_box_size] || 1
+        quote_options[:column]            = @quote_box_column
         quote_options[:row]               = 1
         quote_options[:layout_expand]     = nil
         quote_options[:is_float]          = true
@@ -568,7 +556,7 @@ module RLayout
         quote_options[:parent]            = self
         quote_options[:quote_positon]     = @quote_positon || 5
         quote_options[:quote]             = options['quote']
-        quote_options[:quote_position]    = @quote_position || 3
+        quote_options[:quote_position]    = @quote_position || 1
         quote_options[:quote_box_size]    = @quote_box_size || 4
         quote_options[:quote_x_grid]      = @quote_x_grid || 1
         quote_options[:quote_v_extra_space] = @quote_v_extra_space || 0
@@ -650,7 +638,6 @@ module RLayout
       column_frame        = @graphics.first.frame_rect
       # when grid_frame[0] is greater than columns
       frame_x             = column_frame[0]
-      puts "grid_frame:#{grid_frame}"
       if grid_frame[0] >= @graphics.length
         frame_x           = @graphics.last.x_max
       else
@@ -792,10 +779,10 @@ module RLayout
     end
 
     def border_width
-      width = @width
-      width -=@gutter unless @on_left_edge
-      width -=@gutter unless @on_right_edge
-      width
+      b_width = @width
+      b_width -=@gutter unless @on_left_edge
+      b_width -=@gutter unless @on_right_edge
+      b_width
     end
 
   end
