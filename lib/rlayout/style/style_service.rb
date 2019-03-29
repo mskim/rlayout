@@ -105,6 +105,7 @@ body_gothic:
   tracking: -0.2
   space_width: 3.0
   scale: 100.0
+  first_line_indent: 0
   text_line_spacing:
   space_before_in_lines:
   space_after_in_lines:

@@ -22,7 +22,6 @@ describe "create RParagraph" do
   end
 
   it 'should have RToken class' do
-
     @first_token.must_be_kind_of RTextToken
   end
 end
@@ -34,6 +33,22 @@ describe "layout lines" do
     options                  = {}
     options[:para_string]    = 'This is a string. '*3
     options[:style_name]     = 'body'
+    @para = RParagraph.new(options)
+    @para.layout_lines(@first_line)
+  end
+
+  it 'should layout in first line' do
+    @first_line.graphics.length.must_equal 11
+  end
+end
+
+describe "layout body_gothic lines" do
+  before do
+    @col = RColumn.new()
+    @first_line = @col.first_line
+    options                  = {}
+    options[:para_string]    = 'This is a string. '*3
+    options[:style_name]     = 'body_gothic'
     @para = RParagraph.new(options)
     @para.layout_lines(@first_line)
   end

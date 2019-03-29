@@ -13,7 +13,7 @@ module RLayout
   class	RLineFragment < Container
     attr_accessor :next_line, :layed_out_line
     attr_accessor :total_token_width, :room, :overlap
-    attr_accessor :text_area, :space_width, :debug, :char_half_width_cushion
+    attr_accessor :text_area, :space_width, :char_half_width_cushion
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent
     attr_accessor :token_union_rect, :token_union_style
@@ -191,7 +191,8 @@ module RLayout
       @space_width      = @para_style[:space_width] || 3.0
       @text_alignment   = @para_style[:alignment] || "left"
       @v_offset         = @para_style[:v_offset] || 0
-      @first_line_indent = @para_style[:first_line_indent] || para_style[:font_size] || para_style[:text_size]
+      @first_line_indent = @para_style[:first_line_indent] 
+      @first_line_indent = @para_style[:font_size] unless @first_line_indent
       @right_indent      = @para_style[:right_indent] || 0
       @left_indent      = @para_style[:left_indent] || 0
       if @text_alignment == "left" || @text_alignment == "justified"
@@ -215,7 +216,6 @@ module RLayout
         @text_area[2]    = @middle_line_width
       end
       @room  = @text_area[2]
-      #code
     end
 
     # place tokens in the line, given tokens array

@@ -180,7 +180,7 @@ module RLayout
         @current_line.layed_out_line = true
         @current_line.set_paragraph_info(self, "middle_line")
       elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4'
-        
+
         unless @current_line.first_text_line_in_column?
           if @para_style[:space_before_in_lines] == 1
             @current_line.layed_out_line = true

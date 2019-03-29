@@ -372,7 +372,6 @@ module RLayout
         @stroke.sides     = [1,2,1,1]
         h_options[:x]     = @gutter*2
         h_options[:width] -=@gutter*2
-        # h_options[:top_margin] = @body_line_height  if @top_position
         h_options[:y]     = @body_line_height  if @top_position
         @heading = NewsHeadingForArticle.new(h_options)
       when 'obituary_promotion', '부고-인사'
