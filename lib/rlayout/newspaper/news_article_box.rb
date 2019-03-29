@@ -25,6 +25,7 @@ module RLayout
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
     attr_reader :overlap, :overlap_rect, :embedded, :has_left_side_bar
+    attr_reader :drawing_x, :drawing_y, :drawing_width
 
     def initialize(options={}, &block)
       super
@@ -48,6 +49,9 @@ module RLayout
         if @top_position
           @top_margin += @body_line_height
         end
+        @left_margin  = @body_line_height
+        @left_inset   = @body_line_height
+        @right_margin = @body_line_height
         @stroke.sides = [0,1,0,1] 
         @stroke.thickness = 0.3
       elsif @kind == '책소개' || @kind == 'book_review'
@@ -126,7 +130,23 @@ module RLayout
         # current_y += @top_margin + @top_inset
         @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
+      elsif @kind == '박스기고' || @kind == 'box_opinion'
+        box_opinion_column_width = (@width - @gutter*3 - (@column_count - 1)*@gutter)/@column_count
+        @drawing_x = current_x
+        @drawing_y = @body_line_height
+        @drawing_width = box_opinion_column_width*@column_count + (@column_count + 3)*@gutter
+        current_x += @gutter
+        @starting_column_x = current_x
+        @column_count.times do
+          g= RColumn.new(:parent=>nil, x: current_x, y: @body_line_height, width: box_opinion_column_width, height: @height - @body_line_height, column_line_count: @column_line_count - 1, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+          g.parent = self
+          @graphics << g
+          current_x += box_opinion_column_width + @gutter
+          @column_type  = "box_opinion"
+        end
 
+        @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: box_opinion_column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        @overflow_column.parent = self
       else
         @column_count.times do
           g= RColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
@@ -149,7 +169,6 @@ module RLayout
         previous_column_last_line.next_line = first_line if previous_column_last_line
         previous_column_last_line           = last_line
       end
-
       previous_column_last_line.next_line   = @overflow_column.graphics.first
     end
 
@@ -351,7 +370,10 @@ module RLayout
         @heading = NewsHeadingForOpinion.new(h_options)
       when 'box_opinion', '박스기고'
         @stroke.sides     = [1,2,1,1]
-        h_options[:top_margin] = @body_line_height  if @top_position
+        h_options[:x]     = @gutter*2
+        h_options[:width] -=@gutter*2
+        # h_options[:top_margin] = @body_line_height  if @top_position
+        h_options[:y]     = @body_line_height  if @top_position
         @heading = NewsHeadingForArticle.new(h_options)
       when 'obituary_promotion', '부고-인사'
         @heading = NewsHeadingForObituary.new(h_options)

@@ -135,7 +135,6 @@ TODO List
 	- update hypenation algorithm for front, ending rule for more case
 		- update rule
 
-
 2019_1_10
 	- fix to_pdf
 
