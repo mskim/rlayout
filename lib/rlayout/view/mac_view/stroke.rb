@@ -1,6 +1,8 @@
 
 class GraphicViewMac < NSView
   attr_accessor :stroke, :line_position, :stroke_rect
+  
+  
   def draw_stroke(graphic)
     draw_gutter_stroke(graphic) if graphic.respond_to?(:gutter_stroke) && graphic.draw_gutter_stroke
     return if graphic.stroke[:thickness].nil?
@@ -8,9 +10,25 @@ class GraphicViewMac < NSView
     @stroke = graphic.stroke
     @line_position  = 1
     @left_inset     = graphic.left_inset + 2
-    r               = ns_bounds_rect(graphic)
-    drawLine(r, graphic)
+    draw_line(graphic)
     # drawArrow if @start_arrow && @owner_graphic
+  end
+  
+  # given graphic, return NSPoint
+  def left_top_point(g)
+
+  end
+
+  def right_top_point(g)
+
+  end
+
+  def right_bottom_point(g)
+
+  end
+
+  def left_bottom_point(g)
+
   end
 
   def draw_gutter_stroke(graphic)
@@ -50,17 +68,16 @@ class GraphicViewMac < NSView
     end
   end
 
-  def draw_line_from(starting, ending, width)
+  def draw_line_from(starting, ending, thickness)
     path= NSBezierPath.bezierPath
-    path.setLineWidth(width)
+    path.setLineWidth(thickness)
     path.moveToPoint(starting)
     path.lineToPoint(ending)
     path.stroke
   end
 
-  def linePathWithRect(r)
+  def line_path_with_rect(r)
     path = NSBezierPath.bezierPathWithRect(r)
-    # path = @owner_graphic.bezierPathWithRect(r)
     path.setLineCapStyle(@stroke[:line_cap]) if @stroke[:line_cap]
     path.setLineJoinStyle(@stroke[:line_join]) if @stroke[:line_join]
     if @dash
@@ -72,15 +89,11 @@ class GraphicViewMac < NSView
     path
   end
 
-  def drawSingleLine
-    @stroke[:color]  = RLayout.convert_to_nscolor(@stroke[:color])    unless @stroke[:color].class == NSColor
-    @stroke[:color].set
-  end
-
-  def drawLine(rect, graphic)
+  def draw_line(graphic)
     # return if @stroke[:thickness] == 0 &&  @graphic.drawing_mode == "printing"
     return unless graphic.stroke
     return if graphic.stroke[:thickness] == 0
+    rect = ns_bounds_rect(graphic)
     @line_position  = 1
     @stroke[:color]  = RLayout.convert_to_nscolor(graphic.stroke[:color])    unless graphic.stroke[:color].class == NSColor
     @stroke[:color].set
@@ -91,7 +104,7 @@ class GraphicViewMac < NSView
 
     if graphic.class == RLayout::Line
       starting  = NSPoint.new(rect.origin.x, rect.origin.y)
-      ending    = NSPoint.new(rect.origin.x, + rect.size.width,  rect.origin.y + rect.size.height)
+      ending    = NSPoint.new(rect.origin.x + rect.size.width,  rect.origin.y + rect.size.height)
       path      = NSBezierPath.bezierPath
       path.setLineWidth(graphic.stroke[:thickness])
       path.moveToPoint(starting)
@@ -116,8 +129,8 @@ class GraphicViewMac < NSView
           path.setLineWidth(graphic.stroke[:thickness]*graphic.stroke[:sides][0])
           if graphic.class == RLayout::NewsArticleBox # graphic.class == RLayout::NewsArticleBox && graphic.kind == '박스기고' gives error
             if graphic.kind == '박스기고'
-              path.moveToPoint(NSPoint.new(graphic.drawing_x, rect.origin.y + graphic.top_margin))
-              path.lineToPoint(NSPoint.new(graphic.drawing_x, rect.origin.y + rect.size.height))
+              path.moveToPoint(NSPoint.new(graphic.stroke_x, rect.origin.y + graphic.top_margin))
+              path.lineToPoint(NSPoint.new(graphic.stroke_x, rect.origin.y + rect.size.height))
             end
           else
             path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + graphic.top_margin))
@@ -134,8 +147,8 @@ class GraphicViewMac < NSView
             path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + graphic.top_margin))
           elsif graphic.class == RLayout::NewsArticleBox 
             if graphic.kind == '박스기고'
-              path.moveToPoint(NSPoint.new(graphic.drawing_x, graphic.drawing_y))
-              path.lineToPoint(NSPoint.new(graphic.drawing_x + graphic.drawing_width, graphic.drawing_y))
+              path.moveToPoint(NSPoint.new(graphic.stroke_x, graphic.stroke_y))
+              path.lineToPoint(NSPoint.new(graphic.stroke_x + graphic.border_width, graphic.stroke_y))
             end
           else
             path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + graphic.top_margin))
@@ -163,8 +176,8 @@ class GraphicViewMac < NSView
 
           if graphic.class == RLayout::NewsArticleBox 
             if @graphic.kind == '박스기고'
-              path.moveToPoint(NSPoint.new(graphic.drawing_x, rect.origin.y + rect.size.height))
-              path.lineToPoint(NSPoint.new(graphic.drawing_x + graphic.drawing_width, rect.origin.y + rect.size.height))
+              path.moveToPoint(NSPoint.new(graphic.stroke_x, rect.origin.y + rect.size.height))
+              path.lineToPoint(NSPoint.new(graphic.stroke_x + graphic.border_width, rect.origin.y + rect.size.height))
             else
               path.moveToPoint(NSPoint.new(graphic.border_x, rect.origin.y + rect.size.height))
               path.lineToPoint(NSPoint.new(graphic.border_x + graphic.border_width, rect.origin.y + rect.size.height))
@@ -198,7 +211,7 @@ class GraphicViewMac < NSView
           path.stroke
         end
       else
-        path = linePathWithRect(rect)
+        path = line_path_with_rect(rect)
         path.setLineWidth(graphic.stroke[:thickness])
         path.stroke
       end
@@ -208,12 +221,12 @@ class GraphicViewMac < NSView
         w = @line1
         indentValue = (graphic.stroke[:thickness] - w)/-2.0
         if(graphic.stroke[:type] > 3)
-            path = linePathWithRect(rect)
+            path = line_path_with_rect(rect)
             path.setLineWidth(@line2)
             path.stroke
         end
         new_rect=NSInsetRect(rect, indentValue, indentValue)
-        path = linePathWithRect(NSInsetRect(rect, indentValue, indentValue))
+        path = line_path_with_rect(NSInsetRect(rect, indentValue, indentValue))
         path.setLineWidth(@line1)
         path.stroke
         if(graphic.stroke[:type] < 4)
@@ -221,7 +234,7 @@ class GraphicViewMac < NSView
         end
         indentValue = (graphic.stroke[:thickness] - w)/2.0
         new_rect=NSInsetRect(rect, indentValue, indentValue)
-        path = linePathWithRect(NSInsetRect(rect, indentValue, indentValue))
+        path = line_path_with_rect(NSInsetRect(rect, indentValue, indentValue))
         path.setLineWidth(w)
         path.stroke
     end

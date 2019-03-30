@@ -88,12 +88,12 @@ class Graphic
         # w = @line1
         # indentValue = (@stroke[:thickness] - w)/-2.0
         # if(@stroke[:type] > 3)
-        #     path = linePathWithRect(rect)
+        #     path = line_path_with_rect(rect)
         #     path.setLineWidth(@line2 + trap)
         #     path.stroke
         # end
         # new_rect=NSInsetRect(rect, indentValue, indentValue)
-        # path = linePathWithRect(NSInsetRect(rect, indentValue, indentValue))
+        # path = line_path_with_rect(NSInsetRect(rect, indentValue, indentValue))
         # path.setLineWidth(@line1 + trap)
         # path.stroke
         # if(@stroke[:type] < 4)
@@ -101,7 +101,7 @@ class Graphic
         # end
         # indentValue = (@stroke[:thickness] - w)/2.0
         # new_rect=NSInsetRect(rect, indentValue, indentValue)
-        # path = linePathWithRect(NSInsetRect(rect, indentValue, indentValue))
+        # path = line_path_with_rect(NSInsetRect(rect, indentValue, indentValue))
         # path.setLineWidth(w + trap)
         # path.stroke
     end

@@ -25,7 +25,7 @@ module RLayout
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
     attr_reader :overlap, :overlap_rect, :embedded, :has_left_side_bar
-    attr_reader :drawing_x, :drawing_y, :drawing_width
+    attr_reader :stroke_x, :stroke_y, :stroke_width
 
     def initialize(options={}, &block)
       super
@@ -132,9 +132,8 @@ module RLayout
         @overflow_column.parent = self
       elsif @kind == '박스기고' || @kind == 'box_opinion'
         box_opinion_column_width = (@width - @gutter*3 - (@column_count - 1)*@gutter)/@column_count
-        @drawing_x = current_x
-        @drawing_y = @body_line_height
-        @drawing_width = box_opinion_column_width*@column_count + (@column_count + 3)*@gutter
+        @stroke_x = current_x
+        @stroke_y = @body_line_height
         current_x += @gutter
         @starting_column_x = current_x
         @column_count.times do
@@ -795,15 +794,27 @@ module RLayout
     end
 
     def border_x
-      return @x  if @on_left_edge
-      @x + @gutter
+      if @kind == '박스기고'
+        @x + @gutter*2
+      else
+        return @x  if @on_left_edge
+        @x + @gutter
+      end
+    end
+
+    def border_y
+      @top_margin
     end
 
     def border_width
-      b_width = @width
-      b_width -=@gutter unless @on_left_edge
-      b_width -=@gutter unless @on_right_edge
-      b_width
+      if @kind == '박스기고'
+        @width
+      else
+        b_width = @width
+        b_width -=@gutter unless @on_left_edge
+        b_width -=@gutter unless @on_right_edge
+        b_width
+      end
     end
 
   end
