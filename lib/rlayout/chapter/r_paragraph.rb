@@ -337,7 +337,7 @@ module RLayout
         @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
-      @space_width  = @para_style[:space_width] || 4
+      @space_width  = @para_style[:space_width]
       if @space_width.nil?
         font_size   = @para_style[:font_size]
         @space_width = font_size/2

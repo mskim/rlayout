@@ -53,7 +53,7 @@ IMAGE_CHANGE_BOX_SIZE         = 6 #change box size to fit image source as is at 
 module RLayout
   class Graphic
     attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :source_frame, :local_image, :image_caption, :image_crop_rect, :image_crop_grid
-
+    attr_reader :zoom_level, :zoom_anchor, :zoom_factor
     def init_image(options)
 
       @image_record  = options.fetch(:image_record,nil)
@@ -63,8 +63,6 @@ module RLayout
           puts "++++++ $ProjectPath:#{$ProjectPath}"
           options[:image_path]  = $ProjectPath + "/images/" + options[:local_image]
         else
-        # elsif options[:local_image]
-        #   @local_image          = options[:local_image]
           return
         end
       end
@@ -78,6 +76,10 @@ module RLayout
         @stroke[:sides] = [1,1,1,1,1,1]
         @fill[:color] = 'CMYK=0,0,0,10'
       end
+      @zoom_level     = options[:zoom_level] || "0%"
+      set_zoom_factor
+      @zoom_anchor    = options[:zoom_anchor] unless @zoom_anchor
+      @zoom_anchor    = 5 unless @zoom_anchor
       # @image_path
       #TODO Get rid of this and do it for MRI
       if RUBY_ENGINE == 'rubymotion'
@@ -155,7 +157,7 @@ module RLayout
       when  IMAGE_FIT_TYPE_HORIZONTAL
         fit_horizontal
       when  IMAGE_FIT_TYPE_KEEP_RATIO
-        fit_keep_ratio
+        fit_keep_ratio #최적
       when  IMAGE_FIT_TYPE_IGNORE_RATIO
         fit_ignore_ratio
       when IMAGE_CHANGE_BOX_SIZE
@@ -196,6 +198,30 @@ module RLayout
       end
     end
 
+    # It took me a while to figure this one out!!
+    # Cocoa image zooming works by setting the target rect and reducing the source image rect.
+    # we have to reduce the source rect in order to enlarge image
+    # this is why  @zoom_factor < 1,  when enlarging the image
+    # few!!!! 
+    def set_zoom_factor
+      case @zoom_level
+      when '0%'
+        @zoom_factor = 1
+      when '20%'
+        @zoom_factor = 0.9
+      when '40%'
+        @zoom_factor = 0.8
+      when '60%'
+        @zoom_factor = 0.7
+      when '80%'
+        @zoom_factor = 0.6
+      when '100%'
+        @zoom_factor = 0.5
+      else
+        @zoom_factor = 1
+      end
+    end
+
     def fit_vertical
       return unless @image_object
       if RUBY_ENGINE == 'rubymotion'
@@ -209,11 +235,48 @@ module RLayout
         end
         # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
          # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
-         source_width = @width / (@height/@image_frame.size.height)
-         @source_frame.origin.x = (@image_frame.size.width - source_width)/2.0
-         @source_frame.origin.y = 0
-         @source_frame.size.width = source_width
-         @source_frame.size.height = @image_frame.size.height
+        puts "++++++++ In fit_vertical"
+        if @zoom_level !='0%' && @zoom_anchor !=5
+          source_width = @width / (@height/@image_frame.size.height)
+          @source_frame.origin.x = (@image_frame.size.width - source_width)/2.0
+          @source_frame.origin.y = 0
+          @source_frame.size.width = source_width
+          @source_frame.size.height = @image_frame.size.height
+
+          @source_frame.size.height*@zoom_factor
+          @source_frame.size.width*@zoom_factor
+          case @zoom_anchor
+          when 1
+          when 2
+            @source_frame.origin.y += @source_frame.origin.y*@zoom_factor/2
+          when 3
+            @source_frame.origin.y += @source_frame.origin.y*@zoom_factor
+          when 4
+            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor/2
+            @source_frame.size.width -= @source_frame.size.width*@zoom_factor
+          when 5
+            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor/2
+            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor/2
+          when 6
+            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor
+            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor/2
+          when 7
+            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor
+            @source_frame.size.width -= @source_frame.size.width*@zoom_factor
+          when 8
+            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor/2
+            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
+          when 9
+            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor
+            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
+          end
+        else
+          source_width = @width / (@height/@image_frame.size.height)
+          @source_frame.origin.x = (@image_frame.size.width - source_width)/2.0
+          @source_frame.origin.y = 0
+          @source_frame.size.width = source_width
+          @source_frame.size.height = @image_frame.size.height
+        end
       else
 
       end
@@ -230,13 +293,67 @@ module RLayout
           @source_frame = NSZeroRect
           return
         end
+        if @parent.class == RLayout::NewsImage
+          puts "++++++++ In fit_horizontal"
+          puts "++++++++ In @zoom_level:#{@zoom_level}"
+          puts "++++++++ In @zoom_factor:#{@zoom_factor}"
+          puts "++++++++ In @zoom_anchor:#{@zoom_anchor}"
+        end
         # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
         # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
-        source_height = @height / (@width/@image_frame.size.width)
-        @source_frame.origin.x = 0
-        @source_frame.origin.y = (@image_frame.size.height - source_height)/2.0
-        @source_frame.size.height = source_height
-        @source_frame.size.width = @image_frame.size.width
+        if @zoom_level !='0%' || @zoom_anchor !=5
+          puts "+++++ in adjusting "
+          # set_zoom_factor converts @zoom_level to @zoom_factor
+          source_height = @height / (@width/@image_frame.size.width)
+          @source_frame.origin.x = 0
+          @source_frame.origin.y = (@image_frame.size.height - source_height)/2.0
+          @source_frame.size.height = source_height
+          @source_frame.size.width = @image_frame.size.width
+          
+          @source_frame.size.height*@zoom_factor
+          @source_frame.size.width*@zoom_factor
+          case @zoom_anchor
+          when 1
+            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
+          when 2
+            puts "+++++++ anchor when 2"
+            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
+            if @zoom_level !='0%'
+              @source_frame.origin.x += @source_frame.origin.x*@zoom_factor/2
+            end
+          when 3
+            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
+            @source_frame.origin.x += @source_frame.origin.x*@zoom_factor
+          when 4
+            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor/2
+          when 5
+            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor/2
+            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor/2
+          when 6
+            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor
+            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor/2
+          when 7
+            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
+            @source_frame.size.height -= @source_frame.size.height*@zoom_factor
+          when 8
+            @source_frame.origin.y = 0
+
+            # @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor/2
+            # @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
+
+          when 9
+            @source_frame.origin.y = 0
+
+            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor
+            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
+          end
+        else
+          source_height = @height / (@width/@image_frame.size.width)
+          @source_frame.origin.x = 0
+          @source_frame.origin.y = (@image_frame.size.height - source_height)/2.0
+          @source_frame.size.height = source_height
+          @source_frame.size.width = @image_frame.size.width
+        end
       else
 
       end
