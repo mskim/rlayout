@@ -329,8 +329,15 @@ module RLayout
         @para_style  = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
         @para_string = "▸▸" + @para_string
       end
+      puts "@para_style:#{@para_style}"
 
-      @space_width  = @para_style[:space_width]
+      unless @para_style
+        @style_name  = 'body'
+        style_hash = current_style['body']
+        @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+      end
+
+      @space_width  = @para_style[:space_width] || 4
       if @space_width.nil?
         font_size   = @para_style[:font_size]
         @space_width = font_size/2

@@ -95,8 +95,9 @@ class GraphicViewMac < NSView
     return if graphic.stroke[:thickness] == 0
     rect = ns_bounds_rect(graphic)
     @line_position  = 1
-    @stroke[:color]  = RLayout.convert_to_nscolor(graphic.stroke[:color])    unless graphic.stroke[:color].class == NSColor
-    @stroke[:color].set
+    #TODO
+    @graphic.stroke[:color]  = RLayout.convert_to_nscolor(graphic.stroke[:color])    unless graphic.stroke[:color].class == NSColor
+    @graphic.stroke[:color].set
 
     if graphic.stroke[:type]==nil
       graphic.stroke[:type] = 0
@@ -131,6 +132,9 @@ class GraphicViewMac < NSView
             if graphic.kind == '박스기고'
               path.moveToPoint(NSPoint.new(graphic.stroke_x, rect.origin.y + graphic.top_margin))
               path.lineToPoint(NSPoint.new(graphic.stroke_x, rect.origin.y + rect.size.height))
+            else
+              path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + graphic.top_margin))
+              path.lineToPoint(NSPoint.new(rect.origin.x , rect.origin.y + rect.size.height))
             end
           else
             path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + graphic.top_margin))
