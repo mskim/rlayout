@@ -26,7 +26,7 @@ module RLayout
   class NewsImage < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :caption_title
     attr_accessor :image_box, :caption_column, :caption_paragraph, :position, :before_title, :fit_type, :expand, :has_caption
-    attr_reader   :image_kind, :x_grid, :draw_frame
+    attr_reader   :image_kind, :x_grid, :draw_frame, :zoom_level, :zoom_anchor
 
     def initialize(options={})
       if options[:parent]
@@ -45,6 +45,8 @@ module RLayout
       @position               = options[:position] || 3
       @position               = 9  if @position > 9
       @position               = 1  if @position < 0
+      @zoom_level             = options[:zoom_level] if options[:zoom_level]
+      @zoom_anchor            = options[:zoom_anchor] if options[:zoom_anchor]
       options[:grid_frame]    = convert_column_row_position_to_frame(options) if @position
       options[:grid_frame][0] = @x_grid if @x_grid 
       options[:layout_expand] = nil
@@ -115,6 +117,8 @@ module RLayout
       image_options[:image_path]     = @image_path
       image_options[:layout_expand]  = nil
       image_options[:layout_expand]  = @expand if @expand
+      image_options[:zoom_level]     = @zoom_level
+      image_options[:zoom_anchor]    = @zoom_anchor
       image_options[:parent]         = self
       if @parent && (@parent.kind == '기고' || @parent.kind == 'opinion')
         image_options[:stroke_width]  = 0

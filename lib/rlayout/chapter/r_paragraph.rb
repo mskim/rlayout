@@ -330,7 +330,7 @@ module RLayout
         @para_string = "▸▸" + @para_string
       end
 
-      @space_width  = @para_style[:space_width]
+      @space_width  = @para_style[:space_width] || 4
       if @space_width.nil?
         font_size   = @para_style[:font_size]
         @space_width = font_size/2
