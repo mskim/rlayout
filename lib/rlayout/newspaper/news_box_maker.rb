@@ -753,13 +753,14 @@ module RLayout
     attr_accessor :news_box, :output_path, :project_path
     attr_reader :article_info_path
     attr_accessor :custom_style, :publication_name, :time_stamp
-    attr_accessor :pdf_doc, :story_md, :layout_rb
+    attr_accessor :pdf_doc, :story_md, :layout_rb, :draft_mode
     def initialize(options={})
 
       time_start    = Time.now
       @time_stamp   = options[:time_stamp]
       @story_md     = options[:story_md]
       @layout_rb    = options[:layout_rb]
+      @draft_mode   = options[:draft_mode]
       @article_path = options[:article_path]
       @story_path   = options[:story_path]
       if @story_md && @article_path
@@ -875,6 +876,7 @@ module RLayout
           @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
         elsif @news_box.kind == '사설' && @news_box.page_number == 23
           @news_box.stroke[:sides] = [1,1,1,1]
+          @news_box.left_margin    = @news_box.gutter
         elsif @news_box.kind == '사진' && @news_box.draw_frame == false
           @news_box.stroke[:sides] = [0,0,0,0]
         elsif @news_box.kind == '기고'

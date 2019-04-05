@@ -293,12 +293,12 @@ module RLayout
           @source_frame = NSZeroRect
           return
         end
-        if @parent.class == RLayout::NewsImage
-          puts "++++++++ In fit_horizontal"
-          puts "++++++++ In @zoom_level:#{@zoom_level}"
-          puts "++++++++ In @zoom_factor:#{@zoom_factor}"
-          puts "++++++++ In @zoom_anchor:#{@zoom_anchor}"
-        end
+        # if @parent.class == RLayout::NewsImage
+        #   puts "++++++++ In fit_horizontal"
+        #   puts "++++++++ In @zoom_level:#{@zoom_level}"
+        #   puts "++++++++ In @zoom_factor:#{@zoom_factor}"
+        #   puts "++++++++ In @zoom_anchor:#{@zoom_anchor}"
+        # end
         # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
         # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
         if @zoom_level !='0%' || @zoom_anchor !=5

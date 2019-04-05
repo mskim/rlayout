@@ -34,7 +34,8 @@ module RLayout
       @has_profile_image  = options[:has_profile_image]
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
-          @stroke.sides = [0,1,0,1]
+          @stroke.sides = [1,1,1,1]
+          @left_margin  = @gutter
           @left_inset   = @gutter
         else
           @stroke.sides = [1,3,1,1]
@@ -46,13 +47,20 @@ module RLayout
         @stroke.thickness = 0.3
       elsif @kind == '박스기고' || @kind == 'box_opinion'
         # @stroke.sides = [0,1,0,1]
-        if @top_position
-          @top_margin += @body_line_height
+        # if @top_position
+        #   @top_margin += @body_line_height
+        # end
+        @top_margin   = @body_line_height
+        if @on_right_edge
+          @left_margin  = @body_line_height
+          @left_inset   = @body_line_height
+          @right_margin = @body_line_height
+        else
+          @right_margin = @body_line_height
+          @right_inset  = @body_line_height
+          @left_margin   = @body_line_height
         end
-        @left_margin  = @body_line_height
-        @left_inset   = @body_line_height
-        @right_margin = @body_line_height
-        @stroke.sides = [0,1,0,1] 
+        # @stroke.sides = [0,1,0,1] 
         @stroke.thickness = 0.3
       elsif @kind == '책소개' || @kind == 'book_review'
         @has_left_side_bar = true
@@ -94,12 +102,21 @@ module RLayout
       self
     end
 
+    def stroke_rect
+      if @has_profile_image && (@page_number && @page_number == 22)
+        [@x + @gutter, @y, @width - @left_margin, @height]
+      elsif @on_left_edge && (@kind == '박스기고' || @kind == 'box_opinion')
+        [@x + @left_margin, @y + top_margin ,@width - @left_margin - @right_margin - @gutter, @height - @top_margin - @bottom_margin]
+      else
+        [@x + @left_margin, @y + top_margin ,@width - @left_margin - @right_margin ,@height - @top_margin - @bottom_margin]
+      end
+    end
     # create news_columns
     #  news_columns are different from text_column
     def create_columns
       current_x = @starting_column_x
       if @kind == '사설' || @kind == 'editorial'
-        editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
+        editorial_column_width = @column_width*2 + @gutter - @left_margin - @left_inset - @right_inset
         if @heading_columns == 6
           editorial_column_width = @column_width
           @column_count.times do
@@ -110,41 +127,59 @@ module RLayout
             @column_type  = "editorial"
           end
         else
-          @left_inset   = @gutter*2
+          @left_inset   = @gutter
           @stroke_sides = [1,1,0,1]
-          @right_inset  = 0
+          # @right_inset  = 0
           if @has_profile_image || (@page_number && @page_number == 22)
+            puts "we are at @page_number == 22 @has_profile_image"
             @column_type = "editorial_with_profile_image"
-            editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
-            current_x += @left_inset
+            editorial_column_width = @column_width*2 - @gutter # - @left_margin - @left_inset #- @right_inset
+            current_x += @left_margin + @left_inset
+            @starting_column_x = current_x
           else
             @column_type = "editorial"
             editorial_column_width = @column_width*2 + @gutter - @left_inset - @right_inset
             current_x += @gutter
+            @starting_column_x = current_x
           end
           g= RColumn.new(:parent=>nil, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
           g.parent = self
           @graphics << g
-
         end
         # current_y += @top_margin + @top_inset
         @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
       elsif @kind == '박스기고' || @kind == 'box_opinion'
-        box_opinion_column_width = (@width - @gutter*3 - (@column_count - 1)*@gutter)/@column_count
+        @column_width = (@width - @gutter*3 - (@column_count - 1)*@gutter)/@column_count
         @stroke_x = current_x
         @stroke_y = @body_line_height
         current_x += @gutter
         @starting_column_x = current_x
+
+        # if @on_right_edge
+        #   puts "on right edge"
+        #   puts "+++++ current_x:#{current_x}"
+        #   puts "+++++ @stroke_x:#{@stroke_x}"
+        # elsif @on_left_edge
+        #   puts "on left edge"
+        # else
+        #   puts "on else edge"
+        #   @stroke_x = current_x
+        #   puts "+++++ current_x:#{current_x}"
+        #   puts "+++++ @stroke_x:#{@stroke_x}"
+        #   @stroke_y = @body_line_height
+        #   current_x += @gutter
+        #   @starting_column_x = current_x
+        # end
         @column_count.times do
-          g= RColumn.new(:parent=>nil, x: current_x, y: @body_line_height, width: box_opinion_column_width, height: @height - @body_line_height, column_line_count: @column_line_count - 1, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+          g= RColumn.new(:parent=>nil, x: current_x, y: @body_line_height, width: @column_width, height: @height - @body_line_height, column_line_count: @column_line_count - 1, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
           g.parent = self
           @graphics << g
-          current_x += box_opinion_column_width + @gutter
+          current_x += @column_width + @gutter
           @column_type  = "box_opinion"
         end
 
-        @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: box_opinion_column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
       else
         @column_count.times do
@@ -350,11 +385,10 @@ module RLayout
       when 'editorial', "사설"
         @stroke.sides = [1,1,1,1]
         if @has_profile_image
-          h_options[:x]     += @left_inset 
+          h_options[:width] -= @gutter
         else
-          h_options[:x]     += @gutter 
+          h_options[:width] -= @left_inset  + @right_inset
         end
-        h_options[:width] -= (@left_margin + @left_inset + @right_margin + @right_inset)
         @heading = NewsHeadingForEditorial.new(h_options)
       when 'opinion', "기고"
         @stroke.sides = [0,1,0,1]
@@ -369,9 +403,14 @@ module RLayout
         @heading = NewsHeadingForOpinion.new(h_options)
       when 'box_opinion', '박스기고'
         @stroke.sides     = [1,2,1,1]
-        h_options[:x]     = @gutter*2
-        h_options[:width] -=@gutter*2
-        h_options[:y]     = @body_line_height  if @top_position
+        h_options[:y]     = @body_line_height  # if @top_position
+        if @on_right_edge
+          h_options[:x]     = @gutter*2
+          h_options[:width] -=@gutter*2
+        elsif @on_left_edge
+          h_options[:x]     = @gutter
+          h_options[:width] -=@gutter*2
+        end
         @heading = NewsHeadingForArticle.new(h_options)
       when 'obituary_promotion', '부고-인사'
         @heading = NewsHeadingForObituary.new(h_options)

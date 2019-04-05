@@ -11,6 +11,7 @@ class GraphicViewMac < NSView
     @line_position  = 1
     @left_inset     = graphic.left_inset + 2
     draw_line(graphic)
+
     # drawArrow if @start_arrow && @owner_graphic
   end
   
@@ -94,6 +95,9 @@ class GraphicViewMac < NSView
     return unless graphic.stroke
     return if graphic.stroke[:thickness] == 0
     rect = ns_bounds_rect(graphic)
+    if graphic.class == RLayout::NewsArticleBox
+      rect = ns_stroke_rect(graphic)
+    end
     @line_position  = 1
     #TODO
     @graphic.stroke[:color]  = RLayout.convert_to_nscolor(graphic.stroke[:color])    unless graphic.stroke[:color].class == NSColor
@@ -129,12 +133,17 @@ class GraphicViewMac < NSView
           path= NSBezierPath.bezierPath
           path.setLineWidth(graphic.stroke[:thickness]*graphic.stroke[:sides][0])
           if graphic.class == RLayout::NewsArticleBox # graphic.class == RLayout::NewsArticleBox && graphic.kind == '박스기고' gives error
-            if graphic.kind == '박스기고'
-              path.moveToPoint(NSPoint.new(graphic.stroke_x, rect.origin.y + graphic.top_margin))
+            if @open_left_inset_line
+              # puts "@open_left_inset_line"
+              path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + graphic.top_margin))
+              path.lineToPoint(NSPoint.new(rect.origin.x, rect.origin.y + rect.size.height))
+            elsif graphic.kind == '박스기고'
+              path.moveToPoint(NSPoint.new(graphic.stroke_x, rect.origin.y))
               path.lineToPoint(NSPoint.new(graphic.stroke_x, rect.origin.y + rect.size.height))
             else
-              path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + graphic.top_margin))
-              path.lineToPoint(NSPoint.new(rect.origin.x , rect.origin.y + rect.size.height))
+              # puts "NewsArticleBox left graphic.left_margin:#{graphic.left_margin}"
+              path.moveToPoint(NSPoint.new(rect.origin.x + graphic.left_margin, rect.origin.y + graphic.top_margin))
+              path.lineToPoint(NSPoint.new(rect.origin.x + graphic.left_margin, rect.origin.y + rect.size.height))
             end
           else
             path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + graphic.top_margin))
@@ -147,24 +156,29 @@ class GraphicViewMac < NSView
           path= NSBezierPath.bezierPath
           path.setLineWidth(graphic.stroke[:thickness]*graphic.stroke[:sides][1])
           if @open_left_inset_line
-            path.moveToPoint(NSPoint.new(rect.origin.x + @left_inset, rect.origin.y))
+            path.moveToPoint(NSPoint.new(rect.origin.x + graphic.left_margin*2, rect.origin.y))
             path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + graphic.top_margin))
           elsif graphic.class == RLayout::NewsArticleBox 
             if graphic.kind == '박스기고'
               path.moveToPoint(NSPoint.new(graphic.stroke_x, graphic.stroke_y))
-              path.lineToPoint(NSPoint.new(graphic.stroke_x + graphic.border_width, graphic.stroke_y))
+              # path.lineToPoint(NSPoint.new(graphic.stroke_x + graphic.border_width, graphic.stroke_y))
+              path.lineToPoint(NSPoint.new(graphic.stroke_x + rect.size.width, graphic.stroke_y))
+            else
+              # path.moveToPoint(NSPoint.new(rect.origin.x + graphic.left_margin, rect.origin.y + graphic.top_margin))
+              # path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width - graphic.left_margin, rect.origin.y + graphic.top_margin))
+              path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + graphic.top_margin))
+              path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + graphic.top_margin))
             end
           else
-            path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + graphic.top_margin))
-            path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + graphic.top_margin))
+            path.moveToPoint(NSPoint.new(rect.origin.x + graphic.left_margin, rect.origin.y + graphic.top_margin))
+            path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width - graphic.left_margin, rect.origin.y + graphic.top_margin))
           end
           path.stroke
         end
         if graphic.stroke[:sides][2] > 0
-          # puts  "draw right"
           path= NSBezierPath.bezierPath
           path.setLineWidth(graphic.stroke[:thickness]*graphic.stroke[:sides][2])
-          path.moveToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + graphic.top_margin))
+          path.moveToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y))
           path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
           path.stroke
         end
@@ -172,7 +186,7 @@ class GraphicViewMac < NSView
           path= NSBezierPath.bezierPath
           path.setLineWidth(graphic.stroke[:thickness]*graphic.stroke[:sides][3])
           if @open_left_inset_line
-            path.moveToPoint(NSPoint.new(rect.origin.x + @left_inset, rect.origin.y + rect.size.height))
+            path.moveToPoint(NSPoint.new(rect.origin.x + graphic.left_margin*2, rect.origin.y + rect.size.height))
             path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
             path.stroke
             return
@@ -181,12 +195,14 @@ class GraphicViewMac < NSView
           if graphic.class == RLayout::NewsArticleBox 
             if @graphic.kind == '박스기고'
               path.moveToPoint(NSPoint.new(graphic.stroke_x, rect.origin.y + rect.size.height))
-              path.lineToPoint(NSPoint.new(graphic.stroke_x + graphic.border_width, rect.origin.y + rect.size.height))
+              # path.lineToPoint(NSPoint.new(graphic.stroke_x + graphic.border_width, rect.origin.y + rect.size.height))
+              path.lineToPoint(NSPoint.new(graphic.stroke_x + rect.size.width, rect.origin.y + rect.size.height))
+
             else
-              path.moveToPoint(NSPoint.new(graphic.border_x, rect.origin.y + rect.size.height))
-              path.lineToPoint(NSPoint.new(graphic.border_x + graphic.border_width, rect.origin.y + rect.size.height))
-            # puts "@graphic.border_x + @graphic.border_width:#{@graphic.border_x + @graphic.border_width}"
-            # puts "rect.origin.x + rect.size.width:#{rect.origin.x + rect.size.width}"
+              # path.moveToPoint(NSPoint.new(graphic.border_x, rect.origin.y + rect.size.height))
+              # path.lineToPoint(NSPoint.new(graphic.border_x + graphic.border_width, rect.origin.y + rect.size.height))
+              path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + rect.size.height))
+              path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + rect.size.height))
             end
             path.stroke
           else

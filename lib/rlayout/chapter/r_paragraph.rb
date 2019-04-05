@@ -168,6 +168,7 @@ module RLayout
 
     def layout_lines(current_line, options={})
       return unless current_line
+      # binding.pry
       @current_line = current_line
       @line_count = 1
       @current_line.set_paragraph_info(self, "first_line")
@@ -323,13 +324,12 @@ module RLayout
         @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
-      if @markup =='h4'
+      if @markup == 'h4'
         style_hash = current_style['linked_story']
         @style_name  = 'linked_story'
         @para_style  = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
         @para_string = "▸▸" + @para_string
       end
-      puts "@para_style:#{@para_style}"
 
       unless @para_style
         @style_name  = 'body'

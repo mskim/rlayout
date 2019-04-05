@@ -110,6 +110,11 @@ class GraphicViewMac < NSView
     NSMakeRect(r[0],r[1],r[2],r[3])
   end
 
+  def ns_stroke_rect(graphic)
+    r = graphic.stroke_rect
+    NSMakeRect(r[0],r[1],r[2],r[3])
+  end
+
   def isFlipped
     true
   end

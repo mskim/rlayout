@@ -192,9 +192,9 @@ module RLayout
       @text_alignment   = @para_style[:alignment] || "left"
       @v_offset         = @para_style[:v_offset] || 0
       @first_line_indent = @para_style[:first_line_indent] 
-      @first_line_indent = @para_style[:font_size] unless @first_line_indent
+      @first_line_indent = @para_style[:font_size] if @first_line_indent.nil?
       @right_indent      = @para_style[:right_indent] || 0
-      @left_indent      = @para_style[:left_indent] || 0
+      @left_indent       = @para_style[:left_indent] || 0
       if @text_alignment == "left" || @text_alignment == "justified"
         @first_line_width   = @text_area[2] - @first_line_indent - @right_indent
         @middle_line_width  = @text_area[2] - @left_indent - @right_indent

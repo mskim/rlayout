@@ -7,7 +7,7 @@ describe 'overlapping floats' do
     # @article_path   = "/Users/mskim/Development/rails5/page_template/public/current_issue/2/3"
     # @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/6/3x4/0"
     # @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/1/22/2"
-    @article_path   = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/20/3"
+    @article_path   = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/23/2"
     puts "@article_path:#{@article_path}"
     @svg_path       = @article_path + "/output.svg"
     @maker          = NewsBoxMaker.new(article_path: @article_path)

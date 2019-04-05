@@ -346,6 +346,10 @@ module RLayout
       [@x,@y,@width,@height]
     end
 
+    def stroke_rect
+      [@x + @left_margin, @y + top_margin ,@width - @left_margin - @right_margin ,@height - @top_margin - @bottom_margin]
+    end
+
     def bounds_rect
       [0,0,@width,@height]
     end

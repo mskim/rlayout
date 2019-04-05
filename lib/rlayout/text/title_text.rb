@@ -199,7 +199,6 @@ module RLayout
           end
         end
       end
-
       @current_line.align_tokens
 
     end
