@@ -9,11 +9,11 @@ module RLayout
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(output_path, options)
       elsif RUBY_ENGINE == 'ruby'
-        doc = options[:pdf_doc]
+        @pdf_doc = options[:pdf_doc]
         unless doc
-          doc = HexaPDF::Document.new
+          @pdf_doc = HexaPDF::Document.new
         end
-        page      = doc.pages.add([0, 0, @width, @height])
+        page      = @pdf_doc.pages.add([0, 0, @width, @height])
         canvas    = page.canvas
         font_file = "/Library/Fonts/newspaper/Shinmoon.ttf"
         wrapper   = doc.fonts.add(font_file)
