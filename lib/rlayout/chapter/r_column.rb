@@ -50,6 +50,14 @@ module RLayout
       self
     end
 
+    def to_svg
+      s = "<rect fill='white' x='#{@parent.x + @x}' y='#{@parent.y + @y}' width='#{@width}' height='#{@height}' />"
+      @graphics.each do |line|
+        s +=line.to_svg
+      end
+      s
+    end
+
     def column_grid_rect
       @parent.column_grid_rect(self)
     end

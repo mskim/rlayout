@@ -26,6 +26,7 @@ module RLayout
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
     attr_reader :overlap, :overlap_rect, :embedded, :has_left_side_bar
     attr_reader :stroke_x, :stroke_y, :stroke_width
+    attr_reader :svg_content
 
     def initialize(options={}, &block)
       super
@@ -155,22 +156,6 @@ module RLayout
         @stroke_y = @body_line_height
         current_x += @gutter
         @starting_column_x = current_x
-
-        # if @on_right_edge
-        #   puts "on right edge"
-        #   puts "+++++ current_x:#{current_x}"
-        #   puts "+++++ @stroke_x:#{@stroke_x}"
-        # elsif @on_left_edge
-        #   puts "on left edge"
-        # else
-        #   puts "on else edge"
-        #   @stroke_x = current_x
-        #   puts "+++++ current_x:#{current_x}"
-        #   puts "+++++ @stroke_x:#{@stroke_x}"
-        #   @stroke_y = @body_line_height
-        #   current_x += @gutter
-        #   @starting_column_x = current_x
-        # end
         @column_count.times do
           g= RColumn.new(:parent=>nil, x: current_x, y: @body_line_height, width: @column_width, height: @height - @body_line_height, column_line_count: @column_line_count - 1, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
           g.parent = self
@@ -854,6 +839,29 @@ module RLayout
         b_width -=@gutter unless @on_right_edge
         b_width
       end
+    end
+
+    def columns_in_svg
+      columns_svg = ""
+      @graphics.each do |col|
+        columns_svg += col.to_svg
+      end
+      columns_svg
+    end
+
+    def to_svg
+      svg_template=<<~EOF
+      <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 #{@width} #{@height}' >
+        <rect fill='white' x='0' y='0' width='#{@width}' height='#{@height}' />
+        #{columns_in_svg}
+      </svg>
+      EOF
+      erb = ERB.new(svg_template)
+      @svg_content = erb.result(binding)
+    end
+
+    def to_pdf
+
     end
 
   end

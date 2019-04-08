@@ -753,9 +753,10 @@ module RLayout
     attr_accessor :news_box, :output_path, :project_path
     attr_reader :article_info_path
     attr_accessor :custom_style, :publication_name, :time_stamp
-    attr_accessor :pdf_doc, :story_md, :layout_rb, :draft_mode
-    def initialize(options={})
+    attr_accessor :pdf_doc, :story_md, :layout_rb
+    attr_accessor :draft_mode, :svg_content
 
+    def initialize(options={})
       time_start    = Time.now
       @time_stamp   = options[:time_stamp]
       @story_md     = options[:story_md]
@@ -908,13 +909,17 @@ module RLayout
           @news_box.stroke[:sides] = [0,0,0,1]
       end
       column = @news_box.graphics.first
-      @news_box.save_pdf(@output_path, :jpg=>true)
-      if @time_stamp
-        stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
-        output_jpg_path = @output_path.sub(/pdf$/, "jpg")
-        stamped_jpg_path = stamped_path.sub(/pdf$/, "jpg")
-        system("cp #{@output_path} #{stamped_path}")
-        system("cp #{output_jpg_path} #{stamped_jpg_path}")
+      if @draft_mode
+        @svg_content =  @news_box.to_svg
+      else
+        @news_box.save_pdf(@output_path, :jpg=>true)
+        if @time_stamp
+          stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
+          output_jpg_path = @output_path.sub(/pdf$/, "jpg")
+          stamped_jpg_path = stamped_path.sub(/pdf$/, "jpg")
+          system("cp #{@output_path} #{stamped_path}")
+          system("cp #{output_jpg_path} #{stamped_jpg_path}")
+        end
       end
       time_end = Time.now
       puts "++++++++ it took:#{time_end - time_start}"
