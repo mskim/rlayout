@@ -1,6 +1,5 @@
 module RLayout
   class Container < Graphic
-    attr_reader :pdf_doc
     attr_accessor :flipped 
 
     def save_pdf(output_path, options={})
@@ -9,15 +8,15 @@ module RLayout
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(output_path, options)
       elsif RUBY_ENGINE == 'ruby'
-        doc = options[:pdf_doc]
-        unless doc
-          doc = HexaPDF::Document.new
+        @pdf_doc = options[:pdf_doc]
+        unless @pdf_doc
+          @pdf_doc = HexaPDF::Document.new
         end
-        page      = doc.pages.add([0, 0, @width, @height])
+        page      = @pdf_doc.pages.add([0, 0, @width, @height])
         canvas    = page.canvas
         font_file = "/Library/Fonts/newspaper/Shinmoon.ttf"
         wrapper   = doc.fonts.add(font_file)
-        @flipped = flipped_origin
+        @flipped  = flipped_origin
         if @fill.color.class == String
           if @fill.color == 'clear'
             #TODO set opacity
@@ -63,7 +62,7 @@ module RLayout
           f.to_pdf(canvas)
         end
         
-        doc.write(output_path)
+        @pdf_doc.write(output_path)
       end
       self
     end

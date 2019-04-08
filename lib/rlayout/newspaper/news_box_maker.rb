@@ -908,7 +908,7 @@ module RLayout
           @news_box.stroke[:sides] = [0,0,0,1]
       end
       column = @news_box.graphics.first
-      @news_box.save_pdf(@output_path, :jpg=>true)
+      @news_box.save_pdf(@output_path, :pdf_doc=>@pdf_doc, :jpg=>true)
       if @time_stamp
         stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
         output_jpg_path = @output_path.sub(/pdf$/, "jpg")

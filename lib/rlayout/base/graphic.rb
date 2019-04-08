@@ -481,14 +481,14 @@ module RLayout
       elsif RUBY_ENGINE == 'ruby'
         require 'HexaPDF'
         unless @parent
-          doc       = HexaPDF::Document.new
-          page      = doc.pages.add([@x, @y, @width, @height])
+          @pdf_doc  = HexaPDF::Document.new
+          page      = @pdf_doc.pages.add([@x, @y, @width, @height])
           canvas    = page.canvas
         end
         # # flip canvas virtically 
         # canvas.transform(1,0,0,-1,0,@height)
         to_pdf(canvas)
-        doc.write(path, optimize: true)
+        @pdf_doc.write(path, optimize: true)
       end
     end
 
