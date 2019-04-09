@@ -849,11 +849,24 @@ module RLayout
       columns_svg
     end
 
+    def floats_in_svg
+      floats_svg = ""
+      @floats.each do |float|
+        floats_svg += float.to_svg
+      end
+      floats_svg
+    end
+
+    def save_svg(path)
+      File.open(path, 'w'){|f| f.write to_svg}
+    end
+    
     def to_svg
       svg_template=<<~EOF
       <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 #{@width} #{@height}' >
         <rect fill='white' x='0' y='0' width='#{@width}' height='#{@height}' />
         #{columns_in_svg}
+        #{floats_in_svg}
       </svg>
       EOF
       erb = ERB.new(svg_template)

@@ -17,6 +17,10 @@ module RLayout
       self
     end
 
+    def to_svg
+      "<rect fill='white' x='#{@parent.x + @x}' y='#{@parent.y + @y}' width='#{@width}' height='#{@height - 2}' />"
+    end
+
     def set_heading_content(options)
       # @height_in_lines            = 0
       @height_sum                 = 0

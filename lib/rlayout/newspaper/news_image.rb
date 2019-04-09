@@ -134,6 +134,10 @@ module RLayout
       self
     end
 
+    def to_svg
+      "<rect fill='red' x='#{@parent.x + @x}' y='#{@parent.y + @y}' width='#{@width}' height='#{@height - 2}' />"
+    end
+
     def has_caption_text?(options)
       @has_caption = false
       if options[:caption_title] && options[:caption_title] != ""
