@@ -409,6 +409,37 @@ module RLayout
       end
       align_tokens
     end
+
+    def first_token
+      @graphics.first
+    end
+
+    def last_token
+      @graphics.last
+    end
+
+    def svg_rect_string
+      h = @height - 3
+      if @graphics.length == 0
+        "x='#{x}' y='#{y}' width='#{0}' height='#{h}'"
+      else
+        if @parent
+          x = @parent.x + first_token.x
+          y = @parent.y + @y
+        else
+          x = first_token.x
+          y = @y
+        end
+        w = last_token.x_max - first_token.x
+        "x='#{x}' y='#{y}' width='#{w}' height='#{h}'"
+      end
+    end
+    
+    def to_svg
+      s = "<rect fill='gray' #{svg_rect_string} />"
+      return s if @graphics.length > 0 && @layed_out_line
+      "" 
+    end
   end
 
   class OverFlowMarker < Graphic

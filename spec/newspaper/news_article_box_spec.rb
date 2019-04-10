@@ -8,9 +8,10 @@ describe 'overlapping floats' do
     # @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/6/3x4/0"
     # @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/1/22/2"
     @article_path   = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/23/2"
+    @svg_path       = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/23/2/story.svg"
     puts "@article_path:#{@article_path}"
     @svg_path       = @article_path + "/output.svg"
-    @maker          = NewsBoxMaker.new(article_path: @article_path)
+    @maker          = NewsBoxMaker.new(article_path: @article_path, draft_mode: true)
     @news_box       = @maker.news_box
     @heading        = @news_box.floats.first
     @image          = @news_box.floats[1]
@@ -19,10 +20,17 @@ describe 'overlapping floats' do
     @third_column   = @news_box.graphics[2]
     @overflow_column = @news_box.overflow_column
     @box_width      = (@first_column.width)*3 + (@news_box.gutter)*2
+    @svg            = @news_box.svg_content
+    @news_box.save_svg(@svg_path)
   end
 
   it 'should create NewsHeadingForArticle' do
     assert_equal NewsArticleBox, @news_box.class
+  end
+
+  it 'should create svg' do
+    assert_equal String, @news_box.svg_content.class
+    system("open #{@svg_path}")
   end
 
   # it 'should create overflowing_column' do

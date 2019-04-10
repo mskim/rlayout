@@ -133,16 +133,16 @@ else
   # require File.dirname(__FILE__) + '/rlayout/page/composite_page'
   # require File.dirname(__FILE__) + '/rlayout/page/page_variables_extend'
 
-  # require File.dirname(__FILE__) + '/rlayout/text/announcement_text'
-  # require File.dirname(__FILE__) + '/rlayout/text/heading'
+  require File.dirname(__FILE__) + '/rlayout/text/font'
+  require File.dirname(__FILE__) + '/rlayout/text/announcement_text'
+  require File.dirname(__FILE__) + '/rlayout/text/quote_text'
+  require File.dirname(__FILE__) + '/rlayout/text/title_text'
+  require File.dirname(__FILE__) + "/rlayout/text/text_token"
+  require File.dirname(__FILE__) + '/rlayout/text/heading'
+  require File.dirname(__FILE__) + "/rlayout/text/text"
   # require File.dirname(__FILE__) + '/rlayout/text/heading_container'
   # require File.dirname(__FILE__) + '/rlayout/text/paragraph'
-  # require File.dirname(__FILE__) + '/rlayout/text/quote_text'
-  # require File.dirname(__FILE__) + '/rlayout/text/title_text'
   # require File.dirname(__FILE__) + "/rlayout/text/line_fragment"
-  # require File.dirname(__FILE__) + "/rlayout/text/text"
-  # require File.dirname(__FILE__) + "/rlayout/text/text_token"
-  # require File.dirname(__FILE__) + '/rlayout/text/font'
   # require File.dirname(__FILE__) + '/rlayout/text/text_train'
   # require File.dirname(__FILE__) + '/rlayout/text/ordered_list'
   # require File.dirname(__FILE__) + '/rlayout/text/text_column'

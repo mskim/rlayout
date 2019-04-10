@@ -9,7 +9,7 @@ module RLayout
     attr_accessor :frame_image, :shadow, :rotation, :right_anchor, :center_anchor_at, :bottom_anchor
     attr_reader   :pdf_doc
 
-    # attr_accessor :overflow, :underflow
+
 
     def initialize(options={}, &block)
       @parent = options[:parent]
@@ -545,6 +545,7 @@ module RLayout
     def fit_text_to_box
       @text_layout_manager.fit_text_to_box  if @text_layout_manager
     end
+
   end
 
   class NSText < Graphic
