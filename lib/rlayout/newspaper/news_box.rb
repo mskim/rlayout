@@ -120,6 +120,10 @@ module RLayout
       end
     end
 
+    def stroke_rect
+      [@x + @left_margin, @y + top_margin ,@width - @left_margin - @right_margin ,@height - @top_margin - @bottom_margin]
+    end
+
   end
 
   class NewsAdBox < NewsBox

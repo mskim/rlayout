@@ -15,23 +15,6 @@ class GraphicViewMac < NSView
     # drawArrow if @start_arrow && @owner_graphic
   end
   
-  # given graphic, return NSPoint
-  def left_top_point(g)
-
-  end
-
-  def right_top_point(g)
-
-  end
-
-  def right_bottom_point(g)
-
-  end
-
-  def left_bottom_point(g)
-
-  end
-
   def draw_gutter_stroke(graphic)
     # return unless graphic.kind_of?(RLayout::TextBox)
     #draw gutter lines
@@ -95,7 +78,7 @@ class GraphicViewMac < NSView
     return unless graphic.stroke
     return if graphic.stroke[:thickness] == 0
     rect = ns_bounds_rect(graphic)
-    if graphic.class == RLayout::NewsArticleBox
+    if graphic.kind_of?(RLayout::NewsBox)  
       rect = ns_stroke_rect(graphic)
     end
     @line_position  = 1
@@ -132,7 +115,7 @@ class GraphicViewMac < NSView
           # puts  "draw left side"
           path= NSBezierPath.bezierPath
           path.setLineWidth(graphic.stroke[:thickness]*graphic.stroke[:sides][0])
-          if graphic.class == RLayout::NewsArticleBox # graphic.class == RLayout::NewsArticleBox && graphic.kind == '박스기고' gives error
+          if graphic.kind_of?(RLayout::NewsBox)
             if @open_left_inset_line
               # puts "@open_left_inset_line"
               path.moveToPoint(NSPoint.new(rect.origin.x, rect.origin.y + graphic.top_margin))
@@ -158,7 +141,7 @@ class GraphicViewMac < NSView
           if @open_left_inset_line
             path.moveToPoint(NSPoint.new(rect.origin.x + graphic.left_margin*2, rect.origin.y))
             path.lineToPoint(NSPoint.new(rect.origin.x + rect.size.width, rect.origin.y + graphic.top_margin))
-          elsif graphic.class == RLayout::NewsArticleBox 
+          elsif graphic.kind_of?(RLayout::NewsBox)  
             if graphic.kind == '박스기고'
               path.moveToPoint(NSPoint.new(graphic.stroke_x, graphic.stroke_y))
               # path.lineToPoint(NSPoint.new(graphic.stroke_x + graphic.border_width, graphic.stroke_y))
@@ -192,7 +175,7 @@ class GraphicViewMac < NSView
             return
           end
 
-          if graphic.class == RLayout::NewsArticleBox 
+          if graphic.kind_of?(RLayout::NewsBox) 
             if @graphic.kind == '박스기고'
               path.moveToPoint(NSPoint.new(graphic.stroke_x, rect.origin.y + rect.size.height))
               # path.lineToPoint(NSPoint.new(graphic.stroke_x + graphic.border_width, rect.origin.y + rect.size.height))

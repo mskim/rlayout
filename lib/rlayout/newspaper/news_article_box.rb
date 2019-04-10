@@ -862,13 +862,13 @@ module RLayout
     end
     
     def to_svg
-      svg_template=<<~EOF
-      <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 #{@width} #{@height}' >
-        <rect fill='white' x='0' y='0' width='#{@width}' height='#{@height}' />
-        #{columns_in_svg}
-        #{floats_in_svg}
-      </svg>
-      EOF
+svg_template=<<EOF
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 #{@width} #{@height}' >
+  <rect fill='white' x='0' y='0' width='#{@width}' height='#{@height}' />
+  #{columns_in_svg}
+  #{floats_in_svg}
+</svg>
+EOF
       erb = ERB.new(svg_template)
       @svg_content = erb.result(binding)
     end
