@@ -60,24 +60,23 @@ module RLayout
       else
         frame_rect              = [0,0, 400, 100]
       end
+      @x                      = frame_rect[0]
+      @y                      = frame_rect[1]
+      @width                  = frame_rect[2]
+      @height                 = frame_rect[3] - 4 #TODO body_leading
 
       if @image_kind == '인물_좌'  || @image_kind == 'person_image_left'
         # handle images that are less than column
         #TODO take care when not at the edge 
-        unless @parent.on_left_edge
-          @x = @parent.gutter
-        end
+        # unless @parent.on_left_edge
+        #   @x += @parent.gutter
+        # end
         @width                  = @parent.column_width*0.5 + PERSONAL_IMAGE_MARGIN
         @height                 = @parent.body_line_height*PERSONAL_IMAGE_HEIGHT_IN_LINES
       elsif @image_kind == '인물_우' || @image_kind == 'person_image_right'
-        @x                      = @parent.column_width*0.5 - PERSONAL_IMAGE_MARGIN
+        @x                      += @parent.column_width*0.5 - PERSONAL_IMAGE_MARGIN
         @width                  = @parent.column_width*0.5 + PERSONAL_IMAGE_MARGIN
         @height                 = @parent.body_line_height*PERSONAL_IMAGE_HEIGHT_IN_LINES
-      else
-        @x                      = frame_rect[0]
-        @y                      = frame_rect[1]
-        @width                  = frame_rect[2]
-        @height                 = frame_rect[3] - 4 #TODO body_leading
       end
       if options[:extra_height_in_lines]  && options[:extra_height_in_lines] != 0
         @height += options[:extra_height_in_lines]*@parent.body_line_height
@@ -95,7 +94,6 @@ module RLayout
       image_options[:height]       = @height
       image_options[:height]       = @height - @caption_column.height if @caption_column
       if @image_kind == '인물_좌'  || @image_kind == 'person_image_left'
-        image_options[:x]          = 0
         image_options[:width]      = @width - PERSONAL_IMAGE_MARGIN
       elsif @image_kind == '인물_우' || @image_kind == 'person_image_right'
         image_options[:x]         = PERSONAL_IMAGE_MARGIN
