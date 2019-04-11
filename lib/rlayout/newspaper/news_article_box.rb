@@ -867,6 +867,7 @@ svg_template=<<EOF
   <rect fill='white' x='0' y='0' width='#{@width}' height='#{@height}' />
   #{columns_in_svg}
   #{floats_in_svg}
+
 </svg>
 EOF
       erb = ERB.new(svg_template)

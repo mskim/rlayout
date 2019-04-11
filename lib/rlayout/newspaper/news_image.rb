@@ -66,11 +66,6 @@ module RLayout
       @height                 = frame_rect[3] - 4 #TODO body_leading
 
       if @image_kind == '인물_좌'  || @image_kind == 'person_image_left'
-        # handle images that are less than column
-        #TODO take care when not at the edge 
-        # unless @parent.on_left_edge
-        #   @x += @parent.gutter
-        # end
         @width                  = @parent.column_width*0.5 + PERSONAL_IMAGE_MARGIN
         @height                 = @parent.body_line_height*PERSONAL_IMAGE_HEIGHT_IN_LINES
       elsif @image_kind == '인물_우' || @image_kind == 'person_image_right'
@@ -84,22 +79,30 @@ module RLayout
       end
 
       has_caption_text?(options)
-      if @has_caption
-        @caption_column         = CaptionColumn.new(parent:self, width: @width, top_space_in_lines: 0.3, caption_line_height: 12)
-        @caption_paragraph      = CaptionParagraph.new(options)
-        @caption_paragraph.layout_lines(@caption_column)
-      end
+
       image_options                = {}
       image_options[:width]        = @width
       image_options[:height]       = @height
-      image_options[:height]       = @height - @caption_column.height if @caption_column
+      caption_width = @width
+      caption_x     = 0
       if @image_kind == '인물_좌'  || @image_kind == 'person_image_left'
-        image_options[:width]      = @width - PERSONAL_IMAGE_MARGIN
+        image_options[:width]     = @width - PERSONAL_IMAGE_MARGIN
+        caption_width              = @width - PERSONAL_IMAGE_MARGIN
+        puts "image_options[:width]:#{image_options[:width]}"
+        puts "@width:#{@width}"
       elsif @image_kind == '인물_우' || @image_kind == 'person_image_right'
         image_options[:x]         = PERSONAL_IMAGE_MARGIN
         image_options[:width]     = @width - PERSONAL_IMAGE_MARGIN
+        caption_width              = @width - PERSONAL_IMAGE_MARGIN
+        caption_x                  = PERSONAL_IMAGE_MARGIN
       end
 
+      if @has_caption
+        @caption_column         = CaptionColumn.new(parent:self, x: caption_x, width: caption_width, top_space_in_lines: 0.3, caption_line_height: 12)
+        @caption_paragraph      = CaptionParagraph.new(options)
+        @caption_paragraph.layout_lines(@caption_column)
+      end
+      image_options[:height]       = @height - @caption_column.height if @caption_column
 
       unless top_position?
         image_options[:y]          = @parent.body_line_height
@@ -121,6 +124,8 @@ module RLayout
       if @parent && (@parent.kind == '기고' || @parent.kind == 'opinion')
         image_options[:stroke_width]  = 0
       end
+      puts "++++++++ before image_options[:width]:#{image_options[:width]}"
+      puts "++++++++ before @width:#{@width}"
       @image_box                    = Image.new(image_options)
       if @caption_column
         @caption_column.y             = @image_box.height
@@ -129,6 +134,8 @@ module RLayout
       # make space after the news_image when we have following text
       # for full sized news_image, this will be adjusted by adjust_image_height
       @height                       += @parent.body_line_height if @parent
+
+      puts "+++++++++ at the end @width:#{@width}"
       self
     end
 

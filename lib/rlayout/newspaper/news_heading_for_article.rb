@@ -18,7 +18,9 @@ module RLayout
     end
 
     def to_svg
-      "<rect fill='white' x='#{@parent.x + @x}' y='#{@parent.y + @y}' width='#{@width}' height='#{@height - 2}' />"
+      s = "<rect fill='green' x='#{@parent.x + @x}' y='#{@parent.y + @y}' width='#{@width}' height='#{@height - 2}' />"
+      puts "+++++++++++++++  to_svg:#{s}"
+      s
     end
 
     def set_heading_content(options)

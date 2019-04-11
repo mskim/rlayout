@@ -2,15 +2,14 @@ module RLayout
 class Graphic
   attr_accessor :line_position, :stroke_rect
   def draw_stroke(canvas)
-    @stroke[:color]  = color_from_string(@stroke[:color])    if  @stroke[:color] =~ /^CMYK/
+    #TODO fix this
+    @stroke[:color]  = RLayout.color_from_string(@stroke[:color])    if  @stroke[:color] =~ /^CMYK/
     draw_gutter_stroke(canvas) if self.respond_to?(:gutter_stroke) && @draw_gutter_stroke
     return if @stroke[:thickness].nil? || @stroke[:thickness] == 0
     @stroke_rect    = get_stroke_rect
     @line_position  = 1
     @left_inset     +=  2
     draw_sides(canvas)
-    #TODO
-    # drawArrow if @start_arrow && @owner_graphic
   end
 
   #TODO

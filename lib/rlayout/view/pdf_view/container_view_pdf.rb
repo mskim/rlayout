@@ -15,7 +15,7 @@ module RLayout
         page      = @pdf_doc.pages.add([0, 0, @width, @height])
         canvas    = page.canvas
         font_file = "/Library/Fonts/newspaper/Shinmoon.ttf"
-        wrapper   = doc.fonts.add(font_file)
+        wrapper   = @pdf_doc.fonts.add(font_file)
         @flipped  = flipped_origin
         if @fill.color.class == String
           if @fill.color == 'clear'
