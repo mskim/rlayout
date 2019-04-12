@@ -876,7 +876,7 @@ module RLayout
       else
         # puts "@news_box is Graphic..."
       end
-
+      
       if @news_box.is_a?(NewsArticleBox) 
         if @news_box.graphics.first.column_type == 'editorial_with_profile_image' # s&& @news_box.kind == '샤셜'
           @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
