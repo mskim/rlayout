@@ -19,7 +19,7 @@ module RLayout
   class NewsArticleBox < NewsBox
     attr_accessor :heading_columns, :fill_up_enpty_lines
     attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines
-    attr_accessor :heading, :subtitle_box, :subtitle_in_head, :personal_image, :news_image
+    attr_accessor :heading, :subtitle_box, :subtitle_in_head, :personal_image, :news_image, :news_column_image
     attr_accessor :quote_box, :quote_box_size, :quote_position, :quote_x_grid, :quote_x_grid, :quote_v_extra_space, :quote_alignment, :quote_line_type 
     attr_accessor :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
@@ -265,8 +265,8 @@ module RLayout
       article_info[:quote_box_size]     = @quote_box_size
 
       if @underflow
-        # if we have author image at the bottom from layout
-        @empty_lines -= 6 if @news_image
+        # if we have author image at the bottom from layout, in 22 page editorial 
+        @empty_lines -= 6 if @news_column_image
         article_info[:empty_lines]            = @empty_lines
       elsif @overflow
         # article_info[:overflow]              = true
@@ -670,7 +670,7 @@ module RLayout
     def news_column_image(options={})
       options[:parent]    = self
       options[:is_float]  = true
-      @news_image         = NewsColumnImage.new(options)
+      @news_column_image         = NewsColumnImage.new(options)
     end
 
     def grid_frame_to_rect(grid_frame, options={})

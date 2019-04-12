@@ -754,7 +754,7 @@ module RLayout
     attr_reader :article_info_path
     attr_accessor :custom_style, :publication_name, :time_stamp
     attr_accessor :pdf_doc, :story_md, :layout_rb
-    attr_accessor :draft_mode, :svg_content
+    attr_accessor :draft_mode, :svg_content, :pdf_data, :pdf_tool
 
     def initialize(options={})
       time_start    = Time.now
@@ -762,6 +762,7 @@ module RLayout
       @story_md     = options[:story_md]
       @layout_rb    = options[:layout_rb]
       @draft_mode   = options[:draft_mode]
+      @pdf_tool     = options[:pdf_tool]
       @article_path = options[:article_path]
       @story_path   = options[:story_path]
       if @story_md && @article_path
@@ -816,8 +817,12 @@ module RLayout
       end
       if RUBY_ENGINE == 'ruby'
         # require 'hexapdf'
-        @pdf_doc = HexaPDF::Document.new
-        load_fonts(@pdf_doc)
+        if @pdf_tool == 'prawn'
+          # do it with prawn
+        else
+          @pdf_doc = HexaPDF::Document.new
+          load_fonts(@pdf_doc)
+        end
       end
 
       if options[:image_path]
@@ -908,10 +913,10 @@ module RLayout
       elsif @news_box.is_a?(NewsImageBox)
           @news_box.stroke[:sides] = [0,0,0,1]
       end
-      column = @news_box.graphics.first
+      # column = @news_box.graphics.first
       if @draft_mode
-        @svg_content =  @news_box.to_svg
-      else
+        # @svg_content =  @news_box.to_svg
+      elsif @news_box
         @news_box.save_pdf(@output_path, :jpg=>true)
         if @time_stamp
           stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")

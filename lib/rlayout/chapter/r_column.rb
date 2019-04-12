@@ -91,6 +91,7 @@ module RLayout
       unoccupied_lines_count = 0
       @graphics.reverse.each do |line_in_reverse|
         break if line_in_reverse.layed_out_line?
+        next if line_in_reverse.unoccupied_line? == false
         unoccupied_lines_count += 1
       end
       unoccupied_lines_count

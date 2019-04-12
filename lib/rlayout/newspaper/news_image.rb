@@ -22,6 +22,8 @@ RIGHT_RIGHT   = 8
 
 PERSONAL_IMAGE_MARGIN = 10
 PERSONAL_IMAGE_HEIGHT_IN_LINES = 6.5
+# name caption goes downward
+# gutter shift half towards picture side
 module RLayout
   class NewsImage < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :caption_title
