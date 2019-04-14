@@ -98,8 +98,7 @@ module RLayout
       elsif line_rect[0] < covering_rect[0]
         # puts "covered right side"
         [line_rect[0], line_rect[1] , covering_rect[0] - line_rect[0], line_rect[3] ]
-      elsif covering_rect[0] + covering_rect[0] <= (line_rect[0] + line_rect[2])
-        # puts "covered left side"
+      elsif covering_rect[0] + covering_rect[2] <= (line_rect[0] + line_rect[2])
         [covering_rect[0] + covering_rect[2], line_rect[1] , line_rect[0] + line_rect[2] - (covering_rect[0] + covering_rect[2]), line_rect[3] ]
       else
         line_rect

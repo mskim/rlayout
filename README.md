@@ -124,7 +124,10 @@ TODO List
 
 2019_4_14
 - person_image
+	position of left or right, and make it float for left side person_image
+	
 - autofit_with_sibllings
+	- do not allow push, if siblling is at the bottom and grid height is only one.
 
 2019_4_10
 	- image_box bottom_line

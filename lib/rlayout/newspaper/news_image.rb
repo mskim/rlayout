@@ -19,8 +19,6 @@ RIGHT_LEFT    = 6
 RIGHT_MIDDLE  = 7
 RIGHT_RIGHT   = 8
 
-
-PERSONAL_IMAGE_MARGIN = 10
 PERSONAL_IMAGE_HEIGHT_IN_LINES = 6.5
 # name caption goes downward
 # gutter shift half towards picture side
@@ -28,7 +26,7 @@ module RLayout
   class NewsImage < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :caption_title
     attr_accessor :image_box, :caption_column, :caption_paragraph, :position, :before_title, :fit_type, :expand, :has_caption
-    attr_reader   :image_kind, :x_grid, :draw_frame, :zoom_level, :zoom_anchor
+    attr_reader   :image_kind, :x_grid, :draw_frame, :zoom_level, :zoom_anchor, :gutter
 
     def initialize(options={})
       if options[:parent]
@@ -57,8 +55,10 @@ module RLayout
       @expand                 = options[:expand] if options[:expand]
       @before_title           = options.fetch(:before_title, false)
       super
+      @gutter = 10
       if @parent
         frame_rect              = @parent.grid_frame_to_rect(options[:grid_frame], bottom_position: bottom_position?)
+        @gutter = @parent.gutter
       else
         frame_rect              = [0,0, 400, 100]
       end
@@ -68,11 +68,11 @@ module RLayout
       @height                 = frame_rect[3] - 4 #TODO body_leading
 
       if @image_kind == '인물_좌'  || @image_kind == 'person_image_left'
-        @width                  = @parent.column_width*0.5 + PERSONAL_IMAGE_MARGIN
+        @width                  = @parent.column_width*0.5 + @gutter/2
         @height                 = @parent.body_line_height*PERSONAL_IMAGE_HEIGHT_IN_LINES
       elsif @image_kind == '인물_우' || @image_kind == 'person_image_right'
-        @x                      += @parent.column_width*0.5 - PERSONAL_IMAGE_MARGIN
-        @width                  = @parent.column_width*0.5 + PERSONAL_IMAGE_MARGIN
+        @x                      += @parent.column_width*0.5 - @gutter/2
+        @width                  = @parent.column_width*0.5 + @gutter/2
         @height                 = @parent.body_line_height*PERSONAL_IMAGE_HEIGHT_IN_LINES
       end
       if options[:extra_height_in_lines]  && options[:extra_height_in_lines] != 0
@@ -88,15 +88,14 @@ module RLayout
       caption_width = @width
       caption_x     = 0
       if @image_kind == '인물_좌'  || @image_kind == 'person_image_left'
-        image_options[:width]     = @width - PERSONAL_IMAGE_MARGIN
-        caption_width              = @width - PERSONAL_IMAGE_MARGIN
-        puts "image_options[:width]:#{image_options[:width]}"
-        puts "@width:#{@width}"
+        image_options[:width]     = @width - @gutter
+        caption_width             = @width - @gutter
+
       elsif @image_kind == '인물_우' || @image_kind == 'person_image_right'
-        image_options[:x]         = PERSONAL_IMAGE_MARGIN
-        image_options[:width]     = @width - PERSONAL_IMAGE_MARGIN
-        caption_width              = @width - PERSONAL_IMAGE_MARGIN
-        caption_x                  = PERSONAL_IMAGE_MARGIN
+        image_options[:x]         = @gutter
+        image_options[:width]     = @width - @gutter
+        caption_width             = @width - @gutter
+        caption_x                 = @gutter
       end
 
       if @has_caption
@@ -104,7 +103,7 @@ module RLayout
         @caption_paragraph      = CaptionParagraph.new(options)
         @caption_paragraph.layout_lines(@caption_column)
       end
-      image_options[:height]       = @height - @caption_column.height if @caption_column
+      image_options[:height]       = @height + @caption_column.height if @caption_column
 
       unless top_position?
         image_options[:y]          = @parent.body_line_height
@@ -126,8 +125,6 @@ module RLayout
       if @parent && (@parent.kind == '기고' || @parent.kind == 'opinion')
         image_options[:stroke_width]  = 0
       end
-      puts "++++++++ before image_options[:width]:#{image_options[:width]}"
-      puts "++++++++ before @width:#{@width}"
       @image_box                    = Image.new(image_options)
       if @caption_column
         @caption_column.y             = @image_box.height

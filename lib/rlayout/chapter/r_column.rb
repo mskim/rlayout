@@ -1,12 +1,12 @@
 module RLayout
 
   # RColumn
-  # RColumn is covered with series of "LineFragments".
+  # RColumn is covered with series of "LineFragment".
   # Unlike TextColunm, "LineFragments" are used to determine the shapes of text layout area, to avoid text from overlapping floats.
   # Complex_rect means column has overlapping graphic.
   # We need non-rectanglar shaped bezier path to flow text.
-  # But rather than using bezeier curve, I simulate it using "LineFragments".
-  # I am using seris of LineFragments class rects to determin the shape of text flowing region.
+  # But rather than using bezeier curve, simulate it using "LineFragments".
+  # sing seris of LineFragments class rects to determin the shape of text flowing region.
   # Finer the GridRect, closer it gets to bezier curve. I am using half body_text_height sized rect.
   # Half of body text height should be suffient for text layout.
   # If align_body_text is set to "true", body text are aligned by starting the body paragraph at odd numbered grid.
