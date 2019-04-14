@@ -8,7 +8,7 @@ module RLayout
         [p_origin[0] + @x, p_origin[1]  - @y]
       else
         # [@x, @height - @top_margin - @top_inset - @y]
-        [@x, @y]
+        [@x, @y + @height]
       end
     end
 

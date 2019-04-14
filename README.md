@@ -122,10 +122,13 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
-2019_4_20
+2019_4_14
+- person_image
+- autofit_with_sibllings
+
+2019_4_10
 	- image_box bottom_line
 
-	- person_image
 	- RubyPDF
 
 2019_2_27

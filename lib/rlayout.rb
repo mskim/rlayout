@@ -27,6 +27,7 @@ else
   require 'json'
   require 'mini_magick'
   require 'hexapdf'
+  # require 'prawn'
   # require 'xml-simple'
 
   require File.dirname(__FILE__) + "/rlayout/version"
@@ -71,6 +72,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_line_fragment_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/document_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/page_view_pdf'
+  # require File.dirname(__FILE__) + '/rlayout/view/pdf_view/news_article_prawn_view'
+  
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/stroke'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/fill'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/image'

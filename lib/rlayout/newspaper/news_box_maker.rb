@@ -902,7 +902,7 @@ module RLayout
         elsif @news_box.kind == '부고-인사'
           @news_box.left_margin = 0
           @news_box.right_margin = 0
-          @news_box.stroke[:sides] = [0,1,0,0]
+          @news_box.stroke[:sides] = [0,1,0,1]
         elsif @news_box.embedded
             @news_box.stroke[:sides] = [0,1,0,1]
         elsif @news_box.bottom_article
@@ -915,7 +915,8 @@ module RLayout
       end
       # column = @news_box.graphics.first
       if @draft_mode
-        # @svg_content =  @news_box.to_svg
+        # @news_box.save_pdf(@output_path)
+        return @news_box
       elsif @news_box
         @news_box.save_pdf(@output_path, :jpg=>true)
         if @time_stamp

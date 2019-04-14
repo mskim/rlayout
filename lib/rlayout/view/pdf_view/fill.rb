@@ -1,6 +1,9 @@
 module RLayout
   class Graphic
     def draw_fill(canvas)
+      if self.class == RTextToken
+        return
+      end
       unless @fill.color
         @fill.color = 'CMYK=0,0,0,0 '
       end
@@ -13,7 +16,6 @@ module RLayout
           @fill.color = RLayout.color_from_string(@fill.color) 
         end
       end
-
       case @shape
       when RLayout::RectStruct
         canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill

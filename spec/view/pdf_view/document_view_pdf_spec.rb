@@ -12,11 +12,4 @@ describe 'create DocumentViewPdf' do
     assert File.exist?(@pdf_path)
     system "open #{@pdf_path}"
   end
-
-  it 'should create PageViewPdf' do
-    page = @doc.pages.first
-    assert_equal page.pdf_page.class, HexaPDF::Type::Page
-  end
-
-
 end

@@ -293,8 +293,6 @@ module RLayout
     end
 
     def unoccupied_line?
-      puts "+++++ layed_out_line:#{layed_out_line}"
-      puts "@text_area[2]:#{@text_area[2]}"
       layed_out_line == false && @text_area[2] > 10
     end
 
