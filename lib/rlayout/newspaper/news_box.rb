@@ -57,7 +57,6 @@ module RLayout
       
       if @on_left_edge && @on_right_edge
         # touching both edge
-        puts 
         @right_margin      = 0.0
         @left_margin       = 0.0
         @column_width      = (@width - (@column_count - 1)*@gutter)/@column_count
@@ -86,7 +85,9 @@ module RLayout
       @column_line_count   -= @page_heading_margin_in_lines if @top_position
       @column_line_count   += @extended_line_count
       @column_line_count   -= @pushed_line_count
-
+      if @column_line_count < 7
+        @column_line_count = 7
+      end
       if options[:height]
         @height = options[:height]
       else

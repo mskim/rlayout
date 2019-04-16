@@ -113,7 +113,6 @@ module RLayout
       end
     end
     # create news_columns
-    #  news_columns are different from text_column
     def create_columns
       current_x = @starting_column_x
       if @kind == '사설' || @kind == 'editorial'
@@ -132,7 +131,6 @@ module RLayout
           @stroke_sides = [1,1,0,1]
           # @right_inset  = 0
           if @has_profile_image || (@page_number && @page_number == 22)
-            puts "we are at @page_number == 22 @has_profile_image"
             @column_type = "editorial_with_profile_image"
             editorial_column_width = @column_width*2 - @gutter # - @left_margin - @left_inset #- @right_inset
             current_x += @left_margin + @left_inset
@@ -188,7 +186,7 @@ module RLayout
         previous_column_last_line.next_line = first_line if previous_column_last_line
         previous_column_last_line           = last_line
       end
-      previous_column_last_line.next_line   = @overflow_column.graphics.first
+      previous_column_last_line.next_line   = @overflow_column.graphics.first if previous_column_last_line
     end
 
     def is_top_story?
@@ -423,8 +421,7 @@ module RLayout
         end
       else
         if @floats.first.class == NewsImage && @floats.first.position.to_i == 0
-          # puts "++++++++++ we have NewsImage at position == 0"
-          # position 0 image is at first, so leave it.
+
         elsif @heading != @floats.first
           # make heading as first one in floats
           @heading = @floats.pop
