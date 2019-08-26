@@ -811,8 +811,14 @@ module RLayout
           local_style_yaml = File.open(@local_style_path, 'r'){|f| f.read}
           RLayout::StyleService.shared_style_service.current_style =  YAML::load(local_style_yaml)
         else
-          puts "No local style file :#{@local_style_path} found !!!"
-          return
+          default_style_path = "/Users/Shared/SoftwareLab/newsman/newspaper/text_style.yml"
+          if File.exist?(default_style_path)
+            custom_style_yaml = File.open(default_style_path, 'r'){|f| f.read}
+            RLayout::StyleService.shared_style_service.current_style = YAML::load(custom_style_yaml)
+          else
+            puts "No custom style file :#{@custom_style_path} found !!!"
+            return
+          end
         end
       end
       if RUBY_ENGINE == 'ruby'
