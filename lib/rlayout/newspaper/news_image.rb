@@ -103,7 +103,9 @@ module RLayout
         @caption_paragraph      = CaptionParagraph.new(options)
         @caption_paragraph.layout_lines(@caption_column)
       end
-      image_options[:height]       = @height + @caption_column.height if @caption_column
+      
+      image_options[:height]       = @height - @caption_column.height if @caption_column
+      # image_options[:height]       = @height + @caption_column.height if @caption_column
 
       unless top_position?
         image_options[:y]          = @parent.body_line_height
