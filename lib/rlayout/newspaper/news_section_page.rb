@@ -33,8 +33,6 @@ module RLayout
       @grid_size      = options.fetch('grid_size', [137.40142857142857, 96.94466666666668])
       @grid_width     = @grid_size[0]
       @grid_height    = @grid_size[1]
-      # @grid_width     = (@width - @left_margin - @right_margin- (@grid_base[0]-1)*@gutter )/@grid_base[0]
-      # @grid_height    = (@height - @top_margin - @bottom_margin)/@grid_base[1]
       @body_line_height = @grid_height/@lines_in_grid
       config_path     = @section_path + "/config.yml"
       if File.exist?(config_path)
@@ -50,7 +48,7 @@ module RLayout
         @top_margin     = section_config['top_margin'] if section_config['top_margin']
         @right_margin   = section_config['right_margin'] if section_config['right_margin']
         @bottom_margin  = section_config['bottom_margin'] if section_config['bottom_margin']
-        @ad_type        = section_config[:ad_type]
+        @ad_type        = section_config['ad_type']
         @is_front_page  = false
         @is_front_page  = true if section_config['is_front_page'] == true
         @profile        = section_config['profile']
@@ -61,7 +59,8 @@ module RLayout
         @story_frames   = section_config['story_frames']
         @lines_per_grid = section_config['lines_per_grid'].to_i
         @page_heading_margin_in_lines = section_config['page_heading_margin_in_lines'].to_i
-        @draw_divider   = true  if section_config['draw_divider'] == true
+        @draw_divider   = true  if section_config['draw_divider'] == true || section_config['draw_divider'] == 'true'
+        self
       end
 
       unless @story_frames
@@ -86,6 +85,30 @@ module RLayout
       return true if grid_frame[1] == 0
       return true if @is_front_page && grid_frame[1] == 1
       false
+    end
+
+    def bottom_position?(grid_frame)
+      return true if grid_frame[1] + grid_frame[3]== 15
+      return true if bottom_touches_ad?(grid_frame)
+      false
+    end
+
+    def bottom_touches_ad?(grid_frame)
+      return true if has_ad? && ad_top_in_grid == (grid_frame[1] + grid_frame[3])
+      false
+    end
+
+    def ad_top_in_grid
+      case @ad_type
+      when '전면광고'
+        0
+      else
+        if @ad_type
+          15 - @ad_type[0].to_i
+        else
+          0
+        end
+      end
     end
 
     def latest_story_pdf(article_path)
@@ -220,14 +243,19 @@ module RLayout
     def make_verticla_line(box_frame)
       grid_max_x = box_frame[0] + box_frame[2]
       grid_max_y = box_frame[1] + box_frame[3]
-      x_position = grid_max_x*@grid_width + (grid_max_x - 1)*@gutter + @gutter/2
+      # x_position = grid_max_x*@grid_width + (grid_max_x - 1)*@gutter + @gutter
+      x_position = grid_max_x*@grid_width + @left_margin
       y_position = box_frame[1]*@grid_height + @top_margin
       box_height = box_frame[3]*@grid_height
-      if box_frame[1] == 0
+      if top_position?(box_frame)
         heading_margin = @body_line_height*@page_heading_margin_in_lines
-        y_position +=  heading_margin
-        box_height -=  heading_margin
+        y_position +=  heading_margin + @body_line_height
+        box_height -=  heading_margin + @body_line_height
       end
+      if bottom_position?(box_frame)
+        box_height -=  @body_line_height*2
+      end
+
       Rectangle.new(parent:self, x:x_position, y:y_position, width:0, height:box_height, stroke_thickness: 0.3)
     end
 

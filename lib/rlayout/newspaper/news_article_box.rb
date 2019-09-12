@@ -103,6 +103,17 @@ module RLayout
       self
     end
 
+    def self.open(options={})
+      if options[:article_path]
+        NewsArticle.new(options)
+      elsif options[:story_path]
+        NewsArticle.new(options)
+      else
+        puts "article_path not found!!!"
+        return
+      end
+    end
+
     def stroke_rect
       if @has_profile_image && (@page_number && @page_number == 22)
         [@x + @gutter, @y, @width - @left_margin, @height]
