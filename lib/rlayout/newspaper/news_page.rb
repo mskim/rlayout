@@ -1,7 +1,7 @@
 module RLayout
 
 
-  class NewspaperSectionPage < Page
+  class NewsPage < Page
     attr_accessor :section_path, :section_name, :output_path
     attr_accessor :kind, :is_front_page, :paper_size, :page_heading
     attr_accessor :story_frames, :grid_width, :grid_height, :number_of_stories
@@ -60,6 +60,7 @@ module RLayout
         @lines_per_grid = section_config['lines_per_grid'].to_i
         @page_heading_margin_in_lines = section_config['page_heading_margin_in_lines'].to_i
         @draw_divider   = true  if section_config['draw_divider'] == true || section_config['draw_divider'] == 'true'
+        @draw_divider   = false if @section_name == '오피니언'
         self
       end
 
@@ -87,11 +88,40 @@ module RLayout
       false
     end
 
+    def top_covered?(grid_frame)
+      @story_frames.each do |other_frame|
+        other_frame_max_x = other_frame[0] + other_frame[2]
+        other_frame_max_y = other_frame[1] + other_frame[3]
+        grid_max_x = grid_frame[0] + grid_frame[2]
+        if (other_frame_max_y == grid_frame[1]) # &&  (other_frame[2] != grid_frame[2])
+          return true if (other_frame[0] < grid_max_x) && grid_max_x < other_frame_max_x 
+        end
+      end
+      false
+    end
+    
     def bottom_position?(grid_frame)
       return true if grid_frame[1] + grid_frame[3]== 15
       return true if bottom_touches_ad?(grid_frame)
       false
     end
+
+    def bottom_covered?(grid_frame)
+      puts "+++++++ "
+      puts __method__
+      puts "grid_frame:#{grid_frame}"
+      @story_frames.each do |other_frame|
+        other_frame_max_x = other_frame[0] + other_frame[2]
+        other_frame_y = other_frame[1]
+        grid_max_x = grid_frame[0] + grid_frame[2]
+        grid_max_y = grid_frame[1] + grid_frame[3]
+        if (other_frame_y == grid_max_y)
+          return true if (other_frame[0] < grid_max_x) && (grid_max_x < other_frame_max_x)
+        end
+      end
+      false
+    end
+
 
     def bottom_touches_ad?(grid_frame)
       return true if has_ad? && ad_top_in_grid == (grid_frame[1] + grid_frame[3])
@@ -186,7 +216,7 @@ module RLayout
       config          = File.open(config_path, 'r'){|f| f.read}
       section_options = YAML::load(config)
       section_options.merge!(options)
-      NewspaperSectionPage.new(section_options)
+      NewsPage.new(section_options)
     end
 
     def has_ad?
@@ -251,8 +281,11 @@ module RLayout
         heading_margin = @body_line_height*@page_heading_margin_in_lines
         y_position +=  heading_margin + @body_line_height
         box_height -=  heading_margin + @body_line_height
+      elsif top_covered?(box_frame)
+        y_position +=  @body_line_height
+        box_height -=  @body_line_height
       end
-      if bottom_position?(box_frame)
+      if bottom_position?(box_frame) || bottom_covered?(box_frame)
         box_height -=  @body_line_height*2
       end
 

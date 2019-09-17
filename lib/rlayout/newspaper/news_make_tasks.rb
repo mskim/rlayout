@@ -120,7 +120,7 @@ module RLayout
       options[:output_path]   = @page_path + "/section.pdf"
       options[:jpg]           = true
       puts options
-      RLayout::NewspaperSectionPage.section_pdf(options)
+      RLayout::NewsPage.section_pdf(options)
     end
   end
 

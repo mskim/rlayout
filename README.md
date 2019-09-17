@@ -559,7 +559,7 @@ TODO List
 			- top_margin == 3 lines
 		- top_story
 			- mutiple column intelligent subtitle
-	- NewspaperSectionPage
+	- NewsPage
 		- add page_heading to page
 
 2017_5_5
