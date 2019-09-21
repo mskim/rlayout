@@ -42,6 +42,7 @@ module RLayout
           @stroke.sides = [1,3,1,1]
           @left_inset   = @gutter
           @right_inset  = @gutter
+          
         end
       elsif @kind == '기고' || @kind == 'opinion'
         @stroke.sides = [0,1,0,1] 

@@ -107,9 +107,6 @@ module RLayout
     end
 
     def bottom_covered?(grid_frame)
-      puts "+++++++ "
-      puts __method__
-      puts "grid_frame:#{grid_frame}"
       @story_frames.each do |other_frame|
         other_frame_max_x = other_frame[0] + other_frame[2]
         other_frame_y = other_frame[1]
@@ -290,6 +287,7 @@ module RLayout
       end
 
       Rectangle.new(parent:self, x:x_position, y:y_position, width:0, height:box_height, stroke_thickness: 0.3)
+      Line.new(parent:self, x:x_position, y:y_position, width:0, height:box_height, stroke_thickness: 0.1)
     end
 
     def create_divider_lines
