@@ -420,12 +420,19 @@ module RLayout
         end
         @heading = NewsHeadingForEditorial.new(h_options)
       when 'opinion', "기고"
+        # for 2 column opinion
+        # we want to put heading on top as 2 column heading, before personal image
+        # putting on the right side of image, head space would be too short
         @stroke.sides = [0,1,0,1]
         h_options[:x]     += @left_margin + @column_width + @gutter
         h_options[:y]     = 2
         if @column_count == 2 
           h_options[:x]     = @left_margin
-          h_options[:width] -= @left_margin +  @gutter
+          # h_options[:width] -= @left_margin +  @gutter
+          # 2019-10-7
+          # h_options[:y]     = 5
+          h_options[:width] -= @left_margin
+          h_options[:column_count] = 2
         else
           h_options[:width] -= (h_options[:x] + @right_inset + @right_margin )
         end
@@ -446,7 +453,7 @@ module RLayout
       when '특집', '책소개'
         @heading          = NewsHeadingForArticle.new(h_options)
       else
-        # @stroke.sides = [0,0,0,1]
+        @stroke.sides = [0,0,0,1]
         @stroke.thickness = 0.3
         @heading = NewsHeadingForArticle.new(h_options)
         if  @column_count != @heading_columns

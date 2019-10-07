@@ -883,7 +883,6 @@ module RLayout
       elsif @news_box.is_a?(NewsArticleBox)
         read_story
         layout_story
-
       elsif @news_box.is_a?(Container)
         # puts "@news_box is container..."
       else
@@ -924,6 +923,8 @@ module RLayout
         #   @news_box.stroke[:sides] = [0,0,0,1]
         end
       elsif @news_box.is_a?(NewsImageBox)
+          @news_box.stroke[:sides] = [0,0,0,1]
+      else
           @news_box.stroke[:sides] = [0,0,0,1]
       end
 

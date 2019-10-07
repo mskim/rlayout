@@ -60,7 +60,7 @@ module RLayout
         @lines_per_grid = section_config['lines_per_grid'].to_i
         @page_heading_margin_in_lines = section_config['page_heading_margin_in_lines'].to_i
         @draw_divider   = true  if section_config['draw_divider'] == true || section_config['draw_divider'] == 'true'
-        @draw_divider   = false if @section_name == '오피니언'
+        # @draw_divider   = false if @section_name == '오피니언'
         self
       end
 
@@ -274,10 +274,28 @@ module RLayout
       x_position = grid_max_x*@grid_width + @left_margin
       y_position = box_frame[1]*@grid_height + @top_margin
       box_height = box_frame[3]*@grid_height
+
+      if box_frame.length == 5 
+        if box_frame[4].class == Hash
+          # handle extended and push values
+          if box_frame[4]['extend']
+            extended     = box_frame[4]['extend'] 
+            box_height   += extended*@body_line_height
+          end
+          if box_frame[4]['push']
+            pushed       = box_frame[4]['push'] 
+            box_height   -= pushed*@body_line_height
+            y_position   += pushed*@body_line_height
+          end
+        elsif box_frame[4].class == Integer
+          # this is for pillar
+        end
+      end
       if top_position?(box_frame)
         heading_margin = @body_line_height*@page_heading_margin_in_lines
         y_position +=  heading_margin + @body_line_height
         box_height -=  heading_margin + @body_line_height
+
       elsif top_covered?(box_frame)
         y_position +=  @body_line_height
         box_height -=  @body_line_height
