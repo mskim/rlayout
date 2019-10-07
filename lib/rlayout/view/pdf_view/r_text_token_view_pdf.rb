@@ -31,7 +31,6 @@ module RLayout
             canvas.font(font_wapper, size: size)
           end
         else
-          puts "loading font #{font_name}"
           size = @para_style[:font_size] || 16
           font_foleder  = "/Users/Shared/SoftwareLab/font_width"
           font_file     = font_foleder + "/Shinmoon.ttf"

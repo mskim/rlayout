@@ -2,7 +2,7 @@ module RLayout
 
 
   class RTextToken < Graphic
-    attr_accessor :string, :token_type, :has_text, :para_style, :char_half_width_cushion
+    attr_accessor :string, :token_type, :has_text, :char_half_width_cushion
     attr_reader :adjust_size
     def initialize(options={})
       options[:fill_color] = options.fetch(:token_color, 'clear')
@@ -11,11 +11,9 @@ module RLayout
       @string           = options[:string]
       @token_type       = options[:token_type] if options[:token_type]
       @para_style       = options[:para_style]
-      # @para_style[:font_size] += options[:adjust_size] if options[:adjust_size]
       @char_half_width_cushion = 0
       @char_half_width_cushion  = @para_style[:font_size]/2 if @para_style[:font_size]
       @width            = width_of_string(@string)
-      @height_of_token  = height_of_token
       if options[:text_line_spacing] && options[:text_line_spacing].class != String
         @height += options[:text_line_spacing]
       end
@@ -38,14 +36,6 @@ module RLayout
       font      = @para_style[:font] || 'shinmoon'
       size      = RFont.string_size(@string, font, font_size)
       size[0]
-    end
-
-    def height_of_token
-      font_size = @para_style[:font_size] || 10
-      # font      = @para_style[:font] || 'shinmoon'
-      # size      = RFont.string_size(@string, font, font_size)
-      # size[1]
-      font_size*0.8
     end
 
     def tracking_count

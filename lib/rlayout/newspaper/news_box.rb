@@ -18,6 +18,7 @@ module RLayout
       end
       options[:stroke_width]  = options.fetch(:article_line_thickness,0.3)
       super
+
       @draw_frame             = options[:draw_frame] || true
       @kind                   = options.fetch(:kind, 'article')
       @gutter                 = options.fetch(:gutter, 10)

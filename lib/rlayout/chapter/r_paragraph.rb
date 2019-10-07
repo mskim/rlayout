@@ -19,12 +19,13 @@ module RLayout
     attr_accessor :para_string, :style_name, :para_style, :space_width
     attr_accessor :article_type
     attr_accessor :body_line_height, :line_count, :token_union_style
-
+    attr_accessor :lines, :line_width
     def initialize(options={})
       @tokens = []
       @markup         = options.fetch(:markup, 'p')
       @para_string    = options.fetch(:para_string, "")
       @line_count     = 0
+      @line_width     = options[:line_width] || 130
       @article_type   = options[:article_type]
       parse_style_name
       # super doen't set @para_style values
@@ -40,6 +41,7 @@ module RLayout
       else
         @tokens       = []
         create_tokens
+        # create_body_para_lines if options[:create_body_para_lines]
       end
       self
     end
@@ -128,7 +130,6 @@ module RLayout
       end
     end
 
-
     def create_tokens_with_emphasis_diamond(para_string)
       para_string.chomp!
       para_string.sub!(/^\s*/, "")
@@ -166,13 +167,40 @@ module RLayout
       end
     end
 
+    # def create_body_para_lines
+    #   tokens_array  = @tokens.dup
+    #   i = 0
+    #   @lines        = []
+    #   para_line     = {order: i, tokens:[]}
+    #   while token   = tokens_array.shift do
+    #     if line_room(@line_width, para_line, @space_width) >= token.width
+    #       para_line[:tokens] << token
+    #     else 
+    #       i += 1
+    #       para_line     = {order: i, tokens:[]}
+    #       para_line[:tokens] = []
+    #       @lines << para_line
+    #     end
+    #   end
+    # end
+
+    # def line_room(text_rect_width, para_line, space_width)
+    #     token_width_sum = 0
+    #     line_tokens = para_line[:tokens]
+    #     if line_tokens && line_tokens.length > 0
+    #       token_width_sum = line_tokens.map{|t| t.width}.reduce(:+)
+    #       token_width_sum += space_width*(line_tokens.length - 1) 
+    #     end
+    #     text_rect_width - token_width_sum
+    # end
+
     def layout_lines(current_line, options={})
       return unless current_line
-      # binding.pry
+      tokens_copy = tokens.dup
       @current_line = current_line
       @line_count = 1
       @current_line.set_paragraph_info(self, "first_line")
-      token = tokens.shift
+      token = tokens_copy.shift
       if token && token.token_type == 'diamond_emphasis'
         # if first token is diamond emphasis, no head indent
         unless @current_line.first_text_line_in_column?
@@ -213,12 +241,12 @@ module RLayout
           else
             # break #reached end of last column
             @current_line = @current_line.parent.add_new_page
-            # tokens.unshift(result) #stick the unplace token back to the tokens
+            # tokens_copy.unshift(result) #stick the unplace token back to the tokens_copy
             token = result
           end
         elsif result
           # puts "entire token placed succefully, returned result is true"
-          token = tokens.shift
+          token = tokens_copy.shift
         # entire token was rejected,
         else
           @current_line.align_tokens
@@ -230,7 +258,7 @@ module RLayout
             @line_count += 1
           else
             @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
-            # tokens.unshift(token) #stick the unplace token back to the tokens
+            # tokens.unshift(token) #stick the unplace token back to the tokens_copy
             # break #reached end of column
             
           end
@@ -285,9 +313,16 @@ module RLayout
 
     def parse_style_name
       current_style = RLayout::StyleService.shared_style_service.current_style
+      if current_style.class == String
+        if current_style =~/^---/
+          current_style = YAML::load(current_style) 
+        else
+          current_style = eval(current_style) 
+        end
+      end
       if @markup =='p' || @markup =='br'
         @style_name  = 'body'
-        style_hash = current_style['body']
+        style_hash = current_style[@style_name]
         @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
       # h1 $ is  assigned as reporrter

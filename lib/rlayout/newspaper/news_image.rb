@@ -135,8 +135,6 @@ module RLayout
       # make space after the news_image when we have following text
       # for full sized news_image, this will be adjusted by adjust_image_height
       @height                       += @parent.body_line_height if @parent
-
-      puts "+++++++++ at the end @width:#{@width}"
       self
     end
 

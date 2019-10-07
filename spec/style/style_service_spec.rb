@@ -42,10 +42,6 @@ describe 'newspaper body text' do
     @sr = RLayout::StyleService.shared_style_service
     @news_style = @sr.news_style
   end
-
-  it 'should return current_style_body_height' do
-    @news_style['p'][:font_size].must_equal 10
-  end
 end
 
 

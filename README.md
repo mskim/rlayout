@@ -125,6 +125,27 @@ TODO List
 +++++++ path:/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/1/1
 ++++++++ it took:2.755834
 
+
+2019_9_25
+	- article_line_draw_sides
+	
+2019_9_24
+	- TextToken
+  	- remove height_of_token
+	- from Rails save image layout_info
+	- replace NewsBoxMaker with NewsArticleBox.open 
+		- suppoert custom box stroke 
+		- suppoert custom image stroke 
+		- pass in NewsArticleBox.open adjustable_height
+		- 
+	- NewsArticleBox
+		- tag, adjustable_height
+		- layout_para_lines
+
+  - Printing
+		- body printing by paragraph
+		- print using Ruby and Mac
+
 2019_9_18
 	- pillar based layout
 	

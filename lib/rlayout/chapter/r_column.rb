@@ -50,6 +50,67 @@ module RLayout
       self
     end
 
+    def adjust_column_lines
+      @line_count           = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
+      @line_count           -= @article_bottom_space_in_lines if @article_bottom_space_in_lines
+      create_lines
+    end
+
+    def adjust_height(changing_line_count)
+      if changing_line_count > 0
+        add_lines(changing_line_count)
+      elsif changing_line_count < 0
+        remove_lines(changing_line_count)
+      end
+      @height += changing_line_count*@body_line_height
+    end
+
+    def create_lines(options={})
+      @graphics = []
+      current_x   = 0
+      current_y   = 0
+      line_width  = @width - @left_inset - @right_inset
+      previoust_line = nil
+      @line_count.times do
+        options = {parent:self, x: current_x, y: current_y , width: line_width, height: @body_line_height}
+        line = RLineFragment.new(options)        # @graphics << line
+        previoust_line.next_line = line if previoust_line
+        current_y += @body_line_height
+        previoust_line = line
+      end
+      @current_line_index = 0
+      @current_line       = @graphics[@current_line_index]
+    end
+
+    def add_lines(changing_line_count)
+      @line_count += changing_line_count
+      current_x   = 0
+      # puts "@graphics.length:#{@graphics.length}"
+      # puts "@graphics.first.y:#{@graphics.first.y}"
+      # puts "@graphics.last.y:#{@graphics.last.y}"
+
+      current_y   = @graphics.last.y + @graphics.last.height
+      line_width  = @width - @left_inset - @right_inset
+      previoust_line = @graphics.last
+      changing_line_count.times do
+        
+        options = {parent:self, x: current_x, y: current_y , width: line_width, height: @body_line_height}
+        # binding.pry
+        line = RLineFragment.new(options)        # @graphics << line
+        previoust_line.next_line = line if previoust_line
+        current_y += @body_line_height
+        previoust_line = line
+      end
+    end
+
+    def remove_lines(changing_line_count)
+      @line_count -= changing_line_count
+      changing_line_count.times do
+        @graphics.pop
+      end
+    end
+
+
     def to_svg
       s = "<rect fill='white' x='#{@parent.x + @x}' y='#{@parent.y + @y}' width='#{@width}' height='#{@height}' />"
       @graphics.each do |line|
@@ -60,12 +121,6 @@ module RLayout
 
     def column_grid_rect
       @parent.column_grid_rect(self)
-    end
-
-    def adjust_column_lines
-      @line_count           = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
-      @line_count           -= @article_bottom_space_in_lines if @article_bottom_space_in_lines
-      create_lines
     end
 
     def add_new_page
@@ -85,6 +140,16 @@ module RLayout
       i -= 1
       return @parent.graphics[i] if 1 >= 0
       nil
+    end
+
+    def text_lines
+      @graphics.select{|line| line.unoccupied_line?}
+    end
+
+    def clear_layed_out_line
+      @graphics.select{|line| line.layed_out_line?}.each do |prev_line|
+        prev_line.reset_text_line
+      end
     end
 
     def unoccupied_lines_count
@@ -117,23 +182,6 @@ module RLayout
       @graohics.each do |line|
         column_text << line.line_string
       end
-    end
-
-    def create_lines(options={})
-      @graphics = []
-      current_x   = 0
-      current_y   = 0
-      line_width  = @width - @left_inset - @right_inset
-      previoust_line = nil
-      @line_count.times do
-        options = {parent:self, x: current_x, y: current_y , width: line_width, height: @body_line_height}
-        line = RLineFragment.new(options)        # @graphics << line
-        previoust_line.next_line = line if previoust_line
-        current_y += @body_line_height
-        previoust_line = line
-      end
-      @current_line_index = 0
-      @current_line       = @graphics[@current_line_index]
     end
 
     def adjust_overlapping_lines(overlapping_floats)

@@ -8,10 +8,10 @@ describe 'testing saveing ad_box ruby_pdf' do
     # @article_path    = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/1/ad"
     @article_path    = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/1/1"
     @article_path    = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/10/4"
+    @article_path    = "/Users/mskim/Development/style_guide/public/1/issue/2019-08-05/1/1_1"
     @maker           = NewsBoxMaker.new(article_path: @article_path)
     @article_box     = @maker.news_box
     @pdf_path        = @article_path + "/story.pdf"
-    @svg_content     = @article_box.svg_content
   end
 
   it 'should return svg' do

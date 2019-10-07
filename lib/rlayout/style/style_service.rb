@@ -962,18 +962,6 @@ module RLayout
       rfont.string_width(string)
     end
 
-    def height_of_token(style_name, adjust_size)
-      style = @current_style[style_name]
-      style = Hash[style.map{ |k, v| [k.to_sym, v] }]
-      style[:font_size] += adjust_size if adjust_size
-      style[:font_size] 
-    end
-
-    # get the height of body text by calling size method with sample text
-    #
-    def current_style_body_height
-
-    end
     # read style file from project, and update style
     def update_style_with_custom_sytle(category, path)
       unless File.exist?(path)

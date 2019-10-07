@@ -746,6 +746,7 @@ EOF
 # inner_page_heading_height: height of innerpage heading in lines
 # page_heading_margin_in_lines: actual heading margin for top positined article
 
+ARTICLE_BOTTOM_SPACES_IN_LINE = 2
 module RLayout
 
   class NewsBoxMaker
@@ -755,6 +756,7 @@ module RLayout
     attr_accessor :custom_style, :publication_name, :time_stamp
     attr_accessor :pdf_doc, :story_md, :layout_rb
     attr_accessor :draft_mode, :svg_content, :pdf_data, :pdf_tool
+
 
     def initialize(options={})
       time_start    = Time.now
@@ -821,6 +823,10 @@ module RLayout
           end
         end
       end
+
+      @tag                = @article_path.split("/").last
+      @adjustable_height  = false
+      @adjustable_height  = true if @tag.include?('_')
       if RUBY_ENGINE == 'ruby'
         # require 'hexapdf'
         if @pdf_tool == 'prawn'
@@ -877,6 +883,7 @@ module RLayout
       elsif @news_box.is_a?(NewsArticleBox)
         read_story
         layout_story
+
       elsif @news_box.is_a?(Container)
         # puts "@news_box is container..."
       else
@@ -911,19 +918,16 @@ module RLayout
           @news_box.stroke[:sides] = [0,1,0,1]
         elsif @news_box.embedded
             @news_box.stroke[:sides] = [0,1,0,1]
-        elsif @news_box.bottom_article
-          @news_box.stroke[:sides] = [0,0,0,1]
-        else
-          @news_box.stroke[:sides] = [0,0,0,1]
+        # elsif @news_box.bottom_article
+        #   @news_box.stroke[:sides] = [0,0,0,1]
+        # else
+        #   @news_box.stroke[:sides] = [0,0,0,1]
         end
       elsif @news_box.is_a?(NewsImageBox)
           @news_box.stroke[:sides] = [0,0,0,1]
       end
-      # column = @news_box.graphics.first
-      if @draft_mode
-        # @news_box.save_pdf(@output_path)
-        return @news_box
-      elsif @news_box
+
+      if @news_box
         @news_box.save_pdf(@output_path, :jpg=>true)
         if @time_stamp
           stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
@@ -970,50 +974,35 @@ module RLayout
         para_options[:para_string]    = para[:para_string]
         para_options[:article_type]   = @news_box.kind
         para_options[:text_fit]       = FIT_FONT_SIZE
-        para_options[:layout_lines]   = false
+        para_options[:line_width]     = @news_box.column_width  if para_options[:create_body_para_lines]
         @paragraphs << RParagraph.new(para_options)
       end
     end
+    
+    def total_para_lines_count
+      para_lines_count_array =  @paragraphs.map{|para| Array(para.lines).length}
+      para_lines_count_array.reduce(:+)
+    end
 
-    def layout_comic_article
-      #code
+    def body_text_lines
+      @news_box.text_lines
     end
 
     def layout_story
       @news_box.layout_floats!
       @news_box.adjust_overlapping_columns
-      @news_box.layout_items(@paragraphs)
-    end
-
-    # copy current_;pargraphs until qwh hAVE 1 line for reposter
-    def fill_with_paragraphs
-
-      # story_path          = "#{$ProjectPath}/story.md"
-      # need_chars          = average_characters_per_line*(@empty_lines - 1)
-      # base_string         = "여기는 본문이 입니다. "
-      # string_half_length  = base_string.length/2
-      # target_chart_count  = need_chars - string_half_length
-      # puts "target_chart_count:#{target_chart_count}"
-      # sample_string       = "\n\n" + base_string
-      # count = 0
-      # while  sample_string.length < target_chart_count && count < 100 do
-      #   sample_string += base_string
-      #   count +=1
-      #   mutiples = count % 20
-      #   if mutiples == 0
-      #     sample_string +="\n\n"
-      #   end
-      # end
-      # sample_string += "\n\n\# 홍깅돌 기자 gdhong@naver.com"
-      # story = File.open(story_path, 'r'){|f| f.read}
-      # story += sample_string
-      # File.open(story_path, 'w'){|f| f.write story}
-    end
-
-    def draw_line_grids
-      @news_box.graphics.each do |column|
-        column.draw_line_rect
+      @news_box.layout_items(@paragraphs.dup)
+      if @adjustable_height
+        result = @news_box.adjust_height
+        if result
+          @news_box.clear_layed_out_line
+          @news_box.layout_items(@paragraphs)
+        end
       end
+
+
+
     end
+
   end
 end

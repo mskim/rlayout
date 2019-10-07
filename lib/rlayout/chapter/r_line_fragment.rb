@@ -24,7 +24,7 @@ module RLayout
       options[:fill_color]        = options.fetch(:line_color, 'clear')
       @space_width                = options[:space_width] || 3
       @char_half_width_cushion    = @space_width/3
-      options[:right_margin]      = 2
+      options[:right_margin]      = 2      
       super
 
       if options[:para_style]
@@ -49,6 +49,12 @@ module RLayout
       @layed_out_line   = false
       @token_union_style = @parent.token_union_style if @parent.respond_to?(:token_union_style)
       self
+    end
+
+    def reset_text_line
+      @graphics = []
+      @layed_out_line = false
+      @room = text_area[2]
     end
 
     def clear_tokens

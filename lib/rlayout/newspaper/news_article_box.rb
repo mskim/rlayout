@@ -75,6 +75,9 @@ module RLayout
         @stroke.sides = [0,0,0,1]
         @stroke.thickness = 0.3
       end
+      if options[:article_line_draw_sides] && options[:article_line_draw_sides].class == Array
+        @stroke.sides           = options[:article_line_draw_sides] 
+      end
       @subtitle_type          = options[:subtitle_type] || '1단'
       @overlap                = options[:overlap]
       @embedded               = options[:embedded]
@@ -104,14 +107,50 @@ module RLayout
       self
     end
 
-    def self.open(options={})
-      if options[:article_path]
-        NewsArticle.new(options)
-      elsif options[:story_path]
-        NewsArticle.new(options)
+    def text_lines
+      text_lines_array = []
+      @graphics.each do |column|
+        text_lines_array += column.text_lines
+      end
+      text_lines_array
+    end
+
+    def adjust_height
+      if @overflow
+        puts "+++++++ overflow"
+        line_diff_count = @overflow_column.layed_out_line_count
+        puts "line_diff_count:#{line_diff_count}"
+      elsif @underflow
+        puts "+++++++ underflow"
+        line_diff_count    = - article_box_unoccupied_lines_count
+      end
+      changing_line_count = line_diff_count/@column_count
+      if line_diff_count > 0
+        changing_line_count += 1 if (line_diff_count % @column_count) > 0
       else
-        puts "article_path not found!!!"
-        return
+        changing_line_count -= 1 if (line_diff_count % @column_count) < 0
+      end
+      if @height/@body_line_height  + changing_line_count < 7 # @grid_line_count #  7
+        changing_line_count = 0
+        @height = 7*@body_line_height
+        @columns.each do |column|
+          column.set_lines_to_min
+        end
+      end
+
+      @graphics.each do |column|
+        column.adjust_height(changing_line_count)
+      end
+      link_column_lines
+      # no longer linked to overflow column 
+      @graphics.last.graphics.last.next_line = nil
+      @height += changing_line_count*@body_line_height
+      return @overflow || @undefflow
+    end
+
+    def clear_layed_out_line
+      @graphics.each do |column|
+        column.clear_layed_out_line
       end
     end
 
@@ -326,7 +365,6 @@ module RLayout
 
     def layout_items(flowing_items, options={})
       current_line = first_text_line
-
       while @item = flowing_items.shift do
         current_line = @item.layout_lines(current_line)
       end
@@ -408,7 +446,7 @@ module RLayout
       when '특집', '책소개'
         @heading          = NewsHeadingForArticle.new(h_options)
       else
-        @stroke.sides = [0,0,0,1]
+        # @stroke.sides = [0,0,0,1]
         @stroke.thickness = 0.3
         @heading = NewsHeadingForArticle.new(h_options)
         if  @column_count != @heading_columns
