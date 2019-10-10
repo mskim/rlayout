@@ -625,7 +625,7 @@ module RLayout
   end
 
   class Image < Graphic
-    attr_accessor :caption , :bleed
+    attr_accessor :caption , :bleed, :crop_rect
     def initialize(options={})
       if options[:caption]
         @caption = options[:caption]
@@ -634,11 +634,13 @@ module RLayout
         @bleed = options[:bleed]
       end
       super
+      @crop_rect = options[:crop_rect] if options[:crop_rect]
       init_image(options)
 
       if options[:local_image]
         @local_image = options[:local_image]
       end
+      
       if options[:image_path]
         @image_path   = options[:image_path]
         @image_record = ImageStruct.new(options[:image_path])

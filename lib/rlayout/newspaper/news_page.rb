@@ -145,15 +145,18 @@ module RLayout
     # convert stopry frames into layout format
     def make_layout_info
       @layout_info = []
-      story_count = 0
+      story_count = 0 
       @sorted_story_frames = @story_frames.sort_by{|r| [r[1], r[0]]}
-      # @story_frames.each_with_index do |grid_frame, i|
-      @sorted_story_frames.each_with_index do |grid_frame, i|
+      @sorted_story_frames.each do |grid_frame|
         info = {}
         found_ad = false
         if grid_frame.length == 5 && grid_frame[4] =~/^광고/
           # found_ad = grid_frame[4][:광고] || grid_frame[4]['광고'] || grid_frame[4][:'광고'] || grid_frame[4]['광고']
           info[:image_path] = ad_image_path
+        elsif grid_frame.length == 5 && grid_frame[4].class == Integer
+          story_count += 1
+          pillar_article_count = grid_frame[4]
+          info = make_pillar_image(story_count)
         else
           story_count += 1
           info[:image_path] = @section_path + "/#{story_count}/story.pdf"
@@ -200,6 +203,16 @@ module RLayout
       @layout_info
     end
 
+    def make_pillar_image(pillar_order, pillar_count)
+      info = {}
+      info[:pillar] = true
+      info[:pillar_images] = []
+      pillar_count.times do |i|
+        info[:pillar_images] << "#{pillar_order}_#{i+1}"
+      end
+      info
+    end
+
     def self.section_pdf(options)
       time_start = Time.now
       section_page = self.open(options)
@@ -224,7 +237,12 @@ module RLayout
       @output_path = options[:output_path] if options[:output_path]
       make_layout_info.each_with_index do |info, i|
         info[:parent] = self
-	      Image.new(info)
+        if info[:pillar]
+          puts "++++++++ draw pillar here"
+          # Pillar.new(info)
+        else
+          Image.new(info)
+        end
 	    end
       # page heading
       heading_info = {}
@@ -289,6 +307,8 @@ module RLayout
           end
         elsif box_frame[4].class == Integer
           # this is for pillar
+          # we don't need to do anything special here.
+          # just treat the whole pillar as a single box
         end
       end
       if top_position?(box_frame)
@@ -304,7 +324,7 @@ module RLayout
         box_height -=  @body_line_height*2
       end
 
-      Rectangle.new(parent:self, x:x_position, y:y_position, width:0, height:box_height, stroke_thickness: 0.3)
+      # Rectangle.new(parent:self, x:x_position, y:y_position, width:0, height:box_height, stroke_thickness: 0.3)
       Line.new(parent:self, x:x_position, y:y_position, width:0, height:box_height, stroke_thickness: 0.1)
     end
 

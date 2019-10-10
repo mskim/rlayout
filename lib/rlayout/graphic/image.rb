@@ -76,37 +76,26 @@ module RLayout
         @stroke[:sides] = [1,1,1,1,1,1]
         @fill[:color] = 'CMYK=0,0,0,10'
       end
+      puts "+++++++ @image_path:#{@image_path}"
       @zoom_level     = options[:zoom_level] || "0%"
+      @image_crop_rect = options[:crop_rect] if options[:crop_rect]
       set_zoom_factor
       @zoom_anchor    = options[:zoom_anchor] unless @zoom_anchor
       @zoom_anchor    = 5 unless @zoom_anchor
       # @image_path
-      #TODO Get rid of this and do it for MRI
       if RUBY_ENGINE == 'rubymotion'
-        # puts "@image_path:#{@image_path}"
         @image_object  = NSImage.alloc.initByReferencingFile(@image_path)
         if @image_path =~/pdf$/ || @image_path =~/PDF$/ || @image_path =~/eps$/ || @image_path =~/EPS$/ || @image_path =~/dummy\.jpg$/
           # do not convert color space for pdf and eps
-          # puts "++++++++++++ @image_path:#{@image_path}"
         else
-          # puts "++++ converting color space ++++++++ @image_path:#{@image_path}"
-          # puts "++++++++++++ @image_path:#{@image_path}"
           sourceImageRep = NSBitmapImageRep.imageRepWithData(@image_object.TIFFRepresentation)
-          # puts "sourceImageRep.colorSpaceName:#{sourceImageRep.colorSpaceName}"
-          # targetColorSpace = NSColorSpace.genericCMYKColorSpace
           targetColorSpace = NSColorSpace.deviceCMYKColorSpace
           if (sourceImageRep.colorSpace == targetColorSpace)
-            # puts "targetColorSpace:#{targetColorSpace}"
-            # puts "target color space is same as source color space"
             targetImageRep = sourceImageRep
           else
-            # puts "we have difference color space"
             targetImageRep = sourceImageRep.bitmapImageRepByConvertingToColorSpace(targetColorSpace, renderingIntent:NSColorRenderingIntentPerceptual)
-            # puts "converted targetImageRep.colorSpaceName:#{targetImageRep.colorSpaceName}"
             targetImageData = targetImageRep.representationUsingType(NSJPEGFileType, properties:nil)
-            # puts "targetImageData.class:#{targetImageData.class}"
             @image_object = NSImage.alloc.initWithData(targetImageData)
-            # puts "converted @image_object:#{@image_object}"
           end
         end
         @image_dimension  = [@image_object.size.width, @image_object.size.height]
@@ -149,6 +138,15 @@ module RLayout
     end
 
     def apply_fit_type
+      if @crop_rect
+        x = @crop_rect[0]
+        y = @crop_rect[1]
+        w = @crop_rect[2]
+        h = @crop_rect[3]
+        @source_frame = NSMakeRect(x,y,w,h)
+        return
+      end
+
       case @image_fit_type
       when  IMAGE_FIT_TYPE_ORIGINAL
         fit_original
@@ -381,7 +379,8 @@ module RLayout
     end
 
     def fit_by_changing_box_size
-      puts "fit_by_changing_box_size"
+      @width       = @image_object.width
+      @height      = @image_object.height
     end
 
     # Convert RGB to CMYK
