@@ -133,6 +133,7 @@ module RLayout
     # Use news_image instead of float_image
     def initialize(options={}, &block)
       super
+      @stroke[:sides]= [0,0,0,0]
       if @on_right_edge && @on_left_edge
         @left_margin = 0 
         @right_margin = 0

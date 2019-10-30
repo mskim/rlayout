@@ -2,7 +2,7 @@ module RLayout
   # x, y, widht, height
   # pillar_path, images
 
-  class Pillar < Container
+  class PillarImage < Container
     attr_reader :images, :pillar_path
     attr_reader :status # underflow, overflow, fit
 

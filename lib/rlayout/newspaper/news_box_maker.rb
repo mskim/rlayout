@@ -876,9 +876,8 @@ module RLayout
         @news_box.stroke.sides = [0,0,0,0]
         @news_box.stroke.thickness = 0.3
       elsif @news_box.is_a?(NewsAdBox)
-        image = @news_box.graphics.first
         @news_box.stroke.sides = [0,0,0,0]
-        @news_box.stroke.thickness = 0.3
+        @news_box.stroke.thickness = 0.0
       elsif @news_box.is_a?(NewsComicBox)
       elsif @news_box.is_a?(NewsArticleBox)
         read_story

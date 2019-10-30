@@ -707,6 +707,7 @@ module RLayout
     def news_image(options={})
       options[:parent]    = self
       options[:is_float]  = true
+      options[:stroke_sides] = [0,0,0,0]
       @news_image         = NewsImage.new(options)
       if options[:position] == 0
         # make iit the first item in floats

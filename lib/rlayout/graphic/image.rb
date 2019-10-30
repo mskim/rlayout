@@ -76,7 +76,6 @@ module RLayout
         @stroke[:sides] = [1,1,1,1,1,1]
         @fill[:color] = 'CMYK=0,0,0,10'
       end
-      puts "+++++++ @image_path:#{@image_path}"
       @zoom_level     = options[:zoom_level] || "0%"
       @image_crop_rect = options[:crop_rect] if options[:crop_rect]
       set_zoom_factor
@@ -139,11 +138,20 @@ module RLayout
 
     def apply_fit_type
       if @crop_rect
-        x = @crop_rect[0]
-        y = @crop_rect[1]
-        w = @crop_rect[2]
-        h = @crop_rect[3]
-        @source_frame = NSMakeRect(x,y,w,h)
+        @image_fit_type = 'fit_crop_rect'
+        fit_crop_rect
+        # x = @crop_rect[0]
+        # y = @crop_rect[1]
+        # puts "crop_rect y#{y}"
+        # puts "fit_direction:#{fit_direction} "
+        # if fit_direction == 'fit_horizontal'
+        #   puts "@image_object.size.height:#{@image_object.size.height}"
+        #   y = (@image_object.size.height - y)/2
+        #   puts "new y: #{y}"
+        # end
+        # w = @crop_rect[2]
+        # h = @crop_rect[3]
+        # @source_frame = NSMakeRect(x,y,w,h)
         return
       end
 
@@ -189,8 +197,25 @@ module RLayout
           @source_frame = NSZeroRect
           return
         end
-        @source_frame.origin.x = @image_frame.size.width/2.0 - frame_rect.size.width/2.0
-        @source_frame.origin.y = @image_frame.size.height/2.0 - frame_rect.size.height/2.0
+        @source_frame.origin.x = @image_frame.size.width/2.0 - frame_rect[2]/2.0
+        @source_frame.origin.y = @image_frame.size.height/2.0 - frame_rect[3]/2.0
+      else
+
+      end
+    end
+
+    def fit_crop_rect
+      if RUBY_ENGINE == 'rubymotion'
+        @crop_rect[1] += 380 # this is a hack, quess there are some difference in offset from cropper.js
+        image_height = @image_object.size.height
+        image_width = @image_object.size.width
+        @zoom_factor = @width/@image_object.size.width
+        @source_frame = NSZeroRect
+        @source_frame.origin.x = @crop_rect[0]
+        @source_frame.origin.y = (@height - @crop_rect[3] + @crop_rect[1]).abs
+        @source_frame.size.width = @crop_rect[2]
+        @source_frame.size.height = @crop_rect[3]
+
       else
 
       end
@@ -274,6 +299,15 @@ module RLayout
           @source_frame.origin.y = 0
           @source_frame.size.width = source_width
           @source_frame.size.height = @image_frame.size.height
+          puts "@image_frame.origin.x:#{@image_frame.origin.x}"
+          puts "@image_frame.origin.y:#{@image_frame.origin.y}"
+          puts "@image_frame.size.width:#{@image_frame.size.width}"
+          puts "@image_frame.size.height:#{@image_frame.size.height}"
+
+          puts "@source_frame.origin.x:#{@source_frame.origin.x}"
+          puts "@source_frame.origin.y:#{@source_frame.origin.y}"
+          puts "@source_frame.size.width:#{@source_frame.size.width}"
+          puts "@source_frame.size.height:#{@source_frame.size.height}"
         end
       else
 
@@ -357,22 +391,40 @@ module RLayout
       end
     end
 
-    def fit_keep_ratio
+    def fit_direction
       return unless @image_object
       if RUBY_ENGINE == 'rubymotion'
         @image_frame      = NSZeroRect
         @image_frame.size = @image_object.size
         grapaphic_rect_width_to_height_ratio  = @width/@height
         image_frame_width_to_height_ratio     = @image_frame.size.width/@image_frame.size.height
+        if @crop_rect
+          crop_rect_width_to_height_ratio       = @crop_rect[2]/@crop_rect[3]
+          if grapaphic_rect_width_to_height_ratio > crop_rect_width_to_height_ratio
+            return 'fit_horizontal'
+          else
+            return 'fit_vertical'
+          end
+
+        end
         if grapaphic_rect_width_to_height_ratio > image_frame_width_to_height_ratio
-          fit_horizontal
+          'fit_horizontal'
         else
-          fit_vertical
+          'fit_vertical'
         end
       else
-
+        #TODO for ruby mode
       end
     end
+
+    def fit_keep_ratio
+      if fit_direction == 'fit_horizontal'
+        fit_horizontal
+      elsif fit_direction == 'fit_vertical'
+        fit_vertical
+      end
+    end
+
 
     def fit_ignore_ratio
       @source_frame = [0,0,0,0]

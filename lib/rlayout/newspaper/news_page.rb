@@ -239,7 +239,7 @@ module RLayout
         info[:parent] = self
         if info[:pillar]
           puts "++++++++ draw pillar here"
-          # Pillar.new(info)
+          # PillarImage.new(info)
         else
           Image.new(info)
         end

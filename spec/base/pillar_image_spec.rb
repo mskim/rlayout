@@ -1,17 +1,17 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
-describe 'create Pillar' do
+describe 'create PillarImage' do
   before do
     h = {}
     h[:width]       = 200
     h[:height]      = 500
     h[:pillar_path] = "/Users/mskim"
     h[:images]      = %w[1_1/story.pdf 1_2/story.pdf 1_3/story.pdf]
-    @p = Pillar.new(h)
+    @p = PillarImage.new(h)
   end
 
-  it 'should create Pillar' do
-     assert_equal RLayout::Pillar, @p.class
+  it 'should create PillarImage' do
+     assert_equal RLayout::PillarImage, @p.class
      assert_equal 3, @p.graphics.length
   end
 

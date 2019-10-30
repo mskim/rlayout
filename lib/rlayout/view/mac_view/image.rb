@@ -13,7 +13,10 @@ class GraphicViewMac < NSView
     @graphic_bounds = NSMakeRect(r[0],r[1],r[2],r[3])
     if graphic.image_fit_type == IMAGE_FIT_TYPE_IGNORE_RATIO
       graphic.image_object.drawInRect(@graphic_bounds, fromRect:NSZeroRect, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if graphic.image_object
+    elsif graphic.image_fit_type == 'fit_crop_rect'
+      graphic.image_object.drawInRect(@graphic_bounds, fromRect:graphic.source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if graphic.image_object
     else
+
       graphic.image_object.drawInRect(@graphic_bounds, fromRect:graphic.source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if graphic.image_object
     end
   end
