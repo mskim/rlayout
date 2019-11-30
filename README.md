@@ -126,6 +126,14 @@ TODO List
 ++++++++ it took:2.755834
 
 
+2019_11_26
+	- get rid of overflowing red mark for adjustable_height article
+	
+2019_9_25
+	- add NewsPillar.rb
+
+	- newsman pillar .
+
 2019_9_25
 	- article_line_draw_sides
 	

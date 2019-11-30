@@ -285,7 +285,7 @@ module RLayout
       self
     end
 
-    def make_verticla_line(box_frame)
+    def make_vertical_line(box_frame)
       grid_max_x = box_frame[0] + box_frame[2]
       grid_max_y = box_frame[1] + box_frame[3]
       # x_position = grid_max_x*@grid_width + (grid_max_x - 1)*@gutter + @gutter
@@ -333,7 +333,7 @@ module RLayout
         grid_max_x = box_frame[0] + box_frame[2]
         grid_max_y = box_frame[1] + box_frame[3]
         if grid_max_x < @grid_base[0]
-          make_verticla_line(box_frame)
+          make_vertical_line(box_frame)
         end
       end
     end

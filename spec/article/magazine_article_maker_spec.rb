@@ -97,7 +97,7 @@ end
 #
 # end
 
-describe 'creaet document with MagazineArticleMaker' do
+describe 'create document with MagazineArticleMaker' do
   before do
     article_path = "/Users/mskim/magazine_article/first_article"
     @maker = MagazineArticleMaker.new(article_path: article_path)

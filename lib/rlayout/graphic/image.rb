@@ -206,7 +206,7 @@ module RLayout
 
     def fit_crop_rect
       if RUBY_ENGINE == 'rubymotion'
-        @crop_rect[1] += 380 # this is a hack, quess there are some difference in offset from cropper.js
+        @crop_rect[1] += 400 # this is a hack, quess there are some difference in offset from cropper.js
         image_height = @image_object.size.height
         image_width = @image_object.size.width
         @zoom_factor = @width/@image_object.size.width

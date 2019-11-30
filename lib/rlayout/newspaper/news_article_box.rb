@@ -26,13 +26,15 @@ module RLayout
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
     attr_reader :overlap, :overlap_rect, :embedded, :has_left_side_bar
     attr_reader :stroke_x, :stroke_y, :stroke_width
-    attr_reader :svg_content
+    attr_reader :svg_content, :adjustable_height
 
     def initialize(options={}, &block)
       super
       @overflow           = false
       @page_number        = options[:page_number]
       @has_profile_image  = options[:has_profile_image]
+      @adjustable_height  = options[:adjustable_height] || false
+      puts "@adjustable_height:#{@adjustable_height}"
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
           @stroke.sides = [1,1,1,1]
@@ -115,44 +117,6 @@ module RLayout
       text_lines_array
     end
 
-    def adjust_height
-      if @overflow
-        puts "+++++++ overflow"
-        line_diff_count = @overflow_column.layed_out_line_count
-        puts "line_diff_count:#{line_diff_count}"
-      elsif @underflow
-        puts "+++++++ underflow"
-        line_diff_count    = - article_box_unoccupied_lines_count
-      end
-      changing_line_count = line_diff_count/@column_count
-      if line_diff_count > 0
-        changing_line_count += 1 if (line_diff_count % @column_count) > 0
-      else
-        changing_line_count -= 1 if (line_diff_count % @column_count) < 0
-      end
-      if @height/@body_line_height  + changing_line_count < 7 # @grid_line_count #  7
-        changing_line_count = 0
-        @height = 7*@body_line_height
-        @columns.each do |column|
-          column.set_lines_to_min
-        end
-      end
-
-      @graphics.each do |column|
-        column.adjust_height(changing_line_count)
-      end
-      link_column_lines
-      # no longer linked to overflow column 
-      @graphics.last.graphics.last.next_line = nil
-      @height += changing_line_count*@body_line_height
-      return @overflow || @undefflow
-    end
-
-    def clear_layed_out_line
-      @graphics.each do |column|
-        column.clear_layed_out_line
-      end
-    end
 
     def stroke_rect
       if @has_profile_image && (@page_number && @page_number == 22)
@@ -363,6 +327,13 @@ module RLayout
       end
     end
 
+    def pre_layout_para_lines(flowing_items)
+      flowing_items.each do |para|
+        para.pre_layout_lines(column_width)
+      end
+      flowing_items.map{|para| para.lines}.reduce(:+)
+    end
+
     def layout_items(flowing_items, options={})
       current_line = first_text_line
       while @item = flowing_items.shift do
@@ -372,7 +343,7 @@ module RLayout
         @current_column  = current_line.column
       end
       @overflow  = true if @overflow_column.graphics.first.layed_out_line?
-      if @overflow
+      if @overflow && !@adjustable_height
         last_line_of_box.fill.color = 'red'
       else
         @empty_lines    = article_box_unoccupied_lines_count
@@ -380,6 +351,50 @@ module RLayout
       end
       unless @fill_up_enpty_lines
         save_article_info
+      end
+    end
+
+    def adjust_height
+      if @overflow
+        puts "+++++++ overflow"
+        line_diff_count = @overflow_column.layed_out_line_count
+        puts "line_diff_count:#{line_diff_count}"
+      elsif @underflow
+        puts "+++++++ underflow"
+        line_diff_count    = - article_box_unoccupied_lines_count
+      else
+        puts "+++++++ it fits"
+        line_diff_count    = 0
+        return
+      end
+      changing_line_count = line_diff_count/@column_count
+      if line_diff_count > 0
+        # changing_line_count += 1 if (line_diff_count % @column_count) > 0
+      end
+      puts "changing_line_count:#{changing_line_count}"
+      last_column = @graphics.last
+      puts "before last_column.graphics.length:#{last_column.graphics.length}"
+      if @height/@body_line_height  + changing_line_count < 7 # @grid_line_count #  7
+        changing_line_count = 0
+        @height = 7*@body_line_height
+        @columns.each do |column|
+          column.set_lines_to_min
+        end
+      end
+      @graphics.each do |column|
+        column.adjust_height(changing_line_count)
+      end
+      link_column_lines
+      # no longer linked to overflow column 
+      @graphics.last.graphics.last.next_line = nil
+      @height += changing_line_count*@body_line_height
+      puts "after last_column.graphics.length:#{last_column.graphics.length}"
+      return @overflow || @undefflow
+    end
+
+    def clear_layed_out_line
+      @graphics.each do |column|
+        column.clear_layed_out_line
       end
     end
     

@@ -1,7 +1,7 @@
 require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 
-describe 'creaet NewsBoxMaker for NewsBox with Opinion with 6 column' do
+describe 'create NewsBoxMaker for NewsBox with Opinion with 6 column' do
   before do
 
     @article_path   = "/Users/mskim/Development/style_guide/doc/23/1"

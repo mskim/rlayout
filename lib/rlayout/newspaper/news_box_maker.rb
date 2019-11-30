@@ -992,16 +992,15 @@ module RLayout
       @news_box.layout_floats!
       @news_box.adjust_overlapping_columns
       @news_box.layout_items(@paragraphs.dup)
-      if @adjustable_height
-        result = @news_box.adjust_height
+
+      if  @news_box.adjustable_height
+        puts "++++++++++ adjusting height"
+        result = @news_box.adjust_height 
         if result
           @news_box.clear_layed_out_line
           @news_box.layout_items(@paragraphs)
         end
       end
-
-
-
     end
 
   end

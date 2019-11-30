@@ -1,6 +1,6 @@
 require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
-describe 'creaet NewsBoxMaker with Quote' do
+describe 'create NewsBoxMaker with Quote' do
   before do
     @article_path   = "/Users/mskim/Development/style_guide/public/1/issue/2019-03-03/20/1"
     @maker          = NewsBoxMaker.new(article_path: @article_path)

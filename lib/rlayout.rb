@@ -116,6 +116,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/profile_image'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_box'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box_maker'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_pillar_maker'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_page'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_make_tasks'
 

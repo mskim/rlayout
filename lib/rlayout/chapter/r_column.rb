@@ -93,9 +93,7 @@ module RLayout
       line_width  = @width - @left_inset - @right_inset
       previoust_line = @graphics.last
       changing_line_count.times do
-        
         options = {parent:self, x: current_x, y: current_y , width: line_width, height: @body_line_height}
-        # binding.pry
         line = RLineFragment.new(options)        # @graphics << line
         previoust_line.next_line = line if previoust_line
         current_y += @body_line_height
@@ -104,10 +102,15 @@ module RLayout
     end
 
     def remove_lines(changing_line_count)
+      puts __method__
+      puts "++++++++ before @graphics.length:#{@graphics.length}"
       @line_count -= changing_line_count
-      changing_line_count.times do
-        @graphics.pop
-      end
+      @graphics = @graphics[0..(changing_line_count - 1)]
+      # changing_line_count.times do
+      #   @graphics.pop
+      # end
+      puts "after @graphics.length:#{@graphics.length}"
+
     end
 
 

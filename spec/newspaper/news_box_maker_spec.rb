@@ -39,7 +39,7 @@ describe 'testing save_pdf with ruby_pdf' do
 end
 
 
-describe 'creaet document with NewsBoxMaker' do
+describe 'create document with NewsBoxMaker' do
   before do
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2018-04-01/23/1"
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2018-04-01/23/2"

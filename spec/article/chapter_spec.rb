@@ -17,7 +17,7 @@ describe 'Chapter' do
 end
 
 __END__
-describe 'creaet document with Chapter' do
+describe 'create document with Chapter' do
   before do
     template ="/Users/Shared/SoftwareLab/article_template/chapter.rb"
     story="/Users/mskim/magazine/how-to-creaete-soochup.markdown"

@@ -1,7 +1,7 @@
 require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 
-describe 'creaet NewsSectionPage with divider_lines' do
+describe 'create NewsSectionPage with divider_lines' do
   before do
     @section_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/22"
     @svg_path       = @section_path + "/output.svg"
@@ -25,7 +25,7 @@ describe 'creaet NewsSectionPage with divider_lines' do
 
 end
 
-describe 'creaet NewsBoxMaker with Image' do
+describe 'create NewsBoxMaker with Image' do
   before do
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/section/1/7x15_H_5단통_4/1"
     @section_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/22"
