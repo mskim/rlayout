@@ -5,6 +5,8 @@ describe 'create NewsSectionPage with divider_lines' do
   before do
     @section_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/22"
     @svg_path       = @section_path + "/output.svg"
+    @section_path   = "/Users/mskim/Development/pillar_layout/public/1/issue/2017-05-30/1"
+    @svg_path       = @section_path + "/output.svg"
     @page           = NewsPage.open(section_path: @section_path)
     @merger_page    = @page.merge_layout_pdf
     @first_article  = @merger_page.graphics.last

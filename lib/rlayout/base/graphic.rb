@@ -90,6 +90,20 @@ module RLayout
       @parent.graphics.index(self) if @parent && @parent.graphics
     end
 
+    def next_graphic
+      i = graphics_index
+      return @parent.graphics[i + 1] if @parent.graphics.length >= i+1
+      nil
+    end
+
+    def first_graphic?
+      @parent.graphics.first == self
+    end
+
+    def last_graphic?
+      @parent.graphics.last == self
+    end
+
     def floats_index
       @parent.floats.index(self) if @parent && @parent.floats
     end

@@ -65,6 +65,42 @@ module RLayout
       @height += changing_line_count*@body_line_height
     end
 
+    def collect_line_content
+      line_data = []
+      layed_out_lines.map do |line|  
+        line_data << line.collect_line_content
+      end
+      line_data
+    end
+
+    def ready_unoccupied_lines_for_relayout
+      # @graphics.each do |line|
+      #   line.content_cleared == true if line.unoccupied_line?
+      # end
+    end
+
+    def layout_line_content(line_content)
+      if line_content.nil?
+        puts "line_content is nil !!!!!"
+        return 
+      end
+      ready_line = content_cleared_lines
+      ready_line.each do |cleared_line|
+        # binding.pry if graphics_index == 2
+        break if line_content == []
+        line_data = line_content.shift
+        cleared_line.place_line_content_from(line_data) if line_data
+      end
+    end
+
+    def content_cleared_lines
+      @graphics.select{|line| line.unoccupied_line? || line.layed_out_line == true}
+    end
+
+    def oveflow_column_text_lines
+      parent.overflow_column.text_lines
+    end
+
     def create_lines(options={})
       @graphics = []
       current_x   = 0
@@ -85,10 +121,6 @@ module RLayout
     def add_lines(changing_line_count)
       @line_count += changing_line_count
       current_x   = 0
-      # puts "@graphics.length:#{@graphics.length}"
-      # puts "@graphics.first.y:#{@graphics.first.y}"
-      # puts "@graphics.last.y:#{@graphics.last.y}"
-
       current_y   = @graphics.last.y + @graphics.last.height
       line_width  = @width - @left_inset - @right_inset
       previoust_line = @graphics.last
@@ -96,23 +128,16 @@ module RLayout
         options = {parent:self, x: current_x, y: current_y , width: line_width, height: @body_line_height}
         line = RLineFragment.new(options)        # @graphics << line
         previoust_line.next_line = line if previoust_line
+        line.content_cleared = true
         current_y += @body_line_height
         previoust_line = line
       end
     end
 
     def remove_lines(changing_line_count)
-      puts __method__
-      puts "++++++++ before @graphics.length:#{@graphics.length}"
-      @line_count -= changing_line_count
-      @graphics = @graphics[0..(changing_line_count - 1)]
-      # changing_line_count.times do
-      #   @graphics.pop
-      # end
-      puts "after @graphics.length:#{@graphics.length}"
-
+      @line_count += changing_line_count # since changing_line_count is minus number
+      @graphics = @graphics[0...@line_count]
     end
-
 
     def to_svg
       s = "<rect fill='white' x='#{@parent.x + @x}' y='#{@parent.y + @y}' width='#{@width}' height='#{@height}' />"
@@ -145,14 +170,16 @@ module RLayout
       nil
     end
 
-    def text_lines
-      @graphics.select{|line| line.unoccupied_line?}
+    def layed_out_lines
+      @graphics.select{|line| line.layed_out_line?}
     end
 
-    def clear_layed_out_line
-      @graphics.select{|line| line.layed_out_line?}.each do |prev_line|
-        prev_line.reset_text_line
-      end
+    def text_lines
+      @graphics.select{|line| line.text_line?}
+    end
+
+    def last_text_line
+      text_lines.last
     end
 
     def unoccupied_lines_count

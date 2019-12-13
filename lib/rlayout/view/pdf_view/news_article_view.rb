@@ -3,7 +3,11 @@ module RLayout
   # For Fast PostScript generation
   # 1. draw tokens only, as fast as we can
   # 2. using only single font
-    def save_pdf_text(pdf_doc, output_path)
+    def save_pdf_with_ruby(pdf_doc, output_path, options={})
+
+      puts "+++++++++++++ pdf using ruby+++++++++++++++"
+      puts "+++++++++++++ pdf using ruby+++++++++++++++"
+      # binding.pry
       # @graphics.each do |column|
       #   column.save_pdf_text(canvas)
       # end
@@ -39,7 +43,7 @@ module RLayout
       pdf_doc = options[:pdf_doc]
       size          = para_style[:font_size]
       font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-      font_file     = font_foleder + "/#{font_name}.ttf"
+      font_file     = font_foleder + "/#{para_style[:font]}.ttf"
       font_wapper   = pdf_doc.fonts.add(font_file)
       canvas.font(font_wapper, size: size)
       @graphics.each do |line|
@@ -115,7 +119,11 @@ module RLayout
       @flipped = flipped_origin
       start_x = flipped[0]
       start_y = flipped[1]
+      # start_y = y
       @graphics.each do |token|
+        if @font_size.nil?
+          @font_size = 9.4
+        end
         canvas.text(token.string, at:[start_x + token.x, start_y - @font_size])
       end
     end

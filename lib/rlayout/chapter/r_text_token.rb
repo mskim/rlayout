@@ -5,7 +5,7 @@ module RLayout
     attr_accessor :string, :token_type, :has_text, :char_half_width_cushion
     attr_reader :adjust_size
     def initialize(options={})
-      options[:fill_color] = options.fetch(:token_color, 'clear')
+      # options[:fill_color] = options.fetch(:token_color, 'clear')
       super
       @has_text         = true
       @string           = options[:string]

@@ -928,7 +928,11 @@ module RLayout
       end
 
       if @news_box
-        @news_box.save_pdf(@output_path, :jpg=>true)
+        if RUBY_ENGINE == 'ruby'
+          @news_box.save_pdf_with_ruby(@pdf_doc, @output_path, :jpg=>true)
+        else
+          @news_box.save_pdf(@output_path, :jpg=>true)
+        end
         if @time_stamp
           stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
           output_jpg_path = @output_path.sub(/pdf$/, "jpg")
@@ -992,14 +996,11 @@ module RLayout
       @news_box.layout_floats!
       @news_box.adjust_overlapping_columns
       @news_box.layout_items(@paragraphs.dup)
-
+      puts "+++++++++ @news_box.adjustable_height:#{@news_box.adjustable_height}"
       if  @news_box.adjustable_height
-        puts "++++++++++ adjusting height"
-        result = @news_box.adjust_height 
-        if result
-          @news_box.clear_layed_out_line
-          @news_box.layout_items(@paragraphs)
-        end
+        line_content = @news_box.collect_column_content
+        @news_box.adjust_height
+        @news_box.relayout_line_content(line_content)
       end
     end
 

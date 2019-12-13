@@ -59,8 +59,12 @@ module RLayout
       @width_table[" ".ord]*@size/1000
     end
 
-    def self.string_size(string, font_name, size)
-      RFont.new(font_name, size).string_size(string)
+    def self.string_size(string, font_name, size, option={})
+      size = RFont.new(font_name, size).string_size(string)
+      if option[:tracking]
+        size[0] = size[0]*[100 + option[:tracking]]/100
+      end
+      size
     end
   end
 

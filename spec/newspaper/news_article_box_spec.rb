@@ -7,8 +7,13 @@ describe 'overlapping floats' do
     # @article_path   = "/Users/mskim/Development/rails5/page_template/public/current_issue/2/3"
     # @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/6/3x4/0"
     # @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/issue/1/22/2"
-    @article_path   = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/23/2"
-    @svg_path       = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/23/2/story.svg"
+    # @article_path   = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/23/2"
+    # @svg_path       = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/23/2/story.svg"
+    
+    @article_path   = "/Users/mskim/Development/rails6/pillar_design/public/page/2/2/1"
+    @article_path   = "/Users/mskim/Development/rails6/pillar_design/public/page/2/1/1"
+    @article_path   = "/Users/mskim/Development/pillar_layout/public/1/issue/2017-05-30/1/2/1"
+    @article_path   = "/Users/mskim/Development/pillar_layout/public/1/issue/2017-05-30/2/2/1"
     puts "@article_path:#{@article_path}"
     @svg_path       = @article_path + "/output.svg"
     @maker          = NewsBoxMaker.new(article_path: @article_path, draft_mode: true)
@@ -28,15 +33,7 @@ describe 'overlapping floats' do
     assert_equal NewsArticleBox, @news_box.class
   end
 
-  it 'should create svg' do
-    assert_equal String, @news_box.svg_content.class
-    system("open #{@svg_path}")
-  end
 
-  # it 'should create overflowing_column' do
-  #   assert_equal 2, @news_box.graphics.length
-  #   assert_equal RColumn, @heading.class
-  # end
   #
   # it 'should create overflowing_column with many lines' do
   #   assert @overflow_column.graphics.length == 98

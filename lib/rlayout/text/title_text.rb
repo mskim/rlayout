@@ -78,9 +78,7 @@ module RLayout
     end
 
     def to_svg
-      s = "<rect fill='yellow' x='#{@parent.x + @x}' y='#{@parent.y + @y}' width='#{@width}' height='#{@height - 2}' />"
-      puts "+++++++++++++++  to_svg:#{s}"
-      s
+      "<rect fill='yellow' x='#{@parent.x + @x}' y='#{@parent.y + @y}' width='#{@width}' height='#{@height - 2}' />"
     end
 
     def set_text(new_sting)

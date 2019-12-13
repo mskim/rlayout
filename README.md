@@ -125,6 +125,27 @@ TODO List
 +++++++ path:/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/1/1
 ++++++++ it took:2.755834
 
+2019_12_5
+	- fix adjustable_height change
+	- do now show overflow text for adjustable_height
+	
+2019_11_30
+
+	- fix paragrap creating line_text with ""
+	- adjust_height
+		- shift text_lines from colum to column without relayout
+		# handle the case when we have half-width personal photo 
+		def handle_overflow(number_of_lines)
+			def push_up_text_lines_to_previous_column(number_of_lines)
+				from second to last
+			def move_top_text_lines_to_previous_column(number_of_lines)
+			def move_up_text_lines(number_of_lines)
+
+		def handle_underflow(number_of_lines)
+			def push_down_text_lines_to_next_column(number_of_lines)
+				from first to last
+			def move_bottom_text_lines_to_next_column(number_of_lines)
+			def move_down_text_lines(number_of_lines)
 
 2019_11_26
 	- get rid of overflowing red mark for adjustable_height article

@@ -98,6 +98,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/chapter/r_chapter'
 
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box'
+  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/news_article_view'
+
   require File.dirname(__FILE__) + '/rlayout/newspaper/caption_paragraph'
   require File.dirname(__FILE__) + '/rlayout/newspaper/caption_column'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_ad_block'

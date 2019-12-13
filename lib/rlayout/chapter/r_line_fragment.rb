@@ -17,7 +17,7 @@ module RLayout
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent
     attr_accessor :token_union_rect, :token_union_style
-    attr_accessor :font, :font_size, :para_style
+    attr_accessor :font, :font_size, :para_style, :content_cleared
 
     def	initialize(options={})
       options[:layout_direction]  = 'horizontal'
@@ -49,6 +49,26 @@ module RLayout
       @layed_out_line   = false
       @token_union_style = @parent.token_union_style if @parent.respond_to?(:token_union_style)
       self
+    end
+
+    def collect_line_content
+      tokens = []
+      while graphic = @graphics.shift do
+        tokens << graphic
+      end 
+      @content_cleared = true  
+      tokens  
+    end
+
+    def place_line_content_from(line_data)
+      if line_data.class == RLayout::RLineFragment
+        line_data = line_data.graphics
+      end
+      while token = line_data.shift do
+        token.parent = self
+        @graphics << token
+      end
+      @layed_out_line = true
     end
 
     def reset_text_line

@@ -19,7 +19,6 @@ module RLayout
 
     def to_svg
       s = "<rect fill='green' x='#{@parent.x + @x}' y='#{@parent.y + @y}' width='#{@width}' height='#{@height - 2}' />"
-      puts "+++++++++++++++  to_svg:#{s}"
       s
     end
 

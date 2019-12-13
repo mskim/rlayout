@@ -26,7 +26,7 @@ module RLayout
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
     attr_reader :overlap, :overlap_rect, :embedded, :has_left_side_bar
     attr_reader :stroke_x, :stroke_y, :stroke_width
-    attr_reader :svg_content, :adjustable_height
+    attr_reader :svg_content, :adjustable_height 
 
     def initialize(options={}, &block)
       super
@@ -34,7 +34,6 @@ module RLayout
       @page_number        = options[:page_number]
       @has_profile_image  = options[:has_profile_image]
       @adjustable_height  = options[:adjustable_height] || false
-      puts "@adjustable_height:#{@adjustable_height}"
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
           @stroke.sides = [1,1,1,1]
@@ -285,7 +284,11 @@ module RLayout
         # article_info[:overflow]              = true
         @overflow_line_count                  = @overflow_column.layed_out_line_count
         article_info[:overflow_line_count]    = @overflow_line_count
-        article_info[:overflow_text]          = overflow_text
+        if @adjustable_height
+          article_info[:overflow_text]          = ""
+        else
+          article_info[:overflow_text]          = overflow_text
+        end 
       end
       info_path = "#{$ProjectPath}/article_info.yml"
       File.open(info_path, 'w'){|f| f.write article_info.to_yaml}
@@ -354,16 +357,34 @@ module RLayout
       end
     end
 
+    def collect_column_content
+      line_conent = []
+      @graphics.each do |column|
+        lines = column.collect_line_content
+        line_conent += lines
+      end
+        if @overflow
+        overlfow_lines = @overflow_column.text_lines
+        line_conent += overlfow_lines
+      end
+      line_conent
+    end
+
+    def relayout_line_content(line_content)
+      puts __method__
+      @graphics.each_with_index do |column, i|
+        column.layout_line_content(line_content)
+      end
+    end
+
     def adjust_height
       if @overflow
-        puts "+++++++ overflow"
+        puts "overflow"
         line_diff_count = @overflow_column.layed_out_line_count
-        puts "line_diff_count:#{line_diff_count}"
       elsif @underflow
-        puts "+++++++ underflow"
+        puts "underflow"
         line_diff_count    = - article_box_unoccupied_lines_count
       else
-        puts "+++++++ it fits"
         line_diff_count    = 0
         return
       end
@@ -371,9 +392,7 @@ module RLayout
       if line_diff_count > 0
         # changing_line_count += 1 if (line_diff_count % @column_count) > 0
       end
-      puts "changing_line_count:#{changing_line_count}"
       last_column = @graphics.last
-      puts "before last_column.graphics.length:#{last_column.graphics.length}"
       if @height/@body_line_height  + changing_line_count < 7 # @grid_line_count #  7
         changing_line_count = 0
         @height = 7*@body_line_height
@@ -383,19 +402,10 @@ module RLayout
       end
       @graphics.each do |column|
         column.adjust_height(changing_line_count)
+        # column.ready_unoccupied_lines_for_relayout
       end
-      link_column_lines
-      # no longer linked to overflow column 
-      @graphics.last.graphics.last.next_line = nil
+      puts "changing_line_count:#{changing_line_count}"
       @height += changing_line_count*@body_line_height
-      puts "after last_column.graphics.length:#{last_column.graphics.length}"
-      return @overflow || @undefflow
-    end
-
-    def clear_layed_out_line
-      @graphics.each do |column|
-        column.clear_layed_out_line
-      end
     end
     
     def second_column_x
