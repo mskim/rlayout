@@ -31,11 +31,13 @@ module RLayout
         atts = NSUtils.ns_atts_from_style(@para_style)
         att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
         return att_string.size.width
+      else
+        font_size = @para_style[:font_size] || 10
+        font      = @para_style[:font] || 'shinmoon'
+        # TODO add tracking and horizontal scale
+        size      = RFont.string_size(string, font, font_size)
+        size[0]
       end
-      font_size = @para_style[:font_size] || 10
-      font      = @para_style[:font] || 'shinmoon'
-      size      = RFont.string_size(@string, font, font_size)
-      size[0]
     end
 
     def tracking_count

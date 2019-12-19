@@ -73,12 +73,6 @@ module RLayout
       line_data
     end
 
-    def ready_unoccupied_lines_for_relayout
-      # @graphics.each do |line|
-      #   line.content_cleared == true if line.unoccupied_line?
-      # end
-    end
-
     def layout_line_content(line_content)
       if line_content.nil?
         puts "line_content is nil !!!!!"

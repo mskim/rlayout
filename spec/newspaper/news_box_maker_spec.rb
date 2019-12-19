@@ -9,8 +9,6 @@ describe 'testing saveing ad_box ruby_pdf' do
     @article_path    = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/1/1"
     @article_path    = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/10/4"
     @article_path    = "/Users/mskim/Development/style_guide/public/1/issue/2019-08-05/1/1_1"
-    
-    @article_path    =  "/Users/mskim/Development/pillar_layout/public/1/issue/2017-05-30/1/1/1"
     @article_path    =  "/Users/mskim/Development/pillar_layout/public/1/issue/2017-05-30/1/2/1"
     @maker           = NewsBoxMaker.new(article_path: @article_path)
     @article_box     = @maker.news_box

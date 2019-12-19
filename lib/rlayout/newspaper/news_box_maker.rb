@@ -757,7 +757,6 @@ module RLayout
     attr_accessor :pdf_doc, :story_md, :layout_rb
     attr_accessor :draft_mode, :svg_content, :pdf_data, :pdf_tool
 
-
     def initialize(options={})
       time_start    = Time.now
       @time_stamp   = options[:time_stamp]
@@ -978,26 +977,29 @@ module RLayout
         para_options[:para_string]    = para[:para_string]
         para_options[:article_type]   = @news_box.kind
         para_options[:text_fit]       = FIT_FONT_SIZE
+        # para_options[:create_body_para_lines] = true if @news_box.adjustable_height
         para_options[:line_width]     = @news_box.column_width  if para_options[:create_body_para_lines]
         @paragraphs << RParagraph.new(para_options)
       end
+
     end
     
     def total_para_lines_count
-      para_lines_count_array =  @paragraphs.map{|para| Array(para.lines).length}
-      para_lines_count_array.reduce(:+)
+      @paragraphs.map{|para| Array(para.lines).length}.reduce(:+)
     end
 
-    def body_text_lines
-      @news_box.text_lines
+    def body_text_lines_count
+      @news_box.text_lines.length
     end
 
     def layout_story
       @news_box.layout_floats!
       @news_box.adjust_overlapping_columns
       @news_box.layout_items(@paragraphs.dup)
-      puts "+++++++++ @news_box.adjustable_height:#{@news_box.adjustable_height}"
       if  @news_box.adjustable_height
+        # puts "total_para_lines_count:#{total_para_lines_count}"
+        # puts "body_text_lines_count:#{body_text_lines_count}"
+        # puts "+++++++++ @news_box.adjustable_height:#{@news_box.adjustable_height}"
         line_content = @news_box.collect_column_content
         @news_box.adjust_height
         @news_box.relayout_line_content(line_content)

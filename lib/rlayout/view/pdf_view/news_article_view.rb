@@ -4,8 +4,6 @@ module RLayout
   # 1. draw tokens only, as fast as we can
   # 2. using only single font
     def save_pdf_with_ruby(pdf_doc, output_path, options={})
-
-      puts "+++++++++++++ pdf using ruby+++++++++++++++"
       puts "+++++++++++++ pdf using ruby+++++++++++++++"
       # binding.pry
       # @graphics.each do |column|

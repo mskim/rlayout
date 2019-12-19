@@ -371,7 +371,6 @@ module RLayout
     end
 
     def relayout_line_content(line_content)
-      puts __method__
       @graphics.each_with_index do |column, i|
         column.layout_line_content(line_content)
       end
@@ -379,10 +378,11 @@ module RLayout
 
     def adjust_height
       if @overflow
-        puts "overflow"
+        # puts "overflow"
         line_diff_count = @overflow_column.layed_out_line_count
+        # puts "line_diff_count:#{line_diff_count}"
       elsif @underflow
-        puts "underflow"
+        # puts "underflow"
         line_diff_count    = - article_box_unoccupied_lines_count
       else
         line_diff_count    = 0
@@ -390,7 +390,9 @@ module RLayout
       end
       changing_line_count = line_diff_count/@column_count
       if line_diff_count > 0
-        # changing_line_count += 1 if (line_diff_count % @column_count) > 0
+        changing_line_count += 1 if (line_diff_count % @column_count) > 0
+      elsif line_diff_count < 0
+        changing_line_count += 1 if (line_diff_count % @column_count) > 0
       end
       last_column = @graphics.last
       if @height/@body_line_height  + changing_line_count < 7 # @grid_line_count #  7
@@ -404,7 +406,7 @@ module RLayout
         column.adjust_height(changing_line_count)
         # column.ready_unoccupied_lines_for_relayout
       end
-      puts "changing_line_count:#{changing_line_count}"
+      # puts "changing_line_count:#{changing_line_count}"
       @height += changing_line_count*@body_line_height
     end
     

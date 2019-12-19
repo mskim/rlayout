@@ -30,19 +30,11 @@ module RLayout
       parse_style_name
       # super doen't set @para_style values
       if @markup == 'br'
-
-      elsif options[:tokens]
-        # this is when Paragraph has been splited into two
-        # left over tokens are passed in options[:tokens]
-        # so, no need to re-create tokens.
-        @tokens         = options[:tokens]
-        @token_strings  = @tokens.map { |t| t.string}
-        @para_string    = @token_strings.join(" ")
       else
         @tokens       = []
         create_tokens
-        # create_body_para_lines if options[:create_body_para_lines]
       end
+      create_body_para_lines if options[:create_body_para_lines]
       self
     end
 
@@ -71,11 +63,9 @@ module RLayout
     end
 
     # before we create any text_tokens,
-    # check if we have any special token mark {{something}} or {something}
-    # first check for double curl, single curl
-    # if double curl is found, split para string with double curl fist
-    # and do it recursively with split strings
-    # and call create_plain_tokens for regular string segmnet
+    # check if we have any special token mark EMPASIS_STRONG or EMPASIS_DIAMOND
+    # if EMPASIS_STRONG or EMPASIS_DIAMOND are found, split para string with EMPASIS_STRONG and EMPASIS_DIAMOND segments
+    # and call create_plain_tokens for regular string segment
     def create_tokens
       if @markup == "h4" || @markup == "h1"
         # for author and linked to page, check if there is markup for moving up the text, if there is enoung room
@@ -167,22 +157,9 @@ module RLayout
       end
     end
 
-    # def create_body_para_lines
-    #   tokens_array  = @tokens.dup
-    #   i = 0
-    #   @lines        = []
-    #   para_line     = {order: i, tokens:[]}
-    #   while token   = tokens_array.shift do
-    #     if line_room(@line_width, para_line, @space_width) >= token.width
-    #       para_line[:tokens] << token
-    #     else 
-    #       i += 1
-    #       para_line     = {order: i, tokens:[]}
-    #       para_line[:tokens] = []
-    #       @lines << para_line
-    #     end
-    #   end
-    # end
+    def place_lines(current_line)
+
+    end
 
     # def line_room(text_rect_width, para_line, space_width)
     #     token_width_sum = 0
@@ -193,6 +170,55 @@ module RLayout
     #     end
     #     text_rect_width - token_width_sum
     # end
+
+    def create_body_para_lines
+      return if tokens.length == 0
+      @lines = []
+      tokens_copy = tokens.dup
+      @current_line = RLayout::RLineFragment.new(line_type: "first_line", width: @line_width)
+      token = tokens_copy.shift
+      if token && token.token_type == 'diamond_emphasis'
+        @current_line.line_type = "middle_line"
+      elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4'
+        @current_line.token_union_style = @token_union_style if @token_union_style
+        @current_line.line_type =  "middle_line"
+      end
+
+      while token
+        result = @current_line.place_token(token)
+        
+        if result.class == RTextToken
+          # token is broken into two, second part is returned
+          @current_line.align_tokens
+          @current_line.room = 0
+          @current_line = RLayout::RLineFragment.new(line_type: "middle_line", width: @line_width)
+          @lines << @current_line
+          token = result          
+        elsif result
+          # puts "entire token placed succefully, returned result is true"
+          token = tokens_copy.shift
+        else
+          # entire token was rejected,
+          @current_line.align_tokens
+          @current_line.room = 0
+          @current_line = RLayout::RLineFragment.new(line_type: "middle_line", width: @line_width)
+          @lines << @current_line
+        end
+      end
+
+      @current_line.align_tokens
+      if @move_up_if_room 
+        if found_previous_line = previous_line_has_room(@current_line)
+          move_tokens_to_previous_line(@current_line, found_previous_line)
+          @current_line.layed_out_line = false
+          @current_line
+        else
+          @current_line.next_text_line
+        end
+      else
+        @current_line.next_text_line
+      end
+    end
 
     def layout_lines(current_line, options={})
       return unless current_line
@@ -209,7 +235,6 @@ module RLayout
         @current_line.layed_out_line = true
         @current_line.set_paragraph_info(self, "middle_line")
       elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4'
-
         unless @current_line.first_text_line_in_column?
           if @para_style[:space_before_in_lines] == 1
             @current_line.layed_out_line = true
@@ -401,5 +426,13 @@ module RLayout
     end
 
   end
+
+  class RParaLine < Container
+
+
+  end
+
+
+
 
 end

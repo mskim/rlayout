@@ -5,25 +5,24 @@ describe "create RParagraph" do
     options                 = {}
     options[:para_string]        = 'This is a string.'
     options[:style_name]     = 'body'
+    options[:create_body_para_lines]     = true
     @para = RParagraph.new(options)
     @first_token = @para.tokens.first
   end
 
   it 'should create RParagraph' do
-    @para.must_be_kind_of RParagraph
+    assert @para.class, RParagraph
   end
 
-  it 'should have style_name' do
-    @para.style_name.must_equal 'body'
-  end
 
   it 'should create tokens' do
-    @para.tokens.length.must_equal 4
+    assert @para.tokens.length,  4
   end
 
-  it 'should have RToken class' do
-    @first_token.must_be_kind_of RTextToken
+  it 'should create body_para_lines' do
+    assert @para.lines.length,  1
   end
+
 end
 
 # describe "layout lines" do
