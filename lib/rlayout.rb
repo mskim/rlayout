@@ -158,7 +158,7 @@ else
   # require File.dirname(__FILE__) + '/rlayout/article/pdf_chapter'
   # require File.dirname(__FILE__) + '/rlayout/article/spread_chapter'
   # require File.dirname(__FILE__) + '/rlayout/article/toc_chapter'
-  # require File.dirname(__FILE__) + '/rlayout/article/float_group'
+  require File.dirname(__FILE__) + '/rlayout/article/float_group'
   # require File.dirname(__FILE__) + '/rlayout/article/single_page_maker'
   # require File.dirname(__FILE__) + '/rlayout/article/rjob'
   # require File.dirname(__FILE__) + '/rlayout/article/item_chapter_maker'

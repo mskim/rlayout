@@ -235,7 +235,8 @@ module RLayout
       h_options[:parent]        = self
       h_options[:width]         = @width # - @gutter
       h_options[:column_count]  = @column_count
-      h_options[:x]             = @starting_column_x
+      # h_options[:x]             = @starting_column_x
+      h_options[:x]             = 0
       h_options[:y]             = 0
 
       if @heading_columns       != @column_count

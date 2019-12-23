@@ -189,6 +189,12 @@ module RLayout
     attr_reader :book_title, :title, :starting_page, :heading_type, :heading
     attr_accessor :body_line_count, :body_line_height
 
+    # page_by_page is used for page proof reading
+    # if page_by_page is true,
+    # folders are created for each page, with jpg image and, markdown text for that page
+    # this allow the proofer to working on that specific page rather than dealing with entire chapter text.
+    attr_reader :page_by_page
+
     def initialize(options={} ,&block)
       @project_path = options[:project_path] || options[:article_path]
       if @project_path
@@ -201,7 +207,8 @@ module RLayout
         end
         @project_path = File.dirname(@story_path)
       end
-      $ProjectPath  = @project_path
+      $ProjectPath    = @project_path
+      @page_by_page  = options[:page_by_page]
       if options[:output_path]
         @output_path = options[:output_path]
       elsif options[:filename_output]
@@ -252,6 +259,7 @@ module RLayout
       @doc_info[:starting_page] = @starting_page
       @doc_info[:page_count] = @document.pages.length
       save_toc
+      @document.save_page_by_page(@project_path) if page_by_page
       self
     end
 
@@ -291,7 +299,7 @@ module RLayout
         elsif para[:markup] == 'photo_page'
           @paragraphs << PhotoPage.new(para)
         elsif para[:markup] == 'float_group'
-          @paragraphs << FloatGroup.new(para)
+          @paragraphs << FloatGroup::FloatGroup.new(para)
         elsif para[:markup] == 'pdf_insert'
           @paragraphs << PdfInsert.new(para)
         elsif para[:markup] == 'ordered_list'
@@ -315,15 +323,17 @@ module RLayout
       heading_object.set_heading_content(@heading)
       heading_object.align_vertically
       unless @first_page.main_box
+        puts "create main_box"
         @first_page.create_main_text
       else
-        @first_page.graphics = @first_page.graphics.reverse
+        # puts "revering main_box"
+        # @first_page.graphics = @first_page.graphics.reverse
       end
-      # @first_page.relayout!
+      @first_page.relayout!
       # @first_page.main_box.adjust_overlapping_columns
       first_item = @paragraphs.first
       #TODO
-      if first_item.is_a?(FloatGroup) # || first_item.is_a?(PdfInsert)
+      if first_item.is_a?(RLayout::FloatGroup) # || first_item.is_a?(PdfInsert)
         first_item = @paragraphs.shift
         first_item.layout_page(document: @document, page_index: @page_index)
       end
@@ -419,5 +429,6 @@ module RLayout
       layout_file = layout_text
       File.open(layout_path, 'w') { |f| f.write layout_file }
     end
+
   end
 end

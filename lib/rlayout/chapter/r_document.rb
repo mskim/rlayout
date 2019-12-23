@@ -35,6 +35,8 @@ module RLayout
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_accessor :pdf_path, :jpg, :preview, :column_count, :layout_style
     attr_accessor :page_headings, :document_view_pdf, :heading_type, :body_line_count, :body_line_height
+    attr_reader :project_path
+    
     def initialize(options={}, &block)
       @pages            = []
       @title            = "untitled"
@@ -141,6 +143,7 @@ module RLayout
       end
       @page_headings = options.fetch(:page_headings,[])
       @column_count = options.fetch(:column_count, 1)
+
       if @toc_on
         # save_toc elements for this document
         @toc_elements = []
@@ -180,13 +183,14 @@ module RLayout
       [@left_margin, @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
     end
 
+    # create new page and return first line of of main_box
     def add_new_page
       options                 = {}
       options[:parent]        = self
       options[:paper_size]    = @paper_size
-      options[:page_numver]   = @pages.length
-      options[:page_numver]   += @starting_page
-      new_page =RPage.new(options)
+      options[:page_number]   = @pages.length
+      options[:page_number]   += @starting_page
+      new_page = RPage.new(options)
       new_page.first_line
     end
 
@@ -299,6 +303,7 @@ module RLayout
     end
 
     def save_pdf(path, options={})
+      @project_path = File.dirname(path) unless @project_path
       if RUBY_ENGINE == 'rubymotion'
         @ns_view = DocumentViewMac.new(self)
         @page_view_count = @ns_view.save_pdf(path, options)
@@ -328,6 +333,19 @@ module RLayout
       if options[:output_path]
         File.open(options[:output_path], 'w'){|f| f.write doc_layout_file}
       end
+    end
+
+    def save_page_by_page
+      save_page_folders
+      save_page_markdown
+    end
+
+    def save_page_folders
+
+    end
+
+    def save_page_markdown
+
     end
   end
 

@@ -23,7 +23,7 @@ module RLayout
     attr_accessor :grid_rects, :body_line_height
     attr_accessor :complex_rect, :align_body_text, :show_grid_rects
     attr_accessor :article_bottom_space_in_lines
-    attr_accessor :column_type
+    attr_accessor :column_type, :empty_lines
 
     def initialize(options={}, &block)
       options[:width]     = 200 unless options[:width]
@@ -31,6 +31,7 @@ module RLayout
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
+      @empty_lines          = options[:empty_lines] || false
       @column_type          = options[:column_type] || 'regular_column'
       @current_line_index   = 0
       @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
@@ -57,6 +58,7 @@ module RLayout
     end
 
     def adjust_height(changing_line_count)
+
       if changing_line_count > 0
         add_lines(changing_line_count)
       elsif changing_line_count < 0
@@ -80,7 +82,6 @@ module RLayout
       end
       ready_line = content_cleared_lines
       ready_line.each do |cleared_line|
-        # binding.pry if graphics_index == 2
         break if line_content == []
         line_data = line_content.shift
         cleared_line.place_line_content_from(line_data) if line_data
@@ -96,6 +97,7 @@ module RLayout
     end
 
     def create_lines(options={})
+      return if @empty_lines
       @graphics = []
       current_x   = 0
       current_y   = 0
@@ -113,6 +115,7 @@ module RLayout
     end
 
     def add_lines(changing_line_count)
+      return if @empty_lines
       @line_count += changing_line_count
       current_x   = 0
       current_y   = @graphics.last.y + @graphics.last.height

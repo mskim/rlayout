@@ -68,7 +68,7 @@ module RLayout
       @fixtures = []
       @floats   = []
       main_box_options                      = {}
-      main_box_options[:x]                  = @left_inset
+      main_box_options[:x]                  = 0
       main_box_options[:y]                  = @top_inset
       main_box_options[:width]              = @width - @left_margin - @right_margin
       main_box_options[:height]             = @height - @top_margin - @bottom_margin
@@ -96,7 +96,7 @@ module RLayout
       else
         @main_box = RTextBox.new(main_box_options)
       end
-      relayout!
+      # relayout!
       if block
         instance_eval(&block)
       end

@@ -7,6 +7,31 @@
 # line takes up 2 or multples of body_line_height
 # it has line space of 1 before
 
+# ruby_pdf supported attributes
+# * Style#font
+# * Style#font_size
+# * Style#horizontal_scaling
+# * Style#character_spacing
+# * Style#word_spacing
+# * Style#text_rise
+# * Style#text_rendering_mode
+# * Style#subscript
+# * Style#superscript
+# * Style#underline
+# * Style#strikeout
+# * Style#fill_color
+# * Style#fill_alpha
+# * Style#stroke_color
+# * Style#stroke_alpha
+# * Style#stroke_width
+# * Style#stroke_cap_style
+# * Style#stroke_join_style
+# * Style#stroke_miter_limit
+# * Style#stroke_dash_pattern
+# * Style#underlay_callback
+# * Style#overlay_callback
+
+
 module RLayout
   #TODO
   # tab stop

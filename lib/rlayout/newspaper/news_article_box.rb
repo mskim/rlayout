@@ -20,13 +20,13 @@ module RLayout
     attr_accessor :heading_columns, :fill_up_enpty_lines
     attr_accessor :current_column, :current_column_index, :overflow, :underflow, :empty_lines, :overflow_line_count
     attr_accessor :heading, :subtitle_box, :subtitle_in_head, :personal_image, :news_image, :news_column_image
-    attr_accessor :quote_box, :quote_box_size, :quote_position, :quote_x_grid, :quote_x_grid, :quote_v_extra_space, :quote_alignment, :quote_line_type 
+    attr_accessor :quote_box, :quote_box_size, :quote_position, :quote_x_grid, :quote_v_extra_space, :quote_alignment, :quote_line_type 
     attr_accessor :starting_column_x, :gutter, :column_bottom
     attr_accessor :overflow_column, :page_number, :char_count, :has_profile_image
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
     attr_reader :overlap, :overlap_rect, :embedded, :has_left_side_bar
     attr_reader :stroke_x, :stroke_y, :stroke_width
-    attr_reader :svg_content, :adjustable_height 
+    attr_reader :svg_content, :adjustable_height , :empty_first_column
 
     def initialize(options={}, &block)
       super
@@ -34,6 +34,7 @@ module RLayout
       @page_number        = options[:page_number]
       @has_profile_image  = options[:has_profile_image]
       @adjustable_height  = options[:adjustable_height] || false
+      @empty_first_column  = options[:empty_first_column] || false
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
           @stroke.sides = [1,1,1,1]
@@ -179,11 +180,18 @@ module RLayout
         @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
       else
-        @column_count.times do
-          g= RColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-          g.parent = self
-          @graphics << g
-          current_x += @column_width + @gutter
+        @column_count.times do |i|
+          if @empty_first_column && i == 0
+            g= RColumn.new(:parent=>nil, empty_lines: true, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+            g.parent = self
+            @graphics << g
+            current_x += @column_width + @gutter
+          else
+            g= RColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+            g.parent = self
+            @graphics << g
+            current_x += @column_width + @gutter
+          end
         end
         @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
@@ -194,7 +202,8 @@ module RLayout
 
     def link_column_lines
       previous_column_last_line = nil
-      @graphics.each do |column|
+      @graphics.each_with_index do |column, i|
+        next if @empty_first_column && i == 0
         first_line                          = column.graphics.first
         last_line                           = column.graphics.last
         previous_column_last_line.next_line = first_line if previous_column_last_line
@@ -665,8 +674,8 @@ module RLayout
         text_options[:parent]           = self
         text_options[:v_alignment]      = 'bottom'
         text_options[:height]           = box_height
-        @quote_box = QuoteText.new(text_options)
-        @quote_box.y = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
+        @quote_box                      = QuoteText.new(text_options)
+        @quote_box.y                    = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
       else
         quote_options                     = {}
         quote_options[:column]            = @quote_box_column
@@ -683,8 +692,7 @@ module RLayout
         quote_options[:quote_v_extra_space] = @quote_v_extra_space || 0
         quote_options[:quote_alignment]   = @quote_alignment || 'left'
         quote_options[:quote_line_type]   = @quote_line_type || '상하' #'박스'
-        quote_options[:quote_x_grid]      = @quote_x_grid 
-        @quote_box = NewsQuote.new(quote_options)
+        @quote_box                        = NewsQuote.new(quote_options)
       end
     end
 

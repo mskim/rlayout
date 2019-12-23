@@ -125,6 +125,13 @@ TODO List
 +++++++ path:/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/1/1
 ++++++++ it took:2.755834
 
+2019_12_20
+	- empty_first_column
+	- opinion_writer2
+	- quote_box
+	- personal_photo_right_side
+
+	
 2019_12_5
 	- fix adjustable_height change
 	- do now show overflow text for adjustable_height

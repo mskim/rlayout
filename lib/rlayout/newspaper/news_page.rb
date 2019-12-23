@@ -146,7 +146,6 @@ module RLayout
     def make_layout_info
       @layout_info = []
       story_count = 0 
-      # binding.pry
       @sorted_story_frames = @story_frames.sort_by{|r| [r[1], r[0]]}
       @sorted_story_frames.each do |grid_frame|
         info = {}
