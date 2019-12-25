@@ -168,7 +168,11 @@ module RLayout
     end
 
     def layed_out_lines
-      @graphics.select{|line| line.layed_out_line?}
+      if @empty_lines
+        []
+      else
+        @graphics.select{|line| line.layed_out_line?}
+      end
     end
 
     def text_lines
