@@ -125,6 +125,15 @@ TODO List
 +++++++ path:/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/1/1
 ++++++++ it took:2.755834
 
+일반 발문 사용
+사진 그래픽 
+
+	# 1단 2단 선택
+	# 위치
+	# 선 없음 추가
+	# 상하 
+
+
 2019_12_20
 	- empty_first_column
 	- opinion_writer2

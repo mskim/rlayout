@@ -33,7 +33,6 @@ module RLayout
     attr_reader   :x_grid, :quote, :alignment
 
     def initialize(options={})
-      
       if options[:parent]
         @article_column       = options[:parent].column_count
         @article_row          = options[:parent].row_count
@@ -60,7 +59,7 @@ module RLayout
       @alignment              = 'center'  if @alignment == '중간'
       @line_type              = options[:quote_line_type] || '상하'
       @grid_frame             = convert_column_row_position_to_frame(options) if @position
-      @grid_frame[0]          = @x_grid if @x_grid 
+      @grid_frame[0]          = @x_grid - 1 if @x_grid 
       @fit_type               = options[:fit_type] if options[:fit_type]
       @expand                 = options[:expand] if options[:expand]
       @before_title           = options.fetch(:before_title, false)
@@ -69,6 +68,8 @@ module RLayout
         @stroke.sides = [0,1,0,1]
       elsif @line_type == '테두리'
         @stroke.sides = [1,1,1,1]
+      elsif @line_type == '없음'
+        @stroke.sides = [0,0,0,0]
       end
       if @parent
         frame_rect              = @parent.grid_frame_to_rect(@grid_frame, bottom_position: bottom_position?)
@@ -87,19 +88,33 @@ module RLayout
       quote_options[:layout_expand]  = @expand if @expand
       quote_options[:text_string]    = @quote
       quote_options[:style_name]     = 'quote'
-      quote_options[:text_alignment] = text_alignment
-      quote_options[:y]              = @y + @parent.body_line_height*2
-      quote_options[:top_margin]     = @parent.body_line_height
+      quote_options[:text_alignment] = @alignment
+      quote_options[:y]              = @parent.body_line_height
+      # quote_options[:top_margin]     = @parent.body_line_height
       quote_options[:parent]         = self
       if options[:quote_v_extra_space]  && options[:quote_v_extra_space] > 0
         quote_options[:y]            = @parent.body_line_height*options[:quote_v_extra_space]
         @quote_text_box              = TitleText.new(quote_options)
-        @height = @quote_text_box.height + options[:quote_v_extra_space]*@parent.body_line_height*4
+        @height = @quote_text_box.height + options[:quote_v_extra_space]*@parent.body_line_height*2
+        mutiples = @height/@parent.body_line_height
+        delta = mutiples - mutiples.to_i
+        if delta > 0.5
+          @height += @parent.body_line_height
+        end
       else
         @quote_text_box              = TitleText.new(quote_options)
-        @height                      = @quote_text_box.height + options[:quote_v_extra_space]*@parent.body_line_height*4
+        @height = @quote_text_box.height + @parent.body_line_height*2
+        mutiples = @height/@parent.body_line_height
+        delta = mutiples - mutiples.to_i
+        if delta > 0.5
+          @height += @parent.body_line_height
+        end
       end
       self
+    end
+
+    def draw_pdf(canvas, options={})
+      puts __method__
     end
 
     def top_position?

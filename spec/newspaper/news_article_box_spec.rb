@@ -15,6 +15,7 @@ describe 'overlapping floats' do
     @article_path   = "/Users/mskim/Development/pillar_layout/public/1/issue/2017-05-30/1/2/1"
     @article_path   = "/Users/mskim/Development/pillar_layout/public/1/issue/2017-05-30/1/1/2"
     @article_path   = "/Users/mskim/Development/pillar_layout/public/1/issue/2017-05-30/23/1/1"
+    @article_path   = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/23/1"
     puts "@article_path:#{@article_path}"
     @svg_path       = @article_path + "/output.svg"
     @maker          = NewsBoxMaker.new(article_path: @article_path, draft_mode: true)

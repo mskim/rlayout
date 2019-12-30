@@ -742,6 +742,7 @@ title_main_5:
   publication_id: 1
 EOF
 
+
 # front_page_heading_height: height of frontpage heading in lines
 # inner_page_heading_height: height of innerpage heading in lines
 # page_heading_margin_in_lines: actual heading margin for top positined article
