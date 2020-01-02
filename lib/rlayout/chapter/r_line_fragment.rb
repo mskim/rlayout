@@ -260,6 +260,7 @@ module RLayout
         @layed_out_line = true
         return true
       else
+        return false if @text_alignment != 'justified'
         return false if options[:do_not_break]
         # no more room, try hyphenating token
         # give custion only when there are more than 4 tokens

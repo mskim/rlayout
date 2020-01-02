@@ -133,7 +133,9 @@ TODO List
 	# 선 없음 추가
 	# 상하 
 
-
+2020_1_1
+	- do not break token unless alignment is justified
+	
 2019_12_20
 	- empty_first_column
 	- opinion_writer2

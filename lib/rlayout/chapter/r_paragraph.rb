@@ -63,29 +63,6 @@ module RLayout
       self
     end
 
-    def create_plain_tokens(para_string)
-      # parse for tab first
-      return unless para_string
-      tokens_strings = para_string.split(" ")
-      tokens_strings.each do |token_string|
-        next unless token_string
-        token_options = {}
-        token_options[:string] = token_string
-        token_options[:para_style] = @para_style
-        token_options[:height] = @para_style[:font_size]
-        @tokens << RLayout::RTextToken.new(token_options)
-      end
-    end
-
-    # this is use in calculating left ocer text after layout
-    def left_over_token_text
-      string = ""
-      @tokens.each do |token|
-        string += token.string
-        string += " "
-      end
-      string
-    end
 
     # before we create any text_tokens,
     # check if we have any special token mark EMPASIS_STRONG or EMPASIS_DIAMOND
@@ -106,7 +83,6 @@ module RLayout
       else
         create_plain_tokens(@para_string)
       end
-      # create_plain_tokens(@para_string)
       token_heights_are_equal = true
       return unless  @tokens.length > 0
       tallest_token_height = @tokens.first.height
@@ -117,6 +93,21 @@ module RLayout
         end
       end
     end
+
+    def create_plain_tokens(para_string)
+      # parse for tab first
+      return unless para_string
+      tokens_strings = para_string.split(" ")
+      tokens_strings.each do |token_string|
+        next unless token_string
+        token_options = {}
+        token_options[:string] = token_string
+        token_options[:para_style] = @para_style
+        token_options[:height] = @para_style[:font_size]
+        @tokens << RLayout::RTextToken.new(token_options)
+      end
+    end
+
 
     def create_tokens_with_emphasis_strong(para_string)
       para_string.chomp!
@@ -182,9 +173,6 @@ module RLayout
       end
     end
 
-    def place_lines(current_line)
-
-    end
 
     # def line_room(text_rect_width, para_line, space_width)
     #     token_width_sum = 0

@@ -59,7 +59,6 @@ module RLayout
       @alignment              = 'center'  if @alignment == '중간'
       @line_type              = options[:quote_line_type] || '상하'
       @grid_frame             = convert_column_row_position_to_frame(options) if @position
-      @grid_frame[0]          = @x_grid - 1 if @x_grid 
       @fit_type               = options[:fit_type] if options[:fit_type]
       @expand                 = options[:expand] if options[:expand]
       @before_title           = options.fetch(:before_title, false)
@@ -73,6 +72,7 @@ module RLayout
       end
       if @parent
         frame_rect              = @parent.grid_frame_to_rect(@grid_frame, bottom_position: bottom_position?)
+        frame_rect[2] -= @parent.gutter if @column > 1
       else
         frame_rect              = [0,0, 400, 100]
       end

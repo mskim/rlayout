@@ -658,7 +658,6 @@ module RLayout
     def float_quote(options={})
       return if @quote_box_size == '0'
       if (@kind == '기고' || @kind == 'opinion') && @row_count < 10
-        puts "using QuoteText"
         box_height                      = (@quote_box_size.to_i + QUOTE_BOX_SPACE_BEFORE)*@body_line_height
         text_height_in_lines            = @quote_box_size.to_i
         text_options                    = {}
@@ -678,7 +677,6 @@ module RLayout
         text_options[:height]           = box_height
         @quote_box                      = QuoteText.new(text_options)
         @quote_box.y                    = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
-            
       else
         quote_options                     = {}
         quote_options[:column]            = @quote_box_column
@@ -686,13 +684,12 @@ module RLayout
         quote_options[:layout_expand]     = nil
         quote_options[:is_float]          = true
         quote_options[:text_string]       = options['quote']
-        quote_options[:style_name]       = 'quote'
         quote_options[:parent]            = self
         quote_options[:quote_positon]     = @quote_positon || 4
         quote_options[:quote]             = options['quote']
         quote_options[:quote_position]    = @quote_position || 1
         quote_options[:quote_box_size]    = @quote_box_size || 4
-        quote_options[:quote_x_grid]      = @quote_x_grid || 1
+        quote_options[:quote_x_grid]      = @quote_x_grid || 0
         quote_options[:quote_v_extra_space] = @quote_v_extra_space || 0
         quote_options[:quote_alignment]   = @quote_alignment || 'left'
         quote_options[:quote_line_type]   = @quote_line_type || '상하' #'박스'
