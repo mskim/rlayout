@@ -128,6 +128,7 @@ module RLayout
         options[:layout_expand] = nil
         options[:y]             = 0
         options[:para_style]    = @para_style
+        options[:para_style][:fill_color]  = nil
         options[:height]        = @para_style[:font_size]
         if RUBY_ENGINE == 'rubymotion'
           options[:atts]        = NSUtils.ns_atts_from_style(@para_style)

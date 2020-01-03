@@ -10,11 +10,14 @@ class GraphicViewMac < NSView
       unless fill_color.class == NSColor
         fill_color = RLayout.convert_to_nscolor(fill_color)
       end
-      # if graphic.class == RLayout::RTextToken || graphic.class == RLayout::RLineFragment
+      # if graphic.class == RLayout::RTextToken #|| graphic.class == RLayout::RLineFragment
+      #   puts "+++++++++++ fill_color:#{fill_color}" #if @string == '신문'
+      #   fill_color = RLayout.convert_to_nscolor('clear')
       # else
-      #   puts "+++++++++  graphic.class:#{graphic.class} fill_color:#{fill_color}"
+      #   # puts "+++++++++  graphic.class:#{graphic.class} fill_color:#{fill_color}"
       # end
-      fill_color.set if fill_color
+      return  unless fill_color
+      fill_color.set
       path.fill
 
     elsif  graphic.fill.class == RLayout::LinearGradient
