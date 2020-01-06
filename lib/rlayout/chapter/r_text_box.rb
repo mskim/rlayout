@@ -240,7 +240,7 @@ module RLayout
       h_options[:y]             = 0
 
       if @heading_columns       != @column_count
-        h_options[:width]       = @heading_columns+@column_width
+        h_options[:width]       = @heading_columns*@column_width + @gutter*(@heading_columns - 1)
       end
       case @kind
       when 'editorial', "사설"

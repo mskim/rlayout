@@ -133,6 +133,14 @@ TODO List
 	# 선 없음 추가
 	# 상하 
 
+2020_1_3
+	- make token proxy to layout in line
+	- make token_rep [string, x, style] , ex: ['this', 2.319 , 0]
+	- get token with from hexa_pdf
+	- def proxy
+			[@text_string, @x, style_index]
+		end
+
 2020_1_1
 	- do not break token unless alignment is justified
 	

@@ -443,7 +443,7 @@ module RLayout
       h_options[:width]         = @width - 2
       h_options[:width]         = @width - @gutter unless @on_left_edge
       h_options[:width]         = @width - @gutter unless @on_right_edge
-      h_options[:width]         = @heading_columns*@column_width if @heading_columns != @column_count
+      h_options[:width]         = @heading_columns*@column_width + (@heading_columns - 1)*@gutter if @heading_columns != @column_count
       h_options[:subtitle_type] = @subtitle_type
       @stroke.thickness = 0.3
       case @kind
@@ -497,10 +497,11 @@ module RLayout
           place_holder_options               = {}   
           place_holder_options[:is_float]    = true
           place_holder_options[:parent]      = self
-          place_holder_options[:x]           = @column_width*4 + @gutter*4
+          place_holder_options[:x]           = @heading_columns*@column_width + (@heading_columns - 1)*@gutter #if @heading_columns != @column_count
+          # place_holder_options[:x]           = @column_width*4 + @gutter*4
           place_holder_options[:y]           = 0
           place_holder_options[:width]       = @column_width*(@column_count - @heading_columns) + @gutter*(@column_count - @heading_columns - 1)
-          place_holder_options[:height]      = @body_line_height
+          place_holder_options[:height]      = @body_line_height*2
           @heading_right_side_one_line_space = Rectangle.new(place_holder_options)
         end
       end
