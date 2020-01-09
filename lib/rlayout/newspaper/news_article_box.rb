@@ -26,7 +26,7 @@ module RLayout
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
     attr_reader :overlap, :overlap_rect, :embedded, :has_left_side_bar
     attr_reader :stroke_x, :stroke_y, :stroke_width
-    attr_reader :svg_content, :adjustable_height , :empty_first_column
+    attr_reader :svg_content, :adjustable_height , :empty_first_column, :profile_image_position
 
     def initialize(options={}, &block)
       super
@@ -35,6 +35,7 @@ module RLayout
       @has_profile_image  = options[:has_profile_image]
       @adjustable_height  = options[:adjustable_height] || false
       @empty_first_column  = options[:empty_first_column] || false
+      @profile_image_position = options[:profile_image_position] || nil?
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
           @stroke.sides = [1,1,1,1]
@@ -473,6 +474,9 @@ module RLayout
           h_options[:width] -= (h_options[:x] + @right_inset + @right_margin )
         end
         @heading = NewsHeadingForOpinion.new(h_options)
+        if @profile_image_position == "하단 오른쪽"
+          subject_head(options)
+        end
       when 'box_opinion', '박스기고'
         @stroke.sides     = [1,2,1,1]
         h_options[:y]     = @body_line_height  # if @top_position
@@ -522,6 +526,36 @@ module RLayout
           @floats.unshift(@heading)
         end
       end
+    end
+
+    def subject_head(options={})
+      atts = {}
+      if top_story
+        atts[:style_name] = 'subject_head_main'
+      elsif @heading_columns > 5
+        atts[:style_name] = 'subject_head_L'
+      elsif @heading_columns > 3
+        atts[:style_name] = 'subject_head_M'
+      else
+        atts[:style_name] = 'subject_head_S'
+      end
+      #todo second half string
+      atts[:text_string]        = options['subject_head']
+      atts[:body_line_height]   = @body_line_height
+      atts[:x]                  = @left_margin
+      atts[:y]                  = 0
+      atts[:width]              = @column_width
+      atts[:height]             = @body_line_height*5
+      atts[:stroke_width]       = 3
+      atts[:stroke_sides]       = [0,1,0,0]
+      atts[:is_float]           = true
+      atts[:text_fit_type]      = 'adjust_box_height'
+      atts[:layout_expand]      = nil #[:width] #TODO
+      atts[:fill_color]         = options.fetch(:fill_color, 'clear')
+      atts[:parent]             = self
+      # atts[:layout_length_in_lines] = true
+      t = TitleText.new(atts)
+      t.height = @body_line_height*5
     end
 
     # does current text_box include Heading in floats
