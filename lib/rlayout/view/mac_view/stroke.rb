@@ -82,9 +82,8 @@ class GraphicViewMac < NSView
       rect = ns_stroke_rect(graphic)
     end
     @line_position  = 1
-    #TODO
-    @graphic.stroke[:color]  = RLayout.convert_to_nscolor(graphic.stroke[:color])    unless graphic.stroke[:color].class == NSColor
-    @graphic.stroke[:color].set
+    graphic.stroke[:color]  = RLayout.convert_to_nscolor(graphic.stroke[:color])    unless graphic.stroke[:color].class == NSColor
+    graphic.stroke[:color].set
 
     if graphic.stroke[:type]==nil
       graphic.stroke[:type] = 0

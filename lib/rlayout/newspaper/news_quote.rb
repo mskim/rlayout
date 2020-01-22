@@ -64,11 +64,11 @@ module RLayout
       @before_title           = options.fetch(:before_title, false)
       @stroke.thickness       = 0.3
       if @line_type == '상하'
-        @stroke.sides = [0,1,0,1]
+        @stroke[:sides] = [0,1,0,1]
       elsif @line_type == '테두리'
-        @stroke.sides = [1,1,1,1]
+        @stroke[:sides] = [1,1,1,1]
       elsif @line_type == '없음'
-        @stroke.sides = [0,0,0,0]
+        @stroke[:sides] = [0,0,0,0]
       end
       if @parent
         frame_rect              = @parent.grid_frame_to_rect(@grid_frame, bottom_position: bottom_position?)

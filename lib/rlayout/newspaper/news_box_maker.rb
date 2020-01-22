@@ -872,11 +872,11 @@ module RLayout
         return
       end
       if @news_box.is_a?(NewsImageBox)
-        # @news_box.stroke.sides = [0,0,0,1]
-        @news_box.stroke.sides = [0,0,0,0]
+        # @news_box.stroke[:sides] = [0,0,0,1]
+        @news_box.stroke[:sides] = [0,0,0,0]
         @news_box.stroke.thickness = 0.3
       elsif @news_box.is_a?(NewsAdBox)
-        @news_box.stroke.sides = [0,0,0,0]
+        @news_box.stroke[:sides] = [0,0,0,0]
         @news_box.stroke.thickness = 0.0
       elsif @news_box.is_a?(NewsComicBox)
       elsif @news_box.is_a?(NewsArticleBox)
@@ -920,6 +920,12 @@ module RLayout
         #   @news_box.stroke[:sides] = [0,0,0,1]
         # else
         #   @news_box.stroke[:sides] = [0,0,0,1]
+        end
+        if @news_box.frame_sides == '테두리'
+          @news_box.stroke[:sides] = [1,1,1,1]
+          @news_box.stroke[:thickness] = @news_box.frame_thickness
+          @news_box.left_margin = 0
+          @news_box.right_margin = 0
         end
       elsif @news_box.is_a?(NewsImageBox)
           @news_box.stroke[:sides] = [0,0,0,1]

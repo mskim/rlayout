@@ -125,13 +125,12 @@ TODO List
 +++++++ path:/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/1/1
 ++++++++ it took:2.755834
 
-일반 발문 사용
-사진 그래픽 
 
-	# 1단 2단 선택
-	# 위치
-	# 선 없음 추가
-	# 상하 
+	- width_of_string with (font, font_size, scale, tracking), instead of just (font, font_size)
+	
+
+2020_1_20
+	- frame_sides, frame_color, frame_thickness
 
 2020_1_3
 	- make token proxy to layout in line
@@ -140,6 +139,15 @@ TODO List
 	- def proxy
 			[@text_string, @x, style_index]
 		end
+
+2020_1_2
+	일반 발문 사용
+	사진 그래픽 
+
+		# 1단 2단 선택
+		# 위치
+		# 선 없음 추가
+		# 상하 
 
 2020_1_1
 	- do not break token unless alignment is justified

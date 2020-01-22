@@ -98,7 +98,6 @@ class GraphicViewMac < NSView
   end
 
   def ns_fill_rect(graphic)
-    # r = graphic.fill_rect
     NSMakeRect(graphic.left_margin, graphic.top_margin,graphic.width - graphic.left_margin - graphic.right_margin,graphic.height - graphic.top_margin - graphic.bottom_margin)
   end
 

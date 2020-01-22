@@ -114,7 +114,7 @@ module RLayout
       return if @floats.length > 0
       @stroke.color = 'red'
       @stroke.thickness = 1
-      @stroke.sides = [1,1,1,1,1,1]
+      @stroke[:sides] = [1,1,1,1,1,1]
     end
 
     # give a line_rect and float_rect, return un-cover rect

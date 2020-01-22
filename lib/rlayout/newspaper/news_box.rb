@@ -4,6 +4,7 @@ module RLayout
     attr_accessor :page_heading_margin_in_lines, :page_heading_place_holder, :article_bottom_spaces_in_lines
     attr_accessor :column_width, :column_count, :row_count, :extended_line_count, :pushed_line_count, :draw_frame
     attr_reader :svg_content
+    attr_reader :frame_sides
 
     def initialize(options={}, &block)
       # @is_ad_box            = options[:is_ad_box] || false
@@ -18,12 +19,12 @@ module RLayout
       end
       options[:stroke_width]  = options.fetch(:article_line_thickness,0.3)
       super
-
       @draw_frame             = options[:draw_frame] || true
       @kind                   = options.fetch(:kind, 'article')
       @gutter                 = options.fetch(:gutter, 10)
       @on_left_edge           = options.fetch(:on_left_edge, false)
       @on_right_edge          = options.fetch(:on_right_edge, false)
+
       @page_heading_margin_in_lines    = options[:page_heading_margin_in_lines] || 0
       @extended_line_count    = options.fetch(:extended_line_count, 0)
       @pushed_line_count      = options.fetch(:pushed_line_count, 0)
@@ -55,6 +56,14 @@ module RLayout
       else
         @width  = @column_count*@grid_width # we have @gutter/2 on each side
       end
+
+      @body_line_height     = @grid_height/@lines_per_grid
+      if options[:frame_sides] == '테두리'
+        @frame_sides    = '테두리'
+        @top_margin     = @body_line_height
+        @on_left_edge   = false
+        @on_right_edge  = false
+      end
       
       if @on_left_edge && @on_right_edge
         # touching both edge
@@ -81,7 +90,6 @@ module RLayout
         @right_margin       = @gutter
       end
 
-      @body_line_height     = @grid_height/@lines_per_grid
       @column_line_count    = @row_count*@lines_per_grid
       @column_line_count   -= @page_heading_margin_in_lines if @top_position
       @column_line_count   += @extended_line_count

@@ -27,6 +27,7 @@ module RLayout
     attr_reader :overlap, :overlap_rect, :embedded, :has_left_side_bar
     attr_reader :stroke_x, :stroke_y, :stroke_width
     attr_reader :svg_content, :adjustable_height , :empty_first_column, :profile_image_position
+    attr_reader :frame_thickness, :frame_color
 
     def initialize(options={}, &block)
       super
@@ -38,20 +39,20 @@ module RLayout
       @profile_image_position = options[:profile_image_position] || nil?
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
-          @stroke.sides = [1,1,1,1]
+          @stroke[:sides] = [1,1,1,1]
           @left_margin  = @gutter
           @left_inset   = @gutter
         else
-          @stroke.sides = [1,3,1,1]
+          @stroke[:sides] = [1,3,1,1]
           @left_inset   = @gutter
           @right_inset  = @gutter
           
         end
       elsif @kind == '기고' || @kind == 'opinion'
-        @stroke.sides = [0,1,0,1] 
+        @stroke[:sides] = [0,1,0,1] 
         @stroke.thickness = 0.3
       elsif @kind == '박스기고' || @kind == 'box_opinion'
-        # @stroke.sides = [0,1,0,1]
+        # @stroke[:sides] = [0,1,0,1]
         # if @top_position
         #   @top_margin += @body_line_height
         # end
@@ -65,21 +66,37 @@ module RLayout
           @right_inset  = @body_line_height
           @left_margin   = @body_line_height
         end
-        # @stroke.sides = [0,1,0,1] 
+        # @stroke[:sides] = [0,1,0,1] 
         @stroke.thickness = 0.3
       elsif @kind == '책소개' || @kind == 'book_review'
         @has_left_side_bar = true
       elsif @kind == '특집' || @kind == 'special'
         @has_left_side_bar = true
-        @stroke.sides = [1,2,1,1]
+        @stroke[:sides] = [1,2,1,1]
       elsif @kind == '부고-인사' || @kind == 'obitualry'
 
       else
-        @stroke.sides = [0,0,0,1]
-        @stroke.thickness = 0.3
+        if @frame_sides == '테두리' #|| [:frame_sides] == '상하' || [:frame_sides] == '좌우'
+          @stroke[:sides] = [1,1,1,1]
+          @frame_thickness = @stroke[:thickness]  = options[:frame_thickness] || 0.3
+          puts "+++++++++++++++ options[:frame_thickness]:#{options[:frame_thickness]}"
+          if options[:frame_color] == '자주'
+            @stroke[:color]  = "CMYK=20,100,50,10"
+          elsif options[:frame_color] == '파랑'
+            @stroke[:color]  = "CMYK=100,50,0,10"
+          elsif options[:frame_color] == '회색'
+            @stroke[:color]  = "CMYK=50,50,50,0"
+          end
+        end
+        @frame_color = @stroke[:color]
+
+        puts "options[:frame_thickness]:#{options[:frame_thickness]}"
+        puts "options[:frame_color]:#{options[:frame_color]}"
+        @on_left_edge = false
+        @on_right_edge = false
       end
       if options[:article_line_draw_sides] && options[:article_line_draw_sides].class == Array
-        @stroke.sides           = options[:article_line_draw_sides] 
+        @stroke[:sides]           = options[:article_line_draw_sides] 
       end
       @subtitle_type          = options[:subtitle_type] || '1단'
       @overlap                = options[:overlap]
@@ -449,7 +466,7 @@ module RLayout
       @stroke.thickness = 0.3
       case @kind
       when 'editorial', "사설"
-        @stroke.sides = [1,1,1,1]
+        @stroke[:sides] = [1,1,1,1]
         if @has_profile_image
           h_options[:width] -= @gutter
         else
@@ -460,7 +477,7 @@ module RLayout
         # for 2 column opinion
         # we want to put heading on top as 2 column heading, before personal image
         # putting on the right side of image, head space would be too short
-        @stroke.sides = [0,1,0,1]
+        @stroke[:sides] = [0,1,0,1]
         h_options[:x]     += @left_margin + @column_width + @gutter
         h_options[:y]     = 2
         if @column_count == 2 
@@ -478,7 +495,7 @@ module RLayout
           subject_head(options)
         end
       when 'box_opinion', '박스기고'
-        @stroke.sides     = [1,2,1,1]
+        @stroke[:sides]     = [1,2,1,1]
         h_options[:y]     = @body_line_height  # if @top_position
         if @on_right_edge
           h_options[:x]     = @gutter*2
@@ -493,7 +510,7 @@ module RLayout
       when '특집', '책소개'
         @heading          = NewsHeadingForArticle.new(h_options)
       else
-        @stroke.sides = [0,0,0,1]
+        @stroke[:sides] = [0,0,0,1]
         @stroke.thickness = 0.3
         @heading = NewsHeadingForArticle.new(h_options)
         if  @column_count != @heading_columns
@@ -530,15 +547,17 @@ module RLayout
 
     def subject_head(options={})
       atts = {}
-      if top_story
-        atts[:style_name] = 'subject_head_main'
-      elsif @heading_columns > 5
-        atts[:style_name] = 'subject_head_L'
-      elsif @heading_columns > 3
-        atts[:style_name] = 'subject_head_M'
-      else
-        atts[:style_name] = 'subject_head_S'
-      end
+      # if top_story
+      #   atts[:style_name] = 'subject_head_main'
+      # elsif @heading_columns > 5
+      #   atts[:style_name] = 'subject_head_L'
+      # elsif @heading_columns > 3
+      #   atts[:style_name] = 'subject_head_M'
+      # else
+      #   atts[:style_name] = 'subject_head_S'
+      # end
+      atts[:style_name] = 'subject_head_editorial'
+
       #todo second half string
       atts[:text_string]        = options['subject_head']
       atts[:body_line_height]   = @body_line_height
@@ -546,7 +565,7 @@ module RLayout
       atts[:y]                  = 0
       atts[:width]              = @column_width
       atts[:height]             = @body_line_height*5
-      atts[:stroke_width]       = 3
+      atts[:stroke_width]       = 5
       atts[:stroke_sides]       = [0,1,0,0]
       atts[:is_float]           = true
       atts[:text_fit_type]      = 'adjust_box_height'

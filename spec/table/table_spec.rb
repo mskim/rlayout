@@ -76,7 +76,7 @@ describe 'table style' do
     body_row = @tbl.graphics[1]
     puts body_row.fill.color
     body_row_last_cell = body_row.graphics.last
-    assert body_row_last_cell.stroke.sides == [1,0,0,0]
+    assert body_row_last_cell.stroke[:sides] == [1,0,0,0]
   end
       
 end

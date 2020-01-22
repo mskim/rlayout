@@ -36,7 +36,7 @@ module RLayout
       return if @floats.length > 0
       @stroke.color = 'red'
       @stroke.thickness = 1
-      @stroke.sides = [1,1,1,1,1,1]
+      @stroke[:sides] = [1,1,1,1,1,1]
     end
 
     def adjust_text_area_away_from(overlapping_float_rect)

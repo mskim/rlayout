@@ -244,20 +244,20 @@ module RLayout
       end
       case @kind
       when 'editorial', "사설"
-        @stroke.sides = [1,1,1,1]
+        @stroke[:sides] = [1,1,1,1]
         @stroke.thickness = 0.3
         h_options[:x]     += @left_inset
         h_options[:width] -= (@left_margin + @left_inset + @right_margin + @right_inset)
         @heading = NewsHeadingForEditorial.new(h_options)
       when 'opinion', "기고"
-        @stroke.sides = [0,1,0,1]
+        @stroke[:sides] = [0,1,0,1]
         @stroke.thickness = 0.3
         h_options[:x]     += @left_margin + @column_width + @gutter
         h_options[:y]     = 2
         h_options[:width] -= (h_options[:x] + @right_inset + @right_margin )
         @heading = NewsHeadingForOpinion.new(h_options)
       else
-        @stroke.sides = [0,0,0,1]
+        @stroke[:sides] = [0,0,0,1]
         @stroke.thickness = 0.3
         # @stroke.color = 'red'
         @heading = NewsHeadingForArticle.new(h_options)
