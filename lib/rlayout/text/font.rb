@@ -21,10 +21,13 @@ end
 module RLayout
 
   class RFont
-    attr_accessor :font_name, :size, :width_table, :font_info, :korean_fixed_width
+    attr_reader :font_name, :size, :width_table, :font_info, :korean_fixed_width
+    attr_reader :tracking, :scale
     def initialize(font_name, size, options={})
       @font_name    = font_name
       @size         = size
+      @tracking     = options[:tracking] if options[:tracking]
+      @scale        = options[:scale] if options[:scale]
       font_file = "/Users/Shared/SoftwareLab/font_width/#{font_name}.rb"
       if File.exist?(font_file)
         info_rb             = File.open(font_file, 'r'){|f| f.read}
@@ -46,7 +49,14 @@ module RLayout
     end
 
     def string_width(text_string)
-      text_string.width_with_font(@width_table, @size, korean_fixed_width: @korean_fixed_width)/1000*@size
+      width = text_string.width_with_font(@width_table, @size, korean_fixed_width: @korean_fixed_width)/1000*@size
+      if @scale
+        width = width*@scale/100
+      end
+      if @tracking
+        width += (text_string.length)*@tracking
+      end
+      width
     end
 
     def string_size(text_string)
@@ -59,11 +69,8 @@ module RLayout
       @width_table[" ".ord]*@size/1000
     end
 
-    def self.string_size(string, font_name, size, option={})
-      size = RFont.new(font_name, size).string_size(string)
-      if option[:tracking]
-        size[0] = size[0]*[100 + option[:tracking]]/100
-      end
+    def self.string_size(string, font_name, size, options={})
+      size = RFont.new(font_name, size, options).string_size(string)
       size
     end
   end

@@ -13,7 +13,7 @@ module RLayout
       @para_style       = options[:para_style]
       @char_half_width_cushion = 0
       @char_half_width_cushion  = @para_style[:font_size]/2 if @para_style[:font_size]
-      @width            = width_of_string(@string)
+      @width    = width_of_string(@string)
       if options[:text_line_spacing] && options[:text_line_spacing].class != String
         @height += options[:text_line_spacing]
       end
@@ -34,8 +34,12 @@ module RLayout
       else
         font_size = @para_style[:font_size] || 10
         font      = @para_style[:font] || 'shinmoon'
-        # TODO add tracking and horizontal scale
-        size      = RFont.string_size(string, font, font_size)
+        tracking  = @para_style[:tracking] || 0.0
+        scale     = @para_style[:scale] || 100
+        h = {}
+        h[:tracking] = @para_style[:tracking] if @para_style[:tracking] && @para_style[:tracking] != 0.0
+        h[:scale] = @para_style[:scale] if @para_style[:scale] && @para_style[:scale] != 100.0
+        size      = RFont.string_size(string, font, font_size, h)
         size[0]
       end
     end

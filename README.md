@@ -125,9 +125,12 @@ TODO List
 +++++++ path:/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/1/1
 ++++++++ it took:2.755834
 
-
+2020_1_23
 	- width_of_string with (font, font_size, scale, tracking), instead of just (font, font_size)
-	
+	- pdf_ruby
+		- implement draw_pdf
+	- fix image drawing
+	- add pdf_ruby to pillar_layout
 
 2020_1_20
 	- frame_sides, frame_color, frame_thickness
