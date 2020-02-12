@@ -213,6 +213,11 @@ class GraphicViewMac < NSView
           path.stroke
         end
       else
+        # 
+        half_thickness = graphic.stroke[:thickness]/2.0
+        if graphic.kind_of?(RLayout::NewsBox)
+          rect = NSInsetRect(rect, graphic.stroke[:thickness]/2.0, graphic.stroke[:thickness]/2.0)
+        end
         path = line_path_with_rect(rect)
         path.setLineWidth(graphic.stroke[:thickness])
         path.stroke

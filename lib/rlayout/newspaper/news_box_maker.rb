@@ -924,8 +924,6 @@ module RLayout
         if @news_box.frame_sides == '테두리'
           @news_box.stroke[:sides] = [1,1,1,1]
           @news_box.stroke[:thickness] = @news_box.frame_thickness
-          @news_box.left_margin = 0
-          @news_box.right_margin = 0
         end
       elsif @news_box.is_a?(NewsImageBox)
           @news_box.stroke[:sides] = [0,0,0,1]
@@ -948,7 +946,7 @@ module RLayout
         end
       end
       time_end = Time.now
-      puts "++++++++ it took:#{time_end - time_start}"
+      puts "++++++++ NewsBoxMaker took:#{time_end - time_start}"
       self
     end
 

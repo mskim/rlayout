@@ -122,8 +122,17 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
-+++++++ path:/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/1/1
-++++++++ it took:2.755834
+2020_2_11
+	- increse hyphenation room
+		- number with , do not break
+	- subject head room for boxed
+
+	- overlap article 
+		top 2 lines and top line
+	- body tracking *** ****
+	  기고 사진 욱여넣기 없이
+		
+	- fix h2 first_text_? detection 2020_2_11 23 3 article 
 
 2020_1_23
 	- width_of_string with (font, font_size, scale, tracking), instead of just (font, font_size)

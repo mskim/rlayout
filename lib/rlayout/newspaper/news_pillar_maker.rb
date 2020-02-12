@@ -17,7 +17,6 @@ module RLayout
       read_pillar_config
       adjust_box_path
       # build_up_pillar_pdf
-      puts "++++++++ it took:#{time_end - time_start}"
       self
     end
 

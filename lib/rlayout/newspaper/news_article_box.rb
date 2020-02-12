@@ -89,9 +89,6 @@ module RLayout
           end
         end
         @frame_color = @stroke[:color]
-
-        puts "options[:frame_thickness]:#{options[:frame_thickness]}"
-        puts "options[:frame_color]:#{options[:frame_color]}"
         @on_left_edge = false
         @on_right_edge = false
       end

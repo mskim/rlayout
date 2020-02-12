@@ -61,8 +61,9 @@ module RLayout
       if options[:frame_sides] == '테두리'
         @frame_sides    = '테두리'
         @top_margin     = @body_line_height
-        @on_left_edge   = false
-        @on_right_edge  = false
+        # @top_inset      = @body_line_height
+        # @on_left_edge   = false
+        # @on_right_edge  = false
       end
       
       if @on_left_edge && @on_right_edge
@@ -71,23 +72,39 @@ module RLayout
         @left_margin       = 0.0
         @column_width      = (@width - (@column_count - 1)*@gutter)/@column_count
         @starting_column_x = 0.0
+        if options[:frame_sides] == '테두리'
+          @starting_column_x  = @gutter
+          @column_width       = (@width - (@column_count + 1)*@gutter )/@column_count
+        end
       elsif @on_left_edge
         # touching left edge
         @column_width       = (@width - @column_count*@gutter)/@column_count
         @starting_column_x  = 0.0
         @left_margin        = 0.0
         @right_margin       = @gutter
+        if options[:frame_sides] == '테두리'
+          @starting_column_x  = @gutter
+          @column_width       = (@width - (@column_count + 2)*@gutter )/@column_count
+        end
       elsif @on_right_edge
         # touching right edge
         @column_width       = (@width - @column_count*@gutter)/@column_count
         @starting_column_x  = @gutter
         @left_margin        = @gutter
         @right_margin       = 0.0
+        if options[:frame_sides] == '테두리'
+          @starting_column_x  = @gutter*2
+          @column_width       = (@width - (@column_count + 2)*@gutter )/@column_count
+        end
       else
         @column_width       = (@width - (@column_count + 1)*@gutter)/@column_count
         @starting_column_x  = @gutter
         @left_margin        = @gutter
         @right_margin       = @gutter
+        if options[:frame_sides] == '테두리'
+          @starting_column_x  = @gutter*2
+          @column_width       = (@width - (@column_count + 3)*@gutter )/@column_count
+        end
       end
 
       @column_line_count    = @row_count*@lines_per_grid

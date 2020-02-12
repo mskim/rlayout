@@ -13,6 +13,7 @@ module RLayout
       options[:stroke_color]    = "CMYK=0,0,0,100"
       super
       @body_line_height = @parent.body_line_height
+
       set_heading_content(options)
       self
     end
@@ -77,7 +78,10 @@ module RLayout
         atts[:style_name] = 'subject_head_S'
       end
       #todo second half string
+      atts[:top_margin]         = @body_line_height if @parent.frame_sides == '테두리'
+      puts "+++++++ atts[:top_margin]:#{atts[:top_margin]}"
       atts[:text_string]        = options['subject_head']
+      puts "+++++++ atts[:text_string]:#{atts[:text_string]}"
       atts[:body_line_height]   = @body_line_height
       atts[:width]              = @width
       atts[:stroke_width]       = 0
@@ -133,7 +137,7 @@ module RLayout
       else
         atts[:text_fit_type]        = 'fit_text_to_box' #
       end
-
+      atts[:top_margin]           = @body_line_height if @parent.frame_sides == '테두리' #&& !@subject_head_object
       atts[:body_line_height]     = @body_line_height
       atts[:width]                = @width - 2
       atts[:layout_expand]        = [:width]
@@ -142,6 +146,8 @@ module RLayout
       atts[:single_line_title]    = true
       # atts.merge!(options)
       @title_object               = TitleText.new(atts)
+      @title_object.height        += @body_line_height if @parent.frame_sides == '테두리' #&& !@subject_head_object
+      @title_object
     end
 
     def top_subtitle(options={})

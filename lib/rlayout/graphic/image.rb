@@ -299,15 +299,6 @@ module RLayout
           @source_frame.origin.y = 0
           @source_frame.size.width = source_width
           @source_frame.size.height = @image_frame.size.height
-          puts "@image_frame.origin.x:#{@image_frame.origin.x}"
-          puts "@image_frame.origin.y:#{@image_frame.origin.y}"
-          puts "@image_frame.size.width:#{@image_frame.size.width}"
-          puts "@image_frame.size.height:#{@image_frame.size.height}"
-
-          puts "@source_frame.origin.x:#{@source_frame.origin.x}"
-          puts "@source_frame.origin.y:#{@source_frame.origin.y}"
-          puts "@source_frame.size.width:#{@source_frame.size.width}"
-          puts "@source_frame.size.height:#{@source_frame.size.height}"
         end
       else
 
