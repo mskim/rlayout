@@ -62,11 +62,18 @@ module RLayout
     FORBIDDEN_LAST_CHARS  = /[\(|{|\[|<|‘|“]/
     FORBIDDEN_LAST_CHARS_AT_END  = /[\(|{|\[|<|‘|“]$/
 
+    NUMBERS_RUN_RE     = /^\d+\,?\d+/
+    NUMBERS_RUN_WITH_PERCENT_P_RE     = /^\d+\,?\d+%p/
+    RANDD_RE           = /^R&D/
+
+
     # return false if break_position < MinimunLineRoom
     # split string into two and return splited_second_half_attsting
     def break_attstring_at(break_position, options={})
       # give a char_half_c""
       return false if break_position < MinimunLineRoom
+      return false if @string =~ NUMBERS_RUN_RE || @string =~ RANDD_RE || @string =~ NUMBERS_RUN_WITH_PERCENT_P_RE
+
       @char_half_width_cushion = options[:char_half_width_cushion] if options[:char_half_width_cushion]
       string_length = @string.length
       (1..string_length).to_a.each do |i|
