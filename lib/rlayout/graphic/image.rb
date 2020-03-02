@@ -54,6 +54,8 @@ module RLayout
   class Graphic
     attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :source_frame, :local_image, :image_caption, :image_crop_rect, :image_crop_grid
     attr_reader :zoom_level, :zoom_anchor, :zoom_factor
+    attr_accessor :clip_ready_image_rect
+
     def init_image(options)
 
       @image_record  = options.fetch(:image_record,nil)
@@ -217,7 +219,17 @@ module RLayout
         @source_frame.size.height = @crop_rect[3]
 
       else
-
+        # we should have @crop_rect 
+        # image_dimension[0]/@crop_rect[2] = @clip_width/@width
+        @clip_width  = image_dimension[0]/@crop_rect[2].to_f*@width
+        # image_dimension[1]/@crop_rect[3] = @clip_height/@height
+        @clip_height = image_dimension[1]/@crop_rect[3].to_f*@height
+        # @clip_x/@crop_rect[0] = @clip_width/@width
+        x_ratio = @clip_width/@width
+        @clip_x = @crop_rect[0]/x_ratio
+        y_ratio = @clip_height/@height
+        @clip_y = @crop_rect[1]/y_ratio
+        @clip_rect   = [@clip_x, @clip_y, @clip_width, @clip_height]
       end
     end
 
@@ -301,7 +313,11 @@ module RLayout
           @source_frame.size.height = @image_frame.size.height
         end
       else
-
+        # w/dim_w = h/dim_h
+        # w = h/dim_h*w
+        clip_width = @height/@image_dimension[1].to_f*@image_dimension[0]
+        @clip_rect_delta_x = (@width - clip_width)/2.0
+        @clip_rect_delta_y = 0
       end
     end
 
@@ -316,12 +332,6 @@ module RLayout
           @source_frame = NSZeroRect
           return
         end
-        # if @parent.class == RLayout::NewsImage
-        #   puts "++++++++ In fit_horizontal"
-        #   puts "++++++++ In @zoom_level:#{@zoom_level}"
-        #   puts "++++++++ In @zoom_factor:#{@zoom_factor}"
-        #   puts "++++++++ In @zoom_anchor:#{@zoom_anchor}"
-        # end
         # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
         # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
         if @zoom_level !='0%' || @zoom_anchor !=5
@@ -378,7 +388,8 @@ module RLayout
           @source_frame.size.width = @image_frame.size.width
         end
       else
-
+        @clip_rect_delta_x = 0
+        @clip_rect_delta_y = (@height/@image_dimension[1]/@image_dimension[0] - @height)/2.0
       end
     end
 
@@ -387,7 +398,7 @@ module RLayout
       if RUBY_ENGINE == 'rubymotion'
         @image_frame      = NSZeroRect
         @image_frame.size = @image_object.size
-        grapaphic_rect_width_to_height_ratio  = @width/@height
+        grapaphic_rect_width_to_height_ratio  = @width/ @height
         image_frame_width_to_height_ratio     = @image_frame.size.width/@image_frame.size.height
         if @crop_rect
           crop_rect_width_to_height_ratio       = @crop_rect[2]/@crop_rect[3]
@@ -404,14 +415,21 @@ module RLayout
           'fit_vertical'
         end
       else
-        #TODO for ruby mode
+        grapaphic_rect_width_to_height_ratio  = @width / @height.to_f
+        image_frame_width_to_height_ratio     = @image_dimension[0] / @image_dimension[1].to_f
+        if grapaphic_rect_width_to_height_ratio > image_frame_width_to_height_ratio
+          return 'fit_horizontal'
+        else
+          return 'fit_vertical'
+        end
       end
     end
 
     def fit_keep_ratio
-      if fit_direction == 'fit_horizontal'
+      sugested_direction = fit_direction
+      if sugested_direction == 'fit_horizontal'
         fit_horizontal
-      elsif fit_direction == 'fit_vertical'
+      elsif sugested_direction == 'fit_vertical'
         fit_vertical
       end
     end

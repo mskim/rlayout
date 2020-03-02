@@ -122,6 +122,23 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2020_3_2
+	- fix ruby_pdf fit_type 
+		- fit_horizontal
+		- fit_vertical
+		- fit_crop_rect
+
+	- clear crop_rect
+
+
+2020_2_28
+	- fix image drawing fit_type, clipping
+
+2020_2_23
+	- TextToken should have hyphenation info for English word(for justified alignment)
+		- dictionary for each language is needed
+
+
 2020_2_11
 	- increse hyphenation room
 		- number with , do not break

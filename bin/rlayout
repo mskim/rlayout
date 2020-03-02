@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'rlayout'
+puts "Hello#{ARGV[0]}"

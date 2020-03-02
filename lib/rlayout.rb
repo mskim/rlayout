@@ -27,6 +27,7 @@ else
   require 'json'
   require 'mini_magick'
   require 'hexapdf'
+  # require 'text-hyphen', '~> 1.4'
   # require 'prawn'
   # require 'xml-simple'
 

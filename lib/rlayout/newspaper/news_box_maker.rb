@@ -829,12 +829,12 @@ module RLayout
       @adjustable_height  = true if @tag.include?('_')
       if RUBY_ENGINE == 'ruby'
         # require 'hexapdf'
-        if @pdf_tool == 'prawn'
-          # do it with prawn
-        else
-          @pdf_doc = HexaPDF::Document.new
-          load_fonts(@pdf_doc)
-        end
+        # if @pdf_tool == 'prawn'
+        #   # do it with prawn
+        # else
+        @pdf_doc = HexaPDF::Document.new
+        load_fonts(@pdf_doc)
+        # end
       end
 
       if options[:image_path]
