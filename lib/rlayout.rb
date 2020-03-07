@@ -39,6 +39,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/base/pillar_image'
   require File.dirname(__FILE__) + '/rlayout/base/page'
   require File.dirname(__FILE__) + '/rlayout/base/document'
+  require File.dirname(__FILE__) + '/rlayout/base/rjob'
 
   require File.dirname(__FILE__) + "/rlayout/graphic/fill"
   require File.dirname(__FILE__) + "/rlayout/graphic/graphic_struct"

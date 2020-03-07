@@ -129,15 +129,12 @@ TODO List
 		- fit_crop_rect
 
 	- clear crop_rect
-
-
-2020_2_28
-	- fix image drawing fit_type, clipping
-
+	- fix subtitle not showing in page 1 article 1
+	- add English hyphenation 
+	
 2020_2_23
 	- TextToken should have hyphenation info for English word(for justified alignment)
 		- dictionary for each language is needed
-
 
 2020_2_11
 	- increse hyphenation room
