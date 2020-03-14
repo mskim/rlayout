@@ -28,14 +28,17 @@ module RLayout
     attr_reader :stroke_x, :stroke_y, :stroke_width
     attr_reader :svg_content, :adjustable_height , :empty_first_column, :profile_image_position
     attr_reader :frame_thickness, :frame_color
+    attr_reader :adjusted_line_count
 
     def initialize(options={}, &block)
       super
-      @overflow           = false
-      @page_number        = options[:page_number]
-      @has_profile_image  = options[:has_profile_image]
-      @adjustable_height  = options[:adjustable_height] || false
-      @empty_first_column  = options[:empty_first_column] || false
+      @overflow             = false
+      @page_number          = options[:page_number]
+      @has_profile_image    = options[:has_profile_image]
+      @adjustable_height    = options[:adjustable_height] || false
+      @changing_line_count  = 0
+      @adjusted_line_count  = 0
+      @empty_first_column   = options[:empty_first_column] || false
       @profile_image_position = options[:profile_image_position] || nil?
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
@@ -195,6 +198,8 @@ module RLayout
         @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
       else
+        puts "+++++++++ @top_position:#{@top_position}"
+        puts "+++++++++ @column_line_count:#{@column_line_count}"
         @column_count.times do |i|
           if @empty_first_column && i == 0
             g= RColumn.new(:parent=>nil, empty_lines: true, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
@@ -289,7 +294,7 @@ module RLayout
       available_lines
     end
 
-    def save_article_info
+    def article_info
       article_info                      = {}
       article_info[:column]             = @column_count
       article_info[:row]                = @row_count
@@ -299,7 +304,6 @@ module RLayout
       article_info[:extended_line_count]= @extended_line_count if @extended_line_count
       article_info[:pushed_line_count]  = @pushed_line_count if @pushed_line_count
       article_info[:quote_box_size]     = @quote_box_size
-
       if @underflow
         # if we have author image at the bottom from layout, in 22 page editorial 
         # @empty_lines -= 6 if @news_column_image
@@ -314,6 +318,10 @@ module RLayout
           article_info[:overflow_text]          = overflow_text
         end 
       end
+      article_info
+    end
+
+    def save_article_info
       info_path = "#{$ProjectPath}/article_info.yml"
       File.open(info_path, 'w'){|f| f.write article_info.to_yaml}
     end
@@ -412,26 +420,26 @@ module RLayout
         line_diff_count    = 0
         return
       end
-      changing_line_count = line_diff_count/@column_count
+      @changing_line_count = line_diff_count/@column_count
       if line_diff_count > 0
-        changing_line_count += 1 if (line_diff_count % @column_count) > 0
+        @changing_line_count += 1 if (line_diff_count % @column_count) > 0
       elsif line_diff_count < 0
-        changing_line_count += 1 if (line_diff_count % @column_count) > 0
+        @changing_line_count += 1 if (line_diff_count % @column_count) > 0
       end
       last_column = @graphics.last
-      if @height/@body_line_height  + changing_line_count < 7 # @grid_line_count #  7
-        changing_line_count = 0
+      if @height/@body_line_height  + @changing_line_count < 7 # @grid_line_count #  7
+        @changing_line_count = 0
         @height = 7*@body_line_height
         @columns.each do |column|
           column.set_lines_to_min
         end
       end
       @graphics.each do |column|
-        column.adjust_height(changing_line_count)
+        column.adjust_height(@changing_line_count)
         # column.ready_unoccupied_lines_for_relayout
       end
-      # puts "changing_line_count:#{changing_line_count}"
-      @height += changing_line_count*@body_line_height
+      @adjusted_line_count = @changing_line_count
+      @height += @changing_line_count*@body_line_height
     end
     
     def second_column_x
@@ -702,8 +710,8 @@ module RLayout
       if @floats.last.class == NewsImage && floats.last.image_kind =~/^인물/
         personal_image = floats.pop
       end
-      TitleText.new(options)
       @floats << personal_image if personal_image
+      @subtitle_box  = TitleText.new(options)
     end
 
     def float_quote(options={})

@@ -6,28 +6,47 @@ module RLayout
     def initialize(options={})
       super
       @math_string = options[:math_string]
-      create_tokens
+      create_math_tokens
       self
     end
     
-    def create_tokens(string)
+    def create_math_tokens(string)
       
     end
   end
   
   # Math line has numbering and align to = 
-  class MathLine < LineFragment
-    
+  class MathLine < Container
+    attr_reader :eqaul_sign_position, :numbered
+    def initialize(options={})
+      @parent = options[:parent]
+
+      self
+    end
     
   end
-    
+  
+  # math_text is used as body text of math string
+  # bosic math text sting
+  # :hide_text is used for quiz
+  #  where text should be shoun as a empty box
+  def math_text < Graphic
+    attr_reader :font :font_size, :font_color, :tracking, :scale
+    attr_reader :string, :atts, :stroke, :has_text, :token_type
+    attr_reader :height_in_units, :hide_text
+
+    def initialize(options={})
+
+
+    end
+  end
 
   # style: nomal, monospace, bold, italic, bold-italic
   # font_category: English, division_capital_letter, division_lower_letter, 
   #                super_cap, sub_low, math_symbols, symbol, lines, 
   #                
-  class MathToken 
-    attr_accessor :x, :y, :width, :height
+  class MathToken < Container
+    attr_accessor :height_in_units
     attr_accessor :math_hash, :font_category, :font, :size, :style
     attr_accessor :math_arguments
     def initialize(options={})
@@ -46,6 +65,7 @@ module RLayout
     
     def contains_capital_letter(string)
       string.each_char do |c|
+        # TODO use regex
         if c >='A' && c <= 'Z'
           return true 
         end
@@ -65,7 +85,7 @@ module RLayout
       when 'lim'
         token = Limit.new(options)
       when 'int'
-        token = Integral.new(options)
+        token = Int.new(options)
       when 'sum'
         token = Sum.new(options)
       when 'sup'
@@ -89,7 +109,7 @@ module RLayout
       when :lim
         token = Limit.new(parent, math_hash)
       when :int
-        token = Integral.new(parent, math_hash)
+        token = Int.new(parent, math_hash)
       when :sum
         token = Sum.new(parent, math_hash)
       when :sup
@@ -97,6 +117,7 @@ module RLayout
       when :sub
         token = Sub.new(parent, math_hash)
       else
+
       end
       token 
     end
@@ -159,24 +180,51 @@ module RLayout
   
   class Sub < MathToken
     
+  end
+  
+  class VertialLeftKind < MathToken
+    attr_accsor :vertical, :from, :to :limit, :body
+
+    def initialize(optopms = {})
+      super
+      @stem       = options[:stem]
+      @from       = options[:from]
+      @to         = options[:to]
+      self
+    end
+
+    def draw_pdf(canvas)
+
+    end
     
   end
-  
-  class Int < MathToken
 
+  # vertival stem for Int, Limit, Sum
+
+  class Int < VertialLeftKind
+    
+    def initialize(optopms = {})
+      super
+
+      self
+    end
   end
 
-  class Limit < MathToken
+  class Limit < VertialLeftKind
+    def initialize(optopms = {})
+      super
 
-
+      self
+    end
   end
 
-  class Sum < MathToken
+  class Sum < VertialLeftKind
+    def initialize(optopms = {})
+      super
 
+      self
+    end
   end
-  
-
-
 end
 
 PLAIN_FONTS       = 0
@@ -194,7 +242,6 @@ MATH_SYMBOLS      = 6
 ARROWS_N_LINES    = 7
 
 # Using 8 Fonts Tables to construct Math equations.
-# We have to use comtainers for complex ones.
 FONT_MAP = [
   ["STkEng", "STkboNA", "STkboNB", "STksaA","STkhaB","STkyak","STksou","STksunm"],
   ["STkEng-Bold", "STkboNA-Bold", "STkboNB-Bold", "STksaA-Bold","STkhaB-Bold","STkyak-Bold","STksou-Bold","STksunm-Bold"],

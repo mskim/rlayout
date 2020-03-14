@@ -5,16 +5,10 @@ module RLayout
   # 2. using only single font
     def save_pdf_with_ruby(pdf_doc, output_path, options={})
       puts "+++++++++++++ pdf using ruby+++++++++++++++"
-      # @graphics.each do |column|
-      #   column.save_pdf_text(canvas)
-      # end
       start_time = Time.now
       @pdf_doc = HexaPDF::Document.new
       page = @pdf_doc.pages.add([0, 0, @width, @height])
       canvas = page.canvas
-      # page      = @pdf_doc.pages.add([@x, @y, @width, @height])
-      # canvas    = page.canvas
-      # canvas = @pdf_doc.pages.add.canvas
       font_name     = 'shinmoon'
       size          = 9.8
       font_foleder  = "/Users/Shared/SoftwareLab/font_width"
@@ -116,13 +110,21 @@ module RLayout
       @flipped = flipped_origin
       start_x = flipped[0]
       start_y = flipped[1]
-      # start_y = y
+      if @fill.color == 'red'
+        canvas.save_graphics_state do
+          # canvas.fill_color('ff0000').rectangle(start_x, start_y - @height, @width, @height).fill
+          # use CMYK
+          canvas.fill_color(0, 255, 254, 0).rectangle(start_x, start_y - @height, @width, @height).fill
+        end
+      end
       @graphics.each do |token|
         if @font_size.nil?
           @font_size = 9.4
         end
+        # if @fill ???
         canvas.text(token.string, at:[start_x + token.x, start_y - @font_size])
       end
+
     end
   end
 end

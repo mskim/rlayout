@@ -756,14 +756,14 @@ module RLayout
     attr_reader :article_info_path
     attr_accessor :custom_style, :publication_name, :time_stamp
     attr_accessor :pdf_doc, :story_md, :layout_rb
-    attr_accessor :draft_mode, :svg_content, :pdf_data, :pdf_tool
+    attr_accessor :pdf_data, :pdf_tool
+    attr_reader :adjusted_line_count
 
     def initialize(options={})
       time_start    = Time.now
       @time_stamp   = options[:time_stamp]
       @story_md     = options[:story_md]
       @layout_rb    = options[:layout_rb]
-      @draft_mode   = options[:draft_mode]
       @pdf_tool     = options[:pdf_tool]
       @article_path = options[:article_path]
       @story_path   = options[:story_path]
@@ -828,13 +828,8 @@ module RLayout
       @adjustable_height  = false
       @adjustable_height  = true if @tag.include?('_')
       if RUBY_ENGINE == 'ruby'
-        # require 'hexapdf'
-        # if @pdf_tool == 'prawn'
-        #   # do it with prawn
-        # else
         @pdf_doc = HexaPDF::Document.new
         load_fonts(@pdf_doc)
-        # end
       end
 
       if options[:image_path]
@@ -938,15 +933,16 @@ module RLayout
           @news_box.save_pdf(@output_path, :jpg=>true)
         end
         if @time_stamp
-          stamped_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
-          output_jpg_path = @output_path.sub(/pdf$/, "jpg")
-          stamped_jpg_path = stamped_path.sub(/pdf$/, "jpg")
+          stamped_path      = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
+          output_jpg_path   = @output_path.sub(/pdf$/, "jpg")
+          stamped_jpg_path  = stamped_path.sub(/pdf$/, "jpg")
           system("cp #{@output_path} #{stamped_path}")
           system("cp #{output_jpg_path} #{stamped_jpg_path}")
         end
       end
       time_end = Time.now
       puts "++++++++ NewsBoxMaker took:#{time_end - time_start}"
+      puts "+++++ modified 3-12"
       self
     end
 
@@ -1001,12 +997,12 @@ module RLayout
       @news_box.layout_floats!
       @news_box.adjust_overlapping_columns
       @news_box.layout_items(@paragraphs.dup)
+      puts "******** @news_box.adjustable_height:#{@news_box.adjustable_height}"
       if  @news_box.adjustable_height
-        # puts "total_para_lines_count:#{total_para_lines_count}"
-        # puts "body_text_lines_count:#{body_text_lines_count}"
-        # puts "+++++++++ @news_box.adjustable_height:#{@news_box.adjustable_height}"
-        line_content = @news_box.collect_column_content
+        puts "+++++++++ processing @news_box.adjustable_height"
+        line_content          = @news_box.collect_column_content
         @news_box.adjust_height
+        @adjusted_line_count  = @news_box.adjusted_line_count
         @news_box.relayout_line_content(line_content)
       end
     end

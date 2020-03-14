@@ -109,6 +109,8 @@ module RLayout
 
       @column_line_count    = @row_count*@lines_per_grid
       @column_line_count   -= @page_heading_margin_in_lines if @top_position
+      # TODO
+      # @column_line_count   -= 7 if @top_position && @is_front_page
       @column_line_count   += @extended_line_count
       @column_line_count   -= @pushed_line_count
       if @column_line_count < 7
