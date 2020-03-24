@@ -751,12 +751,11 @@ ARTICLE_BOTTOM_SPACES_IN_LINE = 2
 module RLayout
 
   class NewsBoxMaker
-    attr_accessor :article_path, :template, :story_path, :image_path
-    attr_accessor :news_box, :output_path, :project_path
+    attr_reader :article_path, :template, :story_path, :image_path
+    attr_reader :news_box, :output_path, :project_path
     attr_reader :article_info_path
-    attr_accessor :custom_style, :publication_name, :time_stamp
-    attr_accessor :pdf_doc, :story_md, :layout_rb
-    attr_accessor :pdf_data, :pdf_tool
+    attr_reader :custom_style, :publication_name, :time_stamp
+    attr_reader :pdf_doc, :pdf_data, :story_md, :layout_rb
     attr_reader :adjusted_line_count
 
     def initialize(options={})
@@ -764,7 +763,6 @@ module RLayout
       @time_stamp   = options[:time_stamp]
       @story_md     = options[:story_md]
       @layout_rb    = options[:layout_rb]
-      @pdf_tool     = options[:pdf_tool]
       @article_path = options[:article_path]
       @story_path   = options[:story_path]
       if @story_md && @article_path
