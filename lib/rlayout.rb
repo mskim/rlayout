@@ -25,7 +25,8 @@ else
   require 'erb'
   require 'base64'
   require 'json'
-  require 'mini_magick'
+  # require 'mini_magick'
+  require "image_processing/vips"
   require 'hexapdf'
   # require 'text-hyphen', '~> 1.4'
   # require 'prawn'

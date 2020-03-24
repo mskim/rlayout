@@ -827,10 +827,6 @@ module RLayout
       @tag                = @article_path.split("/").last
       @adjustable_height  = false
       @adjustable_height  = true if @tag.include?('_')
-      if RUBY_ENGINE == 'ruby'
-        @pdf_doc = HexaPDF::Document.new
-        load_fonts(@pdf_doc)
-      end
 
       if options[:image_path]
         @image_path = options[:image_path]
@@ -928,7 +924,7 @@ module RLayout
 
       if @news_box
         if RUBY_ENGINE == 'ruby'
-          @news_box.save_pdf_with_ruby(@pdf_doc, @output_path, :jpg=>true)
+          @news_box.save_pdf_with_ruby(@output_path, :jpg=>true)
         else
           @news_box.save_pdf(@output_path, :jpg=>true)
         end
@@ -942,16 +938,7 @@ module RLayout
       end
       time_end = Time.now
       puts "++++++++ NewsBoxMaker took:#{time_end - time_start}"
-      puts "+++++ modified 3-12"
       self
-    end
-
-    # read fonts from disk
-    def load_fonts(pdf_doc)
-      font_foleder = "/Users/Shared/SoftwareLab/font_width"
-      Dir.glob("#{font_foleder}/*.ttf").each do |font_file|
-        pdf_doc.fonts.add(font_file)
-      end
     end
 
     def read_story
@@ -997,9 +984,7 @@ module RLayout
       @news_box.layout_floats!
       @news_box.adjust_overlapping_columns
       @news_box.layout_items(@paragraphs.dup)
-      puts "******** @news_box.adjustable_height:#{@news_box.adjustable_height}"
       if  @news_box.adjustable_height
-        puts "+++++++++ processing @news_box.adjustable_height"
         line_content          = @news_box.collect_column_content
         @news_box.adjust_height
         @adjusted_line_count  = @news_box.adjusted_line_count

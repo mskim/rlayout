@@ -105,8 +105,9 @@ module RLayout
         end
         apply_fit_type
       else
-        @image_object     = MiniMagick::Image.open(@image_path)
-        @image_dimension  = @image_object.dimensions
+        # @image_object   = MiniMagick::Image.open(@image_path)
+        @image_object     = Vips::Image.new_from_file(@image_path)
+        @image_dimension  = [@image_object.width, @image_object.height]
         if @image_object && options[:adjust_height_to_keep_ratio]
           @height *= image_object_height_to_width_ratio
         end

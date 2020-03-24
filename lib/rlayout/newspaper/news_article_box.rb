@@ -198,8 +198,6 @@ module RLayout
         @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
       else
-        puts "+++++++++ @top_position:#{@top_position}"
-        puts "+++++++++ @column_line_count:#{@column_line_count}"
         @column_count.times do |i|
           if @empty_first_column && i == 0
             g= RColumn.new(:parent=>nil, empty_lines: true, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
