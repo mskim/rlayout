@@ -55,19 +55,29 @@ module RLayout
     end
 
     def collect_line_content
+      line_info = {}
       tokens = []
       while graphic = @graphics.shift do
         tokens << graphic
       end 
       @content_cleared = true  
       tokens  
+      line_info[:tokens] = tokens
+      line_info[:para_style] = @para_style if @para_style
+      line_info[:style_name] = @style_name if @style_name
+      line_info
     end
 
     def place_line_content_from(line_data)
-      if line_data.class == RLayout::RLineFragment
-        line_data = line_data.graphics
+      tokens = []
+      if line_data.class == Hash
+        tokens = line_data[:tokens]
+        @para_style = line_data[:para_style] if line_data[:para_style]
+        @style_name = line_data[:style_name] if line_data[:style_name]
+      elsif line_data.class == Array
+        tokens = line_data
       end
-      while token = line_data.shift do
+      while token = tokens.shift do
         token.parent = self
         @graphics << token
       end

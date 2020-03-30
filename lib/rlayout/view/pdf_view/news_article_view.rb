@@ -13,8 +13,8 @@ module RLayout
       canvas        = page.canvas      
       style_service.set_canvas_text_style(canvas, 'body')
 
-      @graphics.each do |column|
-        column.graphics.each do |line|
+      @graphics.each_with_index do |column, i|
+        column.graphics.each_with_index do |line, j|
           line.draw_pdf(canvas) if line.graphics.length > 0
         end
       end
@@ -60,7 +60,7 @@ module RLayout
           canvas.fill_color(0, 255, 254, 0).rectangle(@start_x, @start_y - @height, @width, @height).fill
         end
       end
-      # TODO can we use here style_name???
+      # TODO can we use style_name here???
       if  @para_style && @para_style[:korean_name] == "본문명조"
 
         # TODO redo mixed token strategy, 

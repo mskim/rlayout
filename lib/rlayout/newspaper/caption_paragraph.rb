@@ -15,11 +15,7 @@ module RLayout
     end
 
     def create_tokens
-      @first_line_style_name == 'caption'
-      if @caption_title
-        make_caption_title_tokens 
-        @first_line_style_name == 'caption_title'
-      end
+      make_caption_title_tokens 
       make_caption_tokens       if @caption
       make_source_tokens        if @source
     end
@@ -100,6 +96,7 @@ module RLayout
     # after creating caption_column and CaptionParagraph
     def layout_lines(caption_column)
       @current_line               = caption_column.graphics.first
+      @current_line.style_name    = 'caption'
       @current_line.space_width   = @space_width
       @current_line.text_alignment = 'justified'
       @current_line.room          = @current_line.width
@@ -123,8 +120,9 @@ module RLayout
         else  # case 3
           # entire token was rejected,
           @current_line.align_tokens
-          @current_line = caption_column.add_new_line
-          @current_line.text_alignment = 'justified'
+          @current_line                 = caption_column.add_new_line
+          @current_line.style_name      = 'caption'
+          @current_line.text_alignment  = 'justified'
           @current_line.place_token(token)
           token = tokens.shift
         end

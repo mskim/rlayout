@@ -983,9 +983,15 @@ module RLayout
       @news_box.adjust_overlapping_columns
       @news_box.layout_items(@paragraphs.dup)
       if  @news_box.adjustable_height
+        # if adjustable_height
+        # collect all layed out lines from @news_box.collect_column_content
         line_content          = @news_box.collect_column_content
+        # TODO
+        # adjust height of news_box to fit content
         @news_box.adjust_height
+        # save the @adjusted_line_count to return to caller
         @adjusted_line_count  = @news_box.adjusted_line_count
+        # relayout news_box with collected content
         @news_box.relayout_line_content(line_content)
       end
     end

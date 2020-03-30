@@ -393,9 +393,11 @@ module RLayout
         lines = column.collect_line_content
         line_conent += lines
       end
-        if @overflow
-        overlfow_lines = @overflow_column.text_lines
-        line_conent += overlfow_lines
+      if @overflow
+        #TODO convert overflow line as line_data
+        # overlfow_lines = @overflow_column.text_lines
+        # overlfow_lines = @overflow_column.collect_line_content
+        line_conent += @overflow_column.collect_line_content
       end
       line_conent
     end

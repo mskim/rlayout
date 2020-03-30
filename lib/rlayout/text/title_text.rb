@@ -22,7 +22,6 @@ module RLayout
       super
       @body_line_height       = options[:body_line_height] || 14
       @style_name             = options[:style_name]
-      binding.pry unless @style_name
       @token_union_style      = options[:token_union_style]
       @tokens                 = []
       @room                   = @width
