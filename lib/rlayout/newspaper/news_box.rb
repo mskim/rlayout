@@ -187,5 +187,22 @@ module RLayout
       end
       self
     end
+
+    def save_pdf_with_ruby(output_path, options={})
+      start_time    = Time.now
+      @pdf_doc      = HexaPDF::Document.new
+      page          = @pdf_doc.pages.add([0, 0, @width, @height])
+      canvas = page.canvas
+      @graphics.each do |image|
+        image.draw_image(canvas) 
+      end
+
+      @pdf_doc.write(output_path)
+      # if options[:jpg]
+      #   convert_pdf2jpg(output_path)
+      # end
+      ending_time = Time.now
+      puts "It took:#{ending_time - start_time}"
+    end
   end
 end

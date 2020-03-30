@@ -27,7 +27,7 @@ module RLayout
       else
         current_y   = @current_line.y_max
       end
-      options       = {parent:self, x: current_x, y: current_y , width: @width - 1, height: @caption_line_height, space_width: @space_width}
+      options       = {parent:self, x: current_x, y: current_y , width: @width - 1, height: @caption_line_height, space_width: @space_width, style_name:'caption'}
       @current_line = RLineFragment.new(options)        # @graphics << line
       @line_count   += 1
       @height       = @current_line.y_max

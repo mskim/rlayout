@@ -7,10 +7,9 @@ module RLayout
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title, :token_union_style, :adjust_size
-
     def initialize(options={})
       @string                 = options.delete(:text_string)
-      # parse for adjust_size pattern 
+      # parse for adjust_size pattern, which is at the end of string with {}
       # if @string =~/\{\s*(-?\d)\s?\}\s?$/
       if @string =~/\{\s*(-*\+*\d)\s*\}\s*$/
         @adjust_size = $1.to_i
@@ -23,6 +22,7 @@ module RLayout
       super
       @body_line_height       = options[:body_line_height] || 14
       @style_name             = options[:style_name]
+      binding.pry unless @style_name
       @token_union_style      = options[:token_union_style]
       @tokens                 = []
       @room                   = @width
@@ -69,7 +69,7 @@ module RLayout
       @current_line_y         = @top_margin + @top_inset
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin)
+      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name)
       @current_line_y         +=@current_line.height
       create_tokens
       layout_tokens
@@ -96,6 +96,8 @@ module RLayout
     end
 
     def create_tokens_from_string(string)
+      @current_style_service = RLayout::StyleService.shared_style_service
+      @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
       @tokens += string.split(" ").collect do |token_string|
         options = {}
         options[:string]      = token_string
@@ -103,6 +105,11 @@ module RLayout
         options[:y]           = 0
         options[:adjust_size] = @adjust_size if @adjust_size
         options[:height]      = para_style[:font_size]
+        if RUBY_ENGINE != 'rubymotion'
+          glyphs               = @font_wrapper.decode_utf8(token_string)
+          width= glyphs.map { |g| @style_object.scaled_item_width(g)}.reduce(:+)
+          options[:width]      = width  
+        end
         RLayout::RTextToken.new(options)
       end
       #code
@@ -128,7 +135,7 @@ module RLayout
     end
 
     def add_new_line
-      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin)
+      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name)
       @current_line.next_line = new_line if @current_line
       @current_line           = new_line
       @current_line_y         += @current_line.height

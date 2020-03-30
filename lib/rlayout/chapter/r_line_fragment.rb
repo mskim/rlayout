@@ -18,6 +18,7 @@ module RLayout
     attr_accessor :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent
     attr_accessor :token_union_rect, :token_union_style
     attr_accessor :font, :font_size, :para_style, :content_cleared
+    attr_accessor :style_name, :has_mixed_token
 
     def	initialize(options={})
       options[:layout_direction]  = 'horizontal'
@@ -39,6 +40,7 @@ module RLayout
         @font_size        = @para_style[:font_size]
         @text_alignment   = @para_style[:alignment]
       end
+      @style_name       = options[:style_name]
       @text_alignment   = options[:text_alignment] if options[:text_alignment]
       @debug            = options[:debug]
       @graphics         = options[:tokens] || []
@@ -212,6 +214,7 @@ module RLayout
     # set line type, and paragraph information for line
     def set_paragraph_info(paragraph, line_type)
       @para_style       = paragraph.para_style
+      @style_name       = paragraph.style_name
       @font             = @para_style[:font]
       @font_size        = @para_style[:font_size]
       @space_width      = @para_style[:space_width] || 3.0

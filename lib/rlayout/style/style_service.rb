@@ -894,7 +894,7 @@ LIST_KIND     = %w[ordered_list ordered_list_item unordered_list unordered_list_
 module RLayout
   class StyleService
     attr_accessor :current_style, :default_style, :chapter_style, :news_style, :magazine_style, :quiz_item_style
-    attr_accessor :custom_style, :pdf_doc, :font_wrappers
+    attr_accessor :custom_style, :pdf_doc, :font_wrappers, :canvas
     def initialize
       @custom_style   = nil
       @current_style  = DEFAULT_STYLES
@@ -917,6 +917,11 @@ module RLayout
       if File.exist?(@quiz_style_path)
         @quiz_item_style = eval(File.open(@quiz_style_path,'r'){|f| f.read})
       end
+
+      # if RUBY_ENGINE != 'rubymotion'
+      #   @pdf_doc ||= HexaPDF::Document.new
+      #   load_fonts(@pdf_doc)
+      # end
       self
     end
 
@@ -946,6 +951,45 @@ module RLayout
         space_width*(font_size + adjust_size)/font_size
       end
       space_width
+    end
+
+
+    ########### ruby_pdf ##############
+
+    def set_canvas_text_style(canvas, style_name)
+      style         = @current_style[style_name]
+      style         = Hash[style.map{ |k, v| [k.to_sym, v] }]
+      font_name     = style[:font]
+      #TODO
+      # find font_wapper with font_name
+      # font_wapper  = @pdf_doc.fonts.loaded_fonts_cache[style_name]
+      # unless font_wapper
+        font_folder  = "/Users/Shared/SoftwareLab/font_width"
+        font_file     = font_folder + "/#{font_name}.ttf"
+        font_wapper   = @pdf_doc.fonts.add(font_file)
+      # end
+      canvas.font(font_wapper, size: style[:font_size])
+      canvas.character_spacing(style[:tracking])  if style[:tracking] && style[:tracking]!= 0
+      canvas.horizontal_scaling(style[:scale])      if style[:scale] && style[:scale] != 100
+    end
+
+    def style_object(style_name)
+      style = @current_style[style_name]
+      style = @current_style['body'] unless style
+      style = Hash[style.map{ |k, v| [k.to_sym, v] }]
+      @pdf_doc      ||= HexaPDF::Document.new
+      font_folder   = "/Users/Shared/SoftwareLab/font_width"
+      font_name     = style[:font]
+      font_file     = font_folder + "/#{font_name}.ttf"
+      font_wrapper = @pdf_doc.fonts.add(font_file)
+      h = {}
+      h[:font]                = font_wrapper
+      h[:font_size]           = style[:font_size]
+      h[:character_spacing]   = style[:tracking]        if style[:tracking] && style[:tracking] != 0
+      h[:horizontal_scaling]  = style[:scale]           if style[:scale] && style[:scale] != 100
+      h
+      style_object = HexaPDF::Layout::Style.new(h)
+      return style_object, font_wrapper
     end
 
     def width_of_string(style_name, string, adjust_size)

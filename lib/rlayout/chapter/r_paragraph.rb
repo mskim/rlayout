@@ -35,16 +35,17 @@
 module RLayout
   #TODO
   # tab stop
-  EMPASIS_STRONG = /(\*\*.*?\*\*)/
-  EMPASIS_DIAMOND = /(\*.*?\*)/
+  EMPASIS_STRONG = /(\*\*.*?\*\*)/ # **some strong string**
+  EMPASIS_DIAMOND = /(\*.*?\*)/    # *empais diamond string*
 
   class RParagraph
     attr_reader :markup, :move_up_if_room
-    attr_accessor :tokens, :token_heights_are_equal
-    attr_accessor :para_string, :style_name, :para_style, :space_width
-    attr_accessor :article_type
-    attr_accessor :body_line_height, :line_count, :token_union_style
-    attr_accessor :lines, :line_width
+    attr_reader :para_string, :style_name, :para_style, :space_width
+    attr_reader :article_type
+    attr_reader :body_line_height, :line_count, :token_union_style
+    attr_reader :line_width,  :token_heights_are_equal
+    attr_accessor :tokens, :lines, :pdf_doc
+
     def initialize(options={})
       @tokens = []
       @markup         = options.fetch(:markup, 'p')
@@ -98,12 +99,19 @@ module RLayout
       # parse for tab first
       return unless para_string
       tokens_strings = para_string.split(" ")
+      @current_style_service = RLayout::StyleService.shared_style_service
+      @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
       tokens_strings.each do |token_string|
         next unless token_string
         token_options = {}
-        token_options[:string] = token_string
-        token_options[:para_style] = @para_style
-        token_options[:height] = @para_style[:font_size]
+        token_options[:string]      = token_string
+        token_options[:para_style]  = @para_style
+        token_options[:height]      = @para_style[:font_size]
+        if RUBY_ENGINE != "rubymotion"
+          glyphs                     = @font_wrapper.decode_utf8(token_string)
+          width= glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
+          token_options[:width]      = width  
+        end
         @tokens << RLayout::RTextToken.new(token_options)
       end
     end
@@ -121,12 +129,20 @@ module RLayout
           current_style = RLayout::StyleService.shared_style_service.current_style
           style_hash = current_style['body_gothic'] #'strong_emphasis'
           @emphasis_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+          @current_style_service = RLayout::StyleService.shared_style_service
+          @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
+          # @style_object = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
             emphasis_style[:para_style] = @emphasis_para_style
             emphasis_style[:height]     = @emphasis_para_style[:font_size]
+            if RUBY_ENGINE != "rubymotion"
+              token_options[:style_name] = 'body_gothic'
+              glyphs                     = @font_wrapper.decode_utf8(token_string)
+              token_options[:width]      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
+            end
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
@@ -156,6 +172,9 @@ module RLayout
           current_style = RLayout::StyleService.shared_style_service.current_style
           style_hash = current_style['body_gothic'] #'diamond_emphasis'
           @diamond_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+          @current_style_service = RLayout::StyleService.shared_style_service
+          @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
+          # @style_object = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
             emphasis_style              = {}
@@ -163,6 +182,10 @@ module RLayout
             emphasis_style[:para_style] = @diamond_para_style
             emphasis_style[:height]     = @diamond_para_style[:font_size]
             emphasis_style[:token_type] = 'diamond_emphasis'
+            if RUBY_ENGINE != "rubymotion"
+              glyphs                     = @font_wrapper.decode_utf8(token_string)
+              token_options[:width]      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
+            end
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
@@ -172,17 +195,6 @@ module RLayout
         end
       end
     end
-
-
-    # def line_room(text_rect_width, para_line, space_width)
-    #     token_width_sum = 0
-    #     line_tokens = para_line[:tokens]
-    #     if line_tokens && line_tokens.length > 0
-    #       token_width_sum = line_tokens.map{|t| t.width}.reduce(:+)
-    #       token_width_sum += space_width*(line_tokens.length - 1) 
-    #     end
-    #     text_rect_width - token_width_sum
-    # end
 
     def create_body_para_lines
       return if tokens.length == 0
@@ -298,7 +310,6 @@ module RLayout
             @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
             # tokens.unshift(token) #stick the unplace token back to the tokens_copy
             # break #reached end of column
-            
           end
         end
       end
@@ -350,6 +361,7 @@ module RLayout
     end
 
     def parse_style_name
+      
       current_style = RLayout::StyleService.shared_style_service.current_style
       if current_style.class == String
         if current_style =~/^---/
@@ -366,8 +378,8 @@ module RLayout
       # h1 $ is  assigned as reporrter
       if @markup =='h1'
         if @article_type == '사설' || @article_type == 'editorial' || @article_type == '기고'
-          style_hash = current_style['reporter_editorial']
           @style_name  = 'reporter_editorial'
+          style_hash = current_style[@style_name]
           @graphic_attributes = style_hash['graphic_attributes']
           if @graphic_attributes == {}
           elsif @graphic_attributes == ""
@@ -379,34 +391,36 @@ module RLayout
             @token_union_style = Hash[@token_union_style.map{ |k, v| [k.to_sym, v] }]
           end
         else
-          style_hash = current_style['reporter']
           @style_name  = 'reporter'
+          style_hash = current_style[@style_name]
         end
         @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
       if @markup =='h2'
-        style_hash = current_style['running_head']
         @style_name  = 'running_head'
+        style_hash = current_style[@style_name]
         @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
       if @markup =='h3'
-        style_hash = current_style['body_gothic']
         @style_name  = 'body_gothic'
+        style_hash = current_style[@style_name]
         @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
       if @markup == 'h4'
-        style_hash = current_style['linked_story']
         @style_name  = 'linked_story'
+        style_hash = current_style[@style_name]
         @para_style  = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-        @para_string = "▸▸" + @para_string
+        # @para_string = "▸▸" + @para_string
+        # @para_string = "▸▸" + @para_string
+        @para_string = "> " + @para_string
       end
 
       unless @para_style
         @style_name  = 'body'
-        style_hash = current_style['body']
+        style_hash = current_style[@style_name]
         @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 
@@ -442,10 +456,5 @@ module RLayout
 
   class RParaLine < Container
 
-
   end
-
-
-
-
 end

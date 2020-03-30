@@ -3,7 +3,7 @@ module RLayout
 
   class RTextToken < Graphic
     attr_accessor :string, :token_type, :has_text, :char_half_width_cushion
-    attr_reader :adjust_size
+    attr_reader :adjust_size, :style_name
     def initialize(options={})
       options[:fill_color] = options.fetch(:token_color, 'clear')
       super
@@ -11,9 +11,14 @@ module RLayout
       @string           = options[:string]
       @token_type       = options[:token_type] if options[:token_type]
       @para_style       = options[:para_style]
+      @style_name       = options[:style_name]
       @char_half_width_cushion = 0
       @char_half_width_cushion  = @para_style[:font_size]/2 if @para_style[:font_size]
-      @width    = width_of_string(@string)
+      if options[:width]
+        @width = options[:width]
+      else
+        @width    = width_of_string(@string)
+      end
       if options[:text_line_spacing] && options[:text_line_spacing].class != String
         @height += options[:text_line_spacing]
       end
@@ -24,7 +29,7 @@ module RLayout
       [@width, @height]
     end
 
-    def width_of_string(string)
+    def width_of_string(string, options={})
       return 0 if string.nil?
       return 0 if string == ""
       if RUBY_ENGINE == "rubymotion"
@@ -32,6 +37,10 @@ module RLayout
         att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
         return att_string.size.width
       else
+        # TODO
+        # this should not be called at all
+        # we should keep char_with_array, if alignment is justified
+        # and not call this.
         font_size = @para_style[:font_size] || 10
         font      = @para_style[:font] || 'shinmoon'
         tracking  = @para_style[:tracking] || 0.0

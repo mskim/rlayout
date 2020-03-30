@@ -46,7 +46,8 @@ module RLayout
   # token fill_color is set by optins[:token_color] or it is set to clear
 
   class TextToken < Graphic
-    attr_accessor :att_string, :tracking, :scale, :para_style
+    attr_reader :para_style
+    attr_accessor :att_string, :tracking, :scale
     attr_accessor :string, :atts, :stroke, :has_text, :token_type # number, empasis, special
     # attr_accessor :width_array
     def initialize(options={})
@@ -91,10 +92,15 @@ module RLayout
           @height += options[:text_line_spacing]
         end
       else
-      #TODO
       
       end
       self
+    end
+
+    def para_style
+      return @para_style if @para_style
+      @parent.para_style if @parent
+      nil
     end
 
     def self.sample

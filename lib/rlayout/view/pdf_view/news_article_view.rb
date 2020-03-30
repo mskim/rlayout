@@ -1,28 +1,25 @@
 module RLayout
+
   class NewsArticleBox < NewsBox
-  # For Fast PostScript generation
-  # 1. draw tokens only, as fast as we can
-  # 2. using only single font
+
     def save_pdf_with_ruby(output_path, options={})
       puts "+++++++++++++ pdf using ruby+++++++++++++++"
       start_time    = Time.now
+      style_service = RLayout::StyleService.shared_style_service
       @pdf_doc      = HexaPDF::Document.new
+      style_service.pdf_doc = @pdf_doc
       load_fonts(@pdf_doc)
       page          = @pdf_doc.pages.add([0, 0, @width, @height])
-      canvas = page.canvas
-      font_name     = 'shinmoon'
-      size          = 9.8
-      font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-      font_file     = font_foleder + "/#{font_name}.ttf"
-      font_wapper   = @pdf_doc.fonts.add(font_file)
-      canvas.font(font_wapper, size: size)
+      canvas        = page.canvas      
+      style_service.set_canvas_text_style(canvas, 'body')
+
       @graphics.each do |column|
         column.graphics.each do |line|
-          line.draw_pdf(canvas, pdf_doc: @pdf_doc) if line.graphics.length > 0
+          line.draw_pdf(canvas) if line.graphics.length > 0
         end
       end
       @floats.each do |float|
-        float.draw_pdf(canvas, pdf_doc: @pdf_doc) 
+        float.draw_pdf(canvas) 
       end
       @pdf_doc.write(output_path)
       if options[:jpg]
@@ -51,38 +48,44 @@ module RLayout
     end
   end
 
-
   class RLineFragment < Container
     def draw_pdf(canvas, options={})
       return unless @graphics.length > 0
+      @style_service = RLayout::StyleService.shared_style_service
       @flipped = flipped_origin
       @start_x = flipped[0]
       @start_y = flipped[1]
       if @fill.color == 'red'
         canvas.save_graphics_state do
-          # canvas.fill_color('ff0000').rectangle(start_x, start_y - @height, @width, @height).fill
-          # use CMYK
           canvas.fill_color(0, 255, 254, 0).rectangle(@start_x, @start_y - @height, @width, @height).fill
         end
       end
-      if @para_style[:korean_name] == "본문명조"
-        draw_tokens(canvas)
-      else 
-        font_wapper   = options[:default_font]
-        unless font_wapper
-          pdf_doc       = options[:pdf_doc]
-          font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-          font_file     = font_foleder + "/#{@para_style[:font]}.ttf"
-          font_wapper   = pdf_doc.fonts.add(font_file)
-        end
+      # TODO can we use here style_name???
+      if  @para_style && @para_style[:korean_name] == "본문명조"
+
+        # TODO redo mixed token strategy, 
+        # set style_name to empasied token only
+          draw_tokens(canvas)
+        # end
+      elsif  @style_name && style_name == "caption"
         canvas.save_graphics_state do
-          # apply font, font_size, tracking, scale
-          canvas.font(font_wapper, size: @para_style[:font_size])
-          canvas.character_spacing(@para_style[:tracking])  if @para_style[:tracking] && @para_style[:tracking]!= 0
-          canvas.horizontal_scale(@para_style[:scale])      if @para_style[:scale] && @para_style[:scale] != 100
+          draw_mixed_style_tokens(canvas)
+        end
+      else 
+        canvas.save_graphics_state do
+          @style_service.set_canvas_text_style(canvas, @style_name)
           draw_tokens(canvas)
         end
       end
+    end
+
+    def has_mixed_style_token?
+      return true if @has_mixed_style_token
+      current_style = @graphics.first.style_name
+      @graphics.each do |token|
+        return true if token.current_style != current_style
+      end
+      false
     end
 
     def draw_tokens(canvas)
@@ -90,25 +93,34 @@ module RLayout
         if @font_size.nil?
           @font_size = 9.4
         end
-        #TODO
-        # check for empasis token
-        canvas.text(token.string, at:[@start_x + token.x, @start_y - @font_size])
+        canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])
       end
     end
+
+    # line has mixed style tokens
+    def draw_mixed_style_tokens(canvas)
+      token = @graphics.first
+      current_style_name = token.style_name
+      @style_service.set_canvas_text_style(canvas, current_style_name)
+      @graphics.each do |token|
+        if token.style_name != current_style_name
+          current_style_name = token.style_name
+          @style_service.set_canvas_text_style(canvas, current_style_name)
+          canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])
+        else
+          canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])
+        end
+      end
+    end
+
   end
 
   class TitleText < Container
     def draw_pdf(canvas, options={})
-      # get pdf_doc from camcas
-      pdf_doc = options[:pdf_doc]
-      size          = para_style[:font_size]
-      font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-      font_file     = font_foleder + "/#{para_style[:font]}.ttf"
-      font_wapper   = pdf_doc.fonts.add(font_file)
       canvas.save_graphics_state do
-        canvas.font(font_wapper, size: size)
+        # canvas.font(font_wapper, size: size)
         @graphics.each do |line|
-          line.draw_pdf(canvas, default_font:font_wapper, pdf_doc: pdf_doc)
+          line.draw_pdf(canvas)
         end
       end
     end
@@ -116,19 +128,11 @@ module RLayout
 
   class CaptionColumn < Container
     def draw_pdf(canvas, options={})
-      puts "in draw_pdf of CaptionColumn"
-      # pdf_doc = options[:pdf_doc]
-      # size          = para_style[:font_size]
-      # font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-      # font_file     = font_foleder + "/#{font_name}.ttf"
-      # font_wapper   = pdf_doc.fonts.add(font_file)
-      # canvas.font(font_wapper, size: size)
-      # @graphics.each do |line|
-      #   line.draw_pdf(canvas)
-      # end
+      @graphics.each do |line|
+        line.draw_pdf(canvas)
+      end
     end
   end
-
 
   class NewsHeadingForArticle < Container
     def draw_pdf(canvas, options={})
@@ -148,7 +152,6 @@ module RLayout
   
   class NewsHeadingForEditorial < Container
     def draw_pdf(canvas, options={})
-      pdf_doc = options[:pdf_doc]
       @subject_head_object.draw_pdf(canvas) if @subject_head_object
       @title_objext.draw_pdf(canvas)        if @title_objext
       @subtitle_objext.draw_pdf(canvas)     if @subtitle_objext
@@ -157,7 +160,6 @@ module RLayout
 
   class NewsHeadingForOpinion < Container
     def draw_pdf(canvas, options={})
-      pdf_doc = options[:pdf_doc]
       @subject_head_object.draw_pdf(canvas) if @subject_head_object
       @title_objext.draw_pdf(canvas)        if @title_objext
       @subtitle_objext.draw_pdf(canvas)     if @subtitle_objext
@@ -166,13 +168,12 @@ module RLayout
 
   class NewsImage < Container
     def draw_pdf(canvas, options={})
-      pdf_doc = options[:pdf_doc]
+      @canvas = canvas
       canvas.save_graphics_state do
         @image_box.draw_image(canvas) if @image_box
       end
       if @caption_column
-        puts "@caption_column.class:#{@caption_column.class}"
-        @caption_column.draw_pdf(canvas) 
+        @caption_column.draw_pdf(@canvas) 
       end
     end
   end
@@ -182,7 +183,6 @@ module RLayout
       pdf_doc = options[:pdf_doc]
       @image_box.draw_image(canvas) if @image_box
       if @caption_column
-        puts "@caption_column.class:#{@caption_column.class}"
         @caption_column.draw_pdf(canvas) 
       end
     end
