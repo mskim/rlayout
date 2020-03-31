@@ -60,6 +60,14 @@ module RLayout
           canvas.fill_color(0, 255, 254, 0).rectangle(@start_x, @start_y - @height, @width, @height).fill
         end
       end
+      # draw overflow x mark
+      if @stroke.color == 'red' && @stroke[:sides] = [1,1,1,1,1,1]
+        canvas.save_graphics_state do
+          canvas.stroke_color(0, 255, 254, 0).rectangle(@start_x, @start_y - @height, @width, @height).stroke
+          canvas.line(@start_x, @start_y, @start_x + @width, @start_y - @height).stroke
+          canvas.line(@start_x, @start_y - @height, @start_x + @width, @start_y).stroke
+        end
+      end
       # TODO can we use style_name here???
       if  @para_style && @para_style[:korean_name] == "본문명조"
 
