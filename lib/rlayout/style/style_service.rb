@@ -956,7 +956,7 @@ module RLayout
 
     ########### ruby_pdf ##############
 
-    def set_canvas_text_style(canvas, style_name)
+    def set_canvas_text_style(canvas, style_name, options={})
       style_name    = 'bpdy' unless style_name
       style         = @current_style[style_name]
       style         = Hash[style.map{ |k, v| [k.to_sym, v] }]
@@ -969,12 +969,14 @@ module RLayout
         font_file     = font_folder + "/#{font_name}.ttf"
         font_wapper   = @pdf_doc.fonts.add(font_file)
       # end
-      canvas.font(font_wapper, size: style[:font_size])
-      canvas.character_spacing(style[:tracking])  if style[:tracking] && style[:tracking]!= 0
+      font_size = style[:font_size]
+      font_size += options[:adjust_size] if options[:adjust_size]
+      canvas.font(font_wapper, size: font_size)
+      canvas.character_spacing(style[:tracking])    if style[:tracking] && style[:tracking]!= 0
       canvas.horizontal_scaling(style[:scale])      if style[:scale] && style[:scale] != 100
     end
 
-    def style_object(style_name)
+    def style_object(style_name, options={})
       style = @current_style[style_name]
       style = @current_style['body'] unless style
       style = Hash[style.map{ |k, v| [k.to_sym, v] }]
@@ -986,6 +988,7 @@ module RLayout
       h = {}
       h[:font]                = font_wrapper
       h[:font_size]           = style[:font_size]
+      h[:font_size]           += options[:adjust_size]  if options[:adjust_size]
       h[:character_spacing]   = style[:tracking]        if style[:tracking] && style[:tracking] != 0
       h[:horizontal_scaling]  = style[:scale]           if style[:scale] && style[:scale] != 100
       h

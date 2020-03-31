@@ -1,8 +1,11 @@
 module RLayout
   MAX_SQUEEZE_LIMIT = 1.1
-  # TitleText single line uniform styled text
-  # used for title, subject_head
-  # It can squeeze text
+
+  # TitleText single or multiple line, uniform styled text
+  # used for title, subject_head, quote
+  # adjust_size  adjusts font size from default text_style value
+  # ex: My title text{-5} will reduce title text by 5 points
+  # only sinngle digit change is allowed, to keep design integrity
   class TitleText < Container
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
@@ -68,9 +71,16 @@ module RLayout
       @current_line_y         = @top_margin + @top_inset
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name)
+      if RUBY_ENGINE != 'rubymotion'
+        @current_style_service        = RLayout::StyleService.shared_style_service
+        @style_object, @font_wrapper  = @current_style_service.style_object(@style_name, adjust_size: @adjust_size) 
+        space_glyph        = @font_wrapper.decode_utf8(" ").first
+        @space_width       = @style_object.scaled_item_width(space_glyph)
+      end
+      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, space_width: @space_width, adjust_size: adjust_size)
       @current_line_y         +=@current_line.height
       create_tokens
+
       layout_tokens
       ajust_height_as_body_height_multiples
       self
@@ -94,29 +104,9 @@ module RLayout
       end
     end
 
-    def create_tokens_from_string(string)
-      @current_style_service = RLayout::StyleService.shared_style_service
-      @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
-      @tokens += string.split(" ").collect do |token_string|
-        options = {}
-        options[:string]      = token_string
-        options[:para_style]  = @para_style
-        options[:y]           = 0
-        options[:adjust_size] = @adjust_size if @adjust_size
-        options[:height]      = para_style[:font_size]
-        if RUBY_ENGINE != 'rubymotion'
-          glyphs               = @font_wrapper.decode_utf8(token_string)
-          width= glyphs.map { |g| @style_object.scaled_item_width(g)}.reduce(:+)
-          options[:width]      = width  
-        end
-        RLayout::RTextToken.new(options)
-      end
-      #code
-    end
-
-
     def create_tokens
       return unless @string
+
       if @string.include?("\r\n")
         force_broken_blocks = @string.split("\r\n")
         @string.split("\r\n").each do |line_string|
@@ -129,12 +119,31 @@ module RLayout
       end
     end
 
+    def create_tokens_from_string(string)
+      @tokens += string.split(" ").collect do |token_string|
+        options = {}
+        options[:string]      = token_string
+        options[:para_style]  = @para_style
+        options[:y]           = 0
+        options[:adjust_size] = @adjust_size if @adjust_size
+        options[:height]      = para_style[:font_size]
+        if RUBY_ENGINE != 'rubymotion'
+          glyphs                = @font_wrapper.decode_utf8(token_string)
+          options[:width]       = glyphs.map { |g| @style_object.scaled_item_width(g)}.reduce(:+)  
+        end
+        RLayout::RTextToken.new(options)
+      end
+      #code
+    end
+
+
+
     def column_index
       0
     end
 
     def add_new_line
-      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name)
+      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, space_width: @space_width, adjust_size: adjust_size)
       @current_line.next_line = new_line if @current_line
       @current_line           = new_line
       @current_line_y         += @current_line.height

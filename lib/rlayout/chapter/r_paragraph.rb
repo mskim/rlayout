@@ -131,7 +131,6 @@ module RLayout
           @emphasis_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
           @current_style_service = RLayout::StyleService.shared_style_service
           @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
-          # @style_object = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
             emphasis_style              = {}

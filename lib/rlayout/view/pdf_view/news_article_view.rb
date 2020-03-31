@@ -73,7 +73,8 @@ module RLayout
         end
       else 
         canvas.save_graphics_state do
-          @style_service.set_canvas_text_style(canvas, @style_name)
+          puts "+++++++++++++  @adjust_size:#{@adjust_size}"
+          @style_service.set_canvas_text_style(canvas, @style_name, adjust_size: @adjust_size)
           draw_tokens(canvas)
         end
       end

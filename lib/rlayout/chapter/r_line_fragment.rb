@@ -18,7 +18,7 @@ module RLayout
     attr_accessor :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent
     attr_accessor :token_union_rect, :token_union_style
     attr_accessor :font, :font_size, :para_style, :content_cleared
-    attr_accessor :style_name, :has_mixed_token
+    attr_accessor :style_name, :has_mixed_token, :adjust_size
 
     def	initialize(options={})
       options[:layout_direction]  = 'horizontal'
@@ -34,6 +34,7 @@ module RLayout
       elsif options[:parent] && options[:parent].respond_to?(:para_style)
         @para_style       = options[:parent].para_style
       end
+      @adjust_size         = options[:adjust_size] if options[:adjust_size]
 
       if @para_style
         @font             = @para_style[:font]

@@ -122,6 +122,18 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2020_3_31
+
+  - draw tittle, subtitle, overflow red mark
+    
+  - rjob from ruby
+    - ad_box
+    - page_heading
+    - opnion
+    - profile
+
+
+
 2020_3_2
 	- fix ruby_pdf fit_type 
 		- fit_horizontal
