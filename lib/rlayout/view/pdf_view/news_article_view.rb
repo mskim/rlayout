@@ -25,6 +25,8 @@ module RLayout
       if options[:jpg]
         convert_pdf2jpg(output_path)
       end
+      draw_sides(canvas) if @stroke.sides !=[0,0,0,0]
+
       ending_time = Time.now
       puts "It took:#{ending_time - start_time}"
     end
@@ -51,6 +53,7 @@ module RLayout
   class RLineFragment < Container
     def draw_pdf(canvas, options={})
       return unless @graphics.length > 0
+      @pdf_doc = parent.pdf_doc
       @style_service = RLayout::StyleService.shared_style_service
       @flipped = flipped_origin
       @start_x = flipped[0]
@@ -75,14 +78,30 @@ module RLayout
         # set style_name to empasied token only
           draw_tokens(canvas)
         # end
+       
       elsif  @style_name && style_name == "caption"
         canvas.save_graphics_state do
           draw_mixed_style_tokens(canvas)
         end
-      else 
+      elsif @style_name
         canvas.save_graphics_state do
           puts "+++++++++++++  @adjust_size:#{@adjust_size}"
           @style_service.set_canvas_text_style(canvas, @style_name, adjust_size: @adjust_size)
+          draw_tokens(canvas)
+        end
+
+      # this is line from Text, where @para_style has no styke_name assigned
+      # this is free formated text.
+      elsif @para_style
+        canvas.save_graphics_state do
+          font_name     = @para_style[:font]
+          font_size     = @para_style[:font_size]
+          font_folder   = "/Users/Shared/SoftwareLab/font_width"
+          font_file     = font_folder + "/#{font_name}.ttf"
+          # TODO find font_wapper from font name
+          font_wapper   = @pdf_doc.fonts.add(font_file)
+          # canvas.fill_color(@para_style[:text_color]) if @para_style[:text_color]
+          canvas.font(font_wapper, size: font_size)
           draw_tokens(canvas)
         end
       end
@@ -102,7 +121,11 @@ module RLayout
         if @font_size.nil?
           @font_size = 9.4
         end
-        canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])
+        if token.class == RLayout::Rectangle
+          token.draw_pdf(canvas) # draw token_union_rect
+        else
+          canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])
+        end
       end
     end
 
@@ -112,7 +135,9 @@ module RLayout
       current_style_name = token.style_name
       @style_service.set_canvas_text_style(canvas, current_style_name)
       @graphics.each do |token|
-        if token.style_name != current_style_name
+        if token.class == RLayout::Rectangle
+          token.draw_pdf(canvas) # draw token_union_rect
+        elsif token.style_name != current_style_name
           current_style_name = token.style_name
           @style_service.set_canvas_text_style(canvas, current_style_name)
           canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])
@@ -126,12 +151,12 @@ module RLayout
 
   class TitleText < Container
     def draw_pdf(canvas, options={})
-      canvas.save_graphics_state do
+      # canvas.save_graphics_state do
         # canvas.font(font_wapper, size: size)
         @graphics.each do |line|
           line.draw_pdf(canvas)
         end
-      end
+      # end
     end
   end
 
@@ -152,7 +177,6 @@ module RLayout
       if @title_object
         @title_object.draw_pdf(canvas, options)        
       end
-
       if @subtitle_object
         @subtitle_object.draw_pdf(canvas, options)     
       end
@@ -162,16 +186,16 @@ module RLayout
   class NewsHeadingForEditorial < Container
     def draw_pdf(canvas, options={})
       @subject_head_object.draw_pdf(canvas) if @subject_head_object
-      @title_objext.draw_pdf(canvas)        if @title_objext
-      @subtitle_objext.draw_pdf(canvas)     if @subtitle_objext
+      @title_object.draw_pdf(canvas)        if @title_object
+      @subtitle_object.draw_pdf(canvas)     if @subtitle_object
     end
   end
 
   class NewsHeadingForOpinion < Container
     def draw_pdf(canvas, options={})
       @subject_head_object.draw_pdf(canvas) if @subject_head_object
-      @title_objext.draw_pdf(canvas)        if @title_objext
-      @subtitle_objext.draw_pdf(canvas)     if @subtitle_objext
+      @title_object.draw_pdf(canvas)        if @title_object
+      @subtitle_object.draw_pdf(canvas)     if @subtitle_object
     end
   end
 

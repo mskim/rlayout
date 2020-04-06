@@ -9,7 +9,7 @@ class Graphic
     @stroke_rect    = get_stroke_rect
     @line_position  = 1
     @left_inset     +=  2
-    draw_sides(canvas)
+    draw_sides(canvas) unless @stroke[:sides] == [0,0,0,0]
   end
 
   #TODO
@@ -17,11 +17,17 @@ class Graphic
   end 
   
   def draw_line(canvas, starting_x, starting_y, ending_x, ending_y, thickness)
-    canvas.line_width(thickness).stroke_color(@stroke[:color]).line(starting_x, starting_y , ending_x, ending_y).stroke
+    # TODO fix stroke_color setting
+    canvas.save_graphics_state do
+      canvas.line_width(thickness)
+      canvas.stroke_color(0, 0, 0, 254).line(starting_x, starting_y, ending_x, ending_y).stroke
+    end
   end
 
   def draw_sides(canvas)
-    rect = @stroke_rect
+    rect = stroke_rect
+    flipped = flipped_origin
+
     if @stroke[:type]==nil
       @stroke[:type] = 0
     end
@@ -37,32 +43,45 @@ class Graphic
 
       # if side are not simple, stroke each sides
       if @stroke[:sides] != [1,1,1,1] #TODO check for rectangle or roundrect
-        # open_left_inset_line do not draw top and bottom inset area
-
-        # TODO open_right_inset_line
-        @open_left_inset_line = @stroke[:sides].length >= 4 && @stroke[:sides].last == "open_left_inset_line"
+        bottom_left       = [@x + @left_margin, flipped[1] + @top_margin - @height]
+        top_left          = [@x + @left_margin, flipped[1] - @top_margin]
+        top_right         = [@x + @width - @right_margin, flipped[1] - @top_margin]
+        bottom_right      = [@x + @width - @right_margin, flipped[1] + @top_margin - @height]
+        open_bottom_left  = [@x + @left_margin + @left_inset, flipped[1] + @top_margin - @height]
+        open_top_left     = [@x + @left_margin + @left_inset, flipped[1] - @top_margin]
         
+        # open_left_inset_line do not draw top and bottom inset area
+        @open_left_inset_line = @stroke[:sides].length >= 4 && @stroke[:sides].last == "open_left_inset_line"
+
         if @stroke[:sides][0] > 0
-          draw_line(canvas, flipped[0] + @left_margin, flipped_origin[1] + @top_margin + @height , flipped[0] - @left_margin - @right_margin, flipped_origin[1] + @top_margin, @stroke[:thickness]*@stroke[:sides][0])
+          if @open_left_inset_line
+            draw_line(canvas, open_bottom_left[0], open_bottom_left[1] , open_top_left[0] , open_top_left[1], @stroke[:thickness]*@stroke[:sides][0])
+          else
+            draw_line(canvas, bottom_left[0], bottom_left[1] , top_left[0] , top_left[1], @stroke[:thickness]*@stroke[:sides][0])
+          end
         end
 
         if @stroke[:sides][1] > 0
           if @open_left_inset_line
-            draw_line(canvas, flipped[0] + @left_margin + @left_inset, @y , x_max, @y, @stroke[:thickness]*@stroke[:sides][1])
+            draw_line(canvas, open_top_left[0], open_top_left[1], top_right[0], top_right[1], @stroke[:thickness]*@stroke[:sides][1])
           else
-            draw_line(canvas, flipped[0] + @left_margin, flipped_origin[1] + @top_margin + @height, flipped[0] + @left_margin + @width, flipped_origin[1] + @top_margin + @height, @stroke[:thickness]*@stroke[:sides][1])
+            draw_line(canvas, top_left[0], top_left[1], top_right[0], top_right[1], @stroke[:thickness]*@stroke[:sides][1])
           end
         end
 
         if @stroke[:sides][2] > 0
-          draw_line(canvas, flipped[0] + @left_margin + @width, flipped_origin[1] + @top_margin + @height , flipped[0] - @left_margin - @right_margin + @width, flipped_origin[1] + @top_margin, @stroke[:thickness]*@stroke[:sides][2])
+          if @open_left_inset_line
+            draw_line(canvas, open_top_right[0], open_top_right[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][2])
+          else
+            draw_line(canvas, top_right[0], top_right[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][2])
+          end
         end
 
         if @stroke[:sides][3] > 0
           if @open_left_inset_line
-            draw_line(canvas, @x + @left_inset, flipped_origin[1] + @top_margin + @height, @width, flipped_origin[1] + @top_margin + @height, @stroke[:thickness]*@stroke[:sides][3])
+            draw_line(canvas, open_bottom_left[0], open_bottom_left[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][3])
           else
-            draw_line(canvas, flipped[0] + @left_margin, flipped_origin[1] + @top_margin , flipped[0] + @left_margin + @width, flipped_origin[1] + @top_margin, @stroke[:thickness]*@stroke[:sides][3])
+            draw_line(canvas, bottom_left[0], bottom_left[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][3])
           end
         end
 
@@ -78,8 +97,7 @@ class Graphic
         end
 
       else
-        canvas.line_width(@stroke[:thickness]).stroke_color(@stroke[:color]).rectangle(flipped[0] + @left_margin, flipped_origin[1] + @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
-        # canvas.line_width(@stroke[:thickness]).rectangle(@x + @left_margin, @y + @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
+        canvas.line_width(@stroke[:thickness]).stroke_color(@stroke[:color]).rectangle(flipped[0] + @left_margin, flipped[1] + @top_margin - @height, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
       end
     else
         # @line1=@line_types_width_table[@stroke[:type]][0]*@stroke[:thickness]

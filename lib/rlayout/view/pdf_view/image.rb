@@ -18,15 +18,15 @@ module RLayout
 
     def draw_image(canvas)
       # unless File.exist?(graphic.image_path)
-      unless File.exist?(image_path)
+      unless File.exist?(@image_path)
         #draw dummy image
         # puts "image_width should be 04.442857142856:#{graphic.width}"
         # draw_line(graphic)
         return
       end
       image_origin    = flipped_origin
-      image_origin[0] += @x
-      image_origin[1] -= @y + @height
+      # image_origin[0] += @x
+      image_origin[1] -= @height #@y # + @height
 
       if @clip_rect_delta_x && @clip_rect_delta_y
         canvas.rectangle(image_origin[0], image_origin[1], @width, @height)
@@ -38,7 +38,6 @@ module RLayout
         canvas.clip_path(:nonzero)
         canvas.end_path
         canvas.image(@image_path, at: [image_origin[0] - @clip_rect[0], image_origin[1] - @clip_rect[1]], width: @clip_rect[2], height: @clip_rect[3])
-
       else
         canvas.image(@image_path, at: image_origin, width: @width, height: @height)
       end

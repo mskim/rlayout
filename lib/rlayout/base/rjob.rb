@@ -57,7 +57,7 @@ module RLayout
       end
       output_options            = {}
       output_options[:jpg]      = @jpg if @jpg
-      output_options[:preview]  = @preview if @preview
+      # output_options[:preview]  = @preview if @preview
       @created_object.save_pdf(@output_path, output_options) if @created_object.respond_to?(:save_pdf)
       self
     end

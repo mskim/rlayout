@@ -143,7 +143,7 @@ module RLayout
     end
 
     def add_new_line
-      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, space_width: @space_width, adjust_size: adjust_size)
+      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, adjust_size: adjust_size)
       @current_line.next_line = new_line if @current_line
       @current_line           = new_line
       @current_line_y         += @current_line.height

@@ -6,25 +6,25 @@ module RLayout
       if @parent
         p_origin = @parent.flipped_origin
         [p_origin[0] + @x, p_origin[1] - @y]
-        # [p_origin[0] + @x, p_origin[1] - @height - @y]
       else
         [@x, @height - @top_margin - @top_inset - @y]
-        # [@x, @y + @height]
       end
     end
 
-    def to_pdf(canvas)
+    # def to_pdf(canvas)
+    def draw_pdf(canvas)
+      @pdf_doc = parent.pdf_doc if parent
       @flipped = flipped_origin
       draw_fill(canvas)
-      draw_image(canvas) if @image_path
+      draw_image(canvas) if @image_path || @local_image
       draw_text_in_ruby(canvas)  if @has_text
       draw_stroke(canvas)
     end
 
     def draw_fixtures(fixtures)
-        fixtures.each do |child|
-          draw_graphic_in_nsview(child)
-        end
+      fixtures.each do |child|
+        draw_graphic_in_nsview(child)
+      end
     end
 
     def draw_graphics(graphics)

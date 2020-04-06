@@ -123,6 +123,8 @@ module RLayout
           return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
         end
       else
+        #TODO
+        [@left_margin, @top_margin, @width - (@left_margin + @right_margin) ,@height- (@top_margin + @bottom_margin)]
       end
     end
 
@@ -493,15 +495,17 @@ module RLayout
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path, options)
       elsif RUBY_ENGINE == 'ruby'
-        require 'HexaPDF'
         unless @parent
           @pdf_doc  = HexaPDF::Document.new
           page      = @pdf_doc.pages.add([@x, @y, @width, @height])
           canvas    = page.canvas
+        else
+          @pdf_doc  = @parent.pdf_doc
         end
         # # flip canvas virtically 
         # canvas.transform(1,0,0,-1,0,@height)
-        to_pdf(canvas)
+        # to_pdf(canvas)
+        draw_pdf(canvas)
         @pdf_doc.write(path, optimize: true)
       end
     end
