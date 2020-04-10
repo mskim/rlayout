@@ -11,8 +11,8 @@ module RLayout
       end
     end
 
-    # def to_pdf(canvas)
     def draw_pdf(canvas)
+      binding.pry if self.class == RLayout::NewsArticleBox
       @pdf_doc = parent.pdf_doc if parent
       @flipped = flipped_origin
       draw_fill(canvas)

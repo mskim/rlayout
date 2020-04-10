@@ -880,6 +880,8 @@ module RLayout
       if @news_box.is_a?(NewsArticleBox) 
         if @news_box.graphics.first.column_type == 'editorial_with_profile_image' # s&& @news_box.kind == '샤셜'
           @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
+          @news_box.left_margin = @news_box.gutter
+          @news_box.left_inset  = @news_box.gutter*2
         elsif @news_box.kind == '사설' && @news_box.page_number == 23
           @news_box.stroke[:sides] = [1,1,1,1]
           @news_box.left_margin    = @news_box.gutter
@@ -992,6 +994,8 @@ module RLayout
         # save the @adjusted_line_count to return to caller
         @adjusted_line_count  = @news_box.adjusted_line_count
         # relayout news_box with collected content
+        # adjust middle and bottom positioned floats
+        @news_box.adjust_middle_and_bottom_floats_position(@adjusted_line_count)
         @news_box.relayout_line_content(line_content)
       end
     end

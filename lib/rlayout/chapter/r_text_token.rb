@@ -39,8 +39,8 @@ module RLayout
       else
         # TODO
         # this should not be called at all
-        # we should keep char_with_array, if alignment is justified
-        # and not call this.
+        # string width should be calculated by paragraph with and given as parameter. 
+
         font_size = @para_style[:font_size] || 10
         font      = @para_style[:font] || 'shinmoon'
         tracking  = @para_style[:tracking] || 0.0

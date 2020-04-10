@@ -109,19 +109,16 @@
 #   body_cycling: {bgcolor:["CMYK=0,0,0,100", "green"]}
 # }
 
-# It is tricky to layout multiple tables in a single page.
-# Tables first need to be placed with right frames in parents, before contents can be layed out.
-# ???
-# I should devide Table init into two parts, first part init getting getting frame
-# Second part actually layout the data after proper size is set.
-# set_content(options={}) should be used for the later call.
 
 module RLayout
 
-# if body_row_atts has cycle_colors, it means body row is cycling with ["green", "blue", "orange"] something like it.  
+# cycle_colors 
+# body row is cycling with given array of colors
+# for example
 # body_row_atts   => { cycle_colors: ["green", "blue"], ... }
 
-# stroke_sides are a array of stroke_sides, first one is for left most cell, second one is for cells in the middle, and the last one is for right most cell.
+# stroke_sides 
+# array of stroke_sides, first one is for left most cell, second one is for cells in the middle, and the last one is for right most cell.
 # body_cell_atts  => {font: "smSSMyungjoP-W35", stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
 
 # category_colors
@@ -145,15 +142,16 @@ DEFAULT_TABLE_STYLE = {
 }
   
   class Table < Container
-    attr_accessor :title, :source, :category_level
-    attr_accessor :has_head_row, :can_grow
-    attr_accessor :column_width_array, :column_alignment, :column_v_alignment
-    attr_accessor :table_data, :rows, :body
-    attr_accessor :table_style, :csv
-    attr_accessor :column_count, :next_link, :prev_link
-    attr_accessor :body_row_colors
-    attr_accessor :column_line_color, :row_spacing
+    attr_reader :title, :source, :category_level
+    attr_reader :has_head_row, :can_grow
+    attr_reader :column_width_array, :column_alignment, :column_v_alignment
+    attr_reader :table_data, :rows, :body
+    attr_reader :table_style, :csv
+    attr_reader :column_count, :next_link, :prev_link
+    attr_reader :body_row_colors
+    attr_reader :column_line_color, :row_spacing
     attr_accessor :proposed_height, :row_height_sum, :overflow, :underflow
+    
     def initialize(options={}, &block)
       super
       @column_count       = options.fetch(:column_count, 1)

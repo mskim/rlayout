@@ -2,11 +2,9 @@
 
 # Chapter
 # Chapter combines Story and Document into a  chapter.
-# Story can come from couple of sources, markdown, adoc, or html(URL blog)
-# deprecated **** Story can be .story, adoc, markdown, or html format.
-# Story file format is our own, mixture of adoc, markdown and LaTex.
-# Stories are first converted to para_data format,
-# It is also converted to Asciidoctor or GHF-markdown for HTML generation.
+# Story can come from couple of sources, markdown, hangul, or html(URL blog)
+# Stories are first converted to heading and body part.
+# Body part is then converted to series of paragraphs,
 # Chapter first look for template in local folder,
 # if it is not found, takes default template from library location.
 
@@ -175,10 +173,6 @@
 # page_001
 # page_002
 # page_003
-
-
-
-
 
 module RLayout
 

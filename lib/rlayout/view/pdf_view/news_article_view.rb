@@ -21,6 +21,9 @@ module RLayout
       @floats.each do |float|
         float.draw_pdf(canvas) 
       end
+      # draw article sides
+      draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
+
       @pdf_doc.write(output_path)
       if options[:jpg]
         convert_pdf2jpg(output_path)
@@ -85,13 +88,12 @@ module RLayout
         end
       elsif @style_name
         canvas.save_graphics_state do
-          puts "+++++++++++++  @adjust_size:#{@adjust_size}"
           @style_service.set_canvas_text_style(canvas, @style_name, adjust_size: @adjust_size)
           draw_tokens(canvas)
         end
 
-      # this is line from Text, where @para_style has no styke_name assigned
-      # this is free formated text.
+      # this is line from Text, where there is no @para_style or style_name 
+      # a free format text.
       elsif @para_style
         canvas.save_graphics_state do
           font_name     = @para_style[:font]
@@ -122,6 +124,9 @@ module RLayout
           @font_size = 9.4
         end
         if token.class == RLayout::Rectangle
+          # rectangle is use to draw stoke around union token
+          # align rect.x with first token.x
+          token.x += @start_x 
           token.draw_pdf(canvas) # draw token_union_rect
         else
           canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])

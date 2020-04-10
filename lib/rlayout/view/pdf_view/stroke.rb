@@ -43,13 +43,15 @@ class Graphic
 
       # if side are not simple, stroke each sides
       if @stroke[:sides] != [1,1,1,1] #TODO check for rectangle or roundrect
-        bottom_left       = [@x + @left_margin, flipped[1] + @top_margin - @height]
-        top_left          = [@x + @left_margin, flipped[1] - @top_margin]
-        top_right         = [@x + @width - @right_margin, flipped[1] - @top_margin]
-        bottom_right      = [@x + @width - @right_margin, flipped[1] + @top_margin - @height]
-        open_bottom_left  = [@x + @left_margin + @left_inset, flipped[1] + @top_margin - @height]
-        open_top_left     = [@x + @left_margin + @left_inset, flipped[1] - @top_margin]
-        
+        line_inset        = @stroke[:thickness]/2
+        bottom_left       = [@x + @left_margin + line_inset, flipped[1] + @top_margin - @height + line_inset]
+        top_left          = [@x + @left_margin + line_inset, flipped[1] - @top_margin - line_inset]
+        top_right         = [@x + @width - @right_margin - line_inset, flipped[1] - @top_margin - line_inset]
+        bottom_right      = [@x + @width - @right_margin + line_inset, flipped[1] + @top_margin - @height - line_inset]
+        open_bottom_left  = [@x + @left_margin, flipped[1] + @bottom_margin - @height + line_inset]
+        open_top_left     = [@x + @left_margin, flipped[1] - @top_margin - line_inset]
+        open_inner_bottom_left  = [@x + @left_margin + @left_inset, flipped[1] + @bottom_margin - @height + line_inset]
+        open_inner_top_left     = [@x + @left_margin + @left_inset, flipped[1] - @top_margin - line_inset]
         # open_left_inset_line do not draw top and bottom inset area
         @open_left_inset_line = @stroke[:sides].length >= 4 && @stroke[:sides].last == "open_left_inset_line"
 
@@ -63,7 +65,7 @@ class Graphic
 
         if @stroke[:sides][1] > 0
           if @open_left_inset_line
-            draw_line(canvas, open_top_left[0], open_top_left[1], top_right[0], top_right[1], @stroke[:thickness]*@stroke[:sides][1])
+            draw_line(canvas, open_inner_top_left[0], open_inner_top_left[1], top_right[0], top_right[1], @stroke[:thickness]*@stroke[:sides][1])
           else
             draw_line(canvas, top_left[0], top_left[1], top_right[0], top_right[1], @stroke[:thickness]*@stroke[:sides][1])
           end
@@ -79,7 +81,7 @@ class Graphic
 
         if @stroke[:sides][3] > 0
           if @open_left_inset_line
-            draw_line(canvas, open_bottom_left[0], open_bottom_left[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][3])
+            draw_line(canvas, open_inner_bottom_left[0], open_inner_bottom_left[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][3])
           else
             draw_line(canvas, bottom_left[0], bottom_left[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][3])
           end

@@ -3,64 +3,31 @@ module RLayout
     attr_accessor :pdf_doc, :flipped 
 
     def save_pdf_with_ruby(output_path, options={})
-      # Container_view_pdf
-      @pdf_doc = options[:pdf_doc]
-      unless @pdf_doc
-        style_service = RLayout::StyleService.shared_style_service
-        @pdf_doc = HexaPDF::Document.new
-        style_service.pdf_doc = @pdf_doc
-        load_fonts(@pdf_doc) 
-      end
-      page      = @pdf_doc.pages.add([0, 0, @width, @height])
-      canvas    = page.canvas
-      @flipped  = flipped_origin
-      if @fill.color.class == String
-        if @fill.color == 'clear'
-          #TODO set opacity
-          # @fill.color = [0.0, 0.0, 0.0, 0.0]
-        else
-          @fill.color = RLayout.color_from_string(@fill.color) 
-        end
-      end
-      if !@stroke.color
-        @stroke.color = 'CMYK=0,0,0,0 '
-      end
-      @stroke.color = RLayout.color_from_string(@stroke.color) if @stroke.color.class == String
-      draw_stroke(canvas)
-
-      case @shape
-      when RLayout::RectStruct
-        @fill.color = RLayout.color_from_string(@fill.color) if @fill.color.class == String
-        unless @fill.color == 'clear'
-          canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
-        end
-        canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
-        draw_stroke(canvas)
-      when RoundRectStruct
-      when RLayout::CircleStruct
-        @flipped = flipped_origin
-        circle = canvas.fill_color(@fill.color).stroke_color(@stroke.color).line_width(@stroke.thickness).circle(flipped[0] + @shape.r, flipped[1] + @shape.r, @shape.r).fill_stroke
-      when EllipseStruct
-      when PoligonStruct
-      when PathStruct
-      when LineStruct
-      else
-        unless @fill.color == 'clear'
-          canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
-        end
-          # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
-        draw_stroke(canvas)
-      end
-
+      puts "genrateing pdf ruby "
+      start_time    = Time.now
+      style_service = RLayout::StyleService.shared_style_service
+      @pdf_doc      = HexaPDF::Document.new
+      style_service.pdf_doc = @pdf_doc
+      load_fonts(@pdf_doc)
+      page          = @pdf_doc.pages.add([0, 0, @width, @height])
+      canvas        = page.canvas      
+      style_service.set_canvas_text_style(canvas, 'body')
       @graphics.each do |g|
-        g.to_pdf(canvas)
+        g.draw_pdf(canvas)
       end
-      @floats.each do |f|
-        f.to_pdf(canvas)
+      @floats.each do |float|
+        float.draw_pdf(canvas) 
       end
-      
+      # draw article sides
+      draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
+
       @pdf_doc.write(output_path)
-      self
+      if options[:jpg]
+        convert_pdf2jpg(output_path)
+      end
+
+      ending_time = Time.now
+      puts "It took:#{ending_time - start_time}"
     end
 
     # read fonts from disk

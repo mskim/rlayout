@@ -56,10 +56,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
 
-
-  require File.dirname(__FILE__) + '/rlayout/table/simple_table'
-  require File.dirname(__FILE__) + '/rlayout/table/table'
-  require File.dirname(__FILE__) + '/rlayout/table/toc_table'
+  require File.dirname(__FILE__) + '/rlayout/table/list.rb'
 
   require File.dirname(__FILE__) + '/rlayout/container_extended/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container_extended/place_item'
@@ -75,9 +72,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_text_token_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_line_fragment_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/document_view_pdf'
-  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/page_view_pdf'
-  # require File.dirname(__FILE__) + '/rlayout/view/pdf_view/news_article_prawn_view'
-  
+  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/page_view_pdf'  
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/stroke'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/fill'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/image'
@@ -85,7 +80,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/graphic_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/container_view_pdf'
 
-  # require File.dirname(__FILE__) + '/rlayout/document_variables_extend'
   require File.dirname(__FILE__) + '/rlayout/story/story'
   require File.dirname(__FILE__) + '/rlayout/story/reader'
   require File.dirname(__FILE__) + '/rlayout/story/remote_reader'
@@ -150,44 +144,9 @@ else
   require File.dirname(__FILE__) + "/rlayout/text/text_token"
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + "/rlayout/text/text"
-  # require File.dirname(__FILE__) + '/rlayout/text/heading_container'
-  # require File.dirname(__FILE__) + '/rlayout/text/paragraph'
-  # require File.dirname(__FILE__) + "/rlayout/text/line_fragment"
-  # require File.dirname(__FILE__) + '/rlayout/text/text_train'
-  # require File.dirname(__FILE__) + '/rlayout/text/ordered_list'
-  # require File.dirname(__FILE__) + '/rlayout/text/text_column'
-  # require File.dirname(__FILE__) + '/rlayout/text/text_box'
-  # require File.dirname(__FILE__) + '/rlayout/article/chapter'
-  # require File.dirname(__FILE__) + '/rlayout/article/pdf_chapter'
-  # require File.dirname(__FILE__) + '/rlayout/article/spread_chapter'
-  # require File.dirname(__FILE__) + '/rlayout/article/toc_chapter'
+  
   require File.dirname(__FILE__) + '/rlayout/article/float_group'
-  # require File.dirname(__FILE__) + '/rlayout/article/single_page_maker'
-  # require File.dirname(__FILE__) + '/rlayout/article/rjob'
-  # require File.dirname(__FILE__) + '/rlayout/article/item_chapter_maker'
-
-  # require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article_maker'
-
-  # require File.dirname(__FILE__) + '/rlayout/publication/book'
-  # require File.dirname(__FILE__) + '/rlayout/publication/book_plan'
-  # require File.dirname(__FILE__) + '/rlayout/publication/dorok'
-  # require File.dirname(__FILE__) + '/rlayout/publication/catalog'
-  # require File.dirname(__FILE__) + '/rlayout/publication/composite'
-  # require File.dirname(__FILE__) + '/rlayout/publication/magazine'
-  # require File.dirname(__FILE__) + '/rlayout/publication/mart'
-  # require File.dirname(__FILE__) + '/rlayout/publication/newspaper'
-  # require File.dirname(__FILE__) + '/rlayout/publication/news_plan'
-  # require File.dirname(__FILE__) + '/rlayout/publication/photo_book'
-  # require File.dirname(__FILE__) + '/rlayout/publication/calendar'
-  # require File.dirname(__FILE__) + '/rlayout/publication/marathon_tag'
-  # require File.dirname(__FILE__) + '/rlayout/publication/member_directory'
-  # require File.dirname(__FILE__) + '/rlayout/publication/banner'
-
-  # require File.dirname(__FILE__) + '/rlayout/quiz/english_quiz_item'
-  # require File.dirname(__FILE__) + '/rlayout/quiz/english_quiz_item_maker'
-  # require File.dirname(__FILE__) + '/rlayout/quiz/quiz_chapter_maker'
-  # require File.dirname(__FILE__) + '/rlayout/quiz/nr_semi_test_chapter_maker'
-  # require File.dirname(__FILE__) + '/rlayout/math/mlayout/mdocument'
+ 
 end
 
 module RLayout

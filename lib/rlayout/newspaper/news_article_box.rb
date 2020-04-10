@@ -884,7 +884,7 @@ module RLayout
         heading.x     = @starting_column_x
       end
       #TODO position bottom bottom_occupied_rects
-      # middle occupied rect shoul
+
       @middle_occupied_rects = []
       @bottom_occupied_rects = []
       @floats.each_with_index do |float, i|
@@ -961,6 +961,22 @@ module RLayout
         new_rect[HEIGHT_VAL] = min_y(float_rect)
         return new_rect
       end
+    end
+
+    # this is called after height adjustment 
+    # move middle and bottom floats to new position before laying out text lines
+    def adjust_middle_and_bottom_floats_position(adjusted_line_count)
+      #TODO quote, announcement
+      @floats.select{|f| (f.class == RLayout::NewsImage || f.class == RLayout::Graphic) && f.position  > 3}.each do |float|
+        case float.position
+        when 0,1,2,3
+        when 4,5,6
+          float.y += (adjusted_line_count/2)*@body_line_height
+        when 7,8,9
+          float.y += adjusted_line_count*@body_line_height
+        end
+      end
+
     end
 
     def border_x
