@@ -842,9 +842,7 @@ module RLayout
       end
       frame_height          = @grid_size[1]*grid_frame[3]
       # if image is on bottom, move up by @article_bottom_spaces_in_lines*@body_line_height
-      # height_in_lines = @row_count*7
-      # height_in_lines += @extended_line_count if  @extended_line_count
-      # height_in_lines -= @pushed_line_count if  @pushed_line_count
+
       # bottom   = (grid_frame[1] + grid_frame[3])*7
       if options[:bottom_position] == true
         frame_y  = @height - frame_height - @article_bottom_spaces_in_lines*@body_line_height

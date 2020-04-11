@@ -198,9 +198,9 @@ module RLayout
       end
 
       @pdf_doc.write(output_path)
-      # if options[:jpg]
-      #   convert_pdf2jpg(output_path)
-      # end
+      if options[:jpg]
+        convert_pdf2jpg(output_path)
+      end
       ending_time = Time.now
       puts "It took:#{ending_time - start_time}"
     end

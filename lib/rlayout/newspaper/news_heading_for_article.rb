@@ -24,14 +24,11 @@ module RLayout
     end
 
     def set_heading_content(options)
-      # @height_in_lines            = 0
       @height_sum                 = 0
       if options['subject_head'] && options['subject_head'] != ""
         @subject_head_object      = subject_head(options)
-        # @height_in_lines          +=@subject_head_object.height_in_lines    unless @subject_head_object.nil?
         @height_sum               +=@subject_head_object.height    unless @subject_head_object.nil?
       end
-      # y = @height_in_lines*@body_line_height
       y = @height_sum
       options[:y] = y
       options[:x] = 0
@@ -41,7 +38,6 @@ module RLayout
         else
           @title_object = title(options)
         end
-        # @height_in_lines  +=@title_object.height_in_lines    unless @title_object.nil?
         @height_sum       +=@title_object.height    unless @title_object.nil?
         y += @height_sum
       end
@@ -52,7 +48,6 @@ module RLayout
         else
           @subtitle_object = subtitle(options)
         end
-        # @height_in_lines += @subtitle_object.height_in_lines unless @subtitle_object.nil?
         @height_sum       +=@subtitle_object.height    if @subtitle_object
       end
       #TODO calculate with actual sum of heigh and make body_line multiple

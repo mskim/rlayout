@@ -1,7 +1,7 @@
 module RLayout
   class RLineFragment < Container
   
-    def draw_text_in_ruby(canvas)
+    def draw_text(canvas)
       if @graphics.length > 0
         font_name = @para_style[:font] 
         size = @para_style[:font_size]

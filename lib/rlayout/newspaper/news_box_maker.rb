@@ -921,7 +921,6 @@ module RLayout
       else
           @news_box.stroke[:sides] = [0,0,0,1]
       end
-
       if @news_box
         if RUBY_ENGINE == 'ruby'
           @news_box.save_pdf_with_ruby(@output_path, :jpg=>true)

@@ -18,16 +18,14 @@ module RLayout
       @floats.each do |float|
         float.draw_pdf(canvas) 
       end
-      # draw article sides
-      draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
-
+      draw_pdf(canvas) 
       @pdf_doc.write(output_path)
       if options[:jpg]
         convert_pdf2jpg(output_path)
       end
-
       ending_time = Time.now
-      puts "It took:#{ending_time - start_time}"
+      puts "It took:#{ending_time - start_time}" if options[:time]
+
     end
 
     # read fonts from disk
@@ -38,16 +36,6 @@ module RLayout
       end
     end
 
-    # using vips convert pdf 2 jpg
-    # I could not get it to work with full path, had to cd into foloder first
-    def convert_pdf2jpg(output_path)
-      pdf_folder    = File.dirname(output_path)
-      pdf_base_name = File.basename(output_path)
-      jpg_base_name = pdf_base_name.gsub(/.pdf$/, ".jpg")
-      commend  = "cd #{pdf_folder} && vips copy #{pdf_base_name}[n=-1] #{jpg_base_name}"
-      system(commend)
-    end
-    
     # def to_pdf(canvas)
     def draw_pdf(canvas)
       @pdf_doc = parent.pdf_doc if parent

@@ -2,7 +2,7 @@
 module RLayout
   class RTextToken < Graphic
     
-    def draw_text_in_ruby(canvas)
+    def draw_text(canvas)
       if @string.length > 0 && @para_style
         font_name = @para_style[:font] 
         size = @para_style[:font_size]
