@@ -18,7 +18,7 @@ module RLayout
 
     def draw_image(canvas)
       # unless File.exist?(graphic.image_path)
-      unless File.exist?(@image_path)
+      unless @image_path && File.exist?(@image_path)
         #draw dummy image
         # puts "image_width should be 04.442857142856:#{graphic.width}"
         # draw_line(graphic)

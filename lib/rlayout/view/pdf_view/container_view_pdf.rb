@@ -11,14 +11,15 @@ module RLayout
       load_fonts(@pdf_doc)
       page          = @pdf_doc.pages.add([0, 0, @width, @height])
       canvas        = page.canvas      
-      style_service.set_canvas_text_style(canvas, 'body')
+      # style_service.set_canvas_text_style(canvas, 'body')
       @graphics.each do |g|
         g.draw_pdf(canvas)
       end
       @floats.each do |float|
         float.draw_pdf(canvas) 
       end
-      draw_pdf(canvas) 
+      draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
+      # draw_pdf(canvas) 
       @pdf_doc.write(output_path)
       if options[:jpg]
         convert_pdf2jpg(output_path)

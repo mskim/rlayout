@@ -876,17 +876,21 @@ module RLayout
       else
         # puts "@news_box is Graphic..."
       end
-      
-      if @news_box.is_a?(NewsArticleBox) 
-        if @news_box.graphics.first.column_type == 'editorial_with_profile_image' # s&& @news_box.kind == '샤셜'
+      if @news_box.kind_of?(NewsBox) 
+        if @news_box.kind == '사진' 
+          if @news_box.draw_frame == false
+            @news_box.stroke[:sides] = [0,0,0,0]
+          else
+            @news_box.stroke[:sides] = [0,0,0,1]
+          end
+        elsif @news_box.graphics.first.column_type == 'editorial_with_profile_image' # s&& @news_box.kind == '샤셜'
           @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
           @news_box.left_margin = @news_box.gutter
           @news_box.left_inset  = @news_box.gutter*2
         elsif @news_box.kind == '사설' && @news_box.page_number == 23
           @news_box.stroke[:sides] = [1,1,1,1]
           @news_box.left_margin    = @news_box.gutter
-        elsif @news_box.kind == '사진' && @news_box.draw_frame == false
-          @news_box.stroke[:sides] = [0,0,0,0]
+
         elsif @news_box.kind == '기고'
           if  @news_box.column_count == 6       
             @news_box.stroke[:sides] = [0,1,0,0] 
@@ -923,7 +927,7 @@ module RLayout
       end
       if @news_box
         if RUBY_ENGINE == 'ruby'
-          @news_box.save_pdf_with_ruby(@output_path, :jpg=>true)
+          @news_box.save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
         else
           @news_box.save_pdf(@output_path, :jpg=>true)
         end

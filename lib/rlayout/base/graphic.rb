@@ -495,7 +495,7 @@ module RLayout
         @ns_view ||= GraphicViewMac.from_graphic(self)
         @ns_view.save_pdf(path, options)
       elsif RUBY_ENGINE == 'ruby'
-        save_pdf_in_ruby(path, options)
+        save_pdf_with_ruby(path, options)
         # unless @parent
         #   @pdf_doc  = HexaPDF::Document.new
         #   page      = @pdf_doc.pages.add([@x, @y, @width, @height])
@@ -667,7 +667,7 @@ module RLayout
     end
 
     def frame_rect
-      [@x + @left_margin,@y + top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
+      [@x + @left_margin, @y + @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
     end
 
 

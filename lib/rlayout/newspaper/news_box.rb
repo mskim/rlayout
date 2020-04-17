@@ -106,7 +106,6 @@ module RLayout
           @column_width       = (@width - (@column_count + 3)*@gutter )/@column_count
         end
       end
-
       @column_line_count    = @row_count*@lines_per_grid
       @column_line_count   -= @page_heading_margin_in_lines if @top_position
       # TODO
@@ -199,7 +198,7 @@ module RLayout
 
       @pdf_doc.write(output_path)
       if options[:jpg]
-        convert_pdf2jpg(output_path)
+        convert_pdf2jpg(output_path, ratio: 2.0)
       end
       ending_time = Time.now
       puts "It took:#{ending_time - start_time}"
