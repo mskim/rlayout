@@ -12,7 +12,6 @@ describe 'test NewsGroupImage' do
     @height = 50
     @g_image = RLayout::NewsGroupImage.new(member_images: images, width: @width, height: @height)
     @first_member = @g_image.graphics.first
-
   end
 
   it 'should create NewsGroupImage' do

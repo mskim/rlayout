@@ -883,6 +883,10 @@ module RLayout
           else
             @news_box.stroke[:sides] = [0,0,0,1]
           end
+        elsif @news_box.is_a?(NewsAdBox) 
+          @news_box.stroke[:sides] = [0,0,0,0]
+        elsif @news_box.is_a?(NewsImageBox)
+          @news_box.stroke[:sides] = [0,0,0,1]
         elsif @news_box.graphics.first.column_type == 'editorial_with_profile_image' # s&& @news_box.kind == '샤셜'
           @news_box.stroke[:sides] = [1,1,0,1, "open_left_inset_line"]
           @news_box.left_margin = @news_box.gutter
@@ -920,8 +924,6 @@ module RLayout
           @news_box.stroke[:sides] = [1,1,1,1]
           @news_box.stroke[:thickness] = @news_box.frame_thickness
         end
-      elsif @news_box.is_a?(NewsImageBox)
-          @news_box.stroke[:sides] = [0,0,0,1]
       else
           @news_box.stroke[:sides] = [0,0,0,1]
       end

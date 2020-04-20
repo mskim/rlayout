@@ -18,15 +18,16 @@ elsif RUBY_ENGINE == "opal"
   #
 else
   # puts RUBY_ENGINE
-  require 'pry'
+  # require 'pry'
   require 'strscan'
   require 'yaml'
   require 'csv'
   require 'erb'
   require 'base64'
   require 'json'
-  # require 'mini_magick'
+  require 'mini_magick'
   require "image_processing/vips"
+  require "image_processing"
   require 'hexapdf'
   # require 'text-hyphen', '~> 1.4'
   # require 'prawn'

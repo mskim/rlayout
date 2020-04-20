@@ -435,25 +435,10 @@ module RLayout
       Hash[list_only.collect{|k,v| [k.to_s.sub("list_","").to_sym, v]}]
     end
 
-    def self.sample
-      tokens = []
-      100.times do
-        tokens << RTextToken.sample
-      end
-      RParagraph.new(token_array: tokens)
-    end
+    def layout_para(para_string, style_name, column_width, output_path)
 
-    def self.sample_para_list(options={})
-      list = []
-      options[:count].times do
-        list << RParagraph.sample
-      end
-      list
     end
 
   end
 
-  class RParaLine < Container
-
-  end
 end
