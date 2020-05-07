@@ -51,7 +51,7 @@ module RLayout
     end
 
     def has_text_room?
-      @room > 10
+      @room > 20
     end
 
     # is it the first line of the column
@@ -73,7 +73,7 @@ module RLayout
     end
 
     def text_line?
-      @room > 10 || @graphics.length > 0
+      @room > 20 || @graphics.length > 0
     end
 
     def char_count

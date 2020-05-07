@@ -18,7 +18,7 @@ elsif RUBY_ENGINE == "opal"
   #
 else
   # puts RUBY_ENGINE
-  # require 'pry'
+  require 'pry'
   require 'strscan'
   require 'yaml'
   require 'csv'

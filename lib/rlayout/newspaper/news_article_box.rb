@@ -120,7 +120,7 @@ module RLayout
       if block
         instance_eval(&block)
       end
-      make_overlap(@overlap) if @overlap
+      make_overlap(@overlap) if @overlap.class == Array && @overlap.length >= 4
       if @floats.length > 0
         layout_floats!
       end
@@ -350,7 +350,7 @@ module RLayout
     def last_line_of_box
       overlap_array = @overlap
       overlap_array = eval(@overlap) if @overlap.class == String
-      if @overlap && intersects_rect(overlap_array, @graphics.last.column_grid_rect)
+      if @overlap && @overlap.class == Array && @overlap.length >= 4 && intersects_rect(overlap_array, @graphics.last.column_grid_rect)
         overlap_rect_height_in_lines = @overlap_rect.height/@body_line_height.to_i - 1
         @graphics.last.graphics[-overlap_rect_height_in_lines] 
       elsif @announcement_box

@@ -77,7 +77,7 @@ module RLayout
         space_glyph        = @font_wrapper.decode_utf8(" ").first
         @space_width       = @style_object.scaled_item_width(space_glyph)
       end
-      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, space_width: @space_width, adjust_size: adjust_size)
+      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, adjust_size: adjust_size)
       @current_line_y         +=@current_line.height
       create_tokens
 

@@ -8,10 +8,10 @@ module RLayout
 
     def initialize(options={})
       @grid_width       = options.fetch(:grid_width, 2)
-      @heading_columns  = options[:column_count]
-      # options[:stroke_width]    = 1
       options[:stroke_color]    = "CMYK=0,0,0,100"
       super
+      @heading_columns  = @parent.column_count
+      @heading_columns  = options[:column_count] if options[:column_count]
       @body_line_height = @parent.body_line_height
 
       set_heading_content(options)
@@ -125,6 +125,8 @@ module RLayout
         atts[:style_name] = 'title_2'
       when 1
         atts[:style_name] = 'title_1'
+      else
+        atts[:style_name] = 'title_4_5'
       end
       atts[:text_string]          = options['title']
       if atts[:text_string] =~/\n/

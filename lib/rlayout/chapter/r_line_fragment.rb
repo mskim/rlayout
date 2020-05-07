@@ -159,7 +159,6 @@ module RLayout
     end
 
     def has_text_room?
-      # @overlap == false && @room > 10
       @room > 20
     end
 
@@ -182,7 +181,7 @@ module RLayout
     end
 
     def text_line?
-      @room > 10 || @graphics.length > 0
+      @room > 20 || @graphics.length > 0
     end
 
     def previous_line
@@ -304,7 +303,8 @@ module RLayout
           @layed_out_line = true
           return true
         end
-        options[:char_half_width_cushion] = 0 # if  @font_size && @font_size > 10
+        #TODO ????? fix this ????
+        options[:char_half_width_cushion] = 0 unless options[:char_half_width_cushion]
         over_line = @room + options[:char_half_width_cushion] - token.width
         if over_line < @space_width && token.width > @space_width*4
           # this is case where token width slightly exceeds room, make sure that this token is cut
@@ -334,7 +334,7 @@ module RLayout
     end
 
     def unoccupied_line?
-      layed_out_line == false && @text_area[2] > 10
+      layed_out_line == false && @text_area[2] > 20
     end
 
     def layed_out_line?

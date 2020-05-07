@@ -90,6 +90,7 @@ module RLayout
 
     def content_cleared_lines
       @graphics.select{|line| line.unoccupied_line? || line.layed_out_line == true}
+      # @graphics.select{|line| line.layed_out_line == true}
     end
 
     def oveflow_column_text_lines

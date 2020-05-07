@@ -122,6 +122,11 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2020_4_22
+	- create  
+	class PDFView
+
+
 2020_3_31
 
   - draw tittle, subtitle, overflow red mark

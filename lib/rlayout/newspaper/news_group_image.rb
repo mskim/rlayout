@@ -16,7 +16,6 @@ module RLayout
       if block
         instance_eval(&block)
       end
-      binding.pry
       relayout!
       self
     end

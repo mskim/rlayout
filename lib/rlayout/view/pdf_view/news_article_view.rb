@@ -198,6 +198,7 @@ module RLayout
       @canvas = canvas
       canvas.save_graphics_state do
         @image_box.draw_image(canvas) if @image_box
+        @image_box.draw_stroke(canvas)
       end
       if @caption_column
         @caption_column.draw_pdf(@canvas) 
