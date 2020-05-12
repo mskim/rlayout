@@ -15,7 +15,7 @@ module RLayout
     end
 
     def create_tokens
-      make_caption_title_tokens 
+      make_caption_title_tokens if @caption_title
       make_caption_tokens       if @caption
       make_source_tokens        if @source
     end
@@ -28,7 +28,6 @@ module RLayout
       @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
       @tokens += @caption_title.split(" ").collect do |token_string|
         options = {}
-        options[:para_style]  = @para_style
         options[:para_style]  = @para_style
         options[:style_name]  = @style_name
         options[:string]      = token_string
@@ -87,9 +86,8 @@ module RLayout
           options[:width]       = width  
         end
         options[:height]      = para_style[:font_size]
-        RLayout::RTextToken.new(options)
+        RLayout::RTextToken.new(options)    
       end
-      
     end
 
     # layout_lines is called from news_image

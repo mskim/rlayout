@@ -644,18 +644,27 @@ module RLayout
     end
 
     def make_overlap(rect)
+      # [grid_x, grid_y, column, row, extended_line_count]
       rect = eval(rect) if rect.class == String
       space_above = @body_line_height*2
+      o_extended_line_count = 0
+      o_extended_line_count = rect[4] if rect.length > 4
       o_x       = rect[0]*grid_width
+      o_width   = rect[2]*grid_width
+      if rect[0] != @x
+        # o_x       += @gutter 
+        o_width  -= @gutter 
+      end
       o_y       = rect[1]*grid_height - @page_heading_margin_in_lines*@body_line_height
       o_y      += @extended_line_count * @body_line_height if @extended_line_count 
-      o_y      -= space_above
-      o_width   = rect[2]*grid_width
-      o_width  -= @gutter if on_left_edge
+      # o_y      -= space_above
+      o_y      -= o_extended_line_count
       o_width  -= @gutter if on_right_edge
       o_height  = rect[3]*grid_height
       o_height += space_above
-      @overlap_rect = Rectangle.new(parent:self, is_float: true, x:o_x, y:o_y, width:o_width, height:o_height, layout_expand: nil, top_margin:space_above, stroke_sides:[0,1,0,2], stroke_width: 0.3)
+      o_height += o_extended_line_count
+      @overlap_rect = Rectangle.new(parent:self, is_float: true, x:o_x, y:o_y, width:o_width, height:o_height, layout_expand: nil, top_margin:space_above, stroke_sides:[0,1,0,0], stroke_width: 0.3)
+      # @overlap_rect = Rectangle.new(parent:self, is_float: true, x:o_x, y:o_y, width:o_width, height:o_height, layout_expand: nil, stroke_sides:[0,1,0,0], stroke_width: 0.3)
     end
 
     # text_height_in_lines should be calculated dynamically

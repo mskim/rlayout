@@ -957,7 +957,7 @@ module RLayout
     ########### ruby_pdf ##############
 
     def set_canvas_text_style(canvas, style_name, options={})
-      style_name    = 'bpdy' unless style_name
+      style_name    = 'body' unless style_name
       style         = @current_style[style_name]
       style         = Hash[style.map{ |k, v| [k.to_sym, v] }]
       font_name     = style[:font]

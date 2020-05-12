@@ -17,7 +17,7 @@
 #]
 #
 #
-# One way is to put image_path in the meta_data as hash, along with title
+# Other alternitive is to put image_path in the meta_data, along with title
 # For book_chaper_article, place image tag along paragraph text
 # as ![alt_text](path/to/image/file)
 # image will flows along with other paragraphs in column.
@@ -32,13 +32,13 @@
 #   end
 # end
 
-# iamge crop is done with image_crop rect
-# crop: {6x6, [1,1,4,4]}
-# this will crop image with grid_base and grid_frame
-
-# image catopn file
+# image cation file
 # location along side the image with file extention of .captopn
 # first line is the caption title, if ther are more than single line
+
+# iamge crop is done with image_crop rect
+# clip_rect_delta_x and clip_rect_delta_y are used for drawing origianl image in larger area.
+# and final image clipped from larger image
 
 IMAGE_FIT_TYPE_ORIGINAL       = 0
 IMAGE_FIT_TYPE_VERTICAL       = 1
@@ -221,16 +221,27 @@ module RLayout
 
       else
         # we should have @crop_rect 
-        # image_dimension[0]/@crop_rect[2] = @clip_width/@width
-        @clip_width  = image_dimension[0]/@crop_rect[2].to_f*@width
-        # image_dimension[1]/@crop_rect[3] = @clip_height/@height
-        @clip_height = image_dimension[1]/@crop_rect[3].to_f*@height
-        # @clip_x/@crop_rect[0] = @clip_width/@width
-        x_ratio = @clip_width/@width
-        @clip_x = @crop_rect[0]/x_ratio
-        y_ratio = @clip_height/@height
-        @clip_y = @crop_rect[1]/y_ratio
-        @clip_rect   = [@clip_x, @clip_y, @clip_width, @clip_height]
+        # In order to crop image, we need to draw image that is larger than the
+        # cropping rect, final cropped result shoud be our image_rect
+        # so the drawing rect should be drawing larger than the resulting clipped image
+        # so we need to make drawing rect that surround clipping final rect
+        # drawing_rect is what we draw, and we pass @drawing_x_offset, and @drawing_y_offset, @drawing_width, @drawing_height
+        #  
+        image_to_canvas_ratio = @crop_rect[2]/@width
+        @drawing_width    = image_dimension[0]/@crop_rect[2].to_f*@width
+        @drawing_height   = image_dimension[1]/@crop_rect[3].to_f*@height
+        @drawing_top      = @crop_rect[1]/image_to_canvas_ratio
+        @drawing_bottom   = @drawing_top + @drawing_height
+        @drawing_y_offset = (image_dimension[1] - @crop_rect[1] - @crop_rect[3])/image_to_canvas_ratio
+        @drawing_x_offset = @crop_rect[0]/image_to_canvas_ratio
+        # we pass clip_rect, which containes offset values to draw
+        # 
+        @clip_rect        = [@drawing_x_offset, @drawing_y_offset, @drawing_width, @drawing_height]
+        puts "+++++++++ clipped rect"
+        puts "@clip_rect:#{@clip_rect}"
+        puts "image_dimension:#{image_dimension}"
+        puts "image object: [@x, @y, @width, @height]:#{[@x, @y, @width, @height]}"
+
       end
     end
 

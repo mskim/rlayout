@@ -12,7 +12,6 @@ module RLayout
       page          = @pdf_doc.pages.add([0, 0, @width, @height])
       canvas        = page.canvas      
       style_service.set_canvas_text_style(canvas, 'body')
-
       @graphics.each_with_index do |column, i|
         column.graphics.each_with_index do |line, j|
           line.draw_pdf(canvas) if line.graphics.length > 0
@@ -65,13 +64,11 @@ module RLayout
       end
       # TODO can we use style_name here???
       if  @para_style && @para_style[:korean_name] == "본문명조"
-
         # TODO redo mixed token strategy, 
         # set style_name to empasied token only
           draw_tokens(canvas)
         # end
-       
-      elsif  @style_name && style_name == "caption"
+      elsif  @style_name && @style_name == "caption"
         canvas.save_graphics_state do
           draw_mixed_style_tokens(canvas)
         end

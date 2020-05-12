@@ -912,7 +912,7 @@ module RLayout
         elsif @news_box.kind == '부고-인사'
           @news_box.left_margin = 0
           @news_box.right_margin = 0
-          @news_box.stroke[:sides] = [0,1,0,1]
+          @news_box.stroke[:sides] = [0,0,0,0]
         elsif @news_box.embedded
             @news_box.stroke[:sides] = [0,1,0,1]
         # elsif @news_box.bottom_article
