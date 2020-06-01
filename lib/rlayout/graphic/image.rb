@@ -57,7 +57,6 @@ module RLayout
     attr_accessor :clip_ready_image_rect
 
     def init_image(options)
-
       @image_record  = options.fetch(:image_record,nil)
       unless options[:image_path]
         if options[:local_image] && $ProjectPath
@@ -237,11 +236,6 @@ module RLayout
         # we pass clip_rect, which containes offset values to draw
         # 
         @clip_rect        = [@drawing_x_offset, @drawing_y_offset, @drawing_width, @drawing_height]
-        puts "+++++++++ clipped rect"
-        puts "@clip_rect:#{@clip_rect}"
-        puts "image_dimension:#{image_dimension}"
-        puts "image object: [@x, @y, @width, @height]:#{[@x, @y, @width, @height]}"
-
       end
     end
 

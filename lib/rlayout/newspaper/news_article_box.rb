@@ -115,7 +115,6 @@ module RLayout
       @quote_alignment        = options[:quote_alignment] || 'left'
       @quote_line_type        = options[:quote_line_type] || '상하' #'박스'
       @quote_box_column       = options[:quote_box_column] || 1
-
       create_columns
       if block
         instance_eval(&block)

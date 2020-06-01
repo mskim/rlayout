@@ -839,6 +839,7 @@ module RLayout
       end
       @svg_path           = @output_path.sub(".pdf", ".svg")
       @article_info_path  = @article_path + "/article_info.yml"
+
       if @layout_rb
           @news_box   = eval(@layout_rb)
       elsif options[:template_path] && File.exist?(options[:template_path])
@@ -855,7 +856,6 @@ module RLayout
           @news_box   = eval(template)
         end
       end
-      
       if @news_box.is_a?(SyntaxError)
         puts "SyntaxError in #{@template_path} !!!!"
         return
