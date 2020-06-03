@@ -124,6 +124,7 @@ module RLayout
         options = {}
         options[:string]      = token_string
         options[:para_style]  = @para_style
+        options[:style_name]  = @style_name
         options[:y]           = 0
         options[:adjust_size] = @adjust_size if @adjust_size
         options[:height]      = para_style[:font_size]
@@ -135,8 +136,6 @@ module RLayout
       end
       #code
     end
-
-
 
     def column_index
       0

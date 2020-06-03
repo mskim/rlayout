@@ -122,6 +122,10 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2020_6_3
+	- redo creating RTextToken remove para_style, do it with style_name
+
+
 2020_4_22
 	- create  
 	class PDFView

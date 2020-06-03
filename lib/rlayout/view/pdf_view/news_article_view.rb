@@ -62,24 +62,29 @@ module RLayout
           canvas.line(@start_x, @start_y - @height, @start_x + @width, @start_y).stroke
         end
       end
-      # TODO can we use style_name here???
-      if  @para_style && @para_style[:korean_name] == "본문명조"
-        # TODO redo mixed token strategy, 
-        # set style_name to empasied token only
-          draw_tokens(canvas)
-        # end
-      elsif  @style_name && @style_name == "caption"
+      # can we use style_name here???
+      # if  @para_style && @para_style[:korean_name] == "본문명조"
+      #   # TODO redo mixed token strategy, 
+      #   # set style_name to empasied token only
+      #     draw_tokens(canvas)
+      #   # end
+      if  @style_name && @style_name == "caption"
         canvas.save_graphics_state do
           draw_mixed_style_tokens(canvas)
         end
       elsif @style_name
         canvas.save_graphics_state do
-          @style_service.set_canvas_text_style(canvas, @style_name, adjust_size: @adjust_size)
-          draw_tokens(canvas)
+          if has_mixed_style_token?
+            draw_mixed_style_tokens(canvas)
+          else
+            @style_service.set_canvas_text_style(canvas, @style_name, adjust_size: @adjust_size)
+            draw_tokens(canvas)
+          end
         end
 
-      # this is line from Text, where there is no @para_style or style_name 
+      # this is line from Text, where there is no @style_name 
       # a free format text.
+      #  Where did @para_style come from???
       elsif @para_style
         canvas.save_graphics_state do
           font_name     = @para_style[:font]
@@ -96,10 +101,11 @@ module RLayout
     end
 
     def has_mixed_style_token?
-      return true if @has_mixed_style_token
-      current_style = @graphics.first.style_name
+      return true if @has_mixed_style_token == true
+      current_style_name = @graphics.first.style_name
       @graphics.each do |token|
-        return true if token.current_style != current_style
+        next if token.class != RLayout::RTextToken
+        return true if token.style_name != current_style_name
       end
       false
     end
@@ -127,6 +133,7 @@ module RLayout
       @style_service.set_canvas_text_style(canvas, current_style_name)
       @graphics.each do |token|
         if token.class == RLayout::Rectangle
+          token.x += @start_x 
           token.draw_pdf(canvas) # draw token_union_rect
         elsif token.style_name != current_style_name
           current_style_name = token.style_name

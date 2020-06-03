@@ -64,7 +64,7 @@ module RLayout
           options[:width]       = width  
         end
         options[:height]      = para_style[:font_size]
-        RLayout::RTextToken.new(options)
+        (options)
       end
 
     end

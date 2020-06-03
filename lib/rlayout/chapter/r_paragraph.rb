@@ -108,6 +108,7 @@ module RLayout
         next unless token_string
         token_options = {}
         token_options[:string]      = token_string
+        token_options[:style_name]  = @style_name
         token_options[:para_style]  = @para_style
         token_options[:height]      = @para_style[:font_size]
         if RUBY_ENGINE != "rubymotion"
@@ -137,12 +138,12 @@ module RLayout
           tokens_array.each do |token_string|
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
+            emphasis_style[:style_name] = 'body_gothic'
             emphasis_style[:para_style] = @emphasis_para_style
             emphasis_style[:height]     = @emphasis_para_style[:font_size]
             if RUBY_ENGINE != "rubymotion"
-              token_options[:style_name] = 'body_gothic'
               glyphs                     = @font_wrapper.decode_utf8(token_string)
-              token_options[:width]      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
+              emphasis_style[:width]      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
             end
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
@@ -166,7 +167,7 @@ module RLayout
             token_group = token_group + "="
           else
             token_group.strip!
-            token_group = "◆" + token_group + "="
+            token_group = "◆" + token_group + " ="
           end
           current_style = RLayout::StyleService.shared_style_service.current_style
           style_hash = current_style['body_gothic'] #'diamond_emphasis'
@@ -178,6 +179,7 @@ module RLayout
           tokens_array.each do |token_string|
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
+            emphasis_style[:style_name] = 'body_gothic'
             emphasis_style[:para_style] = @diamond_para_style
             emphasis_style[:height]     = @diamond_para_style[:font_size]
             emphasis_style[:token_type] = 'diamond_emphasis'
@@ -225,6 +227,7 @@ module RLayout
           tokens_array.each do |token_string|
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
+            emphasis_style[:style_name] = 'body_gothic'
             emphasis_style[:para_style] = @diamond_para_style
             emphasis_style[:height]     = @diamond_para_style[:font_size]
             emphasis_style[:token_type] = 'diamond_emphasis'
