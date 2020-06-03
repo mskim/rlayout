@@ -175,7 +175,7 @@ module RLayout
       unless @top_position == true
         @top_margin        = @body_line_height
       end
-      @x                = 0
+      @x                = @left_margin
       # @width  -= 2
 
       if block
