@@ -62,7 +62,8 @@ module RLayout
         canvas.end_path
         # canvas.image(@image_path, at: [image_origin[0] - @clip_rect[0], image_origin[1] - @clip_rect[1]], width: @clip_rect[2], height: @clip_rect[3])
         # to prevent slite skewing when we specify both widht and height, just use height and let it keep the ratio
-        canvas.image(@image_path, at: [image_origin[0] - @clip_rect[0], image_origin[1] - @clip_rect[1]], height: @clip_rect[3])
+        # canvas.image(@image_path, at: [image_origin[0] - @clip_rect[0], image_origin[1] - @clip_rect[1]], height: @clip_rect[3])
+        canvas.image(@image_path, at: [image_origin[0] - @clip_rect[0], image_origin[1] - @clip_rect[1]], width: @clip_rect[2])
       else
         # drawing IMAGE_FIT_TYPE_IGNORE_RATIO
         canvas.image(@image_path, at: image_origin, width: @width, height: @height)

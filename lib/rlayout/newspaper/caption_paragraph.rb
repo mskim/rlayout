@@ -64,9 +64,8 @@ module RLayout
           options[:width]       = width  
         end
         options[:height]      = para_style[:font_size]
-        (options)
+        RLayout::RTextToken.new(options)
       end
-
     end
 
     def make_source_tokens
@@ -99,7 +98,6 @@ module RLayout
       @current_line.text_alignment = 'justified'
       @current_line.room          = @current_line.width
       token = @tokens.shift
-
       while token
         result = @current_line.place_token(token)
         # result can be one of tree
@@ -127,7 +125,7 @@ module RLayout
       end
       @current_line.text_alignment = 'left' # align left for last line
       @current_line.align_tokens
-      if @source
+      if @source && @source != ""
         line_width                = @current_line.width
         token_list                = @current_line.graphics
         source_tokens_space_sum   = (@source_tokens.length - 1)*@space_width

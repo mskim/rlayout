@@ -105,7 +105,7 @@ module RLayout
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts[:parent]               = self
       atts[:layout_length_in_lines] = true
-      atts[:single_line_title]    = true
+      # atts[:single_line_title]    = true
       @title_object               = TitleText.new(atts)
     end
 
@@ -140,7 +140,7 @@ module RLayout
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts[:parent]               = self
-      atts[:single_line_title]    = true
+      # atts[:single_line_title]    = true
       # atts.merge!(options)
       @title_object               = TitleText.new(atts)
       @title_object.height        += @body_line_height if @parent.frame_sides == '테두리' #&& !@subject_head_object

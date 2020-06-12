@@ -841,7 +841,7 @@ module RLayout
       @article_info_path  = @article_path + "/article_info.yml"
 
       if @layout_rb
-          @news_box   = eval(@layout_rb)
+        @news_box   = eval(@layout_rb)
       elsif options[:template_path] && File.exist?(options[:template_path])
         @template_path = options[:template_path]
         template    = File.open(@template_path,'r'){|f| f.read}

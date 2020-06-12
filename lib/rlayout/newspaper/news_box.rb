@@ -65,7 +65,6 @@ module RLayout
         # @on_left_edge   = false
         # @on_right_edge  = false
       end
-      
       if @on_left_edge && @on_right_edge
         # touching both edge
         @right_margin      = 0.0
@@ -91,6 +90,7 @@ module RLayout
         @column_width       = (@width - @column_count*@gutter)/@column_count
         @starting_column_x  = @gutter
         @left_margin        = @gutter
+        # @left_margin        = 0 if @kind == '부고-인사' || @kind == 'obitualry'
         @right_margin       = 0.0
         if options[:frame_sides] == '테두리'
           @starting_column_x  = @gutter*2

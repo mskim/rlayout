@@ -233,7 +233,7 @@ module RLayout
         @drawing_bottom   = @drawing_top + @drawing_height
         @drawing_y_offset = (image_dimension[1] - @crop_rect[1] - @crop_rect[3])/image_to_canvas_ratio
         @drawing_x_offset = @crop_rect[0]/image_to_canvas_ratio
-        # we pass clip_rect, which containes offset values to draw
+        # @drawing_x_offset = (@crop_rect[0] + image_dimension[0] )/image_to_canvas_ratio
         # 
         @clip_rect        = [@drawing_x_offset, @drawing_y_offset, @drawing_width, @drawing_height]
       end
