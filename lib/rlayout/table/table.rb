@@ -1,3 +1,19 @@
+
+# TODO
+# Colculate column width
+# get average valude of call columns
+# get the layout_length with the column average
+# check if we have any cell that is way too bigger that the average, (30%)
+#   if so, re-calculate the average without them.
+# If a cell width exceeds average by less than 20%, sqeeze it in.
+# if a cell width exceeds average by 20 % make multiple line cell
+
+# SimpleTable is a table which with cell text with sigle style, single line text.
+# For SimpleTable TextToken class is used for text_cell
+# And for Table, TitleText class is used for text_cell
+# TitleText can hanlde multiline and mixed style text.
+
+
 # TODO
 # 1. text fitting
 # 1. line drawing, # book_mode, book_mode1, news_mode
@@ -110,6 +126,7 @@
 # }
 
 
+
 module RLayout
 
 # cycle_colors 
@@ -119,7 +136,6 @@ module RLayout
 
 # stroke_sides 
 # array of stroke_sides, first one is for left most cell, second one is for cells in the middle, and the last one is for right most cell.
-# body_cell_atts  => {font: "smSSMyungjoP-W35", stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
 
 # category_colors
 # category_colors are array of cycling category colors
@@ -136,14 +152,14 @@ DEFAULT_TABLE_STYLE = {
     :head_row_atts   => { row_type: "head_row", fill_color: 'gray', stroke_sides: [1,1,1,1]},
     :head_cell_atts  => { fill_color: "clear", text_color: 'white', font: "Helvetica", font_size: 12.0, stroke_sides: [1,0,1,0]},
     :body_row_atts   => { row_type: "body_row", fill_color: "white", stroke_sides: [0,1,0,1]},
-    :body_cell_atts  => { font: "smSSMyungjoP-W35", font_size: 12.0, stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
-    :category_atts   => { font: "smSSMyungjoP-W35", font_size: 12.0, stroke_sides: [1,1,1,1]},
+    :body_cell_atts  => { font: "Shinmoon", font_size: 12.0, stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
+    :category_atts   => { font: "Shinmoon", font_size: 12.0, stroke_sides: [1,1,1,1]},
     :category_colors => [["CMYK=0.1,0,0,0,1", "CMYK=0.05,0,0,0,1"],["CMYK=0,0.1,0,0,1", "CMYK=0,0.05,0,0,1"],["CMYK=0,0,0.1,0,1", "CMYK=0,0,0.05,0,1"]]
 }
   
   class Table < Container
     attr_reader :title, :source, :category_level
-    attr_reader :has_head_row, :can_grow
+    attr_reader :has_head_row, :can_grow, :calculate_column_width
     attr_reader :column_width_array, :column_alignment, :column_v_alignment
     attr_reader :table_data, :rows, :body
     attr_reader :table_style, :csv
@@ -157,6 +173,7 @@ DEFAULT_TABLE_STYLE = {
       @column_count       = options.fetch(:column_count, 1)
       @category_level     = options.fetch(:category_level, 0)
       @column_width_array = options.fetch(:column_width_array, nil)
+      @calculate_column_width = options[:calculate_column_width]
       @column_alignment   = options.fetch(:column_alignment, nil)
       @layout_space       = options.fetch(:layout_space, 0)
       @overflow           = false
@@ -166,7 +183,6 @@ DEFAULT_TABLE_STYLE = {
         @csv = options[:csv_data].gsub("|", ",")
       elsif options[:csv_path]
         @csv              = File.open(options[:csv_path], 'r'){|f| f.read}
-      elsif options[:csv_data]
       else
         puts "No csv data:#{@data}"
         return
@@ -202,6 +218,7 @@ DEFAULT_TABLE_STYLE = {
       @source             = options.fetch(:source, nil)
       @table_data = @csv.split("\n")
       @table_data = @table_data.map{|row| row.split(",")}
+      create_rows
       if block
         instance_eval(&block)
       end            
@@ -210,15 +227,20 @@ DEFAULT_TABLE_STYLE = {
 
     def create_rows
       unless @column_width_array
-        calculate_column_width_array
+        if @calculate_column_width
+          calculate_column_width_array('average')
+        else
+          calculate_column_width_array('longest')
+        end
       end
       @row_height_sum = 0
       if has_head_row?
-        row_options               = @table_style[:head_row_atts]
-        row_options[:row_data]    = @table_data[0]
-        row_options[:cell_atts]   = @table_style[:head_cell_atts]
-        row_options[:column_width]= @column_width_array
-        row_options[:parent]      = self
+        row_options                     = @table_style[:head_row_atts]
+        row_options[:row_data]          = @table_data[0]
+        row_options[:cell_atts]         = @table_style[:head_cell_atts]
+        row_options[:column_width_array]= @column_width_array
+        row_options[:parent]            = self
+        row_options[:line_space]  = 0
         if @can_grow
           row_options[:layout_expand]= [:width]
         end
@@ -228,13 +250,14 @@ DEFAULT_TABLE_STYLE = {
       body_cycle = @body_row_colors.length if @body_row_colors
       @table_data.each_with_index do |row_data, i|
         next if i == 0
-        row_options               = @table_style[:body_row_atts]
-        current_cylcle            = i % body_cycle if @body_row_colors       
-        row_options[:fill_color]  =  @body_row_colors[current_cylcle] if @body_row_colors
-        row_options[:row_data]    = row_data
-        row_options[:cell_atts]   = @table_style[:body_cell_atts]
-        row_options[:column_width]= @column_width_array
+        row_options                     = @table_style[:body_row_atts]
+        current_cylcle                  = i % body_cycle if @body_row_colors       
+        row_options[:fill_color]        =  @body_row_colors[current_cylcle] if @body_row_colors
+        row_options[:row_data]          = row_data
+        row_options[:cell_atts]         = @table_style[:body_cell_atts]
+        row_options[:column_width_array]= @column_width_array
         row_options[:parent]      = self
+        row_options[:line_space]  = 0
         if @can_grow
           row_options[:layout_expand]= [:width]
         end
@@ -336,16 +359,20 @@ DEFAULT_TABLE_STYLE = {
     
 
     
-    # calculate width of longest cells for each column, 
+    # calculate width of longest or average cells for each column, 
     # so that we can set good looking layout
     # We might need average width?? option
     def calculate_column_width_array(type="longest")
       @column_width_array = []
       @column_width_array = @table_data[0].map{|cell| cell.length}
-      @table_data.each do |row|
-        row.each_with_index do |cell, i|
-          @column_width_array[i] = cell.length if cell.length > @column_width_array[i]
+      if type == "longest" # get longest
+        @table_data.each do |row|
+          row.each_with_index do |cell, i|
+            @column_width_array[i] = cell.length if cell.length > @column_width_array[i]
+          end
         end
+      else # get average
+
       end
     end
     
@@ -410,98 +437,6 @@ DEFAULT_TABLE_STYLE = {
       options[:parent] = self
       TableRow.new(options, &block)
     end
-    
+  end
 
-  end
-  
-  class TableRow < Container
-    attr_accessor :row_type, :fit_type, :font
-    attr_accessor :column_sytle_array, :column_alignment
-    def initialize(options={}, &block)
-      super
-      cell_atts           = options[:cell_atts] 
-      @row_data           = options[:row_data]
-      @row_type           = options.fetch(:row_type, "body_row")
-      @fit_type           = options.fetch(:fit_type, "adjust_row_height")
-      @layout_direction   = 'horizontal'
-      @cell_widths        = []
-      @row_data.each_with_index do |cell_text, i|
-        cell_atts[:text_string]   = cell_text
-        # cell_atts[:font_size]     = 9.0
-        if options[:column_width]
-          cell_atts[:layout_length] = options[:column_width][i] 
-        else
-          @cell_widths[i] = 1
-        end
-        if cell_atts[:stroke_sides]
-          cell_sides_type           = cell_atts[:stroke_sides].length 
-          case cell_sides_type
-          when 4
-            # do noting. This is single array [0,0,0,0]
-          when 3
-            # this is when left most, middle, right most are different
-            # [[0,0,1,0], [1,0,1,0], [1,0,0,0]]
-            if i == 0
-              cell_atts[:stroke_sides] = cell_atts[:stroke_sides][0]
-            elsif i == (@row_data.length - 1)
-              cell_atts[:stroke_sides] = cell_atts[:stroke_sides][2]
-            else
-              cell_atts[:stroke_sides] = cell_atts[:stroke_sides][1]
-            end
-          when 2
-            # this is right of left most column
-            # [[0,0,1,0], [0,0,0,0]]
-            if i == 0
-              cell_atts[:stroke_sides] = cell_atts[:stroke_sides][0]
-            else
-              cell_atts[:stroke_sides] = cell_atts[:stroke_sides][1]
-            end
-          when 1
-            # this is nested case, just flatten it
-            # [[0,0,1,0]]
-            cell_atts[:stroke_sides] = cell_atts[:stroke_sides][0]
-          end
-          #TODO
-          cell_atts[:width] = @width*(@cell_widths[i] - 20)/@cell_widths.reduce(:+).to_f if @width != 100
-        end
-        td(cell_atts)
-      end
-      case @fit_type
-      when 'adjust_row_height'
-        # find tallest cell and adjust height to accomodate it.
-        @height = tallest_cell_height + 4
-      else
-        # we might have to sqeeze in the cells to fit???
-      end
-        
-      self
-    end
-    
-    def adjust_height
-      @height = tallest_cell_height + 6
-    end
-    
-    def td(options={})
-      options[:fill_color]        = 'clear'
-      options[:stroke_thickness]  = 1
-      options[:text_fit_type]     = 'adjust_box_height'
-      options[:parent]            = self
-      if @row_type == "head_row"
-        options[:stroke_thickness]  = 1 
-        tc = TableCell.new(options)
-      else
-        tc = TableCell.new(options)
-      end
-      self
-    end
-    
-    def tallest_cell_height
-      tallest_height = @graphics.first.height
-      @graphics.each do |graphic|
-        tallest_height = graphic.height if graphic.height > tallest_height
-      end
-      tallest_height
-    end
-  end
-  
 end

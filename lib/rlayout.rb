@@ -26,7 +26,7 @@ else
   require 'base64'
   require 'json'
   require 'mini_magick'
-  require "image_processing/vips"
+  # require "image_processing/vips"
   require "image_processing"
   require 'hexapdf'
   # require 'text-hyphen', '~> 1.4'
@@ -57,7 +57,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
 
-  require File.dirname(__FILE__) + '/rlayout/table/list.rb'
 
   require File.dirname(__FILE__) + '/rlayout/container_extended/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container_extended/place_item'
@@ -146,6 +145,12 @@ else
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   require File.dirname(__FILE__) + "/rlayout/text/text"
   
+  require File.dirname(__FILE__) + '/rlayout/table/list.rb'
+  require File.dirname(__FILE__) + '/rlayout/table/simple_table.rb'
+  require File.dirname(__FILE__) + '/rlayout/table/table.rb'
+  require File.dirname(__FILE__) + '/rlayout/table/table_row.rb'
+  require File.dirname(__FILE__) + '/rlayout/table/table_cell.rb'
+
   require File.dirname(__FILE__) + '/rlayout/article/float_group'
  
 end

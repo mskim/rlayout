@@ -845,7 +845,7 @@ CHAPTER_STYLES={
   "head"    =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
   "h6"      =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray", :text_head_indent=>0, :text_tail_indent=>0},
   # "p"       =>{:font => 'SDMyoungjo',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "p"       =>{:font => 'smSSMyungjoP-W30',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+  "p"       =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "body"    =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
   "caption" =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black'},
@@ -953,11 +953,11 @@ module RLayout
       space_width
     end
 
-
     ########### ruby_pdf ##############
 
     def set_canvas_text_style(canvas, style_name, options={})
       style_name    = 'body' unless style_name
+      @current_style  = YAML::load(@current_style) if @current_style.class == String
       style         = @current_style[style_name]
       style         = Hash[style.map{ |k, v| [k.to_sym, v] }]
       font_name     = style[:font]
@@ -977,6 +977,9 @@ module RLayout
     end
 
     def style_object(style_name, options={})
+      if @current_style.class == String
+        @current_style = YAML::load(@current_style)
+      end
       style = @current_style[style_name]
       style = @current_style['body'] unless style
       style = Hash[style.map{ |k, v| [k.to_sym, v] }]

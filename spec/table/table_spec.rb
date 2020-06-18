@@ -2,40 +2,69 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create page with table' do
   before do
+    @pdf_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/table_demo.pdf"
+    @csv_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/category_demo.csv"
+    @table_style_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/table_style.rb"
+    @column_width_array     = [1,1,1,1,2,2,4]
+    @t1 = Table. new(width:500, height:700, column_width_array: @column_width_array, csv_path: @csv_path, category_level: 0, layout_length: 7, table_style_path: @table_style_path)
+  end
+
+  it 'should save_pdf ' do
+    @t1.save_pdf_with_ruby(@pdf_path)
+    assert File.exist?(@pdf_path)
+    system "open #{@pdf_path}"
+  end
+
+end
+
+__END__
+
+describe 'create page with table' do
+  before do
+    @pdf_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/table_demo.pdf"
     @page = RLayout::Page.new() do
       text("Table Sample", fill_color: "yellow", font_size: 16)
       col_width = [2,1,1,1,1.5,1.5,3]
-      t1 = table(column_width_array: col_width, csv_path: "/Users/mskim/flier/category_demo.csv", category_level: 1, layout_length: 7, table_style_path: "/Users/mskim/flier/table_style.rb")
-      t2 = table(column_width_array: col_width, csv_path: "/Users/mskim/flier/category_demo.csv", category_level: 1, layout_length: 7, table_style_path: "/Users/mskim/flier/table_style.rb")
-      # table(csv_path:  "/Users/mskim/flier/demo.csv", layout_length: 5, table_style_path: "/Users/mskim/flier/table_style.rb")
-      # table(layout_expand: [:width], column_width_array: col_width, csv_path:  "/Users/mskim/flier/category_demo.csv", category_level: 1, layout_length: 7, table_style_path: "/Users/mskim/flier/table_style.rb")
+      csv_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/category_demo.csv"
+      table_style_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/table_style.rb"
+      t1 = table(column_width_array: col_width, csv_path: csv_path, category_level: 1, layout_length: 7, table_style_path: table_style_path)
+      t2 = table(column_width_array: col_width, csv_path: csv_path, category_level: 1, layout_length: 7, table_style_path: table_style_path)
+      # binding.pry
       relayout!
-      t1.layout_content
-      t2.layout_content
+      # binding.pry
+      # t1.layout_content
+      # t2.layout_content
     end
   end
   
-  it 'should create page' do
-    assert @page.class == Page
-    puts "@page.width:#{@page.width}"
-    puts "@page.height:#{@page.height}"
-  end
+  # it 'should create page' do
+  #   assert @page.class == Page
+  #   assert @page.width == 600.0
+  #   assert @page.height == 800.0
+  # end
   
-  it 'should create table' do
-    assert @page.graphics.first.class == Text
-    puts "@page.graphics[0].class:#{@page.graphics[0].class}"
-    puts "@page.graphics[1].height:#{@page.graphics[1].height}"
-    puts "@page.graphics[2].height:#{@page.graphics[2].height}"
-    assert @page.graphics[1].class == Table
+  # it 'should create table' do
+  #   assert @page.graphics.first.class == Text
+  #   # puts "@page.graphics[0].class:#{@page.graphics[0].class}"
+  #   # puts "@page.graphics[1].height:#{@page.graphics[1].height}"
+  #   # puts "@page.graphics[2].height:#{@page.graphics[2].height}"
+  #   assert @page.graphics[1].class == Table
+  # end
+
+  it 'should save_pdf ' do
+    @page.save_pdf_with_ruby(@pdf_path)
+    assert File.exist?(@pdf_path)
+    system "open #{@pdf_path}"
   end
 end
 
 __END__
 
+
 describe 'table with category color' do
   before do
-    @csv_path = "/Users/mskim/flier/category_demo.csv"
-    @table_style_path = "/Users/mskim/flier/table_style.rb"
+    @csv_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/category_demo.csv"
+    @table_style_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/table_style.rb"
     @csv_data = File.open(@csv_path, 'r'){|f| f.read}
     @tbl      = Table.new(width: 595.28, height: 841.89, category_level: 1, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
   end
@@ -47,23 +76,23 @@ end
 
 describe 'table column_width_array' do
   before do
-    @csv_path = "/Users/mskim/flier/category_demo.csv"
-    @table_style_path = "/Users/mskim/flier/table_style.rb"
+    @csv_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/category_demo.csv"
+    @table_style_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/table_style.rb"
     @csv_data = File.open(@csv_path, 'r'){|f| f.read}
     @tbl      = Table.new(width: 595.28, height: 841.89, category_level: 0, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
+    puts "@tbl.column_width_array.class:#{@tbl.column_width_array.class}"
   end
   
-  it 'should create table_width_table' do
+  it 'should have column_width_array' do
     assert @tbl.column_width_array.class == Array
   end
-  
 end
 
-__END__
+
 describe 'table style' do
   before do
-    @csv_path = "/Users/mskim/flier/category_demo.csv"
-    @table_style_path = "/Users/mskim/flier/table_style.rb"
+    @csv_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/category_demo.csv"
+    @table_style_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/table_style.rb"
     @csv_data = File.open(@csv_path, 'r'){|f| f.read}
     @tbl      = Table.new(width: 595.28, height: 841.89, category_level: 1, csv_data: @csv_data, has_head_row: true, table_style_path: @table_style_path )
   end
@@ -118,7 +147,6 @@ describe 'table style' do
      
 end
 
-
 __END__
 
 
@@ -136,10 +164,7 @@ describe 'table with csv' do
   it 'should have table with csv_data' do
     assert @tbl.has_head_row? == true
   end
-  
 end
-
-
 
 PDSCRIPT = <<-EOF
 RLayout::Page.new(nil) do

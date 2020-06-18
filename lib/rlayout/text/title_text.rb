@@ -1,5 +1,4 @@
 module RLayout
-  MAX_SQUEEZE_LIMIT = 1.1
 
   # TitleText single or multiple line, uniform styled text
   # used for title, subject_head, quote
@@ -30,7 +29,16 @@ module RLayout
       @room                   = @width
       @single_line_title      = options[:single_line_title]
       if @style_name
-        @para_style           = RLayout::StyleService.shared_style_service.current_style[@style_name]
+        current_style         = RLayout::StyleService.shared_style_service.current_style
+        if current_style.class == String
+          current_style       = YAML::load(current_style)
+          @para_style         = current_style[@style_name]
+          unless @para_style
+            @para_style = current_style['body_gothic']
+          end
+        else
+          @para_style         = RLayout::StyleService.shared_style_service.current_style[@style_name]
+        end
         @para_style           = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
         @graphic_attributes   = @para_style[:graphic_attributes]
         if @graphic_attributes && @graphic_attributes['token_union_style']
@@ -62,7 +70,9 @@ module RLayout
       @tracking               = @para_style.fetch(:tracking, 0)
       @height_in_lines        = @space_before_in_lines + @text_height_in_lines + @space_after_in_lines
       @height                 = @height_in_lines*@body_line_height
-      if @para_style[:text_line_spacing] == "" || @para_style[:text_line_spacing].nil?
+      if options[:line_space]
+        @line_space           =  options[:line_space]
+      elsif @para_style[:text_line_spacing] == "" || @para_style[:text_line_spacing].nil?
         @line_space           =  @para_style[:font_size]*0.4
       else
         @line_space           = @para_style[:text_line_spacing]

@@ -369,6 +369,8 @@ EOF
 
     def table(options={}, &block)
       options[:parent] = self
+      options[:x]      = 50
+      options[:width]  = @width - 100
       Table.new(options, &block)
     end
 

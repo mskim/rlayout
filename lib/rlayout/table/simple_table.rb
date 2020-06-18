@@ -11,6 +11,8 @@ TABLE_PIPE_CHECK = /(?:\||.*?[^\\\n]\|)/
 TABLE_LINE = /#{TABLE_PIPE_CHECK}.*?\n/
 TABLE_START = /^#{OPT_SPACE}(?=\S)#{TABLE_LINE}/
 
+  # SimpleTable is a table which table cell text are single line text.
+  # for multiline table cell support use Table
   class SimpleTable < Container
     attr_accessor :has_head, :header, :rows
     attr_accessor :body_styles, :has_head_column, :header_array
@@ -92,10 +94,11 @@ TABLE_START = /^#{OPT_SPACE}(?=\S)#{TABLE_LINE}/
       @items.each_with_index do |item, i|
         if @head_row
           # token = Rectangle.new(parent: self, fill_color: @colors[i], stroke_width: 1, layout_expand: :width)
-          token = RTextToken.new(parent: self, fill_color: 'clear', string: item.strip, para_style: @table_style['h4'], layout_expand: :width)
+          # token = RTextToken.new(parent: self, fill_color: 'clear', string: item.strip, para_style: @table_style['h4'], layout_expand: :width)
+          token = TableCell.new(cell_tyoe: 'simple', parent: self, fill_color: 'clear', string: item.strip, para_style: @table_style['h4'], layout_expand: :width)
         else
           # token = Rectangle.new(parent: self, fill_color: 'clear',  stroke_width: 1, layout_expand: :width)
-          token = RTextToken.new(parent: self, fill_color: 'clear', string:item.strip, para_style: @table_style['body'], layout_expand: :width)
+          token = RTextToken.new(cell_tyoe: 'simple', parent: self, fill_color: 'clear', string:item.strip, para_style: @table_style['body'], layout_expand: :width)
         end
       end
       self
@@ -103,6 +106,5 @@ TABLE_START = /^#{OPT_SPACE}(?=\S)#{TABLE_LINE}/
   end
   
 end
-  
-  
+
   

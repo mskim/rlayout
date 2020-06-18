@@ -8,7 +8,7 @@ module RLayout
       options[:fill_color] = options.fetch(:token_color, 'clear')
       super
       @has_text         = true
-      @string           = options[:string]
+      @string           = options[:string] || options[:text_string]
       @token_type       = options[:token_type] if options[:token_type]
       @para_style       = options[:para_style]
       @style_name       = options[:style_name]
@@ -163,6 +163,7 @@ module RLayout
       end
       false
     end
+
 
     def draw_text
       style = @para_style

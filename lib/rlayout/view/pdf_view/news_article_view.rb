@@ -38,7 +38,43 @@ module RLayout
         pdf_doc.fonts.add(font_file)
       end
     end
+  end
 
+  class Table < Container
+    def draw_pdf(canvas, options={})
+      @graphics.each do |table_row|
+        table_row.draw_pdf(canvas) 
+      end
+    end
+  end
+
+  class TableRow < Container
+    def draw_pdf(canvas, options={})
+      return unless @graphics.length > 0
+      if @graphics.first.class == RTextToken
+        draw_tokens(canvas) 
+      else
+        @graphics.each{|table_cell| table_cell.draw_pdf(canvas)}
+      end
+    end
+
+    def draw_tokens(canvas)
+      @style_service = RLayout::StyleService.shared_style_service
+      @style_service.set_canvas_text_style(canvas, 'body', adjust_size: @adjust_size)
+      @graphics.each do |token|
+        if @font_size.nil?
+          @font_size = 9.4
+        end
+        if token.class == RLayout::Rectangle
+          # rectangle is use to draw stoke around union token
+          # align rect.x with first token.x
+          token.x += @start_x 
+          token.draw_pdf(canvas) # draw token_union_rect
+        else
+          canvas.text(token.string, at:[x + token.x, y - token.height])
+        end
+      end
+    end
   end
 
   class RLineFragment < Container
@@ -88,6 +124,9 @@ module RLayout
       elsif @para_style
         canvas.save_graphics_state do
           font_name     = @para_style[:font]
+          if font_name =~/smSSMyungjoP-W35/
+            font_name = 'Shinmoon'
+          end
           font_size     = @para_style[:font_size]
           font_folder   = "/Users/Shared/SoftwareLab/font_width"
           font_file     = font_folder + "/#{font_name}.ttf"
