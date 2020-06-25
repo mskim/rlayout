@@ -29,9 +29,7 @@ describe 'create page with table' do
       table_style_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/table_style.rb"
       t1 = table(column_width_array: col_width, csv_path: csv_path, category_level: 1, layout_length: 7, table_style_path: table_style_path)
       t2 = table(column_width_array: col_width, csv_path: csv_path, category_level: 1, layout_length: 7, table_style_path: table_style_path)
-      # binding.pry
       relayout!
-      # binding.pry
       # t1.layout_content
       # t2.layout_content
     end

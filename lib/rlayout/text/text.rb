@@ -271,14 +271,4 @@ module RLayout
     end
   end
 
-  class TableCell < Text
-    # lookup table style and applied the table_cell style
-    attr_accessor :h_span, :v_span, :text_direction
-    def initialize(options={})
-      # options[:text_font] = "smGothicP-W10"
-      super
-      self
-    end
-  end
-
 end

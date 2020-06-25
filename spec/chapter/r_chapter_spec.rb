@@ -20,10 +20,10 @@ describe "create RChapter" do
   #   @doc.paper_size.must_equal 'A5'
   # end
 
-  # it 'should save chapter pdf' do
-  #   @pdf_path = "/Users/Shared/rlayout/pdf_output/r_chapter.pdf"
-  #   @doc.save_pdf(@pdf_path)
-  #   File.exist?(@pdf_path).must_equal true
-  #   system "open #{@pdf_path}"
-  # end
+  it 'should save chapter pdf' do
+    @pdf_path = "/Users/Shared/rlayout/pdf_output/r_chapter.pdf"
+    @doc.save_pdf(@pdf_path)
+    File.exist?(@pdf_path).must_equal true
+    system "open #{@pdf_path}"
+  end
 end

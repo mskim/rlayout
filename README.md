@@ -122,6 +122,24 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2020_6_25
+  - save_para_data with order
+  - save_page_svg with link to paragraph_order
+
+2020_6_22
+	- fix paragraph layout_line
+		we can get rid of many line method, if it is done by paragrph 
+		line objects can be simplify
+			- no alien_token 
+			- no line_type 
+			- no set_paragraph_info
+			- no place_token
+			- no token_union_style
+			line should keep 
+				- style_name
+				- text_area
+				- token should have different style_name when mixed
+		
 2020_6_3
 	- redo creating RTextToken remove para_style, do it with style_name
 

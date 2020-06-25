@@ -1,13 +1,10 @@
 module RLayout
   # TableCell uses TitleText as 
 
-  class TableCell < RLayout::TitleText
+  class TableCell < TitleText
     attr_reader :cell_type
-
     def initialize(options={})
-
       options[:body_line_height]    = 10
-      
       super
       @cell_type = options[:cell_type] || 'body_cell'
       self
