@@ -5,7 +5,7 @@ describe "create RParagraph" do
     options                 = {}
     options[:para_string]        = 'This is a string.'
     options[:style_name]     = 'body'
-    options[:create_body_para_lines]     = true
+    options[:create_para_lines]     = true
     @para = RParagraph.new(options)
     @first_token = @para.tokens.first
   end

@@ -123,8 +123,7 @@ TODO List
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
 2020_6_25
-  - save_para_data with order
-  - save_page_svg with link to paragraph_order
+
 
 2020_6_22
 	- fix paragraph layout_line

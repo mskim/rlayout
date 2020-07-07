@@ -970,7 +970,7 @@ module RLayout
         para_options[:para_string]    = para[:para_string]
         para_options[:article_type]   = @news_box.kind
         para_options[:text_fit]       = FIT_FONT_SIZE
-        para_options[:line_width]     = @news_box.column_width  if para_options[:create_body_para_lines]
+        para_options[:line_width]     = @news_box.column_width  if para_options[:create_para_lines]
         @paragraphs << RParagraph.new(para_options)
       end
 

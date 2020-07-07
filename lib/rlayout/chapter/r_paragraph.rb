@@ -45,7 +45,7 @@ module RLayout
     attr_reader :article_type
     attr_reader :body_line_height, :line_count, :token_union_style
     attr_reader :line_width,  :token_heights_are_equal
-    attr_accessor :tokens, :lines, :pdf_doc
+    attr_accessor :tokens, :para_lines, :pdf_doc
 
     def initialize(options={})
       @tokens = []
@@ -61,7 +61,7 @@ module RLayout
         @tokens       = []
         create_tokens
       end
-      create_body_para_lines if options[:create_body_para_lines]
+      create_para_lines if options[:create_para_lines]
       self
     end
 
@@ -242,56 +242,6 @@ module RLayout
           # puts "token_group for plain: #{token_group}"
           create_plain_tokens(token_group)
         end
-      end
-    end
-
-
-    def create_body_para_lines
-      return if tokens.length == 0
-      @lines = []
-      tokens_copy = tokens.dup
-      @current_line = RLayout::RLineFragment.new(line_type: "first_line", width: @line_width)
-      token = tokens_copy.shift
-      if token && token.token_type == 'diamond_emphasis'
-        @current_line.line_type = "middle_line"
-      elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4'
-        @current_line.token_union_style = @token_union_style if @token_union_style
-        @current_line.line_type =  "middle_line"
-      end
-
-      while token
-        result = @current_line.place_token(token)
-        
-        if result.class == RTextToken
-          # token is broken into two, second part is returned
-          @current_line.align_tokens
-          @current_line.room = 0
-          @current_line = RLayout::RLineFragment.new(line_type: "middle_line", width: @line_width)
-          @lines << @current_line
-          token = result          
-        elsif result
-          # puts "entire token placed succefully, returned result is true"
-          token = tokens_copy.shift
-        else
-          # entire token was rejected,
-          @current_line.align_tokens
-          @current_line.room = 0
-          @current_line = RLayout::RLineFragment.new(line_type: "middle_line", width: @line_width)
-          @lines << @current_line
-        end
-      end
-
-      @current_line.align_tokens
-      if @move_up_if_room 
-        if found_previous_line = previous_line_has_room(@current_line)
-          move_tokens_to_previous_line(@current_line, found_previous_line)
-          @current_line.layed_out_line = false
-          @current_line
-        else
-          @current_line.next_text_line
-        end
-      else
-        @current_line.next_text_line
       end
     end
 
@@ -486,8 +436,68 @@ module RLayout
       Hash[list_only.collect{|k,v| [k.to_s.sub("list_","").to_sym, v]}]
     end
 
-    def layout_para(para_string, style_name, column_width, output_path)
+    # layout paragragraph
+    def self.layout_paragraph(para_string, markup, column_width)
+      p = RParagraph.new(para_string: para_string, markup: markup, line_width: column_width)
+      p.create_para_lines(options)
+      if options[:text_lines_array]
+        # layout lines with given text_lines_array
+      end
+      p.para_lines
+    end
 
+    def create_para_lines
+      return if tokens.length == 0
+      @para_lines = []
+      tokens_copy = tokens.dup
+      @current_line = RLayout::RLineFragment.new(line_type: "first_line", width: @line_width)
+      token = tokens_copy.shift
+      if token && token.token_type == 'diamond_emphasis'
+        @current_line.line_type = "middle_line"
+      elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4'
+        @current_line.token_union_style = @token_union_style if @token_union_style
+        @current_line.line_type =  "middle_line"
+      end
+
+      while token
+        result = @current_line.place_token(token)
+        
+        if result.class == RTextToken
+          # token is broken into two, second part is returned
+          @current_line.align_tokens
+          @current_line.room = 0
+          @current_line = RLayout::RLineFragment.new(line_type: "middle_line", width: @line_width)
+          @para_lines << @current_line
+          token = result          
+        elsif result
+          # puts "entire token placed succefully, returned result is true"
+          token = tokens_copy.shift
+        else
+          # entire token was rejected,
+          @current_line.align_tokens
+          @current_line.room = 0
+          @current_line = RLayout::RLineFragment.new(line_type: "middle_line", width: @line_width)
+          @para_lines << @current_line
+        end
+        @para_lines
+      end
+
+      @current_line.align_tokens
+      if @move_up_if_room 
+        if found_previous_line = previous_line_has_room(@current_line)
+          move_tokens_to_previous_line(@current_line, found_previous_line)
+          @current_line.layed_out_line = false
+          @current_line
+        else
+          @current_line.next_text_line
+        end
+      else
+        @current_line.next_text_line
+      end
+    end
+
+    def layout_para_lines_with_text_lines(text_lines_array)
+      
     end
 
   end

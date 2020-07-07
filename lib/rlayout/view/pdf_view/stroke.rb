@@ -90,12 +90,12 @@ class Graphic
         # if [1,1,1,1,1,1] drawing x mark
         # draw top-left to bottom-right
         if @stroke[:sides][4] && @stroke[:sides][4].class != String && @stroke[:sides][4] > 0
-          draw_line(canvas, @x, @y, x_max, @height, @stroke[:thickness]*@stroke[:sides][4])
+          draw_line(canvas, top_left[0] , top_left[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][4])
         end
 
         # draw bottom-left to top-right
         if @stroke[:sides][5] &&  @stroke[:sides][5] > 0
-          draw_line(canvas, x_max, @y, @x, @height, @stroke[:thickness]*@stroke[:sides][5])
+          draw_line(canvas, top_right[0], top_right[1], bottom_left[0], bottom_left[1], @stroke[:thickness]*@stroke[:sides][5])
         end
 
       else
