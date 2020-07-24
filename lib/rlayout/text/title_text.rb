@@ -116,11 +116,15 @@ module RLayout
 
     def create_tokens
       return unless @string
-
+      # we are getting "\r\n" or "\n" for new line
       if @string.include?("\r\n")
-        puts " +++++++++ @string.include?"
-        # force_broken_blocks = @string.split("\r\n")
         @string.split("\r\n").each do |line_string|
+          create_tokens_from_string(line_string)
+          @tokens <<  NewLineToken.new
+        end
+        @tokens.pop # delete last NewLineToken
+      elsif @string.include?("\n")
+        @string.split("\n").each do |line_string|
           create_tokens_from_string(line_string)
           @tokens <<  NewLineToken.new
         end
