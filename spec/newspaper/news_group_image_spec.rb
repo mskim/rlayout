@@ -7,9 +7,10 @@ describe 'test NewsGroupImage' do
     image1 = @folder + "/1.jpg"
     image2 = @folder + "/2.jpg"
     image3 = @folder + "/3.jpg"
-    images = ["#{image1}", "#{image2}", "#{image3}"]
-    @width = 600
-    @height = 50
+    image4 = @folder + "/4.jpg"
+    images = ["#{image1}", "#{image2}", "#{image3}", "#{image4}"]
+    @width = 400
+    @height = 100
     @g_image = RLayout::NewsGroupImage.new(member_images: images, width: @width, height: @height)
     @first_member = @g_image.graphics.first
   end
@@ -32,6 +33,7 @@ describe 'test NewsGroupImage' do
     @pdf_path = @folder + "/group_image.pdf"
     @g_image.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
+    system("open #{@pdf_path}")
   end
 
 end

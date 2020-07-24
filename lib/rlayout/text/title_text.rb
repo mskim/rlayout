@@ -118,7 +118,8 @@ module RLayout
       return unless @string
 
       if @string.include?("\r\n")
-        force_broken_blocks = @string.split("\r\n")
+        puts " +++++++++ @string.include?"
+        # force_broken_blocks = @string.split("\r\n")
         @string.split("\r\n").each do |line_string|
           create_tokens_from_string(line_string)
           @tokens <<  NewLineToken.new

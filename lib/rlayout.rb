@@ -150,6 +150,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/table/table.rb'
   require File.dirname(__FILE__) + '/rlayout/table/table_row.rb'
   require File.dirname(__FILE__) + '/rlayout/table/table_cell.rb'
+  require File.dirname(__FILE__) + '/rlayout/table/jubo.rb'
 
   require File.dirname(__FILE__) + '/rlayout/article/float_group'
  

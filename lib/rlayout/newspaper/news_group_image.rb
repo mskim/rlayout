@@ -2,7 +2,7 @@ module RLayout
 
   # layout_direction horizontal, vertical, nxn(2x2 or 3x3)
 
-  class NewsGroupImage < NewsImage
+  class NewsGroupImage < Container
     attr_accessor :image_count, :member_images
 
     def initialize(options={}, &block)
@@ -29,8 +29,10 @@ module RLayout
       @member_width   = @width
       @member_height  = @height/@member_count
     end
+    
     @member_images.each do |image_path|
-      i = Image.new(parent:self, image_path:image_path, width:@member_width, height: @member_height, layout_expand: [:width, :height])
+      next unless image_path
+      Image.new(parent:self, image_path:image_path, width:@member_width, height: @member_height, layout_expand: [:width, :height])
     end
   end
 end
