@@ -42,118 +42,61 @@ module RLayout
     end
   end
     
-  # fills the box with leader_character at run time
-  class LeaderCell < Text
-    attr_accessor :leader_character, :is_leader
-    
-    def initialize(options={})
-      options[:font_size] = parent.height - 4
-      options[:height] = parent.height - 2
-      @is_leader = options.fetch(:is_leader, false)
-      
-      @leader_character = options.fetch(:leader_character, ".")
-      if @is_leader
-        options[:text_string] = @leader_character
-      end
-      super
-      self
-    end
-    
-    def set_leader_char(width)
-      puts __method__
-      if RUBY_ENGINE == 'rubymotion'
-        puts "@text_layout_manager.att_string.string.length:#{@text_layout_manager.att_string.string.length}"
-        string_width = @text_layout_manager.att_string.size.width
-        if string_width < width
-          puts "sting is short"
-        else
-          puts "sting is long"
-          puts "width:#{width}"
-          puts "string_width:#{string_width}"
-          count = string_width/width
-          new_string = @leader_character*count
-          @text_layout_manager.replace_string_with(new_string)
-        end
-        # leader_string = "."
-        # while width > leader_string/2.0
-        #   leader_string += "."
-        # end
-        # puts "leader_string.length:#{leader_string.length}"
-        
-      else
-        leader_string = "."
-        while width > leader_string/2.0
-          leader_string += "."
-        end
-        puts "leader_string.length:#{leader_string.length}"
-        # set 
-      end
-    end
-    
-    def is_leader?
-      @is_leader
-    end
-    
-    # adjust_cell_size by adjusting text font size and width according to given cell_height
-    def adjust_cell_size(cell_height)
-      # puts __method__
-    end
-  end
-  
   # similar to TableRow, but has leader cell between text cell
   # Used for TOC, Menu, Jubo
-  class LeaderRow < Container
-    attr_accessor :row_text
-    def initialize(options={}, &block)
-      options[:height] = 24 unless options[:height]
-      # options[:layout_expand] = [:width, :height]
-      options[:layout_direction] = "horizontal"
-      super
-      @row_text = options[:row_text]
-      create_cells
-      self
-    end
+  # class LeaderRow < Container
+  #   attr_accessor :row_text
+  #   def initialize(options={}, &block)
+  #     options[:height] = 24 unless options[:height]
+  #     # options[:layout_expand] = [:width, :height]
+  #     options[:layout_direction] = "horizontal"
+  #     super
+  #     @row_text = options[:row_text]
+  #     create_cells
+  #     self
+  #   end
     
-    def is_breakable?
-      false
-    end
+  #   def is_breakable?
+  #     false
+  #   end
     
-    def create_cells
-      cell_text = @row_text.split(",")
-      cell_text.each_with_index do |text_string, i|
-        if i == cell_text.length - 1
-          # align right for price
-          LeaderCell.new(:parent=>self, text_string:text_string, text_alignment: "right")
-        else
-          LeaderCell.new(:parent=>self, text_string:text_string)
-        end
-        LeaderCell.new(:parent=>self, is_leader:true) unless i >= cell_text.length - 1
-      end
-    end
+  #   def create_cells
+  #     cell_text = @row_text.split(",")
+  #     cell_text.each_with_index do |text_string, i|
+  #       if i == cell_text.length - 1
+  #         # align right for price
+  #         LeaderCell.new(:parent=>self, text_string:text_string, text_alignment: "right")
+  #       else
+  #         LeaderCell.new(:parent=>self, text_string:text_string)
+  #       end
+  #       LeaderCell.new(:parent=>self, is_leader:true) unless i >= cell_text.length - 1
+  #     end
+  #   end
     
-    def relayout!      
-      cell_height         = @height - 2
-      text_cells          = @graphics.select{|cell| cell.is_leader!=true}
-      text_cells.each do |cell|
-        cell.adjust_cell_size(cell_height)
-      end
-      text_cell_width_sum = text_cells.map{|cell| cell.width}.reduce(:+)
-      leader_cells        = @graphics.select{|cell| cell.is_leader==true}
-      space_for_leader    = (@width - text_cell_width_sum)/leader_cells.length
-      leader_cells.each {|cell| cell.width = space_for_leader}
-      x= 0
-      @graphics.each do |cell|
-        y      = 1
-        height = cell_height
-        width = cell.width
-        if cell.is_leader?
-          width = space_for_leader 
-          cell.set_leader_char(width)
-        end
-        cell.set_frame([x,y,width,height])
-        x += cell.width
-      end
+  #   def relayout!      
+  #     cell_height         = @height - 2
+  #     text_cells          = @graphics.select{|cell| cell.is_leader!=true}
+  #     text_cells.each do |cell|
+  #       cell.adjust_cell_size(cell_height)
+  #     end
+  #     text_cell_width_sum = text_cells.map{|cell| cell.width}.reduce(:+)
+  #     leader_cells        = @graphics.select{|cell| cell.is_leader==true}
+  #     space_for_leader    = (@width - text_cell_width_sum)/leader_cells.length
+  #     leader_cells.each {|cell| cell.width = space_for_leader}
+  #     x= 0
+  #     @graphics.each do |cell|
+  #       y      = 1
+  #       height = cell_height
+  #       width = cell.width
+  #       if cell.is_leader?
+  #         width = space_for_leader 
+  #         cell.set_leader_char(width)
+  #       end
+  #       cell.set_frame([x,y,width,height])
+  #       x += cell.width
+  #     end
       
-    end
-  end
+  #   end
+  # end
+
 end

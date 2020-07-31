@@ -2,7 +2,6 @@ module RLayout
 class Graphic
   attr_accessor :line_position, :stroke_rect
   def draw_stroke(canvas)
-    #TODO fix this
     @stroke[:color]  = RLayout.color_from_string(@stroke[:color])    if  @stroke[:color] =~ /^CMYK/
     draw_gutter_stroke(canvas) if self.respond_to?(:gutter_stroke) && @draw_gutter_stroke
     return if @stroke[:thickness].nil? || @stroke[:thickness] == 0

@@ -649,16 +649,16 @@ module RLayout
       o_extended_line_count = 0
       o_extended_line_count = rect[4] if rect.length > 4
       o_x       = rect[0]*grid_width
-      o_width   = rect[2]*grid_width
-      if rect[0] != @x
-        # o_x       += @gutter 
-        o_width  -= @gutter 
-      end
+      o_width   = rect[2]*grid_width - @gutter
+      # if rect[0] != @x
+      #   # o_x       += @gutter 
+      #   o_width  -= @gutter 
+      # end
       o_y       = rect[1]*grid_height - @page_heading_margin_in_lines*@body_line_height
       o_y      += @extended_line_count * @body_line_height if @extended_line_count 
       # o_y      -= space_above
       o_y      -= o_extended_line_count
-      o_width  -= @gutter if on_right_edge
+      # o_width  -= @gutter if on_right_edge
       o_height  = rect[3]*grid_height
       o_height += space_above
       o_height += o_extended_line_count
