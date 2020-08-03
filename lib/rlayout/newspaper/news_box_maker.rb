@@ -994,6 +994,8 @@ module RLayout
         line_content          = @news_box.collect_column_content
         # TODO
         # adjust height of news_box to fit content
+        puts "+++++++++++++++ before @news_box.height:#{@news_box.height}"
+        puts "+++++++++++++++ before @news_box.extended_line_count:#{@news_box.extended_line_count}"
         @news_box.adjust_height
         # save the @adjusted_line_count to return to caller
         @adjusted_line_count  = @news_box.adjusted_line_count
@@ -1001,6 +1003,9 @@ module RLayout
         # adjust middle and bottom positioned floats
         @news_box.adjust_middle_and_bottom_floats_position(@adjusted_line_count)
         @news_box.relayout_line_content(line_content)
+        puts "+++++++++++++++ after @news_box.height:#{@news_box.height}"
+        puts "+++++++++++++++ after @news_box.adjusted_line_count:#{@news_box.adjusted_line_count}"
+
       end
     end
 
