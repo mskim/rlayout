@@ -736,7 +736,7 @@ module RLayout
         text_options[:height]           = box_height
         @quote_box                      = QuoteText.new(text_options)
         @quote_box.y                    = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
-      else
+      else # for 23면 10단 기고
         quote_options                     = {}
         quote_options[:column]            = @quote_box_column
         quote_options[:row]               = 1

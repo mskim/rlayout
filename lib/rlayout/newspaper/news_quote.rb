@@ -113,10 +113,6 @@ module RLayout
       self
     end
 
-    def draw_pdf(canvas, options={})
-      puts __method__
-    end
-
     def top_position?
       @position == 1 || @position == 2 || @position == 3
     end

@@ -86,7 +86,7 @@ module RLayout
       if @string.include?("\r\n")
         @string.split("\r\n").each do |line_string|
           create_tokens_from_string(line_string)
-          @tokens <<  NewLineToken.new
+          @tokens <<  NewLineToken.new(style_name: @style_name)
         end
       else
         create_tokens_from_string(@string)

@@ -276,11 +276,12 @@ module RLayout
 
 
   class NewLineToken < Graphic
-    attr_accessor :string
+    attr_accessor :string, :style_name
     def initialize(options={})
       super
       @string = ""
       @width  = 0
+      @style_name = options[:options] if options[:options]
       self
     end
   end
