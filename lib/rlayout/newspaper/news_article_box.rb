@@ -276,7 +276,7 @@ module RLayout
       end
       unoccupied_lines_count = 0
       @graphics.reverse.each do |column_from_last|
-        break if column_from_last.graphics.last.layed_out_line?
+        break if column_from_last.graphics.last && column_from_last.graphics.last.layed_out_line?
         unoccupied_lines_count += column_from_last.unoccupied_lines_count
       end
       unoccupied_lines_count
@@ -375,7 +375,7 @@ module RLayout
       if  current_line
         @current_column  = current_line.column
       end
-      @overflow  = true if @overflow_column.graphics.first.layed_out_line?
+      @overflow  = true if @overflow_column.graphics.first && @overflow_column.graphics.first.layed_out_line?
       if @overflow && !@adjustable_height
         last_line_of_box.fill.color = 'red'
       else
