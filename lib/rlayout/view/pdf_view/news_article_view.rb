@@ -141,6 +141,7 @@ module RLayout
 
     def has_mixed_style_token?
       return true if @has_mixed_style_token == true
+      @graphics.shift if @graphics.first.class == RLayout::NewLineToken
       current_style_name = @graphics.first.style_name
       @graphics.each do |token|
         next if token.class != RLayout::RTextToken

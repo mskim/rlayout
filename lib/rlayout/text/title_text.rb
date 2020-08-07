@@ -120,15 +120,15 @@ module RLayout
       if @string.include?("\r\n")
         @string.split("\r\n").each do |line_string|
           create_tokens_from_string(line_string)
-          @tokens <<  NewLineToken.new(style_name: @style_name)
+          @tokens <<  NewLineToken.new()
         end
-        @tokens.pop # delete last NewLineToken
+        @tokens.pop if @tokens.last.class == RLayout::NewLineToken # delete last NewLineToken
       elsif @string.include?("\n")
         @string.split("\n").each do |line_string|
           create_tokens_from_string(line_string)
-          @tokens <<  NewLineToken.new(style_name: @style_name)
+          @tokens <<  NewLineToken.new()
         end
-        @tokens.pop # delete last NewLineToken
+        @tokens.pop if @tokens.last.class == RLayout::NewLineToken # delete last NewLineToken
       else
         create_tokens_from_string(@string)
       end

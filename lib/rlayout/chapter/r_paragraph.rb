@@ -111,11 +111,11 @@ module RLayout
         token_options[:style_name]  = @style_name
         token_options[:para_style]  = @para_style
         token_options[:height]      = @para_style[:font_size]
-        if RUBY_ENGINE != "rubymotion"
-          glyphs                     = @font_wrapper.decode_utf8(token_string)
-          width= glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
-          token_options[:width]      = width  
-        end
+        # if RUBY_ENGINE != "rubymotion"
+        glyphs                     = @font_wrapper.decode_utf8(token_string)
+        width= glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
+        token_options[:width]      = width  
+        # end
         @tokens << RLayout::RTextToken.new(token_options)
       end
     end
@@ -141,10 +141,10 @@ module RLayout
             emphasis_style[:style_name] = 'body_gothic'
             emphasis_style[:para_style] = @emphasis_para_style
             emphasis_style[:height]     = @emphasis_para_style[:font_size]
-            if RUBY_ENGINE != "rubymotion"
+            # if RUBY_ENGINE != "rubymotion"
               glyphs                     = @font_wrapper.decode_utf8(token_string)
               emphasis_style[:width]      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
-            end
+            # end
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
@@ -183,10 +183,10 @@ module RLayout
             emphasis_style[:para_style] = @diamond_para_style
             emphasis_style[:height]     = @diamond_para_style[:font_size]
             emphasis_style[:token_type] = 'diamond_emphasis'
-            if RUBY_ENGINE != "rubymotion"
+            # if RUBY_ENGINE != "rubymotion"
               glyphs                     = @font_wrapper.decode_utf8(token_string)
               emphasis_style[:width]      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
-            end
+            # end
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else

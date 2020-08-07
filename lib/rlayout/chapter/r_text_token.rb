@@ -3,7 +3,7 @@ module RLayout
 
   class RTextToken < Graphic
     attr_accessor :string, :token_type, :has_text, :char_half_width_cushion
-    attr_reader :adjust_size, :style_name
+    attr_reader :adjust_size, :style_name, :current_style, :char_width_array
     def initialize(options={})
       options[:fill_color] = options.fetch(:token_color, 'clear')
       super
@@ -29,27 +29,20 @@ module RLayout
       [@width, @height]
     end
 
+    # TODO keep char_width_array
+    # if we have char_width_array, get the string width from this
     def width_of_string(string, options={})
       return 0 if string.nil?
       return 0 if string == ""
-      if RUBY_ENGINE == "rubymotion"
-        atts = NSUtils.ns_atts_from_style(@para_style)
-        att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
-        return att_string.size.width
+      if @char_width_array 
+        @char_width_array[0..(string.length - 1)].sum
       else
-        # TODO
-        # this should not be called at all
-        # string width should be calculated by paragraph with and given as parameter. 
-
-        font_size = @para_style[:font_size] || 10
-        font      = @para_style[:font] || 'shinmoon'
-        tracking  = @para_style[:tracking] || 0.0
-        scale     = @para_style[:scale] || 100
-        h = {}
-        h[:tracking] = @para_style[:tracking] if @para_style[:tracking] && @para_style[:tracking] != 0.0
-        h[:scale] = @para_style[:scale] if @para_style[:scale] && @para_style[:scale] != 100.0
-        size      = RFont.string_size(string, font, font_size, h)
-        size[0]
+        @current_style_service = RLayout::StyleService.shared_style_service
+        @current_style ||= RLayout::StyleService.shared_style_service.current_style
+        @style_hash ||= current_style[@style_name]
+        @style_object, @font_wrapper = @current_style_service.style_object(@style_name) 
+        glyphs     = @font_wrapper.decode_utf8(string)
+        width      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
       end
     end
 
@@ -154,7 +147,9 @@ module RLayout
       if hyphenated_result == "front forbidden character"
         return "front forbidden character"
       elsif hyphenated_result.class == String
+        # binding.pry
         @width = width_of_string(@string)
+        # "‘회"  10.372000000000002
         second_half_width = width_of_string(hyphenated_result) + @left_margin + @right_margin
         second_half = RTextToken.new(string: hyphenated_result, para_style: @para_style, width: second_half_width, height: @height)
         return second_half
