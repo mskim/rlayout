@@ -1,10 +1,10 @@
-require 'thor'
-module RLayout
-  class CLI < Thor
+# require 'thor'
+# module RLayout
+#   class CLI < Thor
     
-    desc "display about", "Tells that it is working"
-    def about
-      puts "This is RLayout CLI"
-    end
-  end
-end
+#     desc "display about", "Tells that it is working"
+#     def about
+#       puts "This is RLayout CLI"
+#     end
+#   end
+# end

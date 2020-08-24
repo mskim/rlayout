@@ -59,11 +59,11 @@ module RLayout
     def init_image(options)
       @image_record  = options.fetch(:image_record,nil)
       unless options[:image_path]
-        if options[:local_image] && $ProjectPath
+        if (options[:local_image] && $ProjectPath) || (options[:local_image] && @project_path)
           @local_image          = options[:local_image]
-          puts "++++++ $ProjectPath:#{$ProjectPath}"
           options[:image_path]  = $ProjectPath + "/images/" + options[:local_image]
         else
+          puts "local_image with out @project_path!!!"
           return
         end
       end
@@ -82,36 +82,12 @@ module RLayout
       set_zoom_factor
       @zoom_anchor    = options[:zoom_anchor] unless @zoom_anchor
       @zoom_anchor    = 5 unless @zoom_anchor
-      # @image_path
-      if RUBY_ENGINE == 'rubymotion'
-        @image_object  = NSImage.alloc.initByReferencingFile(@image_path)
-        if @image_path =~/pdf$/ || @image_path =~/PDF$/ || @image_path =~/eps$/ || @image_path =~/EPS$/ || @image_path =~/dummy\.jpg$/
-          # do not convert color space for pdf and eps
-        else
-          sourceImageRep = NSBitmapImageRep.imageRepWithData(@image_object.TIFFRepresentation)
-          targetColorSpace = NSColorSpace.deviceCMYKColorSpace
-          if (sourceImageRep.colorSpace == targetColorSpace)
-            targetImageRep = sourceImageRep
-          else
-            targetImageRep = sourceImageRep.bitmapImageRepByConvertingToColorSpace(targetColorSpace, renderingIntent:NSColorRenderingIntentPerceptual)
-            targetImageData = targetImageRep.representationUsingType(NSJPEGFileType, properties:nil)
-            @image_object = NSImage.alloc.initWithData(targetImageData)
-          end
-        end
-        @image_dimension  = [@image_object.size.width, @image_object.size.height]
-        if @image_object && options[:adjust_height_to_keep_ratio]
-          @height *= image_object_height_to_width_ratio
-        end
-        apply_fit_type
-      else
-        # @image_object   = MiniMagick::Image.open(@image_path)
-        @image_object     = Vips::Image.new_from_file(@image_path)
-        @image_dimension  = [@image_object.width, @image_object.height]
-        if @image_object && options[:adjust_height_to_keep_ratio]
-          @height *= image_object_height_to_width_ratio
-        end
-        apply_fit_type
+      @image_object     = Vips::Image.new_from_file(@image_path)
+      @image_dimension  = [@image_object.width, @image_object.height]
+      if @image_object && options[:adjust_height_to_keep_ratio]
+        @height *= image_object_height_to_width_ratio
       end
+      apply_fit_type
       if options[:image_caption]
         @image_caption = options[:image_caption]
       else

@@ -4,4 +4,5 @@ module RLayout
     attr_reader :csv
 
   end
+
 end

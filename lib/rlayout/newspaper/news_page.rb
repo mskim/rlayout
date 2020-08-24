@@ -153,6 +153,7 @@ module RLayout
         if grid_frame.length == 5 && grid_frame[4] =~/^광고/
           # found_ad = grid_frame[4][:광고] || grid_frame[4]['광고'] || grid_frame[4][:'광고'] || grid_frame[4]['광고']
           info[:image_path] = ad_image_path
+          @right_side_ad = true if grid_frame[4] =~/홀$/
         elsif grid_frame.length == 5 && grid_frame[4].class == Integer
           story_count += 1
           pillar_article_count = grid_frame[4]
@@ -163,7 +164,11 @@ module RLayout
         end
 
         # info[:x] = grid_frame[0]*(@grid_width + @gutter) + @left_margin
-        info[:x]              = grid_frame[0]*@grid_width + @left_margin
+        if @right_side_ad == true 
+          info[:x]              = grid_frame[0]*@grid_width + @left_margin + @gutter
+        else
+          info[:x]              = grid_frame[0]*@grid_width + @left_margin
+        end
         info[:y]              = grid_frame[1]*@grid_height + @top_margin
         info[:width]          = grid_frame[2]*@grid_width
         info[:height]         = grid_frame[3]*@grid_height

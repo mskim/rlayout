@@ -415,7 +415,7 @@ module RLayout
         @para_style  = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
         # @para_string = "▸▸" + @para_string
         # @para_string = "▸▸" + @para_string
-        @para_string = "> " + @para_string
+        @para_string = "\u25b6\u25b6" + " " + @para_string
       end
 
       unless @para_style

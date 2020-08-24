@@ -999,6 +999,23 @@ module RLayout
       return style_object, font_wrapper
     end
 
+    def style_object_from_para_style(para_style, options={})
+      @pdf_doc      ||= HexaPDF::Document.new
+      font_folder   = "/Users/Shared/SoftwareLab/font_width"
+      font_name     = para_style[:font]
+      font_file     = font_folder + "/#{font_name}.ttf"
+      font_wrapper = @pdf_doc.fonts.add(font_file)
+      h = {}
+      h[:font]                = font_wrapper
+      h[:font_size]           = para_style[:font_size]
+      h[:font_size]           += options[:adjust_size]  if options[:adjust_size]
+      h[:character_spacing]   = para_style[:tracking]        if para_style[:tracking] && para_style[:tracking] != 0
+      h[:horizontal_scaling]  = para_style[:scale]           if para_style[:scale] && para_style[:scale] != 100
+      h
+      style_object = HexaPDF::Layout::Style.new(h)
+      return style_object, font_wrapper
+    end
+
     def width_of_string(style_name, string, adjust_size)
       style = @current_style[style_name]
       style = @current_style['body'] unless style

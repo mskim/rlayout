@@ -7,7 +7,7 @@ module RLayout
     attr_accessor :non_overlapping_rect, :z_order
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
     attr_accessor :frame_image, :shadow, :rotation, :right_anchor, :center_anchor_at, :bottom_anchor
-    attr_reader   :pdf_doc
+    attr_reader   :pdf_doc, :project_path
 
 
 
@@ -16,7 +16,7 @@ module RLayout
       # if @parent && @parent.class.kind_of?(Document)
       #   set_frame(@parent.layout_rect)
       @tag                  = options[:tag]
-
+      @project_path         = options[:project_path]
       if @parent && options[:parent_frame]
         set_frame(@parent.layout_rect)
       elsif options[:grid_frame] && @parent && @parent.grid

@@ -36,11 +36,17 @@ module RLayout
       return 0 if string == ""
       if @char_width_array 
         @char_width_array[0..(string.length - 1)].sum
-      else
+      elsif @style_name
         @current_style_service = RLayout::StyleService.shared_style_service
         @current_style ||= RLayout::StyleService.shared_style_service.current_style
         @style_hash ||= current_style[@style_name]
         @style_object, @font_wrapper = @current_style_service.style_object(@style_name) 
+        glyphs     = @font_wrapper.decode_utf8(string)
+        width      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
+      else
+        # If we dont have @style_name, use @para_style
+        @current_style_service = RLayout::StyleService.shared_style_service
+        @style_object, @font_wrapper = @current_style_service.style_object_from_para_style(@para_style) 
         glyphs     = @font_wrapper.decode_utf8(string)
         width      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
       end
@@ -147,7 +153,6 @@ module RLayout
       if hyphenated_result == "front forbidden character"
         return "front forbidden character"
       elsif hyphenated_result.class == String
-        # binding.pry
         @width = width_of_string(@string)
         # "‘회"  10.372000000000002
         second_half_width = width_of_string(hyphenated_result) + @left_margin + @right_margin

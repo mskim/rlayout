@@ -1,46 +1,46 @@
-# profile
-  # layout_direction
-  # menu_column_count
-  # menu_item_count
-  # paper_size
+# # profile
+#   # layout_direction
+#   # menu_column_count
+#   # menu_item_count
+#   # paper_size
 
-# title style
+# # title style
 
-# menu style
-  # item_color, item_font, item_size, item_alignment
-  # leader_color, leader_font, leader_size, leader_alignment
-  # price_color, price_font, price_size, price_alignment
-  # left_margin, right_margin
+# # menu style
+#   # item_color, item_font, item_size, item_alignment
+#   # leader_color, leader_font, leader_size, leader_alignment
+#   # price_color, price_font, price_size, price_alignment
+#   # left_margin, right_margin
 
 
-module RLayout
+# module RLayout
   
-  class Menu < Container
-    attr_accessor :column_count, :menu_text, :menu_text_path
-    def initialize(options={})
-      super
-      if options[:menu_text_path]
-        unless File.exist?(options[:menu_text_path])
-          puts "menu_text: #{options[:menu_text_path]} doesn't exist!!!"
-        end
-        @menu_text = File.open(options[:menu_text_path], 'r'){|f| f.read}
-      elsif options[:menu_text]
-        @menu_text = options[:menu_text]
-      else
-        puts "No menu_text!!!"
-      end
-      rows = menu_text.split("\n")
-      @item_rows = []
-      rows.each do |row_text|
-        @graphics << LeaderRow.new(row_text:row_text)
-      end
-      self
-    end
+#   class Menu < Container
+#     attr_accessor :column_count, :menu_text, :menu_text_path
+#     def initialize(options={})
+#       super
+#       if options[:menu_text_path]
+#         unless File.exist?(options[:menu_text_path])
+#           puts "menu_text: #{options[:menu_text_path]} doesn't exist!!!"
+#         end
+#         @menu_text = File.open(options[:menu_text_path], 'r'){|f| f.read}
+#       elsif options[:menu_text]
+#         @menu_text = options[:menu_text]
+#       else
+#         puts "No menu_text!!!"
+#       end
+#       rows = menu_text.split("\n")
+#       @item_rows = []
+#       rows.each do |row_text|
+#         @graphics << LeaderRow.new(row_text:row_text)
+#       end
+#       self
+#     end
     
-    def relayout!
-      super
-    end
-  end
+#     def relayout!
+#       super
+#     end
+#   end
     
   # similar to TableRow, but has leader cell between text cell
   # Used for TOC, Menu, Jubo

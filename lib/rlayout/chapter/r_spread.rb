@@ -1,12 +1,11 @@
 module RLayout
-
-  class VTextToken < RTextToken
-
+  
+  class RSpread < Container
+    attr_reader :left_page, :right_page
     def initialize(options={})
-      super
-
 
       self
     end
   end
+
 end

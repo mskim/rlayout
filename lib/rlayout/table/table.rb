@@ -156,9 +156,11 @@ DEFAULT_TABLE_STYLE = {
     :category_atts   => { font: "Shinmoon", font_size: 12.0, stroke_sides: [1,1,1,1]},
     :category_colors => [["CMYK=0.1,0,0,0,1", "CMYK=0.05,0,0,0,1"],["CMYK=0,0.1,0,0,1", "CMYK=0,0.05,0,0,1"],["CMYK=0,0,0.1,0,1", "CMYK=0,0,0.05,0,1"]]
 }
+  # heading_level is used to for heading that is muliple level
+  # default value is 1
   
   class Table < Container
-    attr_reader :title, :source, :category_level
+    attr_reader :title, :source, :category_level, :heading_level
     attr_reader :has_head_row, :can_grow, :calculate_column_width
     attr_reader :column_width_array, :column_alignment, :column_v_alignment
     attr_reader :table_data, :rows, :body

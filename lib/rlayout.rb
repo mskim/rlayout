@@ -119,6 +119,9 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_page'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_make_tasks'
 
+  require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article.rb'
+  require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article_maker.rb'
+
   # require File.dirname(__FILE__) + "/rlayout/svg/canvas"
   # require File.dirname(__FILE__) + "/rlayout/svg/circle"
   # require File.dirname(__FILE__) + "/rlayout/svg/image"

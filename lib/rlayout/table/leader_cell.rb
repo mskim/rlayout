@@ -2,11 +2,11 @@ module RLayout
   # LeaderCell
   # LeaderCell is used for TOC, Jubo and Menu to fill up leader characters.
   # ex 
-  # chapter1  ......................................... 12
+  # chapter1  ....................................       12
   # sermon    ............ loving others ......... Rev. Kim
   # hym       ................. 450 .............. everybody
-  # stake     .......................................... $45
-  # pasta     .......................................... $15
+  # stake     ....................................       $45
+  # pasta     .....................................      $15
 
 
   # LeaderCell is a text token that draws leader characters, such as ...... 

@@ -30,8 +30,8 @@ module RLayout
   # bosic math text sting
   # :hide_text is used for quiz
   #  where text should be shoun as a empty box
-  def math_text < Graphic
-    attr_reader :font :font_size, :font_color, :tracking, :scale
+  class MathText < Graphic
+    attr_reader :font, :font_size, :font_color, :tracking, :scale
     attr_reader :string, :atts, :stroke, :has_text, :token_type
     attr_reader :height_in_units, :hide_text
 
@@ -183,7 +183,7 @@ module RLayout
   end
   
   class VertialLeftKind < MathToken
-    attr_accsor :vertical, :from, :to :limit, :body
+    attr_accessor :vertical, :from, :to, :limit, :body
 
     def initialize(optopms = {})
       super

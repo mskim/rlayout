@@ -18,10 +18,10 @@
 #   MagazineArticleTemplate
 
 module RLayout
-  class MagazineArticle < Document
+  class MagazineArticle < RDocument
     attr_accessor :profile, :page_count, :images, :graphics, :tables, :side_boxes
 
-    def initialize(options={})
+    def initialize(options={}, &block)
       super
 
       if block
