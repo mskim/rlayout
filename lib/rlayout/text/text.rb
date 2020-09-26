@@ -257,13 +257,13 @@ module RLayout
 
   end
 
-  class Quote < Text
-    def initialize(options={})
-      options[:text_string] = "“ #{options[:text_string]} ”" if options[:text_string]
-      options[:font_size]   = 24 unless options[:font_size]
-      super
-      self
-    end
-  end
+  # class Quote < Text
+  #   def initialize(options={})
+  #     options[:text_string] = "“ #{options[:text_string]} ”" if options[:text_string]
+  #     options[:font_size]   = 24 unless options[:font_size]
+  #     super
+  #     self
+  #   end
+  # end
 
 end

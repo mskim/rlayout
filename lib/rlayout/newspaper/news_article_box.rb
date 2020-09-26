@@ -29,6 +29,9 @@ module RLayout
     attr_reader :svg_content, :adjustable_height , :empty_first_column, :profile_image_position
     attr_reader :frame_thickness, :frame_color
     attr_reader :adjusted_line_count
+    # vertical direction
+    attr_reader :direction # horizontal, verticcal
+    attr_reader :starting_column_y
 
     def initialize(options={}, &block)
       super
@@ -215,6 +218,12 @@ module RLayout
       end
       @column_bottom = max_y(@graphics.first.frame_rect)
       link_column_lines
+    end
+
+    def create_vertical_columns
+      current_y = @starting_column_y
+
+
     end
 
     def link_column_lines

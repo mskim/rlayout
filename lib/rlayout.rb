@@ -57,14 +57,15 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
 
+  require File.dirname(__FILE__) + '/rlayout/db_publishing/db_item'
 
   require File.dirname(__FILE__) + '/rlayout/container_extended/photo_item'
   require File.dirname(__FILE__) + '/rlayout/container_extended/place_item'
   require File.dirname(__FILE__) + '/rlayout/container_extended/memo_area'
 
   require File.dirname(__FILE__) + '/rlayout/style/style_service'
-  require File.dirname(__FILE__) + '/rlayout/style/grid_layout'
-  require File.dirname(__FILE__) + '/rlayout/style/image_layout'
+  # require File.dirname(__FILE__) + '/rlayout/style/grid_layout'
+  # require File.dirname(__FILE__) + '/rlayout/style/image_layout'
 
   require File.dirname(__FILE__) + '/rlayout/view/svg_view/document_view_svg'
   require File.dirname(__FILE__) + '/rlayout/view/svg_view/paragraph_view_svg'
