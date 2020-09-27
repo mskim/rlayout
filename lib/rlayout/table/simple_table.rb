@@ -95,7 +95,7 @@ TABLE_START = /^#{OPT_SPACE}(?=\S)#{TABLE_LINE}/
         if @head_row
           # token = Rectangle.new(parent: self, fill_color: @colors[i], stroke_width: 1, layout_expand: :width)
           # token = RTextToken.new(parent: self, fill_color: 'clear', string: item.strip, para_style: @table_style['h4'], layout_expand: :width)
-          token = TableCell.new(cell_tyoe: 'simple', parent: self, fill_color: 'clear', string: item.strip, para_style: @table_style['h4'], layout_expand: :width)
+          token = TextCell.new(cell_tyoe: 'simple', parent: self, fill_color: 'clear', string: item.strip, para_style: @table_style['h4'], layout_expand: :width)
         else
           # token = Rectangle.new(parent: self, fill_color: 'clear',  stroke_width: 1, layout_expand: :width)
           token = RTextToken.new(cell_tyoe: 'simple', parent: self, fill_color: 'clear', string:item.strip, para_style: @table_style['body'], layout_expand: :width)

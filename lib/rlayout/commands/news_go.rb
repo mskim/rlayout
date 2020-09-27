@@ -1,5 +1,3 @@
-require 'thor'
-require_relative '../../rlayout'
 
 # given story.md generate story.pdf
 # options -time  time stamed pdf, jpg, page
@@ -18,9 +16,10 @@ class NewsGO < Thor
   method_option :article_path, aliases: "-p", default: "./"
   method_option :jpg, aliases: "-j", default: :true
   method_option :time, aliases: "-t", default: :true
+  
+  desc "article", "Generate article pdf"
   def article
-    puts "Generating article pdf"
-    puts article_path = File.expand_path(options[:path])
+    article_path = File.expand_path(options[:path])
     options                 = {}
     options[:article_path]  = article_path
     options[:jpf]           = true

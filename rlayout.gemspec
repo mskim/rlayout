@@ -12,6 +12,7 @@ Gem::Specification.new do |spec|
   spec.description   = %q{Ruby DSL for the next generation publishing solutions.}
   spec.homepage      = ""
   spec.license       = "MIT"
+  spec.executables   << 'newsgo'
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }

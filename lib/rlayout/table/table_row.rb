@@ -100,10 +100,10 @@ module RLayout
       if @row_type == "head_row"
         options[:stroke_thickness]  = 1 
         options[:style_name]  = 'body_gothic'
-        tc = TableCell.new(options)
+        tc = TextCell.new(options)
       else
         options[:style_name]  = 'body'
-        tc = TableCell.new(options)
+        tc = TextCell.new(options)
       end
       self
     end
