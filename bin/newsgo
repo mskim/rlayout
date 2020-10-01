@@ -1,4 +1,0 @@
-#!/usr/bin/env ruby
-
-require File.dirname(File.expand_path(__FILE__)) + '/../lib/rlayout/commands/news_go'
-NewsGO.start(ARGV)

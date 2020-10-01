@@ -822,9 +822,9 @@ module RLayout
         end
       end
 
-      @tag                = @article_path.split("/").last
-      @adjustable_height  = false
-      @adjustable_height  = true if @tag.include?('_')
+      # @tag                = @article_path.split("/").last
+      # @adjustable_height  = false
+      # @adjustable_height  = true if @tag.include?('_')
 
       if options[:image_path]
         @image_path = options[:image_path]
