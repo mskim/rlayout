@@ -28,7 +28,7 @@ module RLayout
     attr_reader :stroke_x, :stroke_y, :stroke_width
     attr_reader :svg_content, :adjustable_height , :empty_first_column, :profile_image_position
     attr_reader :frame_thickness, :frame_color
-    attr_reader :adjusted_line_count
+    attr_reader :adjusted_line_count, :has_attachment, :attached_type
     # vertical direction
     attr_reader :direction # horizontal, verticcal
     attr_reader :starting_column_y
@@ -43,6 +43,8 @@ module RLayout
       @adjusted_line_count  = 0
       @empty_first_column   = options[:empty_first_column] || false
       @profile_image_position = options[:profile_image_position] || nil?
+      @has_attachment       = options[:has_attachment]
+      @attached_type        = options[:attached_type]
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
           @stroke[:sides] = [1,1,1,1]
@@ -310,19 +312,27 @@ module RLayout
       article_info[:extended_line_count]= @extended_line_count if @extended_line_count
       article_info[:pushed_line_count]  = @pushed_line_count if @pushed_line_count
       article_info[:quote_box_size]     = @quote_box_size
-      if @underflow
-        # if we have author image at the bottom from layout, in 22 page editorial 
-        # @empty_lines -= 6 if @news_column_image
-        article_info[:empty_lines]            = @empty_lines
-      elsif @overflow
-        # article_info[:overflow]              = true
-        @overflow_line_count                  = @overflow_column.layed_out_line_count
-        article_info[:overflow_line_count]    = @overflow_line_count
-        if @adjustable_height
-          article_info[:overflow_text]          = ""
-        else
-          article_info[:overflow_text]          = overflow_text
-        end 
+      article_info[:image_width]        = width
+      article_info[:image_height]       = height
+      article_info[:has_attachment]     = @has_attachment
+      article_info[:attached_type]      = @attached_type
+      
+      if @adjustable_height
+      else
+        if @underflow
+          # if we have author image at the bottom from layout, in 22 page editorial 
+          # @empty_lines -= 6 if @news_column_image
+          article_info[:empty_lines]            = @empty_lines
+        elsif @overflow
+          # article_info[:overflow]              = true
+          @overflow_line_count                  = @overflow_column.layed_out_line_count
+          article_info[:overflow_line_count]    = @overflow_line_count
+          if @adjustable_height
+            article_info[:overflow_text]          = ""
+          else
+            article_info[:overflow_text]          = overflow_text
+          end 
+        end
       end
       article_info
     end

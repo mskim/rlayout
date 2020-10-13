@@ -122,9 +122,12 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
-2020_9_15
-	- font
-
+2020_10_02
+	- put the font in style/font/, instead of /User/Shared 
+		this will help if we have to put this on Docker
+	- put the text_style in style/text_style.yml
+	- in news_box_maker update page PDF if options is to update
+	- generate page with actual PDF height, pushing down except the bottom most article
 
 2020_6_22
 	- fix paragraph layout_line

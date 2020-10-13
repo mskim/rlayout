@@ -1,193 +1,90 @@
 
 # NewsPage is used to merge working_article PDF files into a page.
 # There are two cases
-# First case is when it is used from Rails, where all infomation is given in options hash,
-# And the second case is when it is used as offline, where we have to read info from config.yml
+# First case is when it is used from Rails, where all infomation is given as option hash,
+# And the second case is when it is used as offline, where we have read info from the file.
 
 module RLayout
-  class NewsPage < Container
-    attr_reader :section_path, :section_name, :output_path
-    attr_reader :is_front_page, :paper_size, :page_heading
-    attr_reader :story_frames, :grid_width, :grid_height, :number_of_stories
-    attr_reader :body_line_height, :ad_type, :page_heading_margin_in_lines, :heading_space, :lines_per_grid
-    attr_reader :draw_divider, :divider_line_thickness, :time_stamp, :reduced_size
-    
+  class NewsPage < Page
+    attr_accessor :section_path, :section_name, :output_path
+    attr_accessor :kind, :is_front_page, :paper_size, :page_heading
+    attr_accessor :story_frames, :grid_width, :grid_height, :number_of_stories
+    attr_accessor :body_line_height, :ad_type, :page_heading_margin_in_lines, :lines_per_grid
+    attr_accessor :draw_divider, :divider_line_thickness, :time_stamp, :reduced_size
     def initialize(options={}, &block)
       super
-      # given config_hash, directly from Rails 
-      @time_stamp = options[:time_stamp]
-      if options[:config_hash]
-        setup(options[:config_hash])
-      # offline reading config.yml file
-      else
-        @section_path   = options[:section_path]
-        config_path     = @section_path + "/config.yml"
-        if File.exist?(config_path)
-          config_hash = File.open(config_path, 'r'){|f| f.read}
-          config_hash = YAML::load(config_hash)
-          setup(config_hash)
-        else
-          return 'config.yml not found!!!'
-        end
+      @section_path   = options[:section_path] if options[:section_path]
+      @time_stamp     = options[:time_stamp]
+      @output_path    = @section_path + "/section.pdf"
+      @output_path    = options[:output_path]   if options[:output_path]
+      @kind           = options.fetch(:kind,"article") # opinion, editorial
+      @paper_size     = options.fetch(:paper_size,"A2")
+      @width          = SIZES[@paper_size][0]
+      @height         = SIZES[@paper_size][1]
+      @grid_base      = options.fetch(:grid_base, [7, 12])
+      @grid_base      = @grid_base.map {|e| e.to_i}
+      @width          = options['width'] if options['width']
+      @height         = options['height'] if options['height']
+      @lines_in_grid  = options.fetch(:lines_in_grid, 7)
+      @section_name   = options['section_name'] || "untitled"
+      @gutter         = options.fetch('gutter', 10)
+      @v_gutter       = options.fetch('v_gutter', 0)
+      @left_margin    = options.fetch('left_margin', 50)
+      @top_margin     = options.fetch('top_margin', 50)
+      @right_margin   = options.fetch('right_margin', 50)
+      @bottom_margin  = options.fetch('bottom_margin', 50)
+      @is_front_page  = options['is_front_page'] || false
+      @grid_size      = options.fetch('grid_size', [137.40142857142857, 96.94466666666668])
+      @grid_width     = @grid_size[0]
+      @grid_height    = @grid_size[1]
+      @body_line_height = @grid_height/@lines_in_grid
+      config_path     = @section_path + "/config.yml"
+      if File.exist?(config_path)
+        section_config = File.open(config_path, 'r'){|f| f.read}
+        section_config = YAML::load(section_config)
+        @section_name   = section_config['section_name'] || "untitled"
+        @output_path    = section_config['output_path']   if section_config['output_path']
+        @width          = section_config['width'] if section_config['width']
+        @height         = section_config['height'] if section_config['height']
+        @gutter         = section_config['gutter'] if section_config['gutter']
+        @v_gutter       = section_config['v_gutter'] if section_config['v_gutter']
+        @left_margin    = section_config['left_margin'] if section_config['left_margin']
+        @top_margin     = section_config['top_margin'] if section_config['top_margin']
+        @right_margin   = section_config['right_margin'] if section_config['right_margin']
+        @bottom_margin  = section_config['bottom_margin'] if section_config['bottom_margin']
+        @ad_type        = section_config['ad_type']
+        @is_front_page  = false
+        @is_front_page  = true if section_config['is_front_page'] == true
+        @profile        = section_config['profile']
+        @grid_base      = @profile.split("_").first.split('x')
+        @grid_base      = @grid_base.map {|e| e.to_i}
+        @grid_width     = @grid_size[0]
+        @grid_height    = @grid_size[1]
+        @story_frames   = section_config['story_frames']
+        @lines_per_grid = section_config['lines_per_grid'].to_i
+        @page_heading_margin_in_lines = section_config['page_heading_margin_in_lines'].to_i
+        @draw_divider   = true  if section_config['draw_divider'] == true || section_config['draw_divider'] == 'true'
+        # @draw_divider   = false if @section_name == '오피니언'
+        self
       end
-      relayout if options[:relayout]
-      merge_pdf
+
+      unless @story_frames
+        #TODO used some precentive default story_frames
+        puts "no @story_frames found!!!"
+      end
+      @number_of_stories = @story_frames.length
+      @number_of_stories -= 1 if has_ad?
       self
     end
 
-    def setup(options)
-      @page_heading_margin_in_lines = options[:page_heading_margin_in_lines].to_i
-      @lines_per_grid = options[:lines_per_grid].to_i
-      @grid_size      = options.fetch(:grid_size, [137.40142857142857, 96.94466666666668])
-      @grid_width     = @grid_size[0]
-      @grid_height    = @grid_size[1]
-      if options[:heading_space]
-        @heading_space =  options[:heading_space]
-      else
-        @heading_space =  @page_heading_margin_in_lines*@grid_height/@lines_per_grid
+    def ad_image_path
+      image_path = @section_path + "/ad/output.pdf"
+      unless File.exist?(image_path)
+        alternative_path = @section_path + "/ad/images"
+        image_path = Dir.glob("#{alternative_path}/*[.jpg,.pdf]").first
       end
-      unless @section_path
-        @section_path = options[:section_path]
-      end
-      @output_path    = @section_path + "/section.pdf"
-      @width          = options[:width] 
-      @height         = options[:height] 
-      @lines_in_grid  = options.fetch(:lines_in_grid, 7)
-      @section_name   = options[:section_name] || "untitled"
-      @gutter         = options.fetch(:gutter, 10)
-      @left_margin    = options.fetch(:left_margin, 50)
-      @top_margin     = options.fetch(:top_margin, 50)
-      @right_margin   = options.fetch(:right_margin, 50)
-      @bottom_margin  = options.fetch(:bottom_margin, 50)
-      @is_front_page  = options[:is_front_page] || false
-      @body_line_height = @grid_height/@lines_in_grid
-      @section_name   = options[:section_name] || "untitled"
-      @output_path    = options[:output_path]   if options[:output_path]
-      @width          = options[:width]
-      @height         = options[:height]
-      @gutter         = options[:gutter]
-      @left_margin    = options[:left_margin]
-      @top_margin     = options[:top_margin]
-      @right_margin   = options[:right_margin]
-      @bottom_margin  = options[:bottom_margin]
-      @ad_type        = options[:ad_type]
-      @ad_box_rect    = options[:ad_box_rect] if options[:ad_box_rect]
-      @is_front_page  = options[:is_front_page]
-      @draw_divider   = options[:draw_divider]
-      @pillar_map     = options[:pillar_map]
+      image_path
     end
-
-
-    def relayout
-      # relayout articles
-      @pillar_map.each do |pillar|
-        pillar[:article_map].each do |article|
-          pdf_path = @section_path + article[:pdf_path]
-          article_path = File.dirname(pdf_path)
-          # check for updated_at date for story.md and story.pdf
-          story_md = article_path + "/story.md"
-          story_pdf = article_path + "/story.pdf"
-          if File.mtime(story_pdf) < File.mtime(story_md)
-            NewsBoxMaker.new(article_path: article_path, adjustable_height:true)
-          end
-        end
-      end
-
-      # relayout page_heading
-
-      # relayout ad
-    end
-
-    def merge_pdf
-      layout_ad_box if @ad_box_rect
-      # layout pillars
-      
-      @pillar_map.each do |pillar|
-        pillar_rect = pillar[:pillar_rect]
-        article_height_sum = 0
-        parent_y = 0
-
-        # pillar_top = @top_margin + pillar_rect[1]
-        # pillar_top = @top_margin + pillar_rect[1]
-        pillar_top = @heading_space + pillar_rect[1]
-        pillar[:article_map].each do |article|
-          h = {}
-          h[:parent] = self
-          h[:image_path] = @section_path + "#{article[:pdf_path]}"
-          article_info_path = File.dirname(h[:image_path]) + "/article_info.yml"
-          article_info      = YAML::load_file(article_info_path)
-          article_width     = article_info[:image_width].to_f
-          article_height    = article_info[:image_height].to_f
-          h[:x] = article[:pdf_rect][0] + pillar_rect[0]
-          if article_info[:attached_type]
-            h[:y] = parent_y
-          else
-            h[:y] = pillar_top + article_height_sum
-            parent_y = h[:y]  if article_info[:has_attachment]
-          end
-          h[:width] = article_width
-          h[:height]= article_height
-          Image.new(h)
-          unless article_info[:attached_type]
-            article_height_sum += article_height 
-          end
-        end
-      end
-      layout_page_heading
-      # create_divider_lines if @draw_divider
-
-      # save_pdf(output_path: @output_path)
-      save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
-
-      # options[:thumbnail] = false
-      if @time_stamp
-        output_jpg_path       = @output_path.sub(/\.pdf$/, ".jpg")
-        time_stamped_path     = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
-        time_stamped_jpg_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.jpg")
-        system("cp #{@output_path} #{time_stamped_path}")
-        system("cp #{output_jpg_path} #{time_stamped_jpg_path}")
-      end
-    end
-
-    def layout_page_heading
-      # page heading
-      heading_info = {}
-      heading_info[:parent] = self
-      new_heading_path = heading_info[:image_path] = @section_path + "/heading/output.pdf" 
-      #TODO delete this after settling to new
-      heading_info[:image_path] = @section_path + "/heading/layout.pdf" unless File.exist?(new_heading_path)
-      heading_info[:x]          = @left_margin
-      heading_info[:y]          = @top_margin
-      heading_info[:width]      = @width - @left_margin - @right_margin
-      heading_info[:layout_expand]  = nil
-      heading_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
-      # heading_info[:stroke_width] = 1
-      # heading_info[:image_fit_type] = IMAGE_FIT_TYPE_ORIGINAL
-      if @is_front_page
-        #TODO
-        # NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES     = 1
-        # NEWS_ARTICLE_HEADING_SPACE_IN_LINES                      = 3
-        heading_info[:height]   = (@lines_per_grid + @page_heading_margin_in_lines) * @body_line_height
-      else
-        heading_info[:height]   = @page_heading_margin_in_lines * @body_line_height
-      end
-      # puts "heading_info[:height]:#{heading_info[:height]}"
-      @page_heading = Image.new(heading_info)
-
-    end
-
-    # need to save ad_box_rect in cofig
-    def layout_ad_box
-      ad_info = {}
-      ad_info[:parent]  = self
-      ad_info[:x]       = @ad_box_rect[0] + @left_margin
-      ad_info[:y]       = @ad_box_rect[1] + @top_margin
-      ad_info[:width]   = @ad_box_rect[2]
-      ad_info[:height]  = @ad_box_rect[3]
-      ad_info[:image_path] = @section_path + "/ad/output.pdf"
-      @ad_box           = Image.new(ad_info)
-    end
-
 
     def top_position?(grid_frame)
       return true if grid_frame[1] == 0
@@ -195,7 +92,6 @@ module RLayout
       false
     end
 
-    # this checks if the article's right side top is covered by other article
     def top_covered?(grid_frame)
       @story_frames.each do |other_frame|
         other_frame_max_x = other_frame[0] + other_frame[2]
@@ -208,17 +104,12 @@ module RLayout
       false
     end
     
-    # this is used when drawing vertical line
-    # if the artice is at the bottom, we need to make it not to touch the bottom
-    # we need to leave some space 
-    # same rule applies if article touchs the bottom ad
     def bottom_position?(grid_frame)
       return true if grid_frame[1] + grid_frame[3]== 15
       return true if bottom_touches_ad?(grid_frame)
       false
     end
 
-    # this checks if the article's right side bottom is covered by other article
     def bottom_covered?(grid_frame)
       @story_frames.each do |other_frame|
         other_frame_max_x = other_frame[0] + other_frame[2]
@@ -231,6 +122,7 @@ module RLayout
       end
       false
     end
+
 
     def bottom_touches_ad?(grid_frame)
       return true if has_ad? && ad_top_in_grid == (grid_frame[1] + grid_frame[3])
@@ -263,6 +155,7 @@ module RLayout
         info = {}
         found_ad = false
         if grid_frame.length == 5 && grid_frame[4] =~/^광고/
+          # found_ad = grid_frame[4][:광고] || grid_frame[4]['광고'] || grid_frame[4][:'광고'] || grid_frame[4]['광고']
           info[:image_path] = ad_image_path
           @right_side_ad = true if grid_frame[4] =~/홀$/
         elsif grid_frame.length == 5 && grid_frame[4].class == Integer

@@ -756,10 +756,11 @@ module RLayout
     attr_reader :article_info_path
     attr_reader :custom_style, :publication_name, :time_stamp
     attr_reader :pdf_doc, :pdf_data, :story_md, :layout_rb
-    attr_reader :adjusted_line_count
+    attr_reader :adjusted_line_count, :adjustable_height
 
     def initialize(options={})
       time_start    = Time.now
+      @adjustable_height = true if options[:adjustable_height]
       @time_stamp   = options[:time_stamp]
       @story_md     = options[:story_md]
       @layout_rb    = options[:layout_rb]
@@ -822,10 +823,6 @@ module RLayout
         end
       end
 
-      # @tag                = @article_path.split("/").last
-      # @adjustable_height  = false
-      # @adjustable_height  = true if @tag.include?('_')
-
       if options[:image_path]
         @image_path = options[:image_path]
       else
@@ -842,6 +839,7 @@ module RLayout
 
       if @layout_rb
         @news_box   = eval(@layout_rb)
+        @news_box.adjustable_height=true if @adjustable_height
       elsif options[:template_path] && File.exist?(options[:template_path])
         @template_path = options[:template_path]
         template    = File.open(@template_path,'r'){|f| f.read}
