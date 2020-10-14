@@ -101,14 +101,11 @@ module RLayout
     def merge_pdf
       layout_ad_box if @ad_box_rect
       # layout pillars
-      
       @pillar_map.each do |pillar|
         pillar_rect = pillar[:pillar_rect]
         article_height_sum = 0
         parent_y = 0
-
-        # pillar_top = @top_margin + pillar_rect[1]
-        # pillar_top = @top_margin + pillar_rect[1]
+        parent_height = 0
         pillar_top = @heading_space + pillar_rect[1]
         pillar[:article_map].each do |article|
           h = {}
@@ -119,11 +116,14 @@ module RLayout
           article_width     = article_info[:image_width].to_f
           article_height    = article_info[:image_height].to_f
           h[:x] = article[:pdf_rect][0] + pillar_rect[0]
-          if article_info[:attached_type]
+          if article_info[:attached_type] == 'overlap'
+            h[:y] = parent_y + (parent_height - article_height)
+          elsif article_info[:attached_type]
             h[:y] = parent_y
           else
             h[:y] = pillar_top + article_height_sum
-            parent_y = h[:y]  if article_info[:has_attachment]
+            parent_y = h[:y]  
+            parent_height = article_info[:image_height]
           end
           h[:width] = article_width
           h[:height]= article_height
