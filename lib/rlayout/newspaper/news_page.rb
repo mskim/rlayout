@@ -11,7 +11,7 @@ module RLayout
     attr_reader :story_frames, :grid_width, :grid_height, :number_of_stories
     attr_reader :body_line_height, :ad_type, :page_heading_margin_in_lines, :heading_space, :lines_per_grid
     attr_reader :draw_divider, :divider_line_thickness, :time_stamp, :reduced_size
-    
+    attr_reader :page_columns
     def initialize(options={}, &block)
       super
       # given config_hash, directly from Rails 
@@ -41,6 +41,7 @@ module RLayout
       @grid_size      = options.fetch(:grid_size, [137.40142857142857, 96.94466666666668])
       @grid_width     = @grid_size[0]
       @grid_height    = @grid_size[1]
+      @page_columns   = options[:page_columns]
       if options[:heading_space]
         @heading_space =  options[:heading_space]
       else
@@ -92,9 +93,7 @@ module RLayout
           end
         end
       end
-
       # relayout page_heading
-
       # relayout ad
     end
 
@@ -106,7 +105,9 @@ module RLayout
         article_height_sum = 0
         parent_y = 0
         parent_height = 0
+        parent_x   = 0
         pillar_top = @heading_space + pillar_rect[1]
+        parent_articles_count = pillar[:article_map].select{|a| !a[:attache_type]}.length
         pillar[:article_map].each do |article|
           h = {}
           h[:parent] = self
@@ -120,9 +121,25 @@ module RLayout
             h[:y] = parent_y + (parent_height - article_height)
           elsif article_info[:attached_type]
             h[:y] = parent_y
+            # drawing divider for attachment
+
+            if @draw_divider
+              attened_on_right_side = true
+              attened_on_right_side = false if h[:x] < parent_x
+              parent_order = article[:pdf_path].split("/")[1].to_i
+              line_x = h[:x] - 5
+              line_x = h[:x] + article_info[:image_width] + 5 unless attened_on_right_side
+              line_height = article_info[:image_height]
+              if article_info[:attached_type] != 'overlap'
+                line_y = h[:y] +  @body_line_height*2
+                line_height -=  @body_line_height*4
+              end
+              Line.new(parent:self, x:line_x, y:line_y, width:0, height:line_height, stroke_thickness: 0.1)
+            end
           else
             h[:y] = pillar_top + article_height_sum
             parent_y = h[:y]  
+            parent_x = h[:x]  
             parent_height = article_info[:image_height]
           end
           h[:width] = article_width
@@ -134,12 +151,8 @@ module RLayout
         end
       end
       layout_page_heading
-      # create_divider_lines if @draw_divider
-
-      # save_pdf(output_path: @output_path)
+      create_pillar_divider_lines if @draw_divider
       save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
-
-      # options[:thumbnail] = false
       if @time_stamp
         output_jpg_path       = @output_path.sub(/\.pdf$/, ".jpg")
         time_stamped_path     = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
@@ -150,30 +163,26 @@ module RLayout
     end
 
     def layout_page_heading
-      # page heading
-      heading_info = {}
-      heading_info[:parent] = self
-      new_heading_path = heading_info[:image_path] = @section_path + "/heading/output.pdf" 
-      #TODO delete this after settling to new
+      heading_info              = {}
+      heading_info[:parent]     = self
+      new_heading_path          = heading_info[:image_path] = @section_path + "/heading/output.pdf" 
       heading_info[:image_path] = @section_path + "/heading/layout.pdf" unless File.exist?(new_heading_path)
       heading_info[:x]          = @left_margin
       heading_info[:y]          = @top_margin
       heading_info[:width]      = @width - @left_margin - @right_margin
       heading_info[:layout_expand]  = nil
       heading_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
-      # heading_info[:stroke_width] = 1
+      # heading_info[:stroke_width]   = 1
       # heading_info[:image_fit_type] = IMAGE_FIT_TYPE_ORIGINAL
       if @is_front_page
-        #TODO
-        # NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES     = 1
+        # NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES     = 1 actually 7 + 1
         # NEWS_ARTICLE_HEADING_SPACE_IN_LINES                      = 3
         heading_info[:height]   = (@lines_per_grid + @page_heading_margin_in_lines) * @body_line_height
       else
         heading_info[:height]   = @page_heading_margin_in_lines * @body_line_height
       end
       # puts "heading_info[:height]:#{heading_info[:height]}"
-      @page_heading = Image.new(heading_info)
-
+      @page_heading   = Image.new(heading_info)
     end
 
     # need to save ad_box_rect in cofig
@@ -188,6 +197,40 @@ module RLayout
       @ad_box           = Image.new(ad_info)
     end
 
+    def create_pillar_divider_lines
+      @pillar_map.each do |pillar|
+        pillar_grid_rect = pillar[:pillar_grid_rect]
+        grid_max_x = pillar_grid_rect[0] + pillar_grid_rect[2]
+        grid_max_y = pillar_grid_rect[1] + pillar_grid_rect[3]
+        if grid_max_x < @page_columns
+          draw_vertical_line(pillar_grid_rect)
+        end
+      end
+    end
+
+    def draw_vertical_line(box_frame)
+      grid_max_x = box_frame[0] + box_frame[2]
+      grid_max_y = box_frame[1] + box_frame[3]
+      # x_position = grid_max_x*@grid_width + (grid_max_x - 1)*@gutter + @gutter
+      x_position = grid_max_x*@grid_width + @left_margin
+      y_position = box_frame[1]*@grid_height + @top_margin
+      box_height = box_frame[3]*@grid_height
+
+      if top_position?(box_frame)
+        heading_margin = @body_line_height*@page_heading_margin_in_lines
+        y_position +=  heading_margin + @body_line_height
+        box_height -=  heading_margin + @body_line_height
+      elsif top_covered?(box_frame)
+        y_position +=  @body_line_height
+        box_height -=  @body_line_height
+      end
+      if bottom_position?(box_frame) || bottom_covered?(box_frame)
+        box_height -=  @body_line_height*2
+      end
+      Line.new(parent:self, x:x_position, y:y_position, width:0, height:box_height, stroke_thickness: 0.1)
+    end
+
+
 
     def top_position?(grid_frame)
       return true if grid_frame[1] == 0
@@ -197,7 +240,8 @@ module RLayout
 
     # this checks if the article's right side top is covered by other article
     def top_covered?(grid_frame)
-      @story_frames.each do |other_frame|
+      @pillar_map.each do |pillar|
+        other_frame = pillar[:pillar_grid_rect]
         other_frame_max_x = other_frame[0] + other_frame[2]
         other_frame_max_y = other_frame[1] + other_frame[3]
         grid_max_x = grid_frame[0] + grid_frame[2]
@@ -220,7 +264,8 @@ module RLayout
 
     # this checks if the article's right side bottom is covered by other article
     def bottom_covered?(grid_frame)
-      @story_frames.each do |other_frame|
+      @pillar_map.each do |pillar|
+        other_frame = pillar[:pillar_rect]
         other_frame_max_x = other_frame[0] + other_frame[2]
         other_frame_y = other_frame[1]
         grid_max_x = grid_frame[0] + grid_frame[2]

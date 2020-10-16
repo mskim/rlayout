@@ -201,7 +201,7 @@ module RLayout
         convert_pdf2jpg(output_path, ratio: 2.0)
       end
       ending_time = Time.now
-      puts "It took:#{ending_time - start_time}"
+      # puts "It took:#{ending_time - start_time}"
     end
   end
 end

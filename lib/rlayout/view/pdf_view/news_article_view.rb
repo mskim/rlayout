@@ -3,7 +3,7 @@ module RLayout
   class NewsArticleBox < NewsBox
 
     def save_pdf_with_ruby(output_path, options={})
-      puts "+++++++++++++ pdf using ruby+++++++++++++++"
+      # puts "+++++++++++++ pdf using ruby+++++++++++++++"
       start_time    = Time.now
       style_service = RLayout::StyleService.shared_style_service
       @pdf_doc      = HexaPDF::Document.new
@@ -26,9 +26,8 @@ module RLayout
       if options[:jpg]
         convert_pdf2jpg(output_path, options)
       end
-
       ending_time = Time.now
-      puts "It took:#{ending_time - start_time}"
+      # puts "It took:#{ending_time - start_time}"
     end
 
     # read fonts from disk

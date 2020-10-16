@@ -3,7 +3,7 @@ module RLayout
     attr_accessor :pdf_doc, :flipped 
 
     def save_pdf_with_ruby(output_path, options={})
-      puts "genrateing pdf ruby "
+      # puts "genrateing pdf ruby "
       start_time    = Time.now
       style_service = RLayout::StyleService.shared_style_service
       @pdf_doc      = HexaPDF::Document.new
@@ -25,7 +25,7 @@ module RLayout
         convert_pdf2jpg(output_path)
       end
       ending_time = Time.now
-      puts "It took:#{ending_time - start_time}" if options[:time]
+      # puts "It took:#{ending_time - start_time}" if options[:time]
 
     end
 
