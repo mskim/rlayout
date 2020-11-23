@@ -858,6 +858,7 @@ module RLayout
         puts "SyntaxError in #{@template_path} !!!!"
         return
       end
+
       if @news_box.is_a?(NewsImageBox)
         # @news_box.stroke[:sides] = [0,0,0,1]
         @news_box.stroke[:sides] = [0,0,0,0]

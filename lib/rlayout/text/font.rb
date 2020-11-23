@@ -70,7 +70,6 @@ module RLayout
     end
 
     def self.string_size(string, font_name, size, options={})
-      binding.pry if string == '‘회' || string == '‘안'
       new_font = RFont.new(font_name, size, options)
       size = new_font.string_size(string)
       size

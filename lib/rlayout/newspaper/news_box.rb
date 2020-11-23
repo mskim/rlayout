@@ -4,7 +4,7 @@ module RLayout
     attr_accessor :page_heading_margin_in_lines, :page_heading_place_holder, :article_bottom_spaces_in_lines
     attr_accessor :column_width, :column_count, :row_count, :extended_line_count, :pushed_line_count, :draw_frame
     attr_reader :svg_content
-    attr_reader :frame_sides
+    attr_reader :frame_sides, :height_in_lines
 
     def initialize(options={}, &block)
       # @is_ad_box            = options[:is_ad_box] || false
@@ -25,11 +25,15 @@ module RLayout
       @on_left_edge           = options.fetch(:on_left_edge, false)
       @on_right_edge          = options.fetch(:on_right_edge, false)
 
-      @page_heading_margin_in_lines    = options[:page_heading_margin_in_lines] || 0
+      # @page_heading_margin_in_lines    = options[:page_heading_margin_in_lines] || 0
       @extended_line_count    = options.fetch(:extended_line_count, 0)
       @pushed_line_count      = options.fetch(:pushed_line_count, 0)
       @column_count           = options[:column]
       @row_count              = options[:row]
+      @height_in_lines        = options[:height_in_lines]
+      unless @height_in_lines
+        @height_in_lines = @row_count*7
+      end
       @is_front_page          = options.fetch(:is_front_page, false)
       @top_story              = options.fetch(:top_story, false)
       @top_position           = options.fetch(:top_position, false)
@@ -106,21 +110,22 @@ module RLayout
           @column_width       = (@width - (@column_count + 3)*@gutter )/@column_count
         end
       end
-      @column_line_count    = @row_count*@lines_per_grid
-      @column_line_count   -= @page_heading_margin_in_lines if @top_position
+      @column_line_count    = @height_in_lines
+
+      # @column_line_count   -= @page_heading_margin_in_lines if @top_position
       # TODO
       # @column_line_count   -= 7 if @top_position && @is_front_page
-      @column_line_count   += @extended_line_count
-      @column_line_count   -= @pushed_line_count
+      # @column_line_count   += @extended_line_count
+      # @column_line_count   -= @pushed_line_count
       if @column_line_count < 7
         @column_line_count = 7
       end
       if options[:height]
         @height = options[:height]
       else
-        # @height             = @row_count*@grid_height + @extended_line_count*@body_line_height
         @height             = @column_line_count*@body_line_height
       end
+
       self
     end
 

@@ -31,11 +31,13 @@ module RLayout
     attr_reader :adjusted_line_count, :has_attachment, :attached_type
     # vertical direction
     attr_reader :direction # horizontal, verticcal
-    attr_reader :starting_column_y
+    attr_reader :starting_column_y, :max_height_in_lines, :min_height_in_lines
 
     def initialize(options={}, &block)
       super
       @overflow             = false
+      @max_height_in_lines  = options[:max_height_in_lines]
+      @min_height_in_lines  = options[:min_height_in_lines]
       @page_number          = options[:page_number]
       @has_profile_image    = options[:has_profile_image]
       @adjustable_height    = options[:adjustable_height] || false
@@ -124,6 +126,7 @@ module RLayout
       if block
         instance_eval(&block)
       end
+
       make_overlap(@overlap) if @overlap.class == Array && @overlap.length >= 4
       if @floats.length > 0
         layout_floats!
@@ -305,15 +308,17 @@ module RLayout
     def article_info
       article_info                      = {}
       article_info[:column]             = @column_count
-      article_info[:row]                = @row_count
+      # article_info[:row]                = @row_count
+      article_info[:row]                = @height_in_lines
       article_info[:is_front_page]      = @is_front_page
       article_info[:top_story]          = @top_story
       article_info[:top_position]       = @top_position
       article_info[:extended_line_count]= @extended_line_count if @extended_line_count
-      article_info[:pushed_line_count]  = @pushed_line_count if @pushed_line_count
+      # article_info[:pushed_line_count]  = @pushed_line_count if @pushed_line_count
       article_info[:quote_box_size]     = @quote_box_size
       article_info[:image_width]        = width
       article_info[:image_height]       = height
+      article_info[:height_in_lines]    = height/@body_line_height
       article_info[:has_attachment]     = @has_attachment
       article_info[:attached_type]      = @attached_type
       
@@ -395,11 +400,12 @@ module RLayout
         @current_column  = current_line.column
       end
       @overflow  = true if @overflow_column.graphics.first && @overflow_column.graphics.first.layed_out_line?
+
       if @overflow && !@adjustable_height
         last_line_of_box.fill.color = 'red'
       else
         @empty_lines    = article_box_unoccupied_lines_count
-        @underflow      = true if @empty_lines > 0
+        @underflow = true if @empty_lines > 0
       end
       unless @fill_up_enpty_lines
         save_article_info
@@ -428,13 +434,21 @@ module RLayout
     end
 
     def adjust_height
+
       if @overflow
         # puts "overflow"
         line_diff_count = @overflow_column.layed_out_line_count
         # puts "line_diff_count:#{line_diff_count}"
       elsif @underflow
         # puts "underflow"
-        line_diff_count    = - article_box_unoccupied_lines_count
+        # when article is auto adjust and underflow happems, make minimun height as 1 row
+        # if @adjustable_height
+        #   # 
+
+        #   line_diff_count = 0
+        # else
+          line_diff_count    = - article_box_unoccupied_lines_count
+        # end
       else
         line_diff_count    = 0
         return
@@ -453,12 +467,29 @@ module RLayout
           column.set_lines_to_min
         end
       end
+      # resulting_line_count = @row_count*7 - @changing_line_count
+      resulting_line_count = @height_in_lines + @changing_line_count
+      if @adjustable_height && resulting_line_count == 14
+        @changing_line_count = -@changing_line_count
+      elsif @adjustable_height && resulting_line_count < 14
+        # when article contnet is less than row height, set mini height as one row
+        # @changing_line_count = @row_count*7 - 14
+        @changing_line_count = @height_in_lines - 14
+      elsif @changing_line_count + @column_line_count == @max_height_in_lines
+        # dp nothing to @changing_line_count 
+      elsif @changing_line_count + @height_in_lines > @max_height_in_lines
+        # when article contnet is greater than max_height_in_lines, set max_height_in_lines
+        @changing_line_count = @max_height_in_lines - @height_in_lines 
+      end
+        
       @graphics.each do |column|
         column.adjust_height(@changing_line_count)
         # column.ready_unoccupied_lines_for_relayout
       end
       @adjusted_line_count = @changing_line_count
+      @extended_line_count = @changing_line_count
       @height += @changing_line_count*@body_line_height
+      save_article_info
     end
     
     def second_column_x
@@ -669,7 +700,7 @@ module RLayout
       o_extended_line_count = rect[4] if rect.length > 4
       o_x       = rect[0]*grid_width
       o_width   = rect[2]*grid_width - @gutter
-      o_y       = rect[1]*grid_height - @page_heading_margin_in_lines*@body_line_height
+      o_y       = rect[1]*grid_height #- @page_heading_margin_in_lines*@body_line_height
       o_y      -= o_extended_line_count * @body_line_height if @extended_line_count 
       o_height  = rect[3]*grid_height
       o_height += space_above
@@ -735,7 +766,7 @@ module RLayout
 
     def float_quote(options={})
       return if @quote_box_size == '0'
-      if (@kind == '기고' || @kind == 'opinion') && @row_count < 10
+      if (@kind == '기고' || @kind == 'opinion') && @height_in_lines < 70 #@row_count < 10
         box_height                      = (@quote_box_size.to_i + QUOTE_BOX_SPACE_BEFORE)*@body_line_height
         text_height_in_lines            = @quote_box_size.to_i
         text_options                    = {}

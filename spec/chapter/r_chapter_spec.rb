@@ -4,6 +4,7 @@ describe "create RChapter" do
   before do
     @project_path = "/Users/mskim/Development/chapter/01_chapter"
     @story_path   = "/Users/mskim/Development/book/bookcheego/source/chapter_1.md"
+    @story_path   = "/Users/mskim/demo/demo_book/sample_book/01_chapter/story.md"
     @chapter      = RLayout::RChapter.new(story_path: @story_path)
     @doc          = @chapter.document
   end
