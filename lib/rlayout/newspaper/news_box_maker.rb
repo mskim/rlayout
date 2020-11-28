@@ -756,7 +756,7 @@ module RLayout
     attr_reader :article_info_path
     attr_reader :custom_style, :publication_name, :time_stamp
     attr_reader :pdf_doc, :pdf_data, :story_md, :layout_rb
-    attr_reader :adjusted_line_count, :adjustable_height
+    attr_reader :adjusted_line_count, :new_height_in_lines, :adjustable_height
 
     def initialize(options={})
       time_start    = Time.now
@@ -868,6 +868,11 @@ module RLayout
         @news_box.stroke.thickness = 0.0
       elsif @news_box.is_a?(NewsComicBox)
       elsif @news_box.is_a?(NewsArticleBox)
+        # puts "++++++++ @article_path:#{@article_path}"
+        # puts "++++++++ @news_box.adjustable_height:#{@news_box.adjustable_height}"
+        # puts "++++++++ @news_box.max_height_in_lines:#{@news_box.max_height_in_lines}"
+        # puts "++++++++ @news_box.height_in_lines:#{@news_box.height_in_lines}"
+        # puts "++++++++ @news_box.new_height_in_lines:#{@news_box.new_height_in_lines}"
         read_story
         layout_story
       elsif @news_box.is_a?(Container)
@@ -987,23 +992,25 @@ module RLayout
       @news_box.layout_floats!
       @news_box.adjust_overlapping_columns
       @news_box.layout_items(@paragraphs.dup)
+      @adjusted_line_count  = @news_box.adjusted_line_count
+      @new_height_in_lines  = @news_box.new_height_in_lines
       if  @news_box.adjustable_height
-        # if adjustable_height
         # collect all layed out lines from @news_box.collect_column_content
         line_content          = @news_box.collect_column_content
         # TODO
         # adjust height of news_box to fit content
-        puts "+++++++++++++++ before @news_box.height:#{@news_box.height}"
-        puts "+++++++++++++++ before @news_box.extended_line_count:#{@news_box.extended_line_count}"
+        # puts "+++++++++++++++ before @news_box.height:#{@news_box.height}"
+        # puts "+++++++++++++++ before @news_box.extended_line_count:#{@news_box.extended_line_count}"
         @news_box.adjust_height
-        # save the @adjusted_line_count to return to caller
         @adjusted_line_count  = @news_box.adjusted_line_count
-        # relayout news_box with collected content
+        @new_height_in_lines  = @news_box.new_height_in_lines
+        puts "+++++++++++++++ @news_box.new_height_in_lines:#{@news_box.new_height_in_lines}"
+
         # adjust middle and bottom positioned floats
         @news_box.adjust_middle_and_bottom_floats_position(@adjusted_line_count)
         @news_box.relayout_line_content(line_content)
-        puts "+++++++++++++++ after @news_box.height:#{@news_box.height}"
-        puts "+++++++++++++++ after @news_box.adjusted_line_count:#{@news_box.adjusted_line_count}"
+        # puts "+++++++++++++++ after @news_box.height:#{@news_box.height}"
+        # puts "+++++++++++++++ after @news_box.adjusted_line_count:#{@news_box.adjusted_line_count}"
 
       end
     end

@@ -32,7 +32,6 @@ module RLayout
     # vertical direction
     attr_reader :direction # horizontal, verticcal
     attr_reader :starting_column_y, :max_height_in_lines, :min_height_in_lines
-
     def initialize(options={}, &block)
       super
       @overflow             = false
@@ -318,6 +317,7 @@ module RLayout
       article_info[:quote_box_size]     = @quote_box_size
       article_info[:image_width]        = width
       article_info[:image_height]       = height
+      @new_height_in_lines              = height/@body_line_height
       article_info[:height_in_lines]    = height/@body_line_height
       article_info[:has_attachment]     = @has_attachment
       article_info[:attached_type]      = @attached_type
@@ -434,7 +434,6 @@ module RLayout
     end
 
     def adjust_height
-
       if @overflow
         # puts "overflow"
         line_diff_count = @overflow_column.layed_out_line_count
@@ -469,16 +468,13 @@ module RLayout
       end
       # resulting_line_count = @row_count*7 - @changing_line_count
       resulting_line_count = @height_in_lines + @changing_line_count
-      if @adjustable_height && resulting_line_count == 14
-        @changing_line_count = -@changing_line_count
-      elsif @adjustable_height && resulting_line_count < 14
+      if resulting_line_count <= 14
         # when article contnet is less than row height, set mini height as one row
-        # @changing_line_count = @row_count*7 - 14
-        @changing_line_count = @height_in_lines - 14
+        @changing_line_count = 14 - @height_in_lines    
       elsif @changing_line_count + @column_line_count == @max_height_in_lines
-        # dp nothing to @changing_line_count 
+      # dp nothing to @changing_line_count 
       elsif @changing_line_count + @height_in_lines > @max_height_in_lines
-        # when article contnet is greater than max_height_in_lines, set max_height_in_lines
+      # when article contnet is greater than max_height_in_lines, set max_height_in_lines
         @changing_line_count = @max_height_in_lines - @height_in_lines 
       end
         

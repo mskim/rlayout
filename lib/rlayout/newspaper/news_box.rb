@@ -4,7 +4,7 @@ module RLayout
     attr_accessor :page_heading_margin_in_lines, :page_heading_place_holder, :article_bottom_spaces_in_lines
     attr_accessor :column_width, :column_count, :row_count, :extended_line_count, :pushed_line_count, :draw_frame
     attr_reader :svg_content
-    attr_reader :frame_sides, :height_in_lines
+    attr_reader :frame_sides, :height_in_lines, :new_height_in_lines
 
     def initialize(options={}, &block)
       # @is_ad_box            = options[:is_ad_box] || false
@@ -34,6 +34,7 @@ module RLayout
       unless @height_in_lines
         @height_in_lines = @row_count*7
       end
+      @new_height_in_lines    = @height_in_lines
       @is_front_page          = options.fetch(:is_front_page, false)
       @top_story              = options.fetch(:top_story, false)
       @top_position           = options.fetch(:top_position, false)
