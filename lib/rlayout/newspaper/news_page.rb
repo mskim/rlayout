@@ -8,7 +8,7 @@ module RLayout
   class NewsPage < Container
     attr_reader :section_path, :section_name, :output_path
     attr_reader :is_front_page, :paper_size, :page_heading
-    attr_reader :story_frames, :grid_width, :grid_height, :number_of_stories
+    attr_reader :grid_width, :grid_height, :number_of_stories
     attr_reader :body_line_height, :ad_type, :page_heading_margin_in_lines, :heading_space, :lines_per_grid
     attr_reader :draw_divider, :divider_line_thickness, :time_stamp, :reduced_size
     attr_reader :page_columns
@@ -22,10 +22,15 @@ module RLayout
       else
         @section_path   = options[:section_path]
         config_path     = @section_path + "/config.yml"
+
         if File.exist?(config_path)
           config_hash = File.open(config_path, 'r'){|f| f.read}
           config_hash = YAML::load(config_hash)
+          # TODO
+          # update pillar_map from story.pdf
+
           setup(config_hash)
+          # 
         else
           return 'config.yml not found!!!'
         end
@@ -299,71 +304,6 @@ module RLayout
       Dir.glob("#{article_path}/story*.pdf").last
     end
 
-    # convert stopry frames into layout format
-    def make_layout_info
-      @layout_info = []
-      story_count = 0 
-      @sorted_story_frames = @story_frames.sort_by{|r| [r[1], r[0]]}
-      @sorted_story_frames.each do |grid_frame|
-        info = {}
-        found_ad = false
-        if grid_frame.length == 5 && grid_frame[4] =~/^광고/
-          info[:image_path] = ad_image_path
-          @right_side_ad = true if grid_frame[4] =~/홀$/
-        elsif grid_frame.length == 5 && grid_frame[4].class == Integer
-          story_count += 1
-          pillar_article_count = grid_frame[4]
-          info = make_pillar_image(story_count)
-        else
-          story_count += 1
-          info[:image_path] = @section_path + "/#{story_count}/story.pdf"
-        end
-
-        # info[:x] = grid_frame[0]*(@grid_width + @gutter) + @left_margin
-        if @right_side_ad == true 
-          info[:x]              = grid_frame[0]*@grid_width + @left_margin + @gutter
-        else
-          info[:x]              = grid_frame[0]*@grid_width + @left_margin
-        end
-        info[:y]              = grid_frame[1]*@grid_height + @top_margin
-        info[:width]          = grid_frame[2]*@grid_width
-        info[:height]         = grid_frame[3]*@grid_height
-
-        if top_position?(grid_frame)
-          heading_space       = @body_line_height*@page_heading_margin_in_lines
-          info[:y]            += heading_space
-          info[:height]       -= heading_space
-        end
-        if grid_frame.last.class == Hash
-          if grid_frame.last['extend']
-            @extened_line_count = grid_frame.last['extend'].to_i
-            info[:height] += @body_line_height*@extened_line_count
-          end
-          if grid_frame.last['push']
-            @pushed_line_count = grid_frame.last['push'].to_i
-            info[:y]          += @body_line_height*@pushed_line_count
-            info[:height]     -= @body_line_height*@pushed_line_count
-          end
-        elsif grid_frame.length > 4
-          # support legacy format
-          # TODO deprecate this at next upgrading
-          if grid_frame.last =~/^extend/
-            @extened_line_count = grid_frame.last.split("_")[1].to_i
-            info[:height] += @body_line_height*@extened_line_count
-          elsif grid_frame.last =~/^push/
-            @pushed_line_count = grid_frame.last.split("_")[1].to_i
-            info[:y]          += @body_line_height*@pushed_line_count
-            info[:height]     -= @body_line_height*@pushed_line_count
-          end
-        end
-        info[:layout_expand]  = nil
-        info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
-        # info[:image_fit_type] = IMAGE_FIT_TYPE_ORIGINAL
-        @layout_info << info.dup
-      end
-      @layout_info
-    end
-
     def make_pillar_image(pillar_order, pillar_count)
       info = {}
       info[:pillar] = true
@@ -374,13 +314,6 @@ module RLayout
       info
     end
 
-    def self.section_pdf(options)
-      time_start = Time.now
-      section_page = self.open(options)
-      section_page.merge_layout_pdf(options)
-      time_end = Time.now
-      puts "++++++++ section_pdf took:#{time_end - time_start}"
-    end
 
     def self.open(options={})
       config_path     = options[:section_path] + "/config.yml"
@@ -392,58 +325,6 @@ module RLayout
 
     def has_ad?
       @ad_type && @ad_type !='no_ad'
-    end
-
-    def merge_layout_pdf(options={})
-      @output_path = options[:output_path] if options[:output_path]
-      make_layout_info.each_with_index do |info, i|
-        info[:parent] = self
-        if info[:pillar]
-          puts "++++++++ draw pillar here"
-          # PillarImage.new(info)
-        else
-          Image.new(info)
-        end
-	    end
-      # page heading
-      heading_info = {}
-      heading_info[:parent] = self
-      new_heading_path = heading_info[:image_path] = @section_path + "/heading/output.pdf" 
-      #TODO delete this after settling to new
-      heading_info[:image_path] = @section_path + "/heading/layout.pdf" unless File.exist?(new_heading_path)
-      heading_info[:x]          = @left_margin
-      heading_info[:y]          = @top_margin
-      heading_info[:width]      = @width - @left_margin - @right_margin
-      heading_info[:layout_expand]  = nil
-      heading_info[:image_fit_type] = IMAGE_FIT_TYPE_IGNORE_RATIO
-      # heading_info[:stroke_width] = 1
-      # heading_info[:image_fit_type] = IMAGE_FIT_TYPE_ORIGINAL
-      if @is_front_page
-        #TODO
-        # NEWS_ARTICLE_FRONT_PAGE_EXTRA_HEADING_SPACE_IN_LINES     = 1
-        # NEWS_ARTICLE_HEADING_SPACE_IN_LINES                      = 3
-        heading_info[:height]   = (@lines_per_grid + @page_heading_margin_in_lines) * @body_line_height
-      else
-        heading_info[:height]   = @page_heading_margin_in_lines * @body_line_height
-      end
-      # puts "heading_info[:height]:#{heading_info[:height]}"
-      @page_heading = Image.new(heading_info)
-      create_divider_lines if @draw_divider
-
-      if @output_path
-        # options[:thumbnail] = false
-        save_pdf(@output_path, options)
-        if @time_stamp
-          output_jpg_path       = @output_path.sub(/\.pdf$/, ".jpg")
-          time_stamped_path     = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
-          time_stamped_jpg_path = @output_path.sub(/\.pdf$/, "#{@time_stamp}.jpg")
-          system("cp #{@output_path} #{time_stamped_path}")
-          system("cp #{output_jpg_path} #{time_stamped_jpg_path}")
-        end
-      else
-        puts "No @output_path!!!"
-      end
-      self
     end
 
     def make_vertical_line(box_frame)
@@ -487,16 +368,6 @@ module RLayout
 
       # Rectangle.new(parent:self, x:x_position, y:y_position, width:0, height:box_height, stroke_thickness: 0.3)
       Line.new(parent:self, x:x_position, y:y_position, width:0, height:box_height, stroke_thickness: 0.1)
-    end
-
-    def create_divider_lines
-      @story_frames.each do |box_frame|
-        grid_max_x = box_frame[0] + box_frame[2]
-        grid_max_y = box_frame[1] + box_frame[3]
-        if grid_max_x < @grid_base[0]
-          make_vertical_line(box_frame)
-        end
-      end
     end
 
   end
