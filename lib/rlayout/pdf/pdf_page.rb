@@ -1,14 +1,18 @@
 #
-# module RLayout
-#
-#   class PDFDoc
-#     attr_accessor :path, :pages
-#
-#
-#     def to_hash
-#
-#     end
-#   end
+module RLayout
+
+  class PDFDoc
+    attr_accessor :path, :pages
+
+    def initialize(options={})
+
+
+
+    end
+  end
+end
+
+
 #
 #   class PDFPage
 #     attr_accessor :graphic_stack, :operations

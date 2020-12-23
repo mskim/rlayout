@@ -184,19 +184,22 @@ module RLayout
     end
 
     # create new page and return first line of of main_box
-    def add_new_page
+    def add_new_page(options={})
       options                 = {}
       options[:parent]        = self
       options[:paper_size]    = @paper_size
       options[:page_number]   = @pages.length
       options[:page_number]   += @starting_page
       new_page = RPage.new(options)
-      new_page.first_line
+      # new_page.first_line
+      new_page
     end
 
     # def page(options={}, &block)
-    #   options[:parent] = self
-    #   options[:paper_size] = @paper_size
+    #   options[:parent]      = self
+    #   options[:paper_size]  = @paper_size
+    #   options[:page_number] = @pages.length
+    #   options[:page_number] += @starting_page
     #   RPage.new(options, &block)
     # end
 

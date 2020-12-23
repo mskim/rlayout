@@ -8,8 +8,8 @@ module RLayout
   class RPage < Container
     attr_accessor :page_number, :left_page, :no_fixture_page
     attr_accessor :main_box, :heading_object, :header_object, :footer_object, :side_bar_object
-    attr_accessor :fixtures, :document, :column_count, :first_page, :body_line_count, :body_line_height
-
+    attr_accessor :fixtures, :floats, :document, :column_count, :first_page, :body_line_count, :body_line_height
+    attr_accessor :body_lines, :gutter
     def initialize(options={}, &block)
       if options[:parent] || options[:document]
         @parent       = options[:parent] || options[:document]
@@ -62,11 +62,9 @@ module RLayout
       end
       # if @parent && @parent.double_side
       @left_page  = @page_number.even?
-      # else
-      #   @left_page  = false
-      # end
       @fixtures = []
       @floats   = []
+
       main_box_options                      = {}
       main_box_options[:x]                  = 0
       main_box_options[:y]                  = @top_inset
@@ -101,6 +99,19 @@ module RLayout
         instance_eval(&block)
       end
       self
+    end
+
+    # TODO
+    def create_body_lines
+
+    end
+
+    def add_floats(floats_info)
+      puts __method__
+    end
+
+    def add_fixtures
+      # add header and footer
     end
 
     def is_first_page?

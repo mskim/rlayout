@@ -361,7 +361,6 @@ module RLayout
     end
 
     def parse_style_name
-      
       current_style = RLayout::StyleService.shared_style_service.current_style
       if current_style.class == String
         if current_style =~/^---/
@@ -400,6 +399,11 @@ module RLayout
       if @markup =='h2'
         @style_name  = 'running_head'
         style_hash = current_style[@style_name]
+        unless style_hash
+          # TODO add running_head to current style hash
+          # make it to see which is the current style
+          style_hash = current_style['head'] || current_style['h2']
+        end
         @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end
 

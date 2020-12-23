@@ -939,6 +939,10 @@ module RLayout
       font_list
     end
 
+    def para_style(style_name)
+      @current_style[style_name]
+    end
+    
     def space_width(style_name, adjust_size)
       style = @current_style[style_name]
       space_width = style['space_width']

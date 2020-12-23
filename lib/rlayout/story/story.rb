@@ -198,6 +198,16 @@ module RLayout
       @para_data = {:heading=>@metadata, :paragraphs =>paragraphs}
     end
 
+
+    #read story file and convert it to para_data format
+    def self.body2para_data(body_markup, starting_heading_level=1)
+      reader = RLayout::Reader.new body_markup, nil
+      paragraphs = reader.text_blocks.map do |lines_block|
+        block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
+      end
+      paragraphs
+    end
+
     # markdown2section_data
     # it parses metadata heading
     # it puts paragraphs by sections in an array, each array starting with section head para
@@ -297,7 +307,6 @@ module RLayout
       elsif s =~/^math\s?/
         @markup = "math"
       else
-
         @markup = "p"
         if text_block.length > 0
           @string = ""
@@ -329,10 +338,96 @@ module RLayout
       end
     end
 
-    #TODO
-    def to_asciidoctorpa
-
+   #processing a block of parsed text
+    def self.block2para_data(text_block, options={})
+      starting_heading_level = options.fetch(:starting_heading_level, 1)
+      s = text_block.shift if text_block[0] =~ /(?>^\s*\n)+/
+      s = text_block[0]
+      if  s =~/^<br>/ || s =~/^<\/br>/ || s =~/^<br\/>/
+        @markup = "br"
+        @string = ""
+      elsif s =~/^#\s/ || s =~/^=\s/
+        @markup = "h#{starting_heading_level}"
+        s = text_block.join("\n")
+        @string = s.sub(/#\s?/, "")
+      elsif s =~/^##\s/ || s =~/^==\s/
+        @markup = "h#{1 + starting_heading_level}"
+        s = text_block.join("\n")
+        @string = s.sub(/##\s/, "")
+      elsif s =~/^###\s/ || s =~/^===\s/
+        @markup = "h#{2 + starting_heading_level}"
+        @string = s.sub(/^###\s/, "")
+      elsif s =~/^####\s/ || s =~/^====\s/
+        @markup = "h#{3 + starting_heading_level}"
+        @string = s.sub(/####\s/, "")
+      elsif s =~/^#####\s/ || s =~/^=====\s/
+        @markup = "h#{4 + starting_heading_level}"
+        @string = s.sub(/#####\s/, "")
+      elsif s =~/^######\s/ || s =~/^======\s/
+        @markup = "h#{5 + starting_heading_level}"
+        @string = s.sub(/######\s/, "")
+      # label some:: some more text
+      elsif s =~/^\.\s?/
+        # ordered list li1
+        return {:markup =>"ordered_list", :text_block=>text_block}
+      elsif s =~/^[0-9]\.\s/
+        return {:markup =>"ordered_section", :text_block=>text_block}
+      elsif s =~/^[A-Z]\s/
+        return {:markup =>"ordered_upper_alpha_list", :text_block=>text_block}
+      #TODO
+      # elsif s =~/^\*\s?/
+      #   # unordered list uli1
+      #   return {:markup =>"unordered_list", :text_block=>text_block}
+      elsif s =~/^table\s?/
+        # parse block
+        @markup = "table"
+        @string = s.sub(/table\s?/, "")
+      elsif s =~/^image\s?/
+        @markup = "image"
+        #TODO multi line?
+        @string = s.sub(/image\s?/, "")
+      elsif s =~/^photo_page\s?/
+        @markup = "photo_page"
+      elsif s =~/^\[float_group\]\s?/
+        #float_group, changed to include other graphics
+        return {:markup =>"float_group", :text_block=>text_block}
+      elsif s =~/^pdf_insert\s?/
+        @markup = "pdf_insert"
+      elsif s =~/^math\s?/
+        @markup = "math"
+      else
+        @markup = "p"
+        if text_block.length > 0
+          @string = ""
+          text_block.each_with_index do |text_line, i|
+            @string += text_line + "\n"
+          end
+        end
+      end
+      #
+      #
+      # string += text_block.join("\n")
+      if @markup == "p" && @string =~/!\[/
+        image_info = @string.match(/\{.*\}/)
+        {:markup =>"img", :local_image=>image_info.to_s}
+      # elsif markup == "image"
+      #   {:markup =>"image", :local_image=>@string.gsub("::", "")}
+      elsif @markup == "table"
+        if text_block.length > 1
+          text_block.shift
+          {:markup =>"table", :csv_data=>text_block.join("\n")}
+        else
+          csv_path = @string.gsub("::", "")
+          {:markup =>"table", :csv_path=>csv_path}
+        end
+      # elsif markup == "image"
+      #   {:markup =>markup, :string=>@string}
+      else
+        {:markup =>@markup, :para_string=>@string}
+      end
     end
+
+
 
     def to_meta_markdown
       text = @heading.to_yaml + "\n---\n\n"

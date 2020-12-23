@@ -57,19 +57,20 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
 
-  require File.dirname(__FILE__) + '/rlayout/db_publishing/db_item'
+  # require File.dirname(__FILE__) + '/rlayout/db_publishing/db_item'
 
-  require File.dirname(__FILE__) + '/rlayout/container_extended/photo_item'
-  require File.dirname(__FILE__) + '/rlayout/container_extended/place_item'
-  require File.dirname(__FILE__) + '/rlayout/container_extended/memo_area'
+  # require File.dirname(__FILE__) + '/rlayout/container_extended/photo_item'
+  # require File.dirname(__FILE__) + '/rlayout/container_extended/place_item'
+  # require File.dirname(__FILE__) + '/rlayout/container_extended/memo_area'
 
   require File.dirname(__FILE__) + '/rlayout/style/style_service'
   # require File.dirname(__FILE__) + '/rlayout/style/grid_layout'
   # require File.dirname(__FILE__) + '/rlayout/style/image_layout'
+  require File.dirname(__FILE__) + '/rlayout/pdf/pdf_utils'
 
-  require File.dirname(__FILE__) + '/rlayout/view/svg_view/document_view_svg'
-  require File.dirname(__FILE__) + '/rlayout/view/svg_view/paragraph_view_svg'
-  require File.dirname(__FILE__) + "/rlayout/view/svg_view/graphic_view_svg"
+  # require File.dirname(__FILE__) + '/rlayout/view/svg_view/document_view_svg'
+  # require File.dirname(__FILE__) + '/rlayout/view/svg_view/paragraph_view_svg'
+  # require File.dirname(__FILE__) + "/rlayout/view/svg_view/graphic_view_svg"
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_text_token_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_line_fragment_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/document_view_pdf'
@@ -120,8 +121,10 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_page'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_make_tasks'
 
-  require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article.rb'
-  require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article_maker.rb'
+  require File.dirname(__FILE__) + '/rlayout/magazine/article.rb'
+
+  # require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article.rb'
+  # require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article_maker.rb'
 
   # require File.dirname(__FILE__) + "/rlayout/svg/canvas"
   # require File.dirname(__FILE__) + "/rlayout/svg/circle"
