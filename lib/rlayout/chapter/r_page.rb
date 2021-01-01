@@ -60,18 +60,30 @@ module RLayout
     # TODO
     def create_body_lines
       prev_line = nil
+      current_x = @left_margin
       @column_count.times do |column_index|
+        current_y = @top_margin
         @body_line_count.times do |line_index|
           h = {}
           h[:parent]  = self
-          h[:x]       = self
-          h[:y]       = self
+          h[:x]       = current_x
+          h[:y]       = current_y
           h[:width]   = @column_width
           h[:height]  = @body_line_height
           new_line = RLineFragment.new(h)
+          current_y += @body_line_height
           # set next_line link
           prev_line.next_line = new_line if prev_line
+          prev_line = new_line
         end
+        current_x += @column_width + @gutter
+      end
+    end
+
+    def put_text_line_chain
+      line = first_text_line
+      while line = line.next_text_line
+        puts line.y
       end
     end
 

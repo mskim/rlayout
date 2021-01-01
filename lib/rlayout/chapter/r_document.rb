@@ -80,7 +80,7 @@ module RLayout
       h[:page_number]   += @starting_page
       new_page = RPage.new(h)
       # new_page.first_line
-      new_page
+      new_page.first_text_line
     end
 
     def save_svg(path, options={})

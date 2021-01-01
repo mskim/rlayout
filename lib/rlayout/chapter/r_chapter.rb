@@ -212,14 +212,13 @@ module RLayout
       #   page.page_number = @starting_page + i
       # end
       @document.add_new_page
-      binding.pry
       read_story
       layout_story
       output_options = {preview: true}
       @document.save_pdf(@output_path,output_options) unless options[:no_output]
-      @doc_info[:starting_page] = @starting_page
-      @doc_info[:page_count]    = @document.pages.length
-      save_toc
+      # @doc_info[:starting_page] = @starting_page
+      # @doc_info[:page_count]    = @document.pages.length
+      # save_toc
       # @document.save_page_by_page(@project_path) if page_by_page
       self
     end
@@ -238,9 +237,8 @@ module RLayout
     def layout_story
       @page_index               = 0
       @first_page               = @document.pages[0]
-      @current_line = @first_page.first_line
+      @current_line = @first_page.first_text_line
       while @paragraph = @paragraphs.shift
-        binding.pry unless @current_line.class == RLayout::RLineFragment
         @current_line = @paragraph.layout_lines(@current_line)
         unless @current_line
           @current_line = @document.add_new_page
