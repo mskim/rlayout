@@ -83,7 +83,7 @@
 #   },
 # }
 # options = {}
-# options[:paper_size]      = "A3"
+# options[:page_size]      = "A3"
 # options[:page_count]      = 2
 # options[:footer]          = true
 # options[:header]          = true

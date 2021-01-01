@@ -12,7 +12,7 @@ describe 'overlapping floats' do
   end
 
   it 'should have width,' do
-    assert_equal @article.paper_size, 'A4'
+    assert_equal @article.page_size, 'A4'
     assert_equal @article.width, 595.28
     assert_equal @article.height, 841.89
   end

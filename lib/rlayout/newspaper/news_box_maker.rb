@@ -860,7 +860,6 @@ module RLayout
       end
 
       if @news_box.is_a?(NewsImageBox)
-        # @news_box.stroke[:sides] = [0,0,0,1]
         @news_box.stroke[:sides] = [0,0,0,0]
         @news_box.stroke.thickness = 0.3
       elsif @news_box.is_a?(NewsAdBox)
@@ -868,18 +867,12 @@ module RLayout
         @news_box.stroke.thickness = 0.0
       elsif @news_box.is_a?(NewsComicBox)
       elsif @news_box.is_a?(NewsArticleBox)
-        # puts "++++++++ @article_path:#{@article_path}"
-        # puts "++++++++ @news_box.adjustable_height:#{@news_box.adjustable_height}"
-        # puts "++++++++ @news_box.max_height_in_lines:#{@news_box.max_height_in_lines}"
-        # puts "++++++++ @news_box.height_in_lines:#{@news_box.height_in_lines}"
-        # puts "++++++++ @news_box.new_height_in_lines:#{@news_box.new_height_in_lines}"
         read_story
         layout_story
       elsif @news_box.is_a?(Container)
-        # puts "@news_box is container..."
       else
-        # puts "@news_box is Graphic..."
       end
+      # TODO this should be moved to rails front
       if @news_box.kind_of?(NewsBox) 
         if @news_box.kind == '사진' 
           if @news_box.draw_frame == false

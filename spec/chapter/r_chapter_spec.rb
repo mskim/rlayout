@@ -17,8 +17,8 @@ describe "create RChapter" do
   #   @doc.must_be_kind_of RDocument
   # end
 
-  # it 'shoud create RDocument with paper_size' do
-  #   @doc.paper_size.must_equal 'A5'
+  # it 'shoud create RDocument with page_size' do
+  #   @doc.page_size.must_equal 'A5'
   # end
 
   it 'should save chapter pdf' do

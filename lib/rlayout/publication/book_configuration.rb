@@ -3,7 +3,7 @@
 # This should go into users hidden downloaded folder
   
 doc_info = {
-  paper_size: 'A5',
+  page_size: 'A5',
   portrait: true,
   double_side: true,
   starting_page: 1,

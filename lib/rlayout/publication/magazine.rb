@@ -61,9 +61,9 @@ module RLayout
       @name         = options.fetch(:name,"MyMagazine")
       @path         = options.fetch(:path, "/Users/Shared/Newspaper")
       @publication_path = "#{@path}/#{@name}"
-      @paper_size   = options.fetch(:paper_size,"A2")
-      @width        = SIZES[@paper_size][0]
-      @height       = SIZES[@paper_size][1]
+      @page_size   = options.fetch(:page_size,"A2")
+      @width        = SIZES[@page_size][0]
+      @height       = SIZES[@page_size][1]
       setup
       self
     end

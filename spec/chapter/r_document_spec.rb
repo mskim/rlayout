@@ -14,8 +14,8 @@ describe "create RDocument" do
     @doc.title.must_equal 'untitled'
   end
 
-  it 'should have a paper_size' do
-    @doc.paper_size.must_equal 'A4'
+  it 'should have a page_size' do
+    @doc.page_size.must_equal 'A4'
   end
 
   it 'shoud have widht' do

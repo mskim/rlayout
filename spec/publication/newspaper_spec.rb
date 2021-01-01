@@ -91,7 +91,7 @@ end
 #   # end
 #   #
 #   # it 'should set width ' do
-#   #   @section.paper_size.must_equal "A2"
+#   #   @section.page_size.must_equal "A2"
 #   # end
 #   #
 #   # it 'should create sample_articles' do

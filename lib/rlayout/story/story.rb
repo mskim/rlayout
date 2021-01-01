@@ -199,7 +199,7 @@ module RLayout
     end
 
 
-    #read story file and convert it to para_data format
+    #given body markdown convert it to para_data format
     def self.body2para_data(body_markup, starting_heading_level=1)
       reader = RLayout::Reader.new body_markup, nil
       paragraphs = reader.text_blocks.map do |lines_block|

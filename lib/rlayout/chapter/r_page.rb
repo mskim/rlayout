@@ -4,13 +4,13 @@
 # main_box(RTextBox) is where body text will follow
 #
 module RLayout
-
   class RPage < Container
     attr_accessor :page_number, :left_page, :no_fixture_page
     attr_accessor :main_box, :heading_object, :header_object, :footer_object, :side_bar_object
     attr_accessor :fixtures, :floats, :document, :column_count, :first_page, :body_line_count, :body_line_height
-    attr_accessor :body_lines, :gutter
+    attr_accessor :body_lines, :gutter, :body_line_count
     def initialize(options={}, &block)
+      super
       if options[:parent] || options[:document]
         @parent       = options[:parent] || options[:document]
         @document     = @parent
@@ -18,37 +18,24 @@ module RLayout
       @first_page     = options[:first_page] || false
       @column_count   = 1
       @column_count   = options[:column_count] if options[:column_count]
-      options[:left_margin]     = layout_default[:left_margin] unless options[:left_margin]
-      options[:top_margin]      = layout_default[:top_margin] unless options[:top_margin]
-      options[:right_margin]    = layout_default[:right_margin] unless options[:right_margin]
-      options[:bottom_margin]   = layout_default[:bottom_margin] unless options[:bottom_margin]
       if @document
-        @column_count           = @document.column_count
-        @body_line_height       = @document.body_line_height
-        @body_line_count        = @document.body_line_count
-        options[:width]         = @document.width
-        options[:height]        = @document.height
-        options[:left_margin]   = @document.left_margin
-        options[:top_margin]    = @document.top_margin
-        options[:right_margin]  = @document.right_margin
-        options[:bottom_margin] = @document.bottom_margin
-        options[:heading_type]  = @document.heading_type
-      elsif options[:paper_size] && options[:paper_size] != "custom"
-        options[:width]         = SIZES[options[:paper_size]][0]
-        options[:height]        = SIZES[options[:paper_size]][1]
-        @body_line_height       = 18
-        @body_line_count        = options[:height] / @body_line_height
-      else
-        options[:width]   = SIZES['A4'][0]
-        options[:height]  = SIZES['A4'][1]
-        @body_line_height       = 18
-        @body_line_count        = options[:height] / @body_line_height
+        @column_count      = @document.column_count
+        @body_line_height  = @document.body_line_height
+        @body_line_count   = @document.body_line_count
+        @column_width      = @document.column_width
+        @gutter            = @document.gutter
+        @width             = @document.width
+        @height            = @document.height
+        @left_margin       = @document.left_margin
+        @top_margin        = @document.top_margin
+        @right_margin      = @document.right_margin
+        @bottom_margin     = @document.bottom_margin
+        @heading_type      = @document.heading_type
       end
       if  @parent && !@parent.pages.include?(self)
         @parent.pages << self
       end
-      super
-      @body_line_count    = 30 unless @body_line_count
+      @body_line_count    = 30 unless @document.body_line_count
       @body_line_height   = (@height - @top_margin - @bottom_margin)/ @body_line_count
       if  @parent
         @page_number = @parent.pages.index(self) + @parent.starting_page
@@ -57,43 +44,12 @@ module RLayout
       else
         @page_number = 1
       end
-      if @first_page
-        @heading_object   = RHeading.new(parent:self, layout_length: 1)
-      end
       # if @parent && @parent.double_side
       @left_page  = @page_number.even?
       @fixtures = []
       @floats   = []
 
-      main_box_options                      = {}
-      main_box_options[:x]                  = 0
-      main_box_options[:y]                  = @top_inset
-      main_box_options[:width]              = @width - @left_margin - @right_margin
-      main_box_options[:height]             = @height - @top_margin - @bottom_margin
-      main_box_options[:column_count]       = @column_count if @column_count
-      main_box_options[:layout_space]       = options.fetch(:layout_space, 10)
-      main_box_options[:column_layout_space] = options.fetch(:column_layout_space, 10)
-      main_box_options[:layout_space]       = options.fetch(:gutter, main_box_options[:layout_space])
-      main_box_options[:heading_columns]    = options.fetch(:heading_columns, @column_count)
-      main_box_options[:grid_base]          = options.fetch(:grid_base,"3x4")
-      main_box_options[:layout_length]      = 1
-      main_box_options[:layout_expand]      = [:height] if @first_page
-      main_box_options[:body_line_height]   = @body_line_height || 18
-      main_box_options[:parent]             = self
-      if options[:text_box_options]
-        main_box_options.merge!(options[:text_box_options])
-      end
-      if  options[:text_box]
-        @main_box = RTextBox.new(main_box_options)
-      elsif options[:toc_table]
-        @main_box = TocTable.new(main_box_options)
-      elsif options[:grid_box]
-        @main_box = GridBox.new(main_box_options)
-      elsif options[:composite_box]
-        @main_box = CompositeBox.new(main_box_options)
-      else
-        @main_box = RTextBox.new(main_box_options)
-      end
+      create_body_lines
       # relayout!
       if block
         instance_eval(&block)
@@ -103,31 +59,48 @@ module RLayout
 
     # TODO
     def create_body_lines
-
+      prev_line = nil
+      @column_count.times do |column_index|
+        @body_line_count.times do |line_index|
+          h = {}
+          h[:parent]  = self
+          h[:x]       = self
+          h[:y]       = self
+          h[:width]   = @column_width
+          h[:height]  = @body_line_height
+          new_line = RLineFragment.new(h)
+          # set next_line link
+          prev_line.next_line = new_line if prev_line
+        end
+      end
     end
 
-    def add_floats(floats_info)
-      puts __method__
-    end
-
-    def add_fixtures
-      # add header and footer
-    end
-
-    def is_first_page?
-      @first_page
+    def first_page?
+      if @parent
+        @parent.pages.first == self
+      end
+      true
     end
 
     def first_line
-      @main_box.first_line
+      body_lines.first
     end
 
-    def add_new_page
-      @parent.add_new_page
+    def body_lines
+      @graphics
+    end
+
+    def text_lines
+      body_lines.select{|l| l.text_line?}
     end
 
     def first_text_line
-      @main_box.first_text_line
+      body_lines.select{|l| l.text_line?}.first
+    end
+
+    def add_new_page
+      p = @parent.add_new_page
+      p.first_text_line
     end
 
     def adjust_page_size_to_document
@@ -170,33 +143,12 @@ EOF
       script
     end
 
-    def first_text_box
-      @graphics.each do |graphic|
-        if graphic.kind_of?(RLayout::TextBox)
-          return graphic
-        end
-      end
-      return nil
-    end
-
     # does page include Heading in graphics
     def get_heading?
       @graphics.each do |graphic|
         return graphic if graphic.class == RLayout::Heading
       end
       nil
-    end
-
-    def create_main_text(options={}, &block)
-      options[:parent_frame]  = true # fit to page's layout_frame
-      options[:grid_base]     = "3x3" unless options[:grid_base]
-      options[:gutter]        = 10    unless options[:gutter]
-      options[:parent]        = self
-      @main_box=RTextBox.new(options, &block)
-    end
-
-    def document
-      @parent
     end
 
     def page_defaults
@@ -257,41 +209,41 @@ EOF
       nil
     end
 
-    def update_header_and_footer(options={})
-      return if @no_fixture_page # for pictures page
-      options[:header][:font] = 8
-      options[:footer][:font] = 8
-      if first_page?
-        if options[:header] && (header_rule[:first_page_only] || header_rule[:first_page])
-          options[:header][:text_string] = options[:header][:first_page_text]
-          @header_object = header(options[:header])
-        end
-        if options[:footer] && (footer_rule[:first_page_only] || footer_rule[:first_page])
-          options[:footer][:text_string] = options[:footer][:first_page_text]
-          @footer_object = footer(options[:footer])
-        end
-      elsif left_page?
-        if options[:header] && header_rule[:left_page] && !header_rule[:first_page_only]
-          options[:header][:text_string] = options[:header][:left_page_text]
-          @header_object = header(options[:header])
-        end
-        if options[:footer] && footer_rule[:left_page] && !footer_rule[:first_page_only]
-          options[:footer][:text_string] = options[:footer][:left_page_text]
-          @footer_object = footer(options[:footer])
-        end
+    # def update_header_and_footer(options={})
+    #   return if @no_fixture_page # for pictures page
+    #   options[:header][:font] = 8
+    #   options[:footer][:font] = 8
+    #   if first_page?
+    #     if options[:header] && (header_rule[:first_page_only] || header_rule[:first_page])
+    #       options[:header][:text_string] = options[:header][:first_page_text]
+    #       @header_object = header(options[:header])
+    #     end
+    #     if options[:footer] && (footer_rule[:first_page_only] || footer_rule[:first_page])
+    #       options[:footer][:text_string] = options[:footer][:first_page_text]
+    #       @footer_object = footer(options[:footer])
+    #     end
+    #   elsif left_page?
+    #     if options[:header] && header_rule[:left_page] && !header_rule[:first_page_only]
+    #       options[:header][:text_string] = options[:header][:left_page_text]
+    #       @header_object = header(options[:header])
+    #     end
+    #     if options[:footer] && footer_rule[:left_page] && !footer_rule[:first_page_only]
+    #       options[:footer][:text_string] = options[:footer][:left_page_text]
+    #       @footer_object = footer(options[:footer])
+    #     end
 
-      else
-        if options[:header] && header_rule[:right_page] && !header_rule[:first_page_only]
-          options[:header][:text_string] = options[:header][:right_page_text]
-          @header_object = header(options[:header])
-        end
-        if options[:footer] && footer_rule[:right_page] && !footer_rule[:first_page_only]
-          options[:footer][:text_string] = options[:footer][:right_page_text]
-          @footer_object = footer(options[:footer])
-        end
+    #   else
+    #     if options[:header] && header_rule[:right_page] && !header_rule[:first_page_only]
+    #       options[:header][:text_string] = options[:header][:right_page_text]
+    #       @header_object = header(options[:header])
+    #     end
+    #     if options[:footer] && footer_rule[:right_page] && !footer_rule[:first_page_only]
+    #       options[:footer][:text_string] = options[:footer][:right_page_text]
+    #       @footer_object = footer(options[:footer])
+    #     end
 
-      end
-    end
+    #   end
+    # end
 
     # def create_column_grid_rects
     #   puts __method__

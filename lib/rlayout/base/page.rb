@@ -31,9 +31,9 @@ module RLayout
         options[:top_margin]    = @document.top_margin
         options[:right_margin]  = @document.right_margin
         options[:bottom_margin] = @document.bottom_margin
-      elsif options[:paper_size] && options[:paper_size] != "custom"
-        options[:width]   = SIZES[options[:paper_size]][0]
-        options[:height]  = SIZES[options[:paper_size]][1]
+      elsif options[:page_size] && options[:page_size] != "custom"
+        options[:width]   = SIZES[options[:page_size]][0]
+        options[:height]  = SIZES[options[:page_size]][1]
       else
         options[:width]   = options.fetch(:width, page_defaults[:width])
         options[:height]  = options.fetch(:height, page_defaults[:height])

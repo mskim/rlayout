@@ -83,7 +83,7 @@ describe "document" do
 
   it 'document should have default values' do
     @doc.title.must_equal "untitled"
-    @doc.paper_size.must_equal "A4"
+    @doc.page_size.must_equal "A4"
     @doc.path.must_equal nil
     @doc.width.must_equal 600
     @doc.height.must_equal 800

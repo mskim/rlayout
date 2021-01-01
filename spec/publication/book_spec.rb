@@ -35,7 +35,7 @@ describe 'generate pdf' do
 
   it 'shoul convert markdown files to pdf' do
     # @book.process_markdown_files(:check_time=>true)
-    @book.process_markdown_files(:paper_size=>'A5')
+    @book.process_markdown_files(:page_size=>'A5')
     @book.body_matter.must_be_kind_of Array
   end
 

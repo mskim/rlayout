@@ -11,7 +11,7 @@ describe 'create ImageBox' do
       shadow: true,
     }
     image_pattern = {"2/1x2/1"=>[[0, 0, 2, 1], [0, 1, 2, 1]]}
-    @g = RLayout::Document.new(:initial_page=>false, paper_size: "A5", portrait: false) do
+    @g = RLayout::Document.new(:initial_page=>false, page_size: "A5", portrait: false) do
       page(margin: 30) do
         # image_box =image_box(fill_color: 'darkGray', profile: "5/3x2/1", image_style: image_style, h_gutter: 20, v_gutter: 20)
         image_box =image_box(fill_color: 'darkGray', image_pattern: image_pattern, image_style: image_style, h_gutter: 20, v_gutter: 20)

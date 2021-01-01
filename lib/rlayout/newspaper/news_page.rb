@@ -7,7 +7,7 @@
 module RLayout
   class NewsPage < Container
     attr_reader :section_path, :section_name, :output_path
-    attr_reader :is_front_page, :paper_size, :page_heading
+    attr_reader :is_front_page, :page_size, :page_heading
     attr_reader :grid_width, :grid_height, :number_of_stories
     attr_reader :body_line_height, :ad_type, :page_heading_margin_in_lines, :heading_space, :lines_per_grid
     attr_reader :draw_divider, :divider_line_thickness, :time_stamp, :reduced_size

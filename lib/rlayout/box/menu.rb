@@ -2,7 +2,7 @@
 #   # layout_direction
 #   # menu_column_count
 #   # menu_item_count
-#   # paper_size
+#   # page_size
 
 # # title style
 

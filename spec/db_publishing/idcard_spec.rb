@@ -4,7 +4,7 @@ describe 'create idcard from hash' do
   before do
     template = {
       :doc_info=> {
-        paper_size: 'IDCARD', # width = 147.40 (45 + 67.4 + 45 = 157
+        page_size: 'IDCARD', # width = 147.40 (45 + 67.4 + 45 = 157
       },
       :pages=> [
         {

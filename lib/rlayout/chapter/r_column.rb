@@ -150,7 +150,7 @@ module RLayout
     end
 
     def add_new_page
-      @parent.add_new_page if @parent && @parent.is_a?(Page)
+      @parent.add_new_page if @parent && @parent.is_a?(RPage)
     end
 
     def column_index

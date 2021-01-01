@@ -1804,7 +1804,7 @@ TODO List
 
 2015 4 8
 	1. Article, NewsBoxMaker, NewsSection
-	1. grid_size with margin, gutter paper_size
+	1. grid_size with margin, gutter page_size
 	1. put the grid_pattern_with source, no need to save it as file
 	1. heading_column for news_article story.
 	1. Page with and without Heading
@@ -1939,7 +1939,7 @@ TODO List
 	- text_layout_manger layout_lines when relayout is called
 
 2014 12 15
-	- add paper_size
+	- add page_size
 
 2014 12 14
 	- remove margin from attr_accessor

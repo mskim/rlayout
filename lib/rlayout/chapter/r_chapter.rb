@@ -187,159 +187,65 @@ module RLayout
     # if page_by_page is true,
     # folders are created for each page, with jpg image and, markdown text for that page
     # this allow the proofer to working on that specific page rather than dealing with entire chapter text.
-    attr_reader :page_by_page
+    attr_reader :page_by_page, :story_body
 
     def initialize(options={} ,&block)
-      @project_path = options[:project_path] || options[:article_path]
-      if @project_path
-        @story_path = Dir.glob("#{@project_path}/*.{md,markdown}").first
-      elsif options[:story_path]
-        @story_path = options[:story_path]
-        unless File.exist?(@story_path)
-          puts "No story found at #{@story_path} !!!"
-          return
-        end
-        @project_path = File.dirname(@story_path)
-      end
-      $ProjectPath    = @project_path
-      @page_by_page  = options[:page_by_page]
-      if options[:output_path]
-        @output_path = options[:output_path]
-      elsif options[:filename_output]
-        ext = File.extname(@story_path)
-        @output_path = @story_path.gsub(ext, ".pdf")
-      else
-        @output_path = @project_path + "/output.pdf"
-      end
-      if options[:template_path] && File.exist?(options[:template_path])
-        @template_path = options[:template_path]
-      else
-        @template_path = Dir.glob("#{@project_path}/*.{rb,script,pgscript}").first
-      end
-      doc_info_path = @project_path + "/doc_info.yml"
-      if File.exist?(doc_info_path)
-        yaml = File.open(doc_info_path, 'r'){|f| f.read}
-        @doc_info = YAML::load(yaml)
-        @starting_page = @doc_info[:starting_page] || 1
-        @paper_size = @doc_info[:paper_size] || 'A5'
-        @doc_info[:heading_type] = 'fixed_height'
-      else
-        @doc_info = default_doc_info
-      end
-
-      if @template_path
-        template = File.open(@template_path,'r') { |f| f.read}
-        @document = eval(template)
-      else
-        @document =  RDocument.new(doc_info: @doc_info)
-      end
+      @output_path    = options[:output_path]
+      @project_path   = File.dirname(@output_path)
+      @story_body     = options[:story_body]
+      @layout_rb      = options[:layout_rb]
+      @page_floats    = options[:page_floats] 
+      @starting_page  = options[:starting_page] || 1
+      @page_by_page   = options[:page_by_page]
+      puts @layout_rb
+      @document       = eval(@layout_rb)
       if @document.is_a?(SyntaxError)
-        puts "SyntaxError in #{@template_path} !!!!"
+        puts "SyntaxError in #{@document} !!!!"
         return
       end
       unless @document.kind_of?(RLayout::RDocument)
         puts "Not a @document kind created !!!"
         return
       end
-      @starting_page = options.fetch(:starting_page,1)
       @document.starting_page = @starting_page
-      @document.pages.each_with_index do |page, i|
-        page.page_number = @starting_page + i
-      end
+      # @document.pages.each_with_index do |page, i|
+      #   page.page_number = @starting_page + i
+      # end
+      @document.add_new_page
+      binding.pry
       read_story
       layout_story
       output_options = {preview: true}
       @document.save_pdf(@output_path,output_options) unless options[:no_output]
       @doc_info[:starting_page] = @starting_page
-      @doc_info[:page_count] = @document.pages.length
+      @doc_info[:page_count]    = @document.pages.length
       save_toc
-      @document.save_page_by_page(@project_path) if page_by_page
+      # @document.save_page_by_page(@project_path) if page_by_page
       self
     end
 
-    def default_doc_info
-      h = {}
-      h[:paper_size]        = 'A5'
-      h[:body_line_count]   = 20
-      h[:body_line_height]  = 18
-      h[:heading_type]      = 'fixed_height'
-      h
-    end
-
-    def default_chapter_document
-      RDocument.new(doc_info: default_doc_info)
-    end
-
     def read_story
-      ext = File.extname(@story_path)
-      if ext == ".md" || ext == ".markdown" || ext == ".story"
-        @story  = Story.new(@story_path).markdown2para_data
-        # elsif ext == ".adoc"
-        # @story      = Story.adoc2para_data(@story_path)
-      end
-      @heading      = @story[:heading] || {}
-      @book_title   = @heading[:book_title] || @heading['book_title'] || "Untitled"
-      @title        = @heading[:title] || @heading['title'] || "Untitled"
-      @toc_content  = "## #{@title}\t0\n"
-      @paragraphs   = []
-      @story[:paragraphs].each do |para|
-        next if para.nil?
-        para[:layout_expand] = [:width]
-        if para[:markup] == 'img' && para[:para_string]
-          para.merge! eval(para.delete(:para_string))
-          @paragraphs << Image.new(para_options)
-        elsif para[:markup] == 'table'
-          @paragraphs << Table.new(para)
-        elsif para[:markup] == 'photo_page'
-          @paragraphs << PhotoPage.new(para)
-        elsif para[:markup] == 'float_group'
-          @paragraphs << FloatGroup::FloatGroup.new(para)
-        elsif para[:markup] == 'pdf_insert'
-          @paragraphs << PdfInsert.new(para)
-        elsif para[:markup] == 'ordered_list'
-          @paragraphs << OrderedList.new(para)
-        elsif para[:markup] == 'unordered_list'
-          @paragraphs << UnorderedList.new(para)
-        else
-          @paragraphs << RParagraph.new(para)
+      if @story_body 
+        para_data = Story.body2para_data(@story_body, starting_heading_level=1)
+        @paragraphs = para_data.map do |para|
+          RParagraph.new(para)
         end
+      else
+        @story  = Story.new(@story_path).markdown2para_data
       end
     end
-
+    
     def layout_story
       @page_index               = 0
       @first_page               = @document.pages[0]
-      @heading[:layout_expand]  = [:width, :height]
-      @heading[:parent]         = @first_page
-      @heading[:layout_length]  = 1
-      @heading[:v_alignment]    = 'center'
-      heading_object            = @first_page.heading_object
-      heading_object.set_heading_content(@heading)
-      heading_object.align_vertically
-      unless @first_page.main_box
-        puts "create main_box"
-        @first_page.create_main_text
-      else
-        # puts "revering main_box"
-        # @first_page.graphics = @first_page.graphics.reverse
-      end
-      @first_page.relayout!
-      # @first_page.main_box.adjust_overlapping_columns
-      first_item = @paragraphs.first
-      #TODO
-      if first_item.is_a?(RLayout::FloatGroup) # || first_item.is_a?(PdfInsert)
-        first_item = @paragraphs.shift
-        first_item.layout_page(document: @document, page_index: @page_index)
-      end
       @current_line = @first_page.first_line
-      @page_index = 1
       while @paragraph = @paragraphs.shift
+        binding.pry unless @current_line.class == RLayout::RLineFragment
         @current_line = @paragraph.layout_lines(@current_line)
         unless @current_line
           @current_line = @document.add_new_page
         end
       end
-      update_header_and_footer
     end
 
 
@@ -357,71 +263,11 @@ module RLayout
     end
 
     def save_toc
+      @project_path   = File.dirname(@output_path)
       toc_path        = @project_path + "/doc_info.yml"
-      @doc_info[:paper_size] = @paper_size
+      @doc_info[:page_size] = @page_size
       @doc_info[:toc] = @toc_content
       File.open(toc_path, 'w') { |f| f.write @doc_info.to_yaml}
-    end
-
-    def update_header_and_footer
-      header = {}
-      header[:first_page_text]  = "| #{@book_title} |" if @book_title
-      header[:left_page_text]   = "| #{@book_title} |" if @book_title
-      header[:right_page_text]  = @title if @title
-      footer = {}
-      footer[:first_page_text]  = @book_title if @book_title
-      footer[:left_page_text]   = @book_title if @book_title
-      footer[:right_page_text]  = @title if @title
-      options = {
-        header: header,
-        footer: footer
-      }
-      @document.header_rule = header_rule
-      @document.footer_rule = footer_rule
-      @document.pages.each { |page| page.update_header_and_footer(options)}
-    end
-
-    def header_rule
-      {
-        first_page_only: true,
-        left_page: false,
-        right_page: false
-      }
-    end
-
-    def footer_rule
-      h = {}
-      h[:first_page]      = true
-      h[:left_page]       = true
-      h[:right_page]      = true
-      h
-    end
-    # generate layout.rb file with script in each page
-    # for manual image adjusting
-    def generate_layout
-      @page_content = ''
-      layout_text = <<-EOF.gsub(/^\s*/, "")
-      RLayout::Document.new do
-        #{@page_content}
-      EOF
-      page_text = <<-EOF.gsub(/^\s*/, "")
-        #page: #{@page_number}
-        page do
-          main_text do
-            #{@image_layout}
-          end
-        end
-      EOF
-      @document.pages.each_with_index do |page, i|
-        @page_number = i + 1
-        @image_layout = ''
-        page.floats.each do |float|
-          @image_layout += float.to_script
-        end
-        @page_content += page_text
-      end
-      layout_file = layout_text
-      File.open(layout_path, 'w') { |f| f.write layout_file }
     end
 
   end

@@ -157,9 +157,9 @@ module RLayout
       @name         = @name.gsub(" ","_")
       @path         = options.fetch(:path, "/Users/Shared/Newspaper")
       @publication_path = "#{@path}/#{@name}"
-      @paper_size   = options.fetch(:paper_size,"A2")
-      @width        = SIZES[@paper_size][0]
-      @height       = SIZES[@paper_size][1]
+      @page_size   = options.fetch(:page_size,"A2")
+      @width        = SIZES[@page_size][0]
+      @height       = SIZES[@page_size][1]
       @sections     = options.fetch(:sections, DEFAULT_SECTIONS.dup)
       @number_of_stories = options.fetch(:number_of_stories, DEFAULT_NUMBER_OF_STORIES.dup)
       @lines_in_grid= options.fetch(:lines_in_grid, 10)
@@ -340,7 +340,7 @@ module RLayout
 
   class NewspaperSection
     attr_accessor :issue, :section_path, :issue_numner, :date, :publication, :issue,
-                  :section_name, :output_path, :has_heading, :paper_size,
+                  :section_name, :output_path, :has_heading, :page_size,
                   :section_config, :articles_info, :story_frames, :grid_key,
                   :grid_width, :grid_height, :number_of_stories
 
@@ -350,9 +350,9 @@ module RLayout
       @section_name   = options[:section_name] || "untitled"
       @output_path    = @section_path + "/section.pdf"
       @output_path    = options[:output_path]   if options[:output_path]
-      @paper_size     = options.fetch(:paper_size,"A2")
-      @width          = SIZES[@paper_size][0]
-      @height         = SIZES[@paper_size][1]
+      @page_size     = options.fetch(:page_size,"A2")
+      @width          = SIZES[@page_size][0]
+      @height         = SIZES[@page_size][1]
       @width          = options['width'] if options['width']
       @height         = options['height'] if options['height']
       @lines_in_grid  = options.fetch(:lines_in_grid, 10)

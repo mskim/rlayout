@@ -70,7 +70,7 @@ module RLayout
   TocNode = Struct.new(:markup, :text_string, :page_number)
 
   class Document
-    attr_accessor :title, :path, :paper_size, :portrait, :width, :height, :starts_left, :double_side
+    attr_accessor :title, :path, :page_size, :portrait, :width, :height, :starts_left, :double_side
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_accessor :pages, :document_view, :starting_page
     attr_accessor :page_view_count, :toc_elements
@@ -84,28 +84,28 @@ module RLayout
       @title      = options[:title] if options[:title]
       @path       = options[:path]  if options[:path]
       if options[:doc_info]
-        @paper_size = options[:doc_info].fetch(:paper_size, "A4")
+        @page_size = options[:doc_info].fetch(:page_size, "A4")
         @portrait   = options[:doc_info].fetch(:portrait, document_defaults[:portrait])
         @double_side= options[:doc_info].fetch(:double_side, document_defaults[:double_side])
         @starts_left= options[:doc_info].fetch(:starts_left, document_defaults[:starts_left])
       elsif options[:layout_style]
-        @paper_size = options[:layout_style].fetch(:paper_size, "A4")
+        @page_size = options[:layout_style].fetch(:page_size, "A4")
         @portrait   = options[:layout_style].fetch(:portrait, document_defaults[:portrait])
         @double_side= options[:layout_style].fetch(:double_side, document_defaults[:double_side])
         @starts_left= options[:layout_style].fetch(:starts_left, document_defaults[:starts_left])
       else
-        @paper_size = options.fetch(:paper_size, "A4")
+        @page_size = options.fetch(:page_size, "A4")
         @portrait   = options.fetch(:portrait, document_defaults[:portrait])
         @double_side= options.fetch(:double_side, document_defaults[:double_side])
         @starts_left= options.fetch(:starts_left, document_defaults[:starts_left])
       end
-      if @paper_size && @paper_size != "custom"
-        @width   = SIZES[@paper_size][0]
-        @height  = SIZES[@paper_size][1]
+      if @page_size && @page_size != "custom"
+        @width   = SIZES[@page_size][0]
+        @height  = SIZES[@page_size][1]
       else
-        @paper_size = document_defaults[:paper_size]
-        @width   = SIZES[@paper_size][0]
-        @height  = SIZES[@paper_size][1]
+        @page_size = document_defaults[:page_size]
+        @width   = SIZES[@page_size][0]
+        @height  = SIZES[@page_size][1]
       end
       if @portrait == false
         temp    = @width
@@ -180,7 +180,7 @@ module RLayout
         portrait: true,
         double_side: false,
         starts_left: true,
-        paper_size: "A4",
+        page_size: "A4",
         width: 595.28,
         height: 841.89,
         left_margin: 50,
@@ -196,7 +196,7 @@ module RLayout
 
     def page(options={}, &block)
       options[:parent] = self
-      options[:paper_size] = @paper_size
+      options[:page_size] = @page_size
       Page.new(options, &block)
     end
 
@@ -247,8 +247,8 @@ module RLayout
     def to_hash
       h = {}
       h[:title]       = @title
-      h[:paper_size]  = @paper_size
-      if @paper_size == 'custom'
+      h[:page_size]  = @page_size
+      if @page_size == 'custom'
         h[:width]       = @width
         h[:height]      = @height
       end
