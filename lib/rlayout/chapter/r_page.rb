@@ -221,54 +221,6 @@ EOF
       nil
     end
 
-    # def update_header_and_footer(options={})
-    #   return if @no_fixture_page # for pictures page
-    #   options[:header][:font] = 8
-    #   options[:footer][:font] = 8
-    #   if first_page?
-    #     if options[:header] && (header_rule[:first_page_only] || header_rule[:first_page])
-    #       options[:header][:text_string] = options[:header][:first_page_text]
-    #       @header_object = header(options[:header])
-    #     end
-    #     if options[:footer] && (footer_rule[:first_page_only] || footer_rule[:first_page])
-    #       options[:footer][:text_string] = options[:footer][:first_page_text]
-    #       @footer_object = footer(options[:footer])
-    #     end
-    #   elsif left_page?
-    #     if options[:header] && header_rule[:left_page] && !header_rule[:first_page_only]
-    #       options[:header][:text_string] = options[:header][:left_page_text]
-    #       @header_object = header(options[:header])
-    #     end
-    #     if options[:footer] && footer_rule[:left_page] && !footer_rule[:first_page_only]
-    #       options[:footer][:text_string] = options[:footer][:left_page_text]
-    #       @footer_object = footer(options[:footer])
-    #     end
-
-    #   else
-    #     if options[:header] && header_rule[:right_page] && !header_rule[:first_page_only]
-    #       options[:header][:text_string] = options[:header][:right_page_text]
-    #       @header_object = header(options[:header])
-    #     end
-    #     if options[:footer] && footer_rule[:right_page] && !footer_rule[:first_page_only]
-    #       options[:footer][:text_string] = options[:footer][:right_page_text]
-    #       @footer_object = footer(options[:footer])
-    #     end
-
-    #   end
-    # end
-
-    # def create_column_grid_rects
-    #   puts __method__
-    #   @main_box.create_column_grid_rects
-    # end
-    #
-    # def set_overlapping_grid_rect
-    #   @main_box.set_overlapping_grid_rect
-    # end
-    #
-    # def layout_items(paragraphs)
-    #   @main_box.layout_items(paragraphs)
-    # end
 
     def to_data
       h = {}

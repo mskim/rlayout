@@ -1,18 +1,10 @@
 module RLayout
   class RLineFragment < Container
   
-    def draw_text(canvas)
+    def draw_body_line(canvas)
       if @graphics.length > 0
         font_name = @para_style[:font] 
         size = @para_style[:font_size]
-
-        if @pareant && @pareant.parent && @pareant.parent.class == RLayout::TitleText #&& @parent.class == RLayout::NewsArticleBox
-          @flipped = flipped_origin
-          @stroke.color = 'CMYK=0,0,0,100'
-          @stroke.color = RLayout.color_from_string(@stroke.color) if @stroke.color.class == String
-          canvas.stroke_color(@stroke.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
-        end
-
 
         if canvas.font
           canvase_font_name = canvas.font.wrapped_font.font_name
@@ -42,12 +34,12 @@ module RLayout
           font_wapper   = doc.fonts.add(font_file)
           canvas.font(font_wapper, size: size)
         end
-        f = flipped_origin
-        x_offset = f[0]
-        y_offset = f[1] + 3
 
+        f = @parent.flipped_origin
+        y_offset = @parent.height
         @graphics.each do |token|
-          canvas.text(token.string, at: [x + token.x, y])
+          # TODO considder drawing position, lowe by token height?
+          canvas.text(token.string, at: [token.x, f[1] - y])
         end
       end
     end

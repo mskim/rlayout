@@ -91,7 +91,7 @@ module RLayout
     end
 
     def save_pdf(path, options={})
-      save_pdf_in_ruby(path, options={})
+      save_pdf_with_ruby(path, options={})
     end
 
     def save_toc(path)

@@ -214,13 +214,14 @@ module RLayout
       @document.add_new_page
       read_story
       layout_story
-      output_options = {preview: true}
-      @document.save_pdf(@output_path,output_options) unless options[:no_output]
+      # output_options = {preview: true}
+      @document.save_pdf(@output_path) unless options[:no_output]
       # @doc_info[:starting_page] = @starting_page
       # @doc_info[:page_count]    = @document.pages.length
       # save_toc
       # @document.save_page_by_page(@project_path) if page_by_page
-      self
+      # self
+      @document.pages.length
     end
 
     def read_story
