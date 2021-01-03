@@ -289,8 +289,12 @@ module RLayout
             @line_count += 1
             token = result
           else
+            if @current_line.parent.class == RLayout::RPage
+              @current_line = @current_line.parent.next_page
+            else
+              @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
+            end
             # break #reached end of last column
-            @current_line = @current_line.parent.add_new_page
             # tokens_copy.unshift(result) #stick the unplace token back to the tokens_copy
             token = result
           end
@@ -307,7 +311,11 @@ module RLayout
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
           else
-            @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
+            if @current_line.parent.class == RLayout::RPage
+              @current_line = @current_line.parent.next_page
+            else
+              @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
+            end
             # tokens.unshift(token) #stick the unplace token back to the tokens_copy
             # break #reached end of column
           end

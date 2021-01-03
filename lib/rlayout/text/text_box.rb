@@ -247,7 +247,7 @@ module RLayout
     # 0. Array of flowing_items are passed as parameter.
     # 1. front_most_item is taken out(shift) from flowing_items array,
     #    and layouted out. It is repeated untill all items are consumed.
-    # 2. Paragraph Item's content is layed out in the column with column widht
+    # 2. Paragraph Item's content is layed out in the column with column width
     #    For simple and also for complex column, it is layout with avoiding overlapping float.
     #    @item.layout_lines(current_column)
 

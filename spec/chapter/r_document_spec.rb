@@ -18,7 +18,7 @@ describe "create RDocument" do
     @doc.page_size.must_equal 'A4'
   end
 
-  it 'shoud have widht' do
+  it 'shoud have width' do
     @doc.width.must_equal SIZES['A4'][0]
   end
 

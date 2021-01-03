@@ -35,11 +35,12 @@ module RLayout
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin, :gutter
     attr_accessor :pdf_path, :jpg, :preview, :column_count, :column_width, :layout_style
     attr_accessor :heading_type, :body_line_count, :body_line_height
-    attr_reader :project_path
+    attr_reader :project_path, :max_page_number
     
     def initialize(options={}, &block)
       @width            = options[:width]
       @height           = options[:height]
+      @max_page_number  = options[:max_page_number] || 999
       @body_line_count  = options[:body_line_count] || 23
       @left_margin      = options[:left_margin] || 50
       @top_margin       = options[:top_margin] || 50
@@ -81,6 +82,19 @@ module RLayout
       new_page = RPage.new(h)
       # new_page.first_line
       new_page.first_text_line
+    end
+
+    def next_page(page)
+      index = pages.index(page)
+      new_index = index + 1
+      if new_index < max_page_number 
+        new_p = pages[new_index]
+        if new_p
+          new_p.first_text_line
+        else
+          add_new_page
+        end
+      end
     end
 
     def save_svg(path, options={})

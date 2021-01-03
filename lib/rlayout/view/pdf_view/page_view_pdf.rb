@@ -8,7 +8,7 @@ module RLayout
     end
 
     def draw_pdf(canvas)
-      @graphics.each do |g|
+      @graphics.each_with_index do |g, i|
         g.draw_body_line(canvas)
       end
       @floats.each do |g|

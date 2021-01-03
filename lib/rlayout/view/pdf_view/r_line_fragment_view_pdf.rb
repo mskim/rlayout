@@ -3,8 +3,13 @@ module RLayout
   
     def draw_body_line(canvas)
       if @graphics.length > 0
-        font_name = @para_style[:font] 
-        size = @para_style[:font_size]
+        if @para_style
+          font_name = @para_style[:font] || 'Shinmoon' 
+          size = @para_style[:font_size]  || '9.5'
+        else
+          font_name = 'Shinmoon' 
+          size = '9.5'
+        end
 
         if canvas.font
           canvase_font_name = canvas.font.wrapped_font.font_name
@@ -26,7 +31,7 @@ module RLayout
             canvas.font(font_wapper, size: size)
           end
         else
-          size = @para_style[:font_size] || 16
+          size = 9.5 # TODO
           font_foleder  = "/Users/Shared/SoftwareLab/font_width"
           font_file     = font_foleder + "/Shinmoon.ttf"
           font_file     = font_foleder + "/#{font_name}.ttf" if font_name

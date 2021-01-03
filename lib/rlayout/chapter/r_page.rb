@@ -80,6 +80,31 @@ module RLayout
       end
     end
 
+    def add_floats(page_floats)
+      if page_floats[:floats]
+        page_floats[:floats].each do |float|
+          float[:parent] = self
+          float[:is_float] = true
+          Image.new(float)
+        end
+      elsif page_floats[:header]
+
+      else page_floats[:footer]
+
+      end
+      adjust_overlapping_body_lines
+    end
+
+    # adjust text_area of body_lines with overlapping floats
+    def adjust_overlapping_body_lines
+      @floats.each do |float|
+        float_rect = float.frame_rect
+        @graphics.each do |line|
+          line.adjust_text_area_away_from(float_rect)
+        end
+      end
+    end
+
     def put_text_line_chain
       line = first_text_line
       while line = line.next_text_line
@@ -111,8 +136,12 @@ module RLayout
     end
 
     def add_new_page
-      p = @parent.add_new_page
-      p.first_text_line
+      @parent.add_new_page
+      # retruns first_text_line
+    end
+
+    def next_page
+      @parent.next_page(self)
     end
 
     def adjust_page_size_to_document

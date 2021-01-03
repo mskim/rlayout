@@ -1,5 +1,5 @@
 module RLayout
-  # x, y, widht, height
+  # x, y, width, height
   # pillar_path, images
 
   class PillarImage < Container

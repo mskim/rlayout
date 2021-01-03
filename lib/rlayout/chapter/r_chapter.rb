@@ -177,11 +177,12 @@
 module RLayout
 
   class RChapter
-    attr_accessor :project_path, :template_path, :story_path
-    attr_accessor :document, :output_path, :column_count
-    attr_accessor :doc_info, :toc_content
+    attr_reader :project_path, :template_path, :story_path
+    attr_reader :document, :output_path, :column_count
+    attr_reader :doc_info, :toc_content
     attr_reader :book_title, :title, :starting_page, :heading_type, :heading
-    attr_accessor :body_line_count, :body_line_height
+    attr_reader :body_line_count, :body_line_height
+    attr_reader :max_page_number
 
     # page_by_page is used for page proof reading
     # if page_by_page is true,
@@ -208,10 +209,16 @@ module RLayout
         return
       end
       @document.starting_page = @starting_page
-      # @document.pages.each_with_index do |page, i|
-      #   page.page_number = @starting_page + i
-      # end
-      @document.add_new_page
+      # place floats to pages
+      @page_floats.each_with_index do |page_float,i| 
+        p = @document.pages[i]
+        unless  p
+          @document.add_new_page 
+          p = @document.pages[i]
+        end
+        p.add_floats(page_float)
+      end
+
       read_story
       layout_story
       # output_options = {preview: true}
@@ -220,8 +227,7 @@ module RLayout
       # @doc_info[:page_count]    = @document.pages.length
       # save_toc
       # @document.save_page_by_page(@project_path) if page_by_page
-      # self
-      @document.pages.length
+      self
     end
 
     def read_story
@@ -240,13 +246,14 @@ module RLayout
       @first_page               = @document.pages[0]
       @current_line = @first_page.first_text_line
       while @paragraph = @paragraphs.shift
+        last_page     = @current_line.parent
         @current_line = @paragraph.layout_lines(@current_line)
         unless @current_line
-          @current_line = @document.add_new_page
+          # retruns first_text_line
+          @current_line = @document.next_page(last_page)
         end
       end
     end
-
 
     def next_chapter_starting_page
       @starting_page = 1 if @starting_page.nil?
@@ -256,7 +263,6 @@ module RLayout
 
     def save_doc_info
       doc_info_path   = @project_path + "/doc_info.yml"
-      @doc_info[:toc] = @toc_content
       @doc_info[:toc] = @toc_content
       File.open(toc_path, 'w') { |f| f.write e@doc_info.to_yaml}
     end
@@ -268,6 +274,5 @@ module RLayout
       @doc_info[:toc] = @toc_content
       File.open(toc_path, 'w') { |f| f.write @doc_info.to_yaml}
     end
-
   end
 end
