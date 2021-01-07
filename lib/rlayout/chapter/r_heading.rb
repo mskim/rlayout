@@ -1,6 +1,6 @@
 # What is Heading
 # Heading is used in Articles and Chapters.
-# Heading consists of title, subtile, leading, author
+# Heading consists of title, subtile, quote, author
 
 # We have two Heading handling classes, Heading and HeadingContainer
 # Heading grows box in vertical direction, usually used in Chapter, and Article Heading.
@@ -20,7 +20,7 @@
 #  number
 #  title
 #  subtitle
-#  leading
+#  quote
 #  author
 
 # Todo
@@ -44,13 +44,16 @@ module RLayout
   # This way, parent can shrink or expand heading and maintain each elements's height propotion.
   # heading height should be multiles of body text height
   class RHeading < Container
-    attr_accessor :number_object, :title_object, :subtitle_object, :leading_object, :author_object
-    attr_accessor :align_to_body_text
+    attr_accessor :number_object, :title_object, :subtitle_object, :quote_object, :author_object
+    attr_accessor :align_to_body_text, :output_path
     def initialize(options={}, &block)
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
-      @layout_alignment  = options[:v_alignment]
+      @x                  = 0
+      @y                  = 0
+      @output_path        = options[:output_path]
+      @layout_alignment   = options[:v_alignment]
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
       @layout_space       = 3
       if options[:width]
@@ -76,6 +79,11 @@ module RLayout
       if block
         instance_eval(&block)
       end
+
+      if @output_path
+        save_pdf_with_ruby(@output_path)
+      end
+
       self
     end
 
@@ -96,36 +104,31 @@ module RLayout
         # place image in the background, change size, width, or height as instructed
       end
 
-      # if options[:number]
-      #   @number_object = title(options[:title], options)
-      # elsif options["number"]
-      #   @number_object = title(options["number"], options)
-      # end
+      @y_position = 20
       if options[:title]
-        if @title_object
-          @title_object.set_text(options[:title])
-        else
-          @title_object = title(options[:title], options)
-        end
+        t = @title_object = title(options[:title])
+        @title_object.y = @y_position
+        @y_position += t.height
       else
-        @title_object = title('Untitled', options)
+        h = {x:0, y: @y}
+        @title_object = title('Untitled')
+        @title_object.y = @y_position
+        @y_position += t.height
       end
 
       if options[:subtitle]
-        @subtitle_object = subtitle(options[:subtitle], options)
-      end
-      if options[:leading]
-        @leading_object = leading(options[:leading], options)
-      end
-      if options[:author]
-        @author_object = author(options[:author], options)
+        t = @subtitle_object = subtitle(options[:subtitle])
+        @subtitle_object.y = @y_position + 10
+        @y_position += t.height
       end
 
-      @graphics.each do |g|
-        y             = 0
-        g.y           = y             
-        y             += g.height + 5
+      if options[:quote]
+        @quote_object = quote(options[:quote])
+        @quote_object.y = @y_position + 10
       end
+
+      # relayout!
+
       self
     end
 
@@ -222,19 +225,19 @@ module RLayout
       @subtitle_object
     end
 
-    def leading(string, options={})
+    def quote(string, options={})
       atts                          = {}
-      atts[:style_name]             = 'leading'
+      atts[:style_name]             = 'quote'
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       # atts                          = options.merge(atts)
       atts[:parent]                 = self
-      @leading_object               = TitleText.new(atts)
-      @leading_object.layout_expand = [:width]
-      @leading_object.layout_length = @leading_object.height
-      @leading_object
+      @quote_object               = TitleText.new(atts)
+      @quote_object.layout_expand = [:width]
+      @quote_object.layout_length = @quote_object.height
+      @quote_object
     end
 
     def author(string, options={})

@@ -283,6 +283,25 @@ reporter:
   markup: ''
   graphic_attributes: ''
   publication_id: 1
+author:
+  korean_name: 저자명
+  category:
+  font_family: KoPub돋움체_Pro Light
+  font: KoPubDotumPL
+  font_size: 7.0
+  text_color: CMYK=0,0,0,100
+  alignment: right
+  tracking: 0.0
+  space_width: 2.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 0
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+  publication_id: 1
 linked_story:
   korean_name: 연결기사
   category:
@@ -443,6 +462,25 @@ title_1:
   markup: ''
   graphic_attributes: ''
   publication_id: 1
+title:
+  korean_name: 제목_메인
+  category:
+  font_family: KoPub바탕체_Pro Bold
+  font: KoPubBatangPB
+  font_size: 42.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -1.0
+  space_width: 10.0
+  scale: 100.0
+  text_line_spacing: 0
+  space_before_in_lines: 0
+  space_after_in_lines: 0
+  text_height_in_lines: 3
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+  publication_id: 1
 subtitle_main:
   korean_name: 부제_메인
   category:
@@ -500,12 +538,12 @@ subtitle_S:
   markup: ''
   graphic_attributes: ''
   publication_id: 1
-subtitle_s_gothic:
+subtitle:
   korean_name: 부제_12_고딕
   category:
   font_family: KoPub돋움체_Pro Medium
   font: KoPubDotumPM
-  font_size: 12.0
+  font_size: 18.0
   text_color: CMYK=0,0,0,100
   alignment: center
   tracking: -1.0

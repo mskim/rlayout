@@ -103,6 +103,7 @@ module RLayout
       #   # set style_name to empasied token only
       #     draw_tokens(canvas)
       #   # end
+
       if  @style_name && @style_name == "caption"
         canvas.save_graphics_state do
           draw_mixed_style_tokens(canvas)

@@ -182,7 +182,7 @@ module RLayout
     attr_reader :doc_info, :toc_content
     attr_reader :book_title, :title, :starting_page, :heading_type, :heading
     attr_reader :body_line_count, :body_line_height
-    attr_reader :max_page_number
+    attr_reader :max_page_number, :page_floats
 
     # page_by_page is used for page proof reading
     # if page_by_page is true,
@@ -198,7 +198,6 @@ module RLayout
       @page_floats    = options[:page_floats] 
       @starting_page  = options[:starting_page] || 1
       @page_by_page   = options[:page_by_page]
-      puts @layout_rb
       @document       = eval(@layout_rb)
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@document} !!!!"

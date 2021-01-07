@@ -87,10 +87,17 @@ module RLayout
           float[:is_float] = true
           Image.new(float)
         end
-      elsif page_floats[:header]
-
-      else page_floats[:footer]
-
+      # TODO
+      # elsif page_floats[:header]
+      #   h = page_floats[:header]
+      #   h[:parent] = self
+      #   h[:is_float] = true
+      #   # RHeader.new(h)
+      # else page_floats[:footer]
+      #   h = page_floats[:footer]
+      #   h[:parent] = self
+      #   h[:is_float] = true
+      #   # RFooter.new(h)
       end
       adjust_overlapping_body_lines
     end
@@ -102,13 +109,6 @@ module RLayout
         @graphics.each do |line|
           line.adjust_text_area_away_from(float_rect)
         end
-      end
-    end
-
-    def put_text_line_chain
-      line = first_text_line
-      while line = line.next_text_line
-        puts line.y
       end
     end
 
@@ -159,12 +159,12 @@ module RLayout
     end
 
     def to_pgscript
-pgscript =<<EOF
-  page do
-#{floats_pgscript}
-#{graphics_pgscript}
-  end
-EOF
+      pgscript =<<~EOF
+        page do
+          #{floats_pgscript}
+          #{graphics_pgscript}
+        end
+      EOF
       pgscript
     end
 
@@ -190,15 +190,6 @@ EOF
         return graphic if graphic.class == RLayout::Heading
       end
       nil
-    end
-
-    def page_defaults
-      {
-        x: 0,
-        y: 0,
-        width: 600,
-        height: 800,
-      }
     end
 
     def to_hash

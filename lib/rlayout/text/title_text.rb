@@ -42,7 +42,7 @@ module RLayout
         @para_style           = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
         @graphic_attributes   = @para_style[:graphic_attributes]
         if @graphic_attributes && @graphic_attributes['token_union_style']
-          @token_union_style      = Hash[@graphic_attributes['token_union_style'].map{ |k, v| [k.to_sym, v] }]
+          @token_union_style  = Hash[@graphic_attributes['token_union_style'].map{ |k, v| [k.to_sym, v] }]
         end
         @space_width            = @para_style[:space_width] || @para_style[:font_size]/2
         if @adjust_size && @adjust_size != 0
@@ -81,12 +81,10 @@ module RLayout
       @current_line_y         = @top_margin + @top_inset
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      if RUBY_ENGINE != 'rubymotion'
-        @current_style_service        = RLayout::StyleService.shared_style_service
-        @style_object, @font_wrapper  = @current_style_service.style_object(@style_name, adjust_size: @adjust_size) 
-        space_glyph        = @font_wrapper.decode_utf8(" ").first
-        @space_width       = @style_object.scaled_item_width(space_glyph)
-      end
+      @current_style_service        = RLayout::StyleService.shared_style_service
+      @style_object, @font_wrapper  = @current_style_service.style_object(@style_name, adjust_size: @adjust_size) 
+      space_glyph             = @font_wrapper.decode_utf8(" ").first
+      @space_width            = @style_object.scaled_item_width(space_glyph)
       @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, adjust_size: adjust_size)
       @current_line_y         +=@current_line.height
       create_tokens

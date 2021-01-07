@@ -1,5 +1,5 @@
 module RLayout
-  class Container < Graphic
+  class RHeading < Container
     attr_accessor :pdf_doc, :flipped 
 
     def save_pdf_with_ruby(output_path, options={})
