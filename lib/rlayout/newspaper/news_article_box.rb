@@ -26,20 +26,26 @@ module RLayout
     attr_reader :announcement_column, :announcement_color, :boxed_subtitle_type, :subtitle_type
     attr_reader :overlap, :overlap_rect, :embedded, :has_left_side_bar
     attr_reader :stroke_x, :stroke_y, :stroke_width
-    attr_reader :svg_content, :adjustable_height , :empty_first_column, :profile_image_position
+    attr_reader :svg_content, :empty_first_column, :profile_image_position
     attr_reader :frame_thickness, :frame_color
     attr_reader :adjusted_line_count, :has_attachment, :attached_type
     # vertical direction
     attr_reader :direction # horizontal, verticcal
     attr_reader :starting_column_y, :max_height_in_lines, :min_height_in_lines
+    attr_accessor :adjustable_height
+    
     def initialize(options={}, &block)
       super
       @overflow             = false
-      @max_height_in_lines  = options[:max_height_in_lines]
+      # @max_height_in_lines  = options[:max_height_in_lines]
       @min_height_in_lines  = options[:min_height_in_lines]
       @page_number          = options[:page_number]
       @has_profile_image    = options[:has_profile_image]
       @adjustable_height    = options[:adjustable_height] || false
+      if options[:fixed_height_in_lines]
+        @height_in_lines    = options[:fixed_height_in_lines] 
+        @adjustable_height  = options[:adjustable_height] || false
+      end
       @changing_line_count  = 0
       @adjusted_line_count  = 0
       @empty_first_column   = options[:empty_first_column] || false
@@ -467,15 +473,16 @@ module RLayout
         end
       end
       # resulting_line_count = @row_count*7 - @changing_line_count
-      resulting_line_count = @height_in_lines + @changing_line_count
+      resulting_line_count = @height_in_lines + @changing_line_count     
       if resulting_line_count <= 14
         # when article contnet is less than row height, set mini height as one row
         @changing_line_count = 14 - @height_in_lines    
-      elsif @changing_line_count + @column_line_count == @max_height_in_lines
-      # dp nothing to @changing_line_count 
-      elsif @changing_line_count + @height_in_lines > @max_height_in_lines
-      # when article contnet is greater than max_height_in_lines, set max_height_in_lines
-        @changing_line_count = @max_height_in_lines - @height_in_lines 
+      # elsif @changing_line_count + @column_line_count == @max_height_in_lines
+      # # dp nothing to @changing_line_count 
+      # elsif @changing_line_count + @height_in_lines > @max_height_in_lines
+      #   .pry
+      # # when article contnet is greater than max_height_in_lines, set max_height_in_lines
+      #   @changing_line_count = @max_height_in_lines - @height_in_lines 
       end
         
       @graphics.each do |column|

@@ -86,6 +86,7 @@ module RLayout
 
     def relayout
       # relayout articles
+      # This is used in offline mode
       @pillar_map.each do |pillar|
         pillar[:article_map].each do |article|
           pdf_path = @section_path + article[:pdf_path]
@@ -98,8 +99,15 @@ module RLayout
           end
         end
       end
+
+      adjust_heights_for_fit
       # relayout page_heading
       # relayout ad
+    end
+
+    def adjust_heights_for_fit
+
+
     end
 
     def merge_pdf

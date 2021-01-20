@@ -63,7 +63,7 @@ module RLayout
           @local_image          = options[:local_image]
           options[:image_path]  = $ProjectPath + "/images/" + options[:local_image]
         else
-          puts "local_image with out @project_path!!!"
+          puts "local_image without @project_path!!!"
           return
         end
       end

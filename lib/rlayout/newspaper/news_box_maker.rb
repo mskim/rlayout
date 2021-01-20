@@ -925,11 +925,7 @@ module RLayout
           @news_box.stroke[:sides] = [0,0,0,1]
       end
       if @news_box
-        if RUBY_ENGINE == 'ruby'
-          @news_box.save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
-        else
-          @news_box.save_pdf(@output_path, :jpg=>true)
-        end
+        @news_box.save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
         if @time_stamp
           stamped_path      = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
           output_jpg_path   = @output_path.sub(/pdf$/, "jpg")
@@ -982,6 +978,7 @@ module RLayout
     end
 
     def layout_story
+
       @news_box.layout_floats!
       @news_box.adjust_overlapping_columns
       @news_box.layout_items(@paragraphs.dup)
@@ -994,6 +991,7 @@ module RLayout
         # adjust height of news_box to fit content
         # puts "+++++++++++++++ before @news_box.height:#{@news_box.height}"
         # puts "+++++++++++++++ before @news_box.extended_line_count:#{@news_box.extended_line_count}"
+        # binding.pry if @article_path.include?("/1/5")
         @news_box.adjust_height
         @adjusted_line_count  = @news_box.adjusted_line_count
         @new_height_in_lines  = @news_box.new_height_in_lines

@@ -42,6 +42,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/base/page'
   require File.dirname(__FILE__) + '/rlayout/base/document'
   require File.dirname(__FILE__) + '/rlayout/base/rjob'
+  require File.dirname(__FILE__) + '/rlayout/base/matrix'
 
   require File.dirname(__FILE__) + "/rlayout/graphic/fill"
   require File.dirname(__FILE__) + "/rlayout/graphic/graphic_struct"
@@ -96,6 +97,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/chapter/r_document'
   require File.dirname(__FILE__) + '/rlayout/chapter/r_page'
   require File.dirname(__FILE__) + '/rlayout/chapter/r_chapter'
+  require File.dirname(__FILE__) + '/rlayout/chapter/group_image'
 
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/news_article_view'
