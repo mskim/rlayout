@@ -4,17 +4,30 @@ module RLayout
     attr_reader :width, :height, :date, :page_number, :section_name, :bg_image_path, :height_in_lines, :body_line_height
     attr_reader :heading_path
     def initialize(options={})
-      @body_line_height = options.fetch(:body_line_height, 13)
-      @height_in_lines  = options.fetch(:height_in_lines, 3)
-      @date             = options[:date]
-      @page_number      = options[:page_number]
-      #code
-      save_pdf_with_ruby()
+      @heading_path     = options[:heading_path]
+      heading_layout    = layout
+      output_path       = @heading_path + "/ouput.pdf"
+      heading_layout.save_pdf_with_ruby(output_path: output_path)
       self
     end
 
-    def save_pdf
+    def heading_erb_path
+      @heading_path + "/layout.erb"
+    end
 
+    def heading_yaml_path
+      @heading_path + "/heading.yml"
+    end
+
+    def layout
+      @body_line_height = heading_data[:body_line_height] || 13
+      @height_in_lines  = heading_data[:height_in_lines] || 3
+      @date             = heading_data[:date]
+      @page_number      = heading_data[:page_number]
+      template = File.open(heading_erb_path, 'r'){|f| f.read}
+      erb = ERB.new(template)
+      heading = erb.result(binding)
+      eval(heading)
     end
   end
 

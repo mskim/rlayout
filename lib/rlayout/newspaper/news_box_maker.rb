@@ -783,7 +783,10 @@ module RLayout
           puts "article_path doesn't exit !!!"
           return
         end
-        @story_path = Dir.glob("#{@article_path}/*{.md, .markdown}").first
+        layout_rb_path  = @article_path + "/layout.rb"
+        @layout_rb      = File.open(layout_rb_path, 'r'){|f| f.read}
+        @story_path     = Dir.glob("#{@article_path}/*{.md, .markdown}").first
+
         if @story_path
           ext = File.extname(@story_path)
           @output_path  = @article_path + "/#{File.basename(@story_path, ext)}" + ".pdf"
@@ -836,7 +839,6 @@ module RLayout
       end
       @svg_path           = @output_path.sub(".pdf", ".svg")
       @article_info_path  = @article_path + "/article_info.yml"
-
       if @layout_rb
         @news_box   = eval(@layout_rb)
         @news_box.adjustable_height=true if @adjustable_height
