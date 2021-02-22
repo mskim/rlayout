@@ -757,11 +757,13 @@ module RLayout
     attr_reader :custom_style, :publication_name, :time_stamp
     attr_reader :pdf_doc, :pdf_data, :story_md, :layout_rb
     attr_reader :adjusted_line_count, :new_height_in_lines, :adjustable_height
-
+    attr_reader :fixed_height_in_lines, :time_stamp
     def initialize(options={})
-      time_start    = Time.now
-      @adjustable_height = true if options[:adjustable_height]
-      @time_stamp   = options[:time_stamp]
+      time_start              = Time.now
+      stamp_time              if options[:time_stamp]
+      puts "@time_stamp:#{@time_stamp}"
+      @adjustable_height      = true if options[:adjustable_height]
+      @fixed_height_in_lines  = options[:fixed_height_in_lines] if options[:fixed_height_in_lines]
       @story_md     = options[:story_md]
       @layout_rb    = options[:layout_rb]
       @article_path = options[:article_path]
@@ -841,7 +843,7 @@ module RLayout
       @article_info_path  = @article_path + "/article_info.yml"
       if @layout_rb
         @news_box   = eval(@layout_rb)
-        @news_box.adjustable_height=true if @adjustable_height
+        @news_box.adjustable_height= true if @adjustable_height
       elsif options[:template_path] && File.exist?(options[:template_path])
         @template_path = options[:template_path]
         template    = File.open(@template_path,'r'){|f| f.read}
@@ -869,6 +871,9 @@ module RLayout
         @news_box.stroke.thickness = 0.0
       elsif @news_box.is_a?(NewsComicBox)
       elsif @news_box.is_a?(NewsArticleBox)
+        if @fixed_height_in_lines
+          @news_box.set_fixed_height_in_lines(@fixed_height_in_lines)
+        end
         read_story
         layout_story
       elsif @news_box.is_a?(Container)
@@ -927,6 +932,7 @@ module RLayout
           @news_box.stroke[:sides] = [0,0,0,1]
       end
       if @news_box
+        delete_old_files
         @news_box.save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
         if @time_stamp
           stamped_path      = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
@@ -940,6 +946,22 @@ module RLayout
       puts "++++++++ NewsBoxMaker took:#{time_end - time_start}"
       self
     end
+
+    def stamp_time
+      t = Time.now
+      h = t.hour
+      @time_stamp = "#{t.day.to_s.rjust(2, '0')}#{t.hour.to_s.rjust(2, '0')}#{t.min.to_s.rjust(2, '0')}#{t.sec.to_s.rjust(2, '0')}"
+    end
+
+    def delete_old_files
+      old_pdf_files = Dir.glob("#{@article_path}/story*.pdf")
+      old_jpg_files = Dir.glob("#{@article_path}/story*.jpg")
+      old_pdf_files += old_jpg_files
+      old_pdf_files.each do |old|
+        system("rm #{old}")
+      end
+    end
+
 
     def read_story
       if @story_md 
@@ -980,31 +1002,18 @@ module RLayout
     end
 
     def layout_story
-
       @news_box.layout_floats!
       @news_box.adjust_overlapping_columns
       @news_box.layout_items(@paragraphs.dup)
       @adjusted_line_count  = @news_box.adjusted_line_count
       @new_height_in_lines  = @news_box.new_height_in_lines
       if  @news_box.adjustable_height
-        # collect all layed out lines from @news_box.collect_column_content
         line_content          = @news_box.collect_column_content
-        # TODO
-        # adjust height of news_box to fit content
-        # puts "+++++++++++++++ before @news_box.height:#{@news_box.height}"
-        # puts "+++++++++++++++ before @news_box.extended_line_count:#{@news_box.extended_line_count}"
-        # binding.pry if @article_path.include?("/1/5")
         @news_box.adjust_height
         @adjusted_line_count  = @news_box.adjusted_line_count
         @new_height_in_lines  = @news_box.new_height_in_lines
-        puts "+++++++++++++++ @news_box.new_height_in_lines:#{@news_box.new_height_in_lines}"
-
-        # adjust middle and bottom positioned floats
         @news_box.adjust_middle_and_bottom_floats_position(@adjusted_line_count)
         @news_box.relayout_line_content(line_content)
-        # puts "+++++++++++++++ after @news_box.height:#{@news_box.height}"
-        # puts "+++++++++++++++ after @news_box.adjusted_line_count:#{@news_box.adjusted_line_count}"
-
       end
     end
 

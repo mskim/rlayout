@@ -122,7 +122,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box_maker'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_pillar'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_page'
-  require File.dirname(__FILE__) + '/rlayout/newspaper/news_page_auto'
 
   require File.dirname(__FILE__) + '/rlayout/magazine/article.rb'
 

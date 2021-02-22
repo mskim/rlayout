@@ -1,35 +1,15 @@
-# TODO
-# save pillar_config.yml
-# pillar_width
-# pillar_height
-# pillar_height_in_lines
-# root_articles_count
 
 
 module RLayout
 
   class NewsPillar
-    attr_accessor :pillar_path, :pillar_config, :height_in_lines
+    attr_accessor :pillar_path, :height_in_lines
 
     def initialize(options={})
       @pillar_path        = options[:pillar_path]
-      @pillar_config_path = @pillar_path + "/pillar_config.yml"
-      unless File.exist?(@pillar_config_path)
-        puts "no pillar_config.yml found!!!:#{@pillar_config_path}"
-        return
-      end
-      read_pillar_config
-      @height_in_lines    = @pillar_config[:height_in_lines]
+      @height_in_lines    = options[:height_in_lines]
       auto_adjust_height_all
       self
-    end
-
-    def pillar_config_path
-      @pillar_path + "/pillar_config.yml"
-    end
-
-    def read_pillar_config 
-      @pillar_config = YAML::load_file(pillar_config_path)
     end
 
     def root_articles

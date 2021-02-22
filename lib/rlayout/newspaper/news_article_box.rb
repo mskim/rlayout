@@ -32,13 +32,13 @@ module RLayout
     # vertical direction
     attr_reader :direction # horizontal, verticcal
     attr_reader :starting_column_y, :max_height_in_lines, :min_height_in_lines
-    attr_accessor :adjustable_height
+    attr_accessor :adjustable_height, :fixed_height_in_lines
     
     def initialize(options={}, &block)
       super
       @overflow             = false
       # @max_height_in_lines  = options[:max_height_in_lines]
-      @min_height_in_lines  = options[:min_height_in_lines]
+      @min_height_in_lines  = options[:min_height_in_lines] || 14
       @page_number          = options[:page_number]
       @has_profile_image    = options[:has_profile_image]
       @adjustable_height    = options[:adjustable_height] || false
@@ -146,7 +146,6 @@ module RLayout
       end
       text_lines_array
     end
-
 
     def stroke_rect
       if @has_profile_image && (@page_number && @page_number == 22)
@@ -313,22 +312,21 @@ module RLayout
     def article_info
       article_info                      = {}
       article_info[:column]             = @column_count
-      # article_info[:row]                = @row_count
-      article_info[:row]                = @height_in_lines
+      article_info[:row]                = @row_count
       article_info[:is_front_page]      = @is_front_page
       article_info[:top_story]          = @top_story
       article_info[:top_position]       = @top_position
       article_info[:extended_line_count]= @extended_line_count if @extended_line_count
-      # article_info[:pushed_line_count]  = @pushed_line_count if @pushed_line_count
       article_info[:quote_box_size]     = @quote_box_size
       article_info[:image_width]        = width
       article_info[:image_height]       = height
       @new_height_in_lines              = height/@body_line_height
-      article_info[:height_in_lines]    = height/@body_line_height
+      # article_info[:height_in_lines]    = (height/@body_line_height).round
+      article_info[:height_in_lines]    = (@height_in_lines).round
       article_info[:has_attachment]     = @has_attachment
       article_info[:attached_type]      = @attached_type
-      
       if @adjustable_height
+        article_info[:adjustable_height]  = true 
       else
         if @underflow
           # if we have author image at the bottom from layout, in 22 page editorial 
@@ -436,6 +434,18 @@ module RLayout
     def relayout_line_content(line_content)
       @graphics.each_with_index do |column, i|
         column.layout_line_content(line_content)
+      end
+    end
+
+    # this is called from NewsBoxMaker, when fixed_height_in_lines option is set
+    def set_fixed_height_in_lines(new_height_in_lines)
+      @height               = new_height_in_lines*@body_line_height
+      changing_line_count   = new_height_in_lines - @height_in_lines
+      @height_in_lines      = new_height_in_lines
+      @adjustable_height    = false
+      @fixed_height_in_lines  = true
+      @graphics.each do |column|
+        column.adjust_height(changing_line_count)
       end
     end
 

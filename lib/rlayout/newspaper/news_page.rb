@@ -6,37 +6,52 @@
 
 module RLayout
   class NewsPage < Container
-    attr_reader :section_path, :section_name, :output_path
+    attr_reader :page_path, :section_name, :output_path
     attr_reader :is_front_page, :page_size, :page_heading
     attr_reader :grid_width, :grid_height, :number_of_stories
     attr_reader :body_line_height, :ad_type, :page_heading_margin_in_lines, :heading_space, :lines_per_grid
     attr_reader :draw_divider, :divider_line_thickness, :time_stamp, :reduced_size
-    attr_reader :page_columns
+    attr_reader :page_columns, :time_stamp, :relayout
     def initialize(options={}, &block)
       super
-      # given config_hash, directly from Rails 
-      @time_stamp = options[:time_stamp]
-      if options[:config_hash]
-        setup(options[:config_hash])
-      # offline reading config.yml file
+      stamp_time      if options[:time_stamp]
+      @page_path      = options[:page_path]
+      @relayout       = options[:relayout]
+      config_path     = @page_path + "/config.yml"
+      if File.exist?(config_path)
+        config_hash = File.open(config_path, 'r'){|f| f.read}
+        config_hash = YAML::load(config_hash)
+        setup(config_hash)
       else
-        @section_path   = options[:section_path]
-        config_path     = @section_path + "/config.yml"
-
-        if File.exist?(config_path)
-          config_hash = File.open(config_path, 'r'){|f| f.read}
-          config_hash = YAML::load(config_hash)
-          # TODO
-          # update pillar_map from story.pdf
-
-          setup(config_hash)
-          # 
-        else
-          return 'config.yml not found!!!'
-        end
+        return 'config.yml not found!!!'
       end
+      relayout_pillars if @relayout
+      layout_ad_box if @ad_box_rect
+      layout_page_heading
       merge_pdf
       self
+    end
+
+    def stamp_time
+      t = Time.now
+      h = t.hour
+      @time_stamp = "#{t.day.to_s.rjust(2, '0')}#{t.hour.to_s.rjust(2, '0')}#{t.min.to_s.rjust(2, '0')}#{t.sec.to_s.rjust(2, '0')}"
+    end
+
+    def relayout_pillars
+      pillars_path.each_with_index do |pillar_path, i|
+        next if pillar_path =~/ad$/
+        next if pillar_path =~/heading$/
+        h = {}
+        h[:pillar_path]     = pillar_path
+        h[:relayout]        = @relayout
+        h[:height_in_lines] = @pillar_map[i][:height_in_lines]
+        NewsPillar.new(h)
+      end
+    end
+
+    def pillars_path     
+      Dir.glob("#{@page_path}/*").select {|f| File.directory? f}
     end
 
     def setup(options)
@@ -51,10 +66,10 @@ module RLayout
       else
         @heading_space =  @page_heading_margin_in_lines*@grid_height/@lines_per_grid
       end
-      unless @section_path
-        @section_path = options[:section_path]
+      unless @page_path
+        @page_path = options[:page_path]
       end
-      @output_path    = @section_path + "/section.pdf"
+      @output_path    = @page_path + "/section.pdf"
       @width          = options[:width] 
       @height         = options[:height] 
       @lines_in_grid  = options.fetch(:lines_in_grid, 7)
@@ -82,8 +97,23 @@ module RLayout
       @pillar_map     = options[:pillar_map]
     end
 
+    def ad_folder_path
+      Dir.glob("#{@page_path}/*").select do|f| 
+        (File.directory? f ) && (f =~ /ad$/)
+      end
+    end
+
+    def heading_folder_path
+      Dir.glob("#{@page_path}/*").select do|f| 
+        (File.directory? f ) && (f =~ /heading$/)
+      end
+    end
+
+    def pillars_path     
+      Dir.glob("#{@page_path}/*").select {|f| File.directory? f}
+    end
+    
     def merge_pdf
-      layout_ad_box if @ad_box_rect
       # layout pillars
       @pillar_map.each do |pillar|
         pillar_rect = pillar[:pillar_rect]
@@ -96,7 +126,7 @@ module RLayout
         pillar[:article_map].each do |article|
           h = {}
           h[:parent] = self
-          h[:image_path] = @section_path + "#{article[:pdf_path]}"
+          h[:image_path] = @page_path + "#{article[:pdf_path]}"
           article_info_path = File.dirname(h[:image_path]) + "/article_info.yml"
           article_info      = YAML::load_file(article_info_path)
           article_width     = article_info[:image_width].to_f
@@ -137,6 +167,7 @@ module RLayout
       end
       layout_page_heading
       create_pillar_divider_lines if @draw_divider
+      # delete_old_files
       save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
       if @time_stamp
         output_jpg_path       = @output_path.sub(/\.pdf$/, ".jpg")
@@ -147,11 +178,20 @@ module RLayout
       end
     end
 
+    def delete_old_files
+      old_pdf_files = Dir.glob("#{@page_pattj}/section*.pdf")
+      old_jpg_files = Dir.glob("#{@page_path}/section*.jpg")
+      old_pdf_files += old_jpg_files
+      old_pdf_files.each do |old|
+        system("rm #{old}")
+      end
+    end
+
     def layout_page_heading
       heading_info              = {}
       heading_info[:parent]     = self
-      new_heading_path          = heading_info[:image_path] = @section_path + "/heading/output.pdf" 
-      heading_info[:image_path] = @section_path + "/heading/layout.pdf" unless File.exist?(new_heading_path)
+      new_heading_path          = heading_info[:image_path] = @page_path + "/heading/output.pdf" 
+      heading_info[:image_path] = @page_path + "/heading/layout.pdf" unless File.exist?(new_heading_path)
       heading_info[:x]          = @left_margin
       heading_info[:y]          = @top_margin
       heading_info[:width]      = @width - @left_margin - @right_margin
@@ -178,7 +218,7 @@ module RLayout
       ad_info[:y]       = @ad_box_rect[1] + @top_margin
       ad_info[:width]   = @ad_box_rect[2]
       ad_info[:height]  = @ad_box_rect[3]
-      ad_info[:image_path] = @section_path + "/ad/output.pdf"
+      ad_info[:image_path] = @page_path + "/ad/output.pdf"
       @ad_box           = Image.new(ad_info)
     end
 
@@ -296,7 +336,7 @@ module RLayout
 
 
     def self.open(options={})
-      config_path     = options[:section_path] + "/config.yml"
+      config_path     = options[:page_path] + "/config.yml"
       config          = File.open(config_path, 'r'){|f| f.read}
       section_options = YAML::load(config)
       section_options.merge!(options)
