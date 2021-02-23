@@ -320,9 +320,9 @@ module RLayout
       article_info[:quote_box_size]     = @quote_box_size
       article_info[:image_width]        = width
       article_info[:image_height]       = height
-      @new_height_in_lines              = height/@body_line_height
+      @new_height_in_lines              = (height/@body_line_height).round
       # article_info[:height_in_lines]    = (height/@body_line_height).round
-      article_info[:height_in_lines]    = (@height_in_lines).round
+      article_info[:height_in_lines]    = @new_height_in_lines
       article_info[:has_attachment]     = @has_attachment
       article_info[:attached_type]      = @attached_type
       if @adjustable_height

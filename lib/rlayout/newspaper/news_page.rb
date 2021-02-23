@@ -3,6 +3,9 @@
 # There are two cases
 # First case is when it is used from Rails, where all infomation is given in options hash,
 # And the second case is when it is used as offline, where we have to read info from config.yml
+# body_line_height: 13.903262092238279
+# 3 headung :13.903262092238279*3 = 41.70978627671484
+# page_area_height: 1459.8425196850194 - 41.70978627671484 = 1418.1327334083046
 
 module RLayout
   class NewsPage < Container
@@ -14,7 +17,7 @@ module RLayout
     attr_reader :page_columns, :time_stamp, :relayout
     def initialize(options={}, &block)
       super
-      stamp_time      if options[:time_stamp]
+      stamp_time      unless options[:time_stamp] == false
       @page_path      = options[:page_path]
       @relayout       = options[:relayout]
       config_path     = @page_path + "/config.yml"
@@ -26,8 +29,8 @@ module RLayout
         return 'config.yml not found!!!'
       end
       relayout_pillars if @relayout
-      layout_ad_box if @ad_box_rect
-      layout_page_heading
+      # layout_ad_box if @ad_box_rect
+      # layout_page_heading
       merge_pdf
       self
     end
@@ -40,18 +43,12 @@ module RLayout
 
     def relayout_pillars
       pillars_path.each_with_index do |pillar_path, i|
-        next if pillar_path =~/ad$/
-        next if pillar_path =~/heading$/
         h = {}
         h[:pillar_path]     = pillar_path
         h[:relayout]        = @relayout
         h[:height_in_lines] = @pillar_map[i][:height_in_lines]
         NewsPillar.new(h)
       end
-    end
-
-    def pillars_path     
-      Dir.glob("#{@page_path}/*").select {|f| File.directory? f}
     end
 
     def setup(options)
@@ -110,9 +107,12 @@ module RLayout
     end
 
     def pillars_path     
-      Dir.glob("#{@page_path}/*").select {|f| File.directory? f}
+      folder_array = Dir.glob("#{@page_path}/*").select do |f|
+        File.directory?(f) &&  !(f =~ /heading$/) && !(f =~ /ad$/)
+      end
+      folder_array.sort
     end
-    
+
     def merge_pdf
       # layout pillars
       @pillar_map.each do |pillar|
@@ -122,6 +122,8 @@ module RLayout
         parent_height = 0
         parent_x   = 0
         pillar_top = @heading_space + pillar_rect[1]
+        # pillar_top = pillar_rect[1] +
+        # binding.pry
         parent_articles_count = pillar[:article_map].select{|a| !a[:attache_type]}.length
         pillar[:article_map].each do |article|
           h = {}
@@ -137,7 +139,6 @@ module RLayout
           elsif article_info[:attached_type]
             h[:y] = parent_y
             # drawing divider for attachment
-
             if @draw_divider
               attened_on_right_side = true
               attened_on_right_side = false if h[:x] < parent_x
@@ -206,7 +207,6 @@ module RLayout
       else
         heading_info[:height]   = @page_heading_margin_in_lines * @body_line_height
       end
-      # puts "heading_info[:height]:#{heading_info[:height]}"
       @page_heading   = Image.new(heading_info)
     end
 
