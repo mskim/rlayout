@@ -123,7 +123,6 @@ module RLayout
         parent_x   = 0
         pillar_top = @heading_space + pillar_rect[1]
         # pillar_top = pillar_rect[1] +
-        # binding.pry
         parent_articles_count = pillar[:article_map].select{|a| !a[:attache_type]}.length
         pillar[:article_map].each do |article|
           h = {}

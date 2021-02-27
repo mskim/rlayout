@@ -12,12 +12,7 @@ if defined?(Motion::Project::Config)
   end
   #
   # raise "This file must be required within a RubyMotion project Rakefile."
-
-elsif RUBY_ENGINE == "opal"
-  # require files for Opal
-  #
 else
-  # puts RUBY_ENGINE
   require 'pry'
   require 'strscan'
   require 'yaml'
@@ -30,7 +25,6 @@ else
   require "image_processing"
   require 'hexapdf'
   # require 'text-hyphen', '~> 1.4'
-  # require 'prawn'
   # require 'xml-simple'
 
   require File.dirname(__FILE__) + "/rlayout/version"
@@ -38,7 +32,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/base/color'
   require File.dirname(__FILE__) + '/rlayout/base/graphic'
   require File.dirname(__FILE__) + '/rlayout/base/container'
-  require File.dirname(__FILE__) + '/rlayout/base/pillar_image'
   require File.dirname(__FILE__) + '/rlayout/base/page'
   require File.dirname(__FILE__) + '/rlayout/base/document'
   require File.dirname(__FILE__) + '/rlayout/base/rjob'
@@ -46,6 +39,7 @@ else
 
   require File.dirname(__FILE__) + "/rlayout/graphic/fill"
   require File.dirname(__FILE__) + "/rlayout/graphic/graphic_struct"
+  require File.dirname(__FILE__) + "/rlayout/graphic/text"
   require File.dirname(__FILE__) + "/rlayout/graphic/image"
   require File.dirname(__FILE__) + "/rlayout/graphic/layout"
   require File.dirname(__FILE__) + "/rlayout/graphic/node_tree"
@@ -57,9 +51,9 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/auto_layout'
   require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
+  require File.dirname(__FILE__) + '/rlayout/container/group_image'
 
   # require File.dirname(__FILE__) + '/rlayout/db_publishing/db_item'
-
   # require File.dirname(__FILE__) + '/rlayout/container_extended/photo_item'
   # require File.dirname(__FILE__) + '/rlayout/container_extended/place_item'
   # require File.dirname(__FILE__) + '/rlayout/container_extended/memo_area'
@@ -69,9 +63,10 @@ else
   # require File.dirname(__FILE__) + '/rlayout/style/image_layout'
   require File.dirname(__FILE__) + '/rlayout/pdf/pdf_utils'
 
-  # require File.dirname(__FILE__) + '/rlayout/view/svg_view/document_view_svg'
-  # require File.dirname(__FILE__) + '/rlayout/view/svg_view/paragraph_view_svg'
-  # require File.dirname(__FILE__) + "/rlayout/view/svg_view/graphic_view_svg"
+  require File.dirname(__FILE__) + "/rlayout/view/svg_view/graphic_view_svg"
+  require File.dirname(__FILE__) + "/rlayout/view/svg_view/container_view_svg"
+  require File.dirname(__FILE__) + '/rlayout/view/svg_view/document_view_svg'
+  require File.dirname(__FILE__) + '/rlayout/view/svg_view/paragraph_view_svg'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_text_token_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_line_fragment_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/document_view_pdf'
@@ -97,7 +92,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/chapter/r_document'
   require File.dirname(__FILE__) + '/rlayout/chapter/r_page'
   require File.dirname(__FILE__) + '/rlayout/chapter/r_chapter'
-  require File.dirname(__FILE__) + '/rlayout/chapter/group_image'
 
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/news_article_view'
@@ -128,14 +122,14 @@ else
   # require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article.rb'
   # require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article_maker.rb'
 
-  # require File.dirname(__FILE__) + "/rlayout/svg/canvas"
-  # require File.dirname(__FILE__) + "/rlayout/svg/circle"
-  # require File.dirname(__FILE__) + "/rlayout/svg/image"
-  # require File.dirname(__FILE__) + "/rlayout/svg/line"
-  # require File.dirname(__FILE__) + "/rlayout/svg/path"
-  # require File.dirname(__FILE__) + "/rlayout/svg/polygon"
-  # require File.dirname(__FILE__) + "/rlayout/svg/rectangle"
-  # require File.dirname(__FILE__) + "/rlayout/svg/text"
+  # require File.dirname(__FILE__) + "/rlayout/svg/graphic"
+  require File.dirname(__FILE__) + "/rlayout/svg/circle"
+  require File.dirname(__FILE__) + "/rlayout/svg/image"
+  require File.dirname(__FILE__) + "/rlayout/svg/line"
+  require File.dirname(__FILE__) + "/rlayout/svg/path"
+  require File.dirname(__FILE__) + "/rlayout/svg/polygon"
+  require File.dirname(__FILE__) + "/rlayout/svg/rectangle"
+  require File.dirname(__FILE__) + "/rlayout/svg/text"
   # require File.dirname(__FILE__) + "/rlayout/svg/svg2pdf"
 
   # require File.dirname(__FILE__) + '/rlayout/math/eqn'
@@ -152,8 +146,10 @@ else
   require File.dirname(__FILE__) + '/rlayout/text/title_text'
   require File.dirname(__FILE__) + "/rlayout/text/text_token"
   require File.dirname(__FILE__) + '/rlayout/text/heading'
-  require File.dirname(__FILE__) + "/rlayout/text/text"
   
+  require File.dirname(__FILE__) + "/rlayout/deco_text/deco_string"
+  require File.dirname(__FILE__) + "/rlayout/deco_text/deco_char"
+
   require File.dirname(__FILE__) + '/rlayout/table/list.rb'
   require File.dirname(__FILE__) + '/rlayout/table/simple_table.rb'
   require File.dirname(__FILE__) + '/rlayout/table/table.rb'

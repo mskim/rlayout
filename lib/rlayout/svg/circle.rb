@@ -28,7 +28,7 @@ module RLayout
       end
 
       def to_svg
-        "<circle cx='#{@cx} y='#{@cy} width='#{@r}' style=#{style_to_svg}/>"
+        "<circle cx='#{@shape[:cx]}' cy='#{@shape[:cy]}' r='#{@shape[:r]}' #{style_to_svg}/>"
       end
     end
 

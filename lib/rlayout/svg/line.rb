@@ -21,7 +21,7 @@ module RLayout
       end
 
       def to_svg
-        "<line x1='#{@x1}' y1='#{@y1}' x2='#{@x2}' y2='#{@y2}' style='#{style_to_svg}' />"
+        "<line x1='#{@x1}' y1='#{@y1}' x2='#{@x2}' y2='#{@y2}' #{style_to_svg}' />"
       end
 
       def stroke_width

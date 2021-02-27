@@ -274,20 +274,8 @@ module RLayout
         Container.new(options)
       when "Matrix"
         Matrix.new(options)
-      when "ActionBox"
-        ActionBox.new(options)
-      when "AudioBox"
-        AudioBox.new(options)
-      when "MovieBox"
-        MovieBox.new(options)
-      when "SlideBox"
-        SlideBox.new(options)
-      when "WebBox"
-        WebBox.new(options)
       when "TextRun"
         TextRun.new(options)
-      when "TextLine"
-        TextBar.new(options)
       when "TextBox"
         TextBox.new(options)
       when "TextColumn"
@@ -312,9 +300,7 @@ module RLayout
       relayout!
     end
 
-
     def create_children_from_svg(svg_hash)
-
       svg_hash.each do |kind, value|
         case kind
         when 'circle'

@@ -12,8 +12,10 @@ module RLayout
 
   FillStruct      = Struct.new(:color) do
     def to_svg
+      # convert to rgb format
       color
     end
+
     def to_hash
       h = {}
       h[:color]     = color if color
@@ -41,6 +43,8 @@ module RLayout
 
   StrokeStruct   = Struct.new(:color, :thickness, :dash, :line_cap, :line_join, :type, :sides) do
     def to_svg
+      # convert color to rgb first
+      
       s = "stroke:#{color};"
       s += "stroke-width:#{thickness}" if thickness > 0
       s += "dash:#{dash}" if dash
@@ -75,7 +79,7 @@ module RLayout
   # SidesStruct     = Struct.new(:left, :top, :right, :bottom, :type)
   RectStruct      = Struct.new(:x, :y, :width, :height) do
     def to_svg
-      "<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" replace_this_with_style></rect>"
+      "\t<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" style_place_holder></rect>\n"
     end
 
     def to_hash
@@ -103,7 +107,7 @@ module RLayout
 
   RoundRectStruct = Struct.new(:x, :y, :width, :height, :rx, :ry, :corners) do
     def to_svg
-      "<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" rx=\"#{rx}\" ry=\"#{ry}\" replace_this_with_style />"
+      "\t<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" rx=\"#{rx}\" ry=\"#{ry}\" style_place_holder />\n"
     end
 
     def to_hash
@@ -133,7 +137,7 @@ module RLayout
 
   CircleStruct    = Struct.new(:cx, :cy, :r) do
     def to_svg
-      "<circle cx=\"#{cx}\" cy=\"#{cy}\" r=\"#{r}\" replace_this_with_style />"
+      "\t<circle cx=\"#{cx}\" cy=\"#{cy}\" r=\"#{r}\"  />\n"
     end
 
     def to_hash
@@ -160,7 +164,7 @@ module RLayout
 
   EllipseStruct   = Struct.new(:cx, :cy, :rx, :ry) do
     def to_svg
-      "<ellipse cx=\"#{cx}\" cy=\"#{cy}\" rx=\"#{rx}\" ry=\"#{ry}\" replace_this_with_style />"
+      "\t<ellipse cx=\"#{cx}\" cy=\"#{cy}\" rx=\"#{rx}\" ry=\"#{ry}\" style_place_holder />\n"
     end
     def to_hash
       h = {}
@@ -188,7 +192,7 @@ module RLayout
   LineStruct      = Struct.new(:x1, :y1, :x2, :y2, :h_direction, :v_direction) do
     def to_svg
       mid_y = y1 + (y2 - y1)/2
-      "<line x1=\"#{x1}\" y1=\"#{mid_y}\" x2=\"#{x2}\" y2=\"#{mid_y}\" replace_this_with_style />"
+      "\t<line x1=\"#{x1}\" y1=\"#{mid_y}\" x2=\"#{x2}\" y2=\"#{mid_y}\" style_place_holder />\n"
     end
 
     def to_hash
@@ -239,6 +243,7 @@ module RLayout
     def to_svg
       #TODO
     end
+
     def to_hash
       to_h
       # self.to_h.delete_if{|k,v| v.nil?}
@@ -246,7 +251,6 @@ module RLayout
 
     def to_nspath
       path  = NSBezierPath.bezierPath
-
     end
   end
 
@@ -278,7 +282,7 @@ module RLayout
     end
 
     def to_svg
-      "<text font-size=\"#{size}\" replace_this_with_text_origin fill=\"#{color}\">#{string}</text>\n"
+      "\t<text font-size=\"#{size}\" replace_this_with_text_origin >#{string}</text>\n"
     end
 
     def to_pdf(canvas)

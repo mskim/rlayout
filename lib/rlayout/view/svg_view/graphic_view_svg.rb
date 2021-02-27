@@ -1,32 +1,16 @@
-if RUBY_ENGINE != 'rubymotion'
-  require 'pp'
-  require 'json'
-end
 
 module RLayout
-  class GreaphicViewSvg
-    attr_accessor :graphic
-
-    def initialize(graphic)
-      @graphic = grephic
-
-      self
-    end
-
-    def draw
-      #code
-    end
-
-  end
-
 
   class Graphic
 
+    def self.from_svg(svg_text, options={})
+      h = parse_svg(svg_text)
+      Graphic.new(h)
+    end
 
-    # def self.from_svg(svg_text, options={})
-    #   h = parse_svg(svg_text)
-    #   Graphic.new(h)
-    # end
+    def self.parse_svg(svg_text)
+      # TODO: parse svg add klass attribute when saving, so that we can parse with RLyout::class
+    end
 
     def to_svg
       if @parent
@@ -39,20 +23,19 @@ module RLayout
       end
     end
 
-
     def svg
       s = @shape.to_svg
-      s = s.gsub!("replace_this_with_style", svg_style)
+      s = s.gsub!("style_place_holder", style_to_svg)
       s += @image_record.to_svg.gsub!("replace_this_with_rect", svg_rect) if @image_record
       s += @text_record.to_svg.gsub!("replace_this_with_text_origin", svg_text_origin) if @text_record
       s
     end
 
-    def svg_style
+    def style_to_svg
       if @fill.class == FillStruct
         "style=\"fill:#{@fill.to_svg};#{@stroke.to_svg}\""
       elsif @fill.class == LinearGradient
-        s =<<E1
+        s =<<~E1
               <defs>
                 <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
@@ -61,11 +44,11 @@ module RLayout
               </defs>
               "style=\"fill:\"url(#grad1)\";#{@stroke.to_svg}\""
 
-E1
+          E1
 
       elsif @fill.class == RadialGradient
 
-        s2 =<<EOF.gsub(/^\s*/, "")
+        s2 =<<~EOF.gsub(/^\s*/, "")
               <defs>
               <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
@@ -74,8 +57,7 @@ E1
               </defs>
               "style=\"fill:\"url(#grad1)\";#{@stroke.to_svg}\""
 
-EOF
-
+        EOF
       end
     end
 
@@ -91,37 +73,6 @@ EOF
     def save_svg(path)
       File.open(path, 'w'){|f| f.write to_svg}
     end
-  end
-
-  class Container < Graphic
-    def to_svg
-      if @parent
-        s = svg + "\n"
-        s += children_graphics_svg
-      else
-        s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"#{@x + @width}px\" height=\"#{@y + @height}px\">\n"
-        s += svg + "\n"
-        s += children_graphics_svg
-        s += "</svg>\n"
-      end
-      s
-    end
-
-    def children_graphics_svg
-      # draw container stuff
-      # draw children stuff
-      s = "<g transform=\"translate(#{@x},#{@y})\">\n"
-      @graphics.each do |graphic|
-        s += graphic.to_svg
-      end
-      s +="</g>\n"
-      s
-    end
-
-    def save_svg(path)
-      File.open(path, 'w'){|f| f.write to_svg}
-    end
-
   end
 
 end

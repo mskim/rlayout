@@ -1,7 +1,7 @@
 module RLayout
 
-    class Text < Container
-      attr_reader :x, :y, :transform
+    class Text < Graphic
+      attr_reader :transform
       def self.from_svg(options={})
         text_options = Text.parse_svg(options)
         Text.new(text_options)
@@ -26,9 +26,9 @@ module RLayout
         h
       end
 
-      def to_svg
-        "<text transform='#{@transform}' style='#{style_to_svg}'>#{@text_content}</text>"
-      end
+      # def to_svg
+      #   "\t<text  #{style_to_svg}'>#{@text_record.string}</text>\n"
+      # end
     end
 
 end

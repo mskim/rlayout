@@ -32,9 +32,9 @@ module RLayout
 
       def to_svg
         if round_coner?
-          "<rect x='#{@x} y='#{@y} width='#{@width}' height='#{@height}' #{round_string} style=#{style_to_svg}/>"
+          "<rect x='#{@x}' y='#{@y}' width='#{@width}' height='#{@height}' #{round_string} #{style_to_svg}/>"
         else
-          "<rect x='#{@x} y='#{@y} width='#{@width}' height='#{@height}' style=#{style_to_svg}/>"
+          "<rect x='#{@x}' y='#{@y}' width='#{@width}' height='#{@height}' #{style_to_svg}/>"
         end
       end
 

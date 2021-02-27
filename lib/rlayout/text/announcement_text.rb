@@ -40,7 +40,7 @@ module RLayout
       atts[:fill_color]         = 'clear'
       atts[:width]              = @width
       atts[:parent]             = self
-      Text.new(atts)
+      TitleText(atts)
     end
 
     def make_linked_page
@@ -54,7 +54,7 @@ module RLayout
       atts[:body_line_height]   = @body_line_height if @body_line_height
       atts[:fill_color]         = 'clear'
       atts[:parent]             = self
-      Text.new(atts)
+      TitleText(atts)
     end
   end
 

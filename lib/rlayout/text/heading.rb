@@ -209,8 +209,7 @@ module RLayout
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts                        = options.merge(atts)
       atts[:parent]               = self
-      # @title_object               = Text.new(atts)
-      Text.new(atts)
+      TitleText(atts)
       @title_object               = @graphics.last
 
       @title_object.layout_length = @title_object.height
@@ -225,7 +224,7 @@ module RLayout
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts                          = options.merge(atts)
       atts[:parent]                 = self
-      @subtitle_object              = Text.new(atts)
+      @subtitle_object              = TitleText(atts)
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object
@@ -239,7 +238,7 @@ module RLayout
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts                          = options.merge(atts)
       atts[:parent]                 = self
-      @leading_object               = Text.new(atts)
+      @leading_object               = TitleText(atts)
       @leading_object.layout_expand = [:width]
       @leading_object.layout_length = @leading_object.height
       @leading_object
@@ -254,7 +253,7 @@ module RLayout
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts                          = options.merge(atts)
       atts[:parent]                 = self
-      @author_object                = Text.new(atts)
+      @author_object                = TitleText(atts)
       @author_object.layout_expand  = [:width]
       @author_object.layout_length  = @author_object.height
       @author_object

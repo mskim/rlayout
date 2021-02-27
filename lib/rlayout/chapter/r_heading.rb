@@ -202,9 +202,7 @@ module RLayout
       atts[:text_fit_type]        = 'adjust_box_height'
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
-      # atts                        = options.merge(atts)
       atts[:parent]               = self
-      # @title_object               = Text.new(atts)
       @title_object               = TitleText.new(atts)
       @title_object.layout_length = @title_object.height
       @title_object

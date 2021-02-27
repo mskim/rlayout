@@ -18,9 +18,6 @@ module RLayout
         @string = @string.sub(/\{\s?(-?\d)\s?\}\s?$/, "")
       end
       options[:fill_color]    = options.fetch(:fill_color, 'clear')
-      # options[:stroke_width]  = 1
-      # options[:stroke_color]  = "CMYK=0,0,0,100"
-      # options[:fill_color]    = "CMYK=0,0,100,0"
       super
       @body_line_height       = options[:body_line_height] || 14
       @style_name             = options[:style_name]
@@ -88,7 +85,6 @@ module RLayout
       @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, adjust_size: adjust_size)
       @current_line_y         +=@current_line.height
       create_tokens
-
       layout_tokens
       ajust_height_as_body_height_multiples
       self

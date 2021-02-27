@@ -10,11 +10,8 @@ module RLayout
     attr_reader   :pdf_doc, :project_path
 
 
-
     def initialize(options={}, &block)
-      @parent = options[:parent]
-      # if @parent && @parent.class.kind_of?(Document)
-      #   set_frame(@parent.layout_rect)
+      @parent = options[:parent] if options[:parent]
       @tag                  = options[:tag]
       @project_path         = options[:project_path]
       if @parent && options[:parent_frame]
@@ -53,7 +50,7 @@ module RLayout
       init_shape(options)
       init_shadow(options)    if options[:shadow]
       init_rotation(options)  if options[:rotation] || options[:rotation_content]
-      # init_text(options)
+      init_text(options)      if options[:string]
       # init_image(options)
       if @parent.nil?
         return self
@@ -563,6 +560,11 @@ module RLayout
     end
 
   end
+
+  class Text < Graphic
+
+  end
+
 
   class NSText < Graphic
     def initialize(options={})

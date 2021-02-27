@@ -6,6 +6,7 @@ module RLayout
     def to_svg
       svg
     end
+    
     def svg
         s = "<rect x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\""
         if @fill_color!=nil && @fill_color != ""
