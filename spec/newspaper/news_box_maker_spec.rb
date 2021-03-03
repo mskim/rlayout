@@ -1,47 +1,33 @@
 require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
-describe 'testing NewsBoxMaker' do
+describe 'NewsBoxMaker with fixed height' do
   before do
     @article_path   =  "/Users/mskim/test_data/2017-05-30/1/2/3"
-    @maker           = NewsBoxMaker.new(article_path: @article_path, fixed_height_in_lines: 17)
-    @article_box     = @maker.news_box
+    @maker           = NewsBoxMaker.new(article_path: @article_path, fixed_height_in_lines: 18)
     @article_box     = @maker.news_box
     @pdf_path        = @article_path + "/story.pdf"
   end
 
   it 'should create with fixed_height_in_lines' do
     assert RLayout::NewsArticleBox,  @article_box.class
-    assert 17, @article_box.height_in_lines
+    assert 18, @article_box.height_in_lines
   end
 
 end
 
-__END__
-
-describe 'testing saveing ad_box ruby_pdf' do
+describe 'NewsBoxMaker with minimum height' do
   before do
-    @article_path    = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2018-11-26/1/4"
-    @article_path    = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/5"
-    @article_path    = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/3/1"
-    # @article_path    = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/1/ad"
-    @article_path    = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/1/1"
-    @article_path    = "/Users/mskim/Development/style_guide/public/1/issue/2017-05-30/10/4"
-    @article_path    = "/Users/mskim/Development/style_guide/public/1/issue/2019-08-05/1/1_1"
-    @article_path    =  "/Users/mskim/Development/pillar_layout/public/1/issue/2017-05-30/1/2/1"
-    @article_path    =  "/Users/mskim/test_data/1/1/1"
-
-    @maker           = NewsBoxMaker.new(article_path: @article_path)
+    @article_path   =  "/Users/mskim/test_data/2017-05-30/1/1/2"
+    @maker           = NewsBoxMaker.new(article_path: @article_path, adjustable_height: true)
     @article_box     = @maker.news_box
-    @article_box     = @maker.news_box
-    @pdf_path        = @article_path + "/story.pdf"
   end
 
   it 'should create svg' do
     assert RLayout::NewsArticleBox,  @article_box.class
+    assert @maker.new_height_in_lines == 14
   end
 
 end
-
 
 __END__
 

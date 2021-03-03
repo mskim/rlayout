@@ -122,7 +122,15 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2021_03_03
+	- update article folders when saving article_info
+	- fix bug when auto_ajdust max_heigth, articles that are shorter than max_height
+	- write test
+
 2021_03_01
+	- Text < Graphic 
+		init_text only if self.class == Text
+
 	- add style_string for title_text, a free format style using html inline style
 	- something like 
 		- "add_size:4;color:red;"

@@ -757,13 +757,11 @@ module RLayout
     attr_reader :custom_style, :publication_name, :time_stamp
     attr_reader :pdf_doc, :pdf_data, :story_md, :layout_rb
     attr_reader :adjusted_line_count, :new_height_in_lines, :adjustable_height
-    attr_reader :fixed_height_in_lines, :time_stamp
+    attr_reader :time_stamp
     def initialize(options={})
       time_start              = Time.now
       stamp_time              if options[:time_stamp]
-      puts "@time_stamp:#{@time_stamp}"
       @adjustable_height      = true if options[:adjustable_height]
-      @fixed_height_in_lines  = options[:fixed_height_in_lines] if options[:fixed_height_in_lines]
       @story_md     = options[:story_md]
       @layout_rb    = options[:layout_rb]
       @article_path = options[:article_path]
@@ -871,9 +869,6 @@ module RLayout
         @news_box.stroke.thickness = 0.0
       elsif @news_box.is_a?(NewsComicBox)
       elsif @news_box.is_a?(NewsArticleBox)
-        if @fixed_height_in_lines
-          @news_box.set_fixed_height_in_lines(@fixed_height_in_lines)
-        end
         read_story
         layout_story
       elsif @news_box.is_a?(Container)
@@ -986,7 +981,7 @@ module RLayout
         para_options[:layout_expand]  = [:width]
         para_options[:para_string]    = para[:para_string]
         para_options[:article_type]   = @news_box.kind
-        para_options[:text_fit]       = FIT_FONT_SIZE
+        # para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:line_width]     = @news_box.column_width  if para_options[:create_para_lines]
         @paragraphs << RParagraph.new(para_options)
       end

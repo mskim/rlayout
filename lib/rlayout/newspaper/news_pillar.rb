@@ -23,25 +23,25 @@ module RLayout
 
     # check if we need to regenerate_pdf
     # by updated time of story or layout.rb and PDF
-    def need_generation?(article_path)
-      return true if @relayout
-      story_path      = article_path + "/story.md"
-      layout_rb_path  = article_path + "/layout.rb"
-      story_pdf_path  = article_path + "/story.pdf"
-      return true if File.mtime(story_path) > File.mtime(story_pdf_path)
-      return true if File.mtime(layout_rb_path) > File.mtime(layout_rb_path)
-      false
-    end
+    # def need_generation?(article_path)
+    #   return true if @relayout
+    #   story_path      = article_path + "/story.md"
+    #   layout_rb_path  = article_path + "/layout.rb"
+    #   story_pdf_path  = article_path + "/story.pdf"
+    #   return true if File.mtime(story_path) > File.mtime(story_pdf_path)
+    #   return true if File.mtime(layout_rb_path) > File.mtime(layout_rb_path)
+    #   false
+    # end
 
     def auto_adjust_height_all(options={})
       # first step is to layout articles with full_height
       root_articles.each do |article_path|
-        if need_generation?(article_path)
-          h                     = {}
-          h[:article_path]      = article_path
-          h[:adjustable_height] = true
-          NewsBoxMaker.new(h)
-        end
+        # if need_generation?(article_path)
+        h                     = {}
+        h[:article_path]      = article_path
+        h[:adjustable_height] = true
+        NewsBoxMaker.new(h)
+        # end
       end
       adjust_articles_to_fit_pillar
     end
@@ -49,7 +49,7 @@ module RLayout
     # read all root article height_in_lines from article_info
     def height_in_lines_array
       root_articles.map do |article_path|
-        read_article_height_in_lines(article_path)
+        lines = read_article_height_in_lines(article_path)
       end
     end
     
@@ -104,7 +104,7 @@ module RLayout
         root_articles.each_with_index do |article, i|
           new_height = new_heights_array[i]
           if read_article_height_in_lines(article).round != new_height.round
-            NewsBoxMaker.new(article_path: article, fixed_height_in_lines: new_height)
+            NewsBoxMaker.new(article_path: article, height_in_lines: new_height)
           end
         end
       end
@@ -115,8 +115,8 @@ module RLayout
     # while maintaining minimum height of article
     def adjusted_heights_array
       current_heights   = height_in_lines_array
-      adjusted_heights  = height_in_lines_array.dup
-      diffenence        = height_in_lines_array.reduce(:+) - @height_in_lines
+      adjusted_heights  = current_heights.dup
+      diffenence        = current_heights.reduce(:+) - @height_in_lines
       if diffenence > 0
         reminaing_overflow = diffenence
         current_heights.reverse.each_with_index do |article_height, i|

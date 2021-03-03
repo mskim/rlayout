@@ -20,7 +20,7 @@ else
   require 'erb'
   require 'base64'
   require 'json'
-  require 'mini_magick'
+  # require 'mini_magick'
   require "image_processing/vips"
   require "image_processing"
   require 'hexapdf'
@@ -98,7 +98,7 @@ else
 
   require File.dirname(__FILE__) + '/rlayout/newspaper/caption_paragraph'
   require File.dirname(__FILE__) + '/rlayout/newspaper/caption_column'
-  require File.dirname(__FILE__) + '/rlayout/newspaper/news_ad_block'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_box_ad'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_heading_maker'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_heading_for_article'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_heading_for_opinion'

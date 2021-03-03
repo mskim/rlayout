@@ -32,7 +32,7 @@ module RLayout
     # vertical direction
     attr_reader :direction # horizontal, verticcal
     attr_reader :starting_column_y, :max_height_in_lines, :min_height_in_lines
-    attr_accessor :adjustable_height, :fixed_height_in_lines
+    attr_accessor :adjustable_height
     
     def initialize(options={}, &block)
       super
@@ -42,10 +42,6 @@ module RLayout
       @page_number          = options[:page_number]
       @has_profile_image    = options[:has_profile_image]
       @adjustable_height    = options[:adjustable_height] || false
-      if options[:fixed_height_in_lines]
-        @height_in_lines    = options[:fixed_height_in_lines] 
-        @adjustable_height  = options[:adjustable_height] || false
-      end
       @changing_line_count  = 0
       @adjusted_line_count  = 0
       @empty_first_column   = options[:empty_first_column] || false
@@ -412,7 +408,8 @@ module RLayout
         @underflow = true if @empty_lines > 0
       end
       unless @fill_up_enpty_lines
-        save_article_info
+        # when @adjustable_height == true, save article_info after adjusting new height 
+        save_article_info unless @adjustable_height
       end
     end
 
@@ -437,33 +434,12 @@ module RLayout
       end
     end
 
-    # this is called from NewsBoxMaker, when fixed_height_in_lines option is set
-    def set_fixed_height_in_lines(new_height_in_lines)
-      @height               = new_height_in_lines*@body_line_height
-      changing_line_count   = new_height_in_lines - @height_in_lines
-      @height_in_lines      = new_height_in_lines
-      @adjustable_height    = false
-      @fixed_height_in_lines  = true
-      @graphics.each do |column|
-        column.adjust_height(changing_line_count)
-      end
-    end
-
     def adjust_height
       if @overflow
-        # puts "overflow"
         line_diff_count = @overflow_column.layed_out_line_count
-        # puts "line_diff_count:#{line_diff_count}"
       elsif @underflow
-        # puts "underflow"
         # when article is auto adjust and underflow happems, make minimun height as 1 row
-        # if @adjustable_height
-        #   # 
-
-        #   line_diff_count = 0
-        # else
-          line_diff_count    = - article_box_unoccupied_lines_count
-        # end
+        line_diff_count    = - article_box_unoccupied_lines_count
       else
         line_diff_count    = 0
         return
@@ -487,12 +463,6 @@ module RLayout
       if resulting_line_count <= 14
         # when article contnet is less than row height, set mini height as one row
         @changing_line_count = 14 - @height_in_lines    
-      # elsif @changing_line_count + @column_line_count == @max_height_in_lines
-      # # dp nothing to @changing_line_count 
-      # elsif @changing_line_count + @height_in_lines > @max_height_in_lines
-      #   .pry
-      # # when article contnet is greater than max_height_in_lines, set max_height_in_lines
-      #   @changing_line_count = @max_height_in_lines - @height_in_lines 
       end
         
       @graphics.each do |column|
