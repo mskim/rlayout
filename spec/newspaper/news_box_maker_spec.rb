@@ -3,12 +3,12 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 describe 'NewsBoxMaker with fixed height' do
   before do
     @article_path   =  "/Users/mskim/test_data/2017-05-30/1/2/3"
-    @maker           = NewsBoxMaker.new(article_path: @article_path, fixed_height_in_lines: 18)
+    @maker           = NewsBoxMaker.new(article_path: @article_path, height_in_lines: 18)
     @article_box     = @maker.news_box
     @pdf_path        = @article_path + "/story.pdf"
   end
 
-  it 'should create with fixed_height_in_lines' do
+  it 'should create with height_in_lines' do
     assert RLayout::NewsArticleBox,  @article_box.class
     assert 18, @article_box.height_in_lines
   end

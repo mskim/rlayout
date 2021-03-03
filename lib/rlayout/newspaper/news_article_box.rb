@@ -432,8 +432,12 @@ module RLayout
       @graphics.each_with_index do |column, i|
         column.layout_line_content(line_content)
       end
+      save_article_info
     end
 
+    # This is called from NewsBoxMaker, when adjustable_heigh is set to true
+    # it expands height until all of contents are layed out
+    # it maintains minimun height(14 lines or 2 rows height)
     def adjust_height
       if @overflow
         line_diff_count = @overflow_column.layed_out_line_count
@@ -464,17 +468,28 @@ module RLayout
         # when article contnet is less than row height, set mini height as one row
         @changing_line_count = 14 - @height_in_lines    
       end
-        
       @graphics.each do |column|
         column.adjust_height(@changing_line_count)
-        # column.ready_unoccupied_lines_for_relayout
       end
       @adjusted_line_count = @changing_line_count
       @extended_line_count = @changing_line_count
       @height += @changing_line_count*@body_line_height
-      save_article_info
     end
     
+    # This is called from NewsBoxMaker
+    # Usually for Pillar auto layout
+    # to change news_article_box to fixed height
+    def set_to_fixed_height(fixed_height_in_lines)
+      @adjustable_height = false
+      line_diff_count = fixed_height_in_lines - @height_in_lines
+      return if line_diff_count  == 0
+      @graphics.each do |column|
+        column.adjust_height(line_diff_count)
+      end
+      @height           = fixed_height_in_lines*@body_line_height
+      @height_in_lines  = fixed_height_in_lines
+    end
+
     def second_column_x
       @graphics[1].x
     end

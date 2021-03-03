@@ -104,7 +104,7 @@ module RLayout
         root_articles.each_with_index do |article, i|
           new_height = new_heights_array[i]
           if read_article_height_in_lines(article).round != new_height.round
-            NewsBoxMaker.new(article_path: article, height_in_lines: new_height)
+            NewsBoxMaker.new(article_path: article, fixed_height_in_lines: new_height)
           end
         end
       end

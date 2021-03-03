@@ -3,7 +3,7 @@ module RLayout
     attr_accessor :kind, :on_left_edge, :on_right_edge, :is_front_page, :top_story, :top_position, :bottom_article, :grid_size, :grid_frame, :body_line_height
     attr_accessor :page_heading_margin_in_lines, :page_heading_place_holder, :article_bottom_spaces_in_lines
     attr_accessor :column_width, :column_count, :row_count, :extended_line_count, :pushed_line_count, :draw_frame
-    attr_reader :svg_content
+    # attr_reader :svg_content
     attr_reader :frame_sides, :height_in_lines, :new_height_in_lines
 
     def initialize(options={}, &block)
@@ -112,12 +112,6 @@ module RLayout
         end
       end
       @column_line_count    = @height_in_lines
-
-      # @column_line_count   -= @page_heading_margin_in_lines if @top_position
-      # TODO
-      # @column_line_count   -= 7 if @top_position && @is_front_page
-      # @column_line_count   += @extended_line_count
-      # @column_line_count   -= @pushed_line_count
       if @column_line_count < 7
         @column_line_count = 7
       end

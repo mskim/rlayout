@@ -757,10 +757,12 @@ module RLayout
     attr_reader :custom_style, :publication_name, :time_stamp
     attr_reader :pdf_doc, :pdf_data, :story_md, :layout_rb
     attr_reader :adjusted_line_count, :new_height_in_lines, :adjustable_height
-    attr_reader :time_stamp
+    attr_reader :time_stamp, :fixed_height_in_lines
+
     def initialize(options={})
       time_start              = Time.now
       stamp_time              if options[:time_stamp]
+      @fixed_height_in_lines  = options[:fixed_height_in_lines]
       @adjustable_height      = true if options[:adjustable_height]
       @story_md     = options[:story_md]
       @layout_rb    = options[:layout_rb]
@@ -860,6 +862,14 @@ module RLayout
         puts "SyntaxError in #{@template_path} !!!!"
         return
       end
+
+
+      # This is called to set NewsArticleBox with fixed height.
+      # Since height value is saved in layout_rb file, 
+      # we can replace the layout_rb text with the new value 
+      # or we instatialte it with eval and call this to change the height
+      # here we are taking the second option
+
 
       if @news_box.is_a?(NewsImageBox)
         @news_box.stroke[:sides] = [0,0,0,0]
@@ -997,11 +1007,15 @@ module RLayout
     end
 
     def layout_story
+      if @fixed_height_in_lines
+        @news_box.set_to_fixed_height(@fixed_height_in_lines)
+      end
       @news_box.layout_floats!
       @news_box.adjust_overlapping_columns
       @news_box.layout_items(@paragraphs.dup)
       @adjusted_line_count  = @news_box.adjusted_line_count
       @new_height_in_lines  = @news_box.new_height_in_lines
+
       if  @news_box.adjustable_height
         line_content          = @news_box.collect_column_content
         @news_box.adjust_height
