@@ -37,7 +37,6 @@ module RLayout
     def initialize(options={}, &block)
       super
       @overflow             = false
-      # @max_height_in_lines  = options[:max_height_in_lines]
       @min_height_in_lines  = options[:min_height_in_lines] || 14
       @page_number          = options[:page_number]
       @has_profile_image    = options[:has_profile_image]
@@ -48,6 +47,7 @@ module RLayout
       @profile_image_position = options[:profile_image_position] || nil?
       @has_attachment       = options[:has_attachment]
       @attached_type        = options[:attached_type]
+
       if @kind == '사설' || @kind == 'editorial'
         if @page_number && @page_number == 22
           @stroke[:sides] = [1,1,1,1]
@@ -57,16 +57,11 @@ module RLayout
           @stroke[:sides] = [1,3,1,1]
           @left_inset   = @gutter
           @right_inset  = @gutter
-          
         end
       elsif @kind == '기고' || @kind == 'opinion'
         @stroke[:sides] = [0,1,0,1] 
         @stroke.thickness = 0.3
       elsif @kind == '박스기고' || @kind == 'box_opinion'
-        # @stroke[:sides] = [0,1,0,1]
-        # if @top_position
-        #   @top_margin += @body_line_height
-        # end
         @top_margin   = @body_line_height
         if @on_right_edge
           @left_margin  = @body_line_height
@@ -77,7 +72,6 @@ module RLayout
           @right_inset  = @body_line_height
           @left_margin   = @body_line_height
         end
-        # @stroke[:sides] = [0,1,0,1] 
         @stroke.thickness = 0.3
       elsif @kind == '책소개' || @kind == 'book_review'
         @has_left_side_bar = true
@@ -85,12 +79,12 @@ module RLayout
         @has_left_side_bar = true
         @stroke[:sides] = [1,2,1,1]
       elsif @kind == '부고-인사' || @kind == 'obitualry'
-
+        @stroke[:sides] = [0,1,0,1]
+        @stroke.thickness = 0.3
       else
         if @frame_sides == '테두리' #|| [:frame_sides] == '상하' || [:frame_sides] == '좌우'
           @stroke[:sides] = [1,1,1,1]
           @frame_thickness = @stroke[:thickness]  = options[:frame_thickness] || 0.3
-          puts "+++++++++++++++ options[:frame_thickness]:#{options[:frame_thickness]}"
           if options[:frame_color] == '자주'
             @stroke[:color]  = "CMYK=20,100,50,10"
           elsif options[:frame_color] == '파랑'
@@ -102,9 +96,6 @@ module RLayout
         @frame_color = @stroke[:color]
         @on_left_edge = false
         @on_right_edge = false
-      end
-      if options[:article_line_draw_sides] && options[:article_line_draw_sides].class == Array
-        @stroke[:sides]           = options[:article_line_draw_sides] 
       end
       @subtitle_type          = options[:subtitle_type] || '1단'
       @overlap                = options[:overlap]
@@ -376,7 +367,7 @@ module RLayout
       # if @overlap && @overlap.class == Array && @overlap.length >= 4 && intersects_rect(overlap_array, @graphics.last.column_grid_rect)
       if @overlap_rect 
         overlap_rect_height_in_lines = (@overlap_rect.height/@body_line_height).to_i
-        @graphics.last.graphics[-(overlap_rect_height_in_lines)] 
+        @graphics.last.graphics[-(overlap_rect_height_in_lines) + 1] 
       elsif @announcement_box
         @graphics.last.graphics[-4]
       else
@@ -701,9 +692,10 @@ module RLayout
       o_y       = rect[1]*grid_height #- @page_heading_margin_in_lines*@body_line_height
       o_y      -= o_extended_line_count * @body_line_height if @extended_line_count 
       o_height  = rect[3]*grid_height
+      o_y      -= space_above
       o_height += space_above
       o_height += o_extended_line_count * @body_line_height #if @extended_line_count != 0
-      @overlap_rect = Rectangle.new(parent:self, is_float: true, x:o_x, y:o_y, width:o_width, height:o_height, layout_expand: nil, top_margin:space_above, stroke_sides:[0,1,0,0], stroke_width: 0.3)
+      @overlap_rect = Rectangle.new(parent:self, is_float: true, x:o_x, y:o_y, width:o_width, height:o_height, layout_expand: nil, top_margin:space_above, stroke_sides:[0,0,0,0], stroke_width: 0.3)
     end
 
     # text_height_in_lines should be calculated dynamically

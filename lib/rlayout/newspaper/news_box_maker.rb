@@ -879,6 +879,10 @@ module RLayout
         @news_box.stroke.thickness = 0.0
       elsif @news_box.is_a?(NewsComicBox)
       elsif @news_box.is_a?(NewsArticleBox)
+        if @news_box.kind == 'overlap'
+          @news_box.stroke[:sides] = [0,1,0,1]
+          @news_box.stroke.thickness = 0.3
+        end
         read_story
         layout_story
       elsif @news_box.is_a?(Container)
@@ -921,7 +925,7 @@ module RLayout
         elsif @news_box.kind == '부고-인사'
           @news_box.left_margin = 0
           @news_box.right_margin = 0
-          @news_box.stroke[:sides] = [0,0,0,0]
+          @news_box.stroke[:sides] = [0,1,0,1]
         elsif @news_box.embedded
             @news_box.stroke[:sides] = [0,1,0,1]
         # elsif @news_box.bottom_article
@@ -1015,7 +1019,6 @@ module RLayout
       @news_box.layout_items(@paragraphs.dup)
       @adjusted_line_count  = @news_box.adjusted_line_count
       @new_height_in_lines  = @news_box.new_height_in_lines
-
       if  @news_box.adjustable_height
         line_content          = @news_box.collect_column_content
         @news_box.adjust_height

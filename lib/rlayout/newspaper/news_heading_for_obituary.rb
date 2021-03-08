@@ -158,7 +158,9 @@ module RLayout
       #todo second half string
       atts[:text_string]        = options['subject_head']
       atts[:body_line_height]   = @body_line_height
+      atts[:y]                  = @body_line_height
       atts[:width]              = @width
+      # atts[:height]             = 18
       atts[:stroke_width]       = 0
       atts[:text_fit_type]      = 'adjust_box_height'
       atts[:layout_expand]      = [:width] #TODO

@@ -12,13 +12,17 @@ module RLayout
       options[:right_margin]  = 0
       options[:top_margin]    = options.fetch(:top_margin, 0)
       options[:bottom_margin] = options.fetch(:bottom_margin, 0)
-      if options[:article_line_draw_sides]
-        options[:stroke_sides]= eval(options[:article_line_draw_sides]) if options[:stroke_sides].class == String
-      else
-        options[:stroke_sides]= [0,0,0,1]
-      end
-      options[:stroke_width]  = options.fetch(:article_line_thickness,0.3)
       super
+      if options[:article_line_draw_sides]
+        if options[:article_line_draw_sides].class == String
+          @stroke[:sides]= eval(options[:article_line_draw_sides])
+        elsif options[:article_line_draw_sides].class == Array
+          @stroke[:sides]= options[:article_line_draw_sides]
+        end
+      # else
+      #   options[:stroke_sides]= [0,0,0,1]
+      end
+      @stroke[:thickness]  = options.fetch(:article_line_thickness,0.3)
       @draw_frame             = options[:draw_frame] || true
       @kind                   = options.fetch(:kind, 'article')
       @gutter                 = options.fetch(:gutter, 10)
