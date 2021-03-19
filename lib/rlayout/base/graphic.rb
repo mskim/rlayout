@@ -50,7 +50,7 @@ module RLayout
       init_shape(options)
       init_shadow(options)    if options[:shadow]
       init_rotation(options)  if options[:rotation] || options[:rotation_content]
-      init_text(options)      if options[:string] && self.class == Text
+      init_text(options)      if (options[:text_string] || options[:string]) && self.class == Text
       # init_image(options)
       if @parent.nil?
         return self

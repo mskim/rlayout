@@ -13,11 +13,12 @@ module RLayout
         canvas    = page.canvas
       else
         @pdf_doc  = @parent.pdf_doc
+        page          = @pdf_doc.pages.add([0, 0, @width, @height])
+        canvas        = page.canvas     
       end
       style_service.pdf_doc = @pdf_doc
       # load_fonts(@pdf_doc)
-      page          = @pdf_doc.pages.add([0, 0, @width, @height])
-      canvas        = page.canvas      
+ 
       # style_service.set_canvas_text_style(canvas, 'body')
       draw_pdf(canvas)
       @pdf_doc.write(output_path)

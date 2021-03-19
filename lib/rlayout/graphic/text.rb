@@ -2,13 +2,6 @@
 
 module RLayout
   class Text < Graphic
-<<<<<<< Updated upstream
-    def init_text(options={})
-      # TextStruct = Struct.new(:string, :size, :color, :font, :style) do
-      @text_record = TextStruct.new(options[:string], options[:size])  
-    end
-
-=======
     attr_reader :text_string, :font, :font_size, :font_color, :tracking
     attr_reader :text_alignment, :text_style
     attr_reader :text_alignment, :v_alignment, :fit_type, :string_width
@@ -27,7 +20,7 @@ module RLayout
         @options = options[:position]
         set_position
       else
-        @text_alignment = options[:v_alignment]     || 'left'
+        @text_alignment = options[:text_alignment]  || 'left'
         @v_alignment    = options[:v_alignment]     || 'top'
       end
      set_string_width
@@ -42,7 +35,6 @@ module RLayout
 
     def draw_text(canvas)
       if @text_string.length > 0
-        # binding.pry
         # canvas.fill_color(@fill_color)
         if canvas.font
           canvase_font_name = canvas.font.wrapped_font.font_name
@@ -72,7 +64,7 @@ module RLayout
           font_wapper   = doc.fonts.add(font_file)
           canvas.font(font_wapper, size: @font_size)
         end
-        @string_width
+
         f = flipped_origin
         x_offset = f[0]
         y_offset = f[1]
@@ -139,7 +131,6 @@ module RLayout
       h
     end
 
->>>>>>> Stashed changes
   end
 
 end
