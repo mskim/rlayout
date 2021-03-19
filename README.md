@@ -122,8 +122,13 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+<<<<<<< Updated upstream
 2021_03_08
 	- remove stroke_sides in NewsBoxMaker, it should be set by front-end
+=======
+2021_03_18
+	- Text pdf drawing
+>>>>>>> Stashed changes
 
 2021_03_03
 	- update article folders when saving article_info
@@ -135,7 +140,7 @@ TODO List
 		init_text only if self.class == Text
 
 	- add style_string for title_text, a free format style using html inline style
-	- something like 
+	-@font_size like 
 		- "add_size:4;color:red;"
 
 2020_10_02
