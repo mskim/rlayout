@@ -74,7 +74,7 @@ module RLayout
       @tokens = @para_string.split(" ").collect do |token_string|
         size  = font_object.string_size(token_string)
         @line_height   = @font_size*1.2 + @top_margin + @bottom_margin
-        TextToken.new(:text_string=>token_string, :width=>size[0], :height=>@line_height, :layout_expand=>[], :font=>@font, :font_size=>@font_size) #, :line_width=>1, :line_color=>'green'
+        TextToken.new(:text_string=>token_string, :width=>size[0], :height=>@line_height, :layout_expand=>[], :font=>@font, :font_size=>@font_size)
       end
     end
 

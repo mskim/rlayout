@@ -24,11 +24,9 @@ module RLayout
         @width  = @graphic.width
         @height = @graphic.height
       end
-
       draw_pdf(canvas)
       self
     end
-
 
     def draw_pdf(canvas)
       @pdf_doc = parent.pdf_doc if parent
@@ -38,23 +36,6 @@ module RLayout
       draw_text(canvas)  if @has_text
       draw_stroke(canvas)
     end
-
-    def draw_stroke
-
-    end
-
-    def draw_fill
-
-    end
-
-    def draw_image
-
-    end
-
-    def draw_text
-
-    end
-
   end
 
 end

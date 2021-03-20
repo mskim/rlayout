@@ -93,6 +93,12 @@ else
   require File.dirname(__FILE__) + '/rlayout/chapter/r_page'
   require File.dirname(__FILE__) + '/rlayout/chapter/r_chapter'
 
+  require File.dirname(__FILE__) + '/rlayout/box_ad/box_table_text_cell'
+  require File.dirname(__FILE__) + '/rlayout/box_ad/box_table_image_cell'
+  require File.dirname(__FILE__) + '/rlayout/box_ad/box_table_row'
+  require File.dirname(__FILE__) + '/rlayout/box_ad/box_table'
+
+
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/news_article_view'
 

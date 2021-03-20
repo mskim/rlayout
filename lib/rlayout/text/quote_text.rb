@@ -7,7 +7,7 @@ module RLayout
     attr_accessor :single_line_title, :force_fit_title, :v_alignment, :quote_text_lines
     def initialize(options={})
       @string                 = options.delete(:text_string)
-      options[:fill_color]    = options.fetch(:line_color, 'clear')
+      options[:fill_color]    = options.fetch(:fill_color, 'clear')
       # options[:stroke_width]  = 1
       super
       @tokens                 = []
