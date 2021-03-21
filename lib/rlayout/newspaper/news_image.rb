@@ -48,8 +48,8 @@ module RLayout
       @zoom_level             = options[:zoom_level] if options[:zoom_level]
       @zoom_anchor            = options[:zoom_anchor] if options[:zoom_anchor]
       @crop_rect              = options[:crop_rect] if options[:crop_rect]      
-      options[:grid_frame]    = convert_column_row_position_to_frame(options) if @position
-      options[:grid_frame][0] = @x_grid if @x_grid 
+      grid_frame              = convert_column_row_position_to_grid(options)
+      grid_frame[0]           = @x_grid if @x_grid 
       options[:layout_expand] = nil
       options[:fill_color]    = 'clear'
       @fit_type               = options[:fit_type] if options[:fit_type]
@@ -58,7 +58,7 @@ module RLayout
       super
       @gutter = 10
       if @parent
-        frame_rect              = @parent.grid_frame_to_rect(options[:grid_frame], bottom_position: bottom_position?)
+        frame_rect              = @parent.grid_frame_to_rect(grid_frame, bottom_position: bottom_position?)
         @gutter = @parent.gutter
       else
         frame_rect              = [0,0, 400, 100]
@@ -80,9 +80,7 @@ module RLayout
         @height += options[:extra_height_in_lines]*@parent.body_line_height
         @y -= options[:extra_height_in_lines]*@parent.body_line_height if bottom_position?
       end
-
       has_caption_text?(options)
-
       image_options                = {}
       image_options[:width]        = @width
       image_options[:height]       = @height
@@ -192,8 +190,7 @@ module RLayout
     end
 
     # convert column, row, and position into x,y,width, and height
-    def convert_column_row_position_to_frame(options={})
-
+    def convert_column_row_position_to_grid(options={})
       #TODO this is only for upper right, do it for other positions as well
       @image_size = {}
       if options[:column] && options[:row]

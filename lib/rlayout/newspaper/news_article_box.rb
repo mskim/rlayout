@@ -203,6 +203,7 @@ module RLayout
             @graphics << g
             current_x += @column_width + @gutter
           else
+            # TODO: why? :parent=>nil
             g= RColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
             g.parent = self
             @graphics << g
@@ -842,10 +843,10 @@ module RLayout
     def news_image(options={})
       options[:parent]    = self
       options[:is_float]  = true
-      options[:stroke_sides] = [0,0,0,0]
+      options[:stroke_sides] = [1,1,1,1]
       @news_image         = NewsImage.new(options)
       if options[:position] == 0
-        # make iit the first item in floats
+        # make it the first item in floats
         if @floats.length > 1
           @floats.pop
           @floats.unshift(@news_image)

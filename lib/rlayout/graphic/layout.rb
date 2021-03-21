@@ -42,9 +42,6 @@ module RLayout
           @right_edge   = options[:right_edge]
           @y            = @parent.width - @right_edge - @hwifhr
         end
-      else
-        @x = 0
-        @y = 0
       end
 
       @layout_direction = options.fetch(:layout_direction, layout_default[:layout_direction])
