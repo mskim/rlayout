@@ -15,7 +15,6 @@ module RLayout
       super
       @width        = options[:width]
       @height       = options[:height]
-      @height       = options[:height]
       @direction    = options[:direction] || 'horizontal'
       @group_caption = options[:group_caption]
       @image_items  = options[:image_items]
