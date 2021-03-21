@@ -48,7 +48,7 @@ module RLayout
       @zoom_level             = options[:zoom_level] if options[:zoom_level]
       @zoom_anchor            = options[:zoom_anchor] if options[:zoom_anchor]
       @crop_rect              = options[:crop_rect] if options[:crop_rect]      
-      grid_frame              = convert_column_row_position_to_grid(options)
+      grid_frame              = position_to_grid_frame(options)
       grid_frame[0]           = @x_grid if @x_grid 
       options[:layout_expand] = nil
       options[:fill_color]    = 'clear'
@@ -190,7 +190,7 @@ module RLayout
     end
 
     # convert column, row, and position into x,y,width, and height
-    def convert_column_row_position_to_grid(options={})
+    def position_to_grid_frame(options={})
       #TODO this is only for upper right, do it for other positions as well
       @image_size = {}
       if options[:column] && options[:row]

@@ -65,9 +65,7 @@ module RLayout
       current_x = @starting_column_x
       column_height = @height
       @column_count.times do
-        g= RColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: column_height, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-        g.parent = self
-        @graphics << g
+        g= RColumn.new(parent:self, x: current_x, y: 0, width: @column_width, height: column_height, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         current_x += @column_width + @gutter
       end
       @column_bottom = max_y(@graphics.first.frame_rect)

@@ -58,7 +58,7 @@ module RLayout
       @alignment              = 'right'   if @alignment == '우측'
       @alignment              = 'center'  if @alignment == '중간'
       @line_type              = options[:quote_line_type] || '상하'
-      @grid_frame             = convert_column_row_position_to_grid(options)
+      @grid_frame             = position_to_grid_frame(options)
       @fit_type               = options[:fit_type] if options[:fit_type]
       @expand                 = options[:expand] if options[:expand]
       @before_title           = options.fetch(:before_title, false)
@@ -143,7 +143,7 @@ module RLayout
 
 
     # convert column, row, and position into x,y,width, and height
-    def convert_column_row_position_to_grid(options={})
+    def position_to_grid_frame(options={})
 
       #TODO this is only for upper right, do it for other positions as well
       @image_size = []

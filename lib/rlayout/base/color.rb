@@ -202,7 +202,7 @@ module RLayout
 
   def rgb_color(r,g,b)
     # RLayout.rgba_color(r,g,b,1)
-    "rgb(#{r},#{g},#{b},#{a})"
+    "rgb(#{r},#{g},#{b})"
   end
 
   # @return [UIcolor]

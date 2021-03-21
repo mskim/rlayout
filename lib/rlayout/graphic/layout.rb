@@ -1,4 +1,6 @@
 module RLayout
+  # options[:margin] sets margins for all sizes
+  # bottom_edge, right_edge
 
 
   class Graphic
@@ -30,18 +32,6 @@ module RLayout
         @top_inset      = options.fetch(:top_inset, layout_default[:top_inset])         unless @top_inset
         @right_inset    = options.fetch(:right_inset, layout_default[:right_inset])     unless @right_inset
         @bottom_inset   = options.fetch(:bottom_inset, layout_default[:bottom_inset])   unless @bottom_inset
-      end
-
-      # bottom_edge, right_edge
-      if @parent
-        if options[:bottom_edge]
-          @bottom_edge  = options[:bottom_edge]
-          @x            = @parent.heihgt - @bottom_edge - @hwifhr
-        end
-        if options[:right_edge]
-          @right_edge   = options[:right_edge]
-          @y            = @parent.width - @right_edge - @hwifhr
-        end
       end
 
       @layout_direction = options.fetch(:layout_direction, layout_default[:layout_direction])

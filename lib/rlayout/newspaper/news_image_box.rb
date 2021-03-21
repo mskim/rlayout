@@ -2,7 +2,7 @@ module RLayout
 
   # NewsImageBox is a Image Box in place of Articles
   # has top margin when not in the top row
-  # left_edge, and right_edge rules are applied
+  # on_left_edge, and on_right_edge rules are applied
 
   class NewsImageBox < NewsBox
     # attr_accessor :on_left_edge, :on_right_edge, :is_front_page, :top_story, :top_position,:grid_size, :grid_frame, :body_line_height

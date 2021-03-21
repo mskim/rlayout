@@ -38,20 +38,4 @@ module RLayout
     end
   end
 
-  # Heading for front page
-  class NewsFrontPageHeading < Container
-    attr_accessor :date, :news_logo, :left_ad, :right_ad, :info_box
-
-    def initialize(options={}, &block)
-      @grid_base = options.fetch(:grid_base, [7,1])
-      super
-      @left_ad    = Image.new(:parent=>self, parent_grid: true, grid_frame:[0,1,1,1])
-      @right_ad   = Image.new(:parent=>self, parent_grid: true, grid_frame:[-1,0,1,0.8])
-      @data       = Image.new(:parent=>self, parent_grid: true, grid_frame:[-1,0.8,1,0.1])
-      @news_logo  = Image.new(:parent=>self, parent_grid: true, grid_frame:[2,0,4,1])
-      self
-    end
-  end
-
-
 end

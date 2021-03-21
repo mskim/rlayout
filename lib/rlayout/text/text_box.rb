@@ -124,9 +124,7 @@ module RLayout
         end
       else
         @column_count.times do
-          g= TextColumn.new(:parent=>nil, layout_space: @column_layout_space)
-          g.parent = self
-          @graphics << g
+          g= TextColumn.new(parent:self, layout_space: @column_layout_space)
         end
       end
       relayout!

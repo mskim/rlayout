@@ -118,7 +118,6 @@ module RLayout
       if block
         instance_eval(&block)
       end
-
       make_overlap(@overlap) if @overlap.class == Array && @overlap.length >= 4
       if @floats.length > 0
         layout_floats!
@@ -151,9 +150,7 @@ module RLayout
         if @heading_columns == 6
           editorial_column_width = @column_width
           @column_count.times do
-            g= RColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-            g.parent = self
-            @graphics << g
+            g= RColumn.new(parent:self, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
             current_x += @column_width + @gutter
             @column_type  = "editorial"
           end
@@ -172,12 +169,11 @@ module RLayout
             current_x += @gutter
             @starting_column_x = current_x
           end
-          g= RColumn.new(:parent=>nil, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-          g.parent = self
-          @graphics << g
+          g= RColumn.new(parent:self, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+          
         end
         # current_y += @top_margin + @top_inset
-        @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        @overflow_column = RColumn.new(parent:self, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
       elsif @kind == '박스기고' || @kind == 'box_opinion'
         @column_width = (@width - @gutter*3 - (@column_count - 1)*@gutter)/@column_count
@@ -186,31 +182,25 @@ module RLayout
         current_x += @gutter
         @starting_column_x = current_x
         @column_count.times do
-          g= RColumn.new(:parent=>nil, x: current_x, y: @body_line_height, width: @column_width, height: @height - @body_line_height, column_line_count: @column_line_count - 1, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-          g.parent = self
-          @graphics << g
+          g= RColumn.new(parent:self, x: current_x, y: @body_line_height, width: @column_width, height: @height - @body_line_height, column_line_count: @column_line_count - 1, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
           current_x += @column_width + @gutter
           @column_type  = "box_opinion"
         end
 
-        @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        @overflow_column = RColumn.new(parent:self, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
       else
         @column_count.times do |i|
           if @empty_first_column && i == 0
-            g= RColumn.new(:parent=>nil, empty_lines: true, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-            g.parent = self
-            @graphics << g
+            g= RColumn.new(parent:self, empty_lines: true, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
             current_x += @column_width + @gutter
           else
-            # TODO: why? :parent=>nil
-            g= RColumn.new(:parent=>nil, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
-            g.parent = self
-            @graphics << g
+            # TODO: why? parent:self
+            g= RColumn.new(parent:self, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
             current_x += @column_width + @gutter
           end
         end
-        @overflow_column = RColumn.new(:parent=>nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        @overflow_column = RColumn.new(parent:self, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
       end
       @column_bottom = max_y(@graphics.first.frame_rect)

@@ -99,6 +99,7 @@ module RLayout
       end
       @svg_path           = @output_path.sub(".pdf", ".svg")
       @article_info_path  = @article_path + "/article_info.yml"
+
       if @layout_rb
         @news_box   = eval(@layout_rb)
         @news_box.adjustable_height= true if @adjustable_height
@@ -121,13 +122,11 @@ module RLayout
         return
       end
 
-
       # This is called to set NewsArticleBox with fixed height.
       # Since height value is saved in layout_rb file, 
       # we can replace the layout_rb text with the new value 
       # or we instatialte it with eval and call this to change the height
       # here we are taking the second option
-
 
       if @news_box.is_a?(NewsImageBox)
         @news_box.stroke[:sides] = [0,0,0,0]

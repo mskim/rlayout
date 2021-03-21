@@ -1,5 +1,16 @@
 
 module RLayout
+  
+  # using from_right, and from_bottom option
+  # {from_right: true, from_bottom: true}
+  # It's a pain in the neck to place graphic to the right/bottom of the parent.
+  # caller has to calculate x, and y value of graphic before hand, using parent object's width and height.
+  # It gets even worse, if parent size is auto adjusted.
+  # from_right, and from_bottom options are solutions for this.
+  # if a graphic has parent, and from_right/from_bottom option is given, 
+  # x/y values is auto calculated from its parent, caller just need width and height of the graphic.
+  # anchor_right/anchor_bottom can also be used as alias
+  # {anchor_right: true, anchor_bottom: true}
 
   class Graphic
     attr_accessor :parent, :x, :y, :width, :height, :tag, :ns_view, :pdf_view, :svg_view, :path
@@ -7,50 +18,45 @@ module RLayout
     attr_accessor :non_overlapping_rect, :z_order
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
     attr_accessor :frame_image, :shadow, :rotation, :right_anchor, :center_anchor_at, :bottom_anchor
-    attr_reader   :pdf_doc, :project_path
+    attr_reader   :pdf_doc, :project_path, :from_right, :from_bottom
 
 
     def initialize(options={}, &block)
       @parent = options[:parent] if options[:parent]
-      @tag                  = options[:tag]
-      @project_path         = options[:project_path]
-      if @parent && options[:parent_frame]
-        set_frame(@parent.layout_rect)
-      elsif options[:grid_frame] && @parent && @parent.grid
-        # if options[:grid_frame] is given, convert grid_frame to x,y,width,height of parent's grid cordinate
-        set_frame_in_parent_grid(options[:grid_frame])
-        # disable autolayout
-        @layout_expand = nil
-      else
-        @anchor_right_at     = options[:from_right] || options[:right_anchor]
-        @anchor_bottom_at    = options[:from_bottom] || options[:bottom_anchor]
-        if @from_right && @parent
-          @width          = options.fetch(:width, graphic_defaults[:width])
-          @x              = @parent.width - @from_right - @width
-        else
-          @x              = options.fetch(:x, graphic_defaults[:x])
-          @width          = options.fetch(:width, graphic_defaults[:width])
-        end
+      @tag            = options[:tag]
+      @project_path   = options[:project_path]
+      @x              = options.fetch(:x, graphic_defaults[:x])
+      @y              = options.fetch(:y, graphic_defaults[:y])
+      @width          = options.fetch(:width, graphic_defaults[:width])
+      @height         = options.fetch(:height, graphic_defaults[:height])
 
-        if @from_bottom && @parent
+      if @parent 
+        if options[:parent_frame]
+          set_frame(@parent.layout_rect)
+        elsif options[:grid_frame] && @parent.grid
+          # if options[:grid_frame] is given, convert grid_frame to x,y,width,height of parent's grid cordinate
+          set_frame_in_parent_grid(options[:grid_frame])
+          # disable autolayout
+          @layout_expand = nil
+        elsif options[:from_right] || options[:anchor_right]
+          @from_right     = true
+          @width          = options.fetch(:width, graphic_defaults[:width])
+          @x              = @parent.width - options[:from_right] - @width
+        elsif options[:from_bottom] || options[:anchor_bottom] 
+          @from_bottom    = true
           @height         = options.fetch(:height, graphic_defaults[:height])
-          @y              = @parent.height - @from_bottom - @height
-        else
-          @y              = options.fetch(:y, graphic_defaults[:y])
-          @height         = options.fetch(:height, graphic_defaults[:height])
+          @y              = @parent.height - options[:from_bottom] - @height
         end
       end
       @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))
       @auto_save        = options[:auto_save]
-      # @overflow         = false
-      # @underflow        = false
       init_layout(options)
       init_fill(options)
       init_stroke(options)
       init_shape(options)
       init_shadow(options)    if options[:shadow]
       init_rotation(options)  if options[:rotation] || options[:rotation_content]
-      init_text(options)      if (options[:text_string] || options[:string]) && self.class == Text || self.class == BoxTableTextCell
+      init_text(options)      if (options[:text_string] || options[:string]) && self.kind_of?(Text) # self.class== Text || self.class == BoxTableTextCell
       # init_image(options)
       if @parent.nil?
         return self
