@@ -150,7 +150,7 @@ module RLayout
 
 DEFAULT_TABLE_STYLE = {
     :head_row_atts   => { row_type: "head_row", fill_color: 'gray', stroke_sides: [1,1,1,1]},
-    :head_cell_atts  => { fill_color: "clear", text_color: 'white', font: "Helvetica", font_size: 12.0, stroke_sides: [1,0,1,0]},
+    :head_cell_atts  => { fill_color: "clear", text_color: 'white', font: "Shinmoon", font_size: 12.0, stroke_sides: [1,0,1,0]},
     :body_row_atts   => { row_type: "body_row", fill_color: "white", stroke_sides: [0,1,0,1]},
     :body_cell_atts  => { font: "Shinmoon", font_size: 12.0, stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
     :category_atts   => { font: "Shinmoon", font_size: 12.0, stroke_sides: [1,1,1,1]},

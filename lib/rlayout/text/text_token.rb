@@ -285,56 +285,6 @@ module RLayout
     end
   end
 
-  # TextCell is used to set alignment for TextToken is a cell
-
-  # class TextCell < Container
-  #   attr_accessor :h_alignment, :v_alignment, :token
-  #   attr_accessor :insert_leader_token, :atts
-  #   def initialize(options={})
-  #     super
-  #     @layout_direction = "horizontal"
-  #     @token          = options[:token]
-  #     @atts           = options[:atts]
-  #     @insert_leader_token = options.fetch(:insert_leader_token, false)
-  #     @layout_length  = @width
-  #     @h_alignment    = options.fetch(:h_alignment, "left")
-  #     @v_alignment    = options.fetch(:v_alignment, "top")
-  #     @height         = @token.height
-  #     @token.parent = self
-  #     @graphics << token
-  #     align_token
-  #     self
-  #   end
-
-  #   def align_token
-  #     @margin = 2
-  #     @space = @width - @token.width - @margin*2
-  #     if @space <= @margin
-  #       @x = 0
-  #       return
-  #     end
-
-  #     case @h_alignment
-  #     when 'left'
-  #       @token.x = @margin
-  #       if @insert_leader_token
-  #         LeaderToken.new(parent: self, x: @margin + @token.width, width: @space, atts: @atts)
-  #       end
-  #     when 'center'
-  #       @token.x = @margin + @space/2
-  #     when 'right'
-  #       @token.x = @margin + @space
-  #       if @insert_leader_token
-  #         LeaderToken.new(parent: self, x: @margin, width: @space, atts: @atts)
-  #         @graphics.reverse!
-  #       end
-  #     else
-  #       @token.x = @margin
-  #     end
-
-  #   end
-  # end
-
   #number,
   #lower_alphabet,
   #lower_alphabet,

@@ -2,11 +2,11 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create page with table' do
   before do
-    @pdf_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/table_demo.pdf"
-    @csv_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/category_demo.csv"
-    @table_style_path = "/Users/mskim/demo/demo_rjob/table/page_with_table/table_style.rb"
+    @pdf_path         = "/Users/mskim/test_data/table/page_with_table/table_demo.pdf"
+    @csv_path         = "/Users/mskim//test_data/table/page_with_table/category_demo.csv"
+    @table_style_path = "/Users/mskim/test_data/table/page_with_table/table_style.rb"
     @column_width_array     = [1,1,1,1,2,2,4]
-    @t1 = Table. new(width:500, height:700, column_width_array: @column_width_array, csv_path: @csv_path, category_level: 0, layout_length: 7, table_style_path: @table_style_path)
+    @t1 = Table.new(width:500, height:700, column_width_array: @column_width_array, csv_path: @csv_path, category_level: 0, layout_length: 7, table_style_path: @table_style_path)
   end
 
   it 'should save_pdf ' do

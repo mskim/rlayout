@@ -11,8 +11,11 @@ module RLayout
   class GroupImage < Container
     attr_reader :x, :y ,:width, :height, :column, :row, :image_items
     attr_reader :direction, :group_caption, :output_path
+    attr_reader :images_path
+
     def initialize(options={})
       super
+      @images_path  = options[:images_path]
       @width        = options[:width]
       @height       = options[:height]
       @direction    = options[:direction] || 'horizontal'
@@ -43,8 +46,8 @@ module RLayout
         # Image.new(parent:self, image_path: item[:image_path], x:item[:x], y:item[:y], width:item[:width], height:item[:height])
         h = {}
         h[:parent]      = self
-        h[:image_path]  = item
-        h[:x]           = x
+        h[:image_path]  = @images_path + "/#{item}"
+        h[:x]           = x_position
         h[:y]           = y_position
         h[:width]       = row_width
         h[:height]      = row_height

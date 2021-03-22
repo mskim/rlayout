@@ -11,6 +11,7 @@ module RLayout
       @tracking       = options[:tracking]        || 0
       @scale          = options[:scale]           || 100
       @font           = options[:font]            || 'KoPubDotumPL'
+      @font           = 'KoPubDotumPL'
       @font_color     = options[:font_color]      || 'black'
       @fill_color     = options[:fill_color]      || 'clear'
       @font_size      = options[:font_size]       || 16

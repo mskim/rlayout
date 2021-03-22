@@ -1,25 +1,21 @@
-require 'minitest/autorun'
-$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '../..', 'lib')
-require 'rlayout/graphic'
-include RLayout
+require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'should process image_caption' do
   before do
-    @image_path = "/Users/Shared/rlayout/image/1.jpg"
+    @image_path = "/Users/mskim/test_data/images/1.jpg"
     @image = Image.new(:image_path=> @image_path)
+    @pdf_path = "/Users/mskim/test_data/image/output.pdf"
+
   end
 
   it 'should create Image object' do
-    @image.must_be_kind_of Image
+    assert_equal Image, @image.class 
   end
 
-  it 'should have image_caption' do
-    assert @image.image_caption
-  end
-
-  it 'should set caption' do
-    image = Image.new(:image_path=> @image_path, :image_caption=> "This is a image caption")
-    image.image_caption.must_equal "This is a image caption"
+  it 'should save pdf image' do
+    @image.save_pdf(@pdf_path)
+    assert File.exist?(@pdf_path)
+    system("open #{@pdf_path}")
   end
 end
 
