@@ -39,7 +39,7 @@ describe 'create BoxTable' do
   end
   
   it 'should create TableCell' do
-    assert_equal BoxTableCellText, @cell.class
+    assert_equal TextCell, @cell.class
     assert_in_delta 0.1,  400/3, @cell.width.round
     assert_equal 'this is cell', @cell.text_string
   end
@@ -108,7 +108,7 @@ describe 'create BoxTable' do
   
   it 'should create TableCell' do
     cell = @table.graphics.first.graphics.first
-    assert_equal BoxTableCellText, cell.class
+    assert_equal TextCell, cell.class
     assert_in_delta 0.1,  500/3, cell.width.round
     assert_equal 'this is title', cell.string
   end

@@ -22,11 +22,10 @@ module RLayout
       # @height = @parent.height if @parent
       @text_alignment = 'center'
       @v_alignment    = 'center'
-
       # @stroke[:thickness] = 1
       # @stroke[:color] = 'red'
       # @fill[:color] = 'blue'
-      @layout_expand = nil
+      # @layout_expand = nil
       # @layout_expand = :width
       @has_text = true
       fillup_with_leader

@@ -51,6 +51,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/auto_layout'
   require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
+  require File.dirname(__FILE__) + '/rlayout/container/image_plus'
   require File.dirname(__FILE__) + '/rlayout/container/group_image'
 
   # require File.dirname(__FILE__) + '/rlayout/db_publishing/db_item'
@@ -99,9 +100,6 @@ else
   require File.dirname(__FILE__) + '/rlayout/table/table_row.rb'
   require File.dirname(__FILE__) + '/rlayout/table/text_cell.rb'
 
-  require File.dirname(__FILE__) + '/rlayout/box_table/image_plus'
-  require File.dirname(__FILE__) + '/rlayout/box_table/box_table_cell_text'
-  require File.dirname(__FILE__) + '/rlayout/box_table/box_table_cell_image'
   require File.dirname(__FILE__) + '/rlayout/box_table/box_table_row'
   require File.dirname(__FILE__) + '/rlayout/box_table/box_table'
 

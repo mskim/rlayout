@@ -56,14 +56,12 @@ module RLayout
         h[:height]            = @height
         h[:layout_direction]  = 'horizontal'
         h[:string]            = cell
-        h[:graphic_style]     = {fill_color: 'yellow', stroke_color: 'black', stroke_width: 1}
         h[:text_style]        = {font: 'Shinmoon', font_size: 12, text_color: 'black'}
         h[:style_name]        = tag || 'body'
         h[:style_name]        = 'subtitle'
         h[:v_alignment]       = 'top'
         h[:adjust_width_to_string_width] = true
         t = TextCell.new(h)
-        # t = Text.new(h)
       end
     end
 

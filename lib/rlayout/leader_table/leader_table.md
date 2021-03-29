@@ -1,12 +1,23 @@
-# BoxTable
+# LeaderTable
 
 
-LeaderTable is fixed size table.
-It is used in Jubo, Toc, Menu.
+LeaderTable is fixed size table for Jubo, Toc, and Menu.
 
-We can have differnt types of BoxTable
-1. leader_table: 
-1. simple table with head
+LeaderRow is a special row that inserts LeaderCell between TextCells. to make it look like following.
+
+starting_text ............................ ending_text
+starting_text ........ middle_text ....... ending_text
+starting_text ........ middle_text ....... ending_text
+starting_text ............................ ending_text
+starting_text ............................ ending_text
+starting_text ............................ ending_text
+starting_text ........ middle_text ....... ending_text
+starting_text ........ middle_text ....... ending_text
+starting_text ............................ ending_text
+starting_text ............................ ending_text
+
+
+
 
 Layout is created by given data array.
 1. calculate row height
@@ -18,33 +29,3 @@ Layout is created by given data array.
   - body_cell
   - head_cell
 
-
-
-BoxTable is used as super class of GroupImage and BoxAd
-
-BoxTable should be given two inputs
-table_data and table_style
-  
-table_data
-series of row data in Array
-
-table_style
-  graphic_style(shape, and border) for table, 
-hash of styles and information for 
-heading_row_style
-category_row_style
-heading_style
-row_styles
-
-  
-fit mode
-fix_to_box_height
-grow_box_height
-  
-What is table category?
-Category is a left most column that represent category.
-Same catgory title cells are merges into one category cell. 
-  
-category_level
-Sometimes category levels are more than one level deep
-category_level is number of categories. 
