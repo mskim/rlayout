@@ -51,7 +51,6 @@ module RLayout
       @row_count  = @table_data.length
       create_rows
       relayout!
-
       self
     end
 

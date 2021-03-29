@@ -35,12 +35,13 @@ describe 'create BoxTable' do
     assert_equal 400, @table.graphics.first.width 
     assert_equal 0, @table.graphics.first.x 
     assert_in_delta 0.1, 500/8, @table.graphics.first.height 
-    assert_in_delta 0.1, 400/8, @table.graphics[2].height 
+    assert_in_delta 0.1, 500/8, @table.graphics[2].height 
   end
   
   it 'should create TableCell' do
     assert_equal TextCell, @cell.class
-    assert_in_delta 0.1,  400/3, @cell.width.round
+    # assert_in_delta 0.1,  400/3, @cell.width.round
+    assert_equal  400/3, @cell.width.round
     assert_equal 'this is cell', @cell.text_string
   end
 
