@@ -3,16 +3,12 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 # testing
 describe 'test NewsGroupImage' do
   before do
-    @folder = "/Users/mskim/Development/pillar_layout/public/1/images"
-    image1 = @folder + "/1.jpg"
-    image2 = @folder + "/2.jpg"
-    image3 = @folder + "/3.jpg"
-    image4 = @folder + "/4.jpg"
-    images = ["#{image1}", "#{image2}", "#{image3}", "#{image4}"]
-    @width = 400
-    @height = 100
-    @g_image = RLayout::NewsGroupImage.new(member_images: images, width: @width, height: @height)
-    @first_member = @g_image.graphics.first
+    @image_items = %w[1.jpg 2.jpg 3.jpg 4.jpg]
+    @output_path = "/Users/mskim/test_data/group_image/output.pdf"
+    @images_folder = "/Users/mskim/test_data/images"
+    @g_image = NewsGroupImage.new(:width=>800, :height=>200, images_folder: @images_folder, :image_items=>@image_items, output_path: @ouput_path)
+    @svg_path = "/Users/mskim/test_data/group_image/output.svg"
+    @pdf_path = "/Users/mskim/test_data/group_image/output.pdf"
   end
 
   it 'should create NewsGroupImage' do
@@ -30,7 +26,6 @@ describe 'test NewsGroupImage' do
   # end
 
   it 'should save pdf' do
-    @pdf_path = @folder + "/group_image.pdf"
     @g_image.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")

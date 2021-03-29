@@ -1,7 +1,11 @@
 
 module RLayout
   
-  # Table should be given two inputs
+  # BoxTable is fixed size table with text and image cell.
+  # Layout is created by given data array.
+  # BoxTable is used as super class of GroupImage and BoxAd
+
+  # BoxTable should be given two inputs
   # table_data and table_style
   
   # table_data
@@ -29,8 +33,8 @@ module RLayout
   # category_level is number of categories. 
 
   class BoxTable < Container
-    attr_reader :data, :heading_level, :category_level
-    attr_reader :heading_styles, :heading_styles, :heading_styles
+    attr_reader :kind, :data, :heading_level, :category_level
+    attr_reader :heading_styles, :body_styles
     attr_reader :table_data, :table_style
     attr_reader :pdf_doc, :style_serice
     def initialize(options={})

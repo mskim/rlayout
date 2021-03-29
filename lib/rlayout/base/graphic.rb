@@ -56,7 +56,7 @@ module RLayout
       init_shape(options)
       init_shadow(options)    if options[:shadow]
       init_rotation(options)  if options[:rotation] || options[:rotation_content]
-      init_text(options)      if (options[:text_string] || options[:string]) && self.kind_of?(Text) # self.class== Text || self.class == BoxTableTextCell
+      init_text(options)      if (options[:text_string] || options[:string]) && self.kind_of?(Text) # self.class== Text || self.class == BoxTableCellText
       # init_image(options)
       if @parent.nil?
         return self
@@ -564,11 +564,6 @@ module RLayout
     def fit_text_to_box
       @text_layout_manager.fit_text_to_box  if @text_layout_manager
     end
-
-  end
-
-  class Text < Graphic
-
   end
 
 
@@ -649,11 +644,8 @@ module RLayout
   end
 
   class Image < Graphic
-    attr_accessor :caption , :bleed, :crop_rect
+    attr_accessor  :bleed, :crop_rect
     def initialize(options={})
-      if options[:caption]
-        @caption = options[:caption]
-      end
       if options[:bleed]
         @bleed = options[:bleed]
       end

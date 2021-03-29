@@ -3,7 +3,7 @@
 # MagazineArticleMaker should be able to support highly customizable designs.
 # MagazineArticleMaker works with given folder with story, layout.rb, and images
 # layout.rb defines layout and styles
-# Image layout can be set using GIM
+# GroupImage layout can be set using GIM
 # Images can be stored in images folder by page and image size
 # making image in the article controlable.
 # Page Count is usually fixed for magazine, default is 2

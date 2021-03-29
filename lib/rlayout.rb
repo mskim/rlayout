@@ -93,11 +93,22 @@ else
   require File.dirname(__FILE__) + '/rlayout/chapter/r_page'
   require File.dirname(__FILE__) + '/rlayout/chapter/r_chapter'
 
-  require File.dirname(__FILE__) + '/rlayout/box_ad/box_table_text_cell'
-  require File.dirname(__FILE__) + '/rlayout/box_ad/box_table_image_cell'
-  require File.dirname(__FILE__) + '/rlayout/box_ad/box_table_row'
-  require File.dirname(__FILE__) + '/rlayout/box_ad/box_table'
+  require File.dirname(__FILE__) + '/rlayout/table/list.rb'
+  require File.dirname(__FILE__) + '/rlayout/table/simple_table.rb'
+  require File.dirname(__FILE__) + '/rlayout/table/table.rb'
+  require File.dirname(__FILE__) + '/rlayout/table/table_row.rb'
+  require File.dirname(__FILE__) + '/rlayout/table/text_cell.rb'
 
+  require File.dirname(__FILE__) + '/rlayout/box_table/image_plus'
+  require File.dirname(__FILE__) + '/rlayout/box_table/box_table_cell_text'
+  require File.dirname(__FILE__) + '/rlayout/box_table/box_table_cell_image'
+  require File.dirname(__FILE__) + '/rlayout/box_table/box_table_row'
+  require File.dirname(__FILE__) + '/rlayout/box_table/box_table'
+
+  require File.dirname(__FILE__) + '/rlayout/leader_table/leader_cell'
+  require File.dirname(__FILE__) + '/rlayout/leader_table/leader_row'
+  require File.dirname(__FILE__) + '/rlayout/leader_table/leader_table'
+  require File.dirname(__FILE__) + '/rlayout/leader_table/jubo'
 
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/news_article_view'
@@ -124,9 +135,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_page'
 
   require File.dirname(__FILE__) + '/rlayout/magazine/article.rb'
-
-  # require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article.rb'
-  # require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article_maker.rb'
+  require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article.rb'
+  require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article_maker.rb'
 
   # require File.dirname(__FILE__) + "/rlayout/svg/graphic"
   require File.dirname(__FILE__) + "/rlayout/svg/circle"
@@ -156,14 +166,6 @@ else
   require File.dirname(__FILE__) + "/rlayout/deco_text/deco_string"
   require File.dirname(__FILE__) + "/rlayout/deco_text/deco_char"
 
-  require File.dirname(__FILE__) + '/rlayout/table/list.rb'
-  require File.dirname(__FILE__) + '/rlayout/table/simple_table.rb'
-  require File.dirname(__FILE__) + '/rlayout/table/table.rb'
-  require File.dirname(__FILE__) + '/rlayout/table/table_row.rb'
-  require File.dirname(__FILE__) + '/rlayout/table/leader_cell.rb'
-  require File.dirname(__FILE__) + '/rlayout/table/text_cell.rb'
-  require File.dirname(__FILE__) + '/rlayout/table/leader_row.rb'
-  require File.dirname(__FILE__) + '/rlayout/table/leader_table.rb'
 
   require File.dirname(__FILE__) + '/rlayout/article/float_group'
  

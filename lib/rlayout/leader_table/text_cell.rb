@@ -1,24 +1,21 @@
 module RLayout
 
   class TextCell < Text
-    attr_accessor :column_index, :row_index
+    attr_reader :column_index, :row_index
     def initialize(options={})
-      @column_index   = options[:column_index]
-      @row_index      = options[:row_index]
       super
-      @height = @parent.height
       @text_alignment = 'center'
       @v_alignment = 'center'
-      # @stroke[:thickness] = 1
-      # @stroke[:color] = 'red'
-      # @fill[:color] = 'blue'
+      @stroke[:thickness] = 1
+      @stroke[:color] = 'red'
+      @fill[:color] = 'blue'
       @layout_expand = nil
       # @layout_expand = :width
       @has_text = true
       fillup_with_leader
       self
     end
-
+    
     def fillup_with_leader
       @current_style_service = RLayout::StyleService.shared_style_service
       @style_object, @font_wrapper = @current_style_service.style_object_from_para_style(para_style) 

@@ -3,10 +3,14 @@
 module RLayout
   class Text < Graphic
     attr_reader :text_string, :font, :font_size, :font_color, :tracking
-    attr_reader :text_alignment, :text_style
-    attr_reader :text_alignment, :v_alignment, :fit_type, :string_width
+    attr_reader :text_style, :string_width
+    attr_accessor :text_alignment, :v_alignment, :fit_type
 
     def init_text(options={})
+      # @stroke[:thickness] = 1
+      # @stroke[:color] = 'black'
+      # @fill[:color] = 'yellow'
+      
       @has_text       = true
       @tracking       = options[:tracking]        || 0
       @scale          = options[:scale]           || 100
@@ -24,7 +28,12 @@ module RLayout
         @text_alignment = options[:text_alignment]  || 'left'
         @v_alignment    = options[:v_alignment]     || 'top'
       end
-     set_string_width
+      set_string_width
+      if options[:adjust_width_to_string_width]
+        adjust_width_to_string_width 
+        @layout_expand = [:height]
+      end
+      self
     end
 
     def set_string_width
@@ -32,6 +41,10 @@ module RLayout
       @style_object, @font_wrapper = @current_style_service.style_object_from_para_style(para_style) 
       glyphs        = @font_wrapper.decode_utf8(@text_string)
       @string_width = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
+    end
+
+    def adjust_width_to_string_width
+      @width = @string_width
     end
 
     def draw_text(canvas)
@@ -67,27 +80,28 @@ module RLayout
         end
 
         f = flipped_origin
-        x_offset = f[0]
-        y_offset = f[1]
-        alignment_shift = 0
+        @x_offset = f[0].dup
+        @y_offset = f[1].dup
         case @text_alignment
         when 'left'
-          x_offset += @left_margin + @left_inset
+          @x_offset += @left_margin + @left_inset
         when 'center'
-          x_offset += (@width - @string_width)/2
+          @x_offset += (@width - @string_width)/2
         when 'right'
-          x_offset += @width - @string_width
+          @x_offset += @width - @string_width
         else
+          @x_offset += @left_margin + @left_inset
         end
+
         case @v_alignment
         when 'top'
         when 'center'
-          y_offset -= @height/2  - @font_size/2
+          @y_offset -= (@height - @font_size)/2
         when 'bottom'
-          y_offset -= @height - @font_size
+          @y_offset -= @height - @font_size
         else
         end
-        canvas.text(@text_string, at: [x_offset, y_offset - @font_size])
+        canvas.text(@text_string, at: [@x_offset, @y_offset - @font_size])
       end
     end
 

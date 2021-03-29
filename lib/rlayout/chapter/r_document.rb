@@ -35,24 +35,30 @@ module RLayout
     attr_accessor :left_margin, :top_margin, :right_margin, :bottom_margin, :gutter
     attr_accessor :pdf_path, :jpg, :preview, :column_count, :column_width, :layout_style
     attr_accessor :heading_type, :body_line_count, :body_line_height
-    attr_reader :project_path, :max_page_number
+    attr_reader :project_path, :max_page_number, :page_count, :starting_page
     
     def initialize(options={}, &block)
+
+      @starting_page    = options[:starting_page]   || 1
       @width            = options[:width]
-      @height           = options[:height]
+      @height            = options[:height]
       @max_page_number  = options[:max_page_number] || 999
       @body_line_count  = options[:body_line_count] || 23
-      @left_margin      = options[:left_margin] || 50
-      @top_margin       = options[:top_margin] || 50
-      @right_margin     = options[:right_margin] || 50
-      @bottom_margin    = options[:bottom_margin] || 50
-      @column_count     = options[:c] || 1
-      @gutter           = options[:gutter] || 10
+      @left_margin      = options[:left_margin]     || 50
+      @top_margin       = options[:top_margin]      || 50
+      @right_margin     = options[:right_margin]    || 50
+      @bottom_margin    = options[:bottom_margin]   || 50
+      @column_count     = options[:c]               || 1
+      @gutter           = options[:gutter]          || 10
       unless @body_line_height
         @body_line_height   = (@height - @top_margin - @bottom_margin)/@body_line_count
       end
       @column_width = (@width - @left_margin - @right_margin - @gutter*(@column_count - 1))/@column_count
       @pages            = []
+      @page_count       = options[:page_count]
+      @page_count.times do 
+        add_new_page
+      end
       if block
         instance_eval(&block)
       end

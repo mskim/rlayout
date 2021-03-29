@@ -8,7 +8,7 @@ module RLayout
     # fit_horizontal 
     #   clip_ready_image_rect has same width as image_rect
     # fit_vertical
-    #   clip_ready_image_rect has same heigth as image_rect
+    #   clip_ready_image_rect has same height as image_rect
     #
     # example:
     # canvas.rectangle(350, 0, 80, 80, radius: 10)

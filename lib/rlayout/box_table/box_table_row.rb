@@ -30,7 +30,7 @@ module RLayout
           h[:v_alignment]       = 'top'
           h[:column_index]      = i
           h[:row_index]         = @row_index
-          BoxTableTextCell.new(h)
+          BoxTableCellText.new(h)
         elsif options[:cell_data].is_a?(Hash)
           # cell is text cell or image cell
         elsif options[:cell_data].is_a?(Array)

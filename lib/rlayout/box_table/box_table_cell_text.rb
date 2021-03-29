@@ -11,7 +11,7 @@ module RLayout
   # alignment
   # font, font_size, font_style, text_color, outline_color
   
-  class BoxTableTextCell < Text
+  class BoxTableCellText < Text
     attr_reader :v_align, :column_index, :row_index
     def initialize(options={})
       options[:fill_color]   = 'yellow'

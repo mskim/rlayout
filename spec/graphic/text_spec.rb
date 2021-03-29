@@ -103,3 +103,16 @@ describe 'text bottom v_align Text' do
     system("open #{@pdf_path}")
   end
 end
+
+describe 'text center center v_align Text' do
+  before do
+    @t = Text.new(width:200, text_string: "...........", text_alignment: 'center', v_alignment: 'center')
+  end
+
+  it 'should save pdf' do
+    @pdf_path = "/Users/mskim/test_data/text/leader.pdf"
+    @t.save_pdf(@pdf_path)
+    assert File.exist?(@pdf_path)
+    system("open #{@pdf_path}")
+  end
+end

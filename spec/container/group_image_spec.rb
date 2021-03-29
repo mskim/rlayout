@@ -6,8 +6,8 @@ describe 'testing GroupImage creation' do
     # @container = Container.new(:width=>600, :height=>800, :layout_space=>20, :layout_direction=>"horizontal") do
     @image_items = %w[1.jpg 2.jpg 3.jpg 4.jpg]
     @output_path = "/Users/mskim/test_data/group_image/output.pdf"
-    @images_path = "/Users/mskim/test_data/images"
-    @g = GroupImage.new(:width=>800, :height=>200, images_path: @images_path, :image_items=>@image_items, output_path: @ouput_path)
+    @images_folder = "/Users/mskim/test_data/images"
+    @g = GroupImage.new(:width=>800, :height=>200, images_folder: @images_folder, :image_items=>@image_items, output_path: @ouput_path)
     @svg_path = "/Users/mskim/test_data/group_image/output.svg"
     @pdf_path = "/Users/mskim/test_data/group_image/output.pdf"
   end
