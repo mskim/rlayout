@@ -200,7 +200,7 @@ module RLayout
             current_x += @column_width + @gutter
           end
         end
-        @overflow_column = RColumn.new(parent:self, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        @overflow_column = RColumn.new(parent:nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
         @overflow_column.parent = self
       end
       @column_bottom = max_y(@graphics.first.frame_rect)
@@ -209,8 +209,7 @@ module RLayout
 
     def create_vertical_columns
       current_y = @starting_column_y
-
-
+      # TODO:
     end
 
     def link_column_lines
@@ -829,7 +828,6 @@ module RLayout
       Quote.new(options)
     end
 
-    # Use news_image instead of float_image
     def news_image(options={})
       options[:parent]    = self
       options[:is_float]  = true
@@ -842,6 +840,13 @@ module RLayout
           @floats.unshift(@news_image)
         end
       end
+    end
+
+    # Use news_float for group_image, table
+    def news_float(options={})
+      options[:parent]    = self
+      options[:is_float]  = true
+      @news_float   = NewsFloat.new(options)
     end
 
     def news_column_image(options={})

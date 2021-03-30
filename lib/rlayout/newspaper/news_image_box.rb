@@ -55,6 +55,7 @@ module RLayout
       options[:height]    = @height
       @news_image         = NewsImage.new(options)
     end
+
   end
 
   class NewsComicBox < NewsBox

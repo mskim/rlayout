@@ -39,6 +39,7 @@ module RLayout
     # def to_pdf(canvas)
     def draw_pdf(canvas)
       @pdf_doc = parent.pdf_doc if parent
+      draw_fill(canvas)
       @graphics.each do |g|
         g.draw_pdf(canvas)
       end

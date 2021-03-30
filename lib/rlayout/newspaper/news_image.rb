@@ -24,17 +24,17 @@ PERSONAL_IMAGE_HEIGHT_IN_LINES = 6.5
 # gutter shift half towards picture side
 module RLayout
   class NewsImage < Container
-    attr_accessor :article_column, :column, :article_row, :row, :image_size, :caption_title
+    attr_accessor :parent_column, :column, :parent_row, :row, :image_size, :caption_title
     attr_accessor :image_box, :caption_column, :caption_paragraph, :position, :before_title, :fit_type, :expand, :has_caption
     attr_reader   :image_kind, :x_grid, :draw_frame, :zoom_level, :zoom_anchor, :gutter, :crop_rect
 
     def initialize(options={})
       if options[:parent]
-        @article_column       = options[:parent].column_count
-        @article_row          = options[:parent].row_count
+        @parent_column       = options[:parent].column_count
+        @parent_row          = options[:parent].row_count
       else
-        @article_column       = 3
-        @article_row          = 3
+        @parent_column       = 3
+        @parent_row          = 3
       end
       @image_path             = options[:image_path]
       @image_kind             = options[:image_kind]
@@ -199,12 +199,12 @@ module RLayout
       else
         @image_size = [1,1]
       end
-      x_grid = @article_column - @image_size[0]
-      y_grid = 0 #@article_row - image_size[1]
+      x_grid = @parent_column - @image_size[0]
+      y_grid = 0 #@parent_row - image_size[1]
 
       # horizontal posiion
       if horizontal_center?
-        diff   = @article_column - @image_size[0]
+        diff   = @parent_column - @image_size[0]
         if diff.odd?
           x_grid = (diff + 1)/2
         else
@@ -215,14 +215,14 @@ module RLayout
       end
       # veritical posiion
       if vertical_center?
-        diff   = @article_row - @image_size[1]
+        diff   = @parent_row - @image_size[1]
         if diff.odd?
           y_grid = (diff + 1)/2
         else
           y_grid = diff/2
         end
       elsif vertical_bottom?
-        y_grid = @article_row - @image_size[1]
+        y_grid = @parent_row - @image_size[1]
       end
       [x_grid, y_grid, @image_size[0], @image_size[1]]
     end

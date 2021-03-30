@@ -41,10 +41,6 @@ module RLayout
       @page = @pdf_doc.pages.last
       @canvase = @page.canvas
     end
-
-    def draw_body_line(line_info)
-
-    end
   end
 
 
