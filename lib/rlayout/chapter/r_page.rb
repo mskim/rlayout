@@ -1,23 +1,31 @@
 
-# unless options[:text_box] == false
-# RPage creates @main_box(RTextBox)
-# main_box(RTextBox) is where body text will follow
-#
+# The decision time!:
+# whether to create main_text within page or not is the question?
+# RPage need to implement bleeding image, and floats.
+# if we have main_text as main text hendling object, bleeding implementation could be tricky.
+# But if we implement r_page as big text_box with columns, this would be simpler to implent.
+# So, let do it without main_box.
+# use text_box as side_box.
+
 module RLayout
   class RPage < Container
-    attr_accessor :page_number, :left_page, :no_fixture_page
-    attr_accessor :main_box, :heading_object, :header_object, :footer_object, :side_bar_object
+    attr_accessor :page_number
+    attr_accessor :heading_object, :header_object, :footer_object, :side_box_object
     attr_accessor :fixtures, :floats, :document, :column_count, :first_page, :body_line_count, :body_line_height
     attr_accessor :body_lines, :gutter, :body_line_count
+    attr_reader :float_layout, :page_by_page
+
     def initialize(options={}, &block)
       super
       if options[:parent] || options[:document]
         @parent       = options[:parent] || options[:document]
         @document     = @parent
       end
+      @float_layout   = options[:float_layout] || []
       @first_page     = options[:first_page] || false
       @column_count   = 1
       @column_count   = options[:column_count] if options[:column_count]
+      @page_number    = options[:page_number] || 1
       if @document
         @column_count      = @document.column_count
         @body_line_height  = @document.body_line_height
@@ -31,25 +39,24 @@ module RLayout
         @right_margin      = @document.right_margin
         @bottom_margin     = @document.bottom_margin
         @heading_type      = @document.heading_type
-      end
-      if  @parent && !@parent.pages.include?(self)
-        @parent.pages << self
-      end
-      @body_line_count    = 30 unless @document.body_line_count
-      @body_line_height   = (@height - @top_margin - @bottom_margin)/ @body_line_count
-      if  @parent
-        @page_number = @parent.pages.index(self) + @parent.starting_page
-      elsif options[:page_number]
-        @page_number = options[:page_number]
+        @body_line_count   = @document.body_line_count || 30 
+        if !@document.pages.include?(self)
+          @document.pages << self
+        end
       else
-        @page_number = 1
+        @body_line_count    = 30
+        @body_line_height   = (@height - @top_margin - @bottom_margin)/@body_line_count
+        @gutter             = 10
+        @column_width       = (@width - @left_margin - @right_margin - (@column_count-1)*@gutter)/@column_count
+      end
+      if options[:page_number]
+        @page_number = options[:page_number]
       end
       # if @parent && @parent.double_side
-      @left_page  = @page_number.even?
-      @fixtures = []
+      @fixtures = []  # header, footer
       @floats   = []
-
       create_body_lines
+      add_floats
       # relayout!
       if block
         instance_eval(&block)
@@ -70,7 +77,7 @@ module RLayout
           h[:y]       = current_y
           h[:width]   = @column_width
           h[:height]  = @body_line_height
-          new_line = RLineFragment.new(h)
+          new_line    = RLineFragment.new(h)
           current_y += @body_line_height
           # set next_line link
           prev_line.next_line = new_line if prev_line
@@ -80,24 +87,15 @@ module RLayout
       end
     end
 
-    def add_floats(page_floats)
-      if page_floats[:floats]
-        page_floats[:floats].each do |float|
-          float[:parent] = self
-          float[:is_float] = true
-          Image.new(float)
+    def add_floats
+      @float_layout.each do |float|
+        float[:parent] = self
+        float[:is_float] = true
+        if float[:kind] == 'image'
+          NewsImage.new(float)
+        else
+          NewsFloat.new(float)
         end
-      # TODO
-      # elsif page_floats[:header]
-      #   h = page_floats[:header]
-      #   h[:parent] = self
-      #   h[:is_float] = true
-      #   # RHeader.new(h)
-      # else page_floats[:footer]
-      #   h = page_floats[:footer]
-      #   h[:parent] = self
-      #   h[:is_float] = true
-      #   # RFooter.new(h)
       end
       adjust_overlapping_body_lines
     end
@@ -120,7 +118,7 @@ module RLayout
     end
 
     def first_line
-      body_lines.first
+      @graphics.first
     end
 
     def body_lines
@@ -155,7 +153,7 @@ module RLayout
     end
 
     def is_left_page?
-      @left_page
+      @page_number.even?
     end
 
     def to_pgscript
@@ -201,6 +199,44 @@ module RLayout
       h
     end
 
+    def layout_items(paragraphs, options={})
+      current_line = first_text_line
+      while @item = paragraphs.shift do
+        current_line = @item.layout_lines(current_line)
+      end
+      if  current_line
+        @current_column  = current_line.column
+      end
+      @overflow  = true if @overflow_column.graphics.first && @overflow_column.graphics.first.layed_out_line?
+
+      if @overflow && !@adjustable_height
+        last_line_of_box.fill.color = 'red'
+      else
+        @empty_lines    = article_box_unoccupied_lines_count
+        @underflow = true if @empty_lines > 0
+      end
+      # TODO:
+      save_page_info if  @page_by_page
+    end
+
+    # TODO:
+    def save_page_info
+
+    end
+
+    # TODO:
+    def layout_floats
+
+    end
+
+    def set_overlapping_grid_rect
+
+    end
+
+    def update_column_areas
+
+    end
+
     def layout_default
       {
         left_margin:  50,
@@ -226,7 +262,7 @@ module RLayout
     # does current text_box include Heading in floats
     def has_heading?
       @graphics.each do |g|
-        if g.class == RLayout::RHeading || g.class == RLayout::HeadingContainer
+        if g.class == RLayout::RHeading
           @heading_object = g unless @heading_object
           return true
         end
@@ -251,8 +287,7 @@ module RLayout
         next if a==@fixtures
         next if a==@header_object
         next if a==@footer_object
-        next if a==@side_bar_object
-        next if a==@main_box
+        next if a==@side_box_object
         v = instance_variable_get a
         s = a.to_s.sub("@","")
         h[s.to_sym] = v if !v.nil?
@@ -314,6 +349,7 @@ module RLayout
     end
 
     ########### PageScritp Verbs #############
+
     def text_box(options={}, &block)
       options[:parent] = self
       @main_box = RTextBox.new(options) unless @main_box
@@ -327,6 +363,16 @@ module RLayout
     def table(options={}, &block)
       options[:parent] = self
       Table.new(options, &block)
+    end
+
+    def image_plus(options={}, &block)
+      options[:parent] = self
+      ImagePlus.new(options, &block)
+    end
+
+    def group_image(options={}, &block)
+      options[:parent] = self
+      GroupImage.new(options, &block)
     end
 
     def image_box(options={}, &block)

@@ -4,19 +4,15 @@ include RLayout
 describe "create a Page" do
   before do
     @page = RPage.new
-    @pdf_path = "/Users/Shared/rlayout/pdf_output/r_page.pdf"
+    @pdf_path = "/Users/mskim/test_data/page/r_page.pdf"
   end
 
   it 'should create Page' do
-    @page.must_be_kind_of RPage
+    assert_equal RPage, @page.class 
   end
 
   it 'shoud have width' do
-    @page.width.must_equal SIZES['A4'][0]
-  end
-
-  it 'shoud create main_box' do
-    @page.main_box.must_be_kind_of RTextBox
+    assert_equal SIZES['A4'][0], @page.width
   end
 
   it 'should save pdf' do

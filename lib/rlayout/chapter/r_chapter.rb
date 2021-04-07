@@ -1,12 +1,11 @@
 # encoding: utf-8
 
 # Chapter
-# Chapter combines Story and Document into a  chapter.
-# Story can come from couple of sources, markdown, hangul, or html(URL blog)
-# Stories are first converted to heading and body part.
-# Body part is then converted to series of paragraphs,
-# Chapter first look for template in local folder,
-# if it is not found, takes default template from library location.
+# Chapter converts given Story into a document.
+# Story is parsed to heading and body. 
+# Each story has heading and body, heding is placed at the top in yaml format.
+# Body part follows the headinng, in markdown format.
+# Body part are converted to series of paragraphs,
 
 # Heading type
 # We have tow type of chapter heading, Heading and HeadingContainer.
@@ -177,7 +176,7 @@
 module RLayout
 
   class RChapter
-    attr_reader :project_path, :template_path, :story_path
+    attr_reader :document_path, :story_path
     attr_reader :document, :output_path, :column_count
     attr_reader :doc_info, :toc_content
     attr_reader :book_title, :title, :starting_page, :heading_type, :heading
@@ -188,14 +187,24 @@ module RLayout
     # if page_by_page is true,
     # folders are created for each page, with jpg image and, markdown text for that page
     # this allow the proofer to working on that specific page rather than dealing with entire chapter text.
-    attr_reader :page_by_page, :story_body
+    
+    attr_reader :page_by_page, :story_md
 
     def initialize(options={} ,&block)
-      @output_path    = options[:output_path]
-      @project_path   = File.dirname(@output_path)
-      @story_body     = options[:story_body]
+      @document_path   = options[:document_path]
+      @story_path     = @document_path + "/story.md"
+      @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
+      @story_md       = options[:story_md]
       @layout_rb      = options[:layout_rb]
-      @page_floats    = options[:page_floats] 
+      unless @layout_rb
+        layout_path = @document_path + "/layout.rb"
+        unless File.exist?(layout_path)
+          @layout_rb = default_document
+        else
+          @layout_rb = File.open(layout_path, 'r'){|f| f.read}
+        end
+      end
+      @page_floats    = options[:page_floats]   || []
       @starting_page  = options[:starting_page] || 1
       @page_by_page   = options[:page_by_page]
       @document       = eval(@layout_rb)
@@ -217,26 +226,32 @@ module RLayout
         end
         p.add_floats(page_float)
       end
-
       read_story
       layout_story
-      # output_options = {preview: true}
       @document.save_pdf(@output_path) unless options[:no_output]
-      # @doc_info[:starting_page] = @starting_page
-      # @doc_info[:page_count]    = @document.pages.length
-      # save_toc
-      # @document.save_page_by_page(@project_path) if page_by_page
       self
     end
 
+    def default_document
+      layout =<<~EOF
+        RLayout::RDocument.new(page_size:'A5')
+      EOF
+    end
+
     def read_story
-      if @story_body 
-        para_data = Story.body2para_data(@story_body, starting_heading_level=1)
-        @paragraphs = para_data.map do |para|
-          RParagraph.new(para)
-        end
+      if @story_md 
+        @story  = Story.new(nil).markdown2para_data(source:@story_md)
       else
         @story  = Story.new(@story_path).markdown2para_data
+      end
+      @heading                = @story[:heading] || {}
+      @paragraphs =[]
+      @story[:paragraphs].each do |para|
+        para_options = {}
+        para_options[:markup]         = para[:markup]
+        para_options[:layout_expand]  = [:width]
+        para_options[:para_string]    = para[:para_string]
+        @paragraphs << RParagraph.new(para_options)
       end
     end
     
@@ -261,14 +276,14 @@ module RLayout
     end
 
     def save_doc_info
-      doc_info_path   = @project_path + "/doc_info.yml"
+      doc_info_path   = @document_path + "/doc_info.yml"
       @doc_info[:toc] = @toc_content
       File.open(toc_path, 'w') { |f| f.write e@doc_info.to_yaml}
     end
 
     def save_toc
-      @project_path   = File.dirname(@output_path)
-      toc_path        = @project_path + "/doc_info.yml"
+      @document_path  = File.dirname(@output_path)
+      toc_path        = @document_path + "/doc_info.yml"
       @doc_info[:page_size] = @page_size
       @doc_info[:toc] = @toc_content
       File.open(toc_path, 'w') { |f| f.write @doc_info.to_yaml}

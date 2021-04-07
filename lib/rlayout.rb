@@ -20,7 +20,7 @@ else
   require 'erb'
   require 'base64'
   require 'json'
-  # require 'mini_magick'
+  require 'mini_magick'
   require "image_processing/vips"
   require "image_processing"
   require 'hexapdf'
@@ -131,11 +131,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_pillar'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_page'
 
-  require File.dirname(__FILE__) + '/rlayout/magazine/article.rb'
   require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article.rb'
-  require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article_maker.rb'
 
-  # require File.dirname(__FILE__) + "/rlayout/svg/graphic"
   require File.dirname(__FILE__) + "/rlayout/svg/circle"
   require File.dirname(__FILE__) + "/rlayout/svg/image"
   require File.dirname(__FILE__) + "/rlayout/svg/line"

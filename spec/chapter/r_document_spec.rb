@@ -3,31 +3,28 @@ include RLayout
 
 describe "create RDocument" do
   before do
+    # @document_path = "/Users/mskim/test_data/sample_book/01_chapter"
     @doc = RDocument.new()
   end
 
   it 'should create RDocument' do
-    @doc.must_be_kind_of RDocument
-  end
-
-  it 'should have a title' do
-    @doc.title.must_equal 'untitled'
+    assert_equal RDocument, @doc.class
   end
 
   it 'should have a page_size' do
-    @doc.page_size.must_equal 'A4'
+    assert_equal 'A4', @doc.page_size 
   end
 
   it 'shoud have width' do
-    @doc.width.must_equal SIZES['A4'][0]
+    assert_equal SIZES['A4'][0], @doc.width 
   end
 
   it 'should have pages' do
-    @doc.pages.length.must_equal 1
+    assert_equal 1, @doc.pages.length
   end
 
   it 'should have margins' do
-    @doc.left_margin.must_equal 50
+    assert_equal 50, @doc.left_margin 
   end
 end
 
@@ -39,22 +36,24 @@ describe "create first page" do
   end
 
   it 'should create a first page' do
-    @pages.length.must_equal 1
+    assert_equal  1, @pages.length
   end
 
   it 'should create a first page' do
-    @pages.first.must_be_kind_of RPage
+    assert_equal RPage, @pages.first.class
   end
 
-  it 'first page should have main_text and heading' do
-    @first_page.main_box.must_be_kind_of RTextBox
-    @first_page.graphics.length.must_equal 2
+  it 'should return first_page_with_text_line' do
+    page, line = @doc.first_page_with_text_line
+    assert 1, page.page_number
+    assert RLineFragment, line.class
+    assert 0, line.y
   end
 
   it 'should save pdf' do
-    @pdf_path = "/Users/Shared/rlayout/pdf_output/r_document.pdf"
+    @pdf_path = "/Users/mskim/test_data/sample_book/01_chapter/document.pdf"
     @doc.save_pdf(@pdf_path)
-    File.exist?(@pdf_path).must_equal true
+    assert File.exist?(@pdf_path)
     system "open #{@pdf_path}"
   end
 

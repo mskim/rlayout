@@ -8,20 +8,17 @@ module RLayout
       start_time    = Time.now
       # style_service = RLayout::StyleService.shared_style_service
       @pdf_doc  = HexaPDF::Document.new
-      pdf_page  = @pdf_doc.pages.add([0, 0, @width, @height])
-      canvas    = pdf_page.canvas
+      # pdf_page  = @pdf_doc.pages.add([0, 0, @width, @height])
+      # canvas    = pdf_page.canvas
       # style_service.pdf_doc = @pdf_doc
       # load_fonts(@pdf_doc)     
       # style_service.set_canvas_text_style(canvas, 'body')
       pages.each do |page|
+        pdf_page    = @pdf_doc.pages.add([0, 0, @width, @height])
+        canvas      = pdf_page.canvas
         page.draw_pdf(canvas)
-        page    = @pdf_doc.pages.add([0, 0, @width, @height])
-        canvas  = page.canvas
       end
       @pdf_doc.write(output_path)
-      # if options[:jpg]
-      #   convert_pdf2jpg(output_path)
-      # end
       ending_time = Time.now
       puts "It took:#{ending_time - start_time}" if options[:time]
     end

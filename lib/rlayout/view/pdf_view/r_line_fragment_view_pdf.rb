@@ -14,6 +14,7 @@ module RLayout
         end
       end
       # draw overflow x mark
+      # @stroke.color == 'red'
       if @stroke.color == 'red' && @stroke[:sides] = [1,1,1,1,1,1]
         canvas.save_graphics_state do
           canvas.stroke_color(0, 255, 254, 0).rectangle(@start_x, @start_y - @height, @width, @height).stroke
