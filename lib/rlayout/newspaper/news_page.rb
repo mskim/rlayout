@@ -166,6 +166,8 @@ module RLayout
         end
       end
       layout_page_heading
+      layout_ad_box if @ad_box_rect
+
       create_pillar_divider_lines if @draw_divider
       # delete_old_files
       save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
