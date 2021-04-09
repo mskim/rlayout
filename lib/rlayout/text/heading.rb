@@ -47,6 +47,7 @@ module RLayout
     attr_accessor :number_object, :title_object, :subtitle_object, :leading_object, :author_object
     attr_accessor :align_to_body_text
     def initialize(options={}, &block)
+      options[:fill_color] = 'red'
       super
       case $publication_type
       when "magazine"
@@ -202,6 +203,7 @@ module RLayout
     ######## PageScript verbes
     def title(string, options={})
       atts                        = @current_style["title"]
+      atts[:style_name]           = 'title'
       atts[:text_string]          = string
       atts[:width]                = @width
       atts[:text_fit_type]        = 'adjust_box_height'
@@ -209,22 +211,21 @@ module RLayout
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts                        = options.merge(atts)
       atts[:parent]               = self
-      TitleText(atts)
-      @title_object               = @graphics.last
-
+      @title_object               = RLayout::TitleText.new(atts)
       @title_object.layout_length = @title_object.height
       @title_object
     end
 
     def subtitle(string, options={})
       atts                          = @current_style["subtitle"]
+      atts[:style_name]             = 'subtitle'
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts                          = options.merge(atts)
       atts[:parent]                 = self
-      @subtitle_object              = TitleText(atts)
+      @subtitle_object              = RLayout::TitleText.new(atts)
       @subtitle_object.layout_expand= [:width]
       @subtitle_object.layout_length= @subtitle_object.height
       @subtitle_object
@@ -232,13 +233,14 @@ module RLayout
 
     def leading(string, options={})
       atts                          = @current_style["leading"]
+      atts[:style_name]             = 'leading'
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts                          = options.merge(atts)
       atts[:parent]                 = self
-      @leading_object               = TitleText(atts)
+      @leading_object               = RLayout::TitleText.new(atts)
       @leading_object.layout_expand = [:width]
       @leading_object.layout_length = @leading_object.height
       @leading_object
@@ -246,6 +248,7 @@ module RLayout
 
     def author(string, options={})
       atts                          = @current_style["author"]
+      atts[:style_name]             = 'author'
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
@@ -253,7 +256,7 @@ module RLayout
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       atts                          = options.merge(atts)
       atts[:parent]                 = self
-      @author_object                = TitleText(atts)
+      @author_object                = RLayout::TitleText.new(atts)
       @author_object.layout_expand  = [:width]
       @author_object.layout_length  = @author_object.height
       @author_object

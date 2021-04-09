@@ -1,7 +1,7 @@
 module RLayout
   class Graphic
     def draw_fill(canvas)
-      if self.class == RTextToken || @fill.color == 'clear'
+      if self.class == RDocument || self.class == RTextToken || @fill.color == 'clear'
         return
       end
       unless @fill.color
@@ -19,6 +19,7 @@ module RLayout
       canvas.save_graphics_state do
         case @shape
         when RLayout::RectStruct
+          flipped = flipped_origin unless flipped
           canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] - @height, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
             # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
         when RoundRectStruct

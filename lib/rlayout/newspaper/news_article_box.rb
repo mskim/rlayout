@@ -581,17 +581,7 @@ module RLayout
 
     def subject_head(options={})
       atts = {}
-      # if top_story
-      #   atts[:style_name] = 'subject_head_main'
-      # elsif @heading_columns > 5
-      #   atts[:style_name] = 'subject_head_L'
-      # elsif @heading_columns > 3
-      #   atts[:style_name] = 'subject_head_M'
-      # else
-      #   atts[:style_name] = 'subject_head_S'
-      # end
       atts[:style_name] = 'subject_head_editorial'
-
       #todo second half string
       atts[:text_string]        = options['subject_head']
       atts[:body_line_height]   = @body_line_height
@@ -656,10 +646,6 @@ module RLayout
       if @subtitle_type != '제목밑 가로'
         float_subtitle(heading_hash['subtitle']) if heading_hash['subtitle'] && heading_hash['subtitle'] != ""
       end
-
-      # if heading_hash['personal_image']
-      #   float_personal_image(heading_hash)
-      # end
 
       if heading_hash['quote']
         float_quote(heading_hash)

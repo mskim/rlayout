@@ -18,18 +18,18 @@ describe 'container_stroke_drawing test' do
   end
 
   it 'should create Graphic object' do
-    @g.must_be_kind_of Container
+    assert_equal Container, @g.class 
   end
 
   it 'should have top_margin ' do
-    @g.top_margin.must_equal 50
-    @g.left_margin.must_equal 50
-    @g.right_margin.must_equal 50
+    assert_equal 50, @g.top_margin
+    assert_equal 50, @g.left_margin
+    assert_equal 50, @g.right_margin
   end
 
   it 'should save pdf' do
     @g.save_pdf(@pdf_path)
-    File.exist?(@pdf_path).must_equal true
+    assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
   end
 end

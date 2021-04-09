@@ -50,8 +50,6 @@ module RLayout
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
-      @x                  = 0
-      @y                  = 0
       @output_path        = options[:output_path]
       @layout_alignment   = options[:v_alignment]
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
@@ -104,7 +102,7 @@ module RLayout
         # place image in the background, change size, width, or height as instructed
       end
 
-      @y_position = 20
+      @y_position = 10
       if options[:title]
         t = @title_object = title(options[:title])
         @title_object.y = @y_position

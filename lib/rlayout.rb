@@ -20,7 +20,7 @@ else
   require 'erb'
   require 'base64'
   require 'json'
-  # require 'mini_magick'
+  require 'mini_magick'
   require "image_processing/vips"
   require "image_processing"
   require 'hexapdf'
@@ -70,7 +70,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/view/svg_view/paragraph_view_svg'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_text_token_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_line_fragment_view_pdf'
-  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/document_view_pdf'
+  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_document_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_heading_pdf_view'  
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/stroke'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/fill'
@@ -131,11 +131,8 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_pillar'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_page'
 
-  require File.dirname(__FILE__) + '/rlayout/magazine/article.rb'
   require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article.rb'
-  require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article_maker.rb'
 
-  # require File.dirname(__FILE__) + "/rlayout/svg/graphic"
   require File.dirname(__FILE__) + "/rlayout/svg/circle"
   require File.dirname(__FILE__) + "/rlayout/svg/image"
   require File.dirname(__FILE__) + "/rlayout/svg/line"

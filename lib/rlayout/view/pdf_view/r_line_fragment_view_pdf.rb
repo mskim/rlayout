@@ -2,7 +2,6 @@ module RLayout
   class RLineFragment < Container
     def draw_pdf(canvas, options={})
       return unless @graphics.length > 0
-
       @pdf_doc = parent.pdf_doc
       @style_service = RLayout::StyleService.shared_style_service
       @flipped = flipped_origin
@@ -14,6 +13,7 @@ module RLayout
         end
       end
       # draw overflow x mark
+      # @stroke.color == 'red'
       if @stroke.color == 'red' && @stroke[:sides] = [1,1,1,1,1,1]
         canvas.save_graphics_state do
           canvas.stroke_color(0, 255, 254, 0).rectangle(@start_x, @start_y - @height, @width, @height).stroke
