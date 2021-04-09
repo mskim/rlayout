@@ -61,6 +61,13 @@ module RLayout
       end
     end
 
+    def first_text_line
+      @pages.each do |page|
+        text_line = page.first_text_line
+        return text_line if text_line
+      end
+    end
+
     def layout_rect
       [@left_margin, @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
     end

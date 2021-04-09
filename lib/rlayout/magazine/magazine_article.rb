@@ -109,12 +109,10 @@ module RLayout
         page.set_overlapping_grid_rect
         page.update_column_areas
       end
-      first_page_with_text_line, first_text_line =  @document.first_page_with_text_line
-      next_line = first_page_with_text_line.layout_items(@paragraphs, first_text_line)
-      # for magazine , do not add pages even if we have overflowing paragraphs
-      while @paragraphs.length > 0 && page_index < @document.pages.length
-        next_page = next_line.page
-        next_page.layout_items(@paragraphs, next_line)
+      current_line =  @document.first_text_line
+      while @paragraph = @paragraphs.shift do
+        current_line = @paragraph.layout_lines(current_line)
+        break unless current_line
       end
       # update_header_and_footer
     end

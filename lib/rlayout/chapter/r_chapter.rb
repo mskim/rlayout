@@ -260,10 +260,11 @@ module RLayout
       @first_page               = @document.pages[0]
       @current_line = @first_page.first_text_line
       while @paragraph = @paragraphs.shift
-        last_page     = @current_line.parent
+        # last_page     = @current_line.parent
         @current_line = @paragraph.layout_lines(@current_line)
         unless @current_line
           # retruns first_text_line
+          binding.pry
           @current_line = @document.next_page(last_page)
         end
       end

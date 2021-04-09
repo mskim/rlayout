@@ -214,25 +214,6 @@ module RLayout
       h
     end
 
-    def layout_items(paragraphs, options={})
-      current_line = first_text_line
-      while @item = paragraphs.shift do
-        current_line = @item.layout_lines(current_line)
-      end
-      return if  current_line
-      # #   @current_column  = current_line.column
-      # # end
-      # @overflow  = true if @overflow_column.graphics.first && @overflow_column.graphics.first.layed_out_line?
-
-      # if @overflow && !@adjustable_height
-      #   last_line_of_box.fill.color = 'red'
-      # else
-      #   @empty_lines    = article_box_unoccupied_lines_count
-      #   @underflow = true if @empty_lines > 0
-      # end
-      # TODO:
-      save_page_info if  @page_by_page
-    end
 
     # TODO:
     def save_page_info

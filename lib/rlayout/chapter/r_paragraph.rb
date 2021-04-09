@@ -289,11 +289,7 @@ module RLayout
             @line_count += 1
             token = result
           else
-            if @current_line.parent.class == RLayout::RPage
-              @current_line = @current_line.parent.next_page
-            else
-              @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
-            end
+            @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
             # break #reached end of last column
             # tokens_copy.unshift(result) #stick the unplace token back to the tokens_copy
             token = result
