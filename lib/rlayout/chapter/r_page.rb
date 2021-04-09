@@ -150,7 +150,6 @@ module RLayout
 
     def add_new_page
       @parent.add_new_page
-      # retruns first_text_line
     end
 
     def next_page

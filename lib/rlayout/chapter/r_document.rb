@@ -26,7 +26,12 @@ module RLayout
       end
       @starting_page    = options[:starting_page]   || 1
       @max_page_number  = options[:max_page_number] || 999
-      @body_line_count  = options[:body_line_count] || 40
+      if options[:body_line_count]
+        @body_line_count  = options[:body_line_count] || 40
+      else
+        @body_line_count  = 40 if @page_size == "A4"
+        @body_line_count  = 25 if @page_size == "A5"
+      end
       @left_margin      = options[:left_margin]     || 50
       @top_margin       = options[:top_margin]      || 50
       @right_margin     = options[:right_margin]    || 50
