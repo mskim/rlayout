@@ -25,7 +25,6 @@ module RLayout
       end
       ending_time = Time.now
       # puts "It took:#{ending_time - start_time}" if options[:time]
-
     end
 
     # read fonts from disk
@@ -39,13 +38,13 @@ module RLayout
     # def to_pdf(canvas)
     def draw_pdf(canvas)
       @pdf_doc = parent.pdf_doc if parent
+      flipped = flipped_origin
       @graphics.each do |g|
         g.draw_pdf(canvas)
       end
       @floats.each do |g|
         g.draw_pdf(canvas)
       end
-      # end
     end
 
 

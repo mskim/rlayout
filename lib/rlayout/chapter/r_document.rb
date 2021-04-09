@@ -26,13 +26,13 @@ module RLayout
       end
       @starting_page    = options[:starting_page]   || 1
       @max_page_number  = options[:max_page_number] || 999
-      @body_line_count  = options[:body_line_count] || 23
+      @body_line_count  = options[:body_line_count] || 40
       @left_margin      = options[:left_margin]     || 50
       @top_margin       = options[:top_margin]      || 50
       @right_margin     = options[:right_margin]    || 50
       @bottom_margin    = options[:bottom_margin]   || 50
       @column_count     = options[:column_count]    || 1
-      @gutter           = options[:gutter]          || 10
+      @gutter           = options[:gutter]          || 20
       unless @body_line_height
         @body_line_height   = (@height - @top_margin - @bottom_margin)/@body_line_count
       end
@@ -67,6 +67,7 @@ module RLayout
 
     # create new page and return first line of of main_box
     def add_new_page(options={})
+      previous_line = @pages.last.last_line if @pages.length > 0
       h                 = {}
       h[:parent]        = self
       h[:width]         = @width
@@ -75,7 +76,9 @@ module RLayout
       h[:page_number]   += @starting_page
       h[:float_layout]  += page_float_layout[options[:page_index]] if @page_float_layout
       new_page = RPage.new(h)
-      new_page.first_text_line
+      new_page_first_line = new_page.first_text_line
+      previous_line.next_line = new_page_first_line if previous_line
+      new_page_first_line
     end
 
     def next_page(page)

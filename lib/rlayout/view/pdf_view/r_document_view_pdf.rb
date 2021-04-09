@@ -6,12 +6,10 @@ module RLayout
     def save_pdf_with_ruby(output_path, options={})
       # puts "genrateing pdf ruby "
       start_time    = Time.now
-      # style_service = RLayout::StyleService.shared_style_service
+      style_service = RLayout::StyleService.shared_style_service
       @pdf_doc  = HexaPDF::Document.new
-      # pdf_page  = @pdf_doc.pages.add([0, 0, @width, @height])
-      # canvas    = pdf_page.canvas
-      # style_service.pdf_doc = @pdf_doc
-      # load_fonts(@pdf_doc)     
+      style_service.pdf_doc = @pdf_doc
+      load_fonts(@pdf_doc)     
       # style_service.set_canvas_text_style(canvas, 'body')
       pages.each do |page|
         pdf_page    = @pdf_doc.pages.add([0, 0, @width, @height])

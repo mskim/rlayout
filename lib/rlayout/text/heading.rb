@@ -47,6 +47,7 @@ module RLayout
     attr_accessor :number_object, :title_object, :subtitle_object, :leading_object, :author_object
     attr_accessor :align_to_body_text
     def initialize(options={}, &block)
+      options[:fill_color] = 'red'
       super
       case $publication_type
       when "magazine"
@@ -202,6 +203,7 @@ module RLayout
     ######## PageScript verbes
     def title(string, options={})
       atts                        = @current_style["title"]
+      atts[:style_name]           = 'title'
       atts[:text_string]          = string
       atts[:width]                = @width
       atts[:text_fit_type]        = 'adjust_box_height'
@@ -216,6 +218,7 @@ module RLayout
 
     def subtitle(string, options={})
       atts                          = @current_style["subtitle"]
+      atts[:style_name]             = 'subtitle'
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
@@ -230,6 +233,7 @@ module RLayout
 
     def leading(string, options={})
       atts                          = @current_style["leading"]
+      atts[:style_name]             = 'leading'
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
@@ -244,6 +248,7 @@ module RLayout
 
     def author(string, options={})
       atts                          = @current_style["author"]
+      atts[:style_name]             = 'author'
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'

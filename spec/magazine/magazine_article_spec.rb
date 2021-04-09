@@ -7,6 +7,7 @@ describe 'overlapping floats' do
     h[:article_path] = @article_path
     @article_maker   = MagazineArticle.new(h)
     @article         = @article_maker.document
+    @pdf_path       = @article_path + '/article.pdf'
   end
 
   it 'should create MagazineArticle' do
@@ -14,9 +15,9 @@ describe 'overlapping floats' do
   end
 
   it 'should have width,' do
-    assert_equal @article.width, 595.28
-    assert_equal @article.height, 841.89
-    assert_equal @article.column_count, 2
+    assert_equal 595.28, @article.width
+    assert_equal 841.89, @article.height
+    assert_equal 2, @article.column_count
   end
 
   it 'should have pages' do
@@ -24,4 +25,8 @@ describe 'overlapping floats' do
     assert_equal 2, @article.pages.count
   end
 
+  it 'should save pdf ' do
+    assert File.exist?(@pdf_path)
+    system("open #{@pdf_path}")
+  end
 end

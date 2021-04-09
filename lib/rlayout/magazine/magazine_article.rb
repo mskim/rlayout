@@ -43,7 +43,7 @@ module RLayout
       end
       read_story
       layout_story
-      @document.save_pdf(@output_path, output_options)
+      @document.save_pdf(@output_path)
       self
     end
 
@@ -58,9 +58,14 @@ module RLayout
       if @document.pages[0].has_heading?
         @document.pages[0].get_heading.set_heading_content(@heading)
         @document.pages[0].relayout!
-      elsif @document.pages[0]
-        if @document.pages[0].floats.length == 0
-          @document.pages[0].floats << Heading.new(@heading)
+      elsif @first_page = @document.pages[0]
+        if @first_page.floats.length == 0
+          @heading[:parent] = @first_page
+          @heading[:x]      = @first_page.left_margin
+          @heading[:y]      = @first_page.top_margin
+          @heading[:width]  = @first_page.width - @first_page.left_margin - @first_page.right_margin
+          @heading[:is_float] = true
+          RHeading.new(@heading)
         elsif @document.pages[0].has_heading?
           @document.pages[0].get_heading.set_heading_content(@heading)
         end
@@ -100,6 +105,7 @@ module RLayout
       page_index                = 0
       @document.pages.each do |page|
         page.layout_floats
+        page.adjust_overlapping_columns
         page.set_overlapping_grid_rect
         page.update_column_areas
       end

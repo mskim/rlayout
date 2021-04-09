@@ -14,8 +14,9 @@ module RLayout
     attr_accessor :fixtures, :floats, :document, :column_count, :first_page, :body_line_count, :body_line_height
     attr_accessor :body_lines, :gutter, :body_line_count
     attr_reader :float_layout, :page_by_page
-
+    attr_reader :empty_first_column
     def initialize(options={}, &block)
+      options[:fill_color] = 'white'
       super
       if options[:parent] || options[:document]
         @parent       = options[:parent] || options[:document]
@@ -55,7 +56,7 @@ module RLayout
       # if @parent && @parent.double_side
       @fixtures = []  # header, footer
       @floats   = []
-      create_body_lines
+      create_columns
       add_floats
       # relayout!
       if block
@@ -64,28 +65,34 @@ module RLayout
       self
     end
 
-    # TODO
-    def create_body_lines
-      prev_line = nil
+    # create news_columns
+    def create_columns
       current_x = @left_margin
-      @column_count.times do |column_index|
-        current_y = @top_margin
-        @body_line_count.times do |line_index|
-          h = {}
-          h[:parent]  = self
-          h[:x]       = current_x
-          h[:y]       = current_y
-          h[:width]   = @column_width
-          h[:height]  = @body_line_height
-          new_line    = RLineFragment.new(h)
-          current_y += @body_line_height
-          # set next_line link
-          prev_line.next_line = new_line if prev_line
-          prev_line = new_line
+      @column_height = @height - @top_margin - @bottom_margin
+      @column_count.times do |i|
+        if @empty_first_column && i == 0
+          g= RColumn.new(parent:self, empty_lines: true, x: current_x, y: @top_margin, width: @column_width, height: @column_height, column_line_count: @body_line_count, body_line_height: @body_line_height)
+          current_x += @column_width + @gutter
+        else
+          # TODO: why? parent:self
+          g= RColumn.new(parent:self, x: current_x, y: @top_margin, width: @column_width, height: @column_height, column_line_count: @body_line_count, body_line_height: @body_line_height)
+          current_x += @column_width + @gutter
         end
-        current_x += @column_width + @gutter
+      end
+      link_column_lines
+    end
+
+    def link_column_lines
+      previous_column_last_line = nil
+      @graphics.each_with_index do |column, i|
+        next if @empty_first_column && i == 0
+        first_line                          = column.graphics.first
+        last_line                           = column.graphics.last
+        previous_column_last_line.next_line = first_line if previous_column_last_line
+        previous_column_last_line           = last_line
       end
     end
+
 
     def add_floats
       @float_layout.each do |float|
@@ -118,11 +125,19 @@ module RLayout
     end
 
     def first_line
-      @graphics.first
+      @graphics.first.graphics.first
+    end
+
+    def last_line
+      @graphics.last.graphics.last
     end
 
     def body_lines
-      @graphics
+      body_lines = []
+      @graphics.each do |column|
+        body_lines += column.graphics
+      end
+      body_lines.flatten
     end
 
     def text_lines
@@ -204,17 +219,17 @@ module RLayout
       while @item = paragraphs.shift do
         current_line = @item.layout_lines(current_line)
       end
-      if  current_line
-        @current_column  = current_line.column
-      end
-      @overflow  = true if @overflow_column.graphics.first && @overflow_column.graphics.first.layed_out_line?
+      return if  current_line
+      # #   @current_column  = current_line.column
+      # # end
+      # @overflow  = true if @overflow_column.graphics.first && @overflow_column.graphics.first.layed_out_line?
 
-      if @overflow && !@adjustable_height
-        last_line_of_box.fill.color = 'red'
-      else
-        @empty_lines    = article_box_unoccupied_lines_count
-        @underflow = true if @empty_lines > 0
-      end
+      # if @overflow && !@adjustable_height
+      #   last_line_of_box.fill.color = 'red'
+      # else
+      #   @empty_lines    = article_box_unoccupied_lines_count
+      #   @underflow = true if @empty_lines > 0
+      # end
       # TODO:
       save_page_info if  @page_by_page
     end
@@ -226,8 +241,56 @@ module RLayout
 
     # TODO:
     def layout_floats
+      return unless @floats
+      @occupied_rects =[]
+      if has_heading? && (@heading_columns != @column_count)
+        heading = get_heading
+        heading.width = @column_width
+        heading.x     = @starting_column_x
+      end
+      #TODO position bottom bottom_occupied_rects
 
+      @middle_occupied_rects = []
+      @bottom_occupied_rects = []
+      @floats.each_with_index do |float, i|
+        @float_rect = float.frame_rect
+        if i==0
+          @occupied_rects << float.frame_rect
+        elsif @column_count == 2 && float.class == RLayout::NewsHeadingForOpinion
+          # when we have 2 column opinion, width gets too small for title
+          # so we are overlapping title on top of the image
+          next
+        elsif intersects_with_occupied_rects?(@occupied_rects, @float_rect)
+          # move to some place
+          move_float_to_unoccupied_area(@occupied_rects, float)
+          @occupied_rects << float.frame_rect
+        else
+          @occupied_rects << @float_rect
+        end
+      end
+      true
     end
+
+    # adjust overlapping line_fragment text area
+    # this method is called when float positions have changed
+    def adjust_overlapping_columns
+      @graphics.each_with_index do |column, i|
+        overlapping_floats = overlapping_floats_with_column(column)
+        column.adjust_overlapping_lines(overlapping_floats)
+      end
+    end
+    
+    # # create lines that are adjusted for overflapping floats
+    # # This is called after floats are layoued out.
+    # def create_column_lines
+    def overlapping_floats_with_column(column)
+      overlapping_floats = []# IDEA: ndi
+      @floats.each do |float|
+        overlapping_floats << float if intersects_rect(column.frame_rect, float.frame_rect)
+      end
+      overlapping_floats
+    end
+
 
     def set_overlapping_grid_rect
 
