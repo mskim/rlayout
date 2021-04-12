@@ -5,8 +5,8 @@ describe 'overlapping floats' do
     @article_path   = "/Users/mskim/test_data/magazine/1_article"
     h = {}
     h[:article_path] = @article_path
-    @article_maker   = MagazineArticle.new(h)
-    @article         = @article_maker.document
+    @article_maker  = MagazineArticle.new(h)
+    @article        = @article_maker.document
     @pdf_path       = @article_path + '/article.pdf'
   end
 
@@ -17,7 +17,7 @@ describe 'overlapping floats' do
   it 'should have width,' do
     assert_equal 595.28, @article.width
     assert_equal 841.89, @article.height
-    assert_equal 2, @article.column_count
+    assert_equal 3, @article.column_count
   end
 
   it 'should have pages' do

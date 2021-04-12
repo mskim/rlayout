@@ -137,6 +137,19 @@ module RLayout
     end
   end
 
+  class NewsFloat < Container
+    def draw_pdf(canvas, options={})
+      @canvas = canvas
+      canvas.save_graphics_state do
+        @image_box.draw_image(canvas) if @image_box
+        @image_box.draw_stroke(canvas)
+      end
+      if @caption_column
+        @caption_column.draw_pdf(@canvas) 
+      end
+    end
+  end
+
   class NewsColumnImage < Container
     def draw_pdf(canvas, options={})
       pdf_doc = options[:pdf_doc]

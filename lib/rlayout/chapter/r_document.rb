@@ -7,8 +7,8 @@ module RLayout
     attr_accessor :pages, :document_view, :starting_page
     attr_accessor :toc_elements
     attr_reader :left_margin, :top_margin, :right_margin, :bottom_margin, :gutter
-    attr_accessor :pdf_path, :jpg, :preview, :column_count, :column_width, :layout_style
-    attr_accessor :heading_type, :body_line_count, :body_line_height
+    attr_accessor :pdf_path, :jpg, :preview, :column_count, :row_count, :column_width, :layout_style
+    attr_accessor :heading_height_type, :body_line_count, :body_line_height
     attr_reader :max_page_number, :page_count, :starting_page
     # attr_reader :document_path, :outpout_path
     def initialize(options={}, &block)
@@ -37,6 +37,7 @@ module RLayout
       @right_margin     = options[:right_margin]    || 50
       @bottom_margin    = options[:bottom_margin]   || 50
       @column_count     = options[:column_count]    || 1
+      @row_count        = options[:row_count]       || 6
       @gutter           = options[:gutter]          || 20
       unless @body_line_height
         @body_line_height   = (@height - @top_margin - @bottom_margin)/@body_line_count

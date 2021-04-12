@@ -24,16 +24,8 @@
 #  author
 
 # Todo
-# 2016 9 20
-# HeadingContainer
-#  support pre-made pdf image as options[:image]
-#  support background pdf image as options[:background]
-
-# 2014 12 17
-# 1. Use TextRun and TextLine instead of Text
-# 2. Create Banner Class
-
-
+# Adjust size 
+# align to v center
 
 module RLayout
 
@@ -45,11 +37,22 @@ module RLayout
   # heading height should be multiles of body text height
   class RHeading < Container
     attr_accessor :number_object, :title_object, :subtitle_object, :quote_object, :author_object
-    attr_accessor :align_to_body_text, :output_path
+    attr_reader :align_to_body_text, :output_path
+    attr_reader :height_sum, :heading_height_type # natural, quarter, half, full
     def initialize(options={}, &block)
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
+      @heading_height_type  = options[:heading_height_type] || "half"
+      if @parent
+        case @heading_height_type
+        when "natural"
+        when "quarter"
+          @height = @parent.layout_size[1]/4
+        when "half"
+          @height = @parent.layout_size[1]/2
+        end
+      end
       @output_path        = options[:output_path]
       @layout_alignment   = options[:v_alignment]
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]
@@ -101,7 +104,6 @@ module RLayout
       if options[:background]
         # place image in the background, change size, width, or height as instructed
       end
-
       @y_position = 10
       if options[:title]
         t = @title_object = title(options[:title])
@@ -109,7 +111,7 @@ module RLayout
         @y_position += t.height
       else
         h = {x:0, y: @y}
-        @title_object = title('Untitled')
+        t = @title_object = title('Untitled')
         @title_object.y = @y_position
         @y_position += t.height
       end
@@ -121,10 +123,12 @@ module RLayout
       end
 
       if options[:quote]
-        @quote_object = quote(options[:quote])
+        t = @quote_object = quote(options[:quote])
         @quote_object.y = @y_position + 10
+        @y_position += t.height
       end
 
+      @height = @y_position + 50 #if @height_type == 'natural'
       # relayout!
 
       self

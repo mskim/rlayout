@@ -24,7 +24,7 @@ module RLayout
     attr_reader   :draw_frame, :position
 
     def initialize(options={})
-     if options[:parent]
+      if options[:parent]
         @parent_column       = options[:parent].column_count
         @parent_row          = options[:parent].row_count
       else
@@ -60,8 +60,8 @@ module RLayout
       end
       @x                      = frame_rect[0]
       @y                      = frame_rect[1]
-      # @width                  = frame_rect[2]
-      # @height                 = frame_rect[3] - 4 #TODO body_leading
+      @width                  = frame_rect[2]
+      @height                 = frame_rect[3]
 
       # TODO get x, y with position
       # we need column, row

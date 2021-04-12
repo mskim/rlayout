@@ -14,13 +14,19 @@ module RLayout
   class MagazineArticle
     attr_accessor :article_path, :layout_rb, :story_path, :images_dir, :tables_dir
     attr_accessor :document, :style, :starting_page, :page_count
-    attr_accessor :output_path
+    attr_accessor :doc_info_path, :page_floats, :output_path
 
     def initialize(options={} ,&block)
       $publication_type = "magazine"
       @article_path     = options[:article_path] || options[:project_path]
+      @doc_info_path    = @article_path + "/doc_info.yml"
       @starting_page    = options.fetch(:starting_page, 1)
       @page_count       = options.fetch(:page_count, 1)
+      if options[:page_floats]
+        @page_floats      = options.fetch(:page_floats, [])
+      else
+        read_page_floats 
+      end
       @article_path     = options[:article_path]
       @story_path       = Dir.glob("#{@article_path}/*.{md,markdown}").first
       if !@story_path && @article_path
@@ -41,10 +47,22 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
+      @document.starting_page = @starting_page
+      # place floats to pages
+
       read_story
       layout_story
       @document.save_pdf(@output_path)
       self
+    end
+
+    def read_page_floats
+      unless File.exists?(@doc_info_path)
+        puts "Can not find file #{@doc_info_path}!!!!"
+        return {}
+      end
+      @doc_info = YAML::load_file(@doc_info_path)
+      @page_floats = @doc_info[:page_floats]
     end
 
     def read_story
@@ -65,11 +83,24 @@ module RLayout
           @heading[:y]      = @first_page.top_margin
           @heading[:width]  = @first_page.width - @first_page.left_margin - @first_page.right_margin
           @heading[:is_float] = true
+          @heading[:heading_height_type] = 'natural'
           RHeading.new(@heading)
         elsif @document.pages[0].has_heading?
           @document.pages[0].get_heading.set_heading_content(@heading)
         end
       end
+
+      if @page_floats
+        @document.pages.each_with_index do |p,i|
+          page_floats = @page_floats[i]
+          p.add_floats(page_floats)
+          p.layout_floats
+          p.adjust_overlapping_columns
+          p.set_overlapping_grid_rect
+          p.update_column_areas
+        end
+      end
+
       @paragraphs =[]
       @story[:paragraphs].each do |para|
         para[:layout_expand]  = [:width]
@@ -102,13 +133,12 @@ module RLayout
     end
 
     def layout_story
-      page_index                = 0
-      @document.pages.each do |page|
-        page.layout_floats
-        page.adjust_overlapping_columns
-        page.set_overlapping_grid_rect
-        page.update_column_areas
-      end
+      # @document.pages.each do |page|
+      #   page.layout_floats
+      #   page.adjust_overlapping_columns
+      #   page.set_overlapping_grid_rect
+      #   page.update_column_areas
+      # end
       current_line =  @document.first_text_line
       while @paragraph = @paragraphs.shift do
         current_line = @paragraph.layout_lines(current_line)

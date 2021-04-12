@@ -25,7 +25,6 @@ module RLayout
       end
       ending_time = Time.now
       # puts "It took:#{ending_time - start_time}" if options[:time]
-
     end
 
     # read fonts from disk

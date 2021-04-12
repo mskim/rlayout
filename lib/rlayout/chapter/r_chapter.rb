@@ -159,9 +159,12 @@
 #   end
 # end
 
-# heading_type
+# heading_height_type
 #   fixed height: use HeightContent
-#   growing height: use Heading
+
+#   natural, quarter, half, full_page
+
+#   natural: growing height: use Heading
 
 # chapter folder
 # config.yml
@@ -179,7 +182,7 @@ module RLayout
     attr_reader :document_path, :story_path
     attr_reader :document, :output_path, :column_count
     attr_reader :doc_info, :toc_content
-    attr_reader :book_title, :title, :starting_page, :heading_type, :heading
+    attr_reader :book_title, :title, :starting_page, :heading_height_type, :heading
     attr_reader :body_line_count, :body_line_height
     attr_reader :max_page_number, :page_floats
 
@@ -218,14 +221,35 @@ module RLayout
       end
       @document.starting_page = @starting_page
       # place floats to pages
-      @page_floats.each_with_index do |page_float,i| 
-        p = @document.pages[i]
-        unless  p
-          @document.add_new_page 
-          p = @document.pages[i]
-        end
-        p.add_floats(page_float)
+      if options[:page_floats]
+        @page_floats      = options.fetch(:page_floats, [])
+      else
+        read_page_floats 
       end
+      
+      if @page_floats
+        page_floats_page_count = @page_floats.keys.sort.last + 1
+        need_page_count = page_floats_page_count - @document.pages.length
+        if need_page_count > 0
+          need_page_count.times do 
+            @document.add_new_page
+          end
+        end
+        @document.pages.each_with_index do |p,i|
+          page_floats = @page_floats[i]
+          p.add_floats(page_floats) if page_floats
+        end
+      end
+
+      # @page_floats.each_with_index do |page_float,i| 
+      #   p = @document.pages[i]
+      #   unless  p
+      #     @document.add_new_page 
+      #     p = @document.pages[i]
+      #   end
+      #   page_floats = @page_floats[i]
+      #   p.add_floats(page_float)
+      # end
       read_story
       layout_story
       @document.save_pdf(@output_path) unless options[:no_output]
@@ -238,13 +262,39 @@ module RLayout
       EOF
     end
 
+    def read_page_floats
+      unless File.exists?(doc_info_path)
+        puts "Can not find file #{doc_info_path}!!!!"
+        return {}
+      end
+      @doc_info = YAML::load_file(doc_info_path)
+      @page_floats = @doc_info[:page_floats]
+    end
+
     def read_story
       if @story_md 
         @story  = Story.new(nil).markdown2para_data(source:@story_md)
       else
         @story  = Story.new(@story_path).markdown2para_data
       end
-      @heading                = @story[:heading] || {}
+      @heading  = @story[:heading] || {}
+      @title    = @heading[:title] || "Untitled"
+      if @document.pages[0].has_heading?
+        @document.pages[0].get_heading.set_heading_content(@heading)
+        @document.pages[0].relayout!
+      elsif @first_page = @document.pages[0]
+        if @first_page.floats.length == 0
+          @heading[:parent] = @first_page
+          @heading[:x]      = @first_page.left_margin
+          @heading[:y]      = @first_page.top_margin
+          @heading[:width]  = @first_page.width - @first_page.left_margin - @first_page.right_margin
+          @heading[:is_float] = true
+          RHeading.new(@heading)
+        elsif @document.pages[0].has_heading?
+          @document.pages[0].get_heading.set_heading_content(@heading)
+        end
+      end
+
       @paragraphs =[]
       @story[:paragraphs].each do |para|
         para_options = {}
@@ -256,7 +306,12 @@ module RLayout
     end
     
     def layout_story
-      @page_index               = 0
+      @document.pages.each do |page|
+        page.layout_floats
+        page.adjust_overlapping_columns
+        page.set_overlapping_grid_rect
+        page.update_column_areas
+      end
       @first_page               = @document.pages[0]
       @current_line             = @first_page.first_text_line
       while @paragraph = @paragraphs.shift
@@ -264,7 +319,6 @@ module RLayout
         @current_line = @paragraph.layout_lines(@current_line)
         unless @current_line
           # retruns first_text_line
-          # binding.pry
           @current_line = @document.add_new_page
         end
       end
@@ -276,10 +330,14 @@ module RLayout
       @starting_page + @page_view_count
     end
 
+    def doc_info_path
+      @document_path + "/doc_info.yml"
+    end
+
     def save_doc_info
-      doc_info_path   = @document_path + "/doc_info.yml"
+      # doc_info_path   = @document_path + "/doc_info.yml"
       @doc_info[:toc] = @toc_content
-      File.open(toc_path, 'w') { |f| f.write e@doc_info.to_yaml}
+      File.open(toc_path, 'w') { |f| f.write @doc_info.to_yaml}
     end
 
     def save_toc

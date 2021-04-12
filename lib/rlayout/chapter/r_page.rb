@@ -11,21 +11,34 @@ module RLayout
   class RPage < Container
     attr_accessor :page_number
     attr_accessor :heading_object, :header_object, :footer_object, :side_box_object
-    attr_accessor :fixtures, :floats, :document, :column_count, :first_page, :body_line_count, :body_line_height
+    attr_accessor :fixtures, :floats, :document, :column_count, :row_count, :first_page, :body_line_count, :body_line_height
     attr_accessor :body_lines, :gutter, :body_line_count
     attr_reader :float_layout, :page_by_page
     attr_reader :empty_first_column
+
     def initialize(options={}, &block)
       options[:fill_color] = 'white'
       super
       if options[:parent] || options[:document]
         @parent       = options[:parent] || options[:document]
         @document     = @parent
+        @column_count   = @document.column_count
+        @row_count      = @document.row_count
+      else
+        @column_count   = 1
+        @column_count   = options[:column_count] if options[:column_count]
+        @row_count      = 6
+        @row_count   = options[:row_count] if options[:row_count]
       end
+
+      # default grid is 6x12 grid
+
+      @grid_size = []
+      @grid_size << (@width - @left_margin - @right_margin)/@column_count
+      @grid_size << (@height - @top_margin - @bottom_margin)/@row_count
       @float_layout   = options[:float_layout] || []
       @first_page     = options[:first_page] || false
-      @column_count   = 1
-      @column_count   = options[:column_count] if options[:column_count]
+
       @page_number    = options[:page_number] || 1
       if @document
         @column_count      = @document.column_count
@@ -39,7 +52,7 @@ module RLayout
         @top_margin        = @document.top_margin
         @right_margin      = @document.right_margin
         @bottom_margin     = @document.bottom_margin
-        @heading_type      = @document.heading_type
+        @heading_height_type      = @document.heading_height_type
         @body_line_count   = @document.body_line_count || 30 
         if !@document.pages.include?(self)
           @document.pages << self
@@ -57,7 +70,7 @@ module RLayout
       @fixtures = []  # header, footer
       @floats   = []
       create_columns
-      add_floats
+      # add_floats
       # relayout!
       if block
         instance_eval(&block)
@@ -79,6 +92,7 @@ module RLayout
           current_x += @column_width + @gutter
         end
       end
+      @column_bottom = max_y(@graphics.first.frame_rect)
       link_column_lines
     end
 
@@ -93,28 +107,19 @@ module RLayout
       end
     end
 
-
-    def add_floats
-      @float_layout.each do |float|
+    def add_floats(page_float)
+      page_float.each do |float_info|
+        float = {}
         float[:parent] = self
         float[:is_float] = true
-        if float[:kind] == 'image'
-          NewsImage.new(float)
-        else
-          NewsFloat.new(float)
-        end
+        float[:image_path]  = float_info[0]
+        float[:position]    = float_info[1]
+        grid                = float_info[2].split("x")
+        float[:column]      = grid[0].to_i
+        float[:row]         = grid[1].to_i
+        NewsFloat.new(float)
       end
-      adjust_overlapping_body_lines
-    end
 
-    # adjust text_area of body_lines with overlapping floats
-    def adjust_overlapping_body_lines
-      @floats.each do |float|
-        float_rect = float.frame_rect
-        @graphics.each do |line|
-          line.adjust_text_area_away_from(float_rect)
-        end
-      end
     end
 
     def first_page?
@@ -213,10 +218,40 @@ module RLayout
       h
     end
 
-
     # TODO:
     def save_page_info
 
+    end
+
+    def grid_frame_to_rect(grid_frame, options={})
+      return [0,0,100,100]    unless @graphics
+      return [0,0,100,100]    if grid_frame.nil?
+      return [0,0,100,100]    if grid_frame == ""
+      return [0,0,100,100]    if grid_frame == []
+      grid_frame          = eval(grid_frame) if grid_frame.class == String
+      column_frame        = @graphics.first.frame_rect
+      # when grid_frame[0] is greater than columns
+      frame_x             = column_frame[0]
+      if grid_frame[0] >= @graphics.length
+        frame_x           = @graphics.last.x_max
+      else
+        frame_x           = @graphics[grid_frame[0]].x
+      end
+      frame_y             = @grid_size[1]*grid_frame[1] + @top_margin
+      column_index = (grid_frame[0] + grid_frame[2] - 1).to_i
+      if @graphics[column_index]
+        frame_width         = @graphics[column_index].x_max - frame_x
+      else
+        frame_width         = @graphics[0].x_max - frame_x
+      end
+      frame_height          = @grid_size[1]*grid_frame[3]
+      # if image is on bottom, move up by @article_bottom_spaces_in_lines*@body_line_height
+
+      # bottom   = (grid_frame[1] + grid_frame[3])*7
+      if options[:bottom_position] == true
+        frame_y  = @height - frame_height - @bottom_margin #@article_bottom_spaces_in_lines*@body_line_height
+      end
+      [frame_x, frame_y, frame_width, frame_height]
     end
 
     # TODO:
@@ -249,6 +284,27 @@ module RLayout
         end
       end
       true
+    end
+
+    def intersects_with_occupied_rects?(occupied_arry, new_rect)
+      occupied_arry.each do |occupied_rect|
+        return true if intersects_rect(occupied_rect, new_rect)
+      end
+      false
+    end
+
+    # if float is overlapping, move float to unoccupied area
+    # by moving float to the bottom of the overlapping float.
+    def move_float_to_unoccupied_area(occupied_arry, float)
+      occupied_arry.each do |occupied_rect|
+        if intersects_rect(occupied_rect, float.frame_rect)
+          float.y = max_y(occupied_rect) + 0
+          if max_y(float.frame_rect) > @column_bottom
+            float.height = @column_bottom - float.y
+            float.adjust_image_height if float.respond_to?(:adjust_image_height)
+          end
+        end
+      end
     end
 
     # adjust overlapping line_fragment text area
