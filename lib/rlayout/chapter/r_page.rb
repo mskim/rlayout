@@ -218,9 +218,13 @@ module RLayout
       h
     end
 
-    # TODO:
-    def save_page_info
+    def page_story_md
+      "some page content"
+    end
 
+    # TODO:
+    def save_page_story(page_story_path)
+      File.open(page_story_path, 'w'){|f| f.write page_story_md}
     end
 
     def grid_frame_to_rect(grid_frame, options={})

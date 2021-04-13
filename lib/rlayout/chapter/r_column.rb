@@ -149,6 +149,11 @@ module RLayout
       @parent.column_grid_rect(self)
     end
 
+    def fixed_page_document?
+      return true if @parent && @parent.parent.class == RDocument && @parent.parent.fixed_page_document?
+      false
+    end
+
     def add_new_page
       @parent.add_new_page if @parent && @parent.is_a?(RPage)
     end

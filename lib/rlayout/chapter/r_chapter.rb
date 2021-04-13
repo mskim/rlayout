@@ -236,7 +236,7 @@ module RLayout
           end
         end
         @document.pages.each_with_index do |p,i|
-          page_floats = @page_floats[i]
+          page_floats = @page_floats[i + 1]
           p.add_floats(page_floats) if page_floats
         end
       end

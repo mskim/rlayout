@@ -307,6 +307,9 @@ module RLayout
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
           else
+            if @current_line.parent.fixed_page_document?
+              return nil
+            end
             @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
             # tokens.unshift(token) #stick the unplace token back to the tokens_copy
             # break #reached end of column

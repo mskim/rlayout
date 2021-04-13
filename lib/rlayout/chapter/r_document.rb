@@ -10,6 +10,7 @@ module RLayout
     attr_accessor :pdf_path, :jpg, :preview, :column_count, :row_count, :column_width, :layout_style
     attr_accessor :heading_height_type, :body_line_count, :body_line_height
     attr_reader :max_page_number, :page_count, :starting_page
+    attr_accessor :fixed_page_document
     # attr_reader :document_path, :outpout_path
     def initialize(options={}, &block)
       if options[:page_size] && SIZES[options[:page_size]]
@@ -24,6 +25,7 @@ module RLayout
         @width          = 595.28
         @height         = 841.89
       end
+      @fixed_page_document = false
       @starting_page    = options[:starting_page]   || 1
       @max_page_number  = options[:max_page_number] || 999
       if options[:body_line_count]
@@ -53,6 +55,18 @@ module RLayout
         instance_eval(&block)
       end
       self
+    end
+
+    def fixed_page_document?
+      @fixed_page_document 
+    end
+
+    def save_story_page_by_page(pages_path)
+      FileUtils.mkdir_p(pages_path) unless File.exist?(pages_path)
+      @pages.each_with_index do |p, i|
+        page_story_path = pages_path + "/#{i+1}_story.md"
+        p.save_page_story(page_story_path)
+      end
     end
 
     def first_line

@@ -15,7 +15,7 @@ module RLayout
     attr_accessor :article_path, :layout_rb, :story_path, :images_dir, :tables_dir
     attr_accessor :document, :style, :starting_page, :page_count
     attr_accessor :doc_info_path, :page_floats, :output_path
-
+    attr_reader   :save_page_story
     def initialize(options={} ,&block)
       $publication_type = "magazine"
       @article_path     = options[:article_path] || options[:project_path]
@@ -35,7 +35,8 @@ module RLayout
       end
       @layout_rb    = @article_path + "/layout.rb"
       @output_path  = @article_path + "/article.pdf"
-
+      @pages_path   = @article_path + "/pages"
+      @save_page_story = options[:save_page_story]
       @images_dir = @article_path + "/images"
       @tables_dir = @article_path + "/tables"
       @document     = eval(File.open(@layout_rb,'r'){|f| f.read})
@@ -48,11 +49,14 @@ module RLayout
         return
       end
       @document.starting_page = @starting_page
+      @document.fixed_page_document = true
       # place floats to pages
-
       read_story
       layout_story
-      @document.save_pdf(@output_path)
+      h = {}
+      @document.save_pdf(@output_path, save_page_preview: true)
+      # save page by page story
+      @document.save_story_page_by_page(@pages_path) if @save_page_story
       self
     end
 
@@ -92,7 +96,7 @@ module RLayout
 
       if @page_floats
         @document.pages.each_with_index do |p,i|
-          page_floats = @page_floats[i]
+          page_floats = @page_floats[i + 1]
           p.add_floats(page_floats)
           p.layout_floats
           p.adjust_overlapping_columns
@@ -133,17 +137,17 @@ module RLayout
     end
 
     def layout_story
-      # @document.pages.each do |page|
-      #   page.layout_floats
-      #   page.adjust_overlapping_columns
-      #   page.set_overlapping_grid_rect
-      #   page.update_column_areas
-      # end
       current_line =  @document.first_text_line
       while @paragraph = @paragraphs.shift do
         current_line = @paragraph.layout_lines(current_line)
-        break unless current_line
+        unless current_line
+          @ovewflow = true
+          break 
+        end
       end
+      # if @overflow take care of overflow
+      # - show overflow line in red
+      # - save overflow text
       # update_header_and_footer
     end
 
