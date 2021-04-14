@@ -14,6 +14,7 @@ module RLayout
     attr_reader :column, :row, :image_items
     attr_reader :direction,  :output_path
     attr_reader :images_folder, :group_caption, :image_item_captions, :hide_caption
+    attr_reader :profile, :gutter, :v_gutter
 
     def initialize(options={})
       super
@@ -34,6 +35,9 @@ module RLayout
       end
       @width        = options[:width]
       @height       = options[:height]
+      @gutter       = options[:gutter] || 3
+      @v_gutter     = options[:v_gutter] || 3
+      
       @direction    = options[:direction] || 'horizontal'
       if options[:image_item_captions]
         @image_item_captions = options[:image_item_captions]
@@ -58,10 +62,11 @@ module RLayout
     end
     
     def layout_items
-      row_width = width/column
-      row_height = height/row
+      row_width  = (@width - (@column-1)*@gutter)/@column
+      row_height = (@height - (@row-1)*@v_gutter)/@row
       x_position = 0
       y_position = 0
+      # TODO: handle mutile row 
       @image_items_full_path.each_with_index do |item, i|
         # Image.new(parent:self, image_path: item[:image_path], x:item[:x], y:item[:y], width:item[:width], height:item[:height])
         h = {}
@@ -75,7 +80,7 @@ module RLayout
         h[:width]       = row_width
         h[:height]      = row_height
         ImagePlus.new(h)
-        x_position += row_width
+        x_position += row_width + @gutter
       end
     end
   end
