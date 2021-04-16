@@ -15,11 +15,12 @@ module RLayout
     attr_reader :direction,  :output_path
     attr_reader :images_folder, :group_caption, :image_item_captions, :hide_caption
     attr_reader :profile, :gutter, :v_gutter
-
+    attr_reader :member_shape # rect, circle
     def initialize(options={})
       super
       @group_caption = options[:group_caption] || false
       @hide_caption = options[:show_caption] || true
+      @member_shape = options[:member_shape] || 'rect'
       # there are two ways to pass image_path_info
       # first way is to pass "images_folder" and "image_items"
       # and an other way is to pass image_items_full_path of each image
@@ -79,6 +80,7 @@ module RLayout
         h[:y]           = y_position
         h[:width]       = row_width
         h[:height]      = row_height
+        h[:shape]       = @member_shape
         ImagePlus.new(h)
         x_position += row_width + @gutter
       end

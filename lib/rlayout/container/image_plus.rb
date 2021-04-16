@@ -13,9 +13,12 @@ module RLayout
 
   class ImagePlus < Container
     attr_reader :image_path, :image_style, :caption, :filename_caption, :project_path
+    attr_reader :shape
+
     def initialize(options={})
       @image_path               = options[:image_path]
       @caption                  = options[:caption]
+      @shape                    = options[:shape] || 'rect'
       @project_path             = options[:project_path]
       @image_style              = options.fetch(options[:image_style], default_image_style)
       @caption                  = File.basename(options[:image_path], ".*")  if options[:filename_caption]

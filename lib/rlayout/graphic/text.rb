@@ -15,7 +15,6 @@ module RLayout
       @tracking       = options[:tracking]        || 0
       @scale          = options[:scale]           || 100
       @font           = options[:font]            || 'KoPubDotumPL'
-      @font           = 'KoPubDotumPL'
       @font_color     = options[:font_color]      || 'black'
       @fill_color     = options[:fill_color]      || 'clear'
       @font_size      = options[:font_size]       || 16
@@ -25,7 +24,7 @@ module RLayout
         @options = options[:position]
         set_position
       else
-        @text_alignment = options[:text_alignment]  || 'left'
+        @text_alignment = options[:text_alignment] || options[:alignment] || 'left'
         @v_alignment    = options[:v_alignment]     || 'top'
       end
       set_string_width
@@ -57,7 +56,7 @@ module RLayout
           if @font == canvase_font_name && @font_size == canvas_font_size
           elsif @font != canvase_font_name
             font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-            font_file     = font_foleder + "/#{font}.ttf"
+            font_file     = font_foleder + "/#{@font}.ttf"
             doc           = canvas.context.document
             font_wapper   = doc.fonts.add(font_file)
             canvas.font(font_wapper, size: @font_size)
