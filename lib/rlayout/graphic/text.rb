@@ -4,7 +4,7 @@ module RLayout
   class Text < Graphic
     attr_reader :text_string, :font, :font_size, :font_color, :tracking
     attr_reader :text_style, :string_width
-    attr_accessor :text_alignment, :v_alignment, :fit_type
+    attr_accessor :text_alignment, :v_alignment, :text_fit_type
 
     def init_text(options={})
       # @stroke[:thickness] = 1
@@ -12,6 +12,7 @@ module RLayout
       # @fill[:color] = 'yellow'
       
       @has_text       = true
+      @text_fit_type  = options[:text_fit_type]        || 'normal' # fit_box_to_text
       @tracking       = options[:tracking]        || 0
       @scale          = options[:scale]           || 100
       @font           = options[:font]            || 'KoPubDotumPL'
@@ -28,9 +29,8 @@ module RLayout
         @v_alignment    = options[:v_alignment]     || 'top'
       end
       set_string_width
-      if options[:adjust_width_to_string_width]
-        adjust_width_to_string_width 
-        @layout_expand = [:height]
+      if @text_fit_type == "fit_box_to_text"
+        adjust_width_to_string_width
       end
       self
     end
@@ -42,8 +42,18 @@ module RLayout
       @string_width = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
     end
 
+    # TODO: it only applies to center alignment
     def adjust_width_to_string_width
+      diff = @width - @string_width
       @width = @string_width
+      if @fit_box_to_text == 'fit_box_to_text'
+        case @text_alignment
+        when 'center'
+          @x += diff/2
+        when 'right'
+          # @x += diff
+        end
+      end
     end
 
     def draw_text(canvas)
@@ -87,6 +97,7 @@ module RLayout
         when 'center'
           @x_offset += (@width - @string_width)/2
         when 'right'
+          # binding.pry if @text_string =~/^2021/
           @x_offset += @width - @string_width
         else
           @x_offset += @left_margin + @left_inset
