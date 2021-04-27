@@ -46,7 +46,7 @@ module RLayout
     def adjust_width_to_string_width
       diff = @width - @string_width
       @width = @string_width
-      if @fit_box_to_text == 'fit_box_to_text'
+      if @text_fit_type == 'fit_box_to_text'
         case @text_alignment
         when 'center'
           @x += diff/2
