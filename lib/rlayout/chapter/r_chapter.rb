@@ -263,12 +263,11 @@ module RLayout
     end
 
     def read_page_floats
-      unless File.exists?(doc_info_path)
-        puts "Can not find file #{doc_info_path}!!!!"
+      unless File.exists?(page_floats_info_path)
+        puts "Can not find file #{page_floats_info_path}!!!!"
         return {}
       end
-      @doc_info = YAML::load_file(doc_info_path)
-      @page_floats = @doc_info[:page_floats]
+      @page_floats = YAML::load_file(page_floats_info_path)
     end
 
     def read_story
@@ -332,6 +331,10 @@ module RLayout
 
     def doc_info_path
       @document_path + "/doc_info.yml"
+    end
+
+    def page_floats_info_path
+      @document_path + "/page_floats_info.yml"
     end
 
     def save_doc_info

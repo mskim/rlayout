@@ -28,7 +28,7 @@ module RLayout
     attr_reader :stroke_x, :stroke_y, :stroke_width
     attr_reader :svg_content, :empty_first_column, :profile_image_position
     attr_reader :frame_thickness, :frame_color
-    attr_reader :adjusted_line_count, :has_attachment, :attached_type
+    attr_reader :adjusted_line_count, :attached_type
     # vertical direction
     attr_reader :direction # horizontal, verticcal
     attr_reader :starting_column_y, :max_height_in_lines, :min_height_in_lines
@@ -45,7 +45,6 @@ module RLayout
       @adjusted_line_count  = 0
       @empty_first_column   = options[:empty_first_column] || false
       @profile_image_position = options[:profile_image_position] || nil?
-      @has_attachment       = options[:has_attachment]
       @attached_type        = options[:attached_type]
 
       if @kind == '사설' || @kind == 'editorial'
@@ -298,9 +297,7 @@ module RLayout
       article_info[:image_width]        = width
       article_info[:image_height]       = height
       @new_height_in_lines              = (height/@body_line_height).round
-      # article_info[:height_in_lines]    = (height/@body_line_height).round
       article_info[:height_in_lines]    = @new_height_in_lines
-      article_info[:has_attachment]     = @has_attachment
       article_info[:attached_type]      = @attached_type
       if @adjustable_height
         article_info[:adjustable_height]  = true 
