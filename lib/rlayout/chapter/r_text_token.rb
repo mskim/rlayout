@@ -164,6 +164,15 @@ module RLayout
       false
     end
 
+    def hyphenate_english_token(word)
+
+
+    end
+
+    def hyphenate_number_token(word)
+
+
+    end
 
     def draw_text
       style = @para_style

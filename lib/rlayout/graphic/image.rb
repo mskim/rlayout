@@ -82,7 +82,8 @@ module RLayout
       set_zoom_factor
       @zoom_anchor    = options[:zoom_anchor] unless @zoom_anchor
       @zoom_anchor    = 5 unless @zoom_anchor
-      @image_object     = Vips::Image.new_from_file(@image_path)
+      @image_object   = Vips::Image.new_from_file(@image_path)
+      # @image_object   = MiniMagick::Image.open(@image_path)
       @image_dimension  = [@image_object.width, @image_object.height]
       if @image_object && options[:adjust_height_to_keep_ratio]
         @height *= image_object_height_to_width_ratio

@@ -10,9 +10,8 @@ module RLayout
       # @stroke[:thickness] = 1
       # @stroke[:color] = 'black'
       # @fill[:color] = 'yellow'
-      
       @has_text       = true
-      @text_fit_type  = options[:text_fit_type]        || 'normal' # fit_box_to_text
+      @text_fit_type  = options[:text_fit_type]   || 'normal' # fit_box_to_text
       @tracking       = options[:tracking]        || 0
       @scale          = options[:scale]           || 100
       @font           = options[:font]            || 'KoPubDotumPL'
