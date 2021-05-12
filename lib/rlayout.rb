@@ -24,7 +24,8 @@ else
   require "image_processing/vips"
   require "image_processing"
   require 'hexapdf'
-  # require 'text-hyphen', '~> 1.4'
+  require 'text/hyphen'
+
   # require 'xml-simple'
 
   require File.dirname(__FILE__) + "/rlayout/version"

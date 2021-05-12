@@ -1,3 +1,4 @@
+
 module RLayout
 
 
@@ -146,10 +147,25 @@ module RLayout
 
     # divide token at position
     def hyphenate_token(break_position, options={})
+      hyphenated_result = break_attstring_at(break_position, options={})
+
+      # TODO: refind this
+      # if is_number_token?(@string)
+      #   r = hyphenate_english_token(@string)
+      #   if r.length <= break_position
+      #     # this is good 
+      #     hyphenated_result = break_attstring_at(r.length+1, options={})
+      #   end
+      # elsif is_english_token?(@string)
+      #   r = hyphenate_number_token(@string)
+      #   if r.length <= break_position
+      #     hyphenated_result = break_attstring_at(r.length+1, options={})
+      #   end
+      # end
+
       # break_attstring_at breaks original att_string into two
       # adjust first token width and result is second haldf att_string
       # or false is return if not abtle to brake the token
-      hyphenated_result = break_attstring_at(break_position, options={})
       if hyphenated_result == "front forbidden character"
         return "front forbidden character"
       elsif hyphenated_result.class == String
@@ -164,14 +180,33 @@ module RLayout
       false
     end
 
-    def hyphenate_english_token(word)
-
-
+    def is_english_token?(word)
+      word.each_char do |ch|
+        if ch =~/[a-zA-Z]/
+        else
+          return false
+        end
+      end
+      return true    
     end
 
+    def hyphenate_english_token(word)
+      #TODO: 
+      #NameError (uninitialized constant RLayout::Text::Hyphen):
+      require 'text/hyphen'
+      hh = ::Text::Hyphen.new
+      r = hh.visualize(word)  
+      r.split("-").first
+      # "some"*20
+    end
+
+    def is_number_token?(word)
+      word=~(/(\d*)/)
+    end
+    
     def hyphenate_number_token(word)
-
-
+      word=~(/(\d*)/)
+      $1
     end
 
     def draw_text

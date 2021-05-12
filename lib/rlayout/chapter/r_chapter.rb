@@ -191,10 +191,12 @@ module RLayout
     # folders are created for each page, with jpg image and, markdown text for that page
     # this allow the proofer to working on that specific page rather than dealing with entire chapter text.
     
-    attr_reader :page_by_page, :story_md
+    # page_pdf options indicates to split docemnt into pages
+    # page_folder are 3 digit numbered 001, 002, 003
+    attr_reader :page_by_page, :page_pdf, :story_md
 
     def initialize(options={} ,&block)
-      @document_path   = options[:document_path]
+      @document_path  = options[:document_path] || options[:chapter_path]
       @story_path     = @document_path + "/story.md"
       @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
       @story_md       = options[:story_md]
@@ -210,6 +212,7 @@ module RLayout
       @page_floats    = options[:page_floats]   || []
       @starting_page  = options[:starting_page] || 1
       @page_by_page   = options[:page_by_page]
+      @page_pdf       = options[:page_pdf]
       @document       = eval(@layout_rb)
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@document} !!!!"
@@ -227,8 +230,8 @@ module RLayout
         read_page_floats 
       end
       
-      if @page_floats
-        page_floats_page_count = @page_floats.keys.sort.last + 1
+      if @page_floats && @page_floats != []
+        page_floats_page_count = @page_floats.length
         need_page_count = page_floats_page_count - @document.pages.length
         if need_page_count > 0
           need_page_count.times do 
@@ -252,7 +255,7 @@ module RLayout
       # end
       read_story
       layout_story
-      @document.save_pdf(@output_path) unless options[:no_output]
+      @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
       self
     end
 
@@ -263,11 +266,11 @@ module RLayout
     end
 
     def read_page_floats
-      unless File.exists?(page_floats_info_path)
-        puts "Can not find file #{page_floats_info_path}!!!!"
+      unless File.exists?(page_floats_path)
+        puts "Can not find file #{page_floats_path}!!!!"
         return {}
       end
-      @page_floats = YAML::load_file(page_floats_info_path)
+      @page_floats = YAML::load_file(page_floats_path)
     end
 
     def read_story
@@ -333,8 +336,8 @@ module RLayout
       @document_path + "/doc_info.yml"
     end
 
-    def page_floats_info_path
-      @document_path + "/page_floats_info.yml"
+    def page_floats_path
+      @document_path + "/page_floats.yml"
     end
 
     def save_doc_info
