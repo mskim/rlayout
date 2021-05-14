@@ -46,7 +46,7 @@ module RLayout
     attr_reader :body_line_height, :line_count, :token_union_style
     attr_reader :line_width,  :token_heights_are_equal
     attr_accessor :tokens, :para_lines, :pdf_doc
-
+    attr_reader :para_rect
     def initialize(options={})
       @tokens = []
       @markup         = options.fetch(:markup, 'p')
@@ -64,6 +64,18 @@ module RLayout
       create_para_lines if options[:create_para_lines]
       self
     end
+
+    # para_info is used to display editing UI from front-end
+    def para_info
+      h = {}
+      h[:markup]      = @markup
+      h[:para_sting]  = @para_string
+      h[:style_name]  = @style_name
+      h[:para_rect]   = @para_rect
+      h
+    end
+
+
 
 
     # before we create any text_tokens,
@@ -247,8 +259,13 @@ module RLayout
 
     def layout_lines(current_line, options={})
       return unless current_line
+      @para_rect  = []
       tokens_copy = tokens.dup
       @current_line = current_line
+      # TODO handle for multiple column para lines
+      @starting_x = current_line.x.dup
+      @starting_y = current_line.y.dup
+      @para_rect  = [current_line.x, current_line.y,current_line.width, current_line.height]
       @line_count = 1
       @current_line.set_paragraph_info(self, "first_line")
       token = tokens_copy.shift
@@ -322,17 +339,22 @@ module RLayout
         @current_line.set_paragraph_info(self, "last_line")
       end
       @current_line.align_tokens
+
       if @move_up_if_room 
         if found_previous_line = previous_line_has_room(@current_line)
           move_tokens_to_previous_line(@current_line, found_previous_line)
           @current_line.layed_out_line = false
+          @para_rect[3] = @current_line.y + @current_line.height - @starting_y 
           @current_line
         else
+          @para_rect[3] = @current_line.y + @current_line.height - @starting_y 
           @current_line.next_text_line
         end
       else
+        @para_rect[3] = @current_line.y + @current_line.height - @starting_y 
         @current_line.next_text_line
       end
+
     end
 
     def previous_line_has_room(current_line)

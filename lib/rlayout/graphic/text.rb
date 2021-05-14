@@ -96,7 +96,6 @@ module RLayout
         when 'center'
           @x_offset += (@width - @string_width)/2
         when 'right'
-          # binding.pry if @text_string =~/^2021/
           @x_offset += @width - @string_width
         else
           @x_offset += @left_margin + @left_inset

@@ -57,6 +57,11 @@ module RLayout
       self
     end
 
+    def page_number
+      return 1 unless @parent
+      @parent.page_number
+    end
+
     def collect_line_content
       line_info = {}
       tokens = []

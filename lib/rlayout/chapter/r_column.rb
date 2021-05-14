@@ -50,6 +50,10 @@ module RLayout
       end
       self
     end
+    
+    def page_number
+      @parent.page_number
+    end
 
     def adjust_column_lines
       @line_count           = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
