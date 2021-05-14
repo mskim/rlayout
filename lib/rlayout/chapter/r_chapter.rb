@@ -193,7 +193,7 @@ module RLayout
     
     # page_pdf options indicates to split docemnt into pages
     # page_folder are 3 digit numbered 001, 002, 003
-    attr_reader :page_by_page, :page_pdf, :story_md, :story_by_page
+    attr_reader :page_by_page, :page_pdf, :story_md, :story_by_page, :toc
 
     def initialize(options={} ,&block)
       @document_path  = options[:document_path] || options[:chapter_path]
@@ -214,6 +214,7 @@ module RLayout
       @page_by_page   = options[:page_by_page]
       @page_pdf       = options[:page_pdf]
       @story_by_page  = options[:story_by_page]
+      @toc            = options[:toc]
       @document       = eval(@layout_rb)
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@document} !!!!"
@@ -258,6 +259,7 @@ module RLayout
       layout_story
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
       save_story_by_page if @story_by_page
+      save_toc if @toc
       self
     end
 
@@ -266,7 +268,7 @@ module RLayout
     end
 
     def save_story_by_page
-      File.open(story_by_page_path, 'w'){|f| f.write @story_by_page_array.to_yaml}
+      File.open(story_by_page_path, 'w'){|f| f.write @story_by_page_hash.to_yaml}
     end
 
     def default_document
@@ -324,34 +326,37 @@ module RLayout
         page.set_overlapping_grid_rect
         page.update_column_areas
       end
-      @first_page               = @document.pages[0]
-      @current_line             = @first_page.first_text_line
-      current_page_number       = @current_line.page_number
-      @story_by_page_array      = [] # this is used to capter story_by_page info
-      current_page_hash               = {}
-      page_key                        = @current_line.page_number
-      current_page_hash[page_key]     = []
+      @first_page                 = @document.pages[0]
+      @current_line               = @first_page.first_text_line
+      @story_by_page_hash         = {} # this is used to capter story_by_page info
+      @toc_content                = []
+      page_key                    = @current_line.page_number
+      current_page_paragraph_list = []
 
       while @paragraph = @paragraphs.shift
         # capturing paragraph info to save @story_by_page
         @current_line                   = @paragraph.layout_lines(@current_line)
-        binding.pry unless current_page_hash[page_key]
-        current_page_hash[page_key]     << @paragraph.para_info
+        current_page_paragraph_list     << @paragraph.para_info
+        if @paragraph.markup != 'p'
+          toc_item = {}
+          toc_item[:page] = page_key
+          toc_item[:markup] = @paragraph.markup
+          toc_item[:para_string] = @paragraph.para_string
+          @toc_content << toc_item
+        end
         unless @current_line
-          # retruns first_text_line
           @current_line                 = @document.add_new_page
-          @story_by_page_array          << current_page_hash
-          current_page_hash             = {}
+          @story_by_page_hash[page_key] = current_page_paragraph_list
+          current_page_paragraph_list   = []
           page_key                      = @current_line.page_number
-          current_page_hash[page_key]   = []
         end
 
-        if @current_line.page_number != current_page_number
-          @story_by_page_array          << current_page_hash
-          current_page_hash             = {}
+        if @current_line.page_number != page_key
+          @story_by_page_hash[page_key] = current_page_paragraph_list
+          current_page_paragraph_list   = []
+          # current_page_hash             = {}
           page_key                      = @current_line.page_number
-          current_page_hash[page_key]   = []
-          current_page_number           = @current_line.page_number
+          # current_page_hash[page_key]   = []
         end
       end
     end
@@ -378,10 +383,8 @@ module RLayout
 
     def save_toc
       @document_path  = File.dirname(@output_path)
-      toc_path        = @document_path + "/doc_info.yml"
-      @doc_info[:page_size] = @page_size
-      @doc_info[:toc] = @toc_content
-      File.open(toc_path, 'w') { |f| f.write @doc_info.to_yaml}
+      toc_path        = @document_path + "/toc.yml"
+      File.open(toc_path, 'w') { |f| f.write @toc_content.to_yaml}
     end
   end
 end
