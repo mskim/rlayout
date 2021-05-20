@@ -131,7 +131,7 @@ module RLayout
 
       # horizontal posiion
       if horizontal_center?
-        diff   = @parent_column - @image_size[0]
+        diff   = @parent_column - @image_size[0].to_1
         if diff.odd?
           x_grid = (diff + 1)/2
         else
@@ -142,7 +142,7 @@ module RLayout
       end
       # veritical posiion
       if vertical_center?
-        diff   = @parent_row - @image_size[1]
+        diff   = @parent_row - @image_size[1].to_i
         if diff.odd?
           y_grid = (diff + 1)/2
         else

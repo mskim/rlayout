@@ -109,15 +109,28 @@ module RLayout
 
     def add_floats(page_floats)
       page_floats.each do |float_info|
-        float = {}
-        float[:parent]      = self
-        float[:is_float]    = true
-        float[:image_path]  = float_info[:image_path]
-        float[:position]    = float_info[:position]
-        float[:column]      = float_info[:column]
-        float[:row]         = float_info[:row]
-        float[:x_grid]      = float_info[:x_grid] if float_info[:x_grid]
-        NewsFloat.new(float)
+        if float_info.class == Array
+          float = {}
+          float[:parent]      = self
+          float[:is_float]    = true
+          float[:image_path]  = float_info[0]
+          float[:position]    = float_info[1]
+          size                = float_info[2]
+          float[:column]      = size.split("x")[0].to_i
+          float[:row]         = size.split("x")[1].to_i
+          # float[:x_grid]      = float_info[:x_grid] if float_info[:x_grid]
+          NewsFloat.new(float)
+        elsif float_info.class == Hash
+          float = {}
+          float[:parent]      = self
+          float[:is_float]    = true
+          float[:image_path]  = float_info[:image_path]
+          float[:position]    = float_info[:position]
+          float[:column]      = float_info[:column]
+          float[:row]         = float_info[:row]
+          # float[:x_grid]      = float_info[:x_grid] if float_info[:x_grid]
+          NewsFloat.new(float)
+        end
       end
 
     end

@@ -11,6 +11,7 @@ module RLayout
     attr_accessor :heading_height_type, :body_line_count, :body_line_height
     attr_reader :max_page_number, :page_count, :starting_page
     attr_accessor :fixed_page_document
+    attr_reader :column_grid, :row_grid
     # attr_reader :document_path, :outpout_path
     def initialize(options={}, &block)
       if options[:page_size] && SIZES[options[:page_size]]
@@ -136,18 +137,6 @@ module RLayout
       File.open(path, 'w'){|f| f.write toc_element.to_yaml}
     end
 
-    def save_page_by_page
-      save_page_folders
-      save_page_markdown
-    end
-
-    def save_page_folders
-      puts __method__
-    end
-
-    def save_page_markdown
-      puts __method__
-    end
   end
 
 end

@@ -193,6 +193,7 @@ module RLayout
     
     # page_pdf options indicates to split docemnt into pages
     # page_folder are 3 digit numbered 001, 002, 003
+
     attr_reader :page_by_page, :page_pdf, :story_md, :story_by_page, :toc
 
     def initialize(options={} ,&block)
@@ -233,8 +234,8 @@ module RLayout
       end
       
       if @page_floats && @page_floats != []
-        page_floats_page_count = @page_floats.length
-        need_page_count = page_floats_page_count - @document.pages.length
+        last_floats_page_number = @page_floats.keys.sort.last
+        need_page_count = last_floats_page_number - @document.pages.length
         if need_page_count > 0
           need_page_count.times do 
             @document.add_new_page
