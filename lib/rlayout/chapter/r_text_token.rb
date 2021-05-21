@@ -147,18 +147,14 @@ module RLayout
 
     # divide token at position
     def hyphenate_token(break_position, options={})
-
-      if is_number_token?(@string)
-        r = hyphenate_english_token(@string)
-        if r.length <= break_position
-          # this is good 
-          hyphenated_result = breake_number_token(break_position)
-        end
+      if is_number_token?
+          binding.pry
+          hyphenated_result = breake_number_token_at(break_position)
+      elsif is_english_token?
+        hyphenated_result = breake_english_token_at(break_position)
       else
         hyphenated_result = break_attstring_at(break_position, options={})
       end
-
-
       # break_attstring_at breaks original att_string into two
       # adjust first token width and result is second haldf att_string
       # or false is return if not abtle to brake the token
@@ -176,8 +172,8 @@ module RLayout
       false
     end
 
-    def is_english_token?(word)
-      word.each_char do |ch|
+    def is_english_token?
+      @string.each_char do |ch|
         if ch =~/[a-zA-Z]/
         else
           return false
@@ -186,23 +182,41 @@ module RLayout
       return true    
     end
 
-    def hyphenate_english_token(word)
-      #TODO: 
-      #NameError (uninitialized constant RLayout::Text::Hyphen):
+    def breake_english_token_at(break_position)
       require 'text/hyphen'
       hh = ::Text::Hyphen.new
-      r = hh.visualize(word)  
-      r.split("-").first
-      # "some"*20
+      r = hh.visualize(@string)
+      captures = r.split("-")
+      return false if captures.length == 1
+      return false if captures == []
+      current_front_string = ""
+      captures.each_with_index do |partial, i|
+        temp_front_string = current_front_string + partial
+        temp_string_width = width_of_string(temp_front_string)
+        if temp_string_width <= break_position 
+          current_front_string = temp_front_string
+        else
+          # current_front_string exceeded break_position
+          if current_front_string == ""
+            return false 
+          else
+            @string = current_front_string + "-"
+            @width = width_of_string(current_front_string)
+            second_string = captures[i..-1].join("")
+            return second_string
+          end
+        end
+      end
+      false    
     end
 
-    def is_number_token?(word)
-      word=~(/(\d*)/)
+    def is_number_token?
+      @string=~(/^(\d+)/)
     end
     
     # this breaks at a number token at break_position
     # updates @string with front and return second_part of the broken token string
-    def breake_number_token(break_position)
+    def breake_number_token_at(break_position)
       match = @string.match(/(\d+)(\D*)(\d*)(\D*)(\d*)(\D*)/)
       current_front_string = ""
       return false unless match
