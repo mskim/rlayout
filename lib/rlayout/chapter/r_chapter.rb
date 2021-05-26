@@ -210,7 +210,7 @@ module RLayout
           @layout_rb = File.open(layout_path, 'r'){|f| f.read}
         end
       end
-      @page_floats    = options[:page_floats]   || []
+      # @page_floats    = options[:page_floats]   || 
       @starting_page  = options[:starting_page] || 1
       @page_by_page   = options[:page_by_page]
       @page_pdf       = options[:page_pdf]
@@ -233,7 +233,7 @@ module RLayout
         read_page_floats 
       end
       
-      if @page_floats && @page_floats != []
+      if @page_floats && @page_floats != {}
         last_floats_page_number = @page_floats.keys.sort.last
         need_page_count = last_floats_page_number - @document.pages.length
         if need_page_count > 0
@@ -281,9 +281,11 @@ module RLayout
     def read_page_floats
       unless File.exists?(page_floats_path)
         puts "Can not find file #{page_floats_path}!!!!"
-        return {}
+        # return {}
+        @page_floats = {}
+      else
+        @page_floats = YAML::load_file(page_floats_path)
       end
-      @page_floats = YAML::load_file(page_floats_path)
     end
 
     def read_story

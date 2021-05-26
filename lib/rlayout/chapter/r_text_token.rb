@@ -149,9 +149,9 @@ module RLayout
     def hyphenate_token(break_position, options={})
       if is_number_token?
           binding.pry
-          hyphenated_result = breake_number_token_at(break_position)
+          hyphenated_result = break_number_token_at(break_position)
       elsif is_english_token?
-        hyphenated_result = breake_english_token_at(break_position)
+        hyphenated_result = break_english_token_at(break_position)
       else
         hyphenated_result = break_attstring_at(break_position, options={})
       end
@@ -182,7 +182,7 @@ module RLayout
       return true    
     end
 
-    def breake_english_token_at(break_position)
+    def break_english_token_at(break_position)
       require 'text/hyphen'
       hh = ::Text::Hyphen.new
       r = hh.visualize(@string)
@@ -216,7 +216,7 @@ module RLayout
     
     # this breaks at a number token at break_position
     # updates @string with front and return second_part of the broken token string
-    def breake_number_token_at(break_position)
+    def break_number_token_at(break_position)
       match = @string.match(/(\d+)(\D*)(\d*)(\D*)(\d*)(\D*)/)
       current_front_string = ""
       return false unless match
