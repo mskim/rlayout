@@ -13,7 +13,7 @@ if defined?(Motion::Project::Config)
   #
   # raise "This file must be required within a RubyMotion project Rakefile."
 else
-  require 'pry'
+  require 'pry-byebug'
   require 'strscan'
   require 'yaml'
   require 'csv'
@@ -103,10 +103,12 @@ else
   require File.dirname(__FILE__) + '/rlayout/box_table/box_table_row'
   require File.dirname(__FILE__) + '/rlayout/box_table/box_table'
 
-  require File.dirname(__FILE__) + '/rlayout/leader_table/leader_cell'
-  require File.dirname(__FILE__) + '/rlayout/leader_table/leader_row'
-  require File.dirname(__FILE__) + '/rlayout/leader_table/leader_table'
-  require File.dirname(__FILE__) + '/rlayout/leader_table/jubo'
+  require File.dirname(__FILE__) + '/rlayout/toc/leader_cell'
+  require File.dirname(__FILE__) + '/rlayout/toc/leader_row'
+  require File.dirname(__FILE__) + '/rlayout/toc/leader_table'
+  require File.dirname(__FILE__) + '/rlayout/toc/jubo'
+  require File.dirname(__FILE__) + '/rlayout/toc/toc'
+  require File.dirname(__FILE__) + '/rlayout/toc/toc_page'
 
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/news_article_view'

@@ -10,7 +10,6 @@ module RLayout
     attr_accessor :fixtures, :document, :column_count
 
     def initialize(options={}, &block)
-
       if options[:parent] || options[:document]
         @parent = options[:parent] || options[:document]
         @document       = @parent

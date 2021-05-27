@@ -148,7 +148,6 @@ module RLayout
     # divide token at position
     def hyphenate_token(break_position, options={})
       if is_number_token?
-          binding.pry
           hyphenated_result = break_number_token_at(break_position)
       elsif is_english_token?
         hyphenated_result = break_english_token_at(break_position)

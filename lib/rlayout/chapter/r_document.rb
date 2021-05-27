@@ -12,7 +12,9 @@ module RLayout
     attr_reader :max_page_number, :page_count, :starting_page
     attr_accessor :fixed_page_document
     attr_reader :column_grid, :row_grid
-    # attr_reader :document_path, :outpout_path
+    # page_type is used to add differnt types of pages in a document
+    # example Toc can create Doc with TocPages
+    attr_reader :page_type, :toc_data
     def initialize(options={}, &block)
       if options[:page_size] && SIZES[options[:page_size]]
         @page_size      = options[:page_size]
@@ -26,6 +28,8 @@ module RLayout
         @width          = 595.28
         @height         = 841.89
       end
+      @page_type        = options[:page_type]
+      @toc_data         = options[:toc_data]
       @fixed_page_document = false
       @starting_page    = options[:starting_page]   || 1
       @max_page_number  = options[:max_page_number] || 999
@@ -95,18 +99,28 @@ module RLayout
 
     # create new page and return first line of of main_box
     def add_new_page(options={})
-      previous_line = @pages.last.last_line if @pages.length > 0
-      h                 = {}
-      h[:parent]        = self
-      h[:width]         = @width
-      h[:height]        = @height
-      h[:page_number]   = @pages.length
-      h[:page_number]   += @starting_page
-      h[:float_layout]  += page_float_layout[options[:page_index]] if @page_float_layout
-      new_page = RPage.new(h)
-      new_page_first_line = new_page.first_text_line
-      previous_line.next_line = new_page_first_line if previous_line
-      new_page_first_line
+      if @page_type && @page_type == "toc_page" 
+        h                 = {}
+        h[:parent]        = self
+        h[:width]         = @width
+        h[:height]        = @height
+        h[:page_number]   = @pages.length + 1
+        h[:toc_data]      = @toc_data
+        new_page          = TocPage.new(h)
+      else
+        previous_line = @pages.last.last_line if @pages.length > 0
+        h                 = {}
+        h[:parent]        = self
+        h[:width]         = @width
+        h[:height]        = @height
+        h[:page_number]   = @pages.length
+        h[:page_number]   += @starting_page
+        h[:float_layout]  += page_float_layout[options[:page_index]] if @page_float_layout
+        new_page = RPage.new(h)
+        new_page_first_line = new_page.first_text_line
+        previous_line.next_line = new_page_first_line if previous_line
+        new_page_first_line
+      end
     end
 
     def next_page(page)
@@ -137,6 +151,11 @@ module RLayout
       File.open(path, 'w'){|f| f.write toc_element.to_yaml}
     end
 
+    def leader_table(data)
+      first_page = pages.first
+      leader_table = LeaderTable.new(data:data)
+      first_page.add_graphic(leader_table)
+    end
   end
 
 end
