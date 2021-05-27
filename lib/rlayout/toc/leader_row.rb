@@ -20,7 +20,6 @@ module RLayout
       @row_index    = options[:row_index]
       @row_data     = options[:row_data]
       @leading_char = options[:leading_char] || "."
-      # create_cells
       create_text_cells
       insert_leader_cells
       align_cells
@@ -45,6 +44,13 @@ module RLayout
           g.text_alignment = 'center'
         end
       end
+      cell_width_sum = graphic_width_sum
+      room = cell_width_sum/@graphics.length - 1
+      x_position = 0
+      @graphics.each do |cell|
+        cell.x = x_position
+        x_position += cell.width + room
+      end
     end
 
     # create text cell and calucate 
@@ -60,7 +66,8 @@ module RLayout
         h[:style_name]        = tag || 'body'
         h[:style_name]        = 'subtitle'
         h[:v_alignment]       = 'top'
-        h[:adjust_width_to_string_width] = true
+        h[:text_fit_type]     = 'fit_box_to_text'
+        # h[:adjust_width_to_string_width] = true
         t = TextCell.new(h)
       end
     end
@@ -70,7 +77,7 @@ module RLayout
       leader_room = @width - text_cell_width_sum
       cell_width = leader_room/@leader_cell_count
       insert_position = 1
-      @leader_cell_count.times do
+      @leader_cell_count.times do |i|
         h = {}
         h[:width]   = cell_width
         h[:height]  = @height
@@ -88,6 +95,10 @@ module RLayout
 
     def graphic_width_sum
       @graphics.map{|c| c.width}.reduce(:+)
+    end
+
+    def leader_cells
+      @graphics.select{|c| c.is_a?(LeaderCell)}
     end
   end
 end

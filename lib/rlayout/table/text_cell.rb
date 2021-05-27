@@ -5,7 +5,6 @@ module RLayout
     def initialize(options={})
       @column_index   = options[:column_index]
       @row_index      = options[:row_index]
-      # @fillup_with_leader = options[:fillup_with_leader]
       super
       @height = @parent.height
       @text_alignment = 'center'
@@ -14,9 +13,8 @@ module RLayout
       # @stroke[:color] = 'red'
       # @fill[:color] = 'blue'
       # @layout_expand = nil
-      # @layout_expand = :width
+      @layout_expand = :height
       @has_text = true
-      # fillup_with_leader if @fillup_with_leader
       self
     end
 
