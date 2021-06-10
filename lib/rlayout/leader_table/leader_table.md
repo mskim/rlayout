@@ -1,7 +1,7 @@
-# LeaderTable
+# RLeaderTable
 
 
-LeaderTable is fixed size table for Jubo, Toc, and Menu.
+RLeaderTable is fixed size table for Jubo, Toc, and Menu.
 
 LeaderRow is a special row that inserts LeaderCell between TextCells. to make it look like following.
 

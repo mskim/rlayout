@@ -185,7 +185,7 @@ module RLayout
     attr_reader :book_title, :title, :starting_page, :heading_height_type, :heading
     attr_reader :body_line_count, :body_line_height
     attr_reader :max_page_number, :page_floats
-
+    attr_reader :header_footer
     # page_by_page is used for page proof reading
     # if page_by_page is true,
     # folders are created for each page, with jpg image and, markdown text for that page
@@ -216,6 +216,7 @@ module RLayout
       @page_pdf       = options[:page_pdf]
       @story_by_page  = options[:story_by_page]
       @toc            = options[:toc]
+      @header_footer  = options[:header_footer]
       @document       = eval(@layout_rb)
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@document} !!!!"
@@ -242,8 +243,10 @@ module RLayout
           end
         end
         @document.pages.each_with_index do |p,i|
+          # p.create_header_footer(@header_footer) if @header_footer
           page_floats = @page_floats[i + 1]
           p.add_floats(page_floats) if page_floats
+          p.create_header_footer(@header_footer)
         end
       end
 

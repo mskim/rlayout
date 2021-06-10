@@ -1,18 +1,18 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
-describe 'create Toc' do
+describe 'create Cover' do
   before do
     @document_path  = "/Users/mskim/test_data/toc"
     @pdf_path       = "/Users/mskim/test_data/toc/toc.pdf"
-    @toc            = Toc.new(document_path: @document_path )
+    @toc            = Cover.new(document_path: @document_path )
     @document       = @toc.document
   end
 
-  it 'should create Toc' do
-    assert_equal RLayout::Toc, @toc.class 
+  it 'should create Cover' do
+    assert_equal RLayout::Cover, @toc.class 
   end
 
-  it 'should create Toc' do
+  it 'should create Cover' do
     assert File.exist?(@pdf_path)
   end
 
@@ -29,10 +29,10 @@ describe 'create Toc' do
     assert_equal 50, first_page.bottom_margin
   end  
 
-  it 'document should have one LeaderTable' do
+  it 'document should have one RLeaderTable' do
     first_page = @document.pages.first
     table = first_page.toc_table
-    assert_equal LeaderTable, table.class
+    assert_equal RLeaderTable, table.class
     assert_equal 50, table.x
   end  
 

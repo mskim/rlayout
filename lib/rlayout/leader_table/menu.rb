@@ -1,6 +1,6 @@
 module RLayout
 
-  class Jubo < LeaderTable
+  class Menu < RLeaderTable
 
   end
 

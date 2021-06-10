@@ -359,11 +359,14 @@ DEFAULT_TABLE_STYLE = {
       @underflow
     end
     
-
+    
     
     # calculate width of longest or average cells for each column, 
     # so that we can set good looking layout
     # We might need average width?? option
+
+    # TODO: maybe we should impleamnt deviation, where one or two deviats from the rest
+    # get longest, and average if they differ 50% or more, use average
     def calculate_column_width_array(type="longest")
       @column_width_array = []
       @column_width_array = @table_data[0].map{|cell| cell.length}

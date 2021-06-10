@@ -1,11 +1,12 @@
+
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
-describe ' create Matrix' do
+describe ' create GroupImage' do
   before do
-    @m = Matrix.new(width:400, height: 400)
+    @m = GroupImage.new(width:400, height: 400)
   end
-  it 'should create Container' do
-    assert Matrix, @m.class
+  it 'should create GroupImage' do
+    assert GroupImage, @m.class
   end
 
   # it 'should save Container' do

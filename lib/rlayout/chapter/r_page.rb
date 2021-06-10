@@ -15,6 +15,7 @@ module RLayout
     attr_accessor :body_lines, :gutter, :body_line_count
     attr_reader :float_layout, :page_by_page
     attr_reader :empty_first_column
+    attr_reader :header_footer
 
     def initialize(options={}, &block)
       options[:fill_color] = 'white'
@@ -32,7 +33,6 @@ module RLayout
       end
 
       # default grid is 6x12 grid
-
       @grid_size = []
       @grid_size << (@width - @left_margin - @right_margin)/@column_count
       @grid_size << (@height - @top_margin - @bottom_margin)/@row_count
@@ -443,15 +443,39 @@ module RLayout
       @left_page == true
     end
 
-    def header_rule
-      return Hash.new unless @parent
-      @parent.header_rule.dup
+    def create_header_footer(options)
+      @header_footer = options
+      if options[:footer_info]
+        #create_footer
+        h = {}
+        h[:parent] = self
+        h[:x] = @left_margin
+        h[:y] = @height - @bottom_margin
+        h[:width] = @width - @left_margin - @right_margin
+        h[:height] = 10
+        h[:font] = 'shinmoon'
+        h[:font_size] = 7.0
+        if page_number.odd?
+          h[:alignment] = 'right'
+        else
+          h[:alignment] = 'left'
+        end
+        Text.new(h)
+      end
+      if options[:header_info]
+        #create_header
+      end
     end
 
-    def footer_rule
-      return Hash.new unless @parent
-      @parent.footer_rule.dup
-    end
+    # def header_rule
+    #   return Hash.new unless @parent
+    #   @parent.header_rule.dup
+    # end
+
+    # def footer_rule
+    #   return Hash.new unless @parent
+    #   @parent.footer_rule.dup
+    # end
 
     def save_yml(path)
       h = to_hash

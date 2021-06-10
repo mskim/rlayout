@@ -99,7 +99,7 @@ module RLayout
 
     # create new page and return first line of of main_box
     def add_new_page(options={})
-      if @page_type && @page_type == "toc_page" 
+      if @page_type && (@page_type == "toc_page" || @page_type == "cover_page")
         h                 = {}
         h[:parent]        = self
         h[:width]         = @width
@@ -153,7 +153,7 @@ module RLayout
 
     def leader_table(data)
       first_page = pages.first
-      leader_table = LeaderTable.new(data:data)
+      leader_table = RLeaderTable.new(data:data)
       first_page.add_graphic(leader_table)
     end
   end

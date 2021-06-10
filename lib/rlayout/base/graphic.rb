@@ -2,15 +2,13 @@
 module RLayout
   
   # using from_right, and from_bottom option
-  # {from_right: true, from_bottom: true}
+  # {from_right: 20, from_bottom: 20}
   # It's a pain in the neck to place graphic to the right/bottom of the parent.
   # caller has to calculate x, and y value of graphic before hand, using parent object's width and height.
   # It gets even worse, if parent size is auto adjusted.
   # from_right, and from_bottom options are solutions for this.
   # if a graphic has parent, and from_right/from_bottom option is given, 
   # x/y values is auto calculated from its parent, caller just need width and height of the graphic.
-  # anchor_right/anchor_bottom can also be used as alias
-  # {anchor_right: true, anchor_bottom: true}
 
   class Graphic
     attr_accessor :parent, :x, :y, :width, :height, :tag, :ns_view, :pdf_view, :svg_view, :path
@@ -18,7 +16,7 @@ module RLayout
     attr_accessor :non_overlapping_rect, :z_order
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
     attr_accessor :frame_image, :shadow, :rotation, :right_anchor, :center_anchor_at, :bottom_anchor
-    attr_reader   :pdf_doc, :project_path, :from_right, :from_bottom
+    attr_reader   :pdf_doc, :project_path , :from_right, :from_bottom
 
 
     def initialize(options={}, &block)
@@ -38,14 +36,14 @@ module RLayout
           set_frame_in_parent_grid(options[:grid_frame])
           # disable autolayout
           @layout_expand = nil
-        elsif options[:from_right] || options[:anchor_right]
-          @from_right     = true
+        elsif options[:from_right]
+          @from_right     = options[:from_right]
           @width          = options.fetch(:width, graphic_defaults[:width])
-          @x              = @parent.width - options[:from_right] - @width
-        elsif options[:from_bottom] || options[:anchor_bottom] 
-          @from_bottom    = true
+          @x              = @parent.width - @from_right - @width
+        elsif options[:from_bottom] 
+          @from_bottom    = options[:from_bottom]
           @height         = options.fetch(:height, graphic_defaults[:height])
-          @y              = @parent.height - options[:from_bottom] - @height
+          @y              = @parent.height - @from_bottom - @height
         end
       end
       @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))

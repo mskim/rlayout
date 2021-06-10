@@ -48,7 +48,7 @@ module RLayout
       options[:x] = @left_margin
       options[:y] = @top_margin
       options[:width] = @width - @left_margin - @right_margin
-      @toc_table = LeaderTable.new(options)
+      @toc_table = RLeaderTable.new(options)
     end
 
   end

@@ -1,6 +1,6 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
-describe 'create LeaderTable' do
+describe 'create RLeaderTable' do
   before do
     # data_path    = "/Users/mskim/test_data/demo_table/story.md"
     @data = [
@@ -15,18 +15,18 @@ describe 'create LeaderTable' do
       ['bottom', 'this'],
     ]
     @style = {}
-    @table        = RLayout::LeaderTable.new( width: 300, height: 400, table_data:@data, table_style: @style)
+    @table        = RLayout::RLeaderTable.new( width: 300, height: 400, table_data:@data, table_style: @style)
     @body_row     = @table.graphics[1]
     @cell         = @table.graphics.first.graphics.first
     @second_cell  = @table.graphics.first.graphics[1]
     @pdf_path     = "/Users/mskim/test_data/leader_table/leader_table.pdf"
   end
 
-  it 'should create LeaderTable' do
-    assert_equal RLayout::LeaderTable, @table.class 
+  it 'should create RLeaderTable' do
+    assert_equal RLayout::RLeaderTable, @table.class 
   end
 
-  it 'should create LeaderTable with given width and height' do
+  it 'should create RLeaderTable with given width and height' do
     assert_equal 300, @table.width
     assert_equal 400, @table.height
   end

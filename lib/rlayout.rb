@@ -36,11 +36,12 @@ else
   require File.dirname(__FILE__) + '/rlayout/base/page'
   require File.dirname(__FILE__) + '/rlayout/base/document'
   require File.dirname(__FILE__) + '/rlayout/base/rjob'
-  require File.dirname(__FILE__) + '/rlayout/base/matrix'
 
   require File.dirname(__FILE__) + "/rlayout/graphic/fill"
   require File.dirname(__FILE__) + "/rlayout/graphic/graphic_struct"
   require File.dirname(__FILE__) + "/rlayout/graphic/text"
+  require File.dirname(__FILE__) + '/rlayout/graphic/text_cell.rb'
+
   require File.dirname(__FILE__) + "/rlayout/graphic/image"
   require File.dirname(__FILE__) + "/rlayout/graphic/layout"
   require File.dirname(__FILE__) + "/rlayout/graphic/node_tree"
@@ -53,6 +54,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
   require File.dirname(__FILE__) + '/rlayout/container/image_plus'
+  require File.dirname(__FILE__) + '/rlayout/container/matrix'
   require File.dirname(__FILE__) + '/rlayout/container/group_image'
 
   # require File.dirname(__FILE__) + '/rlayout/db_publishing/db_item'
@@ -98,17 +100,20 @@ else
   require File.dirname(__FILE__) + '/rlayout/table/simple_table.rb'
   require File.dirname(__FILE__) + '/rlayout/table/table.rb'
   require File.dirname(__FILE__) + '/rlayout/table/table_row.rb'
-  require File.dirname(__FILE__) + '/rlayout/table/text_cell.rb'
 
   require File.dirname(__FILE__) + '/rlayout/box_table/box_table_row'
   require File.dirname(__FILE__) + '/rlayout/box_table/box_table'
 
-  require File.dirname(__FILE__) + '/rlayout/toc/leader_cell'
-  require File.dirname(__FILE__) + '/rlayout/toc/leader_row'
-  require File.dirname(__FILE__) + '/rlayout/toc/leader_table'
-  require File.dirname(__FILE__) + '/rlayout/toc/jubo'
-  require File.dirname(__FILE__) + '/rlayout/toc/toc'
-  require File.dirname(__FILE__) + '/rlayout/toc/toc_page'
+  require File.dirname(__FILE__) + '/rlayout/leader_table/leader_cell'
+  require File.dirname(__FILE__) + '/rlayout/leader_table/leader_row'
+  require File.dirname(__FILE__) + '/rlayout/leader_table/r_leader_table'
+  require File.dirname(__FILE__) + '/rlayout/leader_table/jubo'
+
+  require File.dirname(__FILE__) + '/rlayout/book/toc'
+  require File.dirname(__FILE__) + '/rlayout/book/toc_page'
+  require File.dirname(__FILE__) + '/rlayout/book/cover'
+  require File.dirname(__FILE__) + '/rlayout/book/title_page'
+  require File.dirname(__FILE__) + '/rlayout/book/book_info'
 
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/news_article_view'
@@ -131,6 +136,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/profile_image'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_article_box'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box_maker'
+  require File.dirname(__FILE__) + '/rlayout/newspaper/news_toc'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_pillar'
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_page'
 

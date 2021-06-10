@@ -1,6 +1,6 @@
 module RLayout
   
-  # LeaderTable is fixed size table for Jubo, Toc, and Menu.
+  # RLeaderTable is fixed size table for Jubo, Toc, and Menu.
   # LeaderRow is a special row that inserts LeaderCell between TextCells. to make it look like following.
 
   # start_text ............................ end_text
@@ -14,7 +14,7 @@ module RLayout
   # start_text ............................ end_text
   # start_text ............................ end_text
 
-  class LeaderTable < Container
+  class RLeaderTable < Container
     attr_reader :kind, :data
     attr_reader :body_styles
     attr_reader :table_data, :table_style

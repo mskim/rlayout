@@ -14,8 +14,13 @@ module RLayout
       @text_fit_type  = options[:text_fit_type]   || 'normal' # fit_box_to_text
       @tracking       = options[:tracking]        || 0
       @scale          = options[:scale]           || 100
-      @font           = options[:font]            || 'KoPubDotumPL'
-      @font_color     = options[:font_color]      || 'black'
+      if options[:para_style]
+        @font           = options[:para_style][:font]  || 'KoPubDotumPL'
+        @font_color     = options[:para_style][:font_color]      || 'black'
+      else
+        @font           = options[:font]            || 'KoPubDotumPL'
+        @font_color     = options[:font_color]      || 'black'
+      end
       @fill_color     = options[:fill_color]      || 'clear'
       @font_size      = options[:font_size]       || 16
       @text_string    = options[:text_string]     || options[:string]

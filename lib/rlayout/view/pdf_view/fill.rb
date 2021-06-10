@@ -20,6 +20,7 @@ module RLayout
         case @shape
         when RLayout::RectStruct
           flipped = flipped_origin unless flipped
+          # TODO: getting cmyk value [0.0, ]binding.pry
           canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] - @height, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
             # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
         when RoundRectStruct
