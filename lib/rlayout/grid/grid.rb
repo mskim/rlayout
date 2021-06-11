@@ -63,7 +63,6 @@ module  RLayout
     end
 
     def update_grid
-
       @grid_width   = (@width - @left_margin - @right_margin - (@grid_base[0]-1)*@gutter)/@grid_base[0]
       @grid_height  = (@height - @top_margin - @bottom_margin - (@grid_base[1]-1)*@v_gutter)/@grid_base[1]
       @grid         = GridStruct.new(@grid_base, @grid_width, @grid_height, @gutter, @v_gutter)
@@ -282,21 +281,35 @@ module  RLayout
     end
 
     # given cell number, calculate needed rows and columns
-    def adjust_columns_and_rows_for(number)
-      int_value=Math.sqrt(number).to_i
+    def best_fitting_grid_base(number, options={})
+      adjust_columns_and_rows_for(number, column:true)
+    end
 
-      if Math.sqrt(number) > Math.sqrt(number).to_i
+    # given cell number, calculate needed rows and columns
+    def adjust_columns_and_rows_for(number, options={})
+      int_value = Math.sqrt(number).to_i
+      @grid_base = []
+      if Math.sqrt(number) == Math.sqrt(number).to_i
+        @grid_base[0] = int_value
+        @grid_base[1] = int_value
+      else
         if (int_value+1)*(int_value) >=  number
-          @grid_base[0]  = int_value+1
-          @grid_base[1]     = int_value
+          if options[:column]
+            @grid_base[0] = int_value+1
+            @grid_base[1] = int_value
+          elsif options[:row]
+            @grid_base[0] = int_value
+            @grid_base[1] = int_value+1
+          else
+            @grid_base[0] = int_value+1
+            @grid_base[1] = int_value
+          end
         else
-          @grid_base[0]  = int_value+1
-          @grid_base[1]     = int_value+1
+          @grid_base[0] = int_value+1
+          @grid_base[1] = int_value+1
         end
-      elsif Math.sqrt(number) == Math.sqrt(number).to_i
-        @grid_base[0]  = int_value
-        @grid_base[1]     = int_value
       end
+      @grid_base
     end
 
     def cells

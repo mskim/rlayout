@@ -20,6 +20,22 @@ module RLayout
   # member_image captions are not place under the images, but they are grouped and placed at one of the cell location 
   # This is used in yearbook layout, where students names are place as grouped_caption with same location as the images.
   
+  # usage
+  # specifiy column and row
+  # GroupImage.new(column: 3, row: 3, width: 400, height: 400, images_folder: folder_path, images: images_list_array)
+
+  # specifiy dirction 
+  # direction: 'horizontal 
+  # This will make horizontally spaning images 4x1 with single row.
+  # direction: 'vertical'
+  # This will make vertical spaning images 1x4 with single column.
+
+  # best fit column and row
+  # if no direction nor column row value is given, it will try to make column and row value as squre as possible column and row values.
+  # class Grid
+  # def best_fitting_grid_base(number, options={})
+
+  
   class GroupImage < Grid
     attr_reader :image_items
     attr_reader :direction,  :output_path
@@ -30,12 +46,13 @@ module RLayout
     attr_reader :grouped_caption, :grouped_caption_cell
 
     def initialize(options={})
-      @column       = options[:column] || 2
-      @row          = options[:row] || 2
+      @column       = options[:column] #|| 2
+      @row          = options[:row] #|| 2
       @direction    = options[:direction] #|| 'horizontal'
       # there are two ways to pass image_path_info
       # first way is to pass "images_folder" and "image_items"
       # and an other way is to pass image_items_full_path_array of each image
+      binding.pry
       if options[:images_folder] && options[:image_items]
         @images_folder  = options[:images_folder]
         @image_items  = options[:image_items]
@@ -54,8 +71,13 @@ module RLayout
       elsif @direction == 'vertical'
         @column       = options[:column] || 1 
         @row          = options[:row]    || @image_items_full_path_array.length
+      elsif @column && @row
+        options[:grid_base] = [@column, @row]
+      else
+        options[:grid_base] = best_fitting_grid_base(@image_items_full_path_array.length)
       end
-      options[:grid_base] = [@column, @row]
+
+      # options[:grid_base] = [@column, @row]
       super
       @output_path  = options[:output_path]
       @group_caption = options[:group_caption] || false
