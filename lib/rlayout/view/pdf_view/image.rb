@@ -46,8 +46,9 @@ module RLayout
         return
       end
       image_origin    = flipped_origin
-      # image_origin[0] += @x
-      image_origin[1] -= @height #@y # + @height
+      # image drawing starts at lower right corner
+      image_origin[1] -= @height
+
       if @clip_rect_delta_x && @clip_rect_delta_y
         # drawing fit_types horizontal, vertical, keep ratio
         # IMAGE_FIT_TYPE_ORIGINAL, IMAGE_FIT_TYPE_VERTICAL, IMAGE_FIT_TYPE_HORIZONTAL IMAGE_FIT_TYPE_KEEP_RATIO
@@ -60,12 +61,8 @@ module RLayout
         canvas.rectangle(image_origin[0], image_origin[1], @width, @height)
         canvas.clip_path(:nonzero)
         canvas.end_path
-        # canvas.image(@image_path, at: [image_origin[0] - @clip_rect[0], image_origin[1] - @clip_rect[1]], width: @clip_rect[2], height: @clip_rect[3])
-        # to prevent slite skewing when we specify both width and height, just use height and let it keep the ratio
-        # canvas.image(@image_path, at: [image_origin[0] - @clip_rect[0], image_origin[1] - @clip_rect[1]], height: @clip_rect[3])
         canvas.image(@image_path, at: [image_origin[0] - @clip_rect[0], image_origin[1] - @clip_rect[1]], width: @clip_rect[2])
       else
-        # drawing IMAGE_FIT_TYPE_IGNORE_RATIO
         canvas.image(@image_path, at: image_origin, width: @width, height: @height)
       end
 

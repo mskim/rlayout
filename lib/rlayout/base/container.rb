@@ -3,9 +3,8 @@ module RLayout
 
   class Container < Graphic
     attr_accessor :layout_direction, :layout_space, :layout_align, :stack
-    attr_accessor :grid_base, :grid_width, :grid_height, :grid_frame, :grid_h_gutter, :grid_v_gutter, :lines_in_grid
     attr_accessor :draw_gutter_stroke, :gutter_stroke
-    attr_accessor :floats, :grid
+    attr_accessor :floats
 
     def initialize(options={}, &block)
       @graphics             = []
@@ -22,7 +21,6 @@ module RLayout
       gutter_stroke_dash    = options.fetch(:gutter_stroke_dash, nil)
       gutter_stroke_type    = options.fetch(:gutter_stroke_type, 0)
       @gutter_stroke        = GutterStrokeStruct.new(gutter_stroke_color,  gutter_stroke_width, gutter_stroke_dash, gutter_stroke_type) if @draw_gutter_stroke
-      init_grid(options)    if options[:grid_base]
       if options[:graphics]
         create_children(options[:graphics])
       end
@@ -72,12 +70,6 @@ module RLayout
       h[:stack]             = false
       h[:layout_space]      = 0
       h[:layout_align]      = "top"
-      h[:grid_base]         = [3,3]
-      h[:grid_color]        = "blue"
-      h[:grid_frame]        = [0,0,1,1]
-      h[:grid_width]        = 0
-      h[:grid_height]       = 0
-      h[:grid_show]         = true
       h
     end
 
@@ -85,10 +77,6 @@ module RLayout
       if @graphics.length > 0
         relayout!
       end
-      # TODO
-      # if @floats.length > 0
-      #   relayout_grid!
-      # end
     end
 
     #TODO
@@ -130,9 +118,9 @@ module RLayout
           h[:floats] << float.to_hash
         end
       end
-      if @grid
-        h[:grid] = @grid.to_hash
-      end
+      # if @grid
+      #   h[:grid] = @grid.to_hash
+      # end
       h
     end
 
@@ -354,11 +342,7 @@ module RLayout
         else
           # puts "#{kind} not supported!!!"
         end
-
       end
-
-
-
     end
 
     def create_floats(floats_hash_array)

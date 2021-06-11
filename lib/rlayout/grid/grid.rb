@@ -34,18 +34,26 @@
 
 module  RLayout
 
-  class Container < Graphic
-    attr_accessor :grid_base, :gutter, :v_gutter, :grid_cells, :grid_color, :show_grid
+  class Grid < Graphic
+    attr_accessor :grid_base, :grid_width, :grid_height, :grid_frame, :grid_h_gutter, :grid_v_gutter, :lines_in_grid
+    attr_accessor :gutter, :v_gutter, :grid_cells, :grid_color, :show_grid
     attr_accessor :grid_frame #[x,y, width, height] frame in grid unit of parent's grid
 
-    def init_grid(options)
-      @grid_frame     = options.fetch(:grid_frame,[0,0,3,3])
-      if options[:grid_base]
-        if options[:grid_base].class == String && options[:grid_base] =~/x/
-          @grid_base    = options[:grid_base].split("x").map{|e| e.to_i}
-        elsif options[:grid_base].class == Array
-          @grid_base   = options[:grid_base]
-        end
+    def initialize(options)
+      options[:left_margin] = 0
+      options[:top_margin] = 0
+      options[:right_margin] = 0
+      options[:bottom_margin] = 0
+      super
+      @graphics = []
+      @grid_cells = []
+      @grid_frame = options.fetch(:grid_frame,[0,0,3,3])
+      if options[:grid_base].class == String && options[:grid_base] =~/x/
+        @grid_base    = options[:grid_base].split("x").map{|e| e.to_i}
+      elsif options[:grid_base].class == Array
+        @grid_base   = options[:grid_base]
+      else
+        @grid_base = [3,3]
       end
       @grid_color     = options.fetch(:grid_color, 'blue')
       @gutter         = options.fetch(:gutter, 0)
@@ -55,10 +63,15 @@ module  RLayout
     end
 
     def update_grid
-      return unless @grid_base
+
       @grid_width   = (@width - @left_margin - @right_margin - (@grid_base[0]-1)*@gutter)/@grid_base[0]
       @grid_height  = (@height - @top_margin - @bottom_margin - (@grid_base[1]-1)*@v_gutter)/@grid_base[1]
       @grid         = GridStruct.new(@grid_base, @grid_width, @grid_height, @gutter, @v_gutter)
+      update_grid_cells
+    end
+    
+    # over ride container relayout!
+    def relayout!
       update_grid_cells
     end
 
@@ -126,6 +139,7 @@ module  RLayout
     def move_cell_to_top_most(cell)
 
     end
+
     def move_cell_to_bottom_most(cell)
 
     end
@@ -135,7 +149,6 @@ module  RLayout
       right_space = @grid_base[0] - (frame[X_POS] + frame[WIDTH_VAL])
       frame[X_POS] = right_space
     end
-
 
     def flipp_cell_vertically(cell)
       frame    = cell.grid_record.grid_frame
@@ -157,7 +170,6 @@ module  RLayout
       relayout_grid!
     end
 
-
     def flipp_grid_cells_both_way
       flipp_grid_cells_horizontally
       flipp_grid_cells_vertically
@@ -178,7 +190,6 @@ module  RLayout
             File.open(available_path_name, 'w'){|f| f.write map.to_yaml}
           end
         end
-
       else
         folder = File.dirname(grid_map_path)
         system("mkdir -p #{folder}") unless File.exists?(folder)
@@ -237,6 +248,7 @@ module  RLayout
 
     end
 
+    # return true if ant cells are overlapping
     def over_lapping_calls?
 
     end
@@ -249,7 +261,6 @@ module  RLayout
       h = {}
       h[grid_name.to_sym]= list
     end
-
 
     # given cell index, get x, y position in grid unit
     def grid_frame_of(grid_index)
@@ -387,7 +398,6 @@ module  RLayout
       end
       nil
     end
-
 
     def occupying_grids(graphic)
       occupied_grid = []

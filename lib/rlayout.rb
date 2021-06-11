@@ -51,11 +51,13 @@ else
   require File.dirname(__FILE__) + "/rlayout/graphic/stroke"
 
   require File.dirname(__FILE__) + '/rlayout/container/auto_layout'
-  require File.dirname(__FILE__) + '/rlayout/container/grid'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'
   require File.dirname(__FILE__) + '/rlayout/container/image_plus'
-  require File.dirname(__FILE__) + '/rlayout/container/matrix'
-  require File.dirname(__FILE__) + '/rlayout/container/group_image'
+
+  require File.dirname(__FILE__) + '/rlayout/grid/grid'
+  # require File.dirname(__FILE__) + '/rlayout/grid/matrix'
+  require File.dirname(__FILE__) + '/rlayout/grid/group_image'
+  require File.dirname(__FILE__) + '/rlayout/grid/m_table'
 
   # require File.dirname(__FILE__) + '/rlayout/db_publishing/db_item'
   # require File.dirname(__FILE__) + '/rlayout/container_extended/photo_item'
@@ -81,6 +83,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/text'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/graphic_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/container_view_pdf'
+  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/grid_view_pdf'
 
   require File.dirname(__FILE__) + '/rlayout/story/story'
   require File.dirname(__FILE__) + '/rlayout/story/reader'

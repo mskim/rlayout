@@ -4,7 +4,7 @@ module RLayout
   # Table that is subclassed form matic
   # Size are fixed 
 
-  class MTable < Matrix
+  class MTable < Grid
     attr_reader :project_path
     attr_reader :title, :source, :category_level, :heading_level
     attr_reader :has_head_row, :can_grow, :calculate_column_width
@@ -37,7 +37,7 @@ module RLayout
     def layout_items
       # TODO: implement variable column width
       # replace the text cell content 
-      end
+      # end
     end
 
     # TODO: maybe we should impleamnt deviation, where one or two deviats from the rest

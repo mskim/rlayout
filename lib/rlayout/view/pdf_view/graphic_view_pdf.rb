@@ -18,7 +18,6 @@ module RLayout
       end
       style_service.pdf_doc = @pdf_doc
       # load_fonts(@pdf_doc)
- 
       # style_service.set_canvas_text_style(canvas, 'body')
       draw_pdf(canvas)
       @pdf_doc.write(output_path)
@@ -36,7 +35,6 @@ module RLayout
         pdf_doc.fonts.add(font_file)
       end
     end
-
 
     # using vips convert pdf 2 jpg
     # if enlarging ratio is given as options, it enlarges pdf canvas to the given ratio, 
@@ -74,7 +72,6 @@ module RLayout
         p_origin = @parent.flipped_origin
         [p_origin[0] + @x, p_origin[1] - @y]
       else
-        # [@x, @height - @y - @top_inset]
         [@x, @height - @y]
       end
     end

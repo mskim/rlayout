@@ -122,6 +122,12 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2021_06_11
+  - create Grid class Grid < Graphic
+    - implement relayout!
+
+
+
 2021_03_08
 	- remove stroke_sides in NewsBoxMaker, it should be set by front-end
 2021_03_18

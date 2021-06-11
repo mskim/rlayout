@@ -20,7 +20,7 @@ module RLayout
   # member_image captions are not place under the images, but they are grouped and placed at one of the cell location 
   # This is used in yearbook layout, where students names are place as grouped_caption with same location as the images.
   
-  class GroupImage < Matrix
+  class GroupImage < Grid
     attr_reader :image_items
     attr_reader :direction,  :output_path
     attr_reader :images_folder, :group_caption, :image_item_captions, :hide_caption
@@ -30,10 +30,9 @@ module RLayout
     attr_reader :grouped_caption, :grouped_caption_cell
 
     def initialize(options={})
-      super
-      @group_caption = options[:group_caption] || false
-      @hide_caption = options[:show_caption] || true
-      @member_shape = options[:member_shape] || 'rect'
+      @column       = options[:column] || 2
+      @row          = options[:row] || 2
+      @direction    = options[:direction] #|| 'horizontal'
       # there are two ways to pass image_path_info
       # first way is to pass "images_folder" and "image_items"
       # and an other way is to pass image_items_full_path_array of each image
@@ -49,24 +48,28 @@ module RLayout
         puts "member_image path not given"
         return
       end
-      @width        = options[:width]
-      @height       = options[:height]
+      if @direction == 'horizontal'
+        @column       = options[:column] || @image_items_full_path_array.length
+        @row          = options[:row]    || 1  
+      elsif @direction == 'vertical'
+        @column       = options[:column] || 1 
+        @row          = options[:row]    || @image_items_full_path_array.length
+      end
+      options[:grid_base] = [@column, @row]
+      super
+      @output_path  = options[:output_path]
+      @group_caption = options[:group_caption] || false
+      @hide_caption = options[:show_caption] || true
+      @member_shape = options[:member_shape] || 'rect'
+
       @gutter       = options[:gutter] || 3
       @v_gutter     = options[:v_gutter] || 3
-      @direction    = options[:direction] || 'horizontal'
       if options[:image_item_captions]
         @image_item_captions = options[:image_item_captions]
       elsif options[:group_caption]
         @group_caption = options[:group_caption]
       end
-      @output_path  = options[:output_path]
-      if @direction == 'horizontal'
-        @column       = options[:column] || @image_items_full_path_array.length
-        @row          = options[:row]    || 1  
-      else
-        @column       = options[:column] || 1 
-        @row          = options[:row]    || @image_items_full_path_array.length
-      end
+
       layout_items if @image_items_full_path_array.length > 0
       self
     end
@@ -76,10 +79,10 @@ module RLayout
     end
     
     def layout_items
-      @row_width  = (@width - (@column-1)*@gutter)/@column
-      @row_height = (@height - (@row-1)*@v_gutter)/@row
-      x_position = 0
-      y_position = 0
+      # @row_width  = (@width - (@column-1)*@gutter)/@column
+      # @row_height = (@height - (@row-1)*@v_gutter)/@row
+      # x_position = 0
+      # y_position = 0
       # TODO: handle mutile row 
       @image_items_full_path_array.each_with_index do |item, i|
         # Image.new(parent:self, image_path: item[:image_path], x:item[:x], y:item[:y], width:item[:width], height:item[:height])
@@ -89,13 +92,18 @@ module RLayout
         if @image_item_captions
           h[:caption]     = @image_item_captions[i]
         end
-        h[:x]           = x_position
-        h[:y]           = y_position
-        h[:width]       = @row_width
-        h[:height]      = @row_height
+        cell    = @grid_cells[i]
+        h[:x]           = cell[:x]
+        h[:y]           = cell[:y]
+        h[:width]       = cell[:width]
+        h[:height]      = cell[:height]
         h[:shape]       = @member_shape
+        h[:caption]     = "Hong Gil Dong"
+        h[:stroke_width] = 5
+        h[:stroke_color] = 'red'
+        h[:fill_color] = 'clear'
         ImagePlus.new(h)
-        x_position += row_width + @gutter
+        # Image.new(h)
       end
     end
 
@@ -119,7 +127,7 @@ module RLayout
   # GroupedCaption is placed in one of the empty GroupImage cells.
   # It displays grouped captions for image_cells at a location of images.
   # Think yearbook pictures with collected names area away from pictures. 
-  class GroupedCaption < Matrix
+  class GroupedCaption < Grid
     attr_reader :cell_position, :column_index, :row_index
     attr_reader :captions_array
     def initialize(options = {})
