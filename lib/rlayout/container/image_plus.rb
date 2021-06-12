@@ -17,12 +17,21 @@ module RLayout
 
     def initialize(options={})
       @image_path               = options[:image_path]
+      unless @image_path
+        puts "image_path not found!!!"
+        return
+      end
       @caption                  = options[:caption]
+      #  TODO this works only with .jpg extension
+      unless @caption
+        @ext = File.extname(@image_path)
+        @caption = File.basename(@image_path, @ext).unicode_normalize
+      end
       @shape                    = options[:shape] || 'rect'
       @project_path             = options[:project_path]
       @image_style              = options.fetch(options[:image_style], default_image_style)
-      @caption                  = File.basename(options[:image_path], ".*")  if options[:filename_caption]
       image_options             = @image_style.dup
+      options[:fill_color]      = 'clear'
       super
 
       image_options[:width]        = @width
@@ -30,13 +39,15 @@ module RLayout
       image_options[:parent]       = self
       image_options[:image_path]   = @image_path
       image_options[:project_path] = @project_path
-      caption_width               = @width
-      @image_object               = Image.new(image_options)
+      image_options[:fill_color]   = 'clear'
+      caption_width                = @width
+      caption_height               = @height/10 
+      @image_object                = Image.new(image_options)
       if @caption
         text_options                = @image_style.dup
         text_options[:parent]       = self
-        text_options[:y]            = @height - 12
-        text_options[:height]       = 12
+        text_options[:y]            = @height - caption_height
+        text_options[:height]       = caption_height
         text_options[:width]        = @width
         text_options[:text_string]  = @caption 
         @caption_object = Text.new(text_options)
@@ -47,7 +58,8 @@ module RLayout
       {
         fit_type:3,
         frame_sides:[1,1,1,1], 
-        font:'KoPubDotumPL',
+        # font:'KoPubDotumPL',
+        font:'KoPubBatangPM',
         font_size:9,
         text_alignment:'center',
       }

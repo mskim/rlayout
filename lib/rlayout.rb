@@ -24,7 +24,7 @@ else
   require "image_processing/vips"
   require "image_processing"
   require 'hexapdf'
-  require 'text/hyphen'
+  require 'text-hyphen'
 
   # require 'xml-simple'
 
@@ -174,7 +174,9 @@ else
 
 
   require File.dirname(__FILE__) + '/rlayout/article/float_group'
- 
+
+  require File.dirname(__FILE__) + '/rlayout/yearbook/yb_page'
+  
 end
 
 module RLayout

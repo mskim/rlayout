@@ -52,7 +52,6 @@ module RLayout
       # there are two ways to pass image_path_info
       # first way is to pass "images_folder" and "image_items"
       # and an other way is to pass image_items_full_path_array of each image
-      binding.pry
       if options[:images_folder] && options[:image_items]
         @images_folder  = options[:images_folder]
         @image_items  = options[:image_items]
@@ -79,11 +78,11 @@ module RLayout
 
       # options[:grid_base] = [@column, @row]
       super
+
       @output_path  = options[:output_path]
       @group_caption = options[:group_caption] || false
       @hide_caption = options[:show_caption] || true
       @member_shape = options[:member_shape] || 'rect'
-
       @gutter       = options[:gutter] || 3
       @v_gutter     = options[:v_gutter] || 3
       if options[:image_item_captions]
@@ -111,16 +110,18 @@ module RLayout
         h = {}
         h[:parent]      = self
         h[:image_path]  = item
-        if @image_item_captions
-          h[:caption]     = @image_item_captions[i]
-        end
+        # if @image_item_captions
+        #   h[:caption]     = @image_item_captions[i]
+        # # else
+        # #   @ext = File.extname(@image_items[i])
+        # #   h[:caption] = File.basename(@image_items[i], @ext)
+        # end
         cell    = @grid_cells[i]
         h[:x]           = cell[:x]
         h[:y]           = cell[:y]
         h[:width]       = cell[:width]
         h[:height]      = cell[:height]
         h[:shape]       = @member_shape
-        h[:caption]     = "Hong Gil Dong"
         h[:stroke_width] = 5
         h[:stroke_color] = 'red'
         h[:fill_color] = 'clear'
