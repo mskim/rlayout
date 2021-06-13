@@ -30,7 +30,7 @@ module RLayout
         set_position
       else
         @text_alignment = options[:text_alignment] || options[:alignment] || 'left'
-        @v_alignment    = options[:v_alignment]     || 'top'
+        @v_alignment    = options[:v_alignment]     || 'center'
       end
       set_string_width
       if @text_fit_type == "fit_box_to_text"
@@ -109,7 +109,7 @@ module RLayout
         case @v_alignment
         when 'top'
         when 'center'
-          @y_offset -= (@height - @font_size)/2
+          @y_offset -= (@height - @font_size)/3
         when 'bottom'
           @y_offset -= @height - @font_size
         else

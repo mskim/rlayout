@@ -1,30 +1,24 @@
 module RLayout
 
-  # GroupImage
+  # GroupImage < Grid
   # column
   # row
-  # image_items = [{position: 1, image_path:some_oath}]
   # 
-  # TODO
-  # add member caption 
-  # default is to show caption for each individual images
-  # if group_caption can be # false, collection_cell, bottom 
 
-  # image_flow 
-  # first line of member_images are placed starting from top left[0,0] to right 
-  # but for the second line on we have two ways of placing member_images. "linked" and "from_start"
-  # "linked": when member_images reached right edge, next image will be placed below the right edge and start flowing to the left.
-  # "from_start": when member_images reached right edge, next image will be placed at the start left edge like the first line.
-  
-  # grouped_caption:boolean
-  # member_image captions are not place under the images, but they are grouped and placed at one of the cell location 
+  # captopm
+  # cell cation and group_cell_caption
+
+  # group_cell_caption
+  # member_image captions are grouped and placed at one of the cell location 
   # This is used in yearbook layout, where students names are place as grouped_caption with same location as the images.
   
   # usage
   # specifiy column and row
   # GroupImage.new(column: 3, row: 3, width: 400, height: 400, images_folder: folder_path, images: images_list_array)
 
-  # specifiy dirction 
+  # single row GroupImage
+  # Newspaper personal picture are layout in horizonral fashion.
+  # dirction 
   # direction: 'horizontal 
   # This will make horizontally spaning images 4x1 with single row.
   # direction: 'vertical'
@@ -35,23 +29,35 @@ module RLayout
   # class Grid
   # def best_fitting_grid_base(number, options={})
 
+  # only column value is specified
+  # in this case row value can vary with number of member cells
+
+  # image_path
+  # there are two ways to pass image_path_info
+  # first way is to pass "images_folder" and "image_items"
+  # or image_items_full_path_array of each full image_path
+
+  # caption
+  # caption text for each member cells can be provide with image_item_captions array
+  # or each cation text can be read from filename, if @caption_from_basename is set to true
+  # default @caption_from_basename value is set to true
+ 
   
   class GroupImage < Grid
     attr_reader :image_items
     attr_reader :direction,  :output_path
-    attr_reader :images_folder, :group_caption, :image_item_captions, :hide_caption
+    attr_reader :images_folder, :group_caption, :image_item_captions, :caption_from_basename, :hide_caption
     attr_reader :profile, :gutter, :v_gutter
     attr_reader :member_shape # rect, circle
     attr_reader :image_flow # linked, each_row
-    attr_reader :grouped_caption, :grouped_caption_cell
+    attr_reader :group_caption, :group_caption_cell
+    attr_reader :horizontal_caption
 
     def initialize(options={})
       @column       = options[:column] #|| 2
       @row          = options[:row] #|| 2
       @direction    = options[:direction] #|| 'horizontal'
-      # there are two ways to pass image_path_info
-      # first way is to pass "images_folder" and "image_items"
-      # and an other way is to pass image_items_full_path_array of each image
+
       if options[:images_folder] && options[:image_items]
         @images_folder  = options[:images_folder]
         @image_items  = options[:image_items]
@@ -72,25 +78,27 @@ module RLayout
         @row          = options[:row]    || @image_items_full_path_array.length
       elsif @column && @row
         options[:grid_base] = [@column, @row]
+      elsif @column
+        # only column valus is given, calculate row value
+        result = @image_items_full_path_array.length/@column
+        if (@image_items_full_path_array.length % @column) !=0
+          @row = result.to_i + 1
+        end
+        options[:grid_base] = [@column, @row]
       else
         options[:grid_base] = best_fitting_grid_base(@image_items_full_path_array.length)
       end
 
-      # options[:grid_base] = [@column, @row]
       super
-
       @output_path  = options[:output_path]
       @group_caption = options[:group_caption] || false
       @hide_caption = options[:show_caption] || true
       @member_shape = options[:member_shape] || 'rect'
       @gutter       = options[:gutter] || 3
       @v_gutter     = options[:v_gutter] || 3
-      if options[:image_item_captions]
-        @image_item_captions = options[:image_item_captions]
-      elsif options[:group_caption]
-        @group_caption = options[:group_caption]
-      end
-
+      @group_caption = options[:group_caption]
+      @image_item_captions = options[:image_item_captions]
+      @caption_from_basename = options[:caption_from_basename] || true
       layout_items if @image_items_full_path_array.length > 0
       self
     end
@@ -110,12 +118,6 @@ module RLayout
         h = {}
         h[:parent]      = self
         h[:image_path]  = item
-        # if @image_item_captions
-        #   h[:caption]     = @image_item_captions[i]
-        # # else
-        # #   @ext = File.extname(@image_items[i])
-        # #   h[:caption] = File.basename(@image_items[i], @ext)
-        # end
         cell    = @grid_cells[i]
         h[:x]           = cell[:x]
         h[:y]           = cell[:y]
@@ -125,6 +127,11 @@ module RLayout
         h[:stroke_width] = 5
         h[:stroke_color] = 'red'
         h[:fill_color] = 'clear'
+        if @image_item_captions
+          h[:caption] = @image_item_captions[i]
+        else
+          h[:caption_from_basename] = @caption_from_basename
+        end
         ImagePlus.new(h)
         # Image.new(h)
       end

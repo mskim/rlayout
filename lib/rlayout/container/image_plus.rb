@@ -2,17 +2,19 @@ module RLayout
 
   # ImagePlus
   # ImagePlus adds simple caption using Text to Image Object
-  # if filename_caption is true use filename as caption
+  # if caption_from_basename is true use filename as caption
   # underbar in filename is replaced as " ". 
   # some_caption_in_filename => "some caption in filename"
   # last underbar with following alphabet or nubmer is removed since it is used for duplicate name id
-  #   some_name_A, lee_min_jee_6
+  #   홍길동_A => "홍길동" 
+  #   Lee_Min_Jee_6 => "Lee Min Jee"
   # image_style contains style of ImagePlus
   #  {fit_type, frame, caption}
-  # NewsImage adds CaotionTitle, caption, source, a more complex caption
 
+  # for more complex caption use NewsImage
+  # NewsImage adds CaptionTitle, caption, source
   class ImagePlus < Container
-    attr_reader :image_path, :image_style, :caption, :filename_caption, :project_path
+    attr_reader :image_path, :image_style, :caption, :caption_from_basename, :project_path
     attr_reader :shape
 
     def initialize(options={})
@@ -23,10 +25,11 @@ module RLayout
       end
       @caption                  = options[:caption]
       #  TODO this works only with .jpg extension
-      unless @caption
-        @ext = File.extname(@image_path)
+      if !@caption && options[:caption_from_basename]
+        @ext = '.jpg'
         @caption = File.basename(@image_path, @ext).unicode_normalize
       end
+      filter_captopn_name if @caption
       @shape                    = options[:shape] || 'rect'
       @project_path             = options[:project_path]
       @image_style              = options.fetch(options[:image_style], default_image_style)
@@ -49,8 +52,20 @@ module RLayout
         text_options[:y]            = @height - caption_height
         text_options[:height]       = caption_height
         text_options[:width]        = @width
-        text_options[:text_string]  = @caption 
+        text_options[:text_string]  = @caption
+        text_options[:v_alignment]  = 'center'
+        text_options[:font_size]    = caption_height*0.7
+        
         @caption_object = Text.new(text_options)
+      end
+    end
+
+    def filter_captopn_name
+      if @caption=~/(_[\da-zA-Z])$/
+        @caption.sub!($1, "")
+      end
+      if @caption.include?("_")
+        @caption.gsub!("_", " ")
       end
     end
 
