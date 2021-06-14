@@ -54,10 +54,12 @@ module RLayout
   class Graphic
     attr_accessor :image_path, :image_object, :image_dimension, :image_frame, :image_fit_type, :source_frame, :local_image, :image_caption, :image_crop_rect, :image_crop_grid
     attr_reader :zoom_level, :zoom_anchor, :zoom_factor
-    attr_accessor :clip_ready_image_rect
+    attr_accessor :clip_ready_image_rect, :caption_height
 
     def init_image(options)
+      @shape = options[:shape] if options[:shape]
       @image_record  = options.fetch(:image_record,nil)
+      @caption_height = options[:caption_height]
       unless options[:image_path]
         if (options[:local_image] && $ProjectPath) || (options[:local_image] && @project_path)
           @local_image          = options[:local_image]

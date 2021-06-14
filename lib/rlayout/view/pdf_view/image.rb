@@ -63,7 +63,22 @@ module RLayout
         canvas.end_path
         canvas.image(@image_path, at: [image_origin[0] - @clip_rect[0], image_origin[1] - @clip_rect[1]], width: @clip_rect[2])
       else
-        canvas.image(@image_path, at: image_origin, width: @width, height: @height)
+        if @shape == 'circle'
+          flipped = flipped_origin
+          canvas.save_graphics_state
+          if @caption_height
+          else
+            @caption_height = @height*0.9 
+          end
+          canvas.ellipse(image_origin[0] + @width/2, image_origin[1]  + (@height + @caption_height)/2, a: @width/2, b: (@height -  @caption_height)/2)
+          canvas.clip_path(:nonzero)
+          canvas.end_path
+          canvas.image(@image_path, at: image_origin, width: @width, height: @height)
+          canvas.image(@image_path, at: image_origin, width: @width, height: @height)
+          canvas.restore_graphics_state
+        else
+          canvas.image(@image_path, at: image_origin, width: @width, height: @height)
+        end
       end
 
     end

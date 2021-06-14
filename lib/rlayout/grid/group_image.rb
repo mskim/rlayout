@@ -94,6 +94,7 @@ module RLayout
       @group_caption = options[:group_caption] || false
       @hide_caption = options[:show_caption] || true
       @member_shape = options[:member_shape] || 'rect'
+      @member_shape = options[:member_shape] || 'circle'
       @gutter       = options[:gutter] || 3
       @v_gutter     = options[:v_gutter] || 3
       @group_caption = options[:group_caption]
@@ -123,7 +124,7 @@ module RLayout
         h[:y]           = cell[:y]
         h[:width]       = cell[:width]
         h[:height]      = cell[:height]
-        h[:shape]       = @member_shape
+        h[:shape]       = @member_shape || 'circle'
         h[:stroke_width] = 5
         h[:stroke_color] = 'red'
         h[:fill_color] = 'clear'

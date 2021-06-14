@@ -30,7 +30,6 @@ module RLayout
         @caption = File.basename(@image_path, @ext).unicode_normalize
       end
       filter_captopn_name if @caption
-      @shape                    = options[:shape] || 'rect'
       @project_path             = options[:project_path]
       @image_style              = options.fetch(options[:image_style], default_image_style)
       image_options             = @image_style.dup
@@ -43,8 +42,11 @@ module RLayout
       image_options[:image_path]   = @image_path
       image_options[:project_path] = @project_path
       image_options[:fill_color]   = 'clear'
+      image_options[:shape]        = options[:shape]
       caption_width                = @width
-      caption_height               = @height/10 
+      caption_height               = @height/10
+      # need caption_height to clip circle above the caption 
+      image_options[:caption_height] = caption_height
       @image_object                = Image.new(image_options)
       if @caption
         text_options                = @image_style.dup
@@ -55,7 +57,6 @@ module RLayout
         text_options[:text_string]  = @caption
         text_options[:v_alignment]  = 'center'
         text_options[:font_size]    = caption_height*0.7
-        
         @caption_object = Text.new(text_options)
       end
     end
