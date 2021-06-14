@@ -3,10 +3,28 @@ module RLayout
   # GroupImage < Grid
   # column
   # row
-  # 
+  # image_item_full_path_array
+  # image_item_captions_array
+  
+  # caption
+  # We have two types of caption, "each cell cation" and "grouped_cell_caption".
 
-  # captopm
-  # cell cation and group_cell_caption
+  # caption name filtering: "filter_caption_name"
+  # Some captions need filtering.
+  # Example: If we have dupicate names, we put id,
+  # by adding _1 or _A. And when displaying it, use filtering to remove it.
+  # last underbar with following alphabet or nubmer is removed since it is used for duplicate name id
+  #   홍길동_A => "홍길동" 
+  #   홍길동_1 => "홍길동" 
+  #
+  # Sometimes person's name has space between them and trying to name the image file with the person's name can casuse problem in some file systems.
+  # So, the recommeded way to avoid troble is to use "_" in place of space.
+  # Example: image file of Jame M Smith should be written as "Jame_M_Smith"
+  #   Lee_Min_Jee_6 => "Lee Min Jee"
+
+  #
+  # image_style contains style of ImagePlus
+  #  {fit_type, frame, caption}
 
   # group_cell_caption
   # member_image captions are grouped and placed at one of the cell location 
@@ -35,18 +53,17 @@ module RLayout
   # image_path
   # there are two ways to pass image_path_info
   # first way is to pass "images_folder" and "image_items"
-  # or image_items_full_path_array of each full image_path
+  # or image_item_full_path_array of each full image_path
 
   # caption
-  # caption text for each member cells can be provide with image_item_captions array
-  # or each cation text can be read from filename, if @caption_from_basename is set to true
-  # default @caption_from_basename value is set to true
+  # caption text for each member cells can be provide with image_item_captions_array array
+  # or created from the image_path by calling extract_item_caption_from_image_path
  
   
   class GroupImage < Grid
     attr_reader :image_items
     attr_reader :direction,  :output_path
-    attr_reader :images_folder, :image_item_captions, :caption_from_basename, :hide_caption
+    attr_reader :images_folder, :image_item_captions_array, :hide_caption
     attr_reader :profile, :gutter, :v_gutter
     attr_reader :member_shape # rect, circle
     attr_reader :image_flow # linked, each_row
@@ -61,32 +78,32 @@ module RLayout
       if options[:images_folder] && options[:image_items]
         @images_folder  = options[:images_folder]
         @image_items  = options[:image_items]
-        @image_items_full_path_array = @image_items.map do |item|
+        @image_item_full_path_array = @image_items.map do |item|
           @images_folder + "/#{item}"
         end
-      elsif options[:image_items_full_path_array]
-        @image_items_full_path_array  = options[:image_items_full_path_array]
+      elsif options[:image_item_full_path_array]
+        @image_item_full_path_array  = options[:image_item_full_path_array]
       else
         puts "member_image path not given"
         return
       end
       if @direction == 'horizontal'
-        @column       = options[:column] || @image_items_full_path_array.length
+        @column       = options[:column] || @image_item_full_path_array.length
         @row          = options[:row]    || 1  
       elsif @direction == 'vertical'
         @column       = options[:column] || 1 
-        @row          = options[:row]    || @image_items_full_path_array.length
+        @row          = options[:row]    || @image_item_full_path_array.length
       elsif @column && @row
         options[:grid_base] = [@column, @row]
       elsif @column
         # only column valus is given, calculate row value
-        result = @image_items_full_path_array.length/@column
-        if (@image_items_full_path_array.length % @column) !=0
+        result = @image_item_full_path_array.length/@column
+        if (@image_item_full_path_array.length % @column) !=0
           @row = result.to_i + 1
         end
         options[:grid_base] = [@column, @row]
       else
-        options[:grid_base] = best_fitting_grid_base(@image_items_full_path_array.length)
+        options[:grid_base] = best_fitting_grid_base(@image_item_full_path_array.length)
       end
 
       super
@@ -97,10 +114,13 @@ module RLayout
       @member_shape = options[:member_shape] || 'circle'
       @gutter       = options[:gutter] || 3
       @v_gutter     = options[:v_gutter] || 3
-      @image_item_captions = options[:image_item_captions]
-      @caption_from_basename = options[:caption_from_basename] || true
-      layout_items if @image_items_full_path_array.length > 0
+      @image_item_captions_array = options[:image_item_captions_array] || extract_item_caption_from_image_path
+      layout_items if @image_item_full_path_array.length > 0
       self
+    end
+
+    def extract_item_caption_from_image_path
+      @image_item_full_path_array.map{|f| filter_caption_name(File.basename(f, '.jpg'))}
     end
 
     def dummy_image_path
@@ -113,8 +133,7 @@ module RLayout
       # x_position = 0
       # y_position = 0
       # TODO: handle mutile row 
-      @group_cation_cell = @image_items_full_path_array.length
-      @image_items_full_path_array.each_with_index do |item, i|
+      @image_item_full_path_array.each_with_index do |item, i|
         # Image.new(parent:self, image_path: item[:image_path], x:item[:x], y:item[:y], width:item[:width], height:item[:height])
         h = {}
         h[:parent]      = self
@@ -132,10 +151,8 @@ module RLayout
           h[:caption] = nil
         else
           # indivisual caption
-          if @image_item_captions
-            h[:caption] = @image_item_captions[i]
-          else
-            h[:caption_from_basename] = @caption_from_basename
+          if @image_item_captions_array
+            h[:caption] = @image_item_captions_array[i]
           end
         end
         ImagePlus.new(h)
@@ -144,17 +161,27 @@ module RLayout
       if @group_caption
         h = {}
         h[:parent]      = self
-        i = @image_items_full_path_array.length
-        cell            = @grid_cells[i]
+        caption_cell_index = @image_item_full_path_array.length
+        cell            = @grid_cells[caption_cell_index]
         h[:column]      = @column
         h[:row]         = @row
         h[:x]           = cell[:x]
         h[:y]           = cell[:y]
         h[:width]       = cell[:width]
         h[:height]      = cell[:height]/3
-        h[:text_string_array] = @image_items_full_path_array.map{|f| File.basename(f,".jpg")}
+        h[:text_string_array] = @image_item_full_path_array.map{|f| File.basename(f,".jpg")}
         GroupedCaption.new(h)
       end
+    end
+
+    def filter_caption_name(caption)
+      if caption=~/(_[\da-zA-Z])$/
+        caption.sub!($1, "")
+      end
+      if caption.include?("_")
+        caption.gsub!("_", " ")
+      end
+      caption
     end
 
   end

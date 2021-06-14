@@ -1,15 +1,8 @@
 module RLayout
 
   # ImagePlus
-  # ImagePlus adds simple caption using Text to Image Object
-  # if caption_from_basename is true use filename as caption
-  # underbar in filename is replaced as " ". 
-  # some_caption_in_filename => "some caption in filename"
-  # last underbar with following alphabet or nubmer is removed since it is used for duplicate name id
-  #   홍길동_A => "홍길동" 
-  #   Lee_Min_Jee_6 => "Lee Min Jee"
-  # image_style contains style of ImagePlus
-  #  {fit_type, frame, caption}
+  # ImagePlus adds simple caption to Image Object
+  # if caption is given it uses given caption otherwise, leaves empty room for spacing 
 
   # for more complex caption use NewsImage
   # NewsImage adds CaptionTitle, caption, source
@@ -25,11 +18,10 @@ module RLayout
       end
       @caption                  = options[:caption]
       #  TODO this works only with .jpg extension
-      if !@caption && options[:caption_from_basename]
-        @ext = '.jpg'
-        @caption = File.basename(@image_path, @ext).unicode_normalize
-      end
-      filter_captopn_name if @caption
+      # unless @caption &&
+      #   @ext = '.jpg'
+      #   @caption = filter_caption_name(File.basename(@image_path, @ext).unicode_normalize)
+      # end
       @project_path             = options[:project_path]
       @image_style              = options.fetch(options[:image_style], default_image_style)
       image_options             = @image_style.dup
@@ -62,14 +54,15 @@ module RLayout
       end
     end
 
-    def filter_captopn_name
-      if @caption=~/(_[\da-zA-Z])$/
-        @caption.sub!($1, "")
-      end
-      if @caption.include?("_")
-        @caption.gsub!("_", " ")
-      end
-    end
+    # def filter_caption_name(caption)
+    #   if caption=~/(_[\da-zA-Z])$/
+    #     caption.sub!($1, "")
+    #   end
+    #   if caption.include?("_")
+    #     caption.gsub!("_", " ")
+    #   end
+    #   caption
+    # end
 
     def default_image_style
       {
