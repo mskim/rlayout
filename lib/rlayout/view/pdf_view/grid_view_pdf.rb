@@ -29,5 +29,30 @@ module RLayout
         pdf_doc.fonts.add(font_file)
       end
     end
+
+
+    # def to_pdf(canvas)
+    def draw_pdf(canvas)
+      # return if self.class == RDocument
+      # @pdf_doc = parent.pdf_doc if parent
+      draw_fill(canvas) unless self.class == RDocument
+      @graphics.each do |g|
+        g.draw_pdf(canvas)
+      end
+      # @floats.each do |g|
+      #   g.draw_pdf(canvas)
+      # end
+      # end
+    end
+
+    def flipped_origin
+      if @parent && @parent.class != RDocument
+        p_origin = @parent.flipped_origin
+        [p_origin[0] + @x, p_origin[1] - @y]
+      else
+        [@x, @height - @y]
+      end
+    end
+
   end
 end

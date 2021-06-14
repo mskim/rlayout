@@ -46,11 +46,11 @@ module RLayout
   class GroupImage < Grid
     attr_reader :image_items
     attr_reader :direction,  :output_path
-    attr_reader :images_folder, :group_caption, :image_item_captions, :caption_from_basename, :hide_caption
+    attr_reader :images_folder, :image_item_captions, :caption_from_basename, :hide_caption
     attr_reader :profile, :gutter, :v_gutter
     attr_reader :member_shape # rect, circle
     attr_reader :image_flow # linked, each_row
-    attr_reader :group_caption, :group_caption_cell
+    attr_reader :group_caption, :group_caption_cell, :group_caption_text
     attr_reader :horizontal_caption
 
     def initialize(options={})
@@ -97,7 +97,6 @@ module RLayout
       @member_shape = options[:member_shape] || 'circle'
       @gutter       = options[:gutter] || 3
       @v_gutter     = options[:v_gutter] || 3
-      @group_caption = options[:group_caption]
       @image_item_captions = options[:image_item_captions]
       @caption_from_basename = options[:caption_from_basename] || true
       layout_items if @image_items_full_path_array.length > 0
@@ -114,12 +113,13 @@ module RLayout
       # x_position = 0
       # y_position = 0
       # TODO: handle mutile row 
+      @group_cation_cell = @image_items_full_path_array.length
       @image_items_full_path_array.each_with_index do |item, i|
         # Image.new(parent:self, image_path: item[:image_path], x:item[:x], y:item[:y], width:item[:width], height:item[:height])
         h = {}
         h[:parent]      = self
         h[:image_path]  = item
-        cell    = @grid_cells[i]
+        cell            = @grid_cells[i]
         h[:x]           = cell[:x]
         h[:y]           = cell[:y]
         h[:width]       = cell[:width]
@@ -128,53 +128,35 @@ module RLayout
         h[:stroke_width] = 5
         h[:stroke_color] = 'red'
         h[:fill_color] = 'clear'
-        if @image_item_captions
-          h[:caption] = @image_item_captions[i]
+        if @group_caption
+          h[:caption] = nil
         else
-          h[:caption_from_basename] = @caption_from_basename
+          # indivisual caption
+          if @image_item_captions
+            h[:caption] = @image_item_captions[i]
+          else
+            h[:caption_from_basename] = @caption_from_basename
+          end
         end
         ImagePlus.new(h)
         # Image.new(h)
       end
+      if @group_caption
+        h = {}
+        h[:parent]      = self
+        i = @image_items_full_path_array.length
+        cell            = @grid_cells[i]
+        h[:column]      = @column
+        h[:row]         = @row
+        h[:x]           = cell[:x]
+        h[:y]           = cell[:y]
+        h[:width]       = cell[:width]
+        h[:height]      = cell[:height]/3
+        h[:text_string_array] = @image_items_full_path_array.map{|f| File.basename(f,".jpg")}
+        GroupedCaption.new(h)
+      end
     end
 
-    def graphics_with_image
-      @graphics.map{|g| g.image_path !=nil}
-    end
-
-    def grouped_caption_cell
-      @graphics.map{|g| g.cell_position == graphics_with_image.length + 1}
-    end
-
-    def generate_group_caption_map
-      h = {}
-      h[:cell_type] = 'text'
-      h[:captions_array] = @graphics.map{|g| g.caption}
-      h[:parent] = grouped_caption_cell
-      GroupedCaption.new(h)
-    end
-  end
-
-  # GroupedCaption is placed in one of the empty GroupImage cells.
-  # It displays grouped captions for image_cells at a location of images.
-  # Think yearbook pictures with collected names area away from pictures. 
-  class GroupedCaption < Grid
-    attr_reader :cell_position, :column_index, :row_index
-    attr_reader :captions_array
-    def initialize(options = {})
-      @column_index = options[:column_index]
-      @row_index = options[:row_index]
-      @captions_array = options[:captions_array]
-      # TODO: get x, y, width, height from parent
-      # put the GroupedCaption in the middle of parent cell
-      @parent = options[:parent]
-      options[:x] = parent.width/4
-      options[:y] = parent.height/4
-      options[:width] = parent.width/2
-      options[:height] = parent.height/2
-      super
-      self
-    end
   end
 
 end

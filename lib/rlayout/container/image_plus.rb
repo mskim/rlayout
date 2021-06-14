@@ -47,6 +47,7 @@ module RLayout
       caption_height               = @height/10
       # need caption_height to clip circle above the caption 
       image_options[:caption_height] = caption_height
+      # image_options[:caption_height] = 0 unless @caption
       @image_object                = Image.new(image_options)
       if @caption
         text_options                = @image_style.dup
