@@ -3,9 +3,13 @@
 
 # Grid
 #  There are two layout modes, auto_layout and grid mode.
-#  grid is used to divide layout areaa into a grid.
+#  layout using auto_layout is subclassed from Conatainer
+#    Page, Heading, Column, TextBox, ... most of layout classes are subclass of Conatainer
+#  and layout using grid is subclassed from Grid
+#    GroupImage, GroupedCaption, GridTable
 #
 #  In grid mode,
+#   grid_cells: acting as place holder for cells to be placed
 #   grid[col,row]:  number of columns and rows in its own view
 #   grid_cells:     array of grid cells in following hash format
 #   example cell:
@@ -24,18 +28,11 @@
 #  show_grid:          boolean whether to show or hide grid
 #  show_text_line:     boolean whether to show or hide body text lines
 #
-#  Usually grid mode is used at page level,
-#  and auto_layout mode are used in Containers.
-#  when options hash contains :grid, mode become grid mode.
-#  ex. Portait Page will have 3 x 3 grid system
-#      Newpaper at 7 x 12 and some article with auto_layout mode.
 #  And with each types of publication, we can set the grid system to fit the needs.
-
-
 module  RLayout
 
   class Grid < Graphic
-    attr_accessor :grid_base, :grid_width, :grid_height, :grid_frame, :grid_h_gutter, :grid_v_gutter, :lines_in_grid
+    attr_accessor :column, :row, :grid_base, :grid_width, :grid_height, :grid_frame, :grid_h_gutter, :grid_v_gutter, :lines_in_grid
     attr_accessor :gutter, :v_gutter, :grid_cells, :grid_color, :show_grid
     attr_accessor :grid_frame #[x,y, width, height] frame in grid unit of parent's grid
 
@@ -44,16 +41,19 @@ module  RLayout
       options[:top_margin] = 0
       options[:right_margin] = 0
       options[:bottom_margin] = 0
+      @column = options[:column] || 3
+      @row = options[:row] || 3
+      
       super
-      @graphics = []
       @grid_cells = []
-      @grid_frame = options.fetch(:grid_frame,[0,0,3,3])
+      @graphics = []
+      @grid_frame = options.fetch(:grid_frame,[0,0,@column,@row])
       if options[:grid_base].class == String && options[:grid_base] =~/x/
         @grid_base    = options[:grid_base].split("x").map{|e| e.to_i}
       elsif options[:grid_base].class == Array
         @grid_base   = options[:grid_base]
       else
-        @grid_base = [3,3]
+        @grid_base = [@column,@row]
       end
       @grid_color     = options.fetch(:grid_color, 'blue')
       @gutter         = options.fetch(:gutter, 0)
@@ -61,6 +61,7 @@ module  RLayout
       @show_grid      = options.fetch(:show_grid, false)
       update_grid
     end
+
 
     def update_grid
       @grid_width   = (@width - @left_margin - @right_margin - (@grid_base[0]-1)*@gutter)/@grid_base[0]

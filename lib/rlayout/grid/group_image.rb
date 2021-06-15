@@ -5,7 +5,7 @@ module RLayout
   # row
   # image_item_full_path_array
   # image_item_captions_array
-  
+
   # caption
   # We have two types of caption, "each cell cation" and "grouped_cell_caption".
 
@@ -119,20 +119,7 @@ module RLayout
       self
     end
 
-    def extract_item_caption_from_image_path
-      @image_item_full_path_array.map{|f| filter_caption_name(File.basename(f, '.jpg'))}
-    end
-
-    def dummy_image_path
-      "/Users/Shared/SoftwareLab/images/dummy.jpg"
-    end
-    
     def layout_items
-      # @row_width  = (@width - (@column-1)*@gutter)/@column
-      # @row_height = (@height - (@row-1)*@v_gutter)/@row
-      # x_position = 0
-      # y_position = 0
-      # TODO: handle mutile row 
       @image_item_full_path_array.each_with_index do |item, i|
         # Image.new(parent:self, image_path: item[:image_path], x:item[:x], y:item[:y], width:item[:width], height:item[:height])
         h = {}
@@ -174,6 +161,14 @@ module RLayout
       end
     end
 
+    def extract_item_caption_from_image_path
+      @image_item_full_path_array.map{|f| filter_caption_name(File.basename(f, '.jpg'))}
+    end
+
+    def dummy_image_path
+      "/Users/Shared/SoftwareLab/images/dummy.jpg"
+    end
+    
     def filter_caption_name(caption)
       if caption=~/(_[\da-zA-Z])$/
         caption.sub!($1, "")

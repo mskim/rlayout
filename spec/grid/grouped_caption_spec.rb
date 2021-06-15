@@ -10,7 +10,6 @@ describe 'testing GroupImage with grouped_caption' do
   end
 
   it 'should save pdf GroupImage' do
-    binding.pry
     @g.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path) == true
     system "open #{@pdf_path}"
