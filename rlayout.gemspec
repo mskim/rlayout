@@ -5,7 +5,7 @@ require 'rlayout/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "rlayout"
-  spec.version       = Rlayout::VERSION
+  spec.version       = RLayout::VERSION
   spec.authors       = ["Min Soo Kim"]
   spec.email         = ["mskimsid@gmail.com"]
   spec.summary       = %q{Ruby DSL for creating page layout.}
