@@ -10,6 +10,7 @@ module RLayout
       @height_in_lines    = options[:height_in_lines]
       @relayout           = options[:relayout]
       auto_adjust_height_all if @relayout
+      auto_adjust_height_from_change_detected_article(options[:changed_article_detected]) if options[:changed_article_detected]
       self
     end
 
@@ -139,6 +140,44 @@ module RLayout
         adjusted_heights[-1] -= underflow
       end
       adjusted_heights
+    end
+
+    # NewsPage has detected change
+    # update change
+    def self.update_if_changed(page_path, pillar_map)
+      pillar_order = pillar_map[:order]
+      article_map  = pillar_map[:article_map]
+      article_map.each do |map| 
+        pdf_file  = "#{page_path}#{map[:pdf_path]}"
+        @article_folder = File.dirname(pdf_file)
+        md_file = @article_folder + "/story.md"
+        if File.mtime(md_file) > File.mtime(pdf_file)
+          @change_detected = true
+          # puts "change dectected"
+          # puts md_file
+          break
+        end
+      end
+      if @change_detected
+        pillar_path = page_path + "/#{pillar_order}"
+        RLayout::NewsPillar.new(pillar_path: pillar_path, changed_article_detected: @article_folder, height_in_lines:pillar_map[:height_in_lines])
+        return true
+      end
+      false 
+    end
+
+    def auto_adjust_height_from_change_detected_article(changed_article_path)
+      # first step is to layout articles with full_height
+      sorted_root_articles = root_articles
+      chnaged_article_index = sorted_root_articles.index(changed_article_path)
+      chnaged_article_and_following_articles = sorted_root_articles[chnaged_article_index..-1]
+      chnaged_article_and_following_articles.each do |article_path|
+        h                     = {}
+        h[:article_path]      = article_path
+        h[:adjustable_height] = true
+        NewsBoxMaker.new(h)
+      end
+      adjust_articles_to_fit_pillar
     end
 
   end

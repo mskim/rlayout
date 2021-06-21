@@ -143,6 +143,8 @@ module  RLayout
   end
 
   def upcase_first_letter(name)
+    return name if name.frozen?
+    return name if name =~ /^[A-Z]/
     name[0] = name[0].upcase
     name
   end

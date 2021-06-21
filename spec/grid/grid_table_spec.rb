@@ -35,7 +35,7 @@ describe 'testing GridTable' do
   end
   
   it 'should save pdf GroupImage' do
-    @t.save_pdf(@pdf_path)
+    # @t.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path) == true
     system "open #{@pdf_path}"
   end

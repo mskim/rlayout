@@ -12,6 +12,7 @@ module RLayout
       page          = @pdf_doc.pages.add([0, 0, @width, @height])
       canvas        = page.canvas      
       style_service.set_canvas_text_style(canvas, 'body')
+      draw_fill(canvas) unless self.class == RDocument
       @graphics.each do |g|
         g.draw_pdf(canvas)
       end

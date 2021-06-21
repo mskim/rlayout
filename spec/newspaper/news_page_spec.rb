@@ -1,10 +1,23 @@
 require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
+describe 'NewsPage update_changes_only ' do
+  before do
+    @page_path   =  "/Users/mskim/test_data/2021-01-29/2"
+    @page        = NewsPage.new(page_path: @page_path, update_if_changed: true)
+  end
+
+  it 'should create NewsPage' do
+    assert_equal NewsPage, @page.class
+  end
+
+end
+
+
+__END__
 
 describe 'create NewsPage' do
   before do
     @page_path   =  "/Users/mskim/test_data/2021-01-29/2"
-    # @page        = NewsPage.new(page_path: @page_path, relayout: true, time_stamp: true)
     @page        = NewsPage.new(page_path: @page_path, relayout: false)
   end
 
@@ -14,7 +27,6 @@ describe 'create NewsPage' do
 
 end
 
-__END__
 describe 'create NewsBoxMaker with Image' do
   before do
     @article_path   = "/Users/mskim/Development/rails5/style_guide/public/1/section/1/7x15_H_5단통_4/1"
