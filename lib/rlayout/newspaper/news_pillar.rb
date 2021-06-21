@@ -147,20 +147,26 @@ module RLayout
     def self.update_if_changed(page_path, pillar_map)
       pillar_order = pillar_map[:order]
       article_map  = pillar_map[:article_map]
+      height_in_lines = pillar_map[:height_in_lines] 
+      unless height_in_lines
+        height_in_lines = (pillar_map[:pillar_grid_rect][3]/7).round
+      end
       article_map.each do |map| 
         pdf_file  = "#{page_path}#{map[:pdf_path]}"
         @article_folder = File.dirname(pdf_file)
         md_file = @article_folder + "/story.md"
-        if File.mtime(md_file) > File.mtime(pdf_file)
+        unless File.exist?(pdf_file)
           @change_detected = true
-          # puts "change dectected"
-          # puts md_file
+          break
+        end
+        if !File.exist?(pdf_file) || File.mtime(md_file) > File.mtime(pdf_file)
+          @change_detected = true
           break
         end
       end
       if @change_detected
         pillar_path = page_path + "/#{pillar_order}"
-        RLayout::NewsPillar.new(pillar_path: pillar_path, changed_article_detected: @article_folder, height_in_lines:pillar_map[:height_in_lines])
+        RLayout::NewsPillar.new(pillar_path: pillar_path, changed_article_detected: @article_folder, height_in_lines:height_in_lines)
         return true
       end
       false 
