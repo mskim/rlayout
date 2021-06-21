@@ -14,51 +14,34 @@
 
 module RLayout
   class RJob
-    attr_accessor :output_path, :jpg, :preview, :created_object
+    attr_accessor :project_path, :output_path, :jpg, :preview, :created_object
     def initialize(options={})
-      @created_object  = nil
-      @output_path    = options[:output_path] if options[:output_path]
-      @jpg            = options[:jpg] if options[:jpg]
-      @preview        = options[:preview] if options[:preview]
-      $ProjectPath    = options[:project_folder] if options[:project_folder]
-      if options[:script]
-        @created_object = eval(options[:script])
+      @project_path   = options[:project_path]
+      @output_path    = options[:output_path]
+      unless @project_path
         unless @output_path
-          if $ProjectPath
-            @output_path = $ProjectPath + "/output.pdf"
-          else
-            puts "output_path not specified!!! "
-            return
-          end
-        end
-      elsif options[:script_path]
-        unless File.exist?(options[:script_path])
-          puts "no file #{options[:script_path]} doesn't exit!!! "
+          puts "project_path not found!!!"
           return
+        else
+          @project_path = File.dirname(@output_path)
         end
-        $ProjectPath    = File.dirname(options[:script_path]) unless options[:project_folder]
-        script = File.open(options[:script_path], 'r'){|f| f.read}
-        @created_object = eval(script)
-        unless @output_path
-          @output_path = File.dirname(options[:script_path]) + "/output.pdf"
-        end
+      else
+        @output_path    = @project_path + "/output.pdf" unless @output_path
       end
+      @layout_path    = @project_path + "/layout.rb"
+      unless File.exist?(@layout_path)
+        puts "#{@layout_path} path not found!!"
+        return
+      end
+      @jpg            = options[:jpg]
+      layout_rb       = File.open(@layout_path, 'r'){|f| f.read}
+      @created_object = eval(layout_rb)
       if @created_object.class == SyntaxError
         puts "eval SyntaxError !!!!"
         puts "@created_object.inspect:#{@created_object.inspect}"
         return
       end
-      unless @output_path
-        puts "no output_path !!!"
-        return
-      end
-      unless @jpg
-        @jpg         = @created_object.jpg       if @created_object.respond_to?(:jpg)
-      end
-      output_options            = {}
-      output_options[:jpg]      = @jpg if @jpg
-      # output_options[:preview]  = @preview if @preview
-      @created_object.save_pdf(@output_path, output_options) if @created_object.respond_to?(:save_pdf)
+      @created_object.save_pdf(@output_path, jpg:@jpg)
       self
     end
   end

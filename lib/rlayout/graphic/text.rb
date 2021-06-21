@@ -1,4 +1,4 @@
-# text('2021년 3월 19일 금요일 (3호)', x: 828.00, y: 107.25, fill_color:'clear', width: 200, font: 'KoPubDotumPL', font_size: 9.5, font_color: "CMYK=0,0,0,100", text_alignment: 'right')
+# text('2021년 3월 19일 금요일 (3호)', x: 828.00, y: 107.25, fill_color:'clear', width: 200, font: 'KoPubBatangPM', font_size: 9.5, font_color: "CMYK=0,0,0,100", text_alignment: 'right')
 
 module RLayout
   class Text < Graphic
@@ -15,10 +15,10 @@ module RLayout
       @tracking       = options[:tracking]        || 0
       @scale          = options[:scale]           || 100
       if options[:para_style]
-        @font           = options[:para_style][:font]  || 'KoPubDotumPL'
+        @font           = options[:para_style][:font]  || 'KoPubBatangPM' #'KoPubDotumPL'
         @font_color     = options[:para_style][:font_color]      || 'black'
       else
-        @font           = options[:font]            || 'KoPubDotumPL'
+        @font           = options[:font]            || 'KoPubBatangPM'
         @font_color     = options[:font_color]      || 'black'
       end
       @fill_color     = options[:fill_color]      || 'clear'
@@ -114,6 +114,11 @@ module RLayout
           @y_offset -= @height - @font_size
         else
         end
+        # TODO do font_color
+        if @font_color.class == String
+          canvas.fill_color(color_from_string(@font_color))
+        end
+
         canvas.text(@text_string, at: [@x_offset, @y_offset - @font_size])
       end
     end

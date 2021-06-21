@@ -122,6 +122,19 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2021_06_15
+  - GridTable
+    - fix fill_color error
+    - autofit text size
+    - table style
+      - color, category_color, line drawing rule, text alignment
+    - auto adjust table coloumn width
+    - merge category level text
+
+2021_06_14
+  - GroupImage
+  - GroupedCaption
+
 2021_06_11
   - create Grid class Grid < Graphic
     - implement relayout!

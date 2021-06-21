@@ -14,24 +14,31 @@ module RLayout
     attr_reader :grid_width, :grid_height, :number_of_stories
     attr_reader :body_line_height, :ad_type, :page_heading_margin_in_lines, :heading_space, :lines_per_grid
     attr_reader :draw_divider, :divider_line_thickness, :time_stamp, :reduced_size
-    attr_reader :page_columns, :time_stamp, :relayout
+    attr_reader :page_columns, :time_stamp, :relayout, :update_if_changed
+    attr_reader :config_hash
+    
     def initialize(options={}, &block)
       super
       stamp_time      unless options[:time_stamp] == false
       @page_path      = options[:page_path]
       @relayout       = options[:relayout]
+      @update_if_changed = options[:update_if_changed]
       config_path     = @page_path + "/config.yml"
       if File.exist?(config_path)
-        config_hash = File.open(config_path, 'r'){|f| f.read}
-        config_hash = YAML::load(config_hash)
-        setup(config_hash)
+        @config_hash = File.open(config_path, 'r'){|f| f.read}
+        @config_hash = YAML::load(config_hash)
+        setup(@config_hash)
       else
         return 'config.yml not found!!!'
       end
       relayout_pillars if @relayout
-      # layout_ad_box if @ad_box_rect
-      # layout_page_heading
-      merge_pdf
+
+      if @update_if_changed
+        update_if_changed
+        merge_pdf if @change_detected
+      else
+        merge_pdf
+      end
       self
     end
 
@@ -169,7 +176,7 @@ module RLayout
       layout_ad_box if @ad_box_rect
 
       create_pillar_divider_lines if @draw_divider
-      # delete_old_files
+      delete_old_files
       save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
       if @time_stamp
         output_jpg_path       = @output_path.sub(/\.pdf$/, ".jpg")
@@ -335,7 +342,6 @@ module RLayout
       info
     end
 
-
     def self.open(options={})
       config_path     = options[:page_path] + "/config.yml"
       config          = File.open(config_path, 'r'){|f| f.read}
@@ -390,6 +396,52 @@ module RLayout
       # Rectangle.new(parent:self, x:x_position, y:y_position, width:0, height:box_height, stroke_thickness: 0.3)
       Line.new(parent:self, x:x_position, y:y_position, width:0, height:box_height, stroke_thickness: 0.1)
     end
+
+
+    ########### Page Updating Changes only ###########
+    # This is used for file system based workflow,
+    # where layout is triggerd and we only need to update stories that has changed.
+    # We also need to check for Heading, and AdBox change and update them as will.
+    
+    def update_if_changed
+      @change_detected = false
+      update_pillars
+      update_heading
+      update_ad_box
+    end
+
+    def update_pillars
+      @config_hash[:pillar_map].each_with_index do |pillar_map|
+        @change_detected  = RLayout::NewsPillar.update_if_changed(@page_path, pillar_map)
+      end
+    end
+    
+    def update_heading
+      layout_path = @page_path + "/heading/layout.rb"
+      output_path = @page_path + "/heading/output.pdf"
+      unless File.exist?(layout_path)
+        puts "#{layout_path} file not found!!!"
+      else
+        if File.mtime(layout_path) > File.mtime(output_path)
+          puts "updating heading pdf"
+          @change_detected = true
+        end
+      end
+    end
+
+    def update_ad_box
+      layout_path = @page_path + "/ad/layout.rb"
+      output_path = @page_path + "/ad/output.pdf"
+      unless File.exist?(layout_path)
+        puts "#{layout_path} file not found!!!"
+      else
+        if File.mtime(layout_path) > File.mtime(output_path)
+          puts "updating ad_box pdf"
+          @change_detected = true
+        end
+      end
+    end
+
 
   end
 

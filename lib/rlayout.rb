@@ -55,10 +55,9 @@ else
   require File.dirname(__FILE__) + '/rlayout/container/image_plus'
 
   require File.dirname(__FILE__) + '/rlayout/grid/grid'
-  # require File.dirname(__FILE__) + '/rlayout/grid/matrix'
   require File.dirname(__FILE__) + '/rlayout/grid/group_image'
   require File.dirname(__FILE__) + '/rlayout/grid/grouped_caption'
-  require File.dirname(__FILE__) + '/rlayout/grid/m_table'
+  require File.dirname(__FILE__) + '/rlayout/grid/grid_table'
 
   # require File.dirname(__FILE__) + '/rlayout/db_publishing/db_item'
   # require File.dirname(__FILE__) + '/rlayout/container_extended/photo_item'

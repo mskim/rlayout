@@ -27,7 +27,11 @@ module RLayout
       @y              = options.fetch(:y, graphic_defaults[:y])
       @width          = options.fetch(:width, graphic_defaults[:width])
       @height         = options.fetch(:height, graphic_defaults[:height])
-
+      if options[:page_size]
+        size   = SIZES[options[:page_size]]
+        @width = size[0]
+        @height = size[1]
+      end
       if @parent 
         if options[:parent_frame]
           set_frame(@parent.layout_rect)
