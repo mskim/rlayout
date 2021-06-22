@@ -188,7 +188,7 @@ module RLayout
     end
 
     def delete_old_files
-      old_pdf_files = Dir.glob("#{@page_pattj}/section*.pdf")
+      old_pdf_files = Dir.glob("#{@page_path}/section*.pdf")
       old_jpg_files = Dir.glob("#{@page_path}/section*.jpg")
       old_pdf_files += old_jpg_files
       old_pdf_files.each do |old|

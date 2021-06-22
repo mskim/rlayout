@@ -18,7 +18,7 @@ module RLayout
     attr_reader :time_stamp, :fixed_height_in_lines
 
     def initialize(options={})
-      time_start              = Time.now
+      # time_start              = Time.now
       stamp_time              if options[:time_stamp]
       @fixed_height_in_lines  = options[:fixed_height_in_lines]
       @adjustable_height      = true if options[:adjustable_height]
@@ -208,8 +208,8 @@ module RLayout
           system("cp #{output_jpg_path} #{stamped_jpg_path}")
         end
       end
-      time_end = Time.now
-      puts "++++++++ NewsBoxMaker took:#{time_end - time_start}"
+      # time_end = Time.now
+      # puts "++++++++ NewsBoxMaker took:#{time_end - time_start}"
       self
     end
 

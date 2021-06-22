@@ -2,7 +2,7 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'NewsPage update_changes_only ' do
   before do
-    @page_path   =  "/Users/mskim/test_data/newsgo/2021-01-29/1"
+    @page_path   =  "/Users/mskim/test_data/newsgo/2021-01-29/2"
     @page        = NewsPage.new(page_path: @page_path, update_if_changed: true)
   end
 
