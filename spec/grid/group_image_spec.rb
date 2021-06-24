@@ -11,7 +11,7 @@ describe 'testing GroupImage with group_caption' do
     @images_folder = "/Users/mskim/test_data/yearbook/sample_class/B"
     @image_items = Dir.glob("#{@images_folder}/*.jpg").map{|f| File.basename(f)}
     @image_item_captions = @image_items.map{|f| File.basename(f, ".jpg").unicode_normalize}
-    @g = GroupImage.new(group_caption: true, :width=>400, :height=>400,  images_folder: @images_folder, :image_items=>@image_items, image_item_captions: @image_item_captions, output_path: @pdf_path)
+    @g = GroupImage.new(group_caption: false, :width=>400, :height=>400,  images_folder: @images_folder, :image_items=>@image_items, image_item_captions: @image_item_captions, output_path: @pdf_path)
   end
 
   it 'should save pdf GroupImage' do

@@ -47,7 +47,7 @@ module RLayout
         text_options[:y]            = @height - caption_height
         text_options[:height]       = caption_height
         text_options[:width]        = @width
-        text_options[:text_string]  = @caption
+        text_options[:text_string]  = @caption.unicode_normalize
         text_options[:v_alignment]  = 'center'
         text_options[:font_size]    = caption_height*0.7
         @caption_object = Text.new(text_options)

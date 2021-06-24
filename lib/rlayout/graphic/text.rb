@@ -116,7 +116,7 @@ module RLayout
         end
         # TODO do font_color
         if @font_color.class == String
-          canvas.fill_color(color_from_string(@font_color))
+          canvas.fill_color(RLayout::color_from_string(@font_color))
         end
 
         canvas.text(@text_string, at: [@x_offset, @y_offset - @font_size])

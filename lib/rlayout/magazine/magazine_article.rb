@@ -218,10 +218,25 @@ module RLayout
       	end
       end
 
-
       EOF
       File.open(path, 'w'){|f| f.write rake_text}
     end
+
+    def self.update_if_changed(article_path, options={})
+      story_path = article_path + "/story.md"
+      pdf_path = article_path + "/story.pdf"
+      layout_path = article_path + "/layout.rb"
+      if !File.exist?(pdf_path)
+        MagazineArticle.new(article_path: article_path)
+      elsif File.mtime(story_path) > File.mtime(pdf_path)
+        MagazineArticle.new(article_path: article_path)
+      elsif File.exist?(layout_path) && File.mtime(layout_path) > File.mtime(pdf_path)
+        MagazineArticle.new(article_path: article_path)
+      else
+        puts "story is upto date..."
+      end
+    end
+
   end
 
 end
