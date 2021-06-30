@@ -6,9 +6,8 @@ describe 'testing GroupImage with group_caption' do
   before do
     # @container = Container.new(:width=>600, :height=>800, :layout_space=>20, :layout_direction=>"horizontal") do
     # @image_items = %w[1.jpg 2.jpg]
-    @pdf_path = "/Users/mskim/test_data/yearbook/sample_class/B/output.pdf"
-    @images_folder = "/Users/mskim/test_data/yearbook/sample_class/B/output.pdf"
-    @images_folder = "/Users/mskim/test_data/yearbook/sample_class/B"
+    @pdf_path = "/Users/mskim/test_data/group_image/output.pdf"
+    @images_folder = "/Users/mskim/test_data/group_image"
     @image_items = Dir.glob("#{@images_folder}/*.jpg").map{|f| File.basename(f)}
     @image_item_captions = @image_items.map{|f| File.basename(f, ".jpg").unicode_normalize}
     @g = GroupImage.new(group_caption: false, :width=>400, :height=>400,  images_folder: @images_folder, :image_items=>@image_items, image_item_captions: @image_item_captions, output_path: @pdf_path)

@@ -175,7 +175,9 @@ else
 
   require File.dirname(__FILE__) + '/rlayout/article/float_group'
 
+  require File.dirname(__FILE__) + '/rlayout/yearbook/yearbook'
   require File.dirname(__FILE__) + '/rlayout/yearbook/yb_page'
+  require File.dirname(__FILE__) + '/rlayout/yearbook/yb_section'
   
 end
 

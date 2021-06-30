@@ -29,22 +29,35 @@
 #  show_text_line:     boolean whether to show or hide body text lines
 #
 #  And with each types of publication, we can set the grid system to fit the needs.
+
+# cell margins are different from graphic margins
+# graphic margins are used to for stroke and fill
+# cell margins are used place cell with margin, but to fill and stroke with graphic margins.
+# attr_reader :cell_left_margin, :cell_top_margin, :cell_right_margin, :cell_bottom_margin
+
 module  RLayout
 
   class Grid < Graphic
     attr_accessor :column, :row, :grid_base, :grid_width, :grid_height, :grid_frame, :grid_h_gutter, :grid_v_gutter, :lines_in_grid
     attr_accessor :gutter, :v_gutter, :grid_cells, :grid_color, :show_grid
     attr_accessor :grid_frame #[x,y, width, height] frame in grid unit of parent's grid
-
+    attr_reader :cell_left_margin, :cell_top_margin, :cell_right_margin, :cell_bottom_margin
     def initialize(options)
-      options[:left_margin] = 0
-      options[:top_margin] = 0
-      options[:right_margin] = 0
-      options[:bottom_margin] = 0
+      options[:left_margin] = options[:left_margin] || 0
+      options[:top_margin] = options[:top_margin] || 0
+      options[:right_margin] = options[:right_margin] || 0
+      options[:bottom_margin] = options[:bottom_margin] || 0
+
       @column = options[:column] || 3
       @row = options[:row] || 3
-      
+      options[:stroke_width] = 2
+      @cell_left_margin = options[:cell_left_margin] || 10
+      @cell_top_margin = options[:cell_top_margin] || 10
+      @cell_right_margin = options[:cell_right_margin] || 10
+      @cell_bottom_margin = options[:cell_bottom_margin] || 10
+
       super
+
       @grid_cells = []
       @graphics = []
       @grid_frame = options.fetch(:grid_frame,[0,0,@column,@row])
@@ -64,8 +77,8 @@ module  RLayout
 
 
     def update_grid
-      @grid_width   = (@width - @left_margin - @right_margin - (@grid_base[0]-1)*@gutter)/@grid_base[0]
-      @grid_height  = (@height - @top_margin - @bottom_margin - (@grid_base[1]-1)*@v_gutter)/@grid_base[1]
+      @grid_width   = (@width - @cell_left_margin - @cell_right_margin - (@grid_base[0]-1)*@gutter)/@grid_base[0]
+      @grid_height  = (@height - @cell_top_margin - @cell_bottom_margin - (@grid_base[1]-1)*@v_gutter)/@grid_base[1]
       @grid         = GridStruct.new(@grid_base, @grid_width, @grid_height, @gutter, @v_gutter)
       update_grid_cells
     end
@@ -77,10 +90,10 @@ module  RLayout
 
     def update_grid_cells
       @grid_cells   = []
-      @grid_width   = (@width - @left_margin - @right_margin - (@grid_base[0]-1)*@gutter)/@grid_base[0]
-      @grid_height  = (@height - @top_margin - @bottom_margin - (@grid_base[1]-1)*@v_gutter)/@grid_base[1]
-      x_position = @left_margin
-      y_position = @top_margin
+      @grid_width   = (@width - @cell_left_margin - @cell_right_margin - (@grid_base[0]-1)*@gutter)/@grid_base[0]
+      @grid_height  = (@height - @cell_top_margin - @cell_bottom_margin - (@grid_base[1]-1)*@v_gutter)/@grid_base[1]
+      x_position = @cell_left_margin
+      y_position = @cell_top_margin
       @grid_base[1].times do |row|
         @grid_base[0].times do |column|
           grid_cell = {
@@ -94,7 +107,7 @@ module  RLayout
           @grid_cells << grid_cell
           x_position += @grid_width + @gutter
         end
-        x_position = @left_margin
+        x_position = @cell_left_margin
         y_position += @grid_height + @v_gutter
       end
     end

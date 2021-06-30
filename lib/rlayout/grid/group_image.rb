@@ -105,12 +105,10 @@ module RLayout
       else
         options[:grid_base] = best_fitting_grid_base(@image_item_full_path_array.length)
       end
-
       super
       @output_path  = options[:output_path]
       @group_caption = options[:group_caption] || false
       @hide_caption = options[:show_caption] || true
-      @member_shape = options[:member_shape] || 'rect'
       @member_shape = options[:member_shape] || 'circle'
       @gutter       = options[:gutter] || 3
       @v_gutter     = options[:v_gutter] || 3
