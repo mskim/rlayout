@@ -114,20 +114,11 @@ module RLayout
 
     # calculate width average cells for each column from table_data
     def calculate_column_width_array
-      # column_width_array = []
-      # @column.times do |i|
-      #   cells_of_column = nth_body_column_cells(i)
-      #   string_width_of_column = cells_of_column.map{|c| c.text_string.length}
-      #   body_row_count = @row
-      #   body_row_count -= 1 if @has_head
-      #   column_width_array << string_width_of_column.sum/body_row_count
-      # end
-      # column_width_array
 
       column_width_array = []
       @column.times do |i|
         data_of_column = nth_body_column_data(i)
-        string_width_of_column = data_of_column.map{|st| st.length}
+        string_width_of_column = data_of_column.map{|st| st.length*16}
         body_row_count = @row
         body_row_count -= 1 if @has_head
         column_width_array << string_width_of_column.sum/body_row_count

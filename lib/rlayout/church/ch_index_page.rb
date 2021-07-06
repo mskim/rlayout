@@ -31,14 +31,18 @@ module RLayout
       # column_members = @page_members.each_slice(@body_line_count).to_a
       x_position = @left_margin
       table_width = (@width - @left_margin - @right_margin - @gutter*(@list_column - 1))/@list_column
-      
+      table_height = @height - @top_margin - @bottom_margin
+      table_data_count = @page_members.length
+      if @body_line_count > table_data_count
+        table_height = (table_height*table_data_count)/@body_line_count
+      end
       @page_members.each_slice(@body_line_count).to_a.each do |column_member|
         h = {}
         h[:parent] = self
         h[:x] = x_position
         h[:y] = @top_margin
         h[:width] = table_width
-        h[:height] = @height - @top_margin - @bottom_margin
+        h[:height] = table_height
         h[:table_data] = column_member
         h[:calculate_column_width] = true
         h[:row] = @body_line_count
