@@ -74,7 +74,6 @@ module RLayout
       @column       = options[:column] #|| 2
       @row          = options[:row] #|| 2
       @direction    = options[:direction] #|| 'horizontal'
-
       if options[:images_folder] && options[:image_items]
         @images_folder  = options[:images_folder]
         @image_items  = options[:image_items]
@@ -109,7 +108,7 @@ module RLayout
       @output_path  = options[:output_path]
       @group_caption = options[:group_caption] || false
       @hide_caption = options[:show_caption] || true
-      @member_shape = options[:member_shape] || 'circle'
+      @member_shape = options[:member_shape] || 'rect' # circle
       @gutter       = options[:gutter] || 3
       @v_gutter     = options[:v_gutter] || 3
       @image_item_captions_array = options[:image_item_captions_array] || extract_item_caption_from_image_path

@@ -5,6 +5,46 @@ describe 'testing GridTable' do
 
     @pdf_path = "/Users/mskim/test_data/grid_table/output.pdf"
     @csv_path = "/Users/mskim/test_data/grid_table/data.csv"
+    @t = GridTable.new(has_head: true, :width=>400, :height=>400,  csv_path: @csv_path, output_path: @pdf_path, calculate_column_width:true)
+  end
+
+  it 'should create GridTable' do
+    assert_equal GridTable, @t.class
+    assert_equal 400, @t.width
+    assert_equal 400, @t.height
+  end
+
+  it 'should have body_cells of 40' do
+    assert_equal 48, @t.body_cells.length
+    assert_equal 4, @t.head_row_cells.length
+  end
+
+  it 'should retunr nth_column cells' do
+    column_cells = @t.nth_body_column_cells(1)
+    last_cell = column_cells.last
+    assert_equal 12, column_cells.length
+  end
+
+  it 'should calculate_column_width_array' do
+    column_width_array = @t.calculate_column_width_array
+    assert_equal 4, column_width_array.length
+  end
+
+  it 'should save pdf GroupImage' do
+    # @t.save_pdf(@pdf_path)
+    assert File.exist?(@pdf_path)
+    system "open #{@pdf_path}"
+  end
+end
+
+
+__END__
+
+describe 'testing GridTable' do
+  before do
+
+    @pdf_path = "/Users/mskim/test_data/grid_table/output.pdf"
+    @csv_path = "/Users/mskim/test_data/grid_table/data.csv"
     @t = GridTable.new(has_head: true, :width=>400, :height=>400,  csv_path: @csv_path, output_path: @pdf_path)
   end
 

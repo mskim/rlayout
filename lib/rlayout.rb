@@ -178,7 +178,11 @@ else
   require File.dirname(__FILE__) + '/rlayout/yearbook/yearbook'
   require File.dirname(__FILE__) + '/rlayout/yearbook/yb_page'
   require File.dirname(__FILE__) + '/rlayout/yearbook/yb_section'
-  
+
+  require File.dirname(__FILE__) + '/rlayout/church/ch_section'
+  require File.dirname(__FILE__) + '/rlayout/church/ch_page'
+  require File.dirname(__FILE__) + '/rlayout/church/ch_index'
+  require File.dirname(__FILE__) + '/rlayout/church/ch_index_page'
 end
 
 module RLayout
