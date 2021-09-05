@@ -125,11 +125,27 @@ module RLayout
           float[:parent]      = self
           float[:is_float]    = true
           float[:image_path]  = float_info[:image_path]
-          float[:position]    = float_info[:position]
-          float[:column]      = float_info[:column]
-          float[:row]         = float_info[:row]
+          # float[:position]    = float_info[:position]
+          # float[:column]      = float_info[:column]
+          # float[:row]         = float_info[:row]
+          float[:x]  = float_info[:x]
+          float[:y]  = float_info[:y]
+          float[:width]  = float_info[:width]
+          float[:height]  = float_info[:height]
+          Image.new(float)
+
+          # case float_info[:kind]
+          # when 'image'
+          #   ImagePlus.new(float)
+          # when 'table'
+          #   # float[:project_path]
+          #   GridTable.new(float)
+          # when 'group_image'
+          #   # float[:project_path]
+          #   GroupImage.new(float)
+          # end
           # float[:x_grid]      = float_info[:x_grid] if float_info[:x_grid]
-          NewsFloat.new(float)
+          # NewsFloat.new(float)
         end
       end
 
@@ -443,7 +459,7 @@ module RLayout
       @left_page == true
     end
 
-    def create_header_footer(options)
+    def create_header_footer(options={})
       @header_footer = options
       if options[:footer_info]
         #create_footer
@@ -490,10 +506,10 @@ module RLayout
 
     ########### PageScritp Verbs #############
 
-    def text_box(options={}, &block)
-      options[:parent] = self
-      @main_box = RTextBox.new(options) unless @main_box
-    end
+    # def text_box(options={}, &block)
+    #   options[:parent] = self
+    #   @main_box = RTextBox.new(options) unless @main_box
+    # end
 
     def toc_table(options={}, &block)
       options[:parent] = self

@@ -106,7 +106,8 @@ module RLayout
       end
       @y_position = 10
       if options[:title]
-        t = @title_object = title(options[:title])
+        text_alignment = options[:text_alignment] || 'center'
+        t = @title_object = title(options[:title], text_alignment:text_alignment)
         @title_object.y = @y_position
         @y_position += t.height
       else
@@ -128,6 +129,13 @@ module RLayout
         @y_position += t.height
       end
 
+      if options[:author]
+        text_alignment = options[:text_alignment] || 'center'
+        @y_position += 40
+        t = @author_object = author(options[:author])
+        @author_object.y = @y_position + 10
+        @y_position += t.height
+      end
       @height = @y_position + 50 #if @height_type == 'natural'
       # relayout!
 
@@ -200,7 +208,7 @@ module RLayout
       atts[:style_name]           = 'title'
       atts[:text_string]          = string
       atts[:width]                = @width
-      atts[:text_alignment]            = 'center'
+      atts[:text_alignment]       = options[:text_alignment] || 'center'
       atts[:text_fit_type]        = 'adjust_box_height'
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
@@ -242,7 +250,8 @@ module RLayout
 
     def author(string, options={})
       atts                          = {}
-      atts[:style_name]             = 'author'
+      # atts[:style_name]             = 'author'
+      atts[:style_name]             = 'subtitle'
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'

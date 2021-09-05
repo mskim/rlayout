@@ -5,6 +5,7 @@
 module RLayout
 
   # TextTrain lays out series of text runs with differnt attributes.
+  # given tsv(tab separated value) and atts_array
   # given text_array and atts_array
   # It is used to handle mixed text attributed text run.
   # If h_align is "right" , it will grow to the left changing the origin and width
@@ -26,8 +27,12 @@ module RLayout
       super
       @gap              = options.fetch[:gap, 3]
       @layout_direction = 'horizontal'
-      @text_array       = options[:text_array]
-      @atts_array       = options[:atts_array]
+      if options[:tsv]
+        @tsv              = options[:tsv]
+        @atts_array       = @tsv.split("\t")
+      elsif options[:atts_array]
+        @atts_array       = options[:atts_array]
+      end
       @v_align          = options.fetch(:v_align, "center")
       @h_align          = options.fetch(:h_align, "center")
       create_text_tokens

@@ -1,7 +1,14 @@
 module RLayout
   class Graphic
+  
     def draw_fill(canvas)
-      if self.class == RDocument || self.class == RTextToken || @fill.color == 'clear'
+      if self.class == RDocument || self.class == RTextToken 
+        return
+      end
+      unless  @fill 
+        return
+      end
+      if  @fill.color == 'clear'
         return
       end
       unless @fill.color

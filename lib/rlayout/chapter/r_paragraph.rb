@@ -280,6 +280,9 @@ module RLayout
         unless @current_line.first_text_line_in_column?
           if @para_style[:space_before_in_lines] == 1
             @current_line.layed_out_line = true
+            unless @current_line.next_text_line
+              @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
+            end
             @current_line = @current_line.next_text_line
           end
           @current_line.layed_out_line = true

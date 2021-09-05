@@ -1,5 +1,5 @@
 
-# NewsArticleBox
+# RTextBox
 # grid_frame is passed to detemine the width, height, and column_number of text_box
 # Used when creating newspaper article, called from NewsBoxMaker
 
@@ -209,7 +209,7 @@ module RLayout
         current_line = @item.layout_lines(current_line)
       end
       @current_column  = current_line.column
-      @overflow  = true if @overflow_column.graphics.first.layed_out_line?
+      @overflow  = true if @overflow_column && @overflow_column.graphics.first.layed_out_line?
       if @overflow
 
       else

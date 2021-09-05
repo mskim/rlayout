@@ -193,6 +193,24 @@ module RLayout
       h
     end
 
+    def to_yaml
+      h = to_hash
+      h.to_yaml
+    end
+    # 
+    def save_yaml
+      yaml_path = @project_path + "/layout.yml"
+      File.open(yaml_path, 'w'){|f| f.write to_yaml}
+    end
+
+    def self.from_hash(h)
+
+    end
+
+    def self.from_yaml
+
+    end
+
     # def overflow?
     #   @overflow == true
     # end

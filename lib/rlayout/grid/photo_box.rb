@@ -1,45 +1,93 @@
 module RLayout
   # PhotoBox 
-  # PhotoBox arranges photos into a box accoring to number of photos.
-  #
-  # large_cells
-  # with large_cells array, user can specify which cell should be large sized one.
-  # for example when photo_item is 3
-  # large_cells[0] 
-  # large_cells[0] will make first left cell the large one
-  # so we will have two small ones on the right side
-  # large_cells[1] will put the second one the large one.
-  # so we will have two small ones on the left side
+  # PhotoBox arranges photos into a box accoring to number of photos,
   
+  # There are coulpe of ways to do this.
+  # 1. given list of pictures
+  # 2. given row  with  pictures
+  # 3. given column  with  pictures
+  # 4. given column row with  pictures
+  # 5. cell_layout_info with specification of which one should be the large ones and column row.
+  # %w[[colun,row], 1x1, 1x2, 1x1]
+
   class PhotoBox < Grid
-    attr_reader :photo_item, :photo_item_count, :large_cells
+    attr_reader :photo_item, :photo_item_count, :cell_layout_info
+    attr_reader :column, :row
 
     def initialize(options={})
       @photo_item = options[:photo_item]
       # warning if 0 item
       @photo_item_count = @photo_item.length
-      @large_cells = options[:large_cells]
+      @column = options[:column]
+      @row = options[:row]
+      @cell_layout_info = options[:cell_layout_info]
+      
+      if @cell_layout_info
+        options[:column] = @cell_layout_info[0]
+        options[:row] = @cell_layout_info[1]
+      end
       super
-      layout_photo_item
+
+      if @cell_layout_info
+        layout_photo_item_with_cell_layout_info
+      elsif @column && @row
+        layout_photo_item_with_column_and_row
+      elsif @column 
+        layout_photo_item_column
+      elsif @row
+        layout_photo_item_row
+      else
+        layout_photo_item
+      end
       self
     end
 
     def layout_photo_item
-      case @photo_item_count
-      when 1
-      when 2
-      when 3
-      when 4
+      if @graphics > @photo_item_count
+        differnces = @graphics - @photo_item_count
+        create_cell_size_array
+        layout_cells
+      else
 
-      when 5
-      when 6
-      when 7
-      when 8
-      when 9
-      when 10
       end
     end
 
+    def layout_photo_item_row
+      bigger_count = (@photo_item_count/@row.to_f).ceil
+      new_array = @photo_item.each_slice(bigger_count)
+      
+    end
+
+    def layout_photo_item_column
+
+    end
+
+    def layout_photo_item_with_column_and_row
+      cell_count = @column*@row
+      if cell_count > @photo_item_count
+        @room = @graphics - @photo_item_count
+        create_cell_size_array
+        layout_cells
+      else
+
+      end
+    end
+
+    def layout_photo_item_with_cell_layout_info
+      @cell_size_array = cell_layout_info[1..-1]
+      layout_cells
+    end
+
+    def create_cell_size_array
+      @cell_size_array = cells.map{|c| "1x1"}
+      @room.times do |i|
+        
+      end
+    end
+
+    def layout_cells
+
+    end
   end
 
 

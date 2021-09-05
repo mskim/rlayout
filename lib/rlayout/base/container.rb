@@ -64,6 +64,10 @@ module RLayout
       self
     end
 
+    def self.from_hash(h)
+
+    end
+
     def auto_layout_defaults
       h = {}
       h[:layout_direction]  = "vertical"

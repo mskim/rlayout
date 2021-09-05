@@ -122,6 +122,26 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2021_09_04
+  - rotate seneca 90
+  
+2021_09_04
+  - BackWing
+  - Seneca
+  - fix RColumn line drawing
+  - fix Image empty image drawing when x is not 0
+  - FrontWing
+  - CoverPage
+
+2021_07_28
+  - add to_yaml and from_yaml to Graphic, Conatiner
+
+2021_07_10
+  - round_rect 
+    - corner_shapes[1,1,1,1] for round_corner
+    - corner_shapes[1,0,1,0] for round_corner on left_top, right_bottom
+    - corner_shapes[-1,-1,-1,-1] for inverted_round_corner
+    
 2021_06_15
   - GridTable
     - fix fill_color error

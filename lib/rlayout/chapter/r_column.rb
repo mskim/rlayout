@@ -104,8 +104,8 @@ module RLayout
     def create_lines(options={})
       return if @empty_lines
       @graphics = []
-      current_x   = 0
-      current_y   = 0
+      current_x   = @left_inset
+      current_y   = @top_inset
       line_width  = @width - @left_inset - @right_inset
       previoust_line = nil
       @line_count.times do

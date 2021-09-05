@@ -51,10 +51,10 @@ module  RLayout
       @column = options[:column] || 3
       @row = options[:row] || 3
       options[:stroke_width] = 2
-      @cell_left_margin = options[:cell_left_margin] || 10
-      @cell_top_margin = options[:cell_top_margin] || 10
-      @cell_right_margin = options[:cell_right_margin] || 10
-      @cell_bottom_margin = options[:cell_bottom_margin] || 10
+      @cell_left_margin = options[:cell_left_margin] || 0
+      @cell_top_margin = options[:cell_top_margin] || 0
+      @cell_right_margin = options[:cell_right_margin] || 0
+      @cell_bottom_margin = options[:cell_bottom_margin] || 0
 
       super
 

@@ -114,7 +114,13 @@ else
 
   require File.dirname(__FILE__) + '/rlayout/book/toc'
   require File.dirname(__FILE__) + '/rlayout/book/toc_page'
-  require File.dirname(__FILE__) + '/rlayout/book/cover'
+  require File.dirname(__FILE__) + '/rlayout/book/book_cover'
+  require File.dirname(__FILE__) + '/rlayout/book/cover_spread'
+  require File.dirname(__FILE__) + '/rlayout/book/back_wing'
+  require File.dirname(__FILE__) + '/rlayout/book/back_page'
+  require File.dirname(__FILE__) + '/rlayout/book/seneca'
+  require File.dirname(__FILE__) + '/rlayout/book/front_page'
+  require File.dirname(__FILE__) + '/rlayout/book/front_wing'
   require File.dirname(__FILE__) + '/rlayout/book/title_page'
   require File.dirname(__FILE__) + '/rlayout/book/book_info'
 
@@ -144,6 +150,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_page'
 
   require File.dirname(__FILE__) + '/rlayout/magazine/magazine_article.rb'
+  require File.dirname(__FILE__) + '/rlayout/magazine/cover.rb'
 
   require File.dirname(__FILE__) + "/rlayout/svg/circle"
   require File.dirname(__FILE__) + "/rlayout/svg/image"
@@ -167,6 +174,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/text/quote_text'
   require File.dirname(__FILE__) + '/rlayout/text/title_text'
   require File.dirname(__FILE__) + "/rlayout/text/text_token"
+  require File.dirname(__FILE__) + "/rlayout/text/text_train"
   require File.dirname(__FILE__) + '/rlayout/text/heading'
   
   require File.dirname(__FILE__) + "/rlayout/deco_text/deco_string"

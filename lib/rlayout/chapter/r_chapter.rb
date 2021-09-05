@@ -246,7 +246,7 @@ module RLayout
           # p.create_header_footer(@header_footer) if @header_footer
           page_floats = @page_floats[i + 1]
           p.add_floats(page_floats) if page_floats
-          p.create_header_footer(@header_footer)
+          p.create_header_footer(@header_footer) if @header_footer
         end
       end
 
@@ -392,5 +392,6 @@ module RLayout
       toc_path        = @document_path + "/toc.yml"
       File.open(toc_path, 'w') { |f| f.write @toc_content.to_yaml}
     end
+
   end
 end

@@ -24,11 +24,12 @@ module RLayout
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
       options[:stroke_width]      = 1
+      options[:stroke_color]      = 'black'
       options[:fill_color]        = 'gray'
 
       @space_width                = options[:space_width] || 3
       @char_half_width_cushion    = @space_width/3
-      options[:right_margin]      = 2      
+      options[:right_margin]      = 2 
       super
 
       if options[:para_style]
@@ -137,7 +138,7 @@ module RLayout
       @stroke[:sides] = [1,1,1,1,1,1]
     end
 
-    # give a line_rect and float_rect, return un-cover rect
+    # given a line_rect and float_rect, return un-cover rect
     def un_covered_rect(line_rect, covering_rect)
       if line_rect[0] >= covering_rect[0] && (line_rect[0] + line_rect[2]) <= (covering_rect[0] + covering_rect[2])
         # puts "covered all"
@@ -283,7 +284,7 @@ module RLayout
         return false if @text_alignment != 'justified'
         return false if options[:do_not_break]
         # no more room, try hyphenating token
-        # give custion only when there are more than 4 tokens
+        # give cushion only when there are more than 4 tokens
         # puts "++++++++ token.string:#{token.string}"
         # puts "@graphics.length:#{@graphics.length}"
         # puts "@room:#{@room}"

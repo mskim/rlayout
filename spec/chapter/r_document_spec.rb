@@ -51,7 +51,7 @@ describe "create first page" do
   end
 
   it 'should save pdf' do
-    @pdf_path = "/Users/mskim/test_data/sample_book/01_chapter/document.pdf"
+    @pdf_path = "/Users/mskim/test_data/book/01_chapter/document.pdf"
     @doc.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system "open #{@pdf_path}"
