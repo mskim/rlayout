@@ -106,6 +106,19 @@ module RLayout
       @graphics.length
     end
 
+    def link_info
+      info = @graphics.map do |row|
+        h = {}
+        h[:x] = row.x + @x
+        h[:y] = row.y + @y
+        h[:width] = row.width
+        h[:height] = row.height
+        # h[:page_number] = row.graphics.last.text_string
+        h[:link_text] = row.graphics.last.text_string
+        h
+      end
+      info
+    end
   end
 
 end

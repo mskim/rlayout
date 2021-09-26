@@ -1,47 +1,40 @@
 # encoding: utf-8
 
 # MagazineArticleMaker should be able to support highly customizable designs.
-# MagazineArticleMaker works with given folder with story, layout.rb, and images
+# MagazineArticle works with given folder with story, layout.rb, and page_floats.yml
 # layout.rb defines layout and styles
-# GroupImage layout can be set using GIM
-# Images can be stored in images folder by page and image size
-# making image in the article controlable.
-# Page Count is usually fixed for magazine, default is 2
 
 
 module RLayout
 
   class MagazineArticle
-    attr_accessor :article_path, :layout_rb, :story_path, :images_dir, :tables_dir
-    attr_accessor :document, :style, :starting_page, :page_count
+    attr_accessor :article_path, :layout_path, :story_path, :images_dir, :tables_dir
+    attr_accessor :document, :style, :starting_page, :page_count, :page_type # spread, left, right
     attr_accessor :doc_info_path, :page_floats, :output_path
     attr_reader   :save_page_story
+    attr_reader :article_path
     def initialize(options={} ,&block)
       $publication_type = "magazine"
       @article_path     = options[:article_path] || options[:project_path]
       @doc_info_path    = @article_path + "/doc_info.yml"
       @starting_page    = options.fetch(:starting_page, 1)
       @page_count       = options.fetch(:page_count, 1)
-      if options[:page_floats]
-        @page_floats      = options.fetch(:page_floats, [])
-      else
-        read_page_floats 
-      end
+      read_page_floats 
       @article_path     = options[:article_path]
       @story_path       = Dir.glob("#{@article_path}/*.{md,markdown}").first
       if !@story_path && @article_path
         puts "No story_path !!!"
         return
       end
-      @layout_rb    = @article_path + "/layout.rb"
+      @layout_path    = @article_path + "/layout.rb"
       @output_path  = @article_path + "/article.pdf"
       @pages_path   = @article_path + "/pages"
       @save_page_story = options[:save_page_story]
       @images_dir = @article_path + "/images"
       @tables_dir = @article_path + "/tables"
-      @document     = eval(File.open(@layout_rb,'r'){|f| f.read})
+      @document     = eval(File.open(@layout_path,'r'){|f| f.read})
       if @document.is_a?(SyntaxError)
-        puts "SyntaxError in #{@layout_rb} !!!!"
+        puts "SyntaxError in #{@layout_path} !!!!"
         return
       end
       unless @document.kind_of?(RLayout::RDocument)

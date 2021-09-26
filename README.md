@@ -122,6 +122,21 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2021_09_10
+  - back_wing, front_wing, left_margin right_margin
+
+  - method_missing in text
+    - def 세고딕 GO_LIGHT
+    - def 중고딕 GO_MEDIUM
+    - def 태고딕 GO_BOLD
+    - def 견고딕 GO_EXBOLD
+
+    - def 세명조 MY_LIGHT
+    - def 중명조 MY_MEDIUM
+    - def 태명조 MY_BOLD
+    - def 견명조 MY_EXBOLD
+
+
 2021_09_04
   - rotate seneca 90
   
@@ -1714,10 +1729,6 @@ TODO List
 	- ChapterMaker, MagazineArticleMaker,
 		replace Chapter, MagazineArticle, NewsBoxMaker
 	- support custom style loading at rum time
-
-2015 8 23
-	- class Bar
-	- Bar is Container starting as layout_direction set to "horizontal"
 
 
 2015 8 14

@@ -9,6 +9,7 @@ module RLayout
     
     def init_rotation(options)
       @rotation         = options[:rotation]  if options[:rotation]
+      @rotation         = options[:rotate]  if options[:rotate]
       @rotate_content   = options[:rotate_content]    if options[:rotate_content]
     end
   end

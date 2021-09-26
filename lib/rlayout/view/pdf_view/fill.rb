@@ -31,7 +31,11 @@ module RLayout
             # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
         when RoundRectStruct
         when RLayout::CircleStruct
-          circle = canvas.fill_color(@fill.color).stroke_color(@stroke.color).line_width(@stroke.thickness).circle(flipped[0] + @shape.r, flipped[1] + @shape.r, @shape.r).fill_stroke
+          flipped = flipped_origin unless flipped
+          # circle = canvas.fill_color(@fill.color).stroke_color(@stroke.color).line_width(@stroke.thickness).circle(flipped[0] + @shape.r, flipped[1] + @shape.r, @shape.r).fill_stroke
+          circle = canvas.fill_color(@fill.color).circle(flipped[0] + @shape.r, flipped[1] - @shape.r, @shape.r).fill
+          # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+
         when EllipseStruct
         when PoligonStruct
         when PathStruct

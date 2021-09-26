@@ -148,7 +148,6 @@ module RLayout
           # NewsFloat.new(float)
         end
       end
-
     end
 
     def first_page?
@@ -541,15 +540,24 @@ module RLayout
       ObjectBox.new(options)
     end
 
-    def header(options={})
-      #TODO
-      # Header.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
-      TitleText.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
+    def create_header(header_erb)
+      if @page_number.even?
+        erb = ERB.new(header_erb[:left_header])
+      else
+        erb = ERB.new(header_erb[:right_header])
+      end
+      layout = erb.result(binding)
+      @header_object = eval(layout)  
     end
 
-    def footer(options={})
-      # Footer.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
-      TitleText.new(:parent=>self, :text_string=>options[:text_string], :font_size=>options[:font], :is_fixture=>true)
+    def create_footer(footer_erb)
+      if @page_number.even?
+        erb = ERB.new(footer_erb[:left_footer])
+      else
+        erb = ERB.new(footer_erb[:right_footer])
+      end
+      layout = erb.result(binding)
+      @footer_object = eval(layout)
     end
 
     def side_bar(options={})
@@ -559,5 +567,8 @@ module RLayout
     def self.magazine_page(document)
       Page.new(:parent=>document, :header=>true, :footer=>true, :text_box=>true)
     end
+    
   end
+
+
 end

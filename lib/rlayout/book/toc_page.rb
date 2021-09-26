@@ -51,6 +51,9 @@ module RLayout
       @toc_table = RLeaderTable.new(options)
     end
 
+    def link_info
+      @toc_table.link_info
+    end
   end
 
 end

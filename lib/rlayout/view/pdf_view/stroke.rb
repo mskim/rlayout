@@ -2,13 +2,50 @@ module RLayout
 class Graphic
   attr_accessor :line_position, :stroke_rect
   def draw_stroke(canvas)
-    @stroke[:color]  = RLayout.color_from_string(@stroke[:color])   # if  @stroke[:color] =~ /^CMYK/
+    if @stroke.color.class == String
+      if @stroke.color == 'clear'
+        @stroke.color = [0.0, 0.0, 0.0, 0.0]
+      else
+        @stroke.color = RLayout.color_from_string(@stroke.color) 
+      end
+    end
+    # @stroke[:color]  = RLayout.color_from_string(@stroke[:color])   # if  @stroke[:color] =~ /^CMYK/
     draw_gutter_stroke(canvas) if self.respond_to?(:gutter_stroke) && @draw_gutter_stroke
     return if @stroke[:thickness].nil? || @stroke[:thickness] == 0
-    @stroke_rect    = get_stroke_rect
-    @line_position  = 1
-    @left_inset     +=  2
-    draw_sides(canvas) unless @stroke[:sides] == [0,0,0,0]
+    canvas.save_graphics_state do
+      case @shape
+      when RLayout::RectStruct || 'rect'
+        @stroke_rect    = get_stroke_rect
+        @line_position  = 1
+        @left_inset     +=  2
+        draw_sides(canvas) unless @stroke[:sides] == [0,0,0,0]
+      when RoundRectStruct
+      when RLayout::CircleStruct 
+        flipped = flipped_origin unless flipped
+        circle = canvas.stroke_color(@stroke.color).line_width(@stroke.thickness).circle(flipped[0] + @shape.r, flipped[1] - @shape.r, @shape.r).stroke
+
+        # circle = canvas.stroke_color(@stroke.color).line_width(@stroke.thickness).circle(flipped[0] + @shape.r, flipped[1] + @shape.r, @shape.r).stroke
+        # circle = canvas.fill_color(@fill.color).circle(flipped[0] + @shape.r, flipped[1] + @shape.r, @shape.r).fill
+        # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+
+      when EllipseStruct
+      when PoligonStruct
+      when PathStruct
+      when LineStruct
+      else
+        @stroke_rect    = get_stroke_rect
+        @line_position  = 1
+        @left_inset     +=  2
+        draw_sides(canvas) unless @stroke[:sides] == [0,0,0,0]
+        # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+      end
+    end
+
+
+    # @stroke_rect    = get_stroke_rect
+    # @line_position  = 1
+    # @left_inset     +=  2
+    # draw_sides(canvas) unless @stroke[:sides] == [0,0,0,0]
   end
 
   #TODO

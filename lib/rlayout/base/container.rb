@@ -1,6 +1,28 @@
 
 module RLayout
 
+  # stack mode
+  # graphics layout_expand should be set as :width for vertival and :height for horizontal
+  # and height should be set as sum of graphics heights.
+  # This will prevent graphics from being strached vertically in vertical mode, and other wise in horozontal mode
+  # if @stack
+  #   puts "@stack#{@stack}"
+  #   puts "@graphics.length#{@graphics.length}"
+  #   puts "@layout_direction#{@layout_direction}"
+  #   if @layout_direction == 'vertical'
+  #     @graphics.each {|g| g.layout_expand = :width}
+  #   else
+  #     @graphics.each {|g| g.layout_expand = :height}
+  #   end
+  #   @graphics.each do |g|
+  #     puts g.layout_expand.class
+  #     puts g.layout_expand
+  #   end
+  # end
+  # Container should not process block, when called by subclass as super method.
+  # This results in calling block multiple times.
+  # Process block only when block was called from class itself.
+
   class Container < Graphic
     attr_accessor :layout_direction, :layout_space, :layout_align, :stack
     attr_accessor :draw_gutter_stroke, :gutter_stroke
@@ -38,28 +60,6 @@ module RLayout
           instance_eval(&block)
         end
       end
-
-      # stack mode
-      # graphics layout_expand should be set as :width for vertival and :height for horizontal
-      # and height should be set as sum of graphics heights.
-      # This will prevent graphics from being strached vertically in vertical mode, and other wise in horozontal mode
-      # if @stack
-      #   puts "@stack#{@stack}"
-      #   puts "@graphics.length#{@graphics.length}"
-      #   puts "@layout_direction#{@layout_direction}"
-      #   if @layout_direction == 'vertical'
-      #     @graphics.each {|g| g.layout_expand = :width}
-      #   else
-      #     @graphics.each {|g| g.layout_expand = :height}
-      #   end
-      #   @graphics.each do |g|
-      #     puts g.layout_expand.class
-      #     puts g.layout_expand
-      #   end
-      # end
-      # Container should not process block, when called by subclass as super method.
-      # This results in calling block multiple times.
-      # Process block only when block was called from class itself.
 
       self
     end
@@ -358,54 +358,6 @@ module RLayout
         create_graphic_of_type(klass_name,float_hash)
       end
     end
-
-    def split_grid(col=12, row=12)
-
-    end
-
-
-    def split_row(numner=2)
-
-    end
-
-    def split_col(number=2)
-
-    end
-
-    def merge_right(number=1)
-
-    end
-
-    def merge_down(number=1)
-
-    end
-  end
-
-  # Stack is Container with layout_direction set to 'vertical' and v_align = 'bottom'
-  class Stack < Container
-    def initialize(options={}, &block)
-      options[:layout_direction]  = "vertical"
-      options[:v_alignment]       = "bottom"
-      super
-      @width = 300 unless options[:width]
-      self
-    end
-  end
-
-  # Bar is Container with layout_direction set to 'horizontal'
-  class Bar < Container
-    def initialize(options={}, &block)
-      options[:layout_direction] = "horizontal"
-      super
-      @width = 300 unless options[:width]
-      self
-    end
-  end
-
-  # container with title
-  class TitledBox < Container
-    attr_accessor :title, :title_type, :title_position
-
 
   end
 

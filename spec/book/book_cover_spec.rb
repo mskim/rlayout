@@ -16,27 +16,22 @@ describe 'create BookCover' do
   end
 
   it 'should have back_wing' do
-    # binding.pry
     assert_equal RLayout::BackWing, @book_cover.back_wing.class
   end
 
   it 'should have back_page' do
-    # binding.pry
     assert_equal RLayout::BackPage, @book_cover.back_page.class
   end
 
   it 'should have seneca' do
-    # binding.pry
     assert_equal RLayout::Seneca, @book_cover.seneca.class
   end
 
   it 'should have front_page' do
-    # binding.pry
     assert_equal RLayout::FrontPage, @book_cover.front_page.class
   end
 
   it 'should have front_wing' do
-    # binding.pry
     assert_equal RLayout::FrontWing, @book_cover.front_wing.class
   end
 
@@ -60,7 +55,6 @@ describe 'create BookCover' do
   end
 
   it 'should have front_wing' do
-    # binding.pry
     assert_equal RLayout::FrontWing, @book_cover.front_wing.class
     assert_equal 0, @book_cover.back_wing.x
   end

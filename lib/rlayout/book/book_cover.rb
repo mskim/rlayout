@@ -46,7 +46,7 @@ module RLayout
         
         image(image_path: "#{back_wing_pdf_path}", layout_length: #{@wing_width}, fill_color: 'clear')
         image(image_path: "#{back_page_pdf_path}", layout_length: #{@page_width}, fill_color: 'clear')
-        image(image_path: "#{seneca_pdf_path}", layout_length: #{@seneca_width}, fill_color: 'clear')
+        image(image_path: "#{seneca_pdf_path}", layout_length: #{@seneca_width}, fill_color: 'white', rotate_content: -90)
         image(image_path: "#{front_page_pdf_path}", layout_length: #{@page_width}, fill_color: 'clear')
         image(image_path: "#{front_wing_pdf_path}", layout_length: #{@wing_width}, fill_color: 'clear')
         relayout!
@@ -93,6 +93,7 @@ module RLayout
     end
 
     def create_pages_and_wings
+
       @current_x = 0
       create_back_wing if @has_wing
       create_back_page
@@ -115,7 +116,9 @@ module RLayout
 
     def create_seneca
       part_path = @project_path + "/seneca"
-      @seneca = Seneca.new(project_path:part_path, width:@seneca_width, height: @height)
+      # @seneca = Seneca.new(project_path:part_path, width:@seneca_width, height: @seneca_width)
+      @seneca = Seneca.new(project_path:part_path, width:@height, height: @seneca_width)
+      # rotae PDF 90 degree
       @current_x += @seneca_width
     end
   
@@ -147,15 +150,28 @@ module RLayout
 
     def is_dirty?
       return true unless File.exist?(output_path)
+
       return true if @cover_spread.updated
+      return true if File.mtime(@cover_spread.output_path) > File.mtime(output_path)
+      
       return true if @back_wing.updated
+      return true if File.mtime(@back_wing.output_path) > File.mtime(output_path)
+
       return true if @back_page.updated
+      return true if File.mtime(@back_page.output_path) > File.mtime(output_path)
+
       return true if @seneca.updated
+      return true if File.mtime(@seneca.output_path) > File.mtime(output_path)
+
       return true if @front_page.updated
+      return true if File.mtime(@front_page.output_path) > File.mtime(output_path)
+
       return true if @front_wing.updated
-      return true if @front_wing.updated
+      return true if File.mtime(@front_wing.output_path) > File.mtime(output_path)
+
       return true unless File.exist?(output_path)
       return true if File.mtime(layout_path) > File.mtime(output_path)
+
       # check for spread
       false
     end
@@ -177,7 +193,6 @@ module RLayout
   
     def layout_content
       flowing_items = @paragraphs.dup
-      # binding.pry # unless @column
       current_line = @column.graphics.first
       while @item = flowing_items.shift do
         current_line = @item.layout_lines(current_line)

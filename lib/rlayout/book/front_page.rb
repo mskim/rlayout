@@ -7,8 +7,10 @@ module RLayout
       @content = options[:content]
       @project_path = options[:project_path]
       @page_size = options[:page_size] || 'A5'
-      @width = SIZES[@page_size][0]
+      @width = SIZES[@page_size][0] 
       @height = SIZES[@page_size][1]
+      @width = options[:width] if  options[:width]
+      @height = options[:height] if  options[:height]
       @updated = false
       generate_pdf
       self
@@ -44,16 +46,21 @@ module RLayout
       # before rotating 90 
       layout =<<~EOF
       RLayout::Container.new(fill_color:'clear', width:#{@width}, height:#{@height}) do
-        text("<%= @content[:title] %>", font_size: 40, text_alignment:'center', layout_length:3, font_color: 'red', fill_color: 'clear')
-        text("<%= @content[:subtitle] %>", font_size: 26 , text_alignment:'center', layout_length:2, fill_color: 'clear')
-        text("<%= @content[:author] %>", font_size: 16, text_alignment:'center', fill_color: 'clear')
-        text("<%= @content[:publisher] %>", font_size: 16, text_alignment:'center', fill_color: 'clear')
+        container(fill_color:'clear',layout_length:2) do
+          text("<%= @content[:title] %>", font_size: 40, text_alignment:'center', layout_length:3, font_color: 'red', fill_color: 'clear')
+          text("<%= @content[:subtitle] %>", font_size: 26 , text_alignment:'center', layout_length:2, fill_color: 'clear')
+          text("<%= @content[:author] %>", font_size: 16, text_alignment:'center', fill_color: 'clear')
+          text("<%= @content[:publisher] %>", font_size: 16, text_alignment:'center', fill_color: 'clear')
+        end
+        container fill_color:'clear' do
+
+        end
+
         relayout!
       end
 
       EOF
     end
-
 
     def layout_path
       @project_path + "/layout.rb"
@@ -79,6 +86,10 @@ module RLayout
       h[:publisher] = "활빈당출판"
       h
     end
+
+    # def gothic_16_red
+    #   {font:GOTHIC, font_size: 16, font_color: 'red'}
+    # end
 
     def self.sample_layout
       layout =<<~EOF

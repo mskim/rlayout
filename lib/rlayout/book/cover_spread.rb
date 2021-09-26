@@ -2,7 +2,7 @@ module RLayout
 
 
   class CoverSpread
-    attr_reader :project_path, :spread, :content
+    attr_reader :project_path, :spread, :art_type # band, #image, #random_art
     attr_reader :width, :height, :updated
     def initialize(options={})
       @project_path = options[:project_path]

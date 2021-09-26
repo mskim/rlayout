@@ -24,12 +24,16 @@ module RLayout
     attr_reader :project_path, :content, :updated
 
 
-    def initialize(options={})
+    def initialize(options={}, &block)
       @content = options[:content]
       @project_path = options[:project_path]
       @width = options[:width] || 500
       @height = options[:height] || 20
       save_sample unless File.exist?(layout_erb_path)
+
+      if block
+        instance_eval(&block)
+      end
       generate_pdf
       self
     end
@@ -83,10 +87,11 @@ module RLayout
       # before rotating 90 
       layout =<<~EOF
       RLayout::Container.new(fill_color:'clear', width:#{@width}, height:#{@height}, layout_direction: 'horizontal') do
-        text("<%= @content[:title] %>", font_size: 16, layout_length:2, fill_color: 'yellow')
-        text("<%= @content[:subtitle] %>", font_size: 10 , layout_length:2)
+        text("<%= @content[:title] %>", font_size: 16, text_alignment: 'center', layout_length:2, fill_color: 'white')
+        text("<%= @content[:subtitle] %>", font_size: 10, text_alignment: 'center', layout_length:2)
         text("<%= @content[:author] %>", font_size: 12)
         text("<%= @content[:publisher] %>", font_size: 9)
+        relayout!
       end
 
       EOF
@@ -137,6 +142,37 @@ module RLayout
       content_path = project_path + "/content.yml"
       File.open(layout_path, 'w'){|f| f.write Senca.default_layout}
       File.open(content_path, 'w'){|f| f.write Senca.default_content.to_yaml}
+    end
+
+
+      # RLayout::TextTrain.new(fill_color:'clear', width:#{@width}, height:#{@height}, layout_direction: 'horizontal') do
+      #   text("<%= @content[:title] %>", font_size: 16, text_alignment: 'center', layout_length:2, fill_color: 'white')
+      #   text("<%= @content[:subtitle] %>", font_size: 10, text_alignment: 'center', layout_length:2)
+      #   text("<%= @content[:author] %>", font_size: 12)
+      #   text("<%= @content[:publisher] %>", font_size: 9)
+      #   relayout!
+      # end
+
+    ########## metaprograming
+    # def gothic
+
+    # end
+
+    # def myunjo
+
+    # end
+
+    def change_style(string, options={})
+      if options[:font]
+
+      end      
+      if options[:font_size]
+
+      end
+      if options[:font_color]
+        
+      end
+
     end
   end
 

@@ -12,9 +12,14 @@ module RLayout
     attr_reader :document, :output_path, :column_count
     attr_reader :toc_content
     attr_reader :title, :page_size, :page_count
-
+    attr_reader :link_info, :max_page, :parts_count, :no_table_title
+    attr_reader :toc_item_count
     def initialize(options={})
       @document_path  = options[:document_path]
+      @max_page = options[:max_page]
+      @toc_item_count = options[:toc_item_count] || 20
+      @parts_count = options[:parts_count]
+      @no_table_title = options[:no_table_title]
       @page_size      = options[:page_size] || 'A5'
       @page_count     = options[:page_count] || 1
       @story_path     = @document_path + "/story.md"
@@ -22,6 +27,7 @@ module RLayout
       @layout_rb      = default_document
       @page_pdf       = options[:page_pdf]
       @document       = eval(@layout_rb)
+      @link_info      = [] # array of page with toc link
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@document} !!!!"
         return
@@ -32,6 +38,7 @@ module RLayout
       end
       read_toc
       layout_toc
+      @link_info = update_link_info
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
       self
     end
@@ -57,25 +64,38 @@ module RLayout
     end
 
     def layout_toc
-
       first_page    = @document.pages.first
       # optins for heding
-      h             = {}
-      h[:parent]    = first_page
-      h[:title]     = "목  차"
-      h[:heading_height_type] = "quarter"
-      h[:layout_length] = 2
-      h[:layout_expand] = [:height]
-      first_page.add_heading(h)
+      unless @no_table_title
+        h             = {}
+        h[:parent]    = first_page
+        h[:title]     = "목  차"
+        h[:heading_height_type] = "quarter"
+        h[:layout_length] = 2
+        h[:layout_expand] = [:height]
+        first_page.add_heading(h)
+      end
 
-      # optins for toc_table
-      h                 = {}
-      h[:parent]        = first_page
-      h[:table_data]    = @toc_content
-      h[:layout_length] = 10
-      h[:layout_expand] = [:height]
-      first_page.add_toc_table(h)
-      first_page.relayout!
+      @toc_content.each_slice(@toc_item_count).each_with_index do |page_data, i|
+        if @document.pages.length < i + 1
+          @document.add_new_page
+        end
+        page = @document.pages[i]
+        h                 = {}
+        h[:parent]        = page
+        h[:layout_length] = 10
+        h[:layout_expand] = [:height]
+        h[:table_data]    = page_data
+        page.add_toc_table(h)
+        page.relayout!
+      end
+    end
+
+    def update_link_info
+      @document.pages.map do |page|
+        page.link_info
+      end
+
     end
 
     def default_document

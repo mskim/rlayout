@@ -25,4 +25,8 @@ describe 'create TocPage' do
   it 'should create Toc' do
     assert File.exist?(@pdf_path)
   end
+
+  it 'should create RLeaderTable' do
+    assert_equal RLeaderTable, @toc_page.toc_table.class
+  end
 end

@@ -2,6 +2,31 @@
 #TODO
 # label_text_color
 
+M_LIGHT = "KoPubBatangPL"
+M_MEDIUN = "KoPubBatangPM"
+M_BOLD = "KoPubBatangPB"
+
+G_LIGHT = "KoPubDotumPL"
+G_MEDIUN = "KoPubDotumPM"
+G_BOLD = "KoPubDotumPB"
+
+SERIF_LIGHT = 'TimesRoman-Light'
+SERIF_MEDIUN = 'TimesRoman'
+SERIF_BOLD = 'TimesRoman-Bold'
+
+SAN_LIGHT = 'Helvetica-Light'
+SAN_MEDIUN = 'Helvetica-Medium'
+SAN_BOLD = 'Helvetica-Bold'
+
+SENECA_ATTS = [
+  {font: 'G_BOLD', font_size: 14, font_color: 'black'},
+  {font: 'M_MEDIUN', font_size: 10, font_color: 'red'},
+  {font: 'G_MEDIUN', font_size: 10, font_color: 'black'},
+  {font: 'M_LIGHT', font_size: 10, font_color: 'black'},
+]
+
+
+
 module RLayout
 
   # TextTrain lays out series of text runs with differnt attributes.
@@ -11,6 +36,9 @@ module RLayout
   # If h_align is "right" , it will grow to the left changing the origin and width
   # If h_align is "left" , it will grow to the right changing the  width
   # This is used for" Newspage page heeaing"
+
+  # TODO: how to handle spacing between them?
+  # add spaces after text_sting?
   class TextTrain < Container
     attr_accessor :text_array, :atts_array, :v_align, :h_align, :gap
     attr_reader :x_max, :y_max, :x_mid
@@ -30,6 +58,8 @@ module RLayout
       if options[:tsv]
         @tsv              = options[:tsv]
         @atts_array       = @tsv.split("\t")
+      elsif options[:text_array]
+        @text_array = options[:text_array]
       elsif options[:atts_array]
         @atts_array       = options[:atts_array]
       end

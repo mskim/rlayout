@@ -22,6 +22,8 @@ module RLayout
       draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
       @pdf_doc.write(output_path)
       if options[:jpg]
+        split_pdf(output_path)
+      elsif options[:jpg]
         convert_pdf2jpg(output_path)
       end
       ending_time = Time.now

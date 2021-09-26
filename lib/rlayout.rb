@@ -49,6 +49,8 @@ else
   require File.dirname(__FILE__) + "/rlayout/graphic/shadow"
   require File.dirname(__FILE__) + "/rlayout/graphic/shape"
   require File.dirname(__FILE__) + "/rlayout/graphic/stroke"
+  require File.dirname(__FILE__) + "/rlayout/graphic/random_graphic"
+  require File.dirname(__FILE__) + "/rlayout/graphic/minsoolian"
 
   require File.dirname(__FILE__) + '/rlayout/container/auto_layout'
   require File.dirname(__FILE__) + '/rlayout/container/pgscript'

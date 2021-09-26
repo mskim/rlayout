@@ -38,14 +38,14 @@ module RLayout
   class RHeading < Container
     attr_accessor :number_object, :title_object, :subtitle_object, :quote_object, :author_object
     attr_reader :align_to_body_text, :output_path
-    attr_reader :height_sum, :heading_height_type # natural, quarter, half, full
+    attr_reader :height_sum, :chapter_heading_height # natural, quarter, half, full
     def initialize(options={}, &block)
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
-      @heading_height_type  = options[:heading_height_type] || "half"
+      @chapter_heading_height  = options[:chapter_heading_height] || "half"
       if @parent
-        case @heading_height_type
+        case @chapter_heading_height
         when "natural"
         when "quarter"
           @height = @parent.layout_size[1]/4
@@ -251,7 +251,7 @@ module RLayout
     def author(string, options={})
       atts                          = {}
       # atts[:style_name]             = 'author'
-      atts[:style_name]             = 'subtitle'
+      atts[:style_name]             = 'author'
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'

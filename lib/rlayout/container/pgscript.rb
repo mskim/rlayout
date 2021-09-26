@@ -105,18 +105,6 @@ module RLayout
       Graphic.new(options, &block)
     end
 
-    def bar(options={}, &block)
-      options[:parent] = self
-      options[:layout_direction] = 'horizontal'
-      Container.new(options, &block)
-    end
-
-
-    def bar(options={}, &block)
-      options[:parent] = self
-      Bar.new(options, &block)
-    end
-
     def random_graphics(number)
       add_graphic(Graphic.random_graphics(number))
     end

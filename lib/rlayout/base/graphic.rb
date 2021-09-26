@@ -57,7 +57,7 @@ module RLayout
       init_stroke(options)
       init_shape(options)
       init_shadow(options)    if options[:shadow]
-      init_rotation(options)  if options[:rotation] || options[:rotation_content]
+      init_rotation(options)  if options[:rotation] || options[:rotation_content] || options[:rotate_content]
       init_text(options)      if (options[:text_string] || options[:string]) && self.kind_of?(Text) 
       # init_image(options)
       if @parent.nil?
@@ -276,6 +276,10 @@ module RLayout
 
     def mid_x(rect)
       rect[0] + rect[2]/2
+    end
+
+    def mid_point
+      [(@x + @width)/2.0, (@y + @height)/2.0]
     end
 
     def mid_y(rect)

@@ -9,7 +9,9 @@ module RLayout
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title, :token_union_style, :adjust_size
+    attr_reader :style_category
     def initialize(options={})
+      @style_category = options[:style_category]
       @string                 = options.delete(:text_string)
       # parse for adjust_size pattern, which is at the end of string with {}
       # if @string =~/\{\s*(-?\d)\s?\}\s?$/
@@ -31,7 +33,8 @@ module RLayout
           current_style       = YAML::load(current_style)
           @para_style         = current_style[@style_name]
           unless @para_style
-            @para_style = current_style['body_gothic']
+            # @para_style = current_style['body_gothic']
+            @para_style = current_style['body']
           end
         else
           @para_style         = RLayout::StyleService.shared_style_service.current_style[@style_name]

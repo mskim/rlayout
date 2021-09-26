@@ -103,7 +103,6 @@ module RLayout
   
     def layout_content
       flowing_items = @paragraphs.dup
-      # binding.pry # unless @column
       current_line = @column.graphics.first
       while @item = flowing_items.shift do
         current_line = @item.layout_lines(current_line)
@@ -129,7 +128,7 @@ module RLayout
       # before rotating 90 
       # TODO: fix right_inset not working properly
       layout =<<~EOF
-      RLayout::RColumn.new(width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 14) do
+      RLayout::RColumn.new(width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 16) do
       end
 
       EOF

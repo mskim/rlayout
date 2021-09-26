@@ -36,6 +36,27 @@ module RLayout
       end
     end
 
+
+    # split pdf_file_path file into single page pdf and move it to page folder
+    def split_pdf(pdf_file_path)
+      folder_path  = File.dirname(pdf_file_path)
+      pdf_basename = File.basename(pdf_file_path)
+      # split output_path pdf into 4 digit single page pdfs
+      # 0001.pdf, 0002.pdf, 0003.pdf ...
+      system("cd #{folder_path} && hexapdf split #{pdf_basename} --force")
+      Dir.glob("#{folder_path}/*.pdf").each do |pdf|
+        if pdf=~/(\d\d\d\d)\.pdf$/
+          page_pdf_basename = File.basename(pdf)
+          page_folder_name = $1
+          page_folder_path = folder_path + "/#{page_folder_name}"
+          FileUtils.mkdir_p(page_folder_path) unless File.exist?(page_folder_path)
+          system("cd #{folder_path} && mv #{page_pdf_basename} #{page_folder_name}/page.pdf")
+          single_page_pdf_path = folder_path + "/#{page_folder_name}/page.pdf"
+          convert_pdf2jpg(single_page_pdf_path)
+        end
+      end
+    end
+
     # using vips convert pdf 2 jpg
     # if enlarging ratio is given as options, it enlarges pdf canvas to the given ratio, 
     # then generates jpg, giving the hi-resolution result
@@ -80,9 +101,21 @@ module RLayout
       @pdf_doc = parent.pdf_doc if parent
       @flipped = flipped_origin
       draw_fill(canvas)
-      draw_image(canvas) if @image_path || @local_image
       draw_text(canvas)  if @has_text
       draw_stroke(canvas)
+
+      if @rotate_content
+        canvas.save_graphics_state
+        canvas.translate(@x, @height).rotate(@rotate_content)
+        # rotating image content 
+        # 1. translate origin to top left translate(@x, @height)
+        # 2. change the rect to rotating rect width: @height, height: @width
+        canvas.image(@image_path, at: [0,0], width: @height, height: @width)
+        # canvas.fill_color('0000ff').stroke_color('ffffff').line_width(2).rectangle(0, 0, @height, @width).fill_stroke
+        canvas.restore_graphics_state
+      else
+        draw_image(canvas) if (@image_path || @local_image)
+      end
     end
 
     def draw_fixtures(fixtures)

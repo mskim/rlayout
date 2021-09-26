@@ -176,6 +176,731 @@
 # page_002
 # page_003
 
+CHAPTER_STYLES=<<EOF
+---
+body:
+  korean_name: 본문명조
+  font_family: Shinmoon
+  font: Shinmoon
+  font_size: 9.8
+  text_color: CMYK=0,0,0,100
+  alignment: justified
+  tracking: -0.4
+  space_width: 3.0
+  scale: 98.0
+  text_line_spacing:
+  space_before_in_lines:
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+body_gothic:
+  korean_name: 본문고딕
+  font_family: KoPub돋움체_Pro Light
+  font: KoPubDotumPL
+  font_size: 9.6
+  text_color: CMYK=0,0,0,100
+  alignment: justified
+  tracking: -0.2
+  space_width: 3.0
+  scale: 100.0
+  first_line_indent: 0
+  text_line_spacing:
+  space_before_in_lines:
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+running_head:
+  korean_name: 본문중제
+  font_family: KoPub돋움체_Pro Medium
+  font: KoPubDotumPM
+  font_size: 9.6
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -0.2
+  space_width: 3.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+quote:
+  korean_name: 발문
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 12.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -0.5
+  space_width: 6.0
+  scale: 100.0
+  text_line_spacing: 2
+  space_before_in_lines: 2
+  space_after_in_lines: 0
+  text_height_in_lines: 1
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+announcement_1:
+  korean_name: 안내문1단
+  font: KoPubDotumPM
+  font_size: 12.0
+  text_color: CMYK=0,0,0,0
+  alignment: left
+  tracking: -0.5
+  space_width: 6.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 2
+  space_after_in_lines: 0
+  text_height_in_lines: 1
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+announcement_2:
+  korean_name: 안내문2단
+  font: KoPubDotumPM
+  font_size: 9.6
+  text_color: CMYK=0,0,0,0
+  alignment: left
+  tracking: -0.5
+  space_width: 6.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 2
+  space_after_in_lines: 0
+  text_height_in_lines: 1
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+  publication_id: 1s
+related_story:
+  korean_name: 관련기사
+  font_family: KoPub돋움체_Pro Medium
+  font: KoPubDotumPM
+  font_size: 9.0
+  text_color: CMYK=0,0,0,100
+  alignment: right
+  tracking: -0.5
+  space_width: 3.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines:
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+caption_title:
+  korean_name: 사진제목
+  font_family: KoPub돋움체_Pro Bold
+  font: KoPubDotumPB
+  font_size: 9.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -0.2
+  space_width: 2.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines:
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+caption:
+  korean_name: 사진설명
+  font_family: KoPub돋움체_Pro Light
+  font: KoPubDotumPL
+  font_size: 7.5
+  text_color: CMYK=0,0,0,100
+  alignment: justified
+  tracking: -0.5
+  space_width: 1.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines:
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+source:
+  korean_name: 사진출처
+  font_family: KoPub돋움체_Pro Light
+  font: KoPubDotumPL
+  font_size: 7.5
+  text_color: CMYK=0,0,0,100
+  alignment: right
+  tracking: -0.2
+  space_width: 2.0
+  scale: 70.0
+  text_line_spacing:
+  space_before_in_lines:
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+reporter:
+  korean_name: 기자명
+  font_family: KoPub돋움체_Pro Light
+  font: KoPubDotumPL
+  font_size: 7.0
+  text_color: CMYK=0,0,0,100
+  alignment: right
+  tracking: 0.0
+  space_width: 2.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 0
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+author:
+  korean_name: 저자명
+  font_family: KoPub돋움체_Pro Light
+  font: KoPubDotumPL
+  font_size: 7.0
+  text_color: CMYK=0,0,0,100
+  alignment: right
+  tracking: 0.0
+  space_width: 2.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 0
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+linked_story:
+  korean_name: 연결기사
+  font_family: KoPub돋움체_Pro Light
+  font: KoPubDotumPL
+  font_size: 7.0
+  text_color: CMYK=0,0,0,100
+  alignment: right
+  tracking: 0.0
+  space_width: 2.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 0
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+  publication_id: 1s
+reporter_editorial:
+  korean_name: 논설기자
+  font_family: KoPub돋움체_Pro Light
+  font: KoPubDotumPL
+  font_size: 9.4
+  text_color: CMYK=0,0,0,100
+  alignment: right
+  tracking: 0.0
+  space_width: 2.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes:
+    token_union_style:
+      stroke_width: 1.5
+      stroke_sides:
+        - 0
+        - 1
+        - 0
+        - 0
+      top_line_space: 3
+title_main:
+  korean_name: 제목_메인
+  font_family: KoPub바탕체_Pro Bold
+  font: KoPubBatangPB
+  font_size: 42.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -1.0
+  space_width: 10.0
+  scale: 100.0
+  text_line_spacing: 0
+  space_before_in_lines: 0.5
+  space_after_in_lines: 0.5
+  text_height_in_lines: 3
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_4_5:
+  korean_name: 제목_4-5단
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 32.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -1.5
+  space_width: 10.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines: 2
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_4:
+  korean_name: 제목_4단
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 30.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -2.0
+  space_width: 7.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines: 2
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_3:
+  korean_name: 제목_3단
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 27.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -2.0
+  space_width: 4.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines: 2
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_2:
+  korean_name: 제목_2단
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 23.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -2.0
+  space_width: 4.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines: 2
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_1:
+  korean_name: 제목_1단
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 18.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -2.0
+  space_width: 4.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines: 1
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title:
+  korean_name: 제목_메인
+  font_family: KoPub바탕체_Pro Bold
+  font: KoPubBatangPB
+  font_size: 24.0
+  text_color: CMYK=100,0,0,0
+  alignment: left
+  tracking: -1.0
+  space_width: 10.0
+  scale: 100.0
+  text_line_spacing: 0
+  space_before_in_lines: 0
+  space_after_in_lines: 0
+  text_height_in_lines: 3
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+subtitle_main:
+  korean_name: 부제_메인
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 18.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -1.0
+  space_width: 5.0
+  scale: 100.0
+  text_line_spacing: 6.0
+  space_before_in_lines: 1
+  space_after_in_lines: 2
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+subtitle_M:
+  korean_name: 부제_14
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 14.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -1.0
+  space_width: 5.0
+  scale: 100.0
+  text_line_spacing: 7.0
+  space_before_in_lines: 0
+  space_after_in_lines: 1
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+subtitle_S:
+  korean_name: 부제_12
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 12.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -1.0
+  space_width: 4.0
+  scale: 100.0
+  text_line_spacing: 6.0
+  space_before_in_lines: 0
+  space_after_in_lines: 1
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+subtitle:
+  korean_name: 부제_12_고딕
+  font_family: KoPub돋움체_Pro Medium
+  font: KoPubDotumPM
+  font_size: 18.0
+  text_color: CMYK=0,0,0,100
+  alignment: center
+  tracking: -1.0
+  space_width: 4.0
+  scale: 100.0
+  text_line_spacing: 6.0
+  space_before_in_lines: 0.5
+  space_after_in_lines: 0.5
+  text_height_in_lines: 1
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+news_line_title:
+  korean_name: 뉴스라인_제목
+  font_family: KoPub돋움체_Pro Medium
+  font: KoPubDotumPM
+  font_size: 13.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -0.5
+  space_width: 3.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines:
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+brand_name:
+  korean_name: 애드_브랜드명
+  font_family: KoPub돋움체_Pro Medium
+  font: KoPubDotumPM
+  font_size: 13.0
+  text_color: CMYK=0,0,0,100
+  alignment: center
+  tracking: -0.5
+  space_width: 3.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines:
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+subject_head_L:
+  korean_name: 문패_18
+  font_family: KoPub돋움체_Pro Bold
+  font: KoPubDotumPB
+  font_size: 18.0
+  text_color: CMYK=100,50,0,0
+  alignment: left
+  tracking: -0.5
+  space_width: 0.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines:
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes:
+    token_union_style:
+      stroke_width: 2
+      stroke_sides:
+        - 0
+        - 1
+        - 0
+        - 0
+      top_line_space: 5
+subject_head_M:
+  korean_name: 문패_14
+  font_family: KoPub돋움체_Pro Bold
+  font: KoPubDotumPB
+  font_size: 14.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -0.5
+  space_width: 3.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines:
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+subject_head_editorial:
+  korean_name: 문패_12
+  font_family: KoPub돋움체_Pro Bold
+  font: KoPubDotumPB
+  font_size: 12.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -0.5
+  space_width: 3.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines:
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes:
+    token_union_style:
+      stroke_width: 2
+      stroke_sides:
+        - 0
+        - 1
+        - 0
+        - 0
+      top_line_space: 13.5
+editor_note:
+  korean_name: 편집자주
+  font_family: KoPub돋움체_Pro Medium
+  font: KoPubDotumPM
+  font_size: 8.8
+  text_color: CMYK=0,0,0,80
+  alignment: left
+  tracking: -0.3
+  space_width: 3.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines:
+  space_after_in_lines:
+  text_height_in_lines:
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_opinion:
+  korean_name: 기고 제목
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 22.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -1.5
+  space_width: 7.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines: 2
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_editorial:
+  korean_name: 사설 제목
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 19.0
+  text_color: CMYK=0,0,0,100
+  alignment: left
+  tracking: -1.5
+  space_width: 5.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 0
+  space_after_in_lines: 1
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_7:
+  korean_name: 제목_7단
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 36.0
+  text_color: ''
+  alignment: left
+  tracking: -2.0
+  space_width: 7.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines: 2
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_6:
+  korean_name: 제목_6단
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 34.0
+  text_color: ''
+  alignment: left
+  tracking: -2.0
+  space_width: 7.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines: 2
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_5:
+  korean_name: 제목_5단
+  font_family: KoPub바탕체_Pro Medium
+  font: KoPubBatangPM
+  font_size: 32.0
+  text_color: ''
+  alignment: left
+  tracking: -2.0
+  space_width: 7.0
+  scale:
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines: 2
+  text_height_in_lines: 2
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_main_7:
+  korean_name: 제목_메인_7
+  font_family: KoPub바탕체_Pro Bold
+  font: KoPubBatangPB
+  font_size: 45.0
+  text_color: ''
+  alignment: left
+  tracking: -1.0
+  space_width: 10.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines: 0
+  text_height_in_lines: 3
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_main_6:
+  korean_name: 제목_메인_6
+  font_family: KoPub바탕체_Pro Bold
+  font: KoPubBatangPB
+  font_size: 45.0
+  text_color: ''
+  alignment: left
+  tracking: -1.0
+  space_width: 10.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines: 0
+  text_height_in_lines: 3
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+title_main_5:
+  korean_name: 제목_메인_5
+  font_family: KoPub바탕체_Pro Bold
+  font: KoPubBatangPB
+  font_size: 42.0
+  text_color: ''
+  alignment: left
+  tracking: -1.0
+  space_width: 10.0
+  scale: 100.0
+  text_line_spacing:
+  space_before_in_lines: 1
+  space_after_in_lines: 0
+  text_height_in_lines: 3
+  box_attributes: ''
+  markup: ''
+  graphic_attributes: ''
+
+EOF
+
+
+# CHAPTER_STYLES={
+
+#   "heading_columns" => [1,2,3,4,4,4,4],
+#   "title"   =>{:font => 'KoPubBatangPM',     :font_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
+#   "subtitle"=>{:font => 'KoPubBatangPM',     :font_size=>16.0, :text_color => 'black'},
+#   "author"  =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
+#   "Lead"    =>{:font => 'KoPubDotumPM', :font_size=>14.0, :text_color => 'black'},
+#   "lead"    =>{:font => 'KoPubDotumPM', :font_size=>14.0, :text_color => 'black'},
+#   "leading" =>{:font => 'KoPubBatangPM',     :font_size=>18.0, :text_color => 'black'},
+#   "h1"      =>{:font => 'KoPubDotumPM', :font_size=>18.0, :text_color => 'black'},
+#   "h2"      =>{:font => 'KoPubDotumPM', :font_size=>18.0, :text_color => 'black'},
+#   "h3"      =>{:font => 'KoPubDotumPM', :font_size=>16.0, :text_color => 'black'},
+#   "h4"      =>{:font => 'KoPubDotumPM', :font_size=>14.0, :text_color => 'black'},
+#   "h5"      =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
+#   "head"    =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
+#   "h6"      =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray", :text_head_indent=>0, :text_tail_indent=>0},
+#   # "p"       =>{:font => 'SDMyoungjo',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+#   "p"       =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+#   "body"    =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+#   "caption" =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+#   "header"  =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black'},
+#   "footer"  =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black', :footer_margin=>30},
+#   "page_number" =>{:font => 'KoPubBatangPM', :font_size=>10.0, :text_color => 'black'},
+#   "ordered_list"      =>"h5",
+#   "unordered_list"    =>"h5",
+#   "ordered_section"   =>"h5",
+#   "upper_alpha_list"  =>"h5",
+#   "ordered_list_item" => "p",
+#   "unordered_list_item" => "p",
+# }
+
 module RLayout
 
   class RChapter
@@ -185,7 +910,7 @@ module RLayout
     attr_reader :book_title, :title, :starting_page, :heading_height_type, :heading
     attr_reader :body_line_count, :body_line_height
     attr_reader :max_page_number, :page_floats
-    attr_reader :header_footer
+    attr_reader :header_footer, :header_erb, :footer_erb
     # page_by_page is used for page proof reading
     # if page_by_page is true,
     # folders are created for each page, with jpg image and, markdown text for that page
@@ -216,7 +941,9 @@ module RLayout
       @page_pdf       = options[:page_pdf]
       @story_by_page  = options[:story_by_page]
       @toc            = options[:toc]
-      @header_footer  = options[:header_footer]
+      @header_erb     = options[:header_erb]
+      @footer_erb     = options[:footer_erb]
+
       @document       = eval(@layout_rb)
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@document} !!!!"
@@ -233,7 +960,6 @@ module RLayout
       else
         read_page_floats 
       end
-      
       if @page_floats && @page_floats != {}
         last_floats_page_number = @page_floats.keys.sort.last
         need_page_count = last_floats_page_number - @document.pages.length
@@ -243,24 +969,20 @@ module RLayout
           end
         end
         @document.pages.each_with_index do |p,i|
-          # p.create_header_footer(@header_footer) if @header_footer
           page_floats = @page_floats[i + 1]
           p.add_floats(page_floats) if page_floats
-          p.create_header_footer(@header_footer) if @header_footer
         end
       end
 
-      # @page_floats.each_with_index do |page_float,i| 
-      #   p = @document.pages[i]
-      #   unless  p
-      #     @document.add_new_page 
-      #     p = @document.pages[i]
-      #   end
-      #   page_floats = @page_floats[i]
-      #   p.add_floats(page_float)
-      # end
       read_story
       layout_story
+      # draw header and footers
+      @document.pages.each_with_index do |p,i|
+        p.page_number = @starting_page + i
+        p.create_header(@header_erb) if @header_erb && @header_erb != {}
+        p.create_footer(@footer_erb) if @footer_erb && @footer_erb != {}
+      end
+
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
       save_story_by_page if @story_by_page
       save_toc if @toc
@@ -326,6 +1048,9 @@ module RLayout
     end
     
     def layout_story
+      current_style = RLayout::StyleService.shared_style_service
+      current_style.current_style = CHAPTER_STYLES
+
       @document.pages.each do |page|
         page.layout_floats
         page.adjust_overlapping_columns
