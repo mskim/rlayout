@@ -60,7 +60,6 @@ module RLayout
           instance_eval(&block)
         end
       end
-
       self
     end
 

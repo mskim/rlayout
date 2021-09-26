@@ -189,10 +189,16 @@ else
   require File.dirname(__FILE__) + '/rlayout/yearbook/yb_page'
   require File.dirname(__FILE__) + '/rlayout/yearbook/yb_section'
 
+  require File.dirname(__FILE__) + '/rlayout/picture_book/picture_spread_page'
+  require File.dirname(__FILE__) + '/rlayout/picture_book/picture_spread'
+  require File.dirname(__FILE__) + '/rlayout/picture_book/picture_book'
+
   require File.dirname(__FILE__) + '/rlayout/church/ch_section'
   require File.dirname(__FILE__) + '/rlayout/church/ch_page'
   require File.dirname(__FILE__) + '/rlayout/church/ch_index'
   require File.dirname(__FILE__) + '/rlayout/church/ch_index_page'
+
+
 end
 
 module RLayout

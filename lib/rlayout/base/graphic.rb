@@ -63,7 +63,7 @@ module RLayout
       if @parent.nil?
         return self
       end
-      if @parent.kind_of?(Document)
+      if @parent.kind_of?(Document) || @parent.kind_of?(RDocument) || @parent.kind_of?(PictureSpread)
         @parent.pages << self if  !parent.pages.include?(self)
       elsif options[:is_float]
         @parent.floats << self if @parent.floats && !@parent.floats.include?(self)

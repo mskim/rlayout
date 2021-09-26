@@ -943,7 +943,6 @@ module RLayout
       @toc            = options[:toc]
       @header_erb     = options[:header_erb]
       @footer_erb     = options[:footer_erb]
-
       @document       = eval(@layout_rb)
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@document} !!!!"
@@ -984,6 +983,7 @@ module RLayout
       end
 
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
+      
       save_story_by_page if @story_by_page
       save_toc if @toc
       self

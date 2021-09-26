@@ -55,6 +55,7 @@ module RLayout
           font_folder   = "/Users/Shared/SoftwareLab/font_width"
           font_file     = font_folder + "/#{font_name}.ttf"
           # TODO find font_wapper from font name
+          binding.pry
           font_wapper   = @pdf_doc.fonts.add(font_file)
           # canvas.fill_color(@para_style[:text_color]) if @para_style[:text_color]
           canvas.font(font_wapper, size: font_size)

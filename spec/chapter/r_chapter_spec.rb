@@ -4,6 +4,8 @@ describe "create RChapter" do
   before do
     @document_path = "/Users/mskim/test_data/chapter_1"
     @pdf_path     = "/Users/mskim/test_data/chapter_1/chapter.pdf"
+    @document_path = "/Users/mskim/test_data/chapter_1"
+    @pdf_path     = "/Users/mskim/test_data/chapter_1/chapter.pdf"
     @chapter      = RLayout::RChapter.new(document_path: @document_path)
     @doc          = @chapter.document
   end
