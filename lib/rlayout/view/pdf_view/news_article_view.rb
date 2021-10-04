@@ -74,17 +74,6 @@ module RLayout
   end
 
 
-  class TitleText < Container
-    def draw_pdf(canvas, options={})
-      # canvas.save_graphics_state do
-        # canvas.font(font_wapper, size: size)
-        @graphics.each do |line|
-          line.draw_pdf(canvas)
-        end
-      # end
-    end
-  end
-
   class CaptionColumn < Container
     def draw_pdf(canvas, options={})
       @graphics.each do |line|

@@ -4,8 +4,8 @@ include RLayout
 describe "create PictureSpread" do
   before do
     @document_path = "/Users/mskim/test_data/picture_book/02_03"
-    @pdf_path = "/Users/mskim/test_data/picture_book/02_03/spread.pdf"
-    @bg_image_path = @document_path + "/1_2.jpg"
+    @document_path = "/Users/mskim/test_data/picture_book/16_17"
+    @pdf_path = @document_path + "/spread.pdf"
     @doc = PictureSpread.new(document_path: @document_path )
   end
 
@@ -17,17 +17,13 @@ describe "create PictureSpread" do
     assert_equal 'A4', @doc.page_size 
   end
 
-  it 'should have a bg_image_path' do
-    assert_equal @bg_image_path, @doc.bg_image_path 
-  end
-
   it 'should have a two pages' do
     assert_equal 2, @doc.pages.length 
   end
 
   it 'shoud save pdf' do
     assert File.exist? @pdf_path
+    @doc.save_pdf_with_ruby(@pdf_path)
     system "open #{@pdf_path}"
-
   end
 end

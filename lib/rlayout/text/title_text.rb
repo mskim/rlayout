@@ -4,7 +4,7 @@ module RLayout
   # used for title, subject_head, quote
   # adjust_size  adjusts font size from default text_style value
   # ex: My title text{-5} will reduce title text by 5 points
-  # only sinngle digit change is allowed, to keep design integrity
+  # only sinngle digit change is allowed, to keep design integrity.
   class TitleText < Container
     attr_accessor :tokens, :string, :style_name, :para_style, :room, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
@@ -26,7 +26,7 @@ module RLayout
       @token_union_style      = options[:token_union_style]
       @tokens                 = []
       @room                   = @width
-      @single_line_title      = options[:single_line_title]
+      @single_line_title      = options[:single_line_title] 
       if @style_name
         current_style         = RLayout::StyleService.shared_style_service.current_style
         if current_style.class == String
@@ -36,6 +36,17 @@ module RLayout
             # @para_style = current_style['body_gothic']
             @para_style = current_style['body']
           end
+          # this is used to apply additional attribute on top of given style name
+          if options[:font_size]
+            @para_style['font_size'] = options[:font_size]
+          end
+          if options[:font_color]
+            @para_style['font_color'] = options[:font_color]
+          end
+          if options[:text_alignment]
+            @para_style['text_alignment'] = options[:text_alignment]
+          end
+
         else
           @para_style         = RLayout::StyleService.shared_style_service.current_style[@style_name]
         end
@@ -52,12 +63,17 @@ module RLayout
         @para_style             = options[:@para_style]
       else
         @para_style             = {}
-        @para_style[:font]      = options.fetch(:font, 'Times')
+        @para_style[:font]      = options.fetch(:font, 'KoPubBatangPM')
         @para_style[:font_size] = options.fetch(:size, 16)
-        @para_style[:alignment] = options[:alignment] || 'left'
+        @para_style[:text_alignment] = options[:text_alignment] || 'left'
+        @para_style[:font_color] = options[:font_color] || 'black'
+        @para_style[:text_color] = options[:text_color] || 'black'
+        @para_style[:fill_color] = options[:fill_color] || 'clear'
       end
+      @body_line_height = @para_style[:font_size] unless @body_line_height
       @para_style[:font_size] += @adjust_size if @adjust_size
       @para_style[:alignment] = options[:text_alignment] if options[:text_alignment]
+      @para_style[:font_color] = options[:font_color] if options[:font_color]
       @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
       @text_height_in_lines   = 2 if @text_height_in_lines == ""
       @space_before_in_lines  = @para_style[:space_before_in_lines] || 0
@@ -85,7 +101,7 @@ module RLayout
       @style_object, @font_wrapper  = @current_style_service.style_object(@style_name, adjust_size: @adjust_size) 
       space_glyph             = @font_wrapper.decode_utf8(" ").first
       @space_width            = @style_object.scaled_item_width(space_glyph)
-      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width:@line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, adjust_size: adjust_size)
+      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
       @current_line_y         +=@current_line.height
       create_tokens
       layout_tokens
@@ -136,7 +152,7 @@ module RLayout
         options = {}
         options[:string]      = token_string
         options[:para_style]  = @para_style
-        options[:style_name]  = @style_name
+        # options[:style_name]  = @style_name
         options[:y]           = 0
         options[:adjust_size] = @adjust_size if @adjust_size
         options[:height]      = para_style[:font_size]
@@ -154,7 +170,8 @@ module RLayout
     end
 
     def add_new_line
-      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, adjust_size: adjust_size)
+      # new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, adjust_size: adjust_size)
+      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
       @current_line.next_line = new_line if @current_line
       @current_line           = new_line
       @current_line_y         += @current_line.height

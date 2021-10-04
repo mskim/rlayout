@@ -39,6 +39,12 @@ module RLayout
     attr_accessor :number_object, :title_object, :subtitle_object, :quote_object, :author_object
     attr_reader :align_to_body_text, :output_path
     attr_reader :height_sum, :chapter_heading_height # natural, quarter, half, full
+    
+    
+    # TODO
+    #   - make TitleText support para_style as well as style_name
+
+    
     def initialize(options={}, &block)
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
@@ -84,7 +90,6 @@ module RLayout
       if @output_path
         save_pdf_with_ruby(@output_path)
       end
-
       self
     end
 

@@ -870,37 +870,6 @@ title_main_5:
 EOF
 
 
-# CHAPTER_STYLES={
-
-#   "heading_columns" => [1,2,3,4,4,4,4],
-#   "title"   =>{:font => 'KoPubBatangPM',     :font_size=>18.0, :text_color => 'red', :text_alignment=>'center'},
-#   "subtitle"=>{:font => 'KoPubBatangPM',     :font_size=>16.0, :text_color => 'black'},
-#   "author"  =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'green', :text_alignment=>'right'},
-#   "Lead"    =>{:font => 'KoPubDotumPM', :font_size=>14.0, :text_color => 'black'},
-#   "lead"    =>{:font => 'KoPubDotumPM', :font_size=>14.0, :text_color => 'black'},
-#   "leading" =>{:font => 'KoPubBatangPM',     :font_size=>18.0, :text_color => 'black'},
-#   "h1"      =>{:font => 'KoPubDotumPM', :font_size=>18.0, :text_color => 'black'},
-#   "h2"      =>{:font => 'KoPubDotumPM', :font_size=>18.0, :text_color => 'black'},
-#   "h3"      =>{:font => 'KoPubDotumPM', :font_size=>16.0, :text_color => 'black'},
-#   "h4"      =>{:font => 'KoPubDotumPM', :font_size=>14.0, :text_color => 'black'},
-#   "h5"      =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
-#   "head"    =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray"},
-#   "h6"      =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black', :text_line_spacing=>6, :text_alignment=>'justified', :fill_color=>"lightGray", :text_head_indent=>0, :text_tail_indent=>0},
-#   # "p"       =>{:font => 'SDMyoungjo',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-#   "p"       =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-#   "body"    =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>10, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-#   "caption" =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
-#   "header"  =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black'},
-#   "footer"  =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black', :footer_margin=>30},
-#   "page_number" =>{:font => 'KoPubBatangPM', :font_size=>10.0, :text_color => 'black'},
-#   "ordered_list"      =>"h5",
-#   "unordered_list"    =>"h5",
-#   "ordered_section"   =>"h5",
-#   "upper_alpha_list"  =>"h5",
-#   "ordered_list_item" => "p",
-#   "unordered_list_item" => "p",
-# }
-
 module RLayout
 
   class RChapter

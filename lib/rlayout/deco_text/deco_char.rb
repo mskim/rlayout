@@ -3,7 +3,7 @@ module RLayout
     attr_reader :unicode, :font_size, :size
 
     def initialize(options={})
-      options[:text_color]  = random_text_color unless options[:text_color]
+      options[:font_color]  = random_font_color unless options[:font_color]
       options[:fill_color]  = random_fill       unless options[:fill_color]
       options[:stroke_thickness]  = options[:stroke_thickness]      || random_stroke
       super
@@ -11,7 +11,7 @@ module RLayout
     end
   end
 
-  def random_text_color
+  def random_font_color
     %w[black red orange blue yellow].sample
   end
 

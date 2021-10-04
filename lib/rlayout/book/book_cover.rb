@@ -143,7 +143,7 @@ module RLayout
         File.open(layout_path,'w'){|f| f.write default_layout }
         @book_cover = eval(default_layout)
       end
-      return unless is_dirty?
+      # return unless is_dirty?
       @book_cover.save_pdf_with_ruby(output_path, jpg:true)
       @updated = true
     end

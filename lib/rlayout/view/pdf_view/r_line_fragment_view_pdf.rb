@@ -49,15 +49,20 @@ module RLayout
         canvas.save_graphics_state do
           font_name     = @para_style[:font]
           if font_name =~/smSSMyungjoP-W35/
-            font_name = 'Shinmoon'
+            font_name = 'KoPubBatangPM'
           end
           font_size     = @para_style[:font_size]
           font_folder   = "/Users/Shared/SoftwareLab/font_width"
           font_file     = font_folder + "/#{font_name}.ttf"
-          # TODO find font_wapper from font name
-          binding.pry
-          font_wapper   = @pdf_doc.fonts.add(font_file)
-          # canvas.fill_color(@para_style[:text_color]) if @para_style[:text_color]
+          doc           = canvas.context.document
+          font_wapper   = doc.fonts.add(font_file)
+          canvas.font(font_wapper, size: font_size) 
+          if @para_style[:text_color] || @para_style[:font_color]
+            color = @para_style[:text_color] if @para_style[:text_color]
+            color = @para_style[:font_color] if @para_style[:font_color]
+            adjusted_color = RLayout::color_from_string(color)
+            canvas.fill_color(adjusted_color) 
+          end
           canvas.font(font_wapper, size: font_size)
           draw_tokens(canvas)
         end

@@ -42,6 +42,20 @@ module RLayout
       Text.new(options)
     end
 
+    def title_text(string, options={})
+      options[:parent] = self
+      options[:text_string] = string
+      Text.new(options)
+    end
+
+    def filler(options={}) 
+      options[:parent] = self
+      options[:fill_color] = options[:fill_color] || 'clear'
+      options[:width] = options[:width] || 10
+      options[:height] = options[:height] || 10
+      Rectangle.new(options)
+    end
+
     def label(string, options={})
       options[:parent] = self
       options[:text_string] = string

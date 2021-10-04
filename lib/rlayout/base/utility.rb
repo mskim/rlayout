@@ -2,6 +2,7 @@
 module  RLayout
   module_function
 
+
   def round_rect_to_three(rect)
     new_rect = rect.dup
     new_rect.origin.x.round(3)
