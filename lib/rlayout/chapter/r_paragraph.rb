@@ -418,8 +418,13 @@ module RLayout
             @token_union_style = Hash[@token_union_style.map{ |k, v| [k.to_sym, v] }]
           end
         else
+          # TODO fix this
           @style_name  = 'reporter'
           style_hash = current_style[@style_name]
+          if style_hash.nil?
+            @style_name  = 'title'
+            style_hash = current_style[@style_name]
+          end
         end
         @para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
       end

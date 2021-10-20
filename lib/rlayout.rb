@@ -125,6 +125,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/book/front_wing'
   require File.dirname(__FILE__) + '/rlayout/book/title_page'
   require File.dirname(__FILE__) + '/rlayout/book/book_info'
+  require File.dirname(__FILE__) + '/rlayout/book/paperback'
 
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/news_article_view'

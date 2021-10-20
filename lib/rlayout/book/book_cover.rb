@@ -10,13 +10,15 @@ module RLayout
   # front_wing
   CENTI2POINT = 22.4
   class BookCover < Container
-    attr_reader :project_path, :portrait, :spread_layout, :spread_width, :has_wing
+    attr_reader :book_info, :project_path, :source_path, :portrait, :spread_layout, :spread_width, :has_wing
     attr_reader :cover_spread, :front_page, :back_page, :seneca, :seneca_width, :seneca_width_in_cm, :front_wing, :back_wing
     attr_reader :page_size, :page_width, :wing_width, :updated
 
     def initialize(options={})
       super
+      @book_info = options[:book_info]
       @project_path = options[:project_path]
+      @source_path = options[:source_path]
       @portrait  = options[:portrait] || true
       @has_wing = options[:has_wing] || true
       unless File.exist?(@project_path)
@@ -87,13 +89,46 @@ module RLayout
       @project_path + "/front_wing/output.pdf"
     end
 
+    def build_cover_spread_folder
+      @project_path + "/cover_spread"
+    end
+
     def create_spread
-      part_path = @project_path + "/cover_spread"
-      @cover_spread = CoverSpread.new(project_path:part_path,  width:@spread_width, height: @height)
+      copy_cover_image
+      @cover_spread = CoverSpread.new(project_path:build_cover_spread_folder,  width:@spread_width, height: @height)
+    end
+
+    def copy_cover_image
+      FileUtils.mkdir_p(build_cover_spread_folder) unless File.exist?(build_cover_spread_folder)
+      system("cp #{@source_path}/*.png #{build_cover_spread_folder}/")
+      system("cp #{@source_path}/*.jpg #{build_cover_spread_folder}/")    
+    end
+
+    def build_front_wing_folder
+      @project_path + "/front_wing"
+    end
+
+    def build_back_wing_folder
+      @project_path + "/back_wing"
+    end
+
+    def source_front_wing_text
+      @source_path + "/front_wing.md"
+    end
+
+    def source_back_wing_text
+      @source_path + "/back_wing.md"
+    end
+
+    def copy_wing_contents
+      FileUtils.mkdir_p(build_front_wing_folder) unless File.exist?(build_front_wing_folder)
+      FileUtils.mkdir_p(build_back_wing_folder) unless File.exist?(build_back_wing_folder)
+      system("cp #{source_front_wing_text} #{build_front_wing_folder}/content.md")
+      system("cp #{source_back_wing_text} #{build_back_wing_folder}/content.md")    
     end
 
     def create_pages_and_wings
-
+      copy_wing_contents
       @current_x = 0
       create_back_wing if @has_wing
       create_back_page
@@ -102,35 +137,72 @@ module RLayout
       create_front_wing if @has_wing
     end
 
+
+    # def source_back_wing_md_path
+    #   @project_path + "/back_wing.md"
+    # end
+
     def create_back_wing
-      part_path = @project_path + "/back_wing"
-      @back_wing = BackWing.new(project_path:part_path,  width:@wing_width, height: @height)
+      # part_path = @project_path + "/back_wing"
+      # if File.exist?(source_back_wing_md_path)
+      #   FileUtils.mkdir_p(part_path) unless File.exist?(part_path)
+      #   system("cp #{source_back_wing_md_path} #{part_path}/content.md")
+      # end
+      @back_wing = RLayout::BackWing.new(project_path:build_back_wing_folder,  width:@wing_width, height: @height)
       @current_x += @wing_width
     end
 
     def create_back_page
-      part_path = @project_path + "/back_page"
-      @back_page = BackPage.new(project_path:part_path, width:@page_width, height: @height)
+      # part_path = @project_path + "/back_page"
+      h = {}
+      h[:project_path] = @project_path + "/back_page"
+      h[:width] = @page_width
+      h[:height] = @height
+      h[:cover_spread_width] = cover_spread_width
+      h[:front_page_spread_off_set] = 0
+      h[:spread_image_path] = @cover_spread.output_path
+      h[:content] = @book_info
+
+      # @back_page = RLayout::BackPage.new(project_path:part_path, width:@page_width, height: @height)
+      @back_page = RLayout::BackPage.new(h)
       @current_x += @page_width
     end
 
     def create_seneca
       part_path = @project_path + "/seneca"
       # @seneca = Seneca.new(project_path:part_path, width:@seneca_width, height: @seneca_width)
-      @seneca = Seneca.new(project_path:part_path, width:@height, height: @seneca_width)
+      @seneca = RLayout::Seneca.new(project_path:part_path, width:@height, height: @seneca_width)
       # rotae PDF 90 degree
       @current_x += @seneca_width
     end
+
+    def cover_spread_width
+      @page_width*2 + @seneca_width #+ @wing_width*2
+    end
   
     def create_front_page
-      part_path = @project_path + "/front_page"
-      @front_page = FrontPage.new(project_path:part_path, width:@page_width, height: @height)
+      # part_path = @project_path + "/front_page"
+      h = {}
+      h[:project_path] = @project_path + "/front_page"
+      h[:width] = @page_width
+      h[:height] = @height
+      h[:cover_spread_width] = cover_spread_width
+      h[:front_page_spread_off_set] = @page_width + @seneca_width
+      h[:spread_image_path] = @cover_spread.output_path
+      h[:content] = @book_info
+
+      # @front_page = RLayout::FrontPage.new(project_path:part_path, width:@page_width, height: @height)
+      @front_page = RLayout::FrontPage.new(h)
       @current_x += @page_width
     end
 
+    # def source_front_wing_md_path
+    #   @project_path + "/front_wing.md"
+    # end
+
     def create_front_wing
-      part_path = @project_path + "/front_wing"
-      @front_wing = FrontWing.new(project_path:part_path, width:@wing_width, height: @height)
+      # part_path = @project_path + "/front_wing"
+      @front_wing = RLayout::FrontWing.new(project_path:build_front_wing_folder, width:@wing_width, height: @height)
       @current_x += @wing_width
     end
 

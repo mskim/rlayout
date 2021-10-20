@@ -44,6 +44,10 @@ module RLayout
       @project_path + "/content.md"
     end
 
+    def source_cover_path
+      File.dirname(@project_path)
+    end
+
     def generate_pdf
       @updated = false
       # check if  content.md file exists,
@@ -86,6 +90,7 @@ module RLayout
     end
 
     def read_content
+
       @story  = Story.new(content_path).markdown2para_data
       @heading = @story[:heading] || {}
 
@@ -94,9 +99,9 @@ module RLayout
       #   # make other floats quotes, opinition writer's personal_picture
       #   @column.make_floats(@heading)
       # end
-
       @paragraphs =[]
       @story[:paragraphs].each do |para|
+
         para_options = {}
         para_options[:markup]         = para[:markup]
         para_options[:layout_expand]  = [:width]
