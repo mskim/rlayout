@@ -45,7 +45,7 @@ module RLayout
     def title_text(string, options={})
       options[:parent] = self
       options[:text_string] = string
-      Text.new(options)
+      TitleText.new(options)
     end
 
     def filler(options={}) 

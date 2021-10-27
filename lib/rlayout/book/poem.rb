@@ -1,14 +1,15 @@
 module RLayout
   # Page that starts the book.
   # With Title, author, publisher, logo
-  class Prologue
-    attr_reader :book, :path, :layout_template_path
+  class Poem
+    attr_reader :book, :path, :title, :body
 
     def initialize(path, options={})
       @path = path
-      @width = options[:width]
-      @height = options[:height]
+      @width = options[:width] || 400
+      @height = options[:height] || 500
       @layout_template_path = options[:layout_template_path]
+      read_story
       generate_pdf
       self
     end
@@ -26,7 +27,6 @@ module RLayout
     end
 
     def save_layout
-      FileUtils.mkdir_p(@path) unless File.exist?(@path)
       if @layout_template_path
 
       else
@@ -34,10 +34,37 @@ module RLayout
       end
     end
 
+    def read_story
+      # poem = File.open(story_md_path, 'r'){|f| f.read}
+
+      @title = "여기는 시집 제목"
+
+      @body =<<~EOF
+
+
+      여기는 시집 내용
+      여기는 둘째줄 입니다.
+      여기는 새째줄 입니다.
+
+      여기는 시집 내용
+      여기는 둘째줄 입니다.
+      여기는 새째줄 입니다.
+
+      여기는 시집 내용
+      여기는 둘째줄 입니다.
+      여기는 새째줄 입니다.
+
+      여기는 시집 내용
+      여기는 둘째줄 입니다.
+      여기는 새째줄 입니다.
+
+      EOF
+
+    end
+
     def generate_pdf
       save_layout
       d = eval(layout_rb)
-      d.save_pdf_with_ruby()
       d.save_pdf_with_ruby(output_path, jpg:true)
     end
 
@@ -47,7 +74,6 @@ module RLayout
 
     def layout_options
       h = {}
-      h[:document_path] = @path
       h[:heading_height_type] = "quarter"
       h[:width] = @width
       h[:height] = @height
@@ -58,7 +84,10 @@ module RLayout
 
     def layout_rb
       s =<<~EOF
-        RLayout::RDocument.new(#{layout_options})
+        RLayout::Container.new(#{layout_options}) do
+        title_text("#{@title}", x: 50, y: 50, width: 400, font_size: 16)
+        title_text("#{@body}", x: 50, y: 100, width: 400, height: 400, font_size: 12)
+        end
       EOF
     end
   end

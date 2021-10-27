@@ -1,6 +1,5 @@
 module RLayout
 
-  # BookCover
   # spread
   # Image that spreads across back_page seneca and front_page
 
@@ -9,8 +8,9 @@ module RLayout
   # front_page
   # front_wing
   CENTI2POINT = 22.4
+
   class BookCover < Container
-    attr_reader :book_info, :project_path, :source_path, :portrait, :spread_layout, :spread_width, :has_wing
+    attr_reader :book_info, :project_path, :source_path,  :portrait, :spread_layout, :spread_width, :has_cover_inside_page, :has_wing
     attr_reader :cover_spread, :front_page, :back_page, :seneca, :seneca_width, :seneca_width_in_cm, :front_wing, :back_wing
     attr_reader :page_size, :page_width, :wing_width, :updated
 
@@ -20,6 +20,7 @@ module RLayout
       @project_path = options[:project_path]
       @source_path = options[:source_path]
       @portrait  = options[:portrait] || true
+      @has_cover_inside_page = options[:has_cover_inside_page] || true
       @has_wing = options[:has_wing] || true
       unless File.exist?(@project_path)
         FileUtils.mkdir_p(@project_path)
@@ -36,6 +37,9 @@ module RLayout
       @width = @page_width*2 + @seneca_width + @wing_width*2
       create_spread
       create_pages_and_wings
+      create_empty_page
+      create_front_cover
+      create_back_cover
       generate_pdf
       self
     end
@@ -101,6 +105,7 @@ module RLayout
     def copy_cover_image
       FileUtils.mkdir_p(build_cover_spread_folder) unless File.exist?(build_cover_spread_folder)
       system("cp #{@source_path}/*.png #{build_cover_spread_folder}/")
+      # TODO get error message if no jpg
       system("cp #{@source_path}/*.jpg #{build_cover_spread_folder}/")    
     end
 
@@ -137,17 +142,7 @@ module RLayout
       create_front_wing if @has_wing
     end
 
-
-    # def source_back_wing_md_path
-    #   @project_path + "/back_wing.md"
-    # end
-
     def create_back_wing
-      # part_path = @project_path + "/back_wing"
-      # if File.exist?(source_back_wing_md_path)
-      #   FileUtils.mkdir_p(part_path) unless File.exist?(part_path)
-      #   system("cp #{source_back_wing_md_path} #{part_path}/content.md")
-      # end
       @back_wing = RLayout::BackWing.new(project_path:build_back_wing_folder,  width:@wing_width, height: @height)
       @current_x += @wing_width
     end
@@ -162,15 +157,12 @@ module RLayout
       h[:front_page_spread_off_set] = 0
       h[:spread_image_path] = @cover_spread.output_path
       h[:content] = @book_info
-
-      # @back_page = RLayout::BackPage.new(project_path:part_path, width:@page_width, height: @height)
       @back_page = RLayout::BackPage.new(h)
       @current_x += @page_width
     end
 
     def create_seneca
       part_path = @project_path + "/seneca"
-      # @seneca = Seneca.new(project_path:part_path, width:@seneca_width, height: @seneca_width)
       @seneca = RLayout::Seneca.new(project_path:part_path, width:@height, height: @seneca_width)
       # rotae PDF 90 degree
       @current_x += @seneca_width
@@ -190,15 +182,10 @@ module RLayout
       h[:front_page_spread_off_set] = @page_width + @seneca_width
       h[:spread_image_path] = @cover_spread.output_path
       h[:content] = @book_info
-
       # @front_page = RLayout::FrontPage.new(project_path:part_path, width:@page_width, height: @height)
       @front_page = RLayout::FrontPage.new(h)
       @current_x += @page_width
     end
-
-    # def source_front_wing_md_path
-    #   @project_path + "/front_wing.md"
-    # end
 
     def create_front_wing
       # part_path = @project_path + "/front_wing"
@@ -218,6 +205,78 @@ module RLayout
       # return unless is_dirty?
       @book_cover.save_pdf_with_ruby(output_path, jpg:true)
       @updated = true
+    end
+
+    def empty_page_layout
+      layout =<<~EOF
+      RLayout::Container.new(fill_color:'clear', width:#{@page_width}, height:#{@height}) do
+      end
+      EOF
+    end
+  
+    def empty_page_pdf_path
+      @project_path + "/empty_page.pdf"
+    end
+  
+    def empty_page_jpg_path
+      @project_path + "/empty_page.jpg"
+    end
+  
+    def create_empty_page
+      page_with_empty = eval(empty_page_layout)
+      page_with_empty.save_pdf_with_ruby(empty_page_pdf_path, jpg:true)
+    end
+  
+    def build_front_cover_path
+      @project_path + "/front_cover"
+    end
+  
+    def create_front_cover
+      FileUtils.mkdir_p(build_front_cover_path) unless File.exist?(build_front_cover_path)
+      page1_path = build_front_cover_path + "/0001"
+      FileUtils.mkdir_p(page1_path) unless File.exist?(page1_path)
+      page1_pdf_path = page1_path + "/page.pdf"
+      page1_jpg_path = page1_path + "/page.jpg"
+      # copy pdf
+      pdf_source_1 = @project_path + "/front_page/output.pdf"
+      system(" cp #{pdf_source_1} #{page1_pdf_path}")
+      # copy jpg
+      jpg_source_1 = @project_path + "/front_page/output.jpg"
+      system(" cp #{jpg_source_1} #{page1_jpg_path}")
+      if @has_cover_inside_page
+        page2_path = build_front_cover_path + "/0002"
+        FileUtils.mkdir_p(page2_path) unless File.exist?(page2_path)
+        page2_pdf_path = page2_path + "/page.pdf"
+        page2_jpg_path = page2_path + "/page.jpg"
+        system(" cp #{empty_page_pdf_path} #{page2_pdf_path}")
+        system(" cp #{empty_page_jpg_path} #{page2_jpg_path}")
+      end
+    end
+  
+    def build_back_cover_path
+      @project_path + "/back_cover"
+    end
+  
+    def create_back_cover
+      FileUtils.mkdir_p(build_back_cover_path) unless File.exist?(build_back_cover_path)
+      page1_path = build_back_cover_path + "/0001"
+      page1_pdf_path = page1_path + "/page.pdf"
+      page1_jpg_path = page1_path + "/page.jpg"
+      FileUtils.mkdir_p(page1_path) unless File.exist?(page1_path)
+      # copy pdf
+      pdf_source_1 = @project_path + "/back_page/output.pdf"
+      system(" cp #{pdf_source_1} #{page1_pdf_path}")
+      # copy jpg
+      jpg_source_1 = @project_path + "/back_page/output.jpg"
+      system(" cp #{jpg_source_1} #{page1_jpg_path}")
+      if @has_cover_inside_page
+        page2_path = build_back_cover_path + "/0002"
+        FileUtils.mkdir_p(page2_path) unless File.exist?(page2_path)
+        page2_pdf_path = page2_path + "/page.pdf"
+        page2_jpg_path = page2_path + "/page.jpg"
+        system(" cp #{empty_page_pdf_path} #{page2_pdf_path}")
+        system(" cp #{empty_page_jpg_path} #{page2_jpg_path}")
+      end
     end
 
     def is_dirty?

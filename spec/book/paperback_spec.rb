@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create Paperback' do
   before do
-    @project_path  = "/Users/mskim/test_data/paperback"
+    @project_path  = "/Users/mskim/test_data/book/paperback"
     @paperback = Paperback.new(@project_path)
   end
 

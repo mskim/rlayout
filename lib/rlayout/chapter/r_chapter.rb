@@ -880,11 +880,11 @@ module RLayout
     attr_reader :body_line_count, :body_line_height
     attr_reader :max_page_number, :page_floats
     attr_reader :header_footer, :header_erb, :footer_erb
+    
     # page_by_page is used for page proof reading
     # if page_by_page is true,
     # folders are created for each page, with jpg image and, markdown text for that page
     # this allow the proofer to working on that specific page rather than dealing with entire chapter text.
-    
     # page_pdf options indicates to split docemnt into pages
     # page_folder are 3 digit numbered 001, 002, 003
 
@@ -910,6 +910,7 @@ module RLayout
       @page_pdf       = options[:page_pdf]
       @story_by_page  = options[:story_by_page]
       @toc            = options[:toc]
+      @toc_level      = options[:toc_level] || 'title'
       @header_erb     = options[:header_erb]
       @footer_erb     = options[:footer_erb]
       @document       = eval(@layout_rb)
@@ -945,14 +946,15 @@ module RLayout
       read_story
       layout_story
       # draw header and footers
+      if @footer_erb
+        @footer_erb[:right_footer].gsub!("<%= title %>", @title)
+      end
       @document.pages.each_with_index do |p,i|
         p.page_number = @starting_page + i
         p.create_header(@header_erb) if @header_erb && @header_erb != {}
         p.create_footer(@footer_erb) if @footer_erb && @footer_erb != {}
       end
-
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
-      
       save_story_by_page if @story_by_page
       save_toc if @toc
       self
@@ -974,7 +976,7 @@ module RLayout
 
     def read_page_floats
       unless File.exists?(page_floats_path)
-        puts "Can not find file #{page_floats_path}!!!!"
+        # puts "Can not find file #{page_floats_path}!!!!"
         # return {}
         @page_floats = {}
       else
@@ -989,7 +991,7 @@ module RLayout
         @story  = Story.new(@story_path).markdown2para_data
       end
       @heading  = @story[:heading] || {}
-      @title    = @heading[:title] || "Untitled"
+      @title    = @heading[:title] || @heading['title'] || "Untitled"
       if @document.pages[0].has_heading?
         @document.pages[0].get_heading.set_heading_content(@heading)
         @document.pages[0].relayout!
@@ -1005,7 +1007,6 @@ module RLayout
           @document.pages[0].get_heading.set_heading_content(@heading)
         end
       end
-
       @paragraphs =[]
       @story[:paragraphs].each do |para|
         para_options = {}
@@ -1037,7 +1038,8 @@ module RLayout
         # capturing paragraph info to save @story_by_page
         @current_line                   = @paragraph.layout_lines(@current_line)
         current_page_paragraph_list     << @paragraph.para_info
-        if @paragraph.markup != 'p'
+        if @toc_level == 'title'
+        elsif @paragraph.markup != 'p'
           toc_item = {}
           toc_item[:page] = page_key
           toc_item[:markup] = @paragraph.markup
@@ -1084,6 +1086,13 @@ module RLayout
     def save_toc
       @document_path  = File.dirname(@output_path)
       toc_path        = @document_path + "/toc.yml"
+      if @toc_level == 'title'
+        toc_item = {}
+        toc_item[:page] = @starting_page
+        toc_item[:markup] = 'h1'
+        toc_item[:para_string] = @title
+        @toc_content << toc_item
+      end
       File.open(toc_path, 'w') { |f| f.write @toc_content.to_yaml}
     end
 

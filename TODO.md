@@ -122,6 +122,48 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2021_10_26
+  - Docs
+    - PartCover, Poem, Essay
+
+  - PartCover
+    - single page
+    - double page
+  - Book
+      Paperback
+  - BookWithParts 
+      EsseyBook, PoemBook
+  - PictureBook
+
+  - generate ebook_indexe.html 
+  
+  - TOC with multiple page
+  - book_part  set starting_page
+
+  - text_style auto generator
+      - give font, page_size, margin, body_line_count
+  - rakefile for Dropbox
+    - paperback, essey, poem
+    - bio, picturebook
+    - yearbook
+
+2021_10_25
+  - BookPart
+ 
+2021_10_24
+  - add toc doc pdf 
+
+2021_10_23
+  - fix footer in r_chapter, r_page
+  - set default toc level to chapter title
+  - add custom test_style support
+  - fix first chapter heading style differing from the rest of the chapters
+  - make rake task for dropbox based workflow
+      - drop
+      - done
+      - error
+      - log
+
 2021_09_10
   - back_wing, front_wing, left_margin right_margin
 

@@ -20,14 +20,6 @@ module RLayout
     end
 
     def generate_pdf
-      # check if  layout.rb file exists,
-      # if so use it to generate pdf.
-      # if not merge data and layout.erb and save new layout.rb file
-      # if File.exist?(layout_path)
-      #   mergerd = File.open(layout_path,'r'){|f| f.read}
-      #   layout = eval(mergerd)
-      # else
-
       FileUtils.mkdir_p(@project_path) unless File.exist?(@project_path)
       erb = ERB.new(layout_erb)
       # @content = default_content
@@ -74,26 +66,6 @@ module RLayout
       EOF
     end
   
-    # def default_layout_erb
-    #   # before rotating 90 
-    #   layout =<<~EOF
-    #   RLayout::Container.new(fill_color:'clear', width:#{@width}, height:#{@height}) do
-    #     container(fill_color:'clear',layout_length:2) do
-    #       text("<%= @content[:title] %>", font_size: 40, text_alignment:'center', layout_length:3, font_color: 'red', fill_color: 'clear')
-    #       text("<%= @content[:subtitle] %>", font_size: 26 , text_alignment:'center', layout_length:2, fill_color: 'clear')
-    #       text("<%= @content[:author] %>", font_size: 16, text_alignment:'center', fill_color: 'clear')
-    #       text("<%= @content[:publisher] %>", font_size: 16, text_alignment:'center', fill_color: 'clear')
-    #     end
-    #     container fill_color:'clear' do
-
-    #     end
-
-    #     relayout!
-    #   end
-
-    #   EOF
-    # end
-
     def layout_path
       @project_path + "/layout.rb"
     end
@@ -132,10 +104,10 @@ module RLayout
 
     def self.default_content
       h = {}
-      h[:title] = "소설을 쓰고 있네"
-      h[:subtitle] = "정말로 소설을 쓰고 있네 그려"
-      h[:author] = "홍길동"
-      h[:publisher] = "활빈당출판"
+      h['title'] = "소설을 쓰고 있네"
+      h['subtitle'] = "정말로 소설을 쓰고 있네 그려"
+      h['author'] = "홍길동"
+      h['publisher'] = "활빈당출판"
       h
     end
 

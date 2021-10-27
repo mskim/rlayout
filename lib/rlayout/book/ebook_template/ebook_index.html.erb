@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title><%= @project.repo_name %></title>
+<meta name="apple-mobile-web-app-title" content="<%= title %>"
+<meta name="generator" content="ebook">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="initial-scale=1.0,minimum-scale=.2,maximum-scale=1.0,user-scalable=no">
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">window.jQuery || document.write('<script src="assets/js/jquery.min.js"><\/script>')</script>
+<script type="text/javascript" src="assets/js/vmouse.min.js"></script>
+<script type="text/javascript" src="assets/js/turn.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.touchSwipe.min.js"></script>
+<script type="text/javascript" src="assets/js/ebook.config.js"></script>
+<link rel="stylesheet" href="assets/css/pages.css" media="all">
+<style media="all and (-ms-high-contrast:none)">*::-ms-backdrop, .svg-img{ width: 100%; }</style>
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<style type="text/css">
+  #closeBtn {
+    position: absolute;
+    text-align: right;
+    width: 10px;
+    z-index: 1;
+    margin-left: 530px;
+    margin-top: -15px;
+  }
+  #popBottom {
+    height: 28px;
+    text-align: left;
+    font-weight: bold;
+    color: #FFFFFF;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: move;
+  }
+  #drag_layer {
+    position: absolute;
+    width: 100%;
+    height: 70vh;
+    z-index: 1005;
+    background-color: rgba(0,0,0,0.02);
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: move;
+    top: 5px;
+  }	
+</style>
+</head>
+<body>
+<% @project.pages.each do |page| %>
+  <% page.videos.each do |video| %>
+    <!-- 팝업소스N 시작 -->
+    <style type="text/css">
+      #popWindow<%= video.get_vimeo_id %> { 
+        position: absolute;
+        display: none;
+        background-color: #fff; 
+      }
+      #pop2Window<%= video.get_vimeo_id %> { 
+        position: absolute;
+        display: none;
+        background-color: #fff; 
+      }
+    </style>
+    <script type="text/javascript">
+      function popWindowOpen<%= video.get_vimeo_id %>() {
+        jQuery("#popWindow<%= video.get_vimeo_id %>").css("display", "block");
+        jQuery("#popWindow<%= video.get_vimeo_id %>").draggable();
+      }
+      function popWindowClose<%= video.get_vimeo_id %>() {
+        jQuery("#popWindow<%= video.get_vimeo_id %>").css("display", "none"); 
+      }
+      function pop2WindowOpen<%= video.get_vimeo_id %>() {
+        jQuery("#pop2Window<%= video.get_vimeo_id %>").css("display", "block");
+        jQuery("#pop2Window<%= video.get_vimeo_id %>").draggable();
+      }
+      function pop2WindowClose<%= video.get_vimeo_id %>() {
+        jQuery("#pop2Window<%= video.get_vimeo_id %>").css("display", "none"); 
+      }
+    </script>
+    <div id="popWindow<%= video.get_vimeo_id %>" style="position: absolute; top: 50%; left: 50%; background-color: #FC0; margin-top: -300px; margin-left: -270px; z-index: 1000; background-color: transparent;">
+      <div style="width: 540px; text-align: right; z-index: 1001; padding-bottom: 5px;">
+        <!--	<a href="#"  onclick="pop2WindowOpen();" >
+          <i class="fa fa-comment " aria-hidden="true" style="color: #fff;border-radius: 30px; background-color: #B5B5B5;padding: 13px 13px;"></i>
+        </a>-->
+        <a href="javascript:;" onClick="popWindowClose<%= video.get_vimeo_id %>();" >
+          <i class="fa fa-close " aria-hidden="true" style="color: #fff; border-radius: 30px; background-color: #B5B5B5; padding: 13px 13px;"></i><!--<img src="./../img/close_btn.png"  height="10px"/>-->
+        </a>
+      </div>
+      <div style="position: inherit; border: 0px solid #999; margin-left: 0%; padding-bottom: 0px;">
+        <iframe src="https://player.vimeo.com/video/<%= video.get_vimeo_id %>/?title=0&byline=0" width="540" height="307" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+        <div style="position: absolute; top: 5px; width: 480px; height: 180px; background-color: rgba(0, 0, 0, 0.00); padding: 30px;"></div>
+      </div>
+    </div>
+    <!-- 팝업소스N 끝 -->
+  <% end %>
+<% end %>
+<!--[if lt IE 10]>
+<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+<![endif]-->
+<div id="loadIndicator"><img src="assets/images/loading.jpg" alt="loading..."/><span>&nbsp;</span></div>
+<div id="container-wrap">
+<div id="container">
+<ul class="pages flip" id="slider">
+  <% @project.pages.order(book_page_number: :asc).each do |page| %>
+    <% if page.book_page_number == 1 %>
+      <li class="page" data-name="<%= page.book_page_number %>">
+        <div class="page-scale-wrap mq-none mq-default" data-layout-name="undefined" <% if page.vertical_page? %>style="width: 652px; height: 865px;"<% else %>style="width: 842px; height: 595px;"<% end %>>
+          <!-- <img src="assets/images/blank.gif" class="pageItem hd" alt="Rectangle" id="itemMusicImg<%= page.book_page_number %>" data-src="assets/<%= page.static_jpg_url %>"/> -->
+          <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 <%= page.width %> <%= page.height %>' <% if page.vertical_page? %>style="height: 100%;"<% end %>>
+            <image xlink:href='assets/<%= page.static_jpg_url %>' x='0' y='0' width='<%= page.width %>' height='<%= page.height %>' />
+            <% if page.links.present? %>
+              <% page.links.each do |link| %>
+                <rect class='rectfill' stroke='black' stroke-width='0' fill-opacity='0.0' x='<%= link.x %>' y='<%= link.y %>' width='<%= link.width %>' height='<%= link.height %>' onclick="nav.to(<%= link.link_book_page_number %>);" />
+              <% end %>
+            <% end %>
+          </svg>
+          <% if !page.toc_page %>
+            <button class="pageItem fixLeftTocButton" id="itemTocButton<%= page.book_page_number %>" data-id="TocButton<%= page.book_page_number %>" name="목차 아이콘 버튼" onclick="nav.to(<%= @project.toc_first_page_number %>);" alt="목차 아이콘 버튼">
+              <div class="pageItem state btn-off">
+                <img src="assets/images/blank.gif" class="pageItem hd" alt="Rectangle" style="left: 3px !important; top: 3px !important;" id="itemTocIcon<%= page.book_page_number %>" data-src="assets/images/left_page_toc_icon.png"/>
+              </div>
+            </button>
+          <% end %>
+          <% if page.videos.present? %>
+            <svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 <%= page.width %> <%= page.height %>" style="enable-background: new 0 0 <%= page.width %> <%= page.height %>;<% if page.vertical_page? %> height: 100%;<% end %>" xml:space="preserve">
+              <% page.videos.each do |video| %>
+                <style type="text/css">
+                  .st0{fill:#FFFFFF;}
+                  .st1{fill:#52B8CE;}
+                </style>
+                <g transform='translate(<%= video.x %>, <%= video.y %>)' onClick="popWindowOpen<%= video.get_vimeo_id %>();" target="_blank">
+                  <rect y="0" class="st0" width="64.19" height="64.19"/>
+                  <g>
+                    <circle class="st1" cx="32.09" cy="32.09" r="32.09"/>
+                    <path class="st0" d="M23.55,48.14c-0.36,0-0.72-0.09-1.04-0.28c-0.63-0.37-1.02-1.05-1.02-1.78v-27.2c0-0.73,0.39-1.41,1.02-1.78
+                      c0.63-0.37,1.42-0.38,2.05-0.02l24.3,13.6c0.65,0.36,1.06,1.06,1.06,1.8c0,0.75-0.41,1.44-1.06,1.8l-24.3,13.6
+                      C24.24,48.05,23.89,48.14,23.55,48.14z M24.51,20.51v23.91l21.35-11.95L24.51,20.51z"/>
+                  </g>
+                </g>
+              <% end %>
+            </svg>
+          <% end %>
+        </div>
+      </li>
+    <% elsif page.toc_page %>
+      <li class="page" data-name="<%= page.book_page_number %>">
+        <div class="page-scale-wrap mq-none mq-default" data-layout-name="undefined" style="width: 652px; height: 865px;">
+          <!-- <img src="assets/images/blank.gif" class="pageItem hd" alt="Rectangle" id="itemMusicImg<%= page.book_page_number %>" data-src="assets/<%= page.static_jpg_url %>"/> -->
+          <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 <%= page.width %> <%= page.height %>' <% if page.vertical_page? %>style="height: 100%;"<% end %>>
+            <image xlink:href='assets/<%= page.static_jpg_url %>' x='0' y='0' width='<%= page.width %>' height='<%= page.height %>' />
+            <% if page.links.present? %>
+              <% page.links.each do |link| %>
+                <rect class='rectfill' stroke='black' stroke-width='0' fill-opacity='0.0' x='<%= link.x %>' y='<%= link.y %>' width='<%= link.width %>' height='<%= link.height %>' onclick="nav.to(<%= link.link_page_number %>);" />
+              <% end %>
+            <% end %>
+          </svg>
+        </div>
+      </li>
+    <% elsif page.book_page_number == 2 && @project.book_type != 'picture_book'%>
+      <li class="page" data-name="<%= page.book_page_number %>">
+        <div class="page-scale-wrap mq-none mq-default" data-layout-name="undefined" style="width: 652px; height: 865px;">
+          <%= page.book.download_html %>
+        </div>
+      </li>
+    <% else %>
+      <li class="page" data-name="<%= page.book_page_number %>">
+        <div class="page-scale-wrap mq-none mq-default" data-layout-name="undefined" style="width: 652px; height: 865px;">
+          <!-- <img src="assets/images/blank.gif" class="pageItem hd" alt="Rectangle" id="itemMusicImg<%= page.book_page_number %>" data-src="assets/<%= page.static_jpg_url %>"/> -->
+          <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 <%= page.width %> <%= page.height %>' <% if page.vertical_page? %>style="height: 100%;"<% end %>>
+            <image xlink:href='assets/<%= page.static_jpg_url %>' x='0' y='0' width='<%= page.width %>' height='<%= page.height %>' />
+          </svg>
+          <% if page.book_page_number.even? %>
+            <button class="pageItem fixLeftTocButton" id="itemTocButton<%= page.book_page_number %>" data-id="TocButton<%= page.book_page_number %>" name="목차 <%= @project.toc_first_page_number %>페이지 버튼" onclick="nav.to(<%= @project.toc_first_page_number %>);" alt="목차 <%= @project.toc_first_page_number %>페이지 버튼">
+              <div class="pageItem state btn-off">
+                <img src="assets/images/blank.gif" class="pageItem hd" alt="Rectangle" style="left: 3px !important; top: 3px !important;" data-src="assets/images/left_page_toc_icon.png"/>
+              </div>
+            </button>
+          <% else %>
+            <button class="pageItem fixRightTocButton" id="itemTocButton<%= page.book_page_number %>" data-id="TocButton<%= page.book_page_number %>" name="목차 <%= @project.toc_first_page_number %>페이지 버튼" onclick="nav.to(<%= @project.toc_first_page_number %>);" alt="목차 <%= @project.toc_first_page_number %>페이지 버튼">
+              <div class="pageItem state btn-off">
+                <img src="assets/images/blank.gif" class="pageItem hd" alt="Rectangle" style="left: 3px !important; top: 3px !important;" data-src="assets/images/right_page_toc_icon.png"/>
+              </div>
+            </button>
+          <% end %>
+          <% if page.videos.present? %>
+            <svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 <%= page.width %> <%= page.height %>" style="enable-background: new 0 0 <%= page.width %> <%= page.height %>; <% if page.vertical_page? %>height: 100%;<% end %>" xml:space="preserve" >
+              <% page.videos.each do |video| %>
+                <style type="text/css">
+                  .st0{fill:#FFFFFF;}
+                  .st1{fill:#52B8CE;}
+                </style>
+                <g transform='translate(<%= video.x %>, <%= video.y %>)' onClick="popWindowOpen<%= video.get_vimeo_id %>();" target="_blank">
+                  <rect y="0" class="st0" width="64.19" height="64.19"/>
+                  <g>
+                    <circle class="st1" cx="32.09" cy="32.09" r="32.09"/>
+                    <path class="st0" d="M23.55,48.14c-0.36,0-0.72-0.09-1.04-0.28c-0.63-0.37-1.02-1.05-1.02-1.78v-27.2c0-0.73,0.39-1.41,1.02-1.78
+                      c0.63-0.37,1.42-0.38,2.05-0.02l24.3,13.6c0.65,0.36,1.06,1.06,1.06,1.8c0,0.75-0.41,1.44-1.06,1.8l-24.3,13.6
+                      C24.24,48.05,23.89,48.14,23.55,48.14z M24.51,20.51v23.91l21.35-11.95L24.51,20.51z"/>
+                  </g>
+                </g>
+              <% end %>
+            </svg>
+          <% end %>
+          <% if page.audios.present? %>
+            <svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 <%= page.width %> <%= page.height %>" style="enable-background: new 0 0 <%= page.width %> <%= page.height %>; <% if page.vertical_page? %>height: 100%;<% end %>" xml:space="preserve" >
+              <% page.audios.each do |audio| %>
+                <g transform='translate(<%= audio.x + 3 %>, <%= audio.y + 3 %>)' data-bs-toggle="modal" data-bs-target="#audio<%= audio.id %>Modal">
+                  <path class='audioIcon' d='M11.2,0.4L6.6,5H1.3C0.6,5,0,5.6,0,6.3v7.5C0,14.4,0.6,15,1.3,15h5.3l4.6,4.6c0.8,0.8,2.1,0.2,2.1-0.9V1.3 C13.3,0.1,12-0.4,11.2,0.4z M17.6,6c-0.6-0.3-1.4-0.1-1.7,0.5c-0.3,0.6-0.1,1.4,0.5,1.7c0.7,0.4,1.1,1.1,1.1,1.8 c0,0.7-0.4,1.4-1.1,1.8c-0.6,0.3-0.8,1.1-0.5,1.7c0.3,0.6,1.1,0.8,1.7,0.5c1.5-0.8,2.4-2.3,2.4-4S19.1,6.8,17.6,6z'/>
+                </g>
+              <% end %>
+            </svg>
+          <% end %>
+        </div>
+      </li>
+    <% end %>
+  <% end %>
+</ul>
+<div id="prefooter" style="float: left; height: 1px;">&nbsp;</div>
+</div>
+<nav id="page-nav">
+<button id="nextBtn" name="nextBtn">&nbsp;</button>
+<button id="backBtn" name="backBtn">&nbsp;</button>
+</nav>
+</body>
+</html>
