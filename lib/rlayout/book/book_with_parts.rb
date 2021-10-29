@@ -14,7 +14,7 @@ module RLayout
       @page_size = options[:page_size] || 'A5'
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
-      @body_starting_page_number = 0
+      @starting_page_number = 1
       create_book_cover
       process_front_matter
       process_body_matter_with_parts
@@ -30,8 +30,9 @@ module RLayout
   def process_body_matter_with_parts
     @body_matter_docs = []
     Dir.glob("#{@project_path}/part_*").sort.each_with_index do |part, i|
-      r = RLayout::BookPart.new(part, body_doc_type: @body_doc_type)
+      r = RLayout::BookPart.new(part, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number, order: i + 1)
       @body_matter_docs += r.part_docs
+      @starting_page_number = r.next_part_starting_page
     end
     generate_body_matter_toc
   end
@@ -50,7 +51,12 @@ module RLayout
     @book_toc.each do |chapter_item|
       chapter_item.each do |toc_item|
         a = []
-        a << toc_item[:para_string]
+        if toc_item[:markup] == 'h2'
+          # binding.pry
+          a << "   #{toc_item[:para_string]}"
+        else
+          a << toc_item[:para_string]
+        end
         a << toc_item[:page].to_s
         flatten_toc << a
       end

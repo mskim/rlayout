@@ -11,12 +11,10 @@ module RLayout
 
     }
   }
-
-  
   class Book
     attr_reader :project_path, :book_info, :page_width, :height
     attr_reader :has_cover_inside_page, :has_wing, :has_toc
-    attr_reader :book_toc, :body_matter_toc, :rear_matter_toc, :body_starting_page_number
+    attr_reader :book_toc, :body_matter_toc, :rear_matter_toc, :starting_page_number
     attr_reader :front_matter_docs, :body_matter_docs, :rear_matter_docs, :body_doc_type, :ebook_page_contents
     attr_reader :toc_first_page_number, :toc_doc_page_count, :toc_page_links
     def initialize(project_path, options={})
@@ -27,7 +25,7 @@ module RLayout
       @page_size = options[:page_size] || 'A5'
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
-      @body_starting_page_number = 1
+      @starting_page_number = 1
       create_book_cover
       process_front_matter
       process_body_matter
@@ -94,23 +92,22 @@ module RLayout
         h[:document_path] = prologue_path
         h[:page_pdf] = true
         h[:toc] = true
-        h[:starting_page] = @body_starting_page_number
+        h[:starting_page] = @starting_page_number
         # h[:starting_page] = starting_page_number
         # h[:header_erb] = header_erb
         # h[:footer_erb] = footer_erb
         r = RLayout::RChapter.new(h)
-        page_count = r.document.pages.length
-        @body_starting_page_number += page_count
+        page_count = r.page_count
+        @starting_page_number += page_count
         @front_matter_docs << 'prologue'
       when 'toc.md'
         @has_toc = true
         @front_matter_docs << 'toc' 
         # TODO fix this
-        @toc_first_page_number = @body_starting_page_number + 2
-        @body_starting_page_number += 1
+        @toc_first_page_number = @starting_page_number + 2
+        @starting_page_number += 1
         @book_toc = []
       end
-
     end
     generate_front_matter_toc
   end
@@ -221,7 +218,6 @@ module RLayout
   end
 
   def process_body_matter
-    starting_page_number = @body_starting_page_number
     @body_matter_docs = []
     Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
       # copy source to build 
@@ -236,11 +232,11 @@ module RLayout
       h[:page_pdf] = true
       # h[:story_by_page] = true
       h[:toc] = true
-      h[:starting_page] = starting_page_number
+      h[:starting_page] = @starting_page_number
       # h[:header_erb] = header_erb
       h[:footer_erb] = footer_erb
       r = RLayout::RChapter.new(h)
-      starting_page_number += r.document.pages.length
+      @starting_page_number += r.page_count
     end
     generate_body_matter_toc
   end
@@ -327,7 +323,7 @@ module RLayout
     # h[:parts_count]   = @parts_count
     h[:no_table_title] = true # tells not to creat toc title
     r = RLayout::Toc.new(h)
-    new_page_count = r.document.pages.length
+    new_page_count = r.page_count
     @toc_doc_page_count = new_page_count
     @toc_page_links = r.link_info
     # create_toc_page_links_for_ebook

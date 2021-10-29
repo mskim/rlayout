@@ -5,11 +5,11 @@ module RLayout
   
   class BookPart
     attr_reader :project_path, :build_folder, :book_info, :page_width, :height, :body_doc_type, :order
-    attr_reader :part_starting_page_number, :part_docs
+    attr_reader :starting_page_number, :part_docs, :next_part_starting_page
     def initialize(part_project_path, options={})
       @project_path = part_project_path
       @part_name = File.basename(@project_path)
-      @order = @part_name.split("_").last
+      @order = options[:order] || @part_name.split("_").last
       @build_part_folder = File.dirname(@project_path) + "/build/#{@part_name}"
       # TODO: save part_info.yml????
       @part_info_path = @project_path + "/part_info.yml"
@@ -21,7 +21,7 @@ module RLayout
       @page_size = @part_info[:page_size] || 'A5'
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
-      @part_starting_page_number = options[:part_starting_page_number] || 1
+      @starting_page_number = options[:starting_page_number] || 1
       @body_doc_type = options[:body_doc_type]  || 'chapter' # chapter, poem, essay
       FileUtils.mkdir_p(@build_part_folder) unless File.exist?(@build_part_folder)
       @part_docs = []
@@ -33,12 +33,17 @@ module RLayout
     def create_part_cover
       h = {}
       h[:project_path] = @build_part_folder + "/0_part_cover"
+      h[:starting_page_number] = @starting_page_number
+      h[:title] = @order.to_s + "부"
       @part_docs << @build_part_folder + "/0_part_cover"
-      RLayout::PartCover.new(h)
+      r = RLayout::PartCover.new(h)
+      # r.page_count : make it a document kind
+      # @starting_page_number += r.document.length
+      # @starting_page_number += 1
+      @starting_page_number += r.page_count
     end
 
     def process_part
-      starting_page_number = part_starting_page_number
       Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
         # copy source to build 
         chapter_folder = @build_part_folder + "/chapter_#{i+1}"
@@ -50,7 +55,8 @@ module RLayout
         h[:document_path] = chapter_folder
         h[:page_pdf] = true
         h[:toc] = true
-        h[:starting_page] = @part_starting_page_number
+        h[:starting_page] = @starting_page_number
+        h[:belongs_to_part] = true
 
         # h[:header_erb] = header_erb
         # h[:footer_erb] = footer_erb
@@ -62,8 +68,9 @@ module RLayout
         elsif @body_doc_type == 'essey'
           r = RLayout::Essey.new(h)
         end
-        starting_page_number += r.document.pages.length
+        @starting_page_number += r.page_count
       end
+      @next_part_starting_page = @starting_page_number
     end
 
     def book_title

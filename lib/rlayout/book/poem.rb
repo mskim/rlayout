@@ -2,7 +2,6 @@ module RLayout
   # Page that starts the book.
   # With Title, author, publisher, logo
   class Poem < RChapter
-
     def initialize(options={})
       # @path = options[:document_path]
       # @width = options[:width] || 400
@@ -10,7 +9,7 @@ module RLayout
       # @layout_template_path = options[:layout_template_path]
       # read_poem
       # RLayout::StyleService.shared_style_service.set_poem_style
-
+      @belongs_to_part = options[:belongs_to_part]
       super
 
       self
@@ -123,6 +122,7 @@ module RLayout
       toc_item = {}
       toc_item[:page] = @starting_page
       toc_item[:markup] = 'h1'
+      toc_item[:markup] = 'h2' if @belongs_to_part
       toc_item[:para_string] = @title
       @toc_content << toc_item
       File.open(toc_path, 'w') { |f| f.write @toc_content.to_yaml}

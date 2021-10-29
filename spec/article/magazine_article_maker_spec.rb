@@ -122,7 +122,7 @@ describe 'create document with MagazineArticleMaker' do
   #  end
   #
   #  it 'should create Pages' do
-  #    assert @maker.document.pages.length == 2
+  #    assert @maker.page_count == 2
   #    assert @maker.document.pages.first.heading.class == RLayout::Heading
   #  end
 

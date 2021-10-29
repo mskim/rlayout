@@ -7,7 +7,7 @@ module RLayout
 
     def initialize(options={})
       @project_path = options[:project_path]
-      @starting_page = options[:starting_page] || 1
+      @starting_page_number = options[:starting_page_number] || 1
       @page_size = options[:page_size] || 'A5'
       @width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
@@ -15,6 +15,11 @@ module RLayout
       @order = options[:order] || '01'
       generate_pdf
       save_toc
+    end
+
+    # TODO 
+    def page_count
+      1
     end
 
     def layout_options
@@ -56,7 +61,7 @@ module RLayout
       toc_path = @project_path + "/toc.yml"
       @toc_content = []
       toc_item = {}
-      toc_item[:page] = @starting_page
+      toc_item[:page] = @starting_page_number
       toc_item[:markup] = 'h1'
       toc_item[:para_string] = @title
       @toc_content << toc_item
