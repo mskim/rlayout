@@ -52,7 +52,6 @@ module RLayout
       chapter_item.each do |toc_item|
         a = []
         if toc_item[:markup] == 'h2'
-          # binding.pry
           a << "   #{toc_item[:para_string]}"
         else
           a << toc_item[:para_string]
