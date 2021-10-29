@@ -198,6 +198,35 @@ module RLayout
       @para_data = {:heading=>@metadata, :paragraphs =>paragraphs}
     end
 
+    #read story file and convert it to line text format
+    def story2line_text(options={})
+      if options[:source]
+        source = options[:source]
+      else
+        source = File.open(@path, 'r'){|f| f.read}
+      end
+      begin
+        if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
+          @contents = md.post_match
+          @metadata = YAML.load(md.to_s)
+        else
+          @contents = source
+        end
+      rescue => e
+        puts "YAML Exception reading #filename: #{e.message}"
+      end
+      if @metadata
+        if @metadata.class == Array
+          @metadata = @metadata[0]
+        end
+      end
+      line_text_array = []
+      line_text = @contents.each_line do |line_text|
+        line_text_array << line_text
+      end
+      @story_data = {:heading=>@metadata, :line_text =>line_text_array}
+    end
+
 
     #given body markdown convert it to para_data format
     def self.body2para_data(body_markup, starting_heading_level=1)

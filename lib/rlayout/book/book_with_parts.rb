@@ -30,7 +30,7 @@ module RLayout
   def process_body_matter_with_parts
     @body_matter_docs = []
     Dir.glob("#{@project_path}/part_*").sort.each_with_index do |part, i|
-      r = RLayout::BookPart.new(part)
+      r = RLayout::BookPart.new(part, body_doc_type: @body_doc_type)
       @body_matter_docs += r.part_docs
     end
     generate_body_matter_toc

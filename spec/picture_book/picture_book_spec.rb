@@ -4,7 +4,7 @@ include RLayout
 describe "create PictureBook" do
   before do
     @project_path = "/Users/mskim/test_data/picture_book"
-    @book = PictureBook.new(project_path: @project_path)
+    @book = PictureBook.new(@project_path)
   end
 
   it 'should create PictureBook' do

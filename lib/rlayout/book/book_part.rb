@@ -41,29 +41,26 @@ module RLayout
       starting_page_number = part_starting_page_number
       Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
         # copy source to build 
-        chapter_folder = @build_part_folder + "/#{@body_doc_type}_#{i+1}"
+        chapter_folder = @build_part_folder + "/chapter_#{i+1}"
         @part_docs << chapter_folder
         FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
         FileUtils.cp file, "#{chapter_folder}/story.md"
         copy_page_floats(file, chapter_folder)
         h = {}
         h[:document_path] = chapter_folder
-        # h[:style_path] = book.style_path
         h[:page_pdf] = true
-        # h[:story_by_page] = true
         h[:toc] = true
         h[:starting_page] = @part_starting_page_number
 
         # h[:header_erb] = header_erb
         # h[:footer_erb] = footer_erb
 
-
         if @body_doc_type == 'chapter'
           r = RLayout::RChapter.new(h)
         elsif @body_doc_type == 'poem'
-          # r = RLayout::Poem.new(h)
+          r = RLayout::Poem.new(h)
         elsif @body_doc_type == 'essey'
-          # r = RLayout::Essey.new(h)
+          r = RLayout::Essey.new(h)
         end
         starting_page_number += r.document.pages.length
       end

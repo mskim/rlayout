@@ -26,7 +26,7 @@ module RLayout
       @token_union_style      = options[:token_union_style]
       @tokens                 = []
       @room                   = @width
-      @single_line_title      = options[:single_line_title] 
+      @single_line_title      = options[:single_line_title]
       if @style_name
         current_style         = RLayout::StyleService.shared_style_service.current_style
         if current_style.class == String
@@ -59,12 +59,12 @@ module RLayout
         if @adjust_size && @adjust_size != 0
           @space_width = @space_width*(@para_style[:font_size] + @adjust_size)/@para_style[:font_size]
         end
-      elsif options[:@para_style]
-        @para_style             = options[:@para_style]
+      elsif options[:para_style]
+        @para_style             = options[:para_style]
       else
         @para_style             = {}
         @para_style[:font]      = options.fetch(:font, 'KoPubBatangPM')
-        @para_style[:font_size] = options.fetch(:size, 16)
+        @para_style[:font_size] = options.fetch(:font_size, 16)
         @para_style[:text_alignment] = options[:text_alignment] || 'left'
         @para_style[:font_color] = options[:font_color] || 'black'
         @para_style[:text_color] = options[:text_color] || 'black'

@@ -3,9 +3,9 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create Poem' do
   before do
-    @project_path= "/Users/mskim/test_data/poem"
-    @pdf_path = @project_path + "/chapter.pdf"
-    @poem = Poem.new(@project_path)
+    @document_path= "/Users/mskim/test_data/poem"
+    @pdf_path = @document_path + "/chapter.pdf"
+    @poem = Poem.new(document_path: @document_path)
   end
 
   it 'test create Poem' do

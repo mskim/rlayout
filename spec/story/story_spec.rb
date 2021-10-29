@@ -1,6 +1,24 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
+describe 'read poem story' do
+  before do
+    @story_path  = "/Users/mskim/test_data/poem/story_01.md"
+    @story = Story.new(@story_path)
+    @story_data  = @story.story2line_text
+  end
 
+  it 'shold create story from poem' do
+    assert @story.class == Story
+  end
+
+  it 'shold create story from poem' do
+    assert_equal Hash, @story_data[:heading].class
+    assert_equal Array, @story_data[:line_text].class
+  end
+
+end
+
+__END__
 describe 'read markdown story' do
   before do
     story_path  = "/Users/mskim/Development/rails5/style_guide/public/1/issue/2017-05-30/1/2/story.md"

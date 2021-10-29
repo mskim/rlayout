@@ -787,6 +787,23 @@ NEWS_STYLES={
   "unordered_list_item"=>{:font => 'KoPubDotumPM', :font_size=>0.0, :text_line_spacing=>5, :text_color => 'black'},
 }
 
+POEM_STYLES={
+  "title"   =>{:font => 'KoPubBatangPM',     :font_size=>16.0, :text_color => 'black', :text_alignment=>'left',:text_line_spacing=>10 },
+  "subtitle"=>{:font => 'KoPubBatangPM',     :font_size=>14.0, :text_color => 'black'},
+  "author"  =>{:font => 'KoPubDotumPM', :font_size=>10.0, :text_color => 'black', :text_alignment=>'right'},
+  "body"    =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'left', :text_color => 'black', :text_first_line_head_indent=>9},
+  "caption" =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
+  "header"  =>{:font => 'KoPubBatangPM', :font_size=>8.0, :text_color => 'black'},
+  "footer"  =>{:font => 'KoPubBatangPM', :font_size=>8.0, :text_color => 'black'},
+  "page_number" =>{:font => 'KoPubBatangPM', :font_size=>10.0, :text_color => 'black'},
+  "ordered_list"  =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "unordered_list"=>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "ordered_section" =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "upper_alpha_list"=>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
+  "ordered_list_item"=>{:font => 'KoPubDotumPM', :font_size=>0.0, :text_line_spacing=>5, :text_color => 'black'},
+  "unordered_list_item"=>{:font => 'KoPubDotumPM', :font_size=>0.0, :text_line_spacing=>5, :text_color => 'black'},
+}
+
 HEADING_KIND  = %w[h1 h2 h3 h4 title subtitle author lead]
 BODY_KIND     = %w[h5 h6 p heading1 heading2 heading3 body]
 LIST_KIND     = %w[ordered_list ordered_list_item unordered_list unordered_list_item ordered_section upper_alpha_list]
@@ -799,6 +816,8 @@ module RLayout
       @custom_style   = nil
       @current_style  = DEFAULT_STYLES
       @chapter_style  = CHAPTER_STYLES
+      @poem_style  = POEM_STYLES
+
       # @chapter_style_path = "/Users/Shared/SoftwareLab/article_template/chapter_style.rb"
       # if File.exist?(@chapter_style_path)
       #   @chapter_style = eval(File.open(@chapter_style_path,'r'){|f| f.read})
@@ -827,6 +846,10 @@ module RLayout
 
     def set_chapter_style
       @current_style = @chapter_style
+    end
+
+    def set_poem_style
+      @current_style = @poem_style
     end
 
     def current_style_font_list

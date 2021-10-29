@@ -49,10 +49,10 @@ module RLayout
         image(image_path: "#{@spread_image_path}", x: #{-@front_page_spread_off_set}, width: #{@cover_spread_width}, height:#{@height}, layout_member:false)
         container(fill_color:'clear',layout_length:2) do
           filler        
-          title_text("<%= @content['title'] %>",font:'KoPubDotumPB', font_size: 40, text_alignment:'center', layout_length:3, font_color: 'black', fill_color: 'clear', text_fit_type:'adjust_box_height')
-          title_text("<%= @content['subtitle'] %>", font:'KoPubDotumPM', font_size: 26 , text_alignment:'center', layout_length:2, fill_color: 'clear', text_fit_type:'adjust_box_height')
-          title_text("<%= @content['author'] %>", font:'KoPubBatangPB', font_size: 20, text_alignment:'center', fill_color: 'clear')
-          title_text("<%= @content['publisher'] %>", font:'KoPubBatangPB',font_size: 16, text_alignment:'center', fill_color: 'clear')
+          text("<%= @content['title'] %>",font:'KoPubDotumPB', font_size: 40, text_alignment:'center', layout_length:3, font_color: 'black', fill_color: 'clear', text_fit_type:'adjust_box_height')
+          text("<%= @content['subtitle'] %>", font:'KoPubDotumPM', font_size: 26 , text_alignment:'center', layout_length:2, fill_color: 'clear', text_fit_type:'adjust_box_height')
+          text("<%= @content['author'] %>", font:'KoPubBatangPB', font_size: 20, text_alignment:'center', fill_color: 'clear')
+          text("<%= @content['publisher'] %>", font:'KoPubBatangPB',font_size: 16, text_alignment:'center', fill_color: 'clear')
           filler
           filler
           filler

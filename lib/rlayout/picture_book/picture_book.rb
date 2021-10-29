@@ -14,8 +14,8 @@ module RLayout
     attr_reader :cover, :spreads, :layout_folder
     attr_reader :book_info, :picture_folders
 
-    def initialize(options={})
-      @project_path  = options[:project_path]
+    def initialize(project_path, options={})
+      @project_path  = project_path
       @paper_size = options[:paper_size] || 'A4'
       read_book_info
       @picture_folders = parse_folders
