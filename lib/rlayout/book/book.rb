@@ -37,7 +37,7 @@ module RLayout
       # process_rear_matter
       @rear_matter = RearMatter.new(@project_path)
       generate_toc
-      generate_inner_book
+      generate_pdf_for_print
       generate_pdf_book 
       generate_ebook unless options[:no_ebook]
       # push_to_git_repo if options[:push_to_git_repo]
@@ -47,7 +47,7 @@ module RLayout
   ########### book_cover ###########
 
   def build_folder
-    @project_path + "/build"
+    @project_path + "/_build"
   end
 
   def source_book_cover_path
@@ -176,106 +176,6 @@ module RLayout
     50
   end
 
-  # def header_options
-  #   "parent:self, x:#{left_margin}, y:#{top_margin - 10}, width: #{width}, fill_color: 'clear'"
-  # end
-
-  # def header_erb
-  #   nil
-  # end
-
-  # def footer_width
-  #   width - left_margin - right_margin
-  # end
-
-  # def footer_options
-  #   "parent:self, x:#{left_margin}, y:#{height - bottom_margin - 40}, width: #{footer_width}, height: 12, fill_color: 'clear'"
-  # end
-
-  # def left_footer_erb
-  #   # put book title on the left side 
-  #   s=<<~EOF
-  #   RLayout::Container.new(#{footer_options}) do
-  #     text("<%= @page_number %>  #{book_title} ", font_size: 9, x: 0, width: #{footer_width}, text_alignment: 'left')
-  #   end
-  #   EOF
-  # end
-
-  # def right_footer_erb
-  #   # put chapter title on the right side 
-  #   # chapter title and page_number is place by the layout 
-  #   s=<<~EOF
-  #   RLayout::Container.new(#{footer_options}) do
-  #     text("<%= title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
-  #   end
-  #   EOF
-  # end
-
-  # def footer_erb
-  #   info = {}
-  #   info[:left_footer] = left_footer_erb
-  #   info[:right_footer] = right_footer_erb
-  #   info
-  # end  
-
-
-  # # placing images for the chapter
-  # # images for the chapter should be plced in the folder with same name as chpater md file
-  # # this folder should have page_floats.yml and images folder.
-  # # page_floats.yml file containers image placement information, and images folder contanins images.
-  # # check if there folder with same same as md file
-  # # if so, copy it to build chapter folder along with md file
-  # def copy_page_floats(md_file, chapter_folder)
-  #   page_floats_yml_path = md_file.gsub(/.md$/, "")
-  #   if File.exist?(page_floats_yml_path)
-  #     FileUtils.cp("#{page_floats_yml_path}/**.*", "#{chapter_folder}")
-  #   end
-  # end
-
-  # def process_body_matter
-  #   @body_matter_docs = []
-  #   Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
-  #     # copy source to build 
-  #     chapter_folder = build_folder + "/chapter_#{i+1}"
-  #     @body_matter_docs << chapter_folder
-  #     FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
-  #     FileUtils.cp file, "#{chapter_folder}/story.md"
-  #     copy_page_floats(file, chapter_folder)
-  #     h = {}
-  #     h[:document_path] = chapter_folder
-  #     # h[:style_path] = book.style_path
-  #     h[:page_pdf] = true
-  #     # h[:story_by_page] = true
-  #     h[:toc] = true
-  #     h[:starting_page] = @starting_page_number
-  #     # h[:header_erb] = header_erb
-  #     h[:footer_erb] = footer_erb
-  #     r = RLayout::RChapter.new(h)
-  #     @starting_page_number += r.page_count
-  #   end
-  #   generate_body_matter_toc
-  # end
-
-  # def generate_body_matter_toc
-  #   @body_matter_toc = []
-  #   @body_matter_docs.each do |chapter_folder|
-  #     toc = chapter_folder + "/toc.yml"
-  #     @body_matter_toc << YAML::load_file(toc) if File.exist?(toc)
-  #   end
-  #   @book_toc += @body_matter_toc
-  # end
-
-  # def body_matter_docs_pdf
-  #   pdf_files = []
-  #   @body_matter_docs.each do |chapter|
-  #     chapter_pdf_file = chapter + "/chapter.pdf"
-  #     pdf_files << chapter_pdf_file if File.exist?(chapter_pdf_file)
-  #   end
-  #   pdf_files
-  # end
-
-  ########### rear_matter ###########
-
   def rear_matter_path
     @project_path + "/rear_matter"
   end
@@ -284,26 +184,6 @@ module RLayout
     build_folder + "/rear_matter"
   end
   
-  # def process_rear_matter
-  #   # puts __method__
-  #   @rear_matter_docs = []
-  #   generate_rear_matter_toc
-  # end
-
-  # def generate_rear_matter_toc
-  #   @rear_matter_toc = []
-  #   # doc_info [document_kind, page_count]
-  #   @rear_matter_docs.each do |doc_name|
-  #     toc = build_front_matter_path + "/#{doc_name}/toc.yml"
-  #     @rear_matter_toc << YAML::load_file(toc) if File.exist?(toc)
-  #   end
-  #   @book_toc += @rear_matter_toc
-  # end
-
-  # def rear_matter_docs_pdf
-  #   []
-  # end
-
   ########### toc ###########
 
   def generate_toc
@@ -364,11 +244,28 @@ module RLayout
   end
 
   def print_folder
-    @project_path + "/print"
+    @project_path + "/_print"
   end
 
   def book_without_cover_path
-    @project_path + "/print/pdf_without_cover.pdf"
+    print_folder + "/pdf_without_cover.pdf"
+  end
+
+  def generate_pdf_for_print
+    copy_book_cover_pdf
+    generate_inner_book
+  end
+
+  def build_book_cover_pdf_path
+    build_book_cover_path + "/output.pdf"
+  end
+
+  def print_book_cover_pdf_path
+    print_folder + "/book_cover.pdf"
+  end
+
+  def copy_book_cover_pdf
+    FileUtils.cp(build_book_cover_pdf_path, print_book_cover_pdf_path)
   end
 
   def generate_inner_book
@@ -383,7 +280,7 @@ module RLayout
   end
 
   def pdf_folder
-    @project_path + "/pdf"
+    @project_path + "/_pdf"
   end
 
   def pdf_book_path
@@ -413,23 +310,19 @@ module RLayout
     pdf.pages.each {|page| target.pages << target.import(page)}
     pdf = HexaPDF::Document.open(front_cover_2_pdf_path)
     pdf.pages.each {|page| target.pages << target.import(page)}
-   
     pdf = HexaPDF::Document.open(book_without_cover_path)
     pdf.pages.each {|page| target.pages << target.import(page)}
-
     pdf = HexaPDF::Document.open(back_cover_1_pdf_path)
     pdf.pages.each {|page| target.pages << target.import(page)}
     pdf = HexaPDF::Document.open(back_cover_2_pdf_path)
     pdf.pages.each {|page| target.pages << target.import(page)}
-   
     target.write(pdf_book_path, optimize: true)
   end
 
-  ############# ebook ###########################
+  ################### ebook #####################
   
-
   def generate_ebook
-    FileUtils.mkidr_p(site_folder) unless  File.exist?(site_folder)
+    FileUtils.mkdir_p(site_folder) unless  File.exist?(site_folder)
     system("rm -rf #{assets_folder}")
     copy_assets
     copy_page_images_to_ebook
@@ -437,7 +330,7 @@ module RLayout
   end
 
   def site_folder
-    @project_path
+    @project_path + "/_ebook"
   end
 
   def ebook_template_folder

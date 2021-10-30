@@ -131,6 +131,20 @@ TODO List
   - PartCover
     - part title
 
+  - localization
+    book_cover:표지
+    book_info:책정보
+    part_info:파트정보
+    front_matter:머릿부분
+    front_wing:앞날개
+    back_wing:뒷날개
+    spread.png:양면배경.png
+    title:제목
+    subtitle:부제목
+    author:저자
+
+
+
 2021_10_28
 
   - add page_count to chapter kind

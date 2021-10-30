@@ -32,8 +32,8 @@ module RLayout
       # process_rear_matter
       @rear_matter = RearMatter.new(@project_path)
       generate_toc
-      generate_inner_book
-      generate_pdf_book 
+      generate_pdf_for_print
+      generate_pdf_book       
       generate_ebook unless options[:no_ebook]      # merge cover with inner_book
       # generate_ebook unless options[:no_ebook]
       # push_to_git_repo if options[:push_to_git_repo]

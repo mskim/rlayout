@@ -22,7 +22,7 @@ module RLayout
       @body_matter = BodyMatterWithPart.new(@project_path, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number)
       process_rear_matter
       generate_toc
-      generate_inner_book
+      generate_pdf_for_print
       generate_pdf_book 
     end
   end
