@@ -75,7 +75,6 @@ module RLayout
         h[:layout_expand] = [:height]
         first_page.add_heading(h)
       end
-
       @toc_content.each_slice(@toc_item_count).each_with_index do |page_data, i|
         if @document.pages.length < i + 1
           @document.add_new_page

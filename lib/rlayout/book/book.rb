@@ -17,19 +17,25 @@ module RLayout
     attr_reader :book_toc, :body_matter_toc, :rear_matter_toc, :starting_page_number
     attr_reader :front_matter_docs, :body_matter_docs, :rear_matter_docs, :body_doc_type, :ebook_page_contents
     attr_reader :toc_first_page_number, :toc_doc_page_count, :toc_page_links
+    attr_reader :front_matter, :body_matter, :rear_matter
+    # attr_reader :front_matter_toc
+
     def initialize(project_path, options={})
       @project_path = project_path
       @book_info_path = @project_path + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
       @title = @book_info[:title]
-      @page_size = options[:page_size] || 'A5'
+      @page_size = options['paper_size'] || 'A5'
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
       @starting_page_number = 1
       create_book_cover
-      process_front_matter
-      process_body_matter
-      process_rear_matter
+      # process_front_matter
+      @front_matter = FrontMatter.new(@project_path)
+      # process_body_matter
+      @body_matter = BodyMatter.new(@project_path)
+      # process_rear_matter
+      @rear_matter = RearMatter.new(@project_path)
       generate_toc
       generate_inner_book
       generate_pdf_book 
@@ -63,77 +69,86 @@ module RLayout
     build_folder + "/front_matter"
   end
 
-  def source_front_matter_path
-    @project_path + "/front_matter"
-  end
+  # def source_front_matter_path
+  #   @project_path + "/front_matter"
+  # end
 
-  # create prolog, forward, isbn
-  def process_front_matter
-    @front_matter_docs = []
+  # # create prolog, forward, isbn
+  # def process_front_matter
+  #   @front_matter_docs = []
 
-    FileUtils.mkdir_p(build_front_matter_path) unless File.exist?(build_front_matter_path)
-    Dir.glob("#{source_front_matter_path}/*.md").sort.each do |md|
-      case File.basename(md)
-      # when 'book_info.md'
-      #   @front_matter_docs << ['book_info',page_count]
-      # when 'title.md'
-      #   @front_matter_docs << ['title',page_count]
-      # when 'dedication.md'
-      #   @front_matter_docs << ['dedication',page_count]
-      # when 'thankyou.md'
-      #   @front_matter_docs << ['thankyou', page_count]
-      when 'prologue.md'
-        prologue_path = build_front_matter_path + "/prologue"
-        story_md_path = prologue_path + "/story.md"
-        FileUtils.mkdir_p(prologue_path) unless File.exist?(prologue_path)
-        system("cp #{md} #{story_md_path}")
-        h = {}
-        h[:page_size] = @page_size
-        h[:document_path] = prologue_path
-        h[:page_pdf] = true
-        h[:toc] = true
-        h[:starting_page] = @starting_page_number
-        # h[:starting_page] = starting_page_number
-        # h[:header_erb] = header_erb
-        # h[:footer_erb] = footer_erb
-        r = RLayout::RChapter.new(h)
-        page_count = r.page_count
-        @starting_page_number += page_count
-        @front_matter_docs << 'prologue'
-      when 'toc.md'
-        @has_toc = true
-        @front_matter_docs << 'toc' 
-        # TODO fix this
-        @toc_first_page_number = @starting_page_number + 2
-        @starting_page_number += 1
-        @book_toc = []
-      end
-    end
-    generate_front_matter_toc
-  end
+  #   FileUtils.mkdir_p(build_front_matter_path) unless File.exist?(build_front_matter_path)
+  #   Dir.glob("#{source_front_matter_path}/*.md").sort.each do |md|
+  #     case File.basename(md)
+  #     # when 'book_info.md'
+  #     #   @front_matter_docs << ['book_info',page_count]
+  #     # when 'title.md'
+  #     #   @front_matter_docs << ['title',page_count]
+  #     # when 'dedication.md'
+  #     #   @front_matter_docs << ['dedication',page_count]
+  #     # when 'thankyou.md'
+  #     #   @front_matter_docs << ['thankyou', page_count]
+  #     when 'prologue.md'
+  #       prologue_path = build_front_matter_path + "/prologue"
+  #       story_md_path = prologue_path + "/story.md"
+  #       FileUtils.mkdir_p(prologue_path) unless File.exist?(prologue_path)
+  #       system("cp #{md} #{story_md_path}")
+  #       h = {}
+  #       h[:page_size] = @page_size
+  #       h[:document_path] = prologue_path
+  #       h[:page_pdf] = true
+  #       h[:toc] = true
+  #       h[:starting_page] = @starting_page_number
+  #       # h[:starting_page] = starting_page_number
+  #       # h[:header_erb] = header_erb
+  #       # h[:footer_erb] = footer_erb
+  #       r = RLayout::RChapter.new(h)
+  #       page_count = r.page_count
+  #       @starting_page_number += page_count
+  #       @front_matter_docs << 'prologue'
+  #     when 'toc.md'
+  #       @has_toc = true
+  #       @front_matter_docs << 'toc' 
+  #       # TODO fix this
+  #       @toc_first_page_number = @starting_page_number + 1
+  #       @starting_page_number += 1
+  #       @book_toc = []
+  #     end
+  #   end
+  #   generate_front_matter_toc
+  # end
 
-  def generate_front_matter_toc
-    @front_matter_toc = []
-    # doc_info [document_kind, page_count]
-    @front_matter_docs.each do |doc_name|
-      toc = build_front_matter_path + "/#{doc_name}/toc.yml"
-      @front_matter_toc << YAML::load_file(toc) if File.exist?(toc)
-    end
-    @book_toc = @front_matter_toc
-  end
+  # def generate_front_matter_toc
+  #   @doc_generated_toc_info = []
+  #   # doc_info [document_kind, page_count]
+  #   @front_matter_docs.each do |doc_name|
+  #     toc = build_front_matter_path + "/#{doc_name}/toc.yml"
+  #     @doc_generated_toc_info << YAML::load_file(toc) if File.exist?(toc)
+  #   end
+  #   @front_matter_toc = []
+  #   @doc_generated_toc_info.each do |chapter_item|
+  #     chapter_item.each do |toc_item|
+  #       a = []
+  #       a << toc_item[:para_string]
+  #       a << toc_item[:page].to_s
+  #       @front_matter_toc << a
+  #     end
+  #   end
+  #   @front_matter_toc
+  # end
 
-  def front_matter_docs_pdf
-    pdf_files = []
-    @front_matter_docs.each do |doc_folder|
-      if doc_folder == 'toc'
-        doc_pdf_file = build_front_matter_path + "/#{doc_folder}/toc.pdf"
-      else
-        doc_pdf_file = build_front_matter_path + "/#{doc_folder}/chapter.pdf"
-      end
-      pdf_files << doc_pdf_file if File.exist?(doc_pdf_file)
-    end
-    pdf_files
-  end
+  # def front_matter_docs_pdf
+  #   pdf_files = []
+  #   @front_matter_docs.each do |doc_folder|
+  #     if doc_folder == 'toc'
+  #       doc_pdf_file = build_front_matter_path + "/#{doc_folder}/toc.pdf"
+  #     else
+  #       doc_pdf_file = build_front_matter_path + "/#{doc_folder}/chapter.pdf"
+  #     end
+  #     pdf_files << doc_pdf_file if File.exist?(doc_pdf_file)
+  #   end
+  #   pdf_files
+  # end
 
   ########### body_matter ###########
 
@@ -161,103 +176,103 @@ module RLayout
     50
   end
 
-  def header_options
-    "parent:self, x:#{left_margin}, y:#{top_margin - 10}, width: #{width}, fill_color: 'clear'"
-  end
+  # def header_options
+  #   "parent:self, x:#{left_margin}, y:#{top_margin - 10}, width: #{width}, fill_color: 'clear'"
+  # end
 
-  def header_erb
-    nil
-  end
+  # def header_erb
+  #   nil
+  # end
 
-  def footer_width
-    width - left_margin - right_margin
-  end
+  # def footer_width
+  #   width - left_margin - right_margin
+  # end
 
-  def footer_options
-    "parent:self, x:#{left_margin}, y:#{height - bottom_margin - 40}, width: #{footer_width}, height: 12, fill_color: 'clear'"
-  end
+  # def footer_options
+  #   "parent:self, x:#{left_margin}, y:#{height - bottom_margin - 40}, width: #{footer_width}, height: 12, fill_color: 'clear'"
+  # end
 
-  def left_footer_erb
-    # put book title on the left side 
-    s=<<~EOF
-    RLayout::Container.new(#{footer_options}) do
-      text("<%= @page_number %>  #{book_title} ", font_size: 9, x: 0, width: #{footer_width}, text_alignment: 'left')
-    end
-    EOF
-  end
+  # def left_footer_erb
+  #   # put book title on the left side 
+  #   s=<<~EOF
+  #   RLayout::Container.new(#{footer_options}) do
+  #     text("<%= @page_number %>  #{book_title} ", font_size: 9, x: 0, width: #{footer_width}, text_alignment: 'left')
+  #   end
+  #   EOF
+  # end
 
-  def right_footer_erb
-    # put chapter title on the right side 
-    # chapter title and page_number is place by the layout 
-    s=<<~EOF
-    RLayout::Container.new(#{footer_options}) do
-      text("<%= title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
-    end
-    EOF
-  end
+  # def right_footer_erb
+  #   # put chapter title on the right side 
+  #   # chapter title and page_number is place by the layout 
+  #   s=<<~EOF
+  #   RLayout::Container.new(#{footer_options}) do
+  #     text("<%= title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
+  #   end
+  #   EOF
+  # end
 
-  def footer_erb
-    info = {}
-    info[:left_footer] = left_footer_erb
-    info[:right_footer] = right_footer_erb
-    info
-  end  
+  # def footer_erb
+  #   info = {}
+  #   info[:left_footer] = left_footer_erb
+  #   info[:right_footer] = right_footer_erb
+  #   info
+  # end  
 
 
-  # placing images for the chapter
-  # images for the chapter should be plced in the folder with same name as chpater md file
-  # this folder should have page_floats.yml and images folder.
-  # page_floats.yml file containers image placement information, and images folder contanins images.
-  # check if there folder with same same as md file
-  # if so, copy it to build chapter folder along with md file
-  def copy_page_floats(md_file, chapter_folder)
-    page_floats_yml_path = md_file.gsub(/.md$/, "")
-    if File.exist?(page_floats_yml_path)
-      FileUtils.cp("#{page_floats_yml_path}/**.*", "#{chapter_folder}")
-    end
-  end
+  # # placing images for the chapter
+  # # images for the chapter should be plced in the folder with same name as chpater md file
+  # # this folder should have page_floats.yml and images folder.
+  # # page_floats.yml file containers image placement information, and images folder contanins images.
+  # # check if there folder with same same as md file
+  # # if so, copy it to build chapter folder along with md file
+  # def copy_page_floats(md_file, chapter_folder)
+  #   page_floats_yml_path = md_file.gsub(/.md$/, "")
+  #   if File.exist?(page_floats_yml_path)
+  #     FileUtils.cp("#{page_floats_yml_path}/**.*", "#{chapter_folder}")
+  #   end
+  # end
 
-  def process_body_matter
-    @body_matter_docs = []
-    Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
-      # copy source to build 
-      chapter_folder = build_folder + "/chapter_#{i+1}"
-      @body_matter_docs << chapter_folder
-      FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
-      FileUtils.cp file, "#{chapter_folder}/story.md"
-      copy_page_floats(file, chapter_folder)
-      h = {}
-      h[:document_path] = chapter_folder
-      # h[:style_path] = book.style_path
-      h[:page_pdf] = true
-      # h[:story_by_page] = true
-      h[:toc] = true
-      h[:starting_page] = @starting_page_number
-      # h[:header_erb] = header_erb
-      h[:footer_erb] = footer_erb
-      r = RLayout::RChapter.new(h)
-      @starting_page_number += r.page_count
-    end
-    generate_body_matter_toc
-  end
+  # def process_body_matter
+  #   @body_matter_docs = []
+  #   Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
+  #     # copy source to build 
+  #     chapter_folder = build_folder + "/chapter_#{i+1}"
+  #     @body_matter_docs << chapter_folder
+  #     FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
+  #     FileUtils.cp file, "#{chapter_folder}/story.md"
+  #     copy_page_floats(file, chapter_folder)
+  #     h = {}
+  #     h[:document_path] = chapter_folder
+  #     # h[:style_path] = book.style_path
+  #     h[:page_pdf] = true
+  #     # h[:story_by_page] = true
+  #     h[:toc] = true
+  #     h[:starting_page] = @starting_page_number
+  #     # h[:header_erb] = header_erb
+  #     h[:footer_erb] = footer_erb
+  #     r = RLayout::RChapter.new(h)
+  #     @starting_page_number += r.page_count
+  #   end
+  #   generate_body_matter_toc
+  # end
 
-  def generate_body_matter_toc
-    @body_matter_toc = []
-    @body_matter_docs.each do |chapter_folder|
-      toc = chapter_folder + "/toc.yml"
-      @body_matter_toc << YAML::load_file(toc) if File.exist?(toc)
-    end
-    @book_toc += @body_matter_toc
-  end
+  # def generate_body_matter_toc
+  #   @body_matter_toc = []
+  #   @body_matter_docs.each do |chapter_folder|
+  #     toc = chapter_folder + "/toc.yml"
+  #     @body_matter_toc << YAML::load_file(toc) if File.exist?(toc)
+  #   end
+  #   @book_toc += @body_matter_toc
+  # end
 
-  def body_matter_docs_pdf
-    pdf_files = []
-    @body_matter_docs.each do |chapter|
-      chapter_pdf_file = chapter + "/chapter.pdf"
-      pdf_files << chapter_pdf_file if File.exist?(chapter_pdf_file)
-    end
-    pdf_files
-  end
+  # def body_matter_docs_pdf
+  #   pdf_files = []
+  #   @body_matter_docs.each do |chapter|
+  #     chapter_pdf_file = chapter + "/chapter.pdf"
+  #     pdf_files << chapter_pdf_file if File.exist?(chapter_pdf_file)
+  #   end
+  #   pdf_files
+  # end
 
   ########### rear_matter ###########
 
@@ -269,27 +284,45 @@ module RLayout
     build_folder + "/rear_matter"
   end
   
-  def process_rear_matter
-    # puts __method__
-    @rear_matter_docs = []
-    generate_rear_matter_toc
-  end
+  # def process_rear_matter
+  #   # puts __method__
+  #   @rear_matter_docs = []
+  #   generate_rear_matter_toc
+  # end
 
-  def generate_rear_matter_toc
-    @rear_matter_toc = []
-    # doc_info [document_kind, page_count]
-    @rear_matter_docs.each do |doc_name|
-      toc = build_front_matter_path + "/#{doc_name}/toc.yml"
-      @rear_matter_toc << YAML::load_file(toc) if File.exist?(toc)
-    end
-    @book_toc += @rear_matter_toc
-  end
+  # def generate_rear_matter_toc
+  #   @rear_matter_toc = []
+  #   # doc_info [document_kind, page_count]
+  #   @rear_matter_docs.each do |doc_name|
+  #     toc = build_front_matter_path + "/#{doc_name}/toc.yml"
+  #     @rear_matter_toc << YAML::load_file(toc) if File.exist?(toc)
+  #   end
+  #   @book_toc += @rear_matter_toc
+  # end
 
-  def rear_matter_docs_pdf
-    []
-  end
+  # def rear_matter_docs_pdf
+  #   []
+  # end
 
   ########### toc ###########
+
+  def generate_toc
+    FileUtils.mkdir_p(toc_folder) unless File.exist?(toc_folder)
+    # save_toc_content
+    save_book_toc
+    h = {}
+    h[:document_path] = toc_folder
+    h[:page_pdf]      = true
+    h[:max_page]      = 1
+    h[:toc_item_count] = @book_toc.length
+    # h[:parts_count]   = @parts_count
+    h[:no_table_title] = true # tells not to creat toc title
+    r = RLayout::Toc.new(h)
+    new_page_count = r.page_count
+    @toc_doc_page_count = new_page_count
+    @toc_page_links = r.link_info
+    # create_toc_page_links_for_ebook
+  end
 
   def toc_folder
     build_folder + "/front_matter/toc"
@@ -297,6 +330,14 @@ module RLayout
 
   def toc_yml_path
     build_folder + "/front_matter/toc/toc_content.yml"
+  end
+
+  def save_book_toc
+    book_toc = []
+    book_toc += @front_matter.toc_content
+    book_toc += @body_matter.toc_content
+    book_toc += @rear_matter_toc
+    File.open(toc_yml_path, 'w'){|f| f.write book_toc.to_yaml}
   end
 
   def save_toc_content
@@ -312,29 +353,13 @@ module RLayout
     File.open(toc_yml_path, 'w'){|f| f.write flatten_toc.to_yaml}
   end
 
-  def generate_toc
-    FileUtils.mkdir_p(toc_folder) unless File.exist?(toc_folder)
-    save_toc_content
-    h = {}
-    h[:document_path] = toc_folder
-    h[:page_pdf]      = true
-    h[:max_page]      = 1
-    h[:toc_item_count] = @book_toc.length
-    # h[:parts_count]   = @parts_count
-    h[:no_table_title] = true # tells not to creat toc title
-    r = RLayout::Toc.new(h)
-    new_page_count = r.page_count
-    @toc_doc_page_count = new_page_count
-    @toc_page_links = r.link_info
-    # create_toc_page_links_for_ebook
-  end
-
   ########### assemble book ###########
   def pdf_docs_for_book
     pdf_docs = []
-    pdf_docs += front_matter_docs_pdf
-    pdf_docs += body_matter_docs_pdf
-    pdf_docs += rear_matter_docs_pdf
+    pdf_docs += @front_matter.pdf_docs
+    # pdf_docs += body_matter_docs_pdf
+    pdf_docs += @body_matter.pdf_docs
+    # pdf_docs += rear_matter_docs_pdf
     pdf_docs
   end
 
@@ -480,7 +505,7 @@ module RLayout
       @page_number += 1
     end
     # front_matter_pages
-    @front_matter_docs.each do |doc|
+    @front_matter.front_matter_docs.each do |doc|
       toc_page_index = 0
       Dir.glob("#{build_front_matter_path}/#{doc}/00**").sort.each do |page_folder|
         page_image = page_folder + "/page.jpg"
@@ -507,7 +532,7 @@ module RLayout
       end
     end
     # rear_matter_pages
-    @rear_matter_docs.each do |doc|
+    @rear_matter.rear_matter_docs.each do |doc|
       Dir.glob("#{build_rear_matter_path}/#{doc}/00**").each do |page_folder|
         page_image = page_folder + "/page.jpg"
         target_image = target_folder + "/#{r_justed_number @page_number}.jpg"

@@ -24,11 +24,13 @@ module RLayout
       @page_size = options[:page_size] || 'A5'
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
-      @body_starting_page_number = 1
+      @starting_page_number = 1
       create_book_cover
-      process_front_matter
-      process_body_matter
-      process_rear_matter
+      # process_front_matter
+      @front_matter = FrontMatter.new(@project_path)
+      @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number)
+      # process_rear_matter
+      @rear_matter = RearMatter.new(@project_path)
       generate_toc
       generate_inner_book
       generate_pdf_book 

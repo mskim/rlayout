@@ -1,53 +1,30 @@
 module RLayout
 
-  # Book with parts
-  # footer left foort has book_title, right_footer has part_title
-  
-  class BookPart
-    attr_reader :project_path, :build_folder, :book_info, :page_width, :height, :body_doc_type, :order
-    attr_reader :starting_page_number, :part_docs, :next_part_starting_page
-    def initialize(part_project_path, options={})
-      @project_path = part_project_path
-      @part_name = File.basename(@project_path)
-      @order = options[:order] || @part_name.split("_").last
-      @build_part_folder = File.dirname(@project_path) + "/build/#{@part_name}"
-      # TODO: save part_info.yml????
-      @part_info_path = @project_path + "/part_info.yml"
-      if File.exist?(@part_info_path)
-        @part_info = YAML::load_file(@part_info_path)
-      else
-        @part_info = {title: @part_name}
-      end
-      @page_size = @part_info[:page_size] || 'A5'
+  class BodyMatter
+    attr_reader :project_path, :book_info, :page_width, :height
+    attr_reader :body_matter_docs, :body_matter_toc, :body_doc_type
+    attr_reader :starting_page_number, :toc_doc_page_count, :toc_page_links
+    attr_reader :toc_content
+
+    def initialize(project_path, options={})
+      @project_path = project_path
+      @book_info_path = @project_path + "/book_info.yml"
+      @book_info = YAML::load_file(@book_info_path)
+      @title = @book_info[:title]
+      @page_size = options['paper_size'] || 'A5'
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
       @starting_page_number = options[:starting_page_number] || 1
-      @body_doc_type = options[:body_doc_type]  || 'chapter' # chapter, poem, essay
-      FileUtils.mkdir_p(@build_part_folder) unless File.exist?(@build_part_folder)
-      @part_docs = []
-      create_part_cover
-      process_part
-      # generate_part_toc
+      process_body_matter
+      self
     end
 
-    def create_part_cover
-      h = {}
-      h[:project_path] = @build_part_folder + "/0_part_cover"
-      h[:starting_page_number] = @starting_page_number
-      h[:title] = @order.to_s + "부"
-      @part_docs << @build_part_folder + "/0_part_cover"
-      r = RLayout::PartCover.new(h)
-      # r.page_count : make it a document kind
-      # @starting_page_number += r.document.length
-      # @starting_page_number += 1
-      @starting_page_number += r.page_count
-    end
-
-    def process_part
+    def process_body_matter
+      @body_matter_docs = []
       Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
         # copy source to build 
-        chapter_folder = @build_part_folder + "/chapter_#{i+1}"
-        @part_docs << chapter_folder
+        chapter_folder = build_folder + "/chapter_#{i+1}"
+        @body_matter_docs << chapter_folder
         FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
         FileUtils.cp file, "#{chapter_folder}/story.md"
         copy_page_floats(file, chapter_folder)
@@ -56,21 +33,52 @@ module RLayout
         h[:page_pdf] = true
         h[:toc] = true
         h[:starting_page] = @starting_page_number
-        h[:belongs_to_part] = true
-
         # h[:header_erb] = header_erb
-        # h[:footer_erb] = footer_erb
-        if @body_doc_type == 'chapter'
-          r = RLayout::RChapter.new(h)
-        elsif @body_doc_type == 'poem'
-          r = RLayout::Poem.new(h)
-        elsif @body_doc_type == 'essey'
-          r = RLayout::Essey.new(h)
-        end
+        h[:footer_erb] = footer_erb
+        r = RLayout::RChapter.new(h)
         @starting_page_number += r.page_count
       end
-      @next_part_starting_page = @starting_page_number
+      generate_body_matter_toc
     end
+
+    def generate_body_matter_toc
+      @body_matter_toc = []
+      @body_matter_docs.each do |chapter_folder|
+        toc = chapter_folder + "/toc.yml"
+        @body_matter_toc << YAML::load_file(toc) if File.exist?(toc)
+      end
+      @body_matter_toc
+      save_toc_content
+    end
+
+    def save_toc_content
+      flatten_toc = []
+      @body_matter_toc.each do |chapter_item|
+        chapter_item.each do |toc_item|
+          a = []
+          if toc_item[:markup] == 'h2'
+            a << "   #{toc_item[:para_string]}"
+          else
+            a << toc_item[:para_string]
+          end
+          a << toc_item[:page].to_s
+          flatten_toc << a
+        end
+      end
+      @toc_content = flatten_toc
+      # File.open(toc_yml_path, 'w'){|f| f.write flatten_toc.to_yaml}
+    end
+  
+
+    def pdf_docs
+      pdf_files = []
+      @body_matter_docs.each do |chapter|
+        chapter_pdf_file = chapter + "/chapter.pdf"
+        pdf_files << chapter_pdf_file if File.exist?(chapter_pdf_file)
+      end
+      pdf_files
+    end
+
 
     def book_title
       @book_info['title'] || 'untitled'
@@ -138,6 +146,7 @@ module RLayout
       info
     end  
 
+
     # placing images for the chapter
     # images for the chapter should be plced in the folder with same name as chpater md file
     # this folder should have page_floats.yml and images folder.
@@ -150,18 +159,8 @@ module RLayout
         FileUtils.cp("#{page_floats_yml_path}/**.*", "#{chapter_folder}")
       end
     end
+      
 
-    def part_toc_path
-      @build_part_folder + "/toc.yml"
-    end
 
-    def generate_part_toc
-      @part_toc = []
-      @part_docs.each do |chapter_folder|
-        toc = chapter_folder + "/toc.yml"
-        @part_toc << YAML::load_file(toc) if File.exist?(toc)
-      end
-      File.open(part_toc_path, 'w'){|f| f.write @part_toc.to_yaml}
-    end
   end
 end

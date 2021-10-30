@@ -122,6 +122,15 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2021_10_30
+  - _ebook, _pdf, _print, _build
+  - make all generate folders with _
+  - create
+    - BodyMatter, BodyMatterWithParts
+    - FrontMatter, BodyMatter, RearMatter
+  - PartCover
+    - part title
+
 2021_10_28
 
   - add page_count to chapter kind

@@ -6,7 +6,7 @@ module RLayout
   class BookWithParts < Book
     attr_reader :project_path, :book_info, :page_width, :height
     attr_reader :has_cover_inside_page, :has_wing, :has_toc
-    attr_reader :book_toc, :body_matter_toc, :rear_matter_toc
+    attr_reader :book_toc, :rear_matter_toc
     def initialize(project_path, options={})
       @project_path = project_path
       @book_info_path = @project_path + "/book_info.yml"
@@ -16,8 +16,10 @@ module RLayout
       @height = SIZES[@page_size][1]
       @starting_page_number = 1
       create_book_cover
-      process_front_matter
-      process_body_matter_with_parts
+      # process_front_matter
+      @front_matter = FrontMatter.new(@project_path)
+      @starting_page_number += @front_matter.page_count
+      @body_matter = BodyMatterWithPart.new(@project_path, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number)
       process_rear_matter
       generate_toc
       generate_inner_book
@@ -25,25 +27,38 @@ module RLayout
     end
   end
 
-  ########### body_matter ###########
-
-  def process_body_matter_with_parts
-    @body_matter_docs = []
-    Dir.glob("#{@project_path}/part_*").sort.each_with_index do |part, i|
-      r = RLayout::BookPart.new(part, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number, order: i + 1)
-      @body_matter_docs += r.part_docs
-      @starting_page_number = r.next_part_starting_page
-    end
-    generate_body_matter_toc
+  def generate_toc
+    FileUtils.mkdir_p(toc_folder) unless File.exist?(toc_folder)
+    # save_toc_content
+    save_book_toc
+    h = {}
+    h[:document_path] = toc_folder
+    h[:page_pdf]      = true
+    h[:max_page]      = 1
+    h[:toc_item_count] = 20
+    # h[:parts_count]   = @parts_count
+    h[:no_table_title] = true # tells not to creat toc title
+    r = RLayout::Toc.new(h)
+    new_page_count = r.page_count
+    @toc_doc_page_count = new_page_count
+    @toc_page_links = r.link_info
+    # create_toc_page_links_for_ebook
   end
 
-  def generate_body_matter_toc
-    @body_matter_toc = []
-    @body_matter_docs.each do |chapter_folder|
-      toc = chapter_folder + "/toc.yml"
-      @body_matter_toc << YAML::load_file(toc) if File.exist?(toc)
-    end
-    @book_toc += @body_matter_toc
+  def toc_folder
+    build_folder + "/front_matter/toc"
+  end
+
+  def toc_yml_path
+    build_folder + "/front_matter/toc/toc_content.yml"
+  end
+
+  def save_book_toc
+    book_toc = []
+    book_toc += @front_matter.toc_content
+    book_toc += @body_matter.toc_content
+    # book_toc += @rear_matter.toc_content
+    File.open(toc_yml_path, 'w'){|f| f.write book_toc.to_yaml}
   end
 
   def save_toc_content
@@ -51,24 +66,13 @@ module RLayout
     @book_toc.each do |chapter_item|
       chapter_item.each do |toc_item|
         a = []
-        if toc_item[:markup] == 'h2'
-          a << "   #{toc_item[:para_string]}"
-        else
-          a << toc_item[:para_string]
-        end
+        a << toc_item[:para_string]
         a << toc_item[:page].to_s
         flatten_toc << a
       end
     end
+    flatten_toc += @body_matter.toc_content
     File.open(toc_yml_path, 'w'){|f| f.write flatten_toc.to_yaml}
   end
 
-  def body_matter_docs_pdf
-    pdf_files = []
-    @body_matter_docs.each do |chapter|
-      chapter_pdf_file = chapter + "/chapter.pdf"
-      pdf_files << chapter_pdf_file if File.exist?(chapter_pdf_file)
-    end
-    pdf_files
-  end
 end
