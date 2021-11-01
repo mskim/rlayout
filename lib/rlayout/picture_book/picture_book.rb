@@ -18,7 +18,6 @@ module RLayout
     def initialize(project_path, options={})
       @project_path = project_path
       @body_type = 'picture_book'
-      @has_no_cover_inside_page = true
       @book_info_path = @project_path + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
       @title = @book_info[:title] || @book_info['title']
@@ -26,6 +25,7 @@ module RLayout
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
       # @starting_page_number = 1
+      @has_no_cover_inside_page = true
       create_book_cover
       @body_matter = BodyMatterWithPictureSpread.new(@project_path)
       generate_pdf_for_print
@@ -49,7 +49,7 @@ module RLayout
 
     def create_book_cover
       FileUtils.mkdir_p(build_folder) unless File.exist?(build_folder)
-      RLayout::BookCover.new(project_path: build_book_cover_path, source_path: source_book_cover_path, has_no_cover_inside_page: @has_no_cover_inside_page,  book_info: @book_info )
+      RLayout::BookCover.new(project_path: build_book_cover_path, source_path: source_book_cover_path, has_no_wing: true, has_no_cover_inside_page: true,  book_info: @book_info )
     end
 
     def pdf_docs_for_inner_book

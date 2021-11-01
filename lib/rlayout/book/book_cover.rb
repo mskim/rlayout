@@ -23,7 +23,7 @@ module RLayout
       @source_path = options[:source_path]
       @portrait  = options[:portrait] || true
       @has_no_cover_inside_page = options[:has_no_cover_inside_page]
-      @has_wing = options[:has_wing] || true
+      @has_no_wing = options[:has_no_wing]
       unless File.exist?(@project_path)
         FileUtils.mkdir_p(@project_path)
       end
@@ -105,9 +105,11 @@ module RLayout
 
     def copy_cover_image
       FileUtils.mkdir_p(build_cover_spread_folder) unless File.exist?(build_cover_spread_folder)
-      system("cp #{@source_path}/*.png #{build_cover_spread_folder}/")
+      Dir.glob("#{@source_path}/*{.png,.jpg").each do |file|
+        system("cp #{file} #{build_cover_spread_folder}/")
+      end
       # TODO get error message if no jpg
-      system("cp #{@source_path}/*.jpg #{build_cover_spread_folder}/")    
+      # system("cp #{@source_path}/*.jpg #{build_cover_spread_folder}/")    
     end
 
     def build_front_wing_folder
@@ -134,13 +136,13 @@ module RLayout
     end
 
     def create_pages_and_wings
-      copy_wing_contents
+      copy_wing_contents if !@has_no_wing
       @current_x = 0
-      create_back_wing if @has_wing
+      create_back_wing if !@has_no_wing
       create_back_page
       create_seneca
       create_front_page
-      create_front_wing if @has_wing
+      create_front_wing if !@has_no_wing
     end
 
     def create_back_wing

@@ -131,12 +131,30 @@ TODO List
   - PartCover
     - part title
 
+2021_11_2
+  - bookcheego 
+    - jumpstartpro
+    - user, account, payment, book
+    - upload, user_repo, github webhook
+    - tailwind
+
+    - book 
+      belogns_to user
+      book_info
+      status
+      github_repo
+        email_date_slug
+
 2021_11_1
   - picture_book save results in _build folder
     - create, _ebook, _pdf, _print, _build
   - add BodyMatterWihtPictureSpread
   - picture_book has_no_cover_inside_page
     - fix back_page image 4.jpg/png not showing 
+    - fix
+      cp: /Users/mskim/test_data/book/picture_book/book_cover/*.jpg: No such file or directory
+      cp: /Users/mskim/test_data/book/picture_book/book_cover/front_wing.md: No such file or directory
+      cp: /Users/mskim/test_data/book/picture_book/book_cover/back_wing.md: No such file or directory
 
   - localization
     book_cover:표지
