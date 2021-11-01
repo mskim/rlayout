@@ -996,7 +996,7 @@ module RLayout
         @story  = Story.new(@story_path).markdown2para_data
       end
       @heading  = @story[:heading] || {}
-      @title    = @heading[:title] || @heading['title'] || "Untitled"
+      @title    = @heading[:title] || @heading['title'] || @heading['제목'] || "Untitled"
       if @document.pages[0].has_heading?
         @document.pages[0].get_heading.set_heading_content(@heading)
         @document.pages[0].relayout!

@@ -3,8 +3,8 @@ include RLayout
 
 describe "create PictureSpread" do
   before do
-    @document_path = "/Users/mskim/test_data/picture_book/02_03"
-    @document_path = "/Users/mskim/test_data/picture_book/16_17"
+    @document_path = "/Users/mskim/test_data/book/picture_book/02_03"
+    @document_path = "/Users/mskim/test_data/book/picture_book/16_17"
     @pdf_path = @document_path + "/spread.pdf"
     @doc = PictureSpread.new(document_path: @document_path )
   end

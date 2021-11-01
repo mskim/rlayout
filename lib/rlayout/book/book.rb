@@ -1,16 +1,5 @@
 module RLayout
 
-  Book_STYLE = {
-    'chapter':{
-
-    },
-    'book_cover':{
-
-    },
-    'front_matter':{
-
-    }
-  }
   class Book
     attr_reader :project_path, :book_info, :page_width, :height
     attr_reader :has_cover_inside_page, :has_wing, :has_toc
@@ -234,7 +223,7 @@ module RLayout
   end
 
   ########### assemble book ###########
-  def pdf_docs_for_book
+  def pdf_docs_for_inner_book
     pdf_docs = []
     pdf_docs += @front_matter.pdf_docs
     # pdf_docs += body_matter_docs_pdf
@@ -252,6 +241,7 @@ module RLayout
   end
 
   def generate_pdf_for_print
+    FileUtils.mkdir_p(print_folder) unless File.exist?(print_folder)
     copy_book_cover_pdf
     generate_inner_book
   end
@@ -269,10 +259,9 @@ module RLayout
   end
 
   def generate_inner_book
-    FileUtils.mkdir_p(print_folder) unless File.exist?(print_folder)
     # merge pdf files into book with out cover
     target = HexaPDF::Document.new
-    pdf_docs_for_book.each do |file|
+    pdf_docs_for_inner_book.each do |file|
       pdf = HexaPDF::Document.open(file)
       pdf.pages.each {|page| target.pages << target.import(page)}
     end
@@ -308,14 +297,21 @@ module RLayout
     target = HexaPDF::Document.new
     pdf = HexaPDF::Document.open(front_cover_1_pdf_path)
     pdf.pages.each {|page| target.pages << target.import(page)}
-    pdf = HexaPDF::Document.open(front_cover_2_pdf_path)
-    pdf.pages.each {|page| target.pages << target.import(page)}
+    if @has_no_cover_inside_page
+    else
+      pdf = HexaPDF::Document.open(front_cover_2_pdf_path)
+      pdf.pages.each {|page| target.pages << target.import(page)}
+    end
     pdf = HexaPDF::Document.open(book_without_cover_path)
     pdf.pages.each {|page| target.pages << target.import(page)}
+
     pdf = HexaPDF::Document.open(back_cover_1_pdf_path)
     pdf.pages.each {|page| target.pages << target.import(page)}
-    pdf = HexaPDF::Document.open(back_cover_2_pdf_path)
-    pdf.pages.each {|page| target.pages << target.import(page)}
+    if @has_no_cover_inside_page
+    else
+      pdf = HexaPDF::Document.open(back_cover_2_pdf_path)
+      pdf.pages.each {|page| target.pages << target.import(page)}
+    end
     target.write(pdf_book_path, optimize: true)
   end
 
@@ -437,7 +433,7 @@ module RLayout
     # back_cover
     Dir.glob("#{build_back_cover_path}/00**").sort.each do |page_folder|
       page_image = page_folder + "/page.jpg"
-      target_image = target_folder + "/#{@page_number}.jpg"
+      target_image = target_folder + "/#{r_justed_number @page_number}.jpg"
       FileUtils.cp(page_image, target_image)
       @ebook_page_contents += page_html_for_ebook(@page_number)
       @page_number += 1

@@ -9,6 +9,8 @@ module RLayout
       @page_size = options[:page_size] || 'A5'
       @width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
+      @spread_image_path = options[:spread_image_path]
+      @cover_spread_width = options[:cover_spread_width]
       generate_pdf
       self
     end
@@ -44,6 +46,7 @@ module RLayout
       # before rotating 90 
       layout =<<~EOF
       RLayout::Container.new(width:#{@width}, height:#{@height}, fill_color: 'clear') do
+        image(image_path: "#{@spread_image_path}", x: 0, width: #{@cover_spread_width}, height:#{@height}, layout_member:false)
       end
 
       EOF

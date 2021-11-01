@@ -2,15 +2,17 @@ module RLayout
 
   # spread
   # Image that spreads across back_page seneca and front_page
+  
+  # front_page
+  # front_wing
 
   # back_wing
   # back_page
-  # front_page
-  # front_wing
+
   CENTI2POINT = 22.4
 
   class BookCover < Container
-    attr_reader :book_info, :project_path, :source_path,  :portrait, :spread_layout, :spread_width, :has_cover_inside_page, :has_wing
+    attr_reader :book_info, :project_path, :source_path,  :portrait, :spread_layout, :spread_width, :has_no_cover_inside_page, :has_wing
     attr_reader :cover_spread, :front_page, :back_page, :seneca, :seneca_width, :seneca_width_in_cm, :front_wing, :back_wing
     attr_reader :page_size, :page_width, :wing_width, :updated
 
@@ -20,7 +22,7 @@ module RLayout
       @project_path = options[:project_path]
       @source_path = options[:source_path]
       @portrait  = options[:portrait] || true
-      @has_cover_inside_page = options[:has_cover_inside_page] || true
+      @has_no_cover_inside_page = options[:has_no_cover_inside_page]
       @has_wing = options[:has_wing] || true
       unless File.exist?(@project_path)
         FileUtils.mkdir_p(@project_path)
@@ -48,9 +50,7 @@ module RLayout
     def default_layout
       layout =<<~EOF
       RLayout::Container.new(width:#{@width}, height:#{@height}, layout_direction:'horizontal') do
-
         image(image_path: "#{cover_spread_pdf_path}" , x:#{@wing_width}, y:0, width:#{@spread_width}, height:#{@height}, layout_member: false)
-        
         image(image_path: "#{back_wing_pdf_path}", layout_length: #{@wing_width}, fill_color: 'clear')
         image(image_path: "#{back_page_pdf_path}", layout_length: #{@page_width}, fill_color: 'clear')
         image(image_path: "#{seneca_pdf_path}", layout_length: #{@seneca_width}, fill_color: 'white', rotate_content: -90)
@@ -244,7 +244,8 @@ module RLayout
       # copy jpg
       jpg_source_1 = @project_path + "/front_page/output.jpg"
       system(" cp #{jpg_source_1} #{page1_jpg_path}")
-      if @has_cover_inside_page
+      if @has_no_cover_inside_page
+      else
         page2_path = build_front_cover_path + "/0002"
         FileUtils.mkdir_p(page2_path) unless File.exist?(page2_path)
         page2_pdf_path = page2_path + "/page.pdf"
@@ -270,7 +271,8 @@ module RLayout
       # copy jpg
       jpg_source_1 = @project_path + "/back_page/output.jpg"
       system(" cp #{jpg_source_1} #{page1_jpg_path}")
-      if @has_cover_inside_page
+      if @has_no_cover_inside_page
+      else
         page2_path = build_back_cover_path + "/0002"
         FileUtils.mkdir_p(page2_path) unless File.exist?(page2_path)
         page2_pdf_path = page2_path + "/page.pdf"

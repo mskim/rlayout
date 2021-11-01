@@ -132,6 +132,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/book/front_matter'
   require File.dirname(__FILE__) + '/rlayout/book/body_matter'
   require File.dirname(__FILE__) + '/rlayout/book/body_matter_with_part'
+  require File.dirname(__FILE__) + '/rlayout/book/body_matter_with_picture_spread'
   require File.dirname(__FILE__) + '/rlayout/book/rear_matter'
   require File.dirname(__FILE__) + '/rlayout/book/book'
   require File.dirname(__FILE__) + '/rlayout/book/book_with_parts'

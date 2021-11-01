@@ -582,9 +582,9 @@ module RLayout
     def initialize(project_path)
       @project_path = project_path
       @omr_path     = @project_path + "/omr"
-      FileUtiles.mkdir_p(@omr_path) unless File.directory?(@omr_path)
+      FileUtils.mkdir_p(@omr_path) unless File.directory?(@omr_path)
       @notes_path   = @project_path + "/notes"
-      FileUtiles.mkdir_p(@notes_path) unless File.directory?(@notes_path)
+      FileUtils.mkdir_p(@notes_path) unless File.directory?(@notes_path)
       @correct_answers  = extract_correct_answers
       Dir.glob("#{@omr_path}/*.txt").each do |orm_card|
         IncorrectAnswersNote.new(@correct_answers, orm_card)

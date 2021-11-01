@@ -19,7 +19,7 @@ module RLayout
       @first_page = @document.pages[0]
       @story  = Story.new(@story_path).story2line_text
       @heading  = @story[:heading] || {}
-      @title    = @heading[:title] || @heading['title'] || "Untitled"
+      @title    = @heading[:title] || @heading['title'] || @heading['제목'] || "Untitled"
       # if @first_page && @first_page.has_heading?
       #   @first_page.get_heading.set_heading_content(@heading)
       #   @first_page.relayout!

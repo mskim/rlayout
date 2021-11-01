@@ -5,6 +5,16 @@ module RLayout
     attr_reader :width, :height, :updated
     def initialize(options={})
       @content = options[:content] || default_content
+      if options[:content]['제목']
+        @content['title'] = options[:content]['제목']
+      end
+      if options[:content]['부제목']
+        @content['subtitle'] = options[:content]['부제목']
+      end      
+      if options[:content]['저자']
+        @content['author'] = options[:content]['저자']
+      end 
+            
       @project_path = options[:project_path]
       @page_size = options[:page_size] || 'A5'
       @width = SIZES[@page_size][0] 

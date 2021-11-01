@@ -131,6 +131,13 @@ TODO List
   - PartCover
     - part title
 
+2021_11_1
+  - picture_book save results in _build folder
+    - create, _ebook, _pdf, _print, _build
+  - add BodyMatterWihtPictureSpread
+  - picture_book has_no_cover_inside_page
+    - fix back_page image 4.jpg/png not showing 
+
   - localization
     book_cover:표지
     book_info:책정보
