@@ -50,11 +50,6 @@ module RLayout
     def build_book_cover_path
       build_folder + "/book_cover"
     end
-
-    def create_book_cover
-      FileUtils.mkdir_p(build_folder) unless File.exist?(build_folder)
-      RLayout::BookCover.new(project_path: build_book_cover_path, source_path: source_book_cover_path, book_info: @book_info)
-    end
     
   end
 end
