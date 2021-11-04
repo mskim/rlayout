@@ -33,8 +33,6 @@ module RLayout
     end
   end
 
-  ########### book_cover ###########
-
   def build_folder
     @project_path + "/_build"
   end
@@ -52,94 +50,9 @@ module RLayout
     RLayout::BookCover.new(project_path: build_book_cover_path, source_path: source_book_cover_path, book_info: @book_info)
   end
 
-  ########### front_matter ###########
-
   def build_front_matter_path
     build_folder + "/front_matter"
   end
-
-  # def source_front_matter_path
-  #   @project_path + "/front_matter"
-  # end
-
-  # # create prolog, forward, isbn
-  # def process_front_matter
-  #   @front_matter_docs = []
-
-  #   FileUtils.mkdir_p(build_front_matter_path) unless File.exist?(build_front_matter_path)
-  #   Dir.glob("#{source_front_matter_path}/*.md").sort.each do |md|
-  #     case File.basename(md)
-  #     # when 'book_info.md'
-  #     #   @front_matter_docs << ['book_info',page_count]
-  #     # when 'title.md'
-  #     #   @front_matter_docs << ['title',page_count]
-  #     # when 'dedication.md'
-  #     #   @front_matter_docs << ['dedication',page_count]
-  #     # when 'thankyou.md'
-  #     #   @front_matter_docs << ['thankyou', page_count]
-  #     when 'prologue.md'
-  #       prologue_path = build_front_matter_path + "/prologue"
-  #       story_md_path = prologue_path + "/story.md"
-  #       FileUtils.mkdir_p(prologue_path) unless File.exist?(prologue_path)
-  #       system("cp #{md} #{story_md_path}")
-  #       h = {}
-  #       h[:page_size] = @page_size
-  #       h[:document_path] = prologue_path
-  #       h[:page_pdf] = true
-  #       h[:toc] = true
-  #       h[:starting_page] = @starting_page_number
-  #       # h[:starting_page] = starting_page_number
-  #       # h[:header_erb] = header_erb
-  #       # h[:footer_erb] = footer_erb
-  #       r = RLayout::RChapter.new(h)
-  #       page_count = r.page_count
-  #       @starting_page_number += page_count
-  #       @front_matter_docs << 'prologue'
-  #     when 'toc.md'
-  #       @has_toc = true
-  #       @front_matter_docs << 'toc' 
-  #       # TODO fix this
-  #       @toc_first_page_number = @starting_page_number + 1
-  #       @starting_page_number += 1
-  #       @book_toc = []
-  #     end
-  #   end
-  #   generate_front_matter_toc
-  # end
-
-  # def generate_front_matter_toc
-  #   @doc_generated_toc_info = []
-  #   # doc_info [document_kind, page_count]
-  #   @front_matter_docs.each do |doc_name|
-  #     toc = build_front_matter_path + "/#{doc_name}/toc.yml"
-  #     @doc_generated_toc_info << YAML::load_file(toc) if File.exist?(toc)
-  #   end
-  #   @front_matter_toc = []
-  #   @doc_generated_toc_info.each do |chapter_item|
-  #     chapter_item.each do |toc_item|
-  #       a = []
-  #       a << toc_item[:para_string]
-  #       a << toc_item[:page].to_s
-  #       @front_matter_toc << a
-  #     end
-  #   end
-  #   @front_matter_toc
-  # end
-
-  # def front_matter_docs_pdf
-  #   pdf_files = []
-  #   @front_matter_docs.each do |doc_folder|
-  #     if doc_folder == 'toc'
-  #       doc_pdf_file = build_front_matter_path + "/#{doc_folder}/toc.pdf"
-  #     else
-  #       doc_pdf_file = build_front_matter_path + "/#{doc_folder}/chapter.pdf"
-  #     end
-  #     pdf_files << doc_pdf_file if File.exist?(doc_pdf_file)
-  #   end
-  #   pdf_files
-  # end
-
-  ########### body_matter ###########
 
   def book_title
     @book_info['title'] || 'untitled'

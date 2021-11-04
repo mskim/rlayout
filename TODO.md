@@ -145,6 +145,10 @@ TODO List
       github_repo
         email_date_slug
 
+2021_11_2
+  - add ordered list
+  - add unordered list
+
 2021_11_1
   - picture_book save results in _build folder
     - create, _ebook, _pdf, _print, _build

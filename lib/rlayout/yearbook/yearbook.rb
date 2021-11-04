@@ -21,19 +21,35 @@ module RLayout
   #   bg_image.jpg, story.md, images, tables
 
 
-  class Yearbook
-    attr_reader :category, :school, :year, :project_path
-    attr_reader :template_path, :page_size
-    attr_reader :book_plan, :class_count
+  class Yearbook < Book
+    attr_reader :category, :school, :year
 
     def initialize(project_path, options={})
-      @project_path  = project_path
-      @design_path   = options[:design_path] || default_design_path
-      @page_size     = options[:page_size] || "A4"
-      @class_count   = options[:class_count] || 8
-      create_section_folders
-      copy_design
-      build_sections
+
+      @project_path = project_path
+      @book_info_path = @project_path + "/book_info.yml"
+      @book_info = YAML::load_file(@book_info_path)
+      @title = @book_info[:title]
+      @page_size = options['paper_size'] || 'A4'
+      @page_width = SIZES[@page_size][0]
+      @height = SIZES[@page_size][1]
+      @starting_page_number = 1
+      create_book_cover
+      @front_matter = FrontMatterYearbook.new(@project_path)
+      @body_matter = BodyMatterYearbook.new(@project_path)
+      @rear_matter = RearMatterYearbook.new(@project_path)
+      generate_toc
+      generate_pdf_for_print
+      generate_pdf_book 
+      generate_ebook unless options[:no_ebook]
+      # push_to_git_repo if options[:push_to_git_repo]
+
+      # @design_path   = options[:design_path] || default_design_path
+      # @page_size     = options[:page_size] || "A4"
+      # @class_count   = options[:class_count] || 8
+      # create_section_folders
+      # copy_design
+      # build_sections
       self
     end
 
@@ -69,12 +85,6 @@ module RLayout
         FileUtils.mkdir_p(section_path) unless File.exist?(section_path)
       end
     end
-
-    # merge each page PDF files into a book
-    def merge_pdf_into_book
-
-    end
-
 
     def book_plan_path
       @project_path + "/book_plan.yml"

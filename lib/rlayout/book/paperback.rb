@@ -20,8 +20,8 @@ module RLayout
       @project_path = project_path
       @book_info_path = @project_path + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
-      @title = @book_info[:title]
-      @page_size = options[:page_size] || 'A5'
+      @title = @book_info[:title] || @book_info['title']
+      @page_size = options[:page_size] || options['page_size'] || 'A5'
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
       @starting_page_number = 1
@@ -38,6 +38,23 @@ module RLayout
       # generate_ebook unless options[:no_ebook]
       # push_to_git_repo if options[:push_to_git_repo]
     end
-  end
 
+    def build_folder
+      @project_path + "/_build"
+    end
+
+    def source_book_cover_path
+      @project_path + "/book_cover"
+    end
+  
+    def build_book_cover_path
+      build_folder + "/book_cover"
+    end
+
+    def create_book_cover
+      FileUtils.mkdir_p(build_folder) unless File.exist?(build_folder)
+      RLayout::BookCover.new(project_path: build_book_cover_path, source_path: source_book_cover_path, book_info: @book_info)
+    end
+    
+  end
 end
