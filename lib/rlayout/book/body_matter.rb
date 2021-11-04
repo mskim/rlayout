@@ -19,6 +19,14 @@ module RLayout
       self
     end
 
+    def build_folder
+      @project_path + "/_build"
+    end
+
+    def build_folder
+      @project_path + "/_build"
+    end
+    
     def process_body_matter
       @body_matter_docs = []
       Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|

@@ -113,11 +113,11 @@ module RLayout
     end
 
     def save_book_toc
-      book_toc = []
-      book_toc += @front_matter.toc_content
-      book_toc += @body_matter.toc_content
-      book_toc += @rear_matter_toc
-      File.open(toc_yml_path, 'w'){|f| f.write book_toc.to_yaml}
+      @book_toc = []
+      @book_toc += @front_matter.toc_content if @front_matter
+      @book_toc += @body_matter.toc_content if @body_matter
+      @book_toc += @rear_matter.toc_content if @rear_matter
+      File.open(toc_yml_path, 'w'){|f| f.write @book_toc.to_yaml}
     end
 
     def save_toc_content

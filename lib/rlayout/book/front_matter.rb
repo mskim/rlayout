@@ -20,6 +20,9 @@ module RLayout
       self
     end
 
+    def build_folder
+      @project_path + "/_build"
+    end
     # create prolog, forward, isbn
     def process_front_matter
       @front_matter_docs = []

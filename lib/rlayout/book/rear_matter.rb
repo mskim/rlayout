@@ -39,5 +39,9 @@ module RLayout
     def rear_matter_docs_pdf
       []
     end
+
+    def toc_content
+      []
+    end
   end
 end
