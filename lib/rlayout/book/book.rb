@@ -1,5 +1,6 @@
 module RLayout
 
+  # 2021-11-04
   class Book
     attr_reader :project_path, :book_info, :page_width, :height
     attr_reader :has_cover_inside_page, :has_wing, :has_toc
@@ -7,7 +8,6 @@ module RLayout
     attr_reader :front_matter_docs, :body_matter_docs, :rear_matter_docs, :body_doc_type, :ebook_page_contents
     attr_reader :toc_first_page_number, :toc_doc_page_count, :toc_page_links
     attr_reader :front_matter, :body_matter, :rear_matter
-    # attr_reader :front_matter_toc
 
     def initialize(project_path, options={})
       @project_path = project_path
