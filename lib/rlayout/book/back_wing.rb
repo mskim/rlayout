@@ -26,8 +26,8 @@ module RLayout
     def initialize(options={})
       @project_path = options[:project_path]
       FileUtils.mkdir_p(@project_path) unless File.exist?(@project_path)
-      @width = options[:width] 
-      @height = options[:height] 
+      @width = options[:width] || 225
+      @height = options[:height] || 400
       generate_pdf
       self
     end

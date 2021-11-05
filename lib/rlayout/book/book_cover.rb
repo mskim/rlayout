@@ -35,7 +35,7 @@ module RLayout
       @seneca_width = @seneca_width_in_cm*CENTI2POINT
       @wing_width_in_cm = options[:wing_width_in_cm] || 10
       @wing_width = @wing_width_in_cm*CENTI2POINT
-      @wing_width = 0 unless @has_wing
+      @wing_width = 225 unless @has_wing
       @spread_width = @page_width*2 + @seneca_width
       @width = @page_width*2 + @seneca_width + @wing_width*2
       create_spread
