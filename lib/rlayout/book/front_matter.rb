@@ -2,9 +2,8 @@ module RLayout
 
   class FrontMatter
     attr_reader :project_path, :book_info, :page_width, :height
-    attr_reader :body_matter_docs, :body_matter_toc, :body_doc_type
     attr_reader :starting_page_number, :toc_doc_page_count, :toc_page_links
-    attr_reader :page_count, :toc_content, :front_matter_docs
+    attr_reader :page_count, :toc_content, :document_folders
 
     def initialize(project_path, options={})
       @project_path = project_path
@@ -25,18 +24,14 @@ module RLayout
     end
     # create prolog, forward, isbn
     def process_front_matter
-      @front_matter_docs = []
+      @document_folders = []
       FileUtils.mkdir_p(build_front_matter_path) unless File.exist?(build_front_matter_path)
       Dir.glob("#{source_front_matter_path}/*.md").sort.each do |md|
         case File.basename(md)
         # when 'book_info.md'
-        #   @front_matter_docs << ['book_info',page_count]
         # when 'title.md'
-        #   @front_matter_docs << ['title',page_count]
         # when 'dedication.md'
-        #   @front_matter_docs << ['dedication',page_count]
         # when 'thankyou.md'
-        #   @front_matter_docs << ['thankyou', page_count]
         when 'prologue.md'
           prologue_path = build_front_matter_path + "/prologue"
           story_md_path = prologue_path + "/story.md"
@@ -53,10 +48,10 @@ module RLayout
           r = RLayout::RChapter.new(h)
           @page_count += r.page_count
           @starting_page_number += page_count
-          @front_matter_docs << 'prologue'
+          @document_folders << 'prologue'
         when 'toc.md'
           @has_toc = true
-          @front_matter_docs << 'toc' 
+          @document_folders << 'toc' 
           # TODO fix this
           @page_count += 1
           @toc_first_page_number = @starting_page_number + 1
@@ -70,7 +65,7 @@ module RLayout
     def generate_front_matter_toc
       @doc_generated_toc_info = []
       # doc_info [document_kind, page_count]
-      @front_matter_docs.each do |doc_name|
+      @document_folders.each do |doc_name|
         toc = build_front_matter_path + "/#{doc_name}/toc.yml"
         @doc_generated_toc_info << YAML::load_file(toc) if File.exist?(toc)
       end
@@ -86,22 +81,9 @@ module RLayout
       @toc_content = @front_matter_toc
     end
 
-    def front_matter_docs_pdf
-      pdf_files = []
-      @front_matter_docs.each do |doc_folder|
-        if doc_folder == 'toc'
-          doc_pdf_file = build_front_matter_path + "/#{doc_folder}/toc.pdf"
-        else
-          doc_pdf_file = build_front_matter_path + "/#{doc_folder}/chapter.pdf"
-        end
-        pdf_files << doc_pdf_file if File.exist?(doc_pdf_file)
-      end
-      pdf_files
-    end
-
     def pdf_docs
       pdf_files = []
-      @front_matter_docs.each do |doc_folder|
+      @document_folders.each do |doc_folder|
         if doc_folder == 'toc'
           doc_pdf_file = build_front_matter_path + "/#{doc_folder}/toc.pdf"
         else

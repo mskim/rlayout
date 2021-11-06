@@ -20,26 +20,17 @@ module RLayout
     end
 
     def process_body_matter_with_picture_spread
-      @body_matter_docs = []
+      @document_folders = []
       Dir.glob("#{@project_path}/**_**").sort.each_with_index do |spread_path, i|
         if File.basename(spread_path) =~/^\d\d/
           r = RLayout::PictureSpread.new(spread_path, starting_page_number: @starting_page_number, order: i + 1)
-          @body_matter_docs << spread_path
+          @document_folders << spread_path
           @starting_page_number += 2
         end
       end
       # generate_body_matter_toc
     end
   
-    def body_matter_docs_pdf
-      pdf_files = []
-      @body_matter_docs.each do |chapter|
-        chapter_pdf_file = chapter + "/chapter.pdf"
-        pdf_files << chapter_pdf_file if File.exist?(chapter_pdf_file)
-      end
-      pdf_files
-    end
-
     def pdf_docs
       pdf_files = []
       @body_matter_docs.each do |spread|

@@ -5,7 +5,7 @@ module RLayout
     attr_reader :project_path, :book_info, :page_width, :height
     attr_reader :has_cover_inside_page, :has_wing, :has_toc
     attr_reader :book_toc, :body_matter_toc, :rear_matter_toc, :starting_page_number
-    attr_reader :front_matter_docs, :body_matter_docs, :rear_matter_docs, :body_doc_type, :ebook_page_contents
+    attr_reader :rear_matter_docs, :body_doc_type, :ebook_page_contents
     attr_reader :toc_first_page_number, :toc_doc_page_count, :toc_page_links
     attr_reader :front_matter, :body_matter, :rear_matter
 
@@ -135,7 +135,6 @@ module RLayout
     def pdf_docs_for_inner_book
       pdf_docs = []
       pdf_docs += @front_matter.pdf_docs
-      # pdf_docs += body_matter_docs_pdf
       pdf_docs += @body_matter.pdf_docs
       # pdf_docs += rear_matter_docs_pdf
       pdf_docs
@@ -302,7 +301,7 @@ module RLayout
         @page_number += 1
       end
       # front_matter_pages
-      @front_matter.front_matter_docs.each do |doc|
+      @front_matter.document_folders.each do |doc|
         toc_page_index = 0
         Dir.glob("#{build_front_matter_path}/#{doc}/00**").sort.each do |page_folder|
           page_image = page_folder + "/page.jpg"
@@ -319,7 +318,7 @@ module RLayout
         end
       end
       # body_matter_pages
-      @body_matter.body_matter_docs.each do |chapter|
+      @body_matter.document_folders.each do |chapter|
         Dir.glob("#{chapter}/00**").sort.each do |page_folder|
           page_image = page_folder + "/page.jpg"
           target_image = target_folder + "/#{r_justed_number @page_number}.jpg"

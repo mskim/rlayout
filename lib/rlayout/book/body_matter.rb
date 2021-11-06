@@ -2,7 +2,7 @@ module RLayout
 
   class BodyMatter
     attr_reader :project_path, :book_info, :page_width, :height
-    attr_reader :body_matter_docs, :body_matter_toc, :body_doc_type
+    attr_reader :document_folders, :body_matter_toc, :body_doc_type
     attr_reader :starting_page_number, :toc_doc_page_count, :toc_page_links
     attr_reader :toc_content
 
@@ -28,11 +28,11 @@ module RLayout
     end
     
     def process_body_matter
-      @body_matter_docs = []
+      @document_folders = []
       Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
         # copy source to build 
         chapter_folder = build_folder + "/chapter_#{i+1}"
-        @body_matter_docs << chapter_folder
+        @document_folders << chapter_folder
         FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
         FileUtils.cp file, "#{chapter_folder}/story.md"
         copy_page_floats(file, chapter_folder)
@@ -51,7 +51,7 @@ module RLayout
 
     def generate_body_matter_toc
       @body_matter_toc = []
-      @body_matter_docs.each do |chapter_folder|
+      @document_folders.each do |chapter_folder|
         toc = chapter_folder + "/toc.yml"
         @body_matter_toc << YAML::load_file(toc) if File.exist?(toc)
       end
@@ -80,7 +80,7 @@ module RLayout
 
     def pdf_docs
       pdf_files = []
-      @body_matter_docs.each do |chapter|
+      @document_folders.each do |chapter|
         chapter_pdf_file = chapter + "/chapter.pdf"
         pdf_files << chapter_pdf_file if File.exist?(chapter_pdf_file)
       end

@@ -2,7 +2,7 @@ module RLayout
 
   class BodyMatterWithPart
     attr_reader :project_path, :book_info, :page_width, :height
-    attr_reader :body_matter_docs, :body_matter_toc, :body_doc_type
+    attr_reader :document_folders, :body_matter_toc, :body_doc_type
     attr_reader :starting_page_number, :toc_doc_page_count, :toc_page_links
     attr_reader :toc_content
     def initialize(project_path, options={})
@@ -20,10 +20,10 @@ module RLayout
     end
 
     def process_body_matter_with_parts
-      @body_matter_docs = []
+      @document_folders = []
       Dir.glob("#{@project_path}/part_*").sort.each_with_index do |part, i|
         r = RLayout::BookPart.new(part, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number, order: i + 1)
-        @body_matter_docs += r.part_docs
+        @document_folders += r.part_docs
         @starting_page_number = r.next_part_starting_page
       end
       generate_body_matter_toc
@@ -31,7 +31,7 @@ module RLayout
   
     def generate_body_matter_toc
       @body_matter_toc = []
-      @body_matter_docs.each do |chapter_folder|
+      @document_folders.each do |chapter_folder|
         toc = chapter_folder + "/toc.yml"
         @body_matter_toc << YAML::load_file(toc) if File.exist?(toc)
       end
@@ -56,18 +56,9 @@ module RLayout
       # File.open(toc_yml_path, 'w'){|f| f.write flatten_toc.to_yaml}
     end
   
-    def body_matter_docs_pdf
-      pdf_files = []
-      @body_matter_docs.each do |chapter|
-        chapter_pdf_file = chapter + "/chapter.pdf"
-        pdf_files << chapter_pdf_file if File.exist?(chapter_pdf_file)
-      end
-      pdf_files
-    end
-
     def pdf_docs
       pdf_files = []
-      @body_matter_docs.each do |chapter|
+      @document_folders.each do |chapter|
         chapter_pdf_file = chapter + "/chapter.pdf"
         pdf_files << chapter_pdf_file if File.exist?(chapter_pdf_file)
       end
