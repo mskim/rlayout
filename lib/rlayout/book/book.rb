@@ -19,11 +19,8 @@ module RLayout
       @height = SIZES[@page_size][1]
       @starting_page_number = 1
       create_book_cover
-      # process_front_matter
       @front_matter = FrontMatter.new(@project_path)
-      # process_body_matter
       @body_matter = BodyMatter.new(@project_path)
-      # process_rear_matter
       @rear_matter = RearMatter.new(@project_path)
       generate_toc
       generate_pdf_for_print
@@ -322,7 +319,7 @@ module RLayout
         end
       end
       # body_matter_pages
-      chapter_folders.each do |chapter|
+      @body_matter.body_matter_docs.each do |chapter|
         Dir.glob("#{chapter}/00**").sort.each do |page_folder|
           page_image = page_folder + "/page.jpg"
           target_image = target_folder + "/#{r_justed_number @page_number}.jpg"
@@ -332,13 +329,15 @@ module RLayout
         end
       end
       # rear_matter_pages
-      @rear_matter.rear_matter_docs.each do |doc|
-        Dir.glob("#{build_rear_matter_path}/#{doc}/00**").each do |page_folder|
-          page_image = page_folder + "/page.jpg"
-          target_image = target_folder + "/#{r_justed_number @page_number}.jpg"
-          FileUtils.cp(page_image, target_image)
-          @ebook_page_contents += page_html_for_ebook(@page_number)
-          @page_number += 1       
+      if @rear_matter
+        @rear_matter.rear_matter_docs.each do |doc|
+          Dir.glob("#{build_rear_matter_path}/#{doc}/00**").each do |page_folder|
+            page_image = page_folder + "/page.jpg"
+            target_image = target_folder + "/#{r_justed_number @page_number}.jpg"
+            FileUtils.cp(page_image, target_image)
+            @ebook_page_contents += page_html_for_ebook(@page_number)
+            @page_number += 1       
+          end
         end
       end
       # back_cover

@@ -10,7 +10,7 @@ module RLayout
       @project_path = part_project_path
       @part_name = File.basename(@project_path)
       @order = options[:order] || @part_name.split("_").last
-      @build_part_folder = File.dirname(@project_path) + "/build/#{@part_name}"
+      @build_part_folder = File.dirname(@project_path) + "/_build/#{@part_name}"
       # TODO: save part_info.yml????
       @part_info_path = @project_path + "/part_info.yml"
       if File.exist?(@part_info_path)

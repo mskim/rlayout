@@ -58,46 +58,6 @@ module RLayout
       pdf_docs
     end
 
-    def copy_page_images_to_ebook
-      @ebook_page_contents = ""
-      target_folder = ebook_page_images_folder
-      FileUtils.mkdir_p(target_folder) unless File.exist?(target_folder)
-      @page_number = 1
-      # front_cover
-      Dir.glob("#{build_front_cover_path}/00**").sort.each do |page_folder|
-        page_image = page_folder + "/page.jpg"
-        target_image = target_folder + "/#{r_justed_number @page_number}.jpg"
-        FileUtils.cp(page_image, target_image)
-        @ebook_page_contents += page_html_for_ebook(@page_number)
-        @page_number += 1
-      end
-
-      # body_matter_pages
-      @page_number = 2
-      @body_matter.body_matter_docs.each do |spread|
-        Dir.glob("#{spread}/00**").sort.each do |page_folder|
-          page_image = page_folder + "/page.jpg"
-          target_image = target_folder + "/#{r_justed_number @page_number}.jpg"
-          FileUtils.cp(page_image, target_image)
-          @ebook_page_contents += page_html_for_ebook(@page_number)
-          @page_number += 1      
-        end
-      end
-      # back_cover
-      Dir.glob("#{build_back_cover_path}/00**").sort.each do |page_folder|
-        page_image = page_folder + "/page.jpg"
-        target_image = target_folder + "/#{r_justed_number @page_number}.jpg"
-        FileUtils.cp(page_image, target_image)
-        @ebook_page_contents += page_html_for_ebook(@page_number)
-        @page_number += 1
-      end
-  
-      # copy cover image as loading image
-      cover_page_image = target_folder + "/0001.jpg"
-      loading_image = target_folder + "/loading.jpg"
-      FileUtils.cp(cover_page_image, loading_image)
-    end
-  
   end
 
 end
