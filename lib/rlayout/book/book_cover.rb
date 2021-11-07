@@ -105,7 +105,7 @@ module RLayout
 
     def copy_cover_image
       FileUtils.mkdir_p(build_cover_spread_folder) unless File.exist?(build_cover_spread_folder)
-      Dir.glob("#{@source_path}/*{.png,.jpg").each do |file|
+      Dir.glob("#{@source_path}/*.{png,jpg").each do |file|
         system("cp #{file} #{build_cover_spread_folder}/")
       end
       # TODO get error message if no jpg

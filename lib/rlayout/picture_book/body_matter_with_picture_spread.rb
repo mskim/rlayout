@@ -2,7 +2,7 @@ module RLayout
 
   class BodyMatterWithPictureSpread
     attr_reader :project_path, :book_info, :page_width, :height
-    attr_reader :body_matter_docs, :body_matter_toc, :body_doc_type
+    attr_reader :document_folders, :body_matter_toc, :body_doc_type
     attr_reader :starting_page_number, :toc_doc_page_count, :toc_page_links
     attr_reader :toc_content
     def initialize(project_path, options={})
@@ -33,7 +33,7 @@ module RLayout
   
     def pdf_docs
       pdf_files = []
-      @body_matter_docs.each do |spread|
+      @document_folders.each do |spread|
         spread_pdf_file = spread + "/spread.pdf"
         pdf_files << spread_pdf_file if File.exist?(spread_pdf_file)
       end
