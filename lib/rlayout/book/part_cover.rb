@@ -3,7 +3,7 @@ module RLayout
   # TODO
   # hande two page part_cover
   class PartCover
-    attr_reader :book, :project_path, :title
+    attr_reader :book, :project_path, :title, :order
 
     def initialize(options={})
       @project_path = options[:project_path]
@@ -13,6 +13,8 @@ module RLayout
       @height = SIZES[@page_size][1]
       @title = options[:title] || 'The Name of the Part'
       @order = options[:order] || '01'
+      @order_string = options[:order_string] || '01'
+      @title = options[:title] || 'The Name of the Part'
       generate_pdf
       save_toc
     end
@@ -36,7 +38,7 @@ module RLayout
     def layout_template
       s =<<~EOF
       RLayout::Container.new(#{layout_options}) do
-        text("PART_#{@order}", font_size:#{25}, x: 100, y: 200, width:200, text_alignment: "right")
+        text("#{@order}부 ", font_size:#{20}, x: 100, y: 200, width:200, text_alignment: "right")
         text("#{@title}", font_size:#{18}, x: 100, y: 250, width:200, text_alignment: "right")
       end
   

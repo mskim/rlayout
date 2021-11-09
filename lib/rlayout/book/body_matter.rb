@@ -11,7 +11,7 @@ module RLayout
       @book_info_path = @project_path + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
       @title = @book_info[:title]
-      @page_size = options['paper_size'] || 'A5'
+      @page_size = options[:page_size] || 'A5'
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
       @starting_page_number = options[:starting_page_number] || 1
@@ -56,10 +56,10 @@ module RLayout
         @body_matter_toc << YAML::load_file(toc) if File.exist?(toc)
       end
       @body_matter_toc
-      save_toc_content
+      generate_toc_content
     end
 
-    def save_toc_content
+    def generate_toc_content
       flatten_toc = []
       @body_matter_toc.each do |chapter_item|
         chapter_item.each do |toc_item|
@@ -74,7 +74,6 @@ module RLayout
         end
       end
       @toc_content = flatten_toc
-      # File.open(toc_yml_path, 'w'){|f| f.write flatten_toc.to_yaml}
     end
   
 

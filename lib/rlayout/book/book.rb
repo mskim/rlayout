@@ -20,7 +20,8 @@ module RLayout
       @starting_page_number = 1
       create_book_cover
       @front_matter = FrontMatter.new(@project_path)
-      @body_matter = BodyMatter.new(@project_path)
+      @starting_page_number += @front_matter.page_count
+      @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number, page_size: @page_size)
       @rear_matter = RearMatter.new(@project_path)
       generate_toc
       generate_pdf_for_print
@@ -28,6 +29,10 @@ module RLayout
       generate_ebook unless options[:no_ebook]
       # push_to_git_repo if options[:push_to_git_repo]
     end
+
+    def toc_first_page_number
+      @front_matter.toc_first_page_number
+    end    
 
     def build_folder
       @project_path + "/_build"
@@ -85,7 +90,6 @@ module RLayout
     ########### toc ###########
     def generate_toc
       FileUtils.mkdir_p(toc_folder) unless File.exist?(toc_folder)
-      # save_toc_content
       save_book_toc
       h = {}
       h[:document_path] = toc_folder
@@ -98,7 +102,6 @@ module RLayout
       new_page_count = r.page_count
       @toc_doc_page_count = new_page_count
       @toc_page_links = r.link_info
-      # create_toc_page_links_for_ebook
     end
 
     def toc_folder
@@ -116,20 +119,6 @@ module RLayout
       @book_toc += @rear_matter.toc_content if @rear_matter
       File.open(toc_yml_path, 'w'){|f| f.write @book_toc.to_yaml}
     end
-
-    def save_toc_content
-      flatten_toc = []
-      @book_toc.each do |chapter_item|
-        chapter_item.each do |toc_item|
-          a = []
-          a << toc_item[:para_string]
-          a << toc_item[:page].to_s
-          flatten_toc << a
-        end
-      end
-      File.open(toc_yml_path, 'w'){|f| f.write flatten_toc.to_yaml}
-    end
-
 
     ########### assemble book ###########
     def pdf_docs_for_inner_book
@@ -453,6 +442,7 @@ module RLayout
           template = even_page_templage
         end
       end
+      @toc_first_page_number = toc_first_page_number + 2
       erb = ERB.new(template)
       r = erb.result(binding)
     end
@@ -479,8 +469,6 @@ module RLayout
     
     def toc_page_templage
       s=<<~EOF
-
-
       <li class="page" data-name="<%= page_number %>">
         <div class="page-scale-wrap mq-none mq-default" data-layout-name="undefined" style="width: 652px; height: 865px;">
           <!-- <img src="assets/images/blank.gif" class="pageItem hd" alt="Rectangle" id="itemMusicImg<%= page_number %>" data-src="assets/<%= static_jpg_url %>"/> -->
@@ -567,6 +555,7 @@ module RLayout
       template = ebook_index_html_container #File.open(ebook_index_html_erb, 'r') { |f| f.read }
       erb = ERB.new(template)
       # @project = self
+      @toc_first_page_number = @front_matter.toc_first_page_number
       s = erb.result(binding)
       # File.open(repo_name_ebook_index_html_path, 'w') { |f| f.write s }
       File.open(ebook_index_html_path, 'w') { |f| f.write s }

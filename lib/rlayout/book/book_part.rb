@@ -6,8 +6,11 @@ module RLayout
   class BookPart
     attr_reader :project_path, :build_folder, :book_info, :page_width, :height, :body_doc_type, :order
     attr_reader :starting_page_number, :part_docs, :next_part_starting_page
+    attr_reader :title, :order
     def initialize(part_project_path, options={})
       @project_path = part_project_path
+      @page_size = options[:page_size] || 'A5'
+      @title = options[:title] || "파트 제목은 여기에"
       @part_name = File.basename(@project_path)
       @order = options[:order] || @part_name.split("_").last
       @build_part_folder = File.dirname(@project_path) + "/_build/#{@part_name}"
@@ -15,10 +18,8 @@ module RLayout
       @part_info_path = @project_path + "/part_info.yml"
       if File.exist?(@part_info_path)
         @part_info = YAML::load_file(@part_info_path)
-      else
-        @part_info = {title: @part_name}
+        @title = @part_info[:title] || @part_info['title']
       end
-      @page_size = @part_info[:page_size] || 'A5'
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
       @starting_page_number = options[:starting_page_number] || 1
@@ -34,7 +35,8 @@ module RLayout
       h = {}
       h[:project_path] = @build_part_folder + "/0_part_cover"
       h[:starting_page_number] = @starting_page_number
-      h[:title] = @order.to_s + "부"
+      h[:order] = @order
+      h[:title] = @title
       @part_docs << @build_part_folder + "/0_part_cover"
       r = RLayout::PartCover.new(h)
       # r.page_count : make it a document kind
@@ -64,8 +66,9 @@ module RLayout
           r = RLayout::RChapter.new(h)
         elsif @body_doc_type == 'poem'
           r = RLayout::Poem.new(h)
-        elsif @body_doc_type == 'essey'
-          r = RLayout::Essey.new(h)
+        elsif @body_doc_type == 'essay'
+          h[:heeading_height] = 'quarter'
+          r = RLayout::RChapter.new(h)
         end
         @starting_page_number += r.page_count
       end

@@ -18,7 +18,7 @@ module RLayout
       create_book_cover
       @front_matter = FrontMatter.new(@project_path)
       @starting_page_number += @front_matter.page_count
-      @body_matter = BodyMatterWithPart.new(@project_path, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number)
+      @body_matter = BodyMatterWithPart.new(@project_path, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number, page_size:@page_size)
       @rear_matter = RearMatter.new(@project_path)
       generate_toc
       generate_pdf_for_print
@@ -29,7 +29,6 @@ module RLayout
 
   def generate_toc
     FileUtils.mkdir_p(toc_folder) unless File.exist?(toc_folder)
-    # save_toc_content
     save_book_toc
     h = {}
     h[:document_path] = toc_folder
@@ -42,7 +41,6 @@ module RLayout
     new_page_count = r.page_count
     @toc_doc_page_count = new_page_count
     @toc_page_links = r.link_info
-    # create_toc_page_links_for_ebook
   end
 
   def toc_folder
@@ -59,20 +57,6 @@ module RLayout
     book_toc += @body_matter.toc_content
     # book_toc += @rear_matter.toc_content
     File.open(toc_yml_path, 'w'){|f| f.write book_toc.to_yaml}
-  end
-
-  def save_toc_content
-    flatten_toc = []
-    @book_toc.each do |chapter_item|
-      chapter_item.each do |toc_item|
-        a = []
-        a << toc_item[:para_string]
-        a << toc_item[:page].to_s
-        flatten_toc << a
-      end
-    end
-    flatten_toc += @body_matter.toc_content
-    File.open(toc_yml_path, 'w'){|f| f.write flatten_toc.to_yaml}
   end
 
 end

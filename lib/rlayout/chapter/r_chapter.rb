@@ -890,13 +890,14 @@ module RLayout
     # page_folder are 3 digit numbered 001, 002, 003
 
     attr_reader :page_by_page, :page_pdf, :story_md, :story_by_page, :toc
-
+    attr_reader :belongs_to_part
     def initialize(options={} ,&block)
       @document_path  = options[:document_path] || options[:chapter_path]
       @story_path     = @document_path + "/story.md"
       @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
       @story_md       = options[:story_md]
       @layout_rb      = options[:layout_rb]
+      @belongs_to_part = options[:belongs_to_part]
       unless @layout_rb
         layout_path = @document_path + "/layout.rb"
         unless File.exist?(layout_path)
@@ -1095,6 +1096,7 @@ module RLayout
         toc_item = {}
         toc_item[:page] = @starting_page
         toc_item[:markup] = 'h1'
+        toc_item[:markup] = 'h2' if @belongs_to_part
         toc_item[:para_string] = @title
         @toc_content << toc_item
       end

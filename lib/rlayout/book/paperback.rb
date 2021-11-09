@@ -26,10 +26,9 @@ module RLayout
       @height = SIZES[@page_size][1]
       @starting_page_number = 1
       create_book_cover
-      # process_front_matter
       @front_matter = FrontMatter.new(@project_path)
-      @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number)
-      # process_rear_matter
+      @starting_page_number += @front_matter.page_count
+      @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number, page_size: @page_size)
       @rear_matter = RearMatter.new(@project_path)
       generate_toc
       generate_pdf_for_print

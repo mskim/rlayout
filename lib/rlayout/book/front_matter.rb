@@ -4,7 +4,7 @@ module RLayout
     attr_reader :project_path, :book_info, :page_width, :height
     attr_reader :starting_page_number, :toc_doc_page_count, :toc_page_links
     attr_reader :page_count, :toc_content, :document_folders
-
+    attr_reader :toc_first_page_number
     def initialize(project_path, options={})
       @project_path = project_path
       @book_info_path = @project_path + "/book_info.yml"
