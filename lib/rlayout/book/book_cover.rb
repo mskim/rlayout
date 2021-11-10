@@ -15,7 +15,7 @@ module RLayout
     attr_reader :book_info, :project_path, :source_path,  :portrait, :spread_layout, :spread_width, :has_no_cover_inside_page, :has_wing
     attr_reader :cover_spread, :front_page, :back_page, :seneca, :seneca_width, :seneca_width_in_cm, :front_wing, :back_wing
     attr_reader :page_size, :page_width, :wing_width, :updated
-
+    attr_reader :gripper_width_in_cm, :gripper_width
     def initialize(options={})
       super
       @book_info = options[:book_info]
@@ -33,6 +33,10 @@ module RLayout
       @height = SIZES[@page_size][1]
       @seneca_width_in_cm = options[:seneca_width_in_cm] || 1.5
       @seneca_width = @seneca_width_in_cm*CENTI2POINT
+      @gripper_width_in_cm = options[:seneca_width_in_cm] || 1.0
+      @gripper_width = @gripper_width_in_cm*CENTI2POINT      
+      @gripper_height_in_cm = options[:gripper_height_in_cm] || 1.0
+      @gripper_height = @gripper_height_in_cm*CENTI2POINT      
       @wing_width_in_cm = options[:wing_width_in_cm] || 10
       @wing_width = @wing_width_in_cm*CENTI2POINT
       @wing_width = 225 unless @has_wing
@@ -49,15 +53,36 @@ module RLayout
 
     def default_layout
       layout =<<~EOF
-      RLayout::Container.new(width:#{@width}, height:#{@height}, layout_direction:'horizontal') do
-        image(image_path: "#{cover_spread_pdf_path}" , x:#{@wing_width}, y:0, width:#{@spread_width}, height:#{@height}, layout_member: false)
-        image(image_path: "#{back_wing_pdf_path}", layout_length: #{@wing_width}, fill_color: 'clear')
-        image(image_path: "#{back_page_pdf_path}", layout_length: #{@page_width}, fill_color: 'clear')
-        image(image_path: "#{seneca_pdf_path}", layout_length: #{@seneca_width}, fill_color: 'white', rotate_content: -90)
-        image(image_path: "#{front_page_pdf_path}", layout_length: #{@page_width}, fill_color: 'clear')
-        image(image_path: "#{front_wing_pdf_path}", layout_length: #{@wing_width}, fill_color: 'clear')
-        relayout!
-
+      RLayout::Container.new(width:#{@width + @gripper_width*2}, height:#{@height + @gripper_width*2}, layout_direction:'horizontal') do
+        vertical_line_positio = []
+        x_position = #{@gripper_width}
+        vertical_line_positio << x_position
+        image(image_path: "#{back_wing_pdf_path}", x: x_position, width: #{@wing_width}, height:#{@height}, fill_color: 'clear')
+        x_position += #{@wing_width}
+        vertical_line_positio << x_position
+        image(image_path: "#{cover_spread_pdf_path}" , x: x_position, y:#{@gripper_height}, width:#{@spread_width}, height:#{@height}, layout_member: false)
+        image(image_path: "#{back_page_pdf_path}", x: x_position, y:#{@gripper_height},  width: #{@page_width}, height:#{@height}, fill_color: 'clear')
+        x_position += #{@page_width}
+        vertical_line_positio << x_position
+        image(image_path: "#{seneca_pdf_path}", x: x_position, y:#{@gripper_height}, width: #{@seneca_width},  height:#{@height}, fill_color: 'white', rotate_content: -90)
+        x_position += #{@seneca_width}
+        vertical_line_positio << x_position
+        image(image_path: "#{front_page_pdf_path}", x: x_position, y:#{@gripper_height}, width: #{@page_width}, height:#{@height}, fill_color: 'clear')
+        x_position += #{@page_width}
+        vertical_line_positio << x_position
+        image(image_path: "#{front_wing_pdf_path}", x: x_position, y:#{@gripper_height}, width: #{@wing_width}, height:#{@height}, fill_color: 'clear')
+        x_position += #{@wing_width}
+        vertical_line_positio << x_position
+        vertical_line_positio.each do |x_position|
+          line(x:x_position,y:0, width:1, height: #{@gripper_height})
+          line(x:x_position,y:#{@gripper_height + @height}, width:1, height: #{@gripper_height})
+        end
+        horozontal_line_positio = [#{@gripper_height}, #{@gripper_height + @height}]
+        horozontal_line_positio.each do |y_position|
+          line(x:0, y:y_position, width:#{@gripper_width}, height: 1)
+          line(x:#{@width + @gripper_width}, y:y_position, width:#{@gripper_width}, height: 1)
+        end
+      
       end
       EOF
     end
