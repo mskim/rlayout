@@ -869,7 +869,17 @@ title_main_5:
 
 EOF
 
-
+# adding pictures in chapter
+# 1. first way is to insert text markup in md file
+# a single line text starting with 그림_1/picture_1 followed by number
+# grid 6x12 grid
+# 그림_1(1_6x6)
+# 그림_2(1_6x6)
+# put 그림_3(1_6x6)
+# default_image_location: 1
+# default_image_size: 6x6
+# 2. second way is to create page_image_layut.yml file specifiying page_number and image_name, locatin, size
+# 
 module RLayout
 
   class RChapter
@@ -885,12 +895,14 @@ module RLayout
     # page_by_page is used for page proof reading
     # if page_by_page is true,
     # folders are created for each page, with jpg image and, markdown text for that page
-    # this allow the proofer to working on that specific page rather than dealing with entire chapter text.
+    # this allow the proofer to work on that specific page rather than dealing with entire chapter text.
     # page_pdf options indicates to split docemnt into pages
-    # page_folder are 3 digit numbered 001, 002, 003
+    # page_folder are 4 digit numbered 0001, 0002, 0003
 
     attr_reader :page_by_page, :page_pdf, :story_md, :story_by_page, :toc
     attr_reader :belongs_to_part
+    attr_reader :grid, :default_image_location, :default_image_size
+    
     def initialize(options={} ,&block)
       @document_path  = options[:document_path] || options[:chapter_path]
       @story_path     = @document_path + "/story.md"
@@ -898,6 +910,9 @@ module RLayout
       @story_md       = options[:story_md]
       @layout_rb      = options[:layout_rb]
       @belongs_to_part = options[:belongs_to_part]
+      @grid = options[:grid] || [6,12]
+      @default_image_location = options[:default_image_location] || 1
+      @default_image_size = options[:default_image_size] || [6,6]
       unless @layout_rb
         layout_path = @document_path + "/layout.rb"
         unless File.exist?(layout_path)

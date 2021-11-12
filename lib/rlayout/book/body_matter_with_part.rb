@@ -21,8 +21,12 @@ module RLayout
 
     def process_body_matter_with_parts
       @document_folders = []
-      parts_info = @book_info[:parts] || @book_info['parts']
+      parts_info = @book_info[:parts] || @book_info['parts'] || @book_info[:파트] || @book_info['파트']
+      # we should have a part folder name part_1,part_2, part_3
+      # or Korean named folder 1부, 2부, 3부, 4부
+      @part_folder_found = false
       Dir.glob("#{@project_path}/part_*").sort.each_with_index do |part, i|
+        @part_folder_found = true
         part_title = "파트 제목은 여기"
         if parts_info
           part_title = parts_info[i]
@@ -30,6 +34,18 @@ module RLayout
         r = RLayout::BookPart.new(part, title:part_title, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number, order: i + 1)
         @document_folders += r.part_docs
         @starting_page_number = r.next_part_starting_page
+      end
+      unless @part_folder_found
+        Dir.glob("#{@project_path}/*_부").sort.each_with_index do |part, i|
+          @part_folder_found = true
+          part_title = "파트 제목은 여기"
+          if parts_info
+            part_title = parts_info[i]
+          end
+          r = RLayout::BookPart.new(part, title:part_title, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number, order: i + 1)
+          @document_folders += r.part_docs
+          @starting_page_number = r.next_part_starting_page
+        end
       end
       generate_body_matter_toc
     end

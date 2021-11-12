@@ -322,7 +322,11 @@ module RLayout
         # parse block
         @markup = "table"
         @string = s.sub(/table\s?/, "")
-      elsif s =~/^image\s?/
+      elsif s =~/^image_\d\s?/
+        @markup = "image"
+        #TODO multi line?
+        @string = s.sub(/image\s?/, "")
+      elsif s =~/^그림_\d\s?/
         @markup = "image"
         #TODO multi line?
         @string = s.sub(/image\s?/, "")
