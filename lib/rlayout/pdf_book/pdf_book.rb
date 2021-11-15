@@ -33,9 +33,5 @@ module RLayout
       end
     end
 
-    def split_pdf(pdf_file, starting_page_number)
-      # 
-      pdf_file_page_count
-    end
   end
 end

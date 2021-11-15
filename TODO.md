@@ -122,6 +122,12 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2021_11_13
+  - redefine Line, path, polygon with Struct
+
+  - class line x1, y1, x2, y2, thichness, color, dash head, tail
+
+
 2021_10_30
   - _ebook, _pdf, _print, _build
   - make all generate folders with _

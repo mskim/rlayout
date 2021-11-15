@@ -902,9 +902,11 @@ module RLayout
     attr_reader :page_by_page, :page_pdf, :story_md, :story_by_page, :toc
     attr_reader :belongs_to_part
     attr_reader :grid, :default_image_location, :default_image_size
+    attr_reader :local_image_folder
     
     def initialize(options={} ,&block)
       @document_path  = options[:document_path] || options[:chapter_path]
+      @local_image_folder = @document_path + "/images"
       @story_path     = @document_path + "/story.md"
       @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
       @story_md       = options[:story_md]
@@ -1029,12 +1031,32 @@ module RLayout
         end
       end
       @paragraphs =[]
+      @image_count = 0
+      @left_margin = @document.pages[0].left_margin
+      @top_margin = @document.pages[0].top_margin
+      @width = @document.pages[0].width
+      @height = @document.pages[0].height
       @story[:paragraphs].each do |para|
-        para_options = {}
-        para_options[:markup]         = para[:markup]
-        para_options[:layout_expand]  = [:width]
-        para_options[:para_string]    = para[:para_string]
-        @paragraphs << RParagraph.new(para_options)
+        if  para[:markup] == "image"
+          @image_count += 1
+          image_info = {}
+          image_info[:position] = 1
+          image_info[:x] = @left_margin
+          image_info[:y] = @top_margin
+          image_info[:width] = @width - @left_margin*2
+          image_info[:height] = (@height - @top_margin*2)/2
+          image_info[:image_path] = @local_image_folder + "/#{@image_count}"
+          para_options = {}
+          para_options[:markup] = "image"
+          para_options[:image_info] = image_info
+          @paragraphs << RParagraph.new(para_options)
+        else
+          para_options = {}
+          para_options[:markup]         = para[:markup]
+          para_options[:layout_expand]  = [:width]
+          para_options[:para_string]    = para[:para_string]
+          @paragraphs << RParagraph.new(para_options)
+        end
       end
     end
     
@@ -1056,6 +1078,9 @@ module RLayout
       current_page_paragraph_list = []
 
       while @paragraph = @paragraphs.shift
+        if @paragraph.class == Image
+          puts "we have image"
+        end
         # capturing paragraph info to save @story_by_page
         @current_line                   = @paragraph.layout_lines(@current_line)
         current_page_paragraph_list     << @paragraph.para_info

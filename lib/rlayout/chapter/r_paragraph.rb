@@ -47,6 +47,7 @@ module RLayout
     attr_reader :line_width,  :token_heights_are_equal
     attr_accessor :tokens, :para_lines, :pdf_doc
     attr_reader :para_rect
+    attr_reader :image_info
     def initialize(options={})
       @tokens = []
       @markup         = options.fetch(:markup, 'p')
@@ -61,6 +62,7 @@ module RLayout
         @tokens       = []
         create_tokens
       end
+      @image_info = options[:image_info]
       create_para_lines if options[:create_para_lines]
       self
     end
@@ -291,7 +293,12 @@ module RLayout
         # @current_line = @current_line.next_text_line
         # return true unless @current_line
         @current_line.set_paragraph_info(self, "middle_line")
+      elsif @markup == 'image'
+        column = @current_line.column
+        @image_info[:parent] = column
+        Image.new(@image_info)
       end
+
       if @current_line.room != @current_line.text_area[2]
         @current_line.room = @current_line.text_area[2]
       end

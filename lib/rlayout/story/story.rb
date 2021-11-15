@@ -191,10 +191,13 @@ module RLayout
       paragraphs = reader.text_blocks.map do |lines_block|
         if lines_block[0]=~TABLE_PIPE_CHECK
           {markup:'table', rows:lines_block}
+        elsif lines_block[0]=~/^사진_\d/ || lines_block[0]=~/^그림_\d/ || lines_block[0]=~/^image_\d/ || lines_block[0]=~/^picture_\d/
+          {markup:'image', id: lines_block}
         else
           block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
         end
       end
+
       @para_data = {:heading=>@metadata, :paragraphs =>paragraphs}
     end
 

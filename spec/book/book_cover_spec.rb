@@ -2,9 +2,9 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create BookCover' do
   before do
-    @source_path  = "/Users/mskim/test_data/book_cover_test/book_cover"
-    @project_path  = "/Users/mskim/test_data/book_cover_test/build/book_cover"
-    @book_info_path = "/Users/mskim/test_data/book_cover_test/book_info.yml"
+    @project_path  = "/Users/mskim/test_data/book_cover/build/book_cover"
+    @source_path  = "/Users/mskim/test_data/book_cover/book_cover"
+    @book_info_path = "/Users/mskim/test_data/book_cover/book_info.yml"
     h = {}
     h[:project_path] = @project_path
     h[:source_path] = @source_path
