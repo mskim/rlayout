@@ -1,16 +1,17 @@
 module RLayout
   # Page that starts the book.
   # With Title, author, publisher, logo
-  class Prologue
+  class Prologue < RChapter
     attr_reader :book, :path, :layout_template_path
 
-    def initialize(path, options={})
-      @path = path
-      @width = options[:width]
-      @height = options[:height]
-      @layout_template_path = options[:layout_template_path]
-      generate_pdf
-      self
+    def initialize(options={})
+      # @path = path
+      # @width = options[:width]
+      # @height = options[:height]
+      # @layout_template_path = options[:layout_template_path]
+      # generate_pdf
+      # self
+      super
     end
 
     def story_md_path
@@ -37,7 +38,6 @@ module RLayout
     def generate_pdf
       save_layout
       d = eval(layout_rb)
-      d.save_pdf_with_ruby()
       d.save_pdf_with_ruby(output_path, jpg:true)
     end
 
