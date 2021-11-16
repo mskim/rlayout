@@ -57,16 +57,18 @@ module RLayout
       layout =<<~EOF
       RLayout::Container.new(fill_color:'clear', width:#{@width}, height:#{@height}) do
         image(image_path: "#{@spread_image_path}", x: #{-@front_page_spread_off_set}, width: #{@cover_spread_width}, height:#{@height}, layout_member:false)
-        container(fill_color:'clear',layout_length:2) do
+        container(fill_color:'clear',layout_length:5) do
+          filler(layout_length:10)        
+          text("<%= @content['title'] %>",font:'KoPubDotumPB', font_size: 40, text_alignment:'center', layout_length:8, font_color: 'black', fill_color: 'clear', text_fit_type:'adjust_box_height')
           filler(layout_length:2)        
-          text("<%= @content['title'] %>",font:'KoPubDotumPB', font_size: 40, text_alignment:'center', layout_length:3, font_color: 'black', fill_color: 'clear', text_fit_type:'adjust_box_height')
-          text("<%= @content['subtitle'] %>", font:'KoPubDotumPM', font_size: 26 , text_alignment:'center', layout_length:2, fill_color: 'clear', text_fit_type:'adjust_box_height')
+          text("<%= @content['subtitle'] %>", font:'KoPubDotumPM', font_size: 26 , text_alignment:'center', layout_length:5, fill_color: 'clear', text_fit_type:'adjust_box_height')
+          filler(layout_length:2)        
           text("<%= @content['author'] %>", font:'KoPubBatangPB', font_size: 20, text_alignment:'center', fill_color: 'clear')
-          filler(layout_length:15)        
-          text("<%= @content['publisher'] %>", font:'KoPubBatangPB',font_size: 16, text_alignment:'center', fill_color: 'clear')
+          filler(layout_length:40)        
           filler(layout_length:2)        
         end
         container fill_color:'clear' do
+          text("<%= @content['publisher'] %>", font:'KoPubBatangPB',font_size: 16, text_alignment:'center', fill_color: 'clear')
         end
         relayout!
       end

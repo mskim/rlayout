@@ -52,7 +52,7 @@ module RLayout
           FileUtils.mkdir_p(page_folder_path) unless File.exist?(page_folder_path)
           system("cd #{folder_path} && mv #{page_pdf_basename} #{page_folder_name}/page.pdf")
           single_page_pdf_path = folder_path + "/#{page_folder_name}/page.pdf"
-          convert_pdf2jpg(single_page_pdf_path, ratio:1.5)
+          convert_pdf2jpg(single_page_pdf_path, ratio:1.3)
         end
       end
     end
