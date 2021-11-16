@@ -62,7 +62,7 @@ module RLayout
           text("<%= @content['title'] %>",font:'KoPubDotumPB', font_size: 40, text_alignment:'center', layout_length:3, font_color: 'black', fill_color: 'clear', text_fit_type:'adjust_box_height')
           text("<%= @content['subtitle'] %>", font:'KoPubDotumPM', font_size: 26 , text_alignment:'center', layout_length:2, fill_color: 'clear', text_fit_type:'adjust_box_height')
           text("<%= @content['author'] %>", font:'KoPubBatangPB', font_size: 20, text_alignment:'center', fill_color: 'clear')
-          filler(layout_length:10)        
+          filler(layout_length:15)        
           text("<%= @content['publisher'] %>", font:'KoPubBatangPB',font_size: 16, text_alignment:'center', fill_color: 'clear')
           filler(layout_length:2)        
         end
