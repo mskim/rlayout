@@ -108,7 +108,6 @@ module RLayout
         h[:toc_data]      = @toc_data
         new_page          = TocPage.new(h)
       else
-        previous_line = @pages.last.last_line if @pages.length > 0
         h                 = {}
         h[:parent]        = self
         h[:width]         = @width
@@ -117,6 +116,7 @@ module RLayout
         h[:page_number]   += @starting_page
         h[:float_layout]  += page_float_layout[options[:page_index]] if @page_float_layout
         new_page = RPage.new(h)
+        previous_line = @pages.last.last_line if @pages.length > 0 && @pages.last.last_line
         new_page_first_line = new_page.first_text_line
         previous_line.next_line = new_page_first_line if previous_line
         new_page_first_line

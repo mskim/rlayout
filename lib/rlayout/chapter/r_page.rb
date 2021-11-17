@@ -162,7 +162,12 @@ module RLayout
     end
 
     def last_line
-      @graphics.last.graphics.last
+      # @graphics.last.graphics.last
+      if @graphics.last.graphics
+        @graphics.last.graphics.last
+      else
+        nil
+      end
     end
 
     def body_lines

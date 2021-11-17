@@ -1036,7 +1036,7 @@ module RLayout
       @top_margin = @document.pages[0].top_margin
       @width = @document.pages[0].width
       @height = @document.pages[0].height
-      @story[:paragraphs].each do |para|
+      @story[:paragraphs].each do |para, i|
         if  para[:markup] == "image"
           @image_count += 1
           image_info = {}
@@ -1045,7 +1045,7 @@ module RLayout
           image_info[:y] = @top_margin
           image_info[:width] = @width - @left_margin*2
           image_info[:height] = (@height - @top_margin*2)/2
-          image_info[:image_path] = @local_image_folder + "/#{@image_count}"
+          image_info[:image_path] = @local_image_folder + "/#{@image_count}.jpg"
           para_options = {}
           para_options[:markup] = "image"
           para_options[:image_info] = image_info
@@ -1078,9 +1078,7 @@ module RLayout
       current_page_paragraph_list = []
 
       while @paragraph = @paragraphs.shift
-        if @paragraph.class == Image
-          puts "we have image"
-        end
+
         # capturing paragraph info to save @story_by_page
         @current_line                   = @paragraph.layout_lines(@current_line)
         current_page_paragraph_list     << @paragraph.para_info

@@ -51,6 +51,10 @@ module RLayout
       self
     end
     
+    def page
+      @parent
+    end
+
     def page_number
       @parent.page_number
     end
@@ -160,6 +164,14 @@ module RLayout
 
     def add_new_page
       @parent.add_new_page if @parent && @parent.is_a?(RPage)
+    end
+
+    def next_text_line(current_line)
+      current_line_index = @graphics.index(current_line)
+      @graphics[current_line_index..-1].each do |line|
+        return line if line.has_text_room?
+      end
+      nil
     end
 
     def column_index

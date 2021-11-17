@@ -294,9 +294,15 @@ module RLayout
         # return true unless @current_line
         @current_line.set_paragraph_info(self, "middle_line")
       elsif @markup == 'image'
-        column = @current_line.column
-        @image_info[:parent] = column
-        Image.new(@image_info)
+        # binding.pry
+        # column = @current_line.column
+        # page = column.page
+        # @image_info[:parent] = page
+        # if page.first_page?
+        #   @image_info[:y] = page.height/2
+        # end
+        # Image.new(@image_info)
+        # @current_line = page.add_new_page
       end
 
       if @current_line.room != @current_line.text_area[2]
