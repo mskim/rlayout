@@ -31,6 +31,7 @@ module RLayout
             # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
         when RoundRectStruct
         when RLayout::CircleStruct
+          # binding.pry
           flipped = flipped_origin unless flipped
           # circle = canvas.fill_color(@fill.color).stroke_color(@stroke.color).line_width(@stroke.thickness).circle(flipped[0] + @shape.r, flipped[1] + @shape.r, @shape.r).fill_stroke
           circle = canvas.fill_color(@fill.color).circle(flipped[0] + @shape.r, flipped[1] - @shape.r, @shape.r).fill
@@ -43,7 +44,7 @@ module RLayout
         else
           flipped = flipped_origin unless flipped
           unless @fill.color == 'clear'
-            canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] , @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+            canvas.fill_color(@fill.color).rectangle(flipped[0] + @left_margin,  flipped[1] + @left_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
           end
           # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
         end

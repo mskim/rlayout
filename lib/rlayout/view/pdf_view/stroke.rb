@@ -79,15 +79,18 @@ class Graphic
       # if side are not simple, stroke each sides
       if @stroke[:sides] != [1,1,1,1] #TODO check for rectangle or roundrect
         line_inset        = @stroke[:thickness]/2
-        bottom_left       = [@x + @left_margin + line_inset, flipped[1] + @top_margin - @height + line_inset]
-        top_left          = [@x + @left_margin + line_inset, flipped[1] - @top_margin - line_inset]
-        top_right         = [@x + @width - @right_margin - line_inset, flipped[1] - @top_margin - line_inset]
-        bottom_right      = [@x + @width - @right_margin + line_inset, flipped[1] + @top_margin - @height - line_inset]
-        open_bottom_left  = [@x + @left_margin, flipped[1] + @bottom_margin - @height + line_inset]
-        open_top_left     = [@x + @left_margin, flipped[1] - @top_margin - line_inset]
-        open_inner_bottom_left  = [@x + @left_margin + @left_inset, flipped[1] + @bottom_margin - @height + line_inset]
-        open_inner_top_left     = [@x + @left_margin + @left_inset, flipped[1] - @top_margin - line_inset]
-        # open_left_inset_line do not draw top and bottom inset area
+        # bottom_left       = [@x + @left_margin + line_inset, flipped[1] + @top_margin - @height + line_inset]
+        bottom_left       = [flipped[0] + line_inset, flipped[1] + @top_margin - @height + line_inset]
+        # top_left          = [@x + @left_margin + line_inset, flipped[1] - @top_margin - line_inset]
+        top_left          = [flipped[0] + line_inset, flipped[1] - @top_margin - line_inset]
+        # top_right         = [@x + @width - @right_margin - line_inset, flipped[1] - @top_margin - line_inset]
+        top_right         = [flipped[0] + @width - @right_margin - line_inset, flipped[1] - @top_margin - line_inset]
+        bottom_right      = [flipped[0] + @width - @right_margin + line_inset, flipped[1] + @top_margin - @height - line_inset]
+        # for custom newspaper box 
+        open_bottom_left  = [flipped[0] + @x + @left_margin, flipped[1] + @bottom_margin - @height + line_inset]
+        open_top_left     = [flipped[0] + @x + @left_margin, flipped[1] - @top_margin - line_inset]
+        open_inner_bottom_left  = [flipped[0] + @x + @left_margin + @left_inset, flipped[1] + @bottom_margin - @height + line_inset]
+        open_inner_top_left     = [flipped[0] + @x + @left_margin + @left_inset, flipped[1] - @top_margin - line_inset]
         @open_left_inset_line = @stroke[:sides].length >= 4 && @stroke[:sides].last == "open_left_inset_line"
 
         if @stroke[:sides][0] > 0
@@ -134,7 +137,7 @@ class Graphic
         end
 
       else
-        canvas.line_width(@stroke[:thickness]).stroke_color(@stroke[:color]).rectangle(flipped[0] + @left_margin, flipped[1] + @top_margin - @height, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
+        canvas.line_width(@stroke[:thickness]).stroke_color(@stroke[:color]).rectangle(flipped[0], flipped[1] + @top_margin - @height, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
       end
     else
         # @line1=@line_types_width_table[@stroke[:type]][0]*@stroke[:thickness]

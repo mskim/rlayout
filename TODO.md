@@ -122,6 +122,19 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2021_11_24
+  - fix caption column in ImagePlus
+  - fix empty image box offset error
+  - use Struct with keyword_init: true
+  - make Line with Struct
+
+2021_11_13
+  - r_papagraph image
+    - image size - body_line_height
+    - image_info file name.yml
+  - r_papagraph table
+    - tables folder
+
 2021_11_13
   - redefine Line, path, polygon with Struct
 

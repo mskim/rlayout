@@ -8,7 +8,7 @@ module RLayout
   # NewsImage adds CaptionTitle, caption, source
   class ImagePlus < Container
     attr_reader :image_path, :image_style, :caption, :caption_from_basename, :project_path
-    attr_reader :shape
+    attr_reader :shape, :image_info
 
     def initialize(options={})
       @image_path               = options[:image_path]
@@ -16,23 +16,14 @@ module RLayout
         puts "image_path not found!!!"
         return
       end
-      @caption                  = options[:caption]
-      #  TODO this works only with .jpg extension
-      # unless @caption &&
-      #   @ext = '.jpg'
-      #   @caption = filter_caption_name(File.basename(@image_path, @ext).unicode_normalize)
-      # end
-      @project_path             = options[:project_path]
-      @image_style              = options.fetch(options[:image_style], default_image_style)
-      image_options             = @image_style.dup
       options[:fill_color]      = 'clear'
       super
-
+      @caption = options[:caption]  || options['caption']
+      image_options = {}
       image_options[:width]        = @width
-      image_options[:height]       = @height
+      image_options[:height]       = @height - 10
       image_options[:parent]       = self
       image_options[:image_path]   = @image_path
-      image_options[:project_path] = @project_path
       image_options[:fill_color]   = 'clear'
       image_options[:shape]        = options[:shape]
       caption_width                = @width
@@ -42,7 +33,7 @@ module RLayout
       # image_options[:caption_height] = 0 unless @caption
       @image_object                = Image.new(image_options)
       if @caption
-        text_options                = @image_style.dup
+        text_options                = @image_style.dup || default_image_style
         text_options[:parent]       = self
         text_options[:y]            = @height - caption_height
         text_options[:height]       = caption_height
@@ -50,6 +41,8 @@ module RLayout
         text_options[:text_string]  = @caption.unicode_normalize
         text_options[:v_alignment]  = 'center'
         text_options[:font_size]    = caption_height*0.7
+        text_options[:font_size]    = 7.0
+        # binding.pry
         @caption_object = Text.new(text_options)
       end
     end

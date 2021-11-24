@@ -478,10 +478,10 @@ subtitle:
   font_family: KoPub돋움체_Pro Medium
   font: KoPubDotumPM
   font_size: 18.0
-  text_color: CMYK=0,0,0,100
+  text_color: CMYK=100,0,0,100
   alignment: center
   tracking: -1.0
-  space_width: 4.0
+  space_width: 6.0
   scale: 100.0
   text_line_spacing: 6.0
   space_before_in_lines: 0.5

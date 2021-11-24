@@ -54,7 +54,7 @@ module RLayout
         p_origin = @parent.flipped_origin
         [p_origin[0] + @x, p_origin[1] - @y]
       else
-        [@x, @height - @y]
+        [@x + @left_margin, @height - @y]
       end
     end
 

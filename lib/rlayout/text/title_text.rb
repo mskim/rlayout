@@ -97,7 +97,7 @@ module RLayout
       @current_line_y         = @top_margin + @top_inset
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @current_style_service        = RLayout::StyleService.shared_style_service
+      @current_style_service        = RLayout::StyleService.shared_style_service      
       @style_object, @font_wrapper  = @current_style_service.style_object(@style_name, adjust_size: @adjust_size) 
       space_glyph             = @font_wrapper.decode_utf8(" ").first
       @space_width            = @style_object.scaled_item_width(space_glyph)

@@ -26,8 +26,7 @@ module RLayout
         @column_count   = @document.column_count
         @row_count      = @document.row_count
       else
-        @column_count   = 1
-        @column_count   = options[:column_count] if options[:column_count]
+        @column_count   = options[:column_count] || 1
         @row_count      = 6
         @row_count   = options[:row_count] if options[:row_count]
       end
@@ -38,7 +37,6 @@ module RLayout
       @grid_size << (@height - @top_margin - @bottom_margin)/@row_count
       @float_layout   = options[:float_layout] || []
       @first_page     = options[:first_page] || false
-
       @page_number    = options[:page_number] || 1
       if @document
         @column_count      = @document.column_count
@@ -96,6 +94,7 @@ module RLayout
       link_column_lines
     end
 
+    # set next_line to every line in column
     def link_column_lines
       previous_column_last_line = nil
       @graphics.each_with_index do |column, i|
@@ -107,20 +106,43 @@ module RLayout
       end
     end
 
+    # add single float to page
+    def add_float(float_info, options={})
+      float_info[:parent] = self
+      float_info[:is_float] = true
+      case float_info[:kind]
+      when 'image'
+        ImagePlus.new(float_info)
+      when 'table'
+        # float[:project_path]
+        GridTable.new(float_info)
+      when 'group_image'
+        # float[:project_path]
+        GroupImage.new(float_info)
+      end
+      unless options[:layout_float]
+        layout_floats
+        adjust_overlapping_columns
+        update_column_areas
+      end
+
+    end
+
+    # add multiple floats to page
     def add_floats(page_floats)
       page_floats.each do |float_info|
-        if float_info.class == Array
-          float = {}
-          float[:parent]      = self
-          float[:is_float]    = true
-          float[:image_path]  = float_info[0]
-          float[:position]    = float_info[1]
-          size                = float_info[2]
-          float[:column]      = size.split("x")[0].to_i
-          float[:row]         = size.split("x")[1].to_i
-          # float[:x_grid]      = float_info[:x_grid] if float_info[:x_grid]
-          NewsFloat.new(float)
-        elsif float_info.class == Hash
+        # if float_info.class == Array
+        #   float = {}
+        #   float[:parent]      = self
+        #   float[:is_float]    = true
+        #   float[:image_path]  = float_info[0]
+        #   float[:position]    = float_info[1]
+        #   size                = float_info[2]
+        #   float[:column]      = size.split("x")[0].to_i
+        #   float[:row]         = size.split("x")[1].to_i
+        #   # float[:x_grid]      = float_info[:x_grid] if float_info[:x_grid]
+        #   NewsFloat.new(float)
+        # elsif float_info.class == Hash
           float = {}
           float[:parent]      = self
           float[:is_float]    = true
@@ -132,29 +154,39 @@ module RLayout
           float[:y]  = float_info[:y]
           float[:width]  = float_info[:width]
           float[:height]  = float_info[:height]
-          Image.new(float)
-
-          # case float_info[:kind]
-          # when 'image'
-          #   ImagePlus.new(float)
-          # when 'table'
-          #   # float[:project_path]
-          #   GridTable.new(float)
-          # when 'group_image'
-          #   # float[:project_path]
-          #   GroupImage.new(float)
-          # end
-          # float[:x_grid]      = float_info[:x_grid] if float_info[:x_grid]
-          # NewsFloat.new(float)
-        end
+          add_float(float_info, layout_float: floats_index)
+          # Image.new(float)
+        # end
+        # layoout_float
       end
+    end
+
+    def has_image?
+      @floats.length > 0
+    end
+
+    def is_first_page?
+      return true unless @document
+      return true if @document.pages.first == self
+      false
     end
 
     def first_page?
       if @parent
-        @parent.pages.first == self
+        return @parent.pages.index(self) == 0
       end
-      true
+      false
+    end
+
+    def last_page?
+      if @parent
+        return @parent.pages.last == self
+      end
+      false
+    end
+    
+    def next_page
+      @parent.next_page(self)
     end
 
     def first_line
@@ -188,10 +220,6 @@ module RLayout
 
     def add_new_page
       @parent.add_new_page
-    end
-
-    def next_page
-      @parent.next_page(self)
     end
 
     def adjust_page_size_to_document
@@ -395,6 +423,7 @@ module RLayout
       @heading_object.parent = self
       @graphics << @heading_object
     end
+
     # does current text_box include Heading in floats
     def has_heading?
       @graphics.each do |g|
@@ -446,21 +475,13 @@ module RLayout
       h
     end
 
-    def is_first_page?
-      return true unless @document
-      return true if @document.pages.first == self
-      false
-    end
-
-    def first_page?
-      if @parent
-        return @parent.pages.index(self) == 0
-      end
-      false
-    end
-
     def left_page?
       @left_page == true
+    end
+
+    def next_page
+      index = @graphics.index(self)
+      @graphics[index + 1]
     end
 
     def create_header_footer(options={})

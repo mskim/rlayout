@@ -47,7 +47,7 @@ module RLayout
     attr_reader :line_width,  :token_heights_are_equal
     attr_accessor :tokens, :para_lines, :pdf_doc
     attr_reader :para_rect
-    attr_reader :image_info
+    attr_reader :float_info
     def initialize(options={})
       @tokens = []
       @markup         = options.fetch(:markup, 'p')
@@ -62,7 +62,7 @@ module RLayout
         @tokens       = []
         create_tokens
       end
-      @image_info = options[:image_info]
+      @float_info = options[:float_info]
       create_para_lines if options[:create_para_lines]
       self
     end
@@ -211,7 +211,6 @@ module RLayout
       end
     end
 
-
     def create_tokens_with_emphasis_arrow(para_string)
       para_string.chomp!
       para_string.sub!(/^\s*/, "")
@@ -294,15 +293,35 @@ module RLayout
         # return true unless @current_line
         @current_line.set_paragraph_info(self, "middle_line")
       elsif @markup == 'image'
-        # binding.pry
-        # column = @current_line.column
-        # page = column.page
-        # @image_info[:parent] = page
-        # if page.first_page?
-        #   @image_info[:y] = page.height/2
-        # end
-        # Image.new(@image_info)
-        # @current_line = page.add_new_page
+        column = @current_line.column
+        page = column.page
+        @float_info[:markup] = 'image'
+        # check if page has image
+        # allow one image per page unless they are page_image_collection
+
+        if !page.first_page? && page.has_image? && page.last_page?
+          # add new page
+          # binding.pry
+          if @current_line.y <= page.height/2
+            page.add_float(@float_info)
+          else
+            if page.last_page?
+              @current_line = page.add_new_page
+              column = @current_line.column
+              page = column.page
+              page.add_float(@float_info)
+            else
+              page.next_page.add_float(@float_info)
+            end
+          end
+        else
+          page.add_float(@float_info)
+        end
+      elsif @markup == 'table'
+        column = @current_line.column
+        page = column.page
+        @float_info[:markup] = 'table'
+        page.add_float(@float_info)
       end
 
       if @current_line.room != @current_line.text_area[2]

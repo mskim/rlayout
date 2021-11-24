@@ -1,57 +1,71 @@
 # encoding: utf-8
 
 # Chapter
-# Chapter converts given Story into a document.
-# Story is parsed to heading and body. 
-# Each story has heading and body, heding is placed at the top in yaml format.
-# Body part follows the headinng, in markdown format.
-# Body part are converted to series of paragraphs,
+# - Chapter converts given Story into a document.
+# - Story is parsed to heading and body. 
+# - Each story has heading and body, heding is placed at the top in yaml format.
+# - Body part follows the headinng, in markdown format.
+# - Body part are converted to series of paragraphs,
 
-# Heading type
-# We have tow type of chapter heading, Heading and HeadingContainer.
-# for growing and fix height heading.
-
-# How to place images in long document?
-
+## How to place images in long document?
 # There are three ways of placing images in the long document.
-# First method is to embed image markup in the text.
-# This will place image in the column along other text paragraphs,
-# We can set width of image as 1, 1/2, 1/3, 1/4 of column.
-# And text will flow around it.
+# 1. inline image markup
+# 2. pre-planed separate yaml file containeing image info for page.
+# 3. inserting pre-made PDF photo pages with markup at insertion point
 
-# And second way is to use float_group.
-# Float_group is a floating images layout on top of a page,
-# where text flows aroud those images.
-# Float_group containes position information,
-# such as grid_frame, size, position attributes.
-# New page is triggered with Float_group. pre-desinged layout pattern can also be used.
+### First method is to inline image markup in the text.
+# - Image tag will trigger new page except the first page
+# - It is recommanded to start with image markup at the beginning of page content
+# - and put rest of text after the image markup. 
+# - So, the images will be placed into page as floats first, then text will floow arount it.
+# - 그림_1(크기:전면)
+# - 그림_2(위치:상단, 크기:반)
+# - 그림_1(크기:전면)
+# - 그림_2(위치:상단, 크기:반)
+# - 그림_3(위치:하단, 크기:반), bottom positin of size 1
+# - 그림_4 기본은 (위치:상단, 크기:반)
+# - 그림_5,
 
-# And the third method is to use photo_page,
-# photo_page can containe more then one page.
-# New page section is triggered for photo_page.
-# photo_page is pure photo only page, no text flows in the page,
-# no header, no footer, no page number.
-# pre-desinged layout pattern can be pulled from pattern library
-# or positions can be set manually.
+# - We can also puts multiple images in the same page, for this we need to group them as "그림_조합_1"
+# - this represents collection of images that will be place in the same page.
+# - multiple_image can be placed in a single page by
+# - putting using 그림_조합_1 same image info in the same text block
+# - should create subfolder 그림_조합_1 folder within images folder
+# - staeting with 그림_조합
+# - 그림_조합_1
+# - 그림_1(3, 1x1)
+# - 그림_2(3, 1x1)
+# - 그림_3(3, 1x1)
+# - it will push down image if multiple images have same positioon
+# - this has effoct of vertical alignment
 
-# For short documents, such as magazine article,
-# desinger can place image in rlayout file.
-# And image info in specified in meta-data header
-# or design template by designer.
+### And second way is to use float_group.
+# - Float_group is a floating images layout on top of a page,
+# - where text flows aroud those images.
+# - Float_group containes position information,
+# - such as grid_frame, size, position attributes.
+# - New page is triggered with Float_group. pre-desinged layout pattern can also be used.
 
-# For book chapters, first, second and third methods are used.
+### And the third method is to use photo_page,
+# - photo_page can containe more then one page.
+# - New page section is triggered for photo_page.
+# - photo_page is pure photo only page, no text flows in the page,
+# - no header, no footer, no page number.
+# - pre-desinged layout pattern can be pulled from pattern library
+# - or positions can be set manually.
 
-# How to place image caption?
-# File that has same name with extension of .caption?
-# add p write after the # image tag, this should be the caption?
-# Or have the caption text as file name.?
-# or caption info in the image markup?
+### For short documents, such as magazine article,
+# - desinger can place image in rlayout file.
+# - And image info in specified in meta-data header
+# - or design template by designer.
 
-# Add Image bleeding support
 
-# Inserting Pre-Made PDF Pages in the middle of the pages.
+### How to place image caption?
+# - File that has same name with extension of .caption?
+# - Or have the caption text as file name.jpg
 
-# new page triggering
+### How to add Image bleeding support
+
 
 # when we encounter page triggering node, add new page
 #    section_1, photo_page, image_group
@@ -552,7 +566,7 @@ subtitle_main:
   text_color: CMYK=0,0,0,100
   alignment: left
   tracking: -1.0
-  space_width: 5.0
+  space_width: 6.0
   scale: 100.0
   text_line_spacing: 6.0
   space_before_in_lines: 1
@@ -603,7 +617,7 @@ subtitle:
   text_color: CMYK=0,0,0,100
   alignment: center
   tracking: -1.0
-  space_width: 4.0
+  space_width: 9.0
   scale: 100.0
   text_line_spacing: 6.0
   space_before_in_lines: 0.5
@@ -923,7 +937,6 @@ module RLayout
           @layout_rb = File.open(layout_path, 'r'){|f| f.read}
         end
       end
-      # @page_floats    = options[:page_floats]   || 
       @starting_page  = options[:starting_page] || 1
       @page_by_page   = options[:page_by_page]
       @page_pdf       = options[:page_pdf]
@@ -948,7 +961,8 @@ module RLayout
       else
         read_page_floats 
       end
-      if @page_floats && @page_floats != {}
+      if has_page_floats_info?
+        @has_page_floats_info = true
         last_floats_page_number = @page_floats.keys.sort.last
         need_page_count = last_floats_page_number - @document.pages.length
         if need_page_count > 0
@@ -977,6 +991,10 @@ module RLayout
       save_story_by_page if @story_by_page
       save_toc if @toc
       self
+    end
+
+    def has_page_floats_info?
+      @page_floats && @page_floats != {}
     end
 
     def page_count
@@ -1039,17 +1057,32 @@ module RLayout
       @story[:paragraphs].each do |para, i|
         if  para[:markup] == "image"
           @image_count += 1
-          image_info = {}
-          image_info[:position] = 1
-          image_info[:x] = @left_margin
-          image_info[:y] = @top_margin
-          image_info[:width] = @width - @left_margin*2
-          image_info[:height] = (@height - @top_margin*2)/2
-          image_info[:image_path] = @local_image_folder + "/#{@image_count}.jpg"
+          float_info = {}
+          float_info[:position] = 1
+          float_info[:x] = @left_margin
+          float_info[:y] = @top_margin
+          float_info[:width] = @width - @left_margin*2
+          float_info[:height] = (@height - @top_margin*2)/2
+          float_info[:image_path] = @local_image_folder + "/#{@image_count}.jpg"
+          float_info[:kind] = "image"
+          # TODO: fix this ????
+          float_info[:image_path] =  Dir.glob("#{@local_image_folder}/#{@image_count}.{jpg,png,pdf}").first
+          if float_info[:image_path] && File.exist?(float_info[:image_path])
+            extension = File.extname(float_info[:image_path])
+            image_info_path = float_info[:image_path].sub("#{extension}", ".yml")
+            # binding.pry
+            if File.exist?(image_info_path)
+              image_info = YAML::load_file(image_info_path)
+              float_info.merge!(image_info)
+            end
+          end
+
           para_options = {}
           para_options[:markup] = "image"
-          para_options[:image_info] = image_info
+          para_options[:float_info] = float_info
           @paragraphs << RParagraph.new(para_options)
+        elsif  para[:markup] == "table"
+
         else
           para_options = {}
           para_options[:markup]         = para[:markup]

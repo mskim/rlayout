@@ -97,7 +97,7 @@ module RLayout
       [@left_margin, @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
     end
 
-    # create new page and return first line of of main_box
+    # create new page and return first line of new page
     def add_new_page(options={})
       if @page_type && (@page_type == "toc_page" || @page_type == "cover_page")
         h                 = {}

@@ -57,6 +57,9 @@ module RLayout
       end
     end
 
+    # using imagemagik
+    # convert -density 300 -quality 95 pdf_file.pdf png_file.png
+
     # using vips convert pdf 2 jpg
     # if enlarging ratio is given as options, it enlarges pdf canvas to the given ratio, 
     # then generates jpg, giving the hi-resolution result

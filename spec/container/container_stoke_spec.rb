@@ -3,32 +3,32 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'container_stroke_drawing test' do
   before do
-    @g = RLayout::Container.new(stroke_width: 1, x: 0, y:0, width: 300, height: 500, fill_color: 'gray', top_margin: 50, bottom_margin: 50, left_margin: 50, right_margin: 50) do
-      rectangle(stroke_width: 2, fill_color: 'yellow')
+    @container = RLayout::Container.new(stroke_width: 1, x: 0, y:0, width: 300, height: 500, fill_color: 'white', top_margin: 50, bottom_margin: 50, left_margin: 50, right_margin: 50) do
+      circle(stroke_width: 2, fill_color: 'blue')
       container(stroke_width: 2, fill_color: 'white', layout_direction: 'horizontal') do
         rectangle(stroke_width: 2, fill_color: 'red')
         rectangle(stroke_width: 2, fill_color: 'gray')
         rectangle(stroke_width: 2, fill_color: 'orange')
+        image(image_path: "some_path")
       end
-      rectangle(stroke_width: 1, fill_color: 'darkGray')
       relayout!
     end
-    @path = "/Users/Shared/rlayout/output/container_stoke_drawing_test.svg"
-    @pdf_path = "/Users/Shared/rlayout/output/container_stoke_drawing_test.pdf"
+    # binding.pry
+    @pdf_path = "/Users/mskim/test_data/container/container_stoke.pdf"
   end
 
   it 'should create Graphic object' do
-    assert_equal Container, @g.class 
+    assert_equal Container, @container.class 
   end
 
   it 'should have top_margin ' do
-    assert_equal 50, @g.top_margin
-    assert_equal 50, @g.left_margin
-    assert_equal 50, @g.right_margin
+    assert_equal 50, @container.top_margin
+    assert_equal 50, @container.left_margin
+    assert_equal 50, @container.right_margin
   end
 
   it 'should save pdf' do
-    @g.save_pdf(@pdf_path)
+    @container.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
   end
