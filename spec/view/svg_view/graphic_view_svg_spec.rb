@@ -17,7 +17,6 @@ describe 'create Circle svg ' do
   before do
     @g = Circle.new(:x=>400, :y=>400, :fill_color=>"red")
     @svg_path = "/Users/mskim/test_data/svg/circle_test.svg"
-    @svg_path = "/Users/Shared/rlayout/output/circle_test.svg"
   end
 
   it 'should save svg' do
@@ -80,7 +79,7 @@ end
 
 describe 'create Text svg ' do
   before do
-    @g = Text.new(:text_string=> "This is a text test.")
+    @g = Text.new(text_string: "This is a text test.")
     @svg_path = "/Users/mskim/test_data/svg/text_test.svg"
 
   end

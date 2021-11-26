@@ -135,9 +135,8 @@ class Graphic
         if @stroke[:sides][5] &&  @stroke[:sides][5] > 0
           draw_line(canvas, top_right[0], top_right[1], bottom_left[0], bottom_left[1], @stroke[:thickness]*@stroke[:sides][5])
         end
-
       else
-        canvas.line_width(@stroke[:thickness]).stroke_color(@stroke[:color]).rectangle(flipped[0], flipped[1] + @top_margin - @height, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
+        canvas.line_width(@stroke[:thickness]).stroke_color(@stroke[:color]).rectangle(flipped[0] + @left_margin, flipped[1] + @top_margin - @height, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
       end
     else
         # @line1=@line_types_width_table[@stroke[:type]][0]*@stroke[:thickness]

@@ -523,15 +523,6 @@ module RLayout
         @ns_view.save_pdf(path, options)
       elsif RUBY_ENGINE == 'ruby'
         save_pdf_with_ruby(path, options)
-        # unless @parent
-        #   @pdf_doc  = HexaPDF::Document.new
-        #   page      = @pdf_doc.pages.add([@x, @y, @width, @height])
-        #   canvas    = page.canvas
-        # else
-        #   @pdf_doc  = @parent.pdf_doc
-        # end
-        # draw_pdf(canvas)
-        # @pdf_doc.write(path, optimize: true)
       end
     end
 
@@ -540,10 +531,7 @@ module RLayout
       @ns_view.save_jpg(path)
     end
 
-
     def bezierPathWithRect(r)
-      #TODO
-
       case @shape
       when 0   #{}"rectangle", '사각형'
         path = NSBezierPath.bezierPathWithRect(r)
@@ -589,8 +577,6 @@ module RLayout
       @text_layout_manager.fit_text_to_box  if @text_layout_manager
     end
   end
-
-
   class NSText < Graphic
     def initialize(options={})
       super

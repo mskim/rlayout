@@ -122,11 +122,11 @@ module RLayout
           if vertical
             # graphic_frame[0]  = (@left_margin  + @left_inset)
             # graphic_frame[0]  = @left_margin            
-            graphic_frame[0]  = @left_inset            
+            graphic_frame[0]  = @left_margin # + @left_inset            
             graphic_frame[2]  = column_size[0] - (@left_margin + @right_margin + @right_inset + @left_inset) #- graphic.right_margin - graphic.left_margin
           else
             # graphic_frame[1]  = (@top_margin + @top_inset)
-            graphic_frame[1]  = @top_inset
+            graphic_frame[1]  = @top_margin # + @top_inset
             graphic_frame[3]  = column_size[1] - (@top_margin + @bottom_margin + @top_inset + @bottom_inset) #- graphic.top_margin - graphic.bottom_margin
           end
         end

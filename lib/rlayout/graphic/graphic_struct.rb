@@ -219,10 +219,11 @@ module RLayout
 
   end
 
-  PoligonStruct   = Struct.new(:points, :style) do
+  PoligonStruct   = Struct.new(:points, :style, keyword_init: true) do
     def to_svg
       #TODO
     end
+    
     def to_hash
       h = {}
       # self.to_h.delete_if{|k,v| v.nil?}

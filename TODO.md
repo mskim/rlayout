@@ -122,9 +122,18 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2021_11_26
+  - page.to_svg
+  - Container.to_svg_element
+  - Container.to_svg
+  - Graphic.to_svg_element
+  - Graphic.to_svg
+  
 2021_11_24
-  - fix caption column in ImagePlus
   - fix empty image box offset error
+
+    - fix caption column in ImagePlus
+
   - use Struct with keyword_init: true
   - make Line with Struct
 

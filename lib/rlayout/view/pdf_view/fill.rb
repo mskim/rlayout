@@ -27,7 +27,7 @@ module RLayout
         case @shape
         when RLayout::RectStruct || 'rect'
           flipped = flipped_origin unless flipped
-          canvas.fill_color(@fill.color).rectangle(flipped[0],  flipped[1] - @height, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
+          canvas.fill_color(@fill.color).rectangle(flipped[0] + @left_margin,  flipped[1] - @height, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
             # canvas.fill_color(@fill.color).rectangle(@x - @left_margin, @y - @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).fill
         when RoundRectStruct
         when RLayout::CircleStruct

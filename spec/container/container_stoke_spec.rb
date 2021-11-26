@@ -13,7 +13,6 @@ describe 'container_stroke_drawing test' do
       end
       relayout!
     end
-    # binding.pry
     @pdf_path = "/Users/mskim/test_data/container/container_stoke.pdf"
   end
 

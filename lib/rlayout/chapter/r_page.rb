@@ -110,6 +110,7 @@ module RLayout
     def add_float(float_info, options={})
       float_info[:parent] = self
       float_info[:is_float] = true
+
       case float_info[:kind]
       when 'image'
         ImagePlus.new(float_info)

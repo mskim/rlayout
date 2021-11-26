@@ -16,7 +16,7 @@ module RLayout
       if @parent
         return svg
       else
-        svg_string = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n"
+        svg_string = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"#{@x + @width}px\" height=\"#{@y + @height}px\">\n"
         svg_string += svg
         svg_string += "\n</svg>\n"
         return svg_string
