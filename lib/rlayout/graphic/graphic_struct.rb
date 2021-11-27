@@ -10,10 +10,13 @@ SIDE_SHAPE_TYPES    = %w[round inverted_round ribbon roman_knife]
 
 module RLayout
 
-  FillStruct      = Struct.new(:color) do
+  FillStruct      = Struct.new(:color, :color_name, keyword_init: true) do
+    
     def to_svg
+      # binding.pry
       # convert to rgb format
-      color
+      # color
+      color_name
     end
 
     def to_hash
@@ -41,11 +44,11 @@ module RLayout
     end
   end
 
-  StrokeStruct   = Struct.new(:color, :thickness, :dash, :line_cap, :line_join, :type, :sides) do
+  StrokeStruct   = Struct.new(:color, :thickness, :dash, :line_cap, :line_join, :type, :sides, :color_name, keyword_init: true) do
     def to_svg
       # convert color to rgb first
       
-      s = "stroke:#{color};"
+      s = "stroke:#{color_name};"
       s += "stroke-width:#{thickness}" if thickness > 0
       s += "dash:#{dash}" if dash
       s
@@ -69,7 +72,6 @@ module RLayout
       canvas.stroke_color(color)
       canvas.line_width(thickness)
     end
-
   end
 
   ShadowStruct      = Struct.new(:color, :x_offset, :y_offset, :blur_radius)
@@ -77,7 +79,7 @@ module RLayout
   GutterStrokeStruct = Struct.new(:color, :thickness, :dash, :type)
   # CornersStruct   = Struct.new(:top_left, :top_right, :bottom_right, :bottom_left, :type)
   # SidesStruct     = Struct.new(:left, :top, :right, :bottom, :type)
-  RectStruct      = Struct.new(:x, :y, :width, :height) do
+  RectStruct      = Struct.new(:x, :y, :width, :height, keyword_init: true) do
     def to_svg
       "\t<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" style_place_holder></rect>\n"
     end
@@ -137,7 +139,7 @@ module RLayout
 
   CircleStruct    = Struct.new(:cx, :cy, :r) do
     def to_svg
-      "\t<circle cx=\"#{cx}\" cy=\"#{cy}\" r=\"#{r}\"  />\n"
+      "\t<circle cx=\"#{cx}\" cy=\"#{cy}\" r=\"#{r}\" style_place_holder />\n"
     end
 
     def to_hash
@@ -295,7 +297,7 @@ module RLayout
 
   end
 
-  ImageStruct = Struct.new(:image_path, :fit_type, :rotation) do
+  ImageStruct = Struct.new(:image_path, :fit_type, :rotation, keyword_init: true) do
     def to_hash
       # self.to_h.delete_if{|k,v| v.nil?}
     end

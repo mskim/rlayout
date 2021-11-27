@@ -367,7 +367,7 @@ module RLayout
       options[:y]           = 3
       options[:width]       = 20
       options[:height]      = 9
-      options[:image_record]= ImageStruct.new(options[:image_path])
+      options[:image_record]= ImageStruct.new(image_path: options[:image_path])
       super
       self
     end
@@ -409,7 +409,7 @@ module RLayout
       top_style[:font_size]= top_style[:font_size]*@size_ratio
       top_style[:string]  = options[:top]
       top_style[:parent]  = self
-      top_style[:tag]        = "top"
+      top_style[:tag]     = "top"
       @top_token          = TextToken.new(top_style)
       @graphics.reverse
       # increase the height by 0.5

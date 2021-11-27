@@ -11,7 +11,7 @@ module RLayout
   class Graphic
     def init_stroke(options)
 
-      @stroke             = options.fetch(:stroke, StrokeStruct.new('CMYK=0,0,0,100', 0))
+      @stroke             = options.fetch(:stroke, StrokeStruct.new(color:'CMYK=0,0,0,100', thickness:0, color_name:'black'))
       @stroke[:color]     = options[:line_color] if options[:line_color] # supporting commomly used name
       @stroke[:color]     = options[:stroke_color] if options[:stroke_color]
       

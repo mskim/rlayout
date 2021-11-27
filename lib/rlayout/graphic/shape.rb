@@ -4,7 +4,7 @@ module RLayout
 
   class Graphic
     def init_shape(options)
-      @shape              = options.fetch(:shape, RectStruct.new(@x, @y, @width, @height))
+      @shape              = options.fetch(:shape, RectStruct.new(x:@x, y:@y, width: @width, height: @height))
       @shape_corners      = options.fetch(:shape_corners, shape_defaults[:shape_corners])
       @shape_bezier       = options.fetch(:shape_bezier, shape_defaults[:shape_bezier])
     end

@@ -50,7 +50,7 @@ module RLayout
           @y              = @parent.height - @from_bottom - @height
         end
       end
-      @shape            = options.fetch(:shape, RectStruct.new(@x,@y,@width,@height))
+      @shape            = options.fetch(:shape, RectStruct.new(x:@x, y:@y, width: @width, height: @height))
       @auto_save        = options[:auto_save]
       init_layout(options)
       init_fill(options)
@@ -134,7 +134,7 @@ module RLayout
     end
 
     def update_shape
-      @shape = RectStruct.new(@x,@y,@width,@height)
+      @shape = RectStruct.new(x:@x, y:@y, width: @width, height: @height)
     end
 
     def current_style
@@ -667,9 +667,7 @@ module RLayout
       
       if options[:image_path]
         @image_path   = options[:image_path]
-        @image_record = ImageStruct.new(options[:image_path])
-      elsif options[:image_record]
-        @image_record = ImageStruct.new(*options[:image_record])
+        @image_record = ImageStruct.new(image_path:options[:image_path])
       end
       self
     end

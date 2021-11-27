@@ -13,22 +13,22 @@ module RLayout
     end
 
     def to_svg
-      if @parent
-        return svg
-      else
-        svg_string = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"#{@x + @width}px\" height=\"#{@y + @height}px\">\n"
-        svg_string += svg
-        svg_string += "\n</svg>\n"
-        return svg_string
-      end
+      svg_string = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"#{@x + @width}px\" height=\"#{@y + @height}px\">\n"
+      svg_string += svg_element
+      svg_string += "\n</svg>\n"
+      svg_string
     end
 
-    def svg
+    def svg_element
       s = @shape.to_svg
       s = s.gsub!("style_place_holder", style_to_svg)
-      s += @image_record.to_svg.gsub!("replace_this_with_rect", svg_rect) if @image_record
-      s += @text_record.to_svg.gsub!("replace_this_with_text_origin", svg_text_origin) if @text_record
-      s
+      if @image_record
+        s += @image_record.to_svg.gsub!("replace_this_with_rect", svg_rect) 
+      end
+      if @text_record
+        s += @text_record.to_svg.gsub!("replace_this_with_text_origin", svg_text_origin) 
+      end
+      s += "\n"
     end
 
     def style_to_svg
@@ -43,19 +43,17 @@ module RLayout
                 </linearGradient>
               </defs>
               "style=\"fill:\"url(#grad1)\";#{@stroke.to_svg}\""
-
           E1
 
       elsif @fill.class == RadialGradient
-
         s2 =<<~EOF.gsub(/^\s*/, "")
-              <defs>
-              <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
-                <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
-              </linearGradient>
-              </defs>
-              "style=\"fill:\"url(#grad1)\";#{@stroke.to_svg}\""
+          <defs>
+          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
+            <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+          </linearGradient>
+          </defs>
+          "style=\"fill:\"url(#grad1)\";#{@stroke.to_svg}\""
 
         EOF
       end

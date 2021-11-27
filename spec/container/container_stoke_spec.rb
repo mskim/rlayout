@@ -9,11 +9,12 @@ describe 'container_stroke_drawing test' do
         rectangle(stroke_width: 2, fill_color: 'red')
         rectangle(stroke_width: 2, fill_color: 'gray')
         rectangle(stroke_width: 2, fill_color: 'orange')
-        image(image_path: "some_path")
+        rectangle(stroke_width: 2, fill_color: 'blue')
       end
       relayout!
     end
     @pdf_path = "/Users/mskim/test_data/container/container_stoke.pdf"
+    @svg_path = "/Users/mskim/test_data/container/container_stoke.svg"
   end
 
   it 'should create Graphic object' do
@@ -29,6 +30,9 @@ describe 'container_stroke_drawing test' do
   it 'should save pdf' do
     @container.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
+    @container.save_svg(@svg_path)
+    assert File.exist?(@svg_path)
     system("open #{@pdf_path}")
+    system("open #{@svg_path}")
   end
 end

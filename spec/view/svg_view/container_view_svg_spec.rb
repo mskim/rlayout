@@ -44,7 +44,7 @@ describe "create Container View" do
 
   it 'should save_svg' do
     @cv.save_svg(@svg_path)
-    # @cv.save_pdf(@svg_pdf)
+    @cv.save_pdf(@svg_pdf)
     assert File.exist?(@svg_path)
     system "open #{@svg_path}"
   end

@@ -192,7 +192,7 @@ end
 
 describe 'ImageStruct struct' do
   before do
-    @i= ImageStruct.new('my/image/path.jpg')
+    @i= ImageStruct.new(image_path: 'my/image/path.jpg')
   end
   it 'should crete ImageStruct' do
     @i['image_path'].must_equal 'my/image/path.jpg'
