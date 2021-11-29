@@ -26,7 +26,7 @@ module RLayout
 
         else    
           # @fill                 = FillStruct.new('CMYK=0,0,0,0')
-          @fill                 = FillStruct.new(color: 'CMYK=0,0,0,0', name:'white')
+          @fill                 = FillStruct.new(color: 'CMYK=0,0,0,0', color_name:'white')
         end
       end
 
