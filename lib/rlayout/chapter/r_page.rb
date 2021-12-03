@@ -106,6 +106,9 @@ module RLayout
       end
     end
 
+    def mid_height
+      @top_margin + (@height - @top_margin*2)/2
+    end
     # add single float to page
     def add_float(float_info, options={})
       float_info[:parent] = self
@@ -132,38 +135,24 @@ module RLayout
     # add multiple floats to page
     def add_floats(page_floats)
       page_floats.each do |float_info|
-        # if float_info.class == Array
-        #   float = {}
-        #   float[:parent]      = self
-        #   float[:is_float]    = true
-        #   float[:image_path]  = float_info[0]
-        #   float[:position]    = float_info[1]
-        #   size                = float_info[2]
-        #   float[:column]      = size.split("x")[0].to_i
-        #   float[:row]         = size.split("x")[1].to_i
-        #   # float[:x_grid]      = float_info[:x_grid] if float_info[:x_grid]
-        #   NewsFloat.new(float)
-        # elsif float_info.class == Hash
-          float = {}
-          float[:parent]      = self
-          float[:is_float]    = true
-          float[:image_path]  = float_info[:image_path]
-          # float[:position]    = float_info[:position]
-          # float[:column]      = float_info[:column]
-          # float[:row]         = float_info[:row]
-          float[:x]  = float_info[:x]
-          float[:y]  = float_info[:y]
-          float[:width]  = float_info[:width]
-          float[:height]  = float_info[:height]
-          add_float(float_info, layout_float: floats_index)
-          # Image.new(float)
-        # end
-        # layoout_float
+        float = {}
+        float[:parent]      = self
+        float[:is_float]    = true
+        float[:image_path]  = float_info[:image_path]
+        float[:x]  = float_info[:x]
+        float[:y]  = float_info[:y]
+        float[:width]  = float_info[:width]
+        float[:height]  = float_info[:height]
+        add_float(float_info, layout_float: floats_index)
       end
     end
 
     def has_image?
-      @floats.length > 0
+      if is_first_page? && has_heading?
+        @floats.length > 1
+      else
+        @floats.length > 0
+      end
     end
 
     def is_first_page?
@@ -327,7 +316,7 @@ module RLayout
       if has_heading? && (@heading_columns != @column_count)
         heading = get_heading
         heading.width = @column_width
-        heading.x     = @starting_column_x
+        heading.x     = @starting_column_x || @left_margin
       end
       #TODO position bottom bottom_occupied_rects
 
@@ -427,7 +416,7 @@ module RLayout
 
     # does current text_box include Heading in floats
     def has_heading?
-      @graphics.each do |g|
+      @floats.each do |g|
         if g.class == RLayout::RHeading
           @heading_object = g unless @heading_object
           return true
@@ -437,8 +426,8 @@ module RLayout
     end
 
     def get_heading
-      @graphics.each do |g|
-        return g if g.class == RLayout::Heading
+      @floats.each do |g|
+        return g if g.class == RLayout::RHeading
       end
       nil
     end

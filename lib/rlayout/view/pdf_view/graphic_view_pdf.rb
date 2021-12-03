@@ -92,7 +92,6 @@ module RLayout
     end
   
     def flipped_origin
-      # binding.pry
       if @parent && @parent.class != RDocument
         p_origin = @parent.flipped_origin
         [p_origin[0] + @x, p_origin[1] - @y]

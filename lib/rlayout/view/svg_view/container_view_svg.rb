@@ -24,6 +24,7 @@ module RLayout
       s = "<g transform=\"translate(#{@x},#{@y})\">\n"
       @graphics.each do |graphic|
         s += graphic.to_svg
+        s += "\n"
       end
       s +="</g>\n"
       s

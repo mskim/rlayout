@@ -42,7 +42,6 @@ module RLayout
         text_options[:v_alignment]  = 'center'
         text_options[:font_size]    = caption_height*0.7
         text_options[:font_size]    = 7.0
-        # binding.pry
         @caption_object = Text.new(text_options)
       end
     end

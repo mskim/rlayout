@@ -136,12 +136,12 @@ module RLayout
       end
     end
 
-    def save_svg(path, options={})
-      puts "++++++++++++ save_svg"
-      "path:#{path}"
-      s= path
-      "some string"
-    end
+    # def save_svg(path, options={})
+    #   puts "++++++++++++ save_svg"
+    #   "path:#{path}"
+    #   s= path
+    #   "some string"
+    # end
 
     def save_pdf(path, options={})
       save_pdf_with_ruby(path, options)

@@ -249,6 +249,7 @@ module RLayout
       system "cd #{site_folder} && git add . && git commit -m'#{Time.now}' "
     end
 
+    # copy javascript code and icons to ebook folder
     def copy_assets
       source = ebook_assets_template_folder
       target_folder = site_folder
@@ -524,10 +525,6 @@ module RLayout
       </li>
       
       EOF
-    end
-
-    def ebook_erb_template_path
-      "#{Rails.root}/public/ebook_template/ebook_index.html.erb"
     end
 
     def repo_name

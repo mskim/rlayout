@@ -3,11 +3,11 @@ module RLayout
   class RTextToken < Graphic
     
     def to_svg
-      s = "<Text>#{string}</Text>"
+      s = "<text x=\"#{@x}\"  y=\"#{@y}\">#{string}</text>"
     end
 
     def to_svg_with_style
-      s = "<Text>#{string}</Text>"
+      s = "<text x=\"#{@x}\"  y=\"#{@y}\">#{string}</text>"
     end
 
   end

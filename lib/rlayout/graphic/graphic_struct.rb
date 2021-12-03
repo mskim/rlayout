@@ -13,7 +13,6 @@ module RLayout
   FillStruct      = Struct.new(:color, :color_name, keyword_init: true) do
     
     def to_svg
-      # binding.pry
       # convert to rgb format
       # color
       color_name

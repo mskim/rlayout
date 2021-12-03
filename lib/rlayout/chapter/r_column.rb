@@ -148,7 +148,11 @@ module RLayout
     def to_svg
       s = "<rect fill='white' x='#{@parent.x + @x}' y='#{@parent.y + @y}' width='#{@width}' height='#{@height}' />"
       @graphics.each do |line|
-        s +=line.to_svg
+        line_svg = line.to_svg
+        unless line_svg == ""
+          s +=line.to_svg
+          s += "\n"
+        end
       end
       s
     end

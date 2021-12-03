@@ -489,11 +489,11 @@ module RLayout
       end
     end
     
-    def to_svg
-      s = "<rect fill='gray' #{svg_rect_string} />"
-      return s if @graphics.length > 0 && @layed_out_line
-      "" 
-    end
+    # def to_svg
+    #   s = "<rect fill='gray' #{svg_rect_string} />"
+    #   return s if @graphics.length > 0 && @layed_out_line
+    #   "" 
+    # end
   end
 
   class OverFlowMarker < Graphic

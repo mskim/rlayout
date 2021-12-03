@@ -988,6 +988,7 @@ module RLayout
         p.create_footer(@footer_erb) if @footer_erb && @footer_erb != {}
       end
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
+      @document.save_svg(@document_path) #if options[:svg]
       save_story_by_page if @story_by_page
       save_toc if @toc
       self
@@ -1058,11 +1059,11 @@ module RLayout
         if  para[:markup] == "image"
           @image_count += 1
           float_info = {}
-          float_info[:position] = 1
+          # float_info[:position] = 1
           float_info[:x] = @left_margin
           float_info[:y] = @top_margin
           float_info[:width] = @width - @left_margin*2
-          float_info[:height] = (@height - @top_margin*2)/2
+          float_info[:height] = (@height - @top_margin*2)/2 - 20
           float_info[:image_path] = @local_image_folder + "/#{@image_count}.jpg"
           float_info[:kind] = "image"
           # TODO: fix this ????
@@ -1070,7 +1071,6 @@ module RLayout
           if float_info[:image_path] && File.exist?(float_info[:image_path])
             extension = File.extname(float_info[:image_path])
             image_info_path = float_info[:image_path].sub("#{extension}", ".yml")
-            # binding.pry
             if File.exist?(image_info_path)
               image_info = YAML::load_file(image_info_path)
               float_info.merge!(image_info)

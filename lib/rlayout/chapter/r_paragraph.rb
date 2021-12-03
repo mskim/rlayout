@@ -298,11 +298,15 @@ module RLayout
         @float_info[:markup] = 'image'
         # check if page has image
         # allow one image per page unless they are page_image_collection
-
-        if !page.first_page? && page.has_image? && page.last_page?
+        if page.has_image?
+          @current_line = page.add_new_page
+          column = @current_line.column
+          page = column.page
+          page.add_float(@float_info)
+        elsif !page.first_page? && page.has_image? && page.last_page?
           # add new page
-          # binding.pry
           if @current_line.y <= page.height/2
+            float_info[:y] = page.mid_height
             page.add_float(@float_info)
           else
             if page.last_page?
@@ -311,11 +315,20 @@ module RLayout
               page = column.page
               page.add_float(@float_info)
             else
+              float_info[:y] = page.mid_height
               page.next_page.add_float(@float_info)
             end
           end
         else
-          page.add_float(@float_info)
+          if @current_line.y <= page.height/2
+            float_info[:y] = page.mid_height
+            page.add_float(@float_info)
+          else
+            @current_line = page.add_new_page
+            column = @current_line.column
+            page = column.page
+            page.add_float(@float_info)
+          end
         end
       elsif @markup == 'table'
         column = @current_line.column
