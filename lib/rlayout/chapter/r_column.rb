@@ -171,8 +171,8 @@ module RLayout
     end
 
     def next_text_line(current_line)
-      current_line_index = @graphics.index(current_line)
-      @graphics[current_line_index..-1].each do |line|
+      next_line_index = @graphics.index(current_line) + 1
+      @graphics[next_line_index..-1].each do |line|
         return line if line.has_text_room?
       end
       nil

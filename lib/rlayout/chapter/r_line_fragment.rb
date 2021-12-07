@@ -131,6 +131,14 @@ module RLayout
       @parent
     end
 
+    def page
+      if @parent
+        @parent.parent
+      else
+        nil
+      end
+    end
+
     def mark_overflow
       return if @floats.length > 0
       @stroke.color = 'red'
@@ -272,6 +280,8 @@ module RLayout
     # CharHalfWidthCushion = 5.0
     def place_token(token, options={})
       return if token.nil?
+      binding.pry if token.string == '대중화를'
+      return false if @room < 0
       if (@room + CharHalfWidthCushion >= token.width)
       # if @room + @char_half_width_cushion >= token.width
         # place token in line.

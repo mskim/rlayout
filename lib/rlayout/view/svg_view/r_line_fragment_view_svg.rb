@@ -27,7 +27,11 @@ module RLayout
 
     def draw_line_text_svg
       if @text_alignment == 'justified'
-        line_svg = "\n<g font-size=\"9\" font-face=\"sans-serif\">\n"
+        if @font_size
+          line_svg = "\n<g font-size=\"#{@font_size}\" font-face=\"sans-serif\">\n"
+        else
+          line_svg = "\n<g font-size=\"9\" font-face=\"sans-serif\">\n"
+        end
         line_svg += "<text x=\"#{@x}\" y=\"#{@y}\" textLength=\"#{@width}\" lengthAdjust=\"spacingAndGlyphs\">#{line_string}\"</text>"
         line_svg += "\n</g>"
       else
@@ -37,7 +41,7 @@ module RLayout
 
     def draw_tokens_svg
       first_token = @graphics.first
-      line_svg = "\n<g transform=\"translate(#{@x},#{@y})\" font-size=\"9\" font-face=\"sans-serif\">\n"
+      line_svg = "\n<g transform=\"translate(#{@x},#{@y})\" font-size=\"#{@font_size}\" font-face=\"sans-serif\">\n"
       @graphics.each do |token|
         if @font_size.nil?
           @font_size = 9.4

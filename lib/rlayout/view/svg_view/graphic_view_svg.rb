@@ -33,7 +33,11 @@ module RLayout
 
     def style_to_svg
       if @fill.class == FillStruct
-        "style=\"fill:#{@fill.to_svg};#{@stroke.to_svg}\""
+        if @fill.to_svg == 'clear'
+          "style=\"fill-opacity:0.0;#{@stroke.to_svg}\""
+        else
+          "style=\"fill:#{@fill.to_svg};#{@stroke.to_svg}\""
+        end
       elsif @fill.class == LinearGradient
         s =<<~E1
               <defs>
@@ -60,7 +64,7 @@ module RLayout
     end
 
     def svg_rect
-      "x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{height}\""
+      "x=\"#{@x}\" y=\"#{@y}\" width=\"#{@width}\" height=\"#{@height}\""
     end
 
     def svg_text_origin

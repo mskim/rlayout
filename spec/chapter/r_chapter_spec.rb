@@ -7,7 +7,7 @@ describe "create RChapter with images" do
     # @document_path = "/Users/mskim/test_data/chapter_1"
     # @pdf_path     = "/Users/mskim/test_data/chapter_1/chapter.pdf"
     @document_path  = "/Users/mskim/test_data/chapter_with_images"
-    @chapter      = RLayout::RChapter.new(document_path: @document_path)
+    @chapter      = RLayout::RChapter.new(document_path: @document_path, page_pdf:true, svg:true)
     @doc          = @chapter.document
   end
 

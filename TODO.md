@@ -122,6 +122,16 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2021_12_07
+  - ebook with svg page
+  - picture_book create build folder
+
+2021_12_04
+  - fix paragraph line layout with image placement, 
+      - line.next_text_line
+  - to_svg for RHeading, ImagePlus, TitleText, Text
+
+
 2021_11_27
   - page.to_svg
 

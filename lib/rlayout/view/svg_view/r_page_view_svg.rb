@@ -8,6 +8,9 @@ module RLayout
       if @graphics.length > 0
         s += children_graphics_svg
       end
+      if @floats.length > 0
+        s += floats_svg
+      end
       s += "</svg>\n"
     end
 
@@ -25,6 +28,16 @@ module RLayout
         s += "\n"
       end
       s +="</g>\n"
+      s
+    end
+
+    def floats_svg
+      # draw floats
+      s = ""
+      @floats.each do |float|
+        s += float.to_svg
+        s += "\n"
+      end
       s
     end
 

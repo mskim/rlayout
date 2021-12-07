@@ -46,9 +46,10 @@ module RLayout
   StrokeStruct   = Struct.new(:color, :thickness, :dash, :line_cap, :line_join, :type, :sides, :color_name, keyword_init: true) do
     def to_svg
       # convert color to rgb first
-      
-      s = "stroke:#{color_name};"
-      s += "stroke-width:#{thickness}" if thickness > 0
+      if thickness > 0
+        s = "stroke:#{color_name};"
+        s += "stroke-width:#{thickness}" 
+      end
       s += "dash:#{dash}" if dash
       s
     end

@@ -913,7 +913,7 @@ module RLayout
     # page_pdf options indicates to split docemnt into pages
     # page_folder are 4 digit numbered 0001, 0002, 0003
 
-    attr_reader :page_by_page, :page_pdf, :story_md, :story_by_page, :toc
+    attr_reader :page_by_page, :story_md, :story_by_page, :toc
     attr_reader :belongs_to_part
     attr_reader :grid, :default_image_location, :default_image_size
     attr_reader :local_image_folder
@@ -940,6 +940,7 @@ module RLayout
       @starting_page  = options[:starting_page] || 1
       @page_by_page   = options[:page_by_page]
       @page_pdf       = options[:page_pdf]
+      @svg            = options[:svg]
       @story_by_page  = options[:story_by_page]
       @toc            = options[:toc]
       @toc_level      = options[:toc_level] || 'title'
@@ -988,7 +989,7 @@ module RLayout
         p.create_footer(@footer_erb) if @footer_erb && @footer_erb != {}
       end
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
-      @document.save_svg(@document_path) #if options[:svg]
+      @document.save_svg(@document_path) if @svg
       save_story_by_page if @story_by_page
       save_toc if @toc
       self

@@ -6,6 +6,7 @@ module RLayout
         if @graphics.length > 0
           s += children_graphics_svg
         end
+        s
         # s += children_graphics_svg
       else
         s = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"#{@x + @width}px\" height=\"#{@y + @height}px\">\n"

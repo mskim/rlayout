@@ -342,6 +342,7 @@ module RLayout
       end
       while token
         return unless @current_line
+        binding.pry if token.string == "증거입니다."
         result = @current_line.place_token(token)
         # token is broken into two, second part is returned
         if result.class == RTextToken
@@ -350,6 +351,8 @@ module RLayout
           new_line = @current_line.next_text_line
           if new_line
             @current_line = new_line
+            column = @current_line.column
+            page = column.page
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
             token = result
@@ -369,6 +372,8 @@ module RLayout
           new_line = @current_line.next_text_line
           if new_line
             @current_line = new_line
+            column = @current_line.column
+            page = column.page
             @current_line.set_paragraph_info(self, "middle_line")
             @line_count += 1
           else

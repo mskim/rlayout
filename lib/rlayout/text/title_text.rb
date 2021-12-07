@@ -109,9 +109,9 @@ module RLayout
       self
     end
 
-    def to_svg
-      "<rect fill='yellow' x='#{@parent.x + @x}' y='#{@parent.y + @y}' width='#{@width}' height='#{@height - 2}' />"
-    end
+    # def to_svg
+    #   "<rect fill='yellow' x='#{@x}' y='#{@y}' width='#{@width}' height='#{@height - 2}' />"
+    # end
 
     def set_text(new_sting)
       @string    = new_sting
