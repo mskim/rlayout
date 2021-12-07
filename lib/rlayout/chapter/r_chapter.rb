@@ -619,7 +619,7 @@ subtitle:
   tracking: -1.0
   space_width: 9.0
   scale: 100.0
-  text_line_spacing: 6.0
+  text_line_spacing: 9.0
   space_before_in_lines: 0.5
   space_after_in_lines: 0.5
   text_height_in_lines: 1
