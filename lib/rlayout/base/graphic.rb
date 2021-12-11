@@ -109,10 +109,6 @@ module RLayout
       @parent.graphics.last == self
     end
 
-    def floats_index
-      @parent.floats.index(self) if @parent && @parent.floats
-    end
-
     def get_stroke_rect
       if RUBY_ENGINE == "rubymotion"
         # r = NSMakeRect(@x,@y,@width,@height)

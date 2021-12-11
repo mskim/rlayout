@@ -955,7 +955,10 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
+      @document.document_path = @document_path
       @document.starting_page = @starting_page
+      read_story
+
       # place floats to pages
       if options[:page_floats]
         @page_floats      = options.fetch(:page_floats, [])
@@ -972,19 +975,23 @@ module RLayout
           end
         end
         @document.pages.each_with_index do |p,i|
-          page_floats = @page_floats[i + 1]
-          p.add_floats(page_floats) if page_floats
+          page_floats_for_page = @page_floats[i + 1]
+          if page_floats_for_page
+            # binding.pry
+            p.add_floats(page_floats_for_page) 
+          else
+            # binding.pry
+          end
         end
       end
 
-      read_story
       layout_story
       # draw header and footers
       if @footer_erb
         @footer_erb[:right_footer].gsub!("<%= title %>", @title)
       end
       @document.pages.each_with_index do |p,i|
-        p.page_number = @starting_page + i
+        # p.page_number = @starting_page + i
         p.create_header(@header_erb) if @header_erb && @header_erb != {}
         p.create_footer(@footer_erb) if @footer_erb && @footer_erb != {}
       end

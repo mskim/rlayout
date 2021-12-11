@@ -175,7 +175,8 @@ module RLayout
       @graphics[next_line_index..-1].each do |line|
         return line if line.has_text_room?
       end
-      nil
+      @parent.next_text_line(self)
+      # nil
     end
 
     def column_index

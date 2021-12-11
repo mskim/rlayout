@@ -122,9 +122,20 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
-2021_12_07
-  - ebook with svg page
+2021_12_08
+  - fix TOC page_number after prologue
   - picture_book create build folder
+  - chnage _ebook to Docs folder for github pages
+  - update wing, prolog styles
+  - custom text_style
+  - implement page_floats
+
+  - github webhook
+  - github App
+  - github Action
+
+2021_12_07
+  - ebook with svg page?
 
 2021_12_04
   - fix paragraph line layout with image placement, 

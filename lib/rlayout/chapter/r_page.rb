@@ -9,7 +9,6 @@
 
 module RLayout
   class RPage < Container
-    attr_accessor :page_number
     attr_accessor :heading_object, :header_object, :footer_object, :side_box_object
     attr_accessor :fixtures, :floats, :document, :column_count, :row_count, :first_page, :body_line_count, :body_line_height
     attr_accessor :body_lines, :gutter, :body_line_count
@@ -38,7 +37,9 @@ module RLayout
       @float_layout   = options[:float_layout] || []
       @first_page     = options[:first_page] || false
       @page_number    = options[:page_number] || 1
+      
       if @document
+
         @column_count      = @document.column_count
         @body_line_height  = @document.body_line_height
         @body_line_count   = @document.body_line_count
@@ -61,9 +62,9 @@ module RLayout
         @gutter             = 10
         @column_width       = (@width - @left_margin - @right_margin - (@column_count-1)*@gutter)/@column_count
       end
-      if options[:page_number]
-        @page_number = options[:page_number]
-      end
+      # if options[:page_number]
+      #   @page_number = options[:page_number]
+      # end
       # if @parent && @parent.double_side
       @fixtures = []  # header, footer
       @floats   = []
@@ -74,6 +75,22 @@ module RLayout
         instance_eval(&block)
       end
       self
+    end
+
+    def page_number
+      if @document
+        @document.page_number(self)
+      else
+        1
+      end
+    end
+
+    def page_index
+      if @document
+        @document.pages.index(self)
+      else
+        nil
+      end
     end
 
     # create news_columns
@@ -92,6 +109,27 @@ module RLayout
       end
       @column_bottom = max_y(@graphics.first.frame_rect)
       link_column_lines
+    end
+
+    def next_text_line(column)
+      if @graphics.last == column
+        @parent.next_text_line(self)
+      else
+        column_index = @graphics.index(column)
+        @graphics[(column_index + 1)..-1].each do |coloum|
+          next_column_text_line = coloum.first_text_line_in_column
+          return next_column_text_line if next_column_text_line
+        end
+      end
+      @parent.next_text_line(self)
+    end
+
+    def first_text_line_in_page
+      @graphics.each do |column|
+        column_first_text_line = column.first_text_line_in_column
+        return column_first_text_line if column_first_text_line
+      end
+      nil
     end
 
     # set next_line to every line in column
@@ -124,26 +162,36 @@ module RLayout
         # float[:project_path]
         GroupImage.new(float_info)
       end
-      unless options[:layout_float]
-        layout_floats
-        adjust_overlapping_columns
-        update_column_areas
-      end
+      # unless options[:layout_float]
+      #   binding.pry
+      #   layout_floats
+      #   adjust_overlapping_columns
+      #   update_column_areas
+      # end
 
+    end
+
+    def images_folder
+      @document.images_folder
     end
 
     # add multiple floats to page
     def add_floats(page_floats)
-      page_floats.each do |float_info|
-        float = {}
-        float[:parent]      = self
-        float[:is_float]    = true
-        float[:image_path]  = float_info[:image_path]
-        float[:x]  = float_info[:x]
-        float[:y]  = float_info[:y]
-        float[:width]  = float_info[:width]
-        float[:height]  = float_info[:height]
-        add_float(float_info, layout_float: floats_index)
+      page_floats.each_with_index do |float_info, i|
+        float_info[:parent]      = self
+        float_info[:is_float]    = true
+        # binding.pry
+        float_info[:image_path]  = images_folder + "/#{float_info[:filename]}"
+        if float_info[:bleed]
+          float_info[:x]  = float_info[:x] || 0
+          float_info[:width]  = float_info[:width] || @width
+        else
+          float_info[:x]  = float_info[:x] || @left_margin
+          float_info[:width]  = float_info[:width] || @width - @left_margin - @right_margin
+        end
+        float_info[:y]  = float_info[:y] || @height/2
+        float_info[:height]  = float_info[:height] || @height/2 - @bottom_margin
+        add_float(float_info)
       end
     end
 
@@ -312,6 +360,7 @@ module RLayout
     # TODO:
     def layout_floats
       return unless @floats
+      # binding.pry
       @occupied_rects =[]
       if has_heading? && (@heading_columns != @column_count)
         heading = get_heading
@@ -557,7 +606,7 @@ module RLayout
     end
 
     def create_header(header_erb)
-      if @page_number.even?
+      if page_number.even?
         erb = ERB.new(header_erb[:left_header])
       else
         erb = ERB.new(header_erb[:right_header])
@@ -567,7 +616,7 @@ module RLayout
     end
 
     def create_footer(footer_erb)
-      if @page_number.even?
+      if page_number.even?
         erb = ERB.new(footer_erb[:left_footer])
       else
         erb = ERB.new(footer_erb[:right_footer])

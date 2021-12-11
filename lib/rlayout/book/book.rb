@@ -629,8 +629,42 @@ module RLayout
       EOF
     end
 
+    def create_github_repo
+      system "cd #{project_path} && git init && git add . && git commit -m'initial commit' "
+      system "cd #{project_path} && gh repo create #{github_repo_name}  -y --public"
+      system "cd #{project_path} && git push --set-upstream origin master"  
+    end
+
+    def project_rakefile_path
+      project_path + "/Rakefile"
+    end
+
+    def rakefile_content
+      s=<<~EOF
+      require 'rlayout'
+      # require 'pry-byebug'
+      
+      task :default => [:generate_book]
+      
+      desc 'generate book pdf, ebook'
+      task :generate_book do
+        project_path = File.dirname(__FILE__)
+        RLayout::Book.new(project_path)
+      end
+
+      EOF
+    end
+
+    def save_rakefile
+      File.open(project_rakefile_path, 'w'){|f| f.write rakefile_content}
+    end
+
+    def git_action_content_path
+      project_path + "/.github/workflows/generate_pdf.yml"
+    end
+
     def save_github_action_workflow
-      File.open(git_action_content, 'w'){|f| f.write git_action_content}
+      File.open(git_action_content_path, 'w'){|f| f.write git_action_content}
     end
 
   end

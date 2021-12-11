@@ -3,13 +3,13 @@
 module RLayout
 
   class RDocument
-    attr_accessor :title, :path, :page_size, :width, :height
+    attr_accessor :title, :document_path, :page_size, :width, :height
     attr_accessor :pages, :document_view, :starting_page
     attr_accessor :toc_elements
     attr_reader :left_margin, :top_margin, :right_margin, :bottom_margin, :gutter
-    attr_accessor :pdf_path, :jpg, :preview, :column_count, :row_count, :column_width, :layout_style
+    attr_accessor :jpg, :preview, :column_count, :row_count, :column_width, :layout_style
     attr_accessor :heading_height_type, :body_line_count, :body_line_height
-    attr_reader :max_page_number, :page_count, :starting_page
+    attr_reader :max_page_number, :page_count
     attr_accessor :fixed_page_document
     attr_reader :column_grid, :row_grid
     # page_type is used to add differnt types of pages in a document
@@ -62,8 +62,29 @@ module RLayout
       self
     end
 
+    def page_number(page)
+      @starting_page + pages.index(page)
+    end
+
     def fixed_page_document?
       @fixed_page_document 
+    end
+
+    def next_text_line(page)
+      if @pages.last == page
+        nil
+      else
+        page_index = @pages.index(page)
+        @pages[(page_index + 1)..-1].each do |page|
+          next_page_text_line = @pages[page_index + 1].first_text_line_in_page
+          return next_page_text_line if next_page_text_line
+        end
+      end
+      nil
+    end
+
+    def images_folder
+      @document_path + "/images"
     end
 
     def save_story_page_by_page(pages_path)
@@ -112,8 +133,7 @@ module RLayout
         h[:parent]        = self
         h[:width]         = @width
         h[:height]        = @height
-        h[:page_number]   = @pages.length
-        h[:page_number]   += @starting_page
+        h[:page_number]   = @pages.length + @starting_page
         h[:float_layout]  += page_float_layout[options[:page_index]] if @page_float_layout
         new_page = RPage.new(h)
         previous_line = @pages.last.last_line if @pages.length > 0 && @pages.last.last_line
@@ -136,12 +156,6 @@ module RLayout
       end
     end
 
-    # def save_svg(path, options={})
-    #   puts "++++++++++++ save_svg"
-    #   "path:#{path}"
-    #   s= path
-    #   "some string"
-    # end
 
     def save_pdf(path, options={})
       save_pdf_with_ruby(path, options)
