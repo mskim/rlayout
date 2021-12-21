@@ -14,11 +14,12 @@ module RLayout
     attr_accessor :body_lines, :gutter, :body_line_count
     attr_reader :float_layout, :page_by_page
     attr_reader :empty_first_column
-    attr_reader :header_footer
+    attr_reader :header_footer, :portrait_mode
 
     def initialize(options={}, &block)
       options[:fill_color] = 'white'
       super
+      @portrait_mode = options[:portrait_mode] || true
       if options[:parent] || options[:document]
         @parent       = options[:parent] || options[:document]
         @document     = @parent
@@ -144,35 +145,26 @@ module RLayout
       end
     end
 
-    def mid_height
-      @top_margin + (@height - @top_margin*2)/2
+    def images_folder
+      @document.images_folder
     end
+
+    def tables_folder
+      @document.tables_folder
+    end
+
     # add single float to page
     def add_float(float_info, options={})
       float_info[:parent] = self
       float_info[:is_float] = true
-
       case float_info[:kind]
       when 'image'
         ImagePlus.new(float_info)
       when 'table'
-        # float[:project_path]
         GridTable.new(float_info)
       when 'group_image'
-        # float[:project_path]
         GroupImage.new(float_info)
       end
-      # unless options[:layout_float]
-      #   binding.pry
-      #   layout_floats
-      #   adjust_overlapping_columns
-      #   update_column_areas
-      # end
-
-    end
-
-    def images_folder
-      @document.images_folder
     end
 
     # add multiple floats to page
@@ -180,19 +172,126 @@ module RLayout
       page_floats.each_with_index do |float_info, i|
         float_info[:parent]      = self
         float_info[:is_float]    = true
-        # binding.pry
         float_info[:image_path]  = images_folder + "/#{float_info[:filename]}"
-        if float_info[:bleed]
-          float_info[:x]  = float_info[:x] || 0
-          float_info[:width]  = float_info[:width] || @width
-        else
-          float_info[:x]  = float_info[:x] || @left_margin
-          float_info[:width]  = float_info[:width] || @width - @left_margin - @right_margin
-        end
-        float_info[:y]  = float_info[:y] || @height/2
-        float_info[:height]  = float_info[:height] || @height/2 - @bottom_margin
+        float_info = convert_positioon_to_rect(float_info)
         add_float(float_info)
       end
+    end
+
+    def content_width
+      @width - @left_margin - @right_margin
+    end
+
+    def content_height
+      @height - @top_margin - @bottom_margin
+    end
+  
+    def mid_width
+      @left_margin + content_width/2
+    end
+
+    def mid_height
+      @top_margin + content_height/2
+    end
+
+    def grid_width
+      @portrait_mode == true ? content_width/6 : content_width/12
+    end
+
+    def grid_height
+      @portrait_mode == true ? content_height/12 : content_height/6
+    end
+
+    def convert_positioon_to_rect(float_info)
+      unit_grid_width = float_info[:size].split("x")[0].to_i || 6
+      unit_grid_height = float_info[:size].split("x")[1].to_i || 6
+      float_width = unit_grid_width*grid_width
+      float_height = unit_grid_height*grid_height
+      float_info[:width] = float_width
+      float_info[:height] = float_height
+      bleed_amount = 3
+      bleed = float_info[:bleed]
+      case float_info[:position] 
+      when 1
+        float_info[:x]  = @left_margin
+        float_info[:y]  = @top_margin
+        if bleed
+          float_info[:x]  = -bleed_amount
+          float_info[:width]  += bleed_amount + @left_margin
+          float_info[:y] = -bleed_amount
+          float_info[:height] += bleed_amount + @top_margin
+        end
+      when 2
+        float_info[:x]  = mid_width - float_width/2
+        float_info[:y]  = @top_margin
+        if bleed
+          float_info[:y]  = -bleed_amount
+          float_info[:height]  += bleed_amount + @top_margin
+        end
+      when 3
+        float_info[:x]  = @width - @right_margin - float_info[:width]
+        float_info[:y]  = @top_margin
+        if bleed
+          float_info[:width]  += bleed_amount + @right_margin
+          float_info[:y] = -bleed_amount
+          float_info[:height] += bleed_amount + @top_margin
+        end
+      when 4
+        float_info[:x]  = @left_margin
+        float_info[:y]  = mid_height - float_height/2
+        if bleed
+          float_info[:x]  = -bleed_amount
+          float_info[:width]  += bleed_amount + @left_margin
+        end
+      when 5
+        float_info[:x]  = @width - @right_margin - float_info[:width]
+        float_info[:y]  = mid_height - float_height/2
+      when 6
+        float_info[:x]  = @width - @right_margin - float_info[:width]
+        float_info[:y]  = mid_height - float_height/2
+        if bleed
+          float_info[:width]  += bleed_amount + @right_margin
+        end
+      when 7
+        float_info[:x]  = @left_margin
+        float_info[:y]  = @top_margin + content_height - float_height
+        if bleed
+          float_info[:x]  = -bleed_amount
+          float_info[:width]  += bleed_amount + @left_margin
+          float_info[:height] += bleed_amount + @bottom_margin
+        end
+      when 8
+        float_info[:x]  = @width - @right_margin - float_info[:width]
+        float_info[:y]  = content_height - float_height
+        if bleed
+          float_info[:height] += bleed_amount + @bottom_margin
+        end
+      when 9
+        float_info[:x]  = @width - @right_margin - float_info[:width]
+        float_info[:y]  = @top_margin + content_height - float_height
+        if bleed
+          float_info[:width] += bleed_amount + @right_margin
+          float_info[:height] += bleed_amount + @bottom_margin
+        end
+      else
+        float_info[:x]  = @left_margin
+        float_info[:y]  = @top_margin
+      end
+
+      # apply bleed only to 1,3,7,9? 
+      if bleed
+        # full width
+        if unit_grid_width >=6
+          float_info[:x]  = -bleed_amount
+          float_info[:width]  = @width + bleed_amount*2
+        end
+        # full height
+        if unit_grid_height >=12
+          float_info[:y]  = -bleed_amount
+          float_info[:height]  = @height + bleed_amount*2
+        end
+      end
+      float_info
     end
 
     def has_image?

@@ -20,7 +20,7 @@ else
   require 'erb'
   require 'base64'
   require 'json'
-  require 'mini_magick'
+  # require 'mini_magick'
   require "image_processing/vips"
   require "image_processing"
   require 'hexapdf'

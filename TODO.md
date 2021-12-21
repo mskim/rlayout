@@ -122,6 +122,13 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2021_12_17
+  - adjust overlapping line text space
+  
+2021_12_14
+  - add shape to page_floats
+    - Rect, Circle, Path
+    
 2021_12_08
   - fix TOC page_number after prologue
   - picture_book create build folder

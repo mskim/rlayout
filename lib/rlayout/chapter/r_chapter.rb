@@ -977,10 +977,7 @@ module RLayout
         @document.pages.each_with_index do |p,i|
           page_floats_for_page = @page_floats[i + 1]
           if page_floats_for_page
-            # binding.pry
             p.add_floats(page_floats_for_page) 
-          else
-            # binding.pry
           end
         end
       end

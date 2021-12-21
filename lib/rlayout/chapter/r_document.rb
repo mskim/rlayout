@@ -87,6 +87,10 @@ module RLayout
       @document_path + "/images"
     end
 
+    def tables_folder
+      @document_path + "/tables"
+    end
+
     def save_story_page_by_page(pages_path)
       FileUtils.mkdir_p(pages_path) unless File.exist?(pages_path)
       @pages.each_with_index do |p, i|
