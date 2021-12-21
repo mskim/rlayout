@@ -38,7 +38,7 @@ module RLayout
     end
 
     # def to_pdf(canvas)
-    def draw_pdf(canvas)
+    def draw_pdf(canvas, options={})
       draw_fill(canvas) unless self.class == RDocument
       @graphics.each do |g|
         g.draw_pdf(canvas)
