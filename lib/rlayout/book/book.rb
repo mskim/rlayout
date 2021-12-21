@@ -13,8 +13,9 @@ module RLayout
       @project_path = project_path
       @book_info_path = @project_path + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
+      @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @title = @book_info[:title]
-      @page_size = options['paper_size'] || 'A5'
+      @page_size = options[:paper_size] || 'A5'
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
       @starting_page_number = 1
@@ -222,7 +223,8 @@ module RLayout
     end
 
     def site_folder
-      @project_path + "/_ebook"
+      # @project_path + "/_ebook" chnage it for github pages
+      @project_path + "/docs"
     end
 
     def ebook_template_folder

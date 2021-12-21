@@ -18,7 +18,8 @@ module RLayout
       @part_info_path = @project_path + "/part_info.yml"
       if File.exist?(@part_info_path)
         @part_info = YAML::load_file(@part_info_path)
-        @title = @part_info[:title] || @part_info['title']
+        @part_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
+        @title = @part_info[:title] #|| @part_info['title']
       end
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]

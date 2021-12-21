@@ -9,6 +9,7 @@ module RLayout
       @project_path = project_path
       @book_info_path = @project_path + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
+      @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @title = @book_info[:title]
       @page_size = options[:page_size] || 'A5'
       @page_width = SIZES[@page_size][0]
@@ -36,7 +37,7 @@ module RLayout
         @starting_page_number = r.next_part_starting_page
       end
       unless @part_folder_found
-        Dir.glob("#{@project_path}/*_부").sort.each_with_index do |part, i|
+        Dir.glob("#{@project_path}/*부").sort.each_with_index do |part, i|
           @part_folder_found = true
           part_title = "파트 제목은 여기"
           if parts_info
