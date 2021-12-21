@@ -28,7 +28,7 @@ module RLayout
         FileUtils.mkdir_p(@project_path)
       end
       @book_info = options[:book_info]
-      @page_size = @book_info['paper_size'] || @book_info['page_size'] || 'A4'
+      @page_size = @book_info[:paper_size] || @book_info['page_size'] || 'A4'
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
       @seneca_width_in_cm = options[:seneca_width_in_cm] || 1.5

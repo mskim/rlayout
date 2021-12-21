@@ -5,16 +5,6 @@ module RLayout
     attr_reader :width, :height, :updated
     def initialize(options={})
       @content = options[:content] || default_content
-      if options[:content]['제목']
-        @content['title'] = options[:content]['제목']
-      end
-      if options[:content]['부제목']
-        @content['subtitle'] = options[:content]['부제목']
-      end      
-      if options[:content]['저자']
-        @content['author'] = options[:content]['저자']
-      end 
-            
       @project_path = options[:project_path]
       @page_size = options[:page_size] || 'A5'
       @width = SIZES[@page_size][0] 
@@ -32,13 +22,9 @@ module RLayout
     def generate_pdf
       FileUtils.mkdir_p(@project_path) unless File.exist?(@project_path)
       erb = ERB.new(layout_erb)
-      # @content = default_content
       mergerd = erb.result(binding)
       layout = eval(mergerd)
       File.open(layout_path,'w'){|f| f.write mergerd }
-
-      # end
-      # return unless is_dirty?
       layout.save_pdf_with_ruby(output_path, jpg:true)
       @updated = true
     end
@@ -59,16 +45,16 @@ module RLayout
         image(image_path: "#{@spread_image_path}", x: #{-@front_page_spread_off_set}, width: #{@cover_spread_width}, height:#{@height}, layout_member:false)
         container(fill_color:'clear',layout_length:5) do
           filler(layout_length:10)        
-          text("<%= @content['title'] %>",font:'KoPubDotumPB', font_size: 40, text_alignment:'center', layout_length:8, font_color: 'black', fill_color: 'clear', text_fit_type:'adjust_box_height')
+          text("<%= @content[:title] %>",font:'KoPubDotumPB', font_size: 40, text_alignment:'center', layout_length:8, font_color: 'black', fill_color: 'clear', text_fit_type:'adjust_box_height')
           filler(layout_length:2)        
-          text("<%= @content['subtitle'] %>", font:'KoPubDotumPM', font_size: 26 , text_alignment:'center', layout_length:5, fill_color: 'clear', text_fit_type:'adjust_box_height')
+          text("<%= @content[:subtitle] %>", font:'KoPubDotumPM', font_size: 26 , text_alignment:'center', layout_length:5, fill_color: 'clear', text_fit_type:'adjust_box_height')
           filler(layout_length:2)        
-          text("<%= @content['author'] %>", font:'KoPubBatangPB', font_size: 20, text_alignment:'center', fill_color: 'clear')
+          text("<%= @content[:author] %>", font:'KoPubBatangPB', font_size: 20, text_alignment:'center', fill_color: 'clear')
           filler(layout_length:40)        
           filler(layout_length:2)        
         end
         container fill_color:'clear' do
-          text("<%= @content['publisher'] %>", font:'KoPubBatangPB',font_size: 16, text_alignment:'center', fill_color: 'clear')
+          text("<%= @content[:publisher] %>", font:'KoPubBatangPB',font_size: 16, text_alignment:'center', fill_color: 'clear')
         end
         relayout!
       end
@@ -114,10 +100,10 @@ module RLayout
 
     def self.default_content
       h = {}
-      h['title'] = "소설을 쓰고 있네"
-      h['subtitle'] = "정말로 소설을 쓰고 있네 그려"
-      h['author'] = "홍길동"
-      h['publisher'] = "활빈당출판"
+      h[:title] = "소설을 쓰고 있네"
+      h[:subtitle] = "정말로 소설을 쓰고 있네 그려"
+      h[:author] = "홍길동"
+      h[:publisher] = "활빈당출판"
       h
     end
 

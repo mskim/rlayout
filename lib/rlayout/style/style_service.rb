@@ -939,7 +939,7 @@ module RLayout
       h[:character_spacing]   = para_style[:tracking]        if para_style[:tracking] && para_style[:tracking] != 0
       h[:horizontal_scaling]  = para_style[:scale]           if para_style[:scale] && para_style[:scale] != 100
       h
-      style_object = HexaPDF::Layout::Style.new(h)
+      style_object = HexaPDF::Layout::Style.new(**h)
       return style_object, font_wrapper
     end
 

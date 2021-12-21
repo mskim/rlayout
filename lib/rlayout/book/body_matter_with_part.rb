@@ -37,7 +37,7 @@ module RLayout
         @starting_page_number = r.next_part_starting_page
       end
       unless @part_folder_found
-        Dir.glob("#{@project_path}/*부").sort.each_with_index do |part, i|
+        Dir.glob("#{@project_path}/파트_*").sort.each_with_index do |part, i|
           @part_folder_found = true
           part_title = "파트 제목은 여기"
           if parts_info
