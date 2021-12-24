@@ -13,19 +13,18 @@ if defined?(Motion::Project::Config)
   #
   # raise "This file must be required within a RubyMotion project Rakefile."
 else
-  require 'pry-byebug'
   require 'strscan'
   require 'yaml'
   require 'csv'
   require 'erb'
   require 'base64'
   require 'json'
-  # require 'mini_magick'
   require "image_processing/vips"
   require "image_processing"
   require 'hexapdf'
   require 'text-hyphen'
-
+  # require 'pry-byebug'
+  # require 'mini_magick'
   # require 'xml-simple'
 
   require File.dirname(__FILE__) + "/rlayout/version"
