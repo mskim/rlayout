@@ -21,13 +21,25 @@ module RLayout
       @caption = options[:caption]  || options['caption']
       image_options = {}
       image_options[:width]        = @width
+      if options[:left_inset]
+        # this is done to give a room between image and text.
+        image_options[:x] = options[:left_inset]
+        image_options[:width] -= options[:left_inset]
+      elsif options[:right_inset]
+        image_options[:width] -= options[:right_inset]
+      elsif options[:both_sides_inset]
+        image_options[:x] += options[:both_sides_inset]
+        image_options[:width] -= options[:both_sides_inset]*2
+      end
       image_options[:height]       = @height - 10
       image_options[:parent]       = self
       image_options[:image_path]   = @image_path
       image_options[:fill_color]   = 'clear'
       image_options[:shape]        = options[:shape]
       caption_width                = @width
-      caption_height               = @height/10
+      # TODO: this should be the height of captopn
+      # caption_height               = @height/10
+      caption_height               = @height/16
       # need caption_height to clip circle above the caption 
       image_options[:caption_height] = caption_height
       # image_options[:caption_height] = 0 unless @caption
@@ -40,8 +52,8 @@ module RLayout
         text_options[:width]        = @width
         text_options[:text_string]  = @caption.unicode_normalize
         text_options[:v_alignment]  = 'center'
-        text_options[:font_size]    = caption_height*0.7
-        text_options[:font_size]    = 7.0
+        # text_options[:font_size]    = caption_height*0.7
+        text_options[:font_size]    = 8.0
         @caption_object = Text.new(text_options)
       end
     end

@@ -210,6 +210,7 @@ module RLayout
       float_info[:width] = float_width
       float_info[:height] = float_height
       bleed_amount = 3
+      inset_amount = 3
       bleed = float_info[:bleed]
       case float_info[:position] 
       when 1
@@ -289,6 +290,17 @@ module RLayout
         if unit_grid_height >=12
           float_info[:y]  = -bleed_amount
           float_info[:height]  = @height + bleed_amount*2
+        end
+      end
+      # add horizontal inset when float cuts the text line
+      if unit_grid_width < 6
+        case float_info[:position]
+        when 1,4,7
+          float_info[:right_inset] = inset_amount
+        when 3,6,9
+          float_info[:left_inset] = inset_amount
+        when 3,6,9
+          float_info[:both_sides_inset] = inset_amount
         end
       end
       float_info

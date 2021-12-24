@@ -123,12 +123,13 @@ TODO List
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
 2021_12_21
-  - adjust overlapping line text space
   - update book folder parsing method
     - chapter file, chapter_folder, part_folder
       - 00.md
       - 00
       - part_00
+  - adjust overlapping line text space, or inset image box?
+  - delete old page_folder
 
 2021_12_14
   - add shape to page_floats
