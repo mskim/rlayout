@@ -57,7 +57,7 @@ module RLayout
     end
   
     def book_title
-      @book_info['title'] || 'untitled'
+      @book_info[:title] || 'untitled'
     end
   
     def width
@@ -191,7 +191,13 @@ module RLayout
     end
 
     def generate_pdf_book
-      FileUtils.mkdir_p(pdf_folder) unless File.exist?(pdf_folder)
+      unless File.exist?(pdf_folder)
+        FileUtils.mkdir_p(pdf_folder) 
+      else
+        # clear old folder
+        system("rm -rf #{pdf_folder}")
+        FileUtils.mkdir_p(pdf_folder) 
+      end
       target = HexaPDF::Document.new
       pdf = HexaPDF::Document.open(front_cover_1_pdf_path)
       pdf.pages.each {|page| target.pages << target.import(page)}

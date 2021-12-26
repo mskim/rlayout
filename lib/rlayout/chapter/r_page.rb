@@ -210,7 +210,7 @@ module RLayout
       float_info[:width] = float_width
       float_info[:height] = float_height
       bleed_amount = 3
-      inset_amount = 3
+      inset_amount = 6
       bleed = float_info[:bleed]
       case float_info[:position] 
       when 1
