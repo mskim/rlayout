@@ -471,7 +471,6 @@ module RLayout
     # TODO:
     def layout_floats
       return unless @floats
-      # binding.pry
       @occupied_rects =[]
       if has_heading? && (@heading_columns != @column_count)
         heading = get_heading

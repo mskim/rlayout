@@ -23,7 +23,7 @@ else
   require "image_processing"
   require 'hexapdf'
   require 'text-hyphen'
-  # require 'pry-byebug'
+  require 'pry-byebug'
   # require 'mini_magick'
   # require 'xml-simple'
 

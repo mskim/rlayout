@@ -1,5 +1,13 @@
 module RLayout
 
+  # chapter folder names should start with at least two digits followed by any
+  # 01,02,03,04, 01_chpater, 02_chpater, 02_장, are all valid chapter folder format
+  
+  # Each chapter folder contains **.md file, images and page_floats.yml
+  # story.md, 1.md some_name.md are all valid .md file format
+
+  # They are copied to _build foler as chapter_01, chapter_02
+  # amd *.md files are copied as story.md under _build/chapter_01/story.md
   class BodyMatter
     attr_reader :project_path, :book_info, :page_width, :height
     attr_reader :document_folders, :body_matter_toc, :body_doc_type

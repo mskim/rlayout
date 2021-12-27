@@ -124,8 +124,16 @@ TODO List
 
 2021_12_26
   - clean_previous_generated_books
+
+  - chapter folder
+  - .md story file with any name to story.md in _build when coping
   - book title auto fit
-   
+  - table
+  - auto detect part base or chapter based book
+
+  -  book_type paperback, essey_book, potry_book, picture_book, manual
+  -  chapter_type: chapter, poem, essey
+
 2021_12_25
   - clean_previous_generated_folders
 
