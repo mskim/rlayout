@@ -62,10 +62,10 @@ module RLayout
       self
     end
 
-    def log_document
+    def inspect
       log = ""
       @pages.each do |page|
-        log += page.log_page
+        log += page.inspect
       end
       log
     end

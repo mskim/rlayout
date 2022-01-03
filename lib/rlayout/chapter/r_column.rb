@@ -51,10 +51,10 @@ module RLayout
       self
     end
 
-    def log_column
+    def inspect
       column_log = ""
       @graphics.each do |l| 
-        column_log += l.log_line
+        column_log += l.inspect
       end
       column_log
     end

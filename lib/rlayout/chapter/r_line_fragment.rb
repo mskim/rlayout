@@ -58,7 +58,7 @@ module RLayout
       self
     end
 
-    def log_line
+    def inspect
       "#{page_number}_#{line_index}:#{line_string}\n"
     end
 

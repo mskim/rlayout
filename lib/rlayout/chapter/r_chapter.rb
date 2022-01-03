@@ -958,7 +958,7 @@ module RLayout
       @document.document_path = @document_path
       @document.starting_page = @starting_page
       read_story
-      save_para_string
+      # save_para_string # used for debuging
       # place floats to pages
       if options[:page_floats]
         @page_floats      = options.fetch(:page_floats, [])
@@ -996,12 +996,12 @@ module RLayout
       @document.save_svg(@document_path) if @svg
       save_story_by_page if @story_by_page
       save_toc if @toc
-      save_line_log
+      # save_line_log # used for debuging
       self
     end
 
     def save_line_log
-      log = @document.log_document
+      log = @document.inspect
       log_path = @document_path + "/log.md"
       File.open(log_path, 'w'){|f| f.write log}
     end

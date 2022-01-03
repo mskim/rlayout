@@ -79,10 +79,10 @@ module RLayout
       self
     end
 
-    def log_page
+    def inspect
       page_log = ""
       @graphics.each do |c| 
-        page_log += c.log_column
+        page_log += c.inspect
       end
       page_log
     end
