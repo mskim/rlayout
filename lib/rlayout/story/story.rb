@@ -169,6 +169,7 @@ module RLayout
           @contents = md.post_match
           @metadata = YAML.load(md.to_s)
           # filter smart quptes and stuff
+          # RubyPants filters yaml marker --- so, filter heading after YAML is parsed 
           @metadata.map do |k, v|
             [k, RubyPants.new(@contents).to_html]
           end

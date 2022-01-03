@@ -122,6 +122,41 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2022_01_04
+  - apply smart_pants to story files
+
+  - fix chapter file to handle file or folder
+      01_something_folder
+      01
+      01.md
+      01_some_name.md
+  - add picture support
+  - add table support
+  - fix cover title text overflow
+    - set title_text fit_to_box
+    - set layout_length for each element for vertival balance
+  - use async to process chapter in parallel
+      apply smart_pants to story files
+
+      book_cover
+      front_matter
+      body
+
+      and toc
+      matter
+
+      and ebook
+      and pdf_book
+      and print_book
+
+
+  - add inline float marking support??
+      floats_1
+
+  - github webhook responds
+    - return ping
+    - parse webhook tasks by repo name
+
 2022_01_03
   - fix line next_line setting wring line becase of bug in add_new_page
 
