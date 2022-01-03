@@ -50,7 +50,15 @@ module RLayout
       end
       self
     end
-    
+
+    def log_column
+      column_log = ""
+      @graphics.each do |l| 
+        column_log += l.log_line
+      end
+      column_log
+    end
+
     def page
       @parent
     end

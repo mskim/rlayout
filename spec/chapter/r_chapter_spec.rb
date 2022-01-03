@@ -3,9 +3,9 @@ describe "create RChapter with page_floats" do
   before do
     # @document_path = "/Users/mskim/test_data/chapter"
     # @pdf_path     = "/Users/mskim/test_data/chapter_1/chapter.pdf"
-    # @document_path = "/Users/mskim/test_data/chapter_1"
     # @pdf_path     = "/Users/mskim/test_data/chapter_1/chapter.pdf"
-    @document_path  = "/Users/mskim/test_data/chapter_with_page_floats"
+    # @document_path  = "/Users/mskim/test_data/chapter_with_page_floats"
+    @document_path = "/Users/mskim/test_data/chapter_1"
     @chapter      = RLayout::RChapter.new(document_path: @document_path, page_pdf:true, svg:true)
     @doc          = @chapter.document
   end

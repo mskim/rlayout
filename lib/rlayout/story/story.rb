@@ -168,9 +168,15 @@ module RLayout
         if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
           @contents = md.post_match
           @metadata = YAML.load(md.to_s)
+          # filter smart quptes and stuff
+          @metadata.map do |k, v|
+            [k, RubyPants.new(@contents).to_html]
+          end
+
         else
           @contents = source
         end
+        @contents = RubyPants.new(@contents).to_html if @contents
       rescue => e
         puts "YAML Exception reading #filename: #{e.message}"
       end
@@ -181,6 +187,7 @@ module RLayout
           # YAML.load(md.to_s) returns Array
           @metadata = @metadata[0]
         end
+
         starting_heading_level += @metadata['demotion'].to_i if @metadata['demotion']
       end
       # if we have meta-data, then

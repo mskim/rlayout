@@ -62,6 +62,14 @@ module RLayout
       self
     end
 
+    def log_document
+      log = ""
+      @pages.each do |page|
+        log += page.log_page
+      end
+      log
+    end
+
     def page_number(page)
       @starting_page + pages.index(page)
     end
@@ -139,8 +147,8 @@ module RLayout
         h[:height]        = @height
         h[:page_number]   = @pages.length + @starting_page
         h[:float_layout]  += page_float_layout[options[:page_index]] if @page_float_layout
-        new_page = RPage.new(h)
         previous_line = @pages.last.last_line if @pages.length > 0 && @pages.last.last_line
+        new_page = RPage.new(h)
         new_page_first_line = new_page.first_text_line
         previous_line.next_line = new_page_first_line if previous_line
         new_page_first_line

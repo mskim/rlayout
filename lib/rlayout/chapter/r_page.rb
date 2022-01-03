@@ -14,11 +14,12 @@ module RLayout
     attr_accessor :body_lines, :gutter, :body_line_count
     attr_reader :float_layout, :page_by_page
     attr_reader :empty_first_column
-    attr_reader :header_footer, :portrait_mode
-
+    attr_reader :header_footer, :portrait_mode, :binding_margin
+    attr_accessor :page_log
     def initialize(options={}, &block)
       options[:fill_color] = 'white'
       super
+      @binding_margin = options[:binding_margin] || 10
       @portrait_mode = options[:portrait_mode] || true
       if options[:parent] || options[:document]
         @parent       = options[:parent] || options[:document]
@@ -76,6 +77,14 @@ module RLayout
         instance_eval(&block)
       end
       self
+    end
+
+    def log_page
+      page_log = ""
+      @graphics.each do |c| 
+        page_log += c.log_column
+      end
+      page_log
     end
 
     def page_number
@@ -179,8 +188,21 @@ module RLayout
     end
 
     def content_width
-      @width - @left_margin - @right_margin
+      @width - @left_margin - @right_margin - @binding_margin
     end
+
+    def left_side_margin
+      if page_number.odd?
+        @left_margin + @binding_margin
+      else
+        @left_margin
+      end
+    end
+
+    # def left_side?
+    #   return true if page_number.even?
+    #   false
+    # end
 
     def content_height
       @height - @top_margin - @bottom_margin

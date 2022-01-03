@@ -9,6 +9,7 @@ describe 'create Paperback' do
     @project_path  = "/Users/mskim/test_data/book/paperback"
     @project_path  = "/Users/mskim/test_data/book/paperback"
     @project_path  = "/Users/mskim/Development/paperback_writer/paperback/public/job/mskimsid@gmail.com/소설"
+    @project_path  = "/Users/mskim/daebooklee/paperback"
     @paperback = Paperback.new(@project_path)
   end
 

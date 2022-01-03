@@ -958,7 +958,7 @@ module RLayout
       @document.document_path = @document_path
       @document.starting_page = @starting_page
       read_story
-
+      save_para_string
       # place floats to pages
       if options[:page_floats]
         @page_floats      = options.fetch(:page_floats, [])
@@ -996,7 +996,24 @@ module RLayout
       @document.save_svg(@document_path) if @svg
       save_story_by_page if @story_by_page
       save_toc if @toc
+      save_line_log
       self
+    end
+
+    def save_line_log
+      log = @document.log_document
+      log_path = @document_path + "/log.md"
+      File.open(log_path, 'w'){|f| f.write log}
+    end
+
+    def save_para_string
+      story_paras =  "" 
+      @paragraphs.each do |p|
+        story_paras += p.para_string
+        story_paras += "\n\n"
+      end
+      story_paras_path = @document_path + "/story_para.md"
+      File.open(story_paras_path, 'w'){|f| f.write story_paras}
     end
 
     def has_page_floats_info?
@@ -1045,9 +1062,9 @@ module RLayout
       elsif @first_page = @document.pages[0]
         if @first_page.floats.length == 0
           @heading[:parent] = @first_page
-          @heading[:x]      = @first_page.left_margin
+          @heading[:x]      = @first_page.left_side_margin # left_margin + binding_margin
           @heading[:y]      = @first_page.top_margin
-          @heading[:width]  = @first_page.width - @first_page.left_margin - @first_page.right_margin
+          @heading[:width]  = @first_page.content_width # - @first_page.left_margin - @first_page.right_margin
           @heading[:is_float] = true
           RHeading.new(@heading)
         elsif @document.pages[0].has_heading?

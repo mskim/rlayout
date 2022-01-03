@@ -23,6 +23,11 @@ else
   require "image_processing"
   require 'hexapdf'
   require 'text-hyphen'
+  require 'rubypants-unicode'
+  # require 'debug'
+  # require 'pry'
+  # require 'byebug'
+
   require 'pry-byebug'
   # require 'mini_magick'
   # require 'xml-simple'

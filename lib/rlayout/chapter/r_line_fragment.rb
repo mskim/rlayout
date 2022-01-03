@@ -58,6 +58,10 @@ module RLayout
       self
     end
 
+    def log_line
+      "#{page_number}_#{line_index}:#{line_string}\n"
+    end
+
     def page_number
       return 1 unless @parent
       @parent.page_number
@@ -183,6 +187,10 @@ module RLayout
       self == @parent.graphics.first
     end
 
+    def line_index
+      @parent.graphics.index(self)
+    end
+    
     def first_text_line_in_column?
       self == @parent.first_text_line_in_column
     end
@@ -498,6 +506,7 @@ module RLayout
       end
     end
     
+
     # def to_svg
     #   s = "<rect fill='gray' #{svg_rect_string} />"
     #   return s if @graphics.length > 0 && @layed_out_line

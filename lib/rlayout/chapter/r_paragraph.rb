@@ -56,7 +56,6 @@ module RLayout
       @line_width     = options[:line_width] || 130
       @article_type   = options[:article_type]
       parse_style_name
-      # super doen't set @para_style values
       if @markup == 'br'
       else
         @tokens       = []
@@ -76,9 +75,6 @@ module RLayout
       h[:para_rect]   = @para_rect
       h
     end
-
-
-
 
     # before we create any text_tokens,
     # check if we have any special token mark EMPASIS_STRONG or EMPASIS_DIAMOND
@@ -273,6 +269,7 @@ module RLayout
       if token && token.token_type == 'diamond_emphasis'
         # if first token is diamond emphasis, no head indent
         unless @current_line.first_text_line_in_column?
+          
           @current_line = @current_line.next_text_line
         end
         @current_line.layed_out_line = true
@@ -342,6 +339,7 @@ module RLayout
       end
       while token
         return unless @current_line
+        # binding.pry if token.string == "“그리고요……”" #&& @current_line.first_text_line_in_column?
         result = @current_line.place_token(token)
         # token is broken into two, second part is returned
         if result.class == RTextToken

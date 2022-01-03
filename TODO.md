@@ -122,6 +122,23 @@ TODO List
 		this will create graphic from right_space, and bottom_space
 - manual hyphenation with - in the middle of English and number, break at hyphen
 
+2022_01_03
+  - fix line next_line setting wring line becase of bug in add_new_page
+
+2021_12_29
+  - add RubyPants gem 
+  - gem 'rubypants-unicode'
+    gem install rubypants-unicode
+    h['title']                = RubyPants.new(title).to_html if title
+    if subtitle
+      h['subtitle']           = RubyPants.new(subtitle).to_html unless (kind == '사설' || kind == '기고')
+    end
+    h['boxed_subtitle_text']  = RubyPants.new(boxed_subtitle_text).to_html if boxed_subtitle_type && boxed_subtitle_type.to_i > 0
+    h['quote']                = RubyPants.new(quote).to_html  if quote && quote !="" if quote_box_size.to_i > 0
+    h['announcement']         = RubyPants.new(announcement_text).to_html  if announcement_column && announcement_column > 0
+    h['reporter']             = reporter if reporter &&  reporter !=""
+    h['email']                = email
+
 2021_12_26
   - clean_previous_generated_books
 
