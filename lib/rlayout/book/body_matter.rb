@@ -36,24 +36,74 @@ module RLayout
       @project_path + "/_build"
     end
     
+    # # support folder as well as .md file as chapter source
+    # def process_body_matter
+    #   @document_folders = []
+    #   Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
+    #     # copy source to build 
+    #     chapter_folder = build_folder + "/chapter_#{i+1}"
+    #     @document_folders << chapter_folder
+    #     FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
+    #     FileUtils.cp file, "#{chapter_folder}/story.md"
+    #     copy_page_floats(file, chapter_folder)
+    #     h = {}
+    #     h[:document_path] = chapter_folder
+    #     h[:page_pdf] = true
+    #     h[:toc] = true
+    #     h[:starting_page] = @starting_page_number
+    #     # h[:header_erb] = header_erb
+    #     h[:footer_erb] = footer_erb
+    #     r = RLayout::RChapter.new(h)
+    #     @starting_page_number += r.page_count
+    #   end
+    #   generate_body_matter_toc
+    # end
+
+    # support folder as well as .md file as chapter source
     def process_body_matter
       @document_folders = []
-      Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
+      # Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
+      chapter_number = 1
+      Dir.entries(@project_path).sort.each do |file|
         # copy source to build 
-        chapter_folder = build_folder + "/chapter_#{i+1}"
-        @document_folders << chapter_folder
-        FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
-        FileUtils.cp file, "#{chapter_folder}/story.md"
-        copy_page_floats(file, chapter_folder)
-        h = {}
-        h[:document_path] = chapter_folder
-        h[:page_pdf] = true
-        h[:toc] = true
-        h[:starting_page] = @starting_page_number
-        # h[:header_erb] = header_erb
-        h[:footer_erb] = footer_erb
-        r = RLayout::RChapter.new(h)
-        @starting_page_number += r.page_count
+        if file =~/^\d\d/
+          chapter_folder = build_folder + "/chapter_#{chapter_number}"
+          FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
+          source_path = @project_path + "/#{file}"
+          if File.directory?(source_path)
+            # look for .md file and copy it as story.md in build
+            Dir.glob("#{source_path}/*").each do |souce_folder_file|
+              if File.directory?(souce_folder_file)
+                # copy images folder to build chpater folder
+                FileUtils.cp_r souce_folder_file, chapter_folder
+              elsif souce_folder_file =~/.md$/
+                # if a file is .md file, rename it as story.md in build chapter folder
+                FileUtils.cp souce_folder_file, "#{chapter_folder}/story.md"
+              else
+                FileUtils.cp souce_folder_file, "#{chapter_folder}"
+              end
+            end
+            @document_folders << chapter_folder
+          elsif source_path =~/[.md,.markdown]$/
+            FileUtils.cp source_path, "#{chapter_folder}/story.md"
+            @document_folders << chapter_folder
+          else
+            # this is case when a file starts with \d\d but not a .md file nor folder
+            next
+          end
+          h = {}
+          h[:document_path] = chapter_folder
+          h[:page_pdf] = true
+          h[:toc] = true
+          h[:starting_page] = @starting_page_number
+          # h[:header_erb] = header_erb
+          h[:footer_erb] = footer_erb
+          r = RLayout::RChapter.new(h)
+          @starting_page_number += r.page_count
+          chapter_number += 1
+        else
+          next
+        end
       end
       generate_body_matter_toc
     end

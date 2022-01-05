@@ -46,32 +46,87 @@ module RLayout
       @starting_page_number += r.page_count
     end
 
+    # def process_part
+    #   Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
+    #     # copy source to build 
+    #     chapter_folder = @build_part_folder + "/chapter_#{i+1}"
+    #     @part_docs << chapter_folder
+    #     FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
+    #     FileUtils.cp file, "#{chapter_folder}/story.md"
+    #     copy_page_floats(file, chapter_folder)
+    #     h = {}
+    #     h[:document_path] = chapter_folder
+    #     h[:page_pdf] = true
+    #     h[:toc] = true
+    #     h[:starting_page] = @starting_page_number
+    #     h[:belongs_to_part] = true
+    #     if @body_doc_type == 'chapter'
+    #       r = RLayout::RChapter.new(h)
+    #     elsif @body_doc_type == 'poem'
+    #       r = RLayout::Poem.new(h)
+    #     elsif @body_doc_type == 'essay'
+    #       h[:heeading_height] = 'quarter'
+    #       r = RLayout::RChapter.new(h)
+    #     end
+    #     @starting_page_number += r.page_count
+    #   end
+    #   @next_part_starting_page = @starting_page_number
+    # end
+    
+    # support folder as well as .md file as chapter source
     def process_part
-      Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
+      chapter_number = 1
+      Dir.entries(@project_path).sort.each do |file|
+        next if file == "." || file == ".." || file == ".DS_Store"
         # copy source to build 
-        chapter_folder = @build_part_folder + "/chapter_#{i+1}"
-        @part_docs << chapter_folder
-        FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
-        FileUtils.cp file, "#{chapter_folder}/story.md"
-        copy_page_floats(file, chapter_folder)
-        h = {}
-        h[:document_path] = chapter_folder
-        h[:page_pdf] = true
-        h[:toc] = true
-        h[:starting_page] = @starting_page_number
-        h[:belongs_to_part] = true
+        if file =~/^\d\d/
+          chapter_folder = @build_part_folder + "/chapter_#{chapter_number}"
+          FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
+          source_path = @project_path + "/#{file}"
 
-        # h[:header_erb] = header_erb
-        # h[:footer_erb] = footer_erb
-        if @body_doc_type == 'chapter'
-          r = RLayout::RChapter.new(h)
-        elsif @body_doc_type == 'poem'
-          r = RLayout::Poem.new(h)
-        elsif @body_doc_type == 'essay'
-          h[:heeading_height] = 'quarter'
-          r = RLayout::RChapter.new(h)
+          if File.directory?(source_path)
+            # this is chapter source with directory
+            # look for .md file and copy it as story.md in build
+            Dir.glob("#{source_path}/*").each do |souce_folder_file|
+              if File.directory?(souce_folder_file)
+                # copy images folder to build chpater folder
+                FileUtils.cp_r souce_folder_file, chapter_folder
+              elsif souce_folder_file =~/.md$/
+                # if a file is .md file, rename it as story.md in build chapter folder
+                FileUtils.cp souce_folder_file, "#{chapter_folder}/story.md"
+              else
+                FileUtils.cp souce_folder_file, "#{chapter_folder}"
+              end
+            end
+            @part_docs << chapter_folder
+          elsif source_path =~/[.md,.markdown]$/
+            # this is chapter source with markdown file
+            FileUtils.cp source_path, "#{chapter_folder}/story.md"
+            @part_docs << chapter_folder
+          else
+            # this is case when a file starts with \d\d but not a .md file
+            next
+          end
+
+          # FileUtils.cp file, "#{chapter_folder}/story.md"
+          # copy_page_floats(file, chapter_folder)
+          h = {}
+          h[:document_path] = chapter_folder
+          h[:page_pdf] = true
+          h[:toc] = true
+          h[:starting_page] = @starting_page_number
+          h[:belongs_to_part] = true
+          if @body_doc_type == 'chapter'
+            r = RLayout::RChapter.new(h)
+          elsif @body_doc_type == 'poem'
+            r = RLayout::Poem.new(h)
+          elsif @body_doc_type == 'essay'
+            h[:heeading_height] = 'quarter'
+            r = RLayout::RChapter.new(h)
+          end
+          @starting_page_number += r.page_count
+          chapter_number += 1
         end
-        @starting_page_number += r.page_count
       end
       @next_part_starting_page = @starting_page_number
     end

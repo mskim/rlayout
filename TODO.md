@@ -124,12 +124,16 @@ TODO List
 
 2022_01_04
   - apply smart_pants to story files
-
   - fix chapter file to handle file or folder
       01_something_folder
       01
       01.md
       01_some_name.md
+
+  - fix parts to handle file or folder
+  - create print pdf with cutting lines and marging
+      bleed_margin, cutter_margin
+
   - add picture support
   - add table support
   - fix cover title text overflow
@@ -321,7 +325,7 @@ TODO List
   - Book
       Paperback
   - BookWithParts 
-      EsseyBook, PoemBook
+      EsseyBook, PoetryBook
   - PictureBook
 
   - generate ebook_indexe.html 

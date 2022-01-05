@@ -164,16 +164,20 @@ module RLayout
       else
         source = File.open(@path, 'r'){|f| f.read}
       end
+      starting_heading_level = options.fetch(:demotion, 1)
+
       begin
         if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
           @contents = md.post_match
           @metadata = YAML.load(md.to_s)
           # filter smart quptes and stuff
           # RubyPants filters yaml marker --- so, filter heading after YAML is parsed 
-          @metadata.map do |k, v|
-            [k, RubyPants.new(@contents).to_html]
+          @updated_metadata = {}
+          @metadata = @metadata.each do |k, v|
+            next if k == 'demotion'
+            @updated_metadata[k] = RubyPants.new(v).to_html if v
           end
-
+          starting_heading_level += @metadata['demotion'].to_i if @metadata['demotion']
         else
           @contents = source
         end
@@ -181,20 +185,7 @@ module RLayout
       rescue => e
         puts "YAML Exception reading #filename: #{e.message}"
       end
-      starting_heading_level = options.fetch(:demotion, 1)
-      if @metadata
-        if @metadata.class == Array
-          #TODO it seem like a bug in motion-yaml
-          # YAML.load(md.to_s) returns Array
-          @metadata = @metadata[0]
-        end
 
-        starting_heading_level += @metadata['demotion'].to_i if @metadata['demotion']
-      end
-      # if we have meta-data, then
-      # take out the top meta-data part from source
-      # Set Document Options
-      # And Create Heading from this
       reader = RLayout::Reader.new @contents, nil
       paragraphs = reader.text_blocks.map do |lines_block|
         if lines_block[0]=~TABLE_PIPE_CHECK
@@ -206,7 +197,7 @@ module RLayout
         end
       end
 
-      @para_data = {:heading=>@metadata, :paragraphs =>paragraphs}
+      @para_data = {:heading=>@updated_metadata, :paragraphs =>paragraphs}
     end
 
     #read story file and convert it to line text format
