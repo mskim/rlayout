@@ -24,7 +24,11 @@ module RLayout
       @title = @book_info[:title]
       @page_size = options[:page_size] || 'A5'
       @page_width = SIZES[@page_size][0]
+      @width = @page_width
       @height = SIZES[@page_size][1]
+      @cutting_margin = options[:cutting_margin] || 22.4
+      @binding_margin = options[:binding_margin] || 10
+      @bleeding_margin = options[:bleeding_margin] || 3*2.24
       @starting_page_number = 1
       create_book_cover
       @front_matter = FrontMatter.new(@project_path)

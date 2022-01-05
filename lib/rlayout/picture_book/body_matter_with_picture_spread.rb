@@ -28,7 +28,6 @@ module RLayout
           @starting_page_number += 2
         end
       end
-      # generate_body_matter_toc
     end
   
     def pdf_docs
@@ -39,6 +38,8 @@ module RLayout
       end
       pdf_files
     end
+
+    
 
   end
 end

@@ -2,12 +2,13 @@ module RLayout
 
   # 2021-11-04
   class Book
-    attr_reader :project_path, :book_info, :page_width, :height
+    attr_reader :project_path, :book_info, :page_width, :width, :height
     attr_reader :has_cover_inside_page, :has_wing, :has_toc
     attr_reader :book_toc, :body_matter_toc, :rear_matter_toc, :starting_page_number
     attr_reader :rear_matter_docs, :body_doc_type, :ebook_page_contents
     attr_reader :toc_first_page_number, :toc_doc_page_count, :toc_page_links
     attr_reader :front_matter, :body_matter, :rear_matter
+    attr_reader :cutting_margin, :binding_margin, :bleeding_margin
 
     def initialize(project_path, options={})
       @project_path = project_path
@@ -17,8 +18,12 @@ module RLayout
       @title = @book_info[:title]
       @page_size = options[:paper_size] || 'A5'
       @page_width = SIZES[@page_size][0]
+      @width = @page_width
       @height = SIZES[@page_size][1]
       @starting_page_number = 1
+      @cutting_margin = options[:cutting_margin] || 22.4
+      @binding_margin = options[:binding_margin] || 10
+      @bleeding_margin = options[:bleeding_margin] || 3*2.24
       create_book_cover
       @front_matter = FrontMatter.new(@project_path)
       @starting_page_number += @front_matter.page_count
@@ -60,9 +65,9 @@ module RLayout
       @book_info[:title] || 'untitled'
     end
   
-    def width
-      @page_width
-    end
+    # def width
+    #   @page_width
+    # end
   
     def left_margin
       50
@@ -130,6 +135,15 @@ module RLayout
       pdf_docs
     end
 
+    def pdf_pages_for_inner_book
+      pdf_pages = []
+      pdf_pages += @front_matter.pdf_pages
+      pdf_pages += @body_matter.pdf_pages
+      # pdf_docs += rear_matter_docs_pdf
+      pdf_pages.flatten
+      pdf_pages
+    end
+
     def print_folder
       @project_path + "/_print"
     end
@@ -156,12 +170,29 @@ module RLayout
       FileUtils.cp(build_book_cover_pdf_path, print_book_cover_pdf_path)
     end
 
+    def place_page_in_print_page(page_path, side)
+      print_page_width = @page_width + @cutting_margin*2
+      print_page_height = @height + @cutting_margin*2
+      RLayout::PrintPage.new(page_path:page_path, side:side, width: print_page_width, height: print_page_height, cutting_margin: @cutting_margin, bleeding_margin: @bleeding_margin, binding_margin: @binding_margin)
+    end
+
     def generate_inner_book
-      # merge pdf files into book with out cover
+      # merge pdf files into book without cover
+      # add cutting page with cutting_line, binding_margin
+      # left_page  = left_print_page
+      # right_page = right_printing_page
       target = HexaPDF::Document.new
-      pdf_docs_for_inner_book.each do |file|
-        pdf = HexaPDF::Document.open(file)
-        pdf.pages.each {|page| target.pages << target.import(page)}
+      starting_page_number = 1
+      flattened_pdf_files = pdf_pages_for_inner_book.flatten
+      flattened_pdf_files.each do |page_path|
+        if starting_page_number.odd?
+          right_side_print_page = place_page_in_print_page(page_path, "right" ).first_pdf_page
+          target.pages << target.import(right_side_print_page)
+        else
+          left_side_print_page = place_page_in_print_page(page_path, "left").first_pdf_page
+          target.pages << target.import(left_side_print_page)
+        end
+        starting_page_number += 1
       end
       target.write(book_without_cover_path, optimize: true)
     end
@@ -554,7 +585,7 @@ module RLayout
     end
 
     def create_ebook_index_page
-      width = @page_width
+      width = @width
       height = @height
       vertical_page = true
       template = ebook_index_html_container #File.open(ebook_index_html_erb, 'r') { |f| f.read }

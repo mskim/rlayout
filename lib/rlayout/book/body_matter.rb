@@ -36,29 +36,6 @@ module RLayout
       @project_path + "/_build"
     end
     
-    # # support folder as well as .md file as chapter source
-    # def process_body_matter
-    #   @document_folders = []
-    #   Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
-    #     # copy source to build 
-    #     chapter_folder = build_folder + "/chapter_#{i+1}"
-    #     @document_folders << chapter_folder
-    #     FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
-    #     FileUtils.cp file, "#{chapter_folder}/story.md"
-    #     copy_page_floats(file, chapter_folder)
-    #     h = {}
-    #     h[:document_path] = chapter_folder
-    #     h[:page_pdf] = true
-    #     h[:toc] = true
-    #     h[:starting_page] = @starting_page_number
-    #     # h[:header_erb] = header_erb
-    #     h[:footer_erb] = footer_erb
-    #     r = RLayout::RChapter.new(h)
-    #     @starting_page_number += r.page_count
-    #   end
-    #   generate_body_matter_toc
-    # end
-
     # support folder as well as .md file as chapter source
     def process_body_matter
       @document_folders = []
@@ -145,9 +122,17 @@ module RLayout
       pdf_files
     end
 
+    def pdf_pages
+      pdf_pages = []
+      @document_folders.each do |chapter|
+        chapter_pdf_pages = Dir.glob("#{chapter}/????/page.pdf").sort
+        pdf_pages << chapter_pdf_pages #if File.exist?(chapter_pdf_file)
+      end
+      pdf_pages
+    end
 
     def book_title
-      @book_info['title'] || 'untitled'
+      @book_info['title'] || @book_info[:title] || 'untitled'
     end
 
     def width

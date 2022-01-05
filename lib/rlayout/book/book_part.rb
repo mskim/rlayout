@@ -46,33 +46,6 @@ module RLayout
       @starting_page_number += r.page_count
     end
 
-    # def process_part
-    #   Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
-    #     # copy source to build 
-    #     chapter_folder = @build_part_folder + "/chapter_#{i+1}"
-    #     @part_docs << chapter_folder
-    #     FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
-    #     FileUtils.cp file, "#{chapter_folder}/story.md"
-    #     copy_page_floats(file, chapter_folder)
-    #     h = {}
-    #     h[:document_path] = chapter_folder
-    #     h[:page_pdf] = true
-    #     h[:toc] = true
-    #     h[:starting_page] = @starting_page_number
-    #     h[:belongs_to_part] = true
-    #     if @body_doc_type == 'chapter'
-    #       r = RLayout::RChapter.new(h)
-    #     elsif @body_doc_type == 'poem'
-    #       r = RLayout::Poem.new(h)
-    #     elsif @body_doc_type == 'essay'
-    #       h[:heeading_height] = 'quarter'
-    #       r = RLayout::RChapter.new(h)
-    #     end
-    #     @starting_page_number += r.page_count
-    #   end
-    #   @next_part_starting_page = @starting_page_number
-    # end
-    
     # support folder as well as .md file as chapter source
     def process_part
       chapter_number = 1

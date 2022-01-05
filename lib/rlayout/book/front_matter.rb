@@ -90,9 +90,20 @@ module RLayout
         else
           doc_pdf_file = build_front_matter_path + "/#{doc_folder}/chapter.pdf"
         end
-        pdf_files << doc_pdf_file if File.exist?(doc_pdf_file)
+        pdf_files << doc_pdf_file
       end
       pdf_files
+    end
+
+    def pdf_pages
+      pdf_pages = []
+      @document_folders.each do |doc_folder|
+        full_path = build_front_matter_path + "/#{doc_folder}"
+        doc_pdf_pages = Dir.glob("#{full_path}/????/page.pdf")
+        pdf_pages << doc_pdf_pages
+      end
+      pdf_pages.flatten
+      pdf_pages
     end
 
     def build_front_matter_path

@@ -981,7 +981,6 @@ module RLayout
           end
         end
       end
-
       layout_story
       # draw header and footers
       if @footer_erb

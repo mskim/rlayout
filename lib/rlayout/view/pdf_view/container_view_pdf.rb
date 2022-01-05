@@ -18,6 +18,7 @@ module RLayout
         float.draw_pdf(canvas) 
       end
       draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
+
       @pdf_doc.write(output_path)
       if options[:page_pdf]
         split_pdf(output_path)
@@ -59,5 +60,23 @@ module RLayout
       end
     end
 
+    def to_pdf(options={})
+      # style_service = RLayout::StyleService.shared_style_service
+      @pdf_doc      = HexaPDF::Document.new
+      # style_service.pdf_doc = @pdf_doc
+      # load_fonts(@pdf_doc)
+      page          = @pdf_doc.pages.add([0, 0, @width, @height])
+      canvas        = page.canvas      
+      # style_service.set_canvas_text_style(canvas, 'body')
+      draw_fill(canvas) unless self.class == RDocument
+      @graphics.each do |g|
+        g.draw_pdf(canvas)
+      end
+      # @floats.each do |float|
+      #   float.draw_pdf(canvas) 
+      # end
+      draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
+      @pdf_doc
+    end
   end
 end
