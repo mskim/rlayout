@@ -6,9 +6,9 @@ module RLayout
     def initialize(options={})
       @content = options[:content]
       @project_path = options[:project_path]
-      @page_size = options[:page_size] || 'A5'
-      @width = SIZES[@page_size][0]
-      @height = SIZES[@page_size][1]
+      @paper_size = options[:paper_size] || 'A5'
+      @width = SIZES[@paper_size][0]
+      @height = SIZES[@paper_size][1]
       @spread_image_path = options[:spread_image_path]
       @cover_spread_width = options[:cover_spread_width]
       generate_pdf

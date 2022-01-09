@@ -15,6 +15,11 @@
       floats_1
 
 ### 2022_01_09
+  - set_body_starting_page
+  - use pre-made frontmatter
+    book_cover
+  - change  footer style
+### 2022_01_09
   - front_matter
     - \d\d folder or file
     - add title_page title_page.pdf, jpg, png

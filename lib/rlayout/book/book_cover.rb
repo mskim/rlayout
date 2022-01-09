@@ -15,7 +15,7 @@ module RLayout
   class BookCover < Container
     attr_reader :book_info, :project_path, :source_path,  :portrait, :spread_layout, :spread_width, :has_no_cover_inside_page, :has_wing
     attr_reader :cover_spread, :front_page, :back_page, :seneca, :seneca_width, :seneca_width_in_cm, :front_wing, :back_wing
-    attr_reader :page_size, :page_width, :wing_width, :updated
+    attr_reader :paper_size, :page_width, :wing_width, :updated
     attr_reader :gripper_width_in_cm, :gripper_width
     def initialize(options={})
       super
@@ -29,9 +29,9 @@ module RLayout
         FileUtils.mkdir_p(@project_path)
       end
       @book_info = options[:book_info]
-      @page_size = @book_info[:paper_size] || @book_info['page_size'] || 'A4'
-      @page_width = SIZES[@page_size][0]
-      @height = SIZES[@page_size][1]
+      @paper_size = @book_info[:paper_size]
+      @page_width = SIZES[@paper_size][0]
+      @height = SIZES[@paper_size][1]
       @seneca_width_in_cm = options[:seneca_width_in_cm] || 1.5
       @seneca_width = @seneca_width_in_cm*CENTI2POINT
       @gripper_width_in_cm = options[:seneca_width_in_cm] || 1.0
@@ -212,7 +212,6 @@ module RLayout
       h[:front_page_spread_off_set] = @page_width + @seneca_width
       h[:spread_image_path] = @cover_spread.output_path
       h[:content] = @book_info
-      # @front_page = RLayout::FrontPage.new(project_path:part_path, width:@page_width, height: @height)
       @front_page = RLayout::FrontPage.new(h)
       @current_x += @page_width
     end

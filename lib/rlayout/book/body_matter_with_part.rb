@@ -11,9 +11,10 @@ module RLayout
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @title = @book_info[:title]
-      @page_size = options[:page_size] || 'A5'
-      @page_width = SIZES[@page_size][0]
-      @height = SIZES[@page_size][1]
+      @paper_size = @book_info[:paper_size] || "A4"
+      @paper_size = options[:paper_size] if options[:paper_size]
+      @page_width = SIZES[@paper_size][0]
+      @height = SIZES[@paper_size][1]
       @body_doc_type = options[:body_doc_type]
       @starting_page_number = options[:starting_page_number] || 1
       process_body_matter_with_parts
@@ -32,7 +33,7 @@ module RLayout
         if parts_info
           part_title = parts_info[i]
         end
-        r = RLayout::BookPart.new(part, title:part_title, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number, order: i + 1)
+        r = RLayout::BookPart.new(part, paper_size: @paper_size, title:part_title, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number, order: i + 1)
         @document_folders += r.part_docs
         @starting_page_number = r.next_part_starting_page
       end
@@ -43,7 +44,7 @@ module RLayout
           if parts_info
             part_title = parts_info[i]
           end
-          r = RLayout::BookPart.new(part, title:part_title, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number, order: i + 1)
+          r = RLayout::BookPart.new(part, paper_size: @paper_size, title:part_title, body_doc_type: @body_doc_type, starting_page_number: @starting_page_number, order: i + 1)
           @document_folders += r.part_docs
           @starting_page_number = r.next_part_starting_page
         end

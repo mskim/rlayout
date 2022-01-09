@@ -4,11 +4,11 @@ module RLayout
   class CoverHeading < Container
     attr_accessor :title_object, :subject_head_object, :subtitle_object, :author_object
     attr_reader   :upper_line_type, :heading_columns, :body_line_height
-    attr_reader :page_size
+    attr_reader :paper_size
     def initialize(options={})
       options[:stroke_color]    = "CMYK=0,0,0,100"
       super
-      @page_size = options[:page_size] || A5
+      @paper_size = options[:paper_size] || A5
       @body_line_height = options[:body_line_height] || 20
       set_heading_content(options)
       self

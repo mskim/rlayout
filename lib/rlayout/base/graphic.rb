@@ -27,8 +27,8 @@ module RLayout
       @y              = options.fetch(:y, graphic_defaults[:y])
       @width          = options.fetch(:width, graphic_defaults[:width])
       @height         = options.fetch(:height, graphic_defaults[:height])
-      if options[:page_size]
-        size   = SIZES[options[:page_size]]
+      if options[:paper_size]
+        size   = SIZES[options[:paper_size]]
         @width = size[0]
         @height = size[1]
       end

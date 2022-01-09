@@ -12,7 +12,7 @@ module RLayout
     attr_reader :project_path, :book_info, :page_width, :height
     attr_reader :document_folders, :body_matter_toc, :body_doc_type
     attr_reader :starting_page_number, :toc_doc_page_count, :toc_page_links
-    attr_reader :toc_content
+    attr_reader :toc_content, :paper_size
 
     def initialize(project_path, options={})
       @project_path = project_path
@@ -20,9 +20,10 @@ module RLayout
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @title = @book_info[:title]
-      @page_size = options[:page_size] || 'A5'
-      @page_width = SIZES[@page_size][0]
-      @height = SIZES[@page_size][1]
+      @paper_size = @book_info[:paper_size]  || "A5"
+      @paper_size = options[:paper_size] if options[:paper_size]
+      @page_width = SIZES[@paper_size][0]
+      @height = SIZES[@paper_size][1]
       @starting_page_number = options[:starting_page_number] || 1
       process_body_matter
       self
@@ -70,6 +71,7 @@ module RLayout
           end
           h = {}
           h[:document_path] = chapter_folder
+          h[:paper_size] = @paper_size
           h[:page_pdf] = true
           h[:toc] = true
           h[:starting_page] = @starting_page_number
@@ -173,9 +175,14 @@ module RLayout
 
     def left_footer_erb
       # put book title on the left side 
+      # s=<<~EOF
+      # RLayout::Container.new(#{footer_options}) do
+      #   text("<%= @page_number %>  #{book_title} ", font_size: 9, x: 0, width: #{footer_width}, text_alignment: 'left')
+      # end
+      # EOF
       s=<<~EOF
       RLayout::Container.new(#{footer_options}) do
-        text("<%= @page_number %>  #{book_title} ", font_size: 9, x: 0, width: #{footer_width}, text_alignment: 'left')
+        text("<%= @page_number %>", font_size: 9, x: 0, width: #{footer_width}, text_alignment: 'left')
       end
       EOF
     end

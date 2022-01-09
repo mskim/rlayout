@@ -6,9 +6,9 @@ module RLayout
     def initialize(options={})
       @content = options[:content] || default_content
       @project_path = options[:project_path]
-      @page_size = options[:page_size] || 'A5'
-      @width = SIZES[@page_size][0] 
-      @height = SIZES[@page_size][1]
+      @paper_size = options[:paper_size] || 'A5'
+      @width = SIZES[@paper_size][0] 
+      @height = SIZES[@paper_size][1]
       @width = options[:width] if  options[:width]
       @height = options[:height] if  options[:height]
       @updated = false

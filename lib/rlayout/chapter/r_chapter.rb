@@ -904,7 +904,7 @@ module RLayout
     attr_reader :body_line_count, :body_line_height
     attr_reader :max_page_number, :page_floats
     attr_reader :header_footer, :header_erb, :footer_erb
-    attr_reader :belongs_to_part
+    attr_reader :belongs_to_part, :paper_size
 
     # page_by_page is used for page proof reading
     # if page_by_page is true,
@@ -916,10 +916,11 @@ module RLayout
     attr_reader :page_by_page, :story_md, :story_by_page, :toc
     attr_reader :belongs_to_part
     attr_reader :grid, :default_image_location, :default_image_size
-    attr_reader :local_image_folder
+    attr_reader :local_image_folder, :paper_size
     
     def initialize(options={} ,&block)
       @document_path  = options[:document_path] || options[:chapter_path]
+      @paper_size = options[:paper_size] || "A5"
       @local_image_folder = @document_path + "/images"
       @story_path     = @document_path + "/story.md"
       @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
@@ -932,7 +933,10 @@ module RLayout
       unless @layout_rb
         layout_path = @document_path + "/layout.rb"
         unless File.exist?(layout_path)
-          @layout_rb = default_document
+          @paper_size = "A5" unless @paper_size
+          erb = ERB.new(default_document)
+          @layout_rb = erb.result(binding)
+          # @layout_rb = default_document
         else
           @layout_rb = File.open(layout_path, 'r'){|f| f.read}
         end
@@ -958,7 +962,7 @@ module RLayout
       @document.document_path = @document_path
       @document.starting_page = @starting_page
       read_story
-      # save_para_string # used for debuging
+      # save_para_string # used for debug
       # place floats to pages
       if options[:page_floats]
         @page_floats      = options.fetch(:page_floats, [])
@@ -995,7 +999,7 @@ module RLayout
       @document.save_svg(@document_path) if @svg
       save_story_by_page if @story_by_page
       save_toc if @toc
-      # save_line_log # used for debuging
+      # save_line_log # used for debug
       self
     end
 
@@ -1033,7 +1037,7 @@ module RLayout
 
     def default_document
       layout =<<~EOF
-        RLayout::RDocument.new(page_size:'A5')
+        RLayout::RDocument.new(paper_size:'<%= @paper_size %>')
       EOF
     end
 
@@ -1075,7 +1079,10 @@ module RLayout
       @left_margin = @document.pages[0].left_margin
       @top_margin = @document.pages[0].top_margin
       @width = @document.pages[0].width
+      puts "+++++++++++++ document page width in MM: #{pt2mm(@width)}"
       @height = @document.pages[0].height
+      puts "+++++++++++++ document page height in MM: #{pt2mm(@height)}"
+
       @story[:paragraphs].each do |para, i|
         if  para[:markup] == "image"
           @image_count += 1

@@ -8,9 +8,9 @@ module RLayout
     def initialize(options={})
       @project_path = options[:project_path]
       @starting_page_number = options[:starting_page_number] || 1
-      @page_size = options[:page_size] || 'A5'
-      @width = SIZES[@page_size][0]
-      @height = SIZES[@page_size][1]
+      @paper_size = options[:paper_size] || 'A5'
+      @width = SIZES[@paper_size][0]
+      @height = SIZES[@paper_size][1]
       @title = options[:title] || 'The Name of the Part'
       @order = options[:order] || '01'
       @order_string = options[:order_string] || '01'

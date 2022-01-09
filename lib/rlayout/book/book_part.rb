@@ -9,7 +9,10 @@ module RLayout
     attr_reader :title, :order
     def initialize(part_project_path, options={})
       @project_path = part_project_path
-      @page_size = options[:page_size] || 'A5'
+      @book_info = YAML::load_file(@book_info_path)
+      @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
+      @title = @book_info[:title]
+      @paper_size = options[:paper_size] || 'A5'
       @title = options[:title] || "파트 제목은 여기에"
       @part_name = File.basename(@project_path)
       @order = options[:order] || @part_name.split("_").last
@@ -21,8 +24,8 @@ module RLayout
         @part_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
         @title = @part_info[:title] #|| @part_info['title']
       end
-      @page_width = SIZES[@page_size][0]
-      @height = SIZES[@page_size][1]
+      @page_width = SIZES[@paper_size][0]
+      @height = SIZES[@paper_size][1]
       @starting_page_number = options[:starting_page_number] || 1
       @body_doc_type = options[:body_doc_type]  || 'chapter' # chapter, poem, essay
       FileUtils.mkdir_p(@build_part_folder) unless File.exist?(@build_part_folder)
@@ -38,6 +41,7 @@ module RLayout
       h[:starting_page_number] = @starting_page_number
       h[:order] = @order
       h[:title] = @title
+      h[:paper_size] = @paper_size
       @part_docs << @build_part_folder + "/0_part_cover"
       r = RLayout::PartCover.new(h)
       # r.page_count : make it a document kind
@@ -85,6 +89,7 @@ module RLayout
           # copy_page_floats(file, chapter_folder)
           h = {}
           h[:document_path] = chapter_folder
+          h[:paper_size] = @paper_size
           h[:page_pdf] = true
           h[:toc] = true
           h[:starting_page] = @starting_page_number

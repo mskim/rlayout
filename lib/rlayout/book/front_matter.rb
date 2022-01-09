@@ -11,9 +11,9 @@ module RLayout
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @title = @book_info[:title]
-      @page_size = @book_info[:paper_size] || 'A5'
-      @page_width = SIZES[@page_size][0]
-      @height = SIZES[@page_size][1]
+      @paper_size = @book_info[:paper_size] || 'A5'
+      @page_width = SIZES[@paper_size][0]
+      @height = SIZES[@paper_size][1]
       @starting_page_number = options[:starting_page_number] || 1
       @page_count = 0
       process_front_matter
@@ -39,7 +39,7 @@ module RLayout
           FileUtils.mkdir_p(prologue_path) unless File.exist?(prologue_path)
           system("cp #{md} #{story_md_path}")
           h = {}
-          h[:page_size] = @page_size
+          h[:paper_size] = @paper_size
           h[:document_path] = prologue_path
           h[:page_pdf] = true
           h[:toc] = true

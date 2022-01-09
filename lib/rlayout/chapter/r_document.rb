@@ -38,6 +38,7 @@ module RLayout
       else
         @body_line_count  = 40 if @page_size == "A4"
         @body_line_count  = 25 if @page_size == "A5"
+        @body_line_count  = 25 if @page_size == "16절" || "197x272" || "197X272"
       end
       @left_margin      = options[:left_margin]     || 50
       @top_margin       = options[:top_margin]      || 50

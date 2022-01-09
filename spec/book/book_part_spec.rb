@@ -5,7 +5,7 @@ describe 'create BookPart' do
   before do
     @project_path  = "/Users/mskim/test_data/book_part/part_1"
     @build_path  = "/Users/mskim/test_data/book_part/build/part_1"
-    @part = BookPart.new(@project_path, )
+    @part = BookPart.new(@project_path)
   end
 
   it 'should create BookPart' do

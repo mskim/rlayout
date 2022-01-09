@@ -16,10 +16,11 @@ module RLayout
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @title = @book_info[:title]
-      @page_size = options[:paper_size] || 'A5'
-      @page_width = SIZES[@page_size][0]
+      @paper_size = @book_info[:paper_size] || 'A5'
+      @paper_size = options[:paper_size] if options[:paper_size]
+      @page_width = SIZES[@paper_size][0]
       @width = @page_width
-      @height = SIZES[@page_size][1]
+      @height = SIZES[@paper_size][1]
       @starting_page_number = 1
       @gripper_margin = options[:gripper_margin] || 1*28.34646
       @binding_margin = options[:binding_margin] || 10
@@ -27,7 +28,7 @@ module RLayout
       create_book_cover
       @front_matter = FrontMatter.new(@project_path)
       @starting_page_number += @front_matter.page_count
-      @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number, page_size: @page_size)
+      @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number, paper_size: @paper_size)
       @rear_matter = RearMatter.new(@project_path)
       generate_toc
       generate_pdf_for_print

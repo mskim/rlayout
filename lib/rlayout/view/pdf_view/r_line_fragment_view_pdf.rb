@@ -81,6 +81,7 @@ module RLayout
     end
 
     def draw_tokens(canvas)
+      # puts line_string for debug
       @graphics.each do |token|
         if @font_size.nil?
           @font_size = 9.4
