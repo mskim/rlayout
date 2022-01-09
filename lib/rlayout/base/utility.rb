@@ -131,6 +131,15 @@ module  RLayout
     cm * 28.34646
   end
 
+
+  # def mm2pt(mm)
+  #   mm * (72 / 25.4)
+  # end
+
+  # def cm2pt(cm)
+  #   mm2pt(cm2mm(cm))
+  # end
+
   def meter2pt(m)
     m * 2800.34646
   end

@@ -2,23 +2,61 @@
 
 ### 2022_01_??
 
-  - add picture support
   - add table support
   - fix cover title text overflow
     - set title_text fit_to_box
     - set layout_length for each element for vertival balance
   - use async to process chapter in parallel
-  - foot note support
+  - foot note support using [^1]
   - index support
   - reference support
   - math suppoert
-  
+  - add inline float marking support??
+      floats_1
+
+### 2022_01_09
+  - front_matter
+    - \d\d folder or file
+    - add title_page title_page.pdf, jpg, png
+    - supprt book_info_page book_info.md
+    - add blank_page
+    - support pre_made seneca
+    - bg_image with bleeding
+
+  - custom_style support
+    - style_name
+    - toc.erb
+    - prolog.erb
+    - dedication.erb
+    - chapter_heading.erb
+    - footer.erb
+    - header.erb
+    - book_info.erb
+    - text_style.yml
+      title
+      subtitle
+      author
+      leading
+      heading
+      quote
+      body
+
+      front_matter
+        title
+        subtitle
+        heading
+        body
+    - 
+### 2022_01_07
+  - fix bold italic tag as markdown standard
+  - support image with markdown standard
 ### 2022_01_06
   - when creating _print fix order!
     - by sorting pdf_pages
   - fix left side footer showing book title as "untitled"
 
-  - refine class Line with x1,y1,x2,y2 , stroke
+  - re-define class Line with x1,y1,x2,y2 , stroke
+  - test picture support
 
 ### 2022_01_04
   - apply smart_pants to story files
@@ -32,8 +70,6 @@
       bleed_margin, cutter_margin
 
 
-  - add inline float marking support??
-      floats_1
 
 ### 2022_01_03
   - fix line next_line setting wring line becase of bug in add_new_page
@@ -655,11 +691,9 @@
 	so we don't have to have twp apps, rjob and newsman app.
 	fit_text_to_box
 ### 2018_9_21
- - 	{right_anchor: 30, bottom_anchor: 20, center_anchor: true, fit_box_to_text}
 
 ### 2018_9_19
 	- text_fit_type: 'fit_text_to_box', 'fit_box_to_height
-	- anchor_type: 'right_anchor', center_anchor'
  	- include rjob fundction into  newsman
  	- fix number of lines error when underflow
 
@@ -1531,7 +1565,6 @@
 	- get rid of Klass, just use class
 	- fix memo
 	- fix Line
-	- draw rule add stroke_rule, stroke[:rule]
 
 ### 2015 12 5
 	- add MemoArea
@@ -1610,7 +1643,6 @@
 	- flowing_item
 		member_item, product_item,
 	- anchor
-	    attr_accessor :frame_image, :shadow, :rotation, :right_anchor, :center_anchor_at, :bottom_anchor
 
 	- center[:vertical, :horizontal]
 	- page_count, scale, fit text to text_box

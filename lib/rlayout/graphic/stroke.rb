@@ -14,7 +14,6 @@ module RLayout
       @stroke             = options.fetch(:stroke, StrokeStruct.new(color:'CMYK=0,0,0,100', thickness:0, color_name:'black'))
       @stroke[:color]     = options[:line_color] if options[:line_color] # supporting commomly used name
       @stroke[:color]     = options[:stroke_color] if options[:stroke_color]
-      
       @stroke[:thickness] = options[:line_width] if options[:line_width] # supporting commomly used name
       @stroke[:thickness] = options[:stroke_thickness] if options[:stroke_thickness]
       @stroke[:thickness] = options[:stroke_width] if options[:stroke_width]

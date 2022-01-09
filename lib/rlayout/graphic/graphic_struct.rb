@@ -191,7 +191,7 @@ module RLayout
 
   end
 
-  LineStruct      = Struct.new(:x1, :y1, :x2, :y2, :h_direction, :v_direction) do
+  LineStruct = Struct.new(:x1, :y1, :x2, :y2, :line_type, :stroke_width, :stroke_color, :h_direction, :v_direction, keyword_init: true) do
     def to_svg
       mid_y = y1 + (y2 - y1)/2
       "\t<line x1=\"#{x1}\" y1=\"#{mid_y}\" x2=\"#{x2}\" y2=\"#{mid_y}\" style_place_holder />\n"
@@ -205,10 +205,6 @@ module RLayout
 
     def to_key_value
       [:line, to_hash]
-    end
-
-    def to_pdf(canvas)
-
     end
 
     def to_nspath

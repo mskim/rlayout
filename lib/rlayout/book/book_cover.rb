@@ -9,8 +9,8 @@ module RLayout
   # back_wing
   # back_page
 
-  CENTI2POINT = 22.4
-  MM2POINT = 2.4
+  CENTI2POINT = 28.34646
+  MM2POINT = 2.834646
 
   class BookCover < Container
     attr_reader :book_info, :project_path, :source_path,  :portrait, :spread_layout, :spread_width, :has_no_cover_inside_page, :has_wing
@@ -35,8 +35,8 @@ module RLayout
       @seneca_width_in_cm = options[:seneca_width_in_cm] || 1.5
       @seneca_width = @seneca_width_in_cm*CENTI2POINT
       @gripper_width_in_cm = options[:seneca_width_in_cm] || 1.0
-      @gripper_width = @gripper_width_in_cm*CENTI2POINT      
       @gripper_height_in_cm = options[:gripper_height_in_cm] || 1.0
+      @gripper_width = @gripper_width_in_cm*CENTI2POINT      
       @gripper_height = @gripper_height_in_cm*CENTI2POINT 
       @cutting_margin = 3*MM2POINT # 3 point
       @wing_width_in_cm = options[:wing_width_in_cm] || 10

@@ -8,7 +8,7 @@ module RLayout
     attr_reader :rear_matter_docs, :body_doc_type, :ebook_page_contents
     attr_reader :toc_first_page_number, :toc_doc_page_count, :toc_page_links
     attr_reader :front_matter, :body_matter, :rear_matter
-    attr_reader :cutting_margin, :binding_margin, :bleeding_margin
+    attr_reader :gripper_margin, :bleed_margin, :binding_margin
 
     def initialize(project_path, options={})
       @project_path = project_path
@@ -21,9 +21,9 @@ module RLayout
       @width = @page_width
       @height = SIZES[@page_size][1]
       @starting_page_number = 1
-      @cutting_margin = options[:cutting_margin] || 22.4
+      @gripper_margin = options[:gripper_margin] || 1*28.34646
       @binding_margin = options[:binding_margin] || 10
-      @bleeding_margin = options[:bleeding_margin] || 3*2.24
+      @bleed_margin = options[:bleed_margin] || 3*2.834646
       create_book_cover
       @front_matter = FrontMatter.new(@project_path)
       @starting_page_number += @front_matter.page_count
@@ -171,9 +171,9 @@ module RLayout
     end
 
     def place_page_in_print_page(page_path, side)
-      print_page_width = @page_width + @cutting_margin*2
-      print_page_height = @height + @cutting_margin*2
-      RLayout::PrintPage.new(page_path:page_path, side:side, width: print_page_width, height: print_page_height, cutting_margin: @cutting_margin, bleeding_margin: @bleeding_margin, binding_margin: @binding_margin)
+      print_page_width = @page_width + @gripper_margin*2
+      print_page_height = @height + @gripper_margin*2
+      RLayout::PrintPage.new(page_path:page_path, side:side, width: print_page_width, height: print_page_height, gripper_margin: @gripper_margin, bleed_margin: @bleed_margin, binding_margin: @binding_margin)
     end
 
     def generate_inner_book

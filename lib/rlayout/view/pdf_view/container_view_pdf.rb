@@ -60,6 +60,8 @@ module RLayout
       end
     end
 
+    # This is used for creating print_page, 
+    # where a page gets embbed into a larger page with print_page with gripper_margin amd cutting marks
     def to_pdf(options={})
       # style_service = RLayout::StyleService.shared_style_service
       @pdf_doc      = HexaPDF::Document.new

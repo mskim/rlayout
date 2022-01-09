@@ -3,12 +3,12 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create manual' do
   before do
-    @project_path  = "/Users/mskim/Development/bookcheego/manual"
-    @paperback = Book.new(@project_path)
+    @project_path  = "/Users/mskim/test_data/book/manual"
+    @manual = Book.new(@project_path)
   end
 
   it 'should create Seneca' do
-    assert_equal RLayout::Book, @paperback.class 
+    assert_equal RLayout::Book, @manual.class 
   end
 
   # it 'should create Seneca' do

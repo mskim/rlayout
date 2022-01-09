@@ -11,11 +11,11 @@ module RLayout
   # x/y values is auto calculated from its parent, caller just need width and height of the graphic.
 
   class Graphic
-    attr_accessor :parent, :x, :y, :width, :height, :tag, :ns_view, :pdf_view, :svg_view, :path
+    attr_accessor :parent, :x, :y, :width, :height, :tag, :ns_view, :pdf_view, :svg_view
     attr_accessor :graphics, :fixtures, :floats, :grid_frame
     attr_accessor :non_overlapping_rect, :z_order
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
-    attr_accessor :frame_image, :shadow, :rotation, :right_anchor, :center_anchor_at, :bottom_anchor
+    attr_accessor :frame_image, :shadow, :rotation
     attr_reader   :pdf_doc, :project_path , :from_right, :from_bottom
 
 
@@ -514,125 +514,11 @@ module RLayout
     end
 
     def save_pdf(path, options={})
-      if RUBY_ENGINE == 'rubymotion'
-        @ns_view ||= GraphicViewMac.from_graphic(self)
-        @ns_view.save_pdf(path, options)
-      elsif RUBY_ENGINE == 'ruby'
-        save_pdf_with_ruby(path, options)
-      end
-    end
-
-    def save_jpg(path)
-      @ns_view ||= GraphicViewMac.from_graphic(self)
-      @ns_view.save_jpg(path)
-    end
-
-    def bezierPathWithRect(r)
-      case @shape
-      when 0   #{}"rectangle", '사각형'
-        path = NSBezierPath.bezierPathWithRect(r)
-      when 1    #{}"round_corner", '둥근사각형'
-        path=NSBezierPath.bezierPath
-        if r.size.width > r.size.height
-          smaller_side = r.size.height
-        else
-          smaller_side = r.size.width
-        end
-
-        if @corner_size == 0 # "small" || @corner_size == '소'
-          radius = smaller_side*0.1
-        elsif @corner_size == 1 # "medium" || @corner_size == '중'
-          radius = smaller_side*0.2
-        elsif @corner_size == 2 #{}"large" || @corner_size == '대'
-          radius = smaller_side*0.3
-        else
-          radius = smaller_side*0.1
-        end
-
-        if @inverted_corner
-          path = path.appendBezierPathWithRoundedRect(r, xRadius:radius ,yRadius:radius)
-        else
-          # do inverted corner
-          path = path.appendBezierPathWithRoundedRect(r, xRadius:radius ,yRadius:radius)
-        end
-      when 2 #{}"circle", '원'
-        path = NSBezierPath.bezierPathWithOvalInRect(r)
-      when 3 #{}"bloon"
-        # pointer_direction 0, 45 , 90, 135, 180 ....
-        path = NSBezierPath.bezierPathWithOvalInRect(r)
-      when 4 #{}"spike"
-        # density large, medium, small
-        path = NSBezierPath.bezierPathWithOvalInRect(r)
-      else
-        path = NSBezierPath.bezierPathWithRect(r)
-      end
-      path
+      save_pdf_with_ruby(path, options)
     end
 
     def fit_text_to_box
       @text_layout_manager.fit_text_to_box  if @text_layout_manager
-    end
-  end
-  class NSText < Graphic
-    def initialize(options={})
-      super
-      @transform = options[:transform]
-      init_ns_text(options)
-      self
-    end
-
-    def set_attributed_string(new_att_string)
-      return unless @text_layout_manager
-      @text_layout_manager.setAttributedString(new_att_string)
-    end
-
-    def set_text_string(text_string)
-      if RUBY_ENGINE == "rubymotion"
-        return unless @text_layout_manager
-        @text_layout_manager.set_text_string(text_string)
-      else
-        @text_record.string = text_string
-      end
-    end
-
-    def set_text(text_string)
-      if RUBY_ENGINE == "rubymotion"
-        return unless @text_layout_manager
-        @text_layout_manager.set_text_string(text_string)
-      else
-        @text_record.string = text_string
-      end
-    end
-
-    def text_string
-      if @text_layout_manager
-        @text_layout_manager.att_string.string
-      elsif @text_record
-        @text_record.string
-      end
-    end
-
-    def font_size
-      unless @text_layout_manager
-        return 16.0
-      else
-        @text_layout_manager.font_size
-      end
-    end
-
-    def setAttributes(atts, range)
-      return unless @text_layout_manager
-      @text_layout_manager.att_string.setAttributes(atts, range: range)
-    end
-
-    def to_pgscript
-      if text_string && text_string.length > 0
-        variables = "\"#{text_string}\", font_size: #{font_size}, x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}"
-        variables += ", tag: \"#{@tag}\"" if @tag
-        "   text(#{variables})\n"
-      else
-        " "
-      end
     end
   end
 
@@ -671,7 +557,6 @@ module RLayout
     def frame_rect
       [@x + @left_margin, @y + @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
     end
-
 
     def to_pgscript
       variables = "x: #{@x}, y: #{@y}, width: #{@width}, height: #{@height}, image_path: \"#{@image_path}\""
@@ -724,12 +609,27 @@ module RLayout
   end
 
   class Line < Graphic
-    attr_accessor :line_type
+    # attr_reader :x1, :x2, :y1, :y2
+    attr_reader :line_type
     #"horizontal_rule", vertical_rule, top_left_to_bottom_right, top_right_to_bottom_left
     def initialize(options={})
-      options[:thickness]     = 1 unless options[:thickness] || options[:stroke_thickness] || options[:stroke_width]
-      options[:stroke_rule]   = "horizontal_rule" unless options[:stroke_rule]
+      options[:thickness]     = 0.3 unless options[:thickness] || options[:stroke_thickness] || options[:stroke_width]
       super
+      @x1 = options[:x1] if options[:x1]
+      @x2 = options[:x2] if options[:x2]
+      @y1 = options[:y1] if options[:y1]
+      @y2 = options[:y2] if options[:y2]
+      @x = @x1 if @x1
+      @y = @y1 if @y1
+      if @x2 && @y2
+        @width = @x2 - @x1
+        @height = @y2 - @y1
+      else
+        @x2 = @x + @width
+        @y2 = @y + @height
+      end
+      @line_type = options[:line_type] || 'solid'
+      @shape = LineStruct.new(x1:@x, y1:@y, x2:@x2, y2:@y2)
       self
     end
   end

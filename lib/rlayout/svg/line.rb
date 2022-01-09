@@ -1,7 +1,6 @@
 module RLayout
 
     class Line < Graphic
-      attr_reader :x1, :x2, :y1, :y2
       def self.from_svg(options={})
         line_options = Line.parse_svg(options)
         l = Line.new(line_options)

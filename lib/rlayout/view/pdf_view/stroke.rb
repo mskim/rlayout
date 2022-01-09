@@ -32,6 +32,8 @@ class Graphic
       when PoligonStruct
       when PathStruct
       when LineStruct
+        flipped = flipped_origin
+        draw_line(canvas, flipped[0], flipped[1], flipped[0] + @width, flipped[1] - @height)
       else
         @stroke_rect    = get_stroke_rect
         @line_position  = 1
@@ -52,11 +54,16 @@ class Graphic
   def draw_gutter_stroke(canvas)
   end 
   
-  def draw_line(canvas, starting_x, starting_y, ending_x, ending_y, thickness)
+  def draw_line(canvas, starting_x, starting_y, ending_x, ending_y)
     # TODO fix stroke_color setting
     canvas.save_graphics_state do
+      thickness = @stroke[:thickness]
       canvas.line_width(thickness)
-      canvas.stroke_color(0, 0, 0, 254).line(starting_x, starting_y, ending_x, ending_y).stroke
+      stroke_color  = @stroke[:color]
+      canvas.stroke_color(stroke_color)
+      # canvas.stroke_color(stroke_color)
+      # canvas.stroke_color(0,0,0,254).line(starting_x, starting_y, ending_x, ending_y).stroke
+      canvas.line(starting_x, starting_y, ending_x, ending_y).stroke
     end
   end
 
@@ -67,10 +74,10 @@ class Graphic
       @stroke[:type] = 0
     end
 
-    if @graphic.class == RLayout::Line
-      draw_line(canvas, @x, flip_y(@y), x_max, @height, @stroke[:thickness])
-      return
-    end
+    # if @graphic.class == RLayout::Line
+    #   draw_line(canvas, @x, flip_y(@y), x_max, @height, @stroke[:thickness])
+    #   return
+    # end
 
     # @stroke[:type] == 0 means single line
     # @stroke[:type] > 0 means double or triple line
