@@ -35,9 +35,9 @@ module RLayout
 
     def place_pdf
       if side == 'left'
-        Image.new(parent: self, image_path:@page_path, x: @gripper_margin - @binding_margin, y: @gripper_margin, width: @width - @gripper_margin, height: @height - @gripper_margin)
+        Image.new(parent: self, image_path:@page_path, x: @gripper_margin - @binding_margin, y: @gripper_margin, width: @width - @gripper_margin*2, height: @height - @gripper_margin*2)
       else
-        Image.new(parent: self, image_path:@page_path, x: @gripper_margin + @binding_margin, y: @gripper_margin, width: @width - @gripper_margin, height: @height - @gripper_margin)
+        Image.new(parent: self, image_path:@page_path, x: @gripper_margin + @binding_margin, y: @gripper_margin, width: @width - @gripper_margin*2, height: @height - @gripper_margin*2)
       end
     end
 

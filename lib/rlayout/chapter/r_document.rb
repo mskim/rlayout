@@ -3,7 +3,7 @@
 module RLayout
 
   class RDocument
-    attr_accessor :title, :document_path, :page_size, :width, :height
+    attr_accessor :title, :document_path, :paper_size, :width, :height
     attr_accessor :pages, :document_view, :starting_page
     attr_accessor :toc_elements
     attr_reader :left_margin, :top_margin, :right_margin, :bottom_margin, :gutter
@@ -16,15 +16,15 @@ module RLayout
     # example Toc can create Doc with TocPages
     attr_reader :page_type, :toc_data
     def initialize(options={}, &block)
-      if options[:page_size] && SIZES[options[:page_size]]
-        @page_size      = options[:page_size]
-        @width          = SIZES[options[:page_size]][0]
-        @height         = SIZES[options[:page_size]][1]
+      if options[:paper_size] && SIZES[options[:paper_size]]
+        @paper_size      = options[:paper_size]
+        @width          = SIZES[options[:paper_size]][0]
+        @height         = SIZES[options[:paper_size]][1]
       elsif options[:width] && options[:height] 
         @width          = options[:width]
         @height         = options[:height]
       else
-        @page_size      = "A4"
+        @paper_size      = "A4"
         @width          = 595.28
         @height         = 841.89
       end
@@ -36,14 +36,14 @@ module RLayout
       if options[:body_line_count]
         @body_line_count  = options[:body_line_count] || 40
       else
-        @body_line_count  = 40 if @page_size == "A4"
-        @body_line_count  = 25 if @page_size == "A5"
-        @body_line_count  = 25 if @page_size == "16절" || "197x272" || "197X272"
+        @body_line_count  = 40 if @paper_size == "A4"
+        @body_line_count  = 25 if @paper_size == "A5"
+        @body_line_count  = 25 if @paper_size == "16절" || "197x272" || "197X272"
       end
-      @left_margin      = options[:left_margin]     || 50
-      @top_margin       = options[:top_margin]      || 50
-      @right_margin     = options[:right_margin]    || 50
-      @bottom_margin    = options[:bottom_margin]   || 50
+      @left_margin      = options[:left_margin]     || 110
+      @top_margin       = options[:top_margin]      || 30
+      @right_margin     = options[:right_margin]    || 110
+      @bottom_margin    = options[:bottom_margin]   || 110
       @column_count     = options[:column_count]    || 1
       @row_count        = options[:row_count]       || 6
       @gutter           = options[:gutter]          || 20

@@ -9,6 +9,7 @@ module RLayout
     attr_reader :title, :order
     def initialize(part_project_path, options={})
       @project_path = part_project_path
+      @book_info_path = File.dirname(part_project_path) + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @title = @book_info[:title]
@@ -89,6 +90,7 @@ module RLayout
           # copy_page_floats(file, chapter_folder)
           h = {}
           h[:document_path] = chapter_folder
+          h[:book_info]  = @book_info
           h[:paper_size] = @paper_size
           h[:page_pdf] = true
           h[:toc] = true

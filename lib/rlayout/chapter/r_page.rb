@@ -52,8 +52,7 @@ module RLayout
         @top_margin        = @document.top_margin
         @right_margin      = @document.right_margin
         @bottom_margin     = @document.bottom_margin
-        @heading_height_type      = @document.heading_height_type
-        @body_line_count   = @document.body_line_count || 30 
+        @heading_height_type  = @document.heading_height_type
         if !@document.pages.include?(self)
           @document.pages << self
         end
@@ -63,10 +62,7 @@ module RLayout
         @gutter             = 10
         @column_width       = (@width - @left_margin - @right_margin - (@column_count-1)*@gutter)/@column_count
       end
-      # if options[:page_number]
-      #   @page_number = options[:page_number]
-      # end
-      # if @parent && @parent.double_side
+
       @fixtures = []  # header, footer
       @floats   = []
       create_columns
@@ -111,7 +107,6 @@ module RLayout
           g= RColumn.new(parent:self, empty_lines: true, x: current_x, y: @top_margin, width: @column_width, height: @column_height, column_line_count: @body_line_count, body_line_height: @body_line_height)
           current_x += @column_width + @gutter
         else
-          # TODO: why? parent:self
           g= RColumn.new(parent:self, x: current_x, y: @top_margin, width: @column_width, height: @column_height, column_line_count: @body_line_count, body_line_height: @body_line_height)
           current_x += @column_width + @gutter
         end

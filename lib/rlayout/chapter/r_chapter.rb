@@ -189,6 +189,8 @@
 # page_001
 # page_002
 # page_003
+# Glyph for "ö" missing for KoPubBatangPM
+# Shinmoon is OK
 
 CHAPTER_STYLES=<<EOF
 ---
@@ -197,7 +199,7 @@ body:
   font_family: Shinmoon
   font: Shinmoon
   font_size: 9.8
-  text_color: CMYK=0,0,0,100
+  text_color: CMYK=100,0,0,100
   alignment: justified
   tracking: -0.4
   space_width: 3.0
@@ -916,16 +918,21 @@ module RLayout
     attr_reader :page_by_page, :story_md, :story_by_page, :toc
     attr_reader :belongs_to_part
     attr_reader :grid, :default_image_location, :default_image_size
-    attr_reader :local_image_folder, :paper_size
+    attr_reader :local_image_folder, :paper_size, :has_header, :has_footer
+    attr_reader :book_info
     
     def initialize(options={} ,&block)
       @document_path  = options[:document_path] || options[:chapter_path]
       @paper_size = options[:paper_size] || "A5"
+
       @local_image_folder = @document_path + "/images"
       @story_path     = @document_path + "/story.md"
       @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
       @story_md       = options[:story_md]
       @layout_rb      = options[:layout_rb]
+      @book_info      = options[:book_info]
+      @has_footer    =  options[:has_footer] || true
+      @has_header    =  options[:has_header] || false
       @belongs_to_part = options[:belongs_to_part]
       @grid = options[:grid] || [6,12]
       @default_image_location = options[:default_image_location] || 1
@@ -934,9 +941,7 @@ module RLayout
         layout_path = @document_path + "/layout.rb"
         unless File.exist?(layout_path)
           @paper_size = "A5" unless @paper_size
-          erb = ERB.new(default_document)
-          @layout_rb = erb.result(binding)
-          # @layout_rb = default_document
+          @layout_rb = default_document_layout
         else
           @layout_rb = File.open(layout_path, 'r'){|f| f.read}
         end
@@ -948,8 +953,6 @@ module RLayout
       @story_by_page  = options[:story_by_page]
       @toc            = options[:toc]
       @toc_level      = options[:toc_level] || 'title'
-      @header_erb     = options[:header_erb]
-      @footer_erb     = options[:footer_erb]
       @document       = eval(@layout_rb)
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@document} !!!!"
@@ -987,13 +990,18 @@ module RLayout
       end
       layout_story
       # draw header and footers
-      if @footer_erb
-        @footer_erb[:right_footer].gsub!("<%= title %>", @title)
+      chapter_info ={}
+      chapter_info[:book_title] = @book_info[:title] if @book_info
+      chapter_info[:chapter_title] = @title if @title
+      if @has_header
+        @document.pages.each_with_index do |p,i|
+          p.create_header(chapter_info) 
+        end
       end
-      @document.pages.each_with_index do |p,i|
-        # p.page_number = @starting_page + i
-        p.create_header(@header_erb) if @header_erb && @header_erb != {}
-        p.create_footer(@footer_erb) if @footer_erb && @footer_erb != {}
+      if @has_footer
+        @document.pages.each_with_index do |p,i|
+          p.create_footer(chapter_info) 
+        end
       end
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
       @document.save_svg(@document_path) if @svg
@@ -1001,6 +1009,34 @@ module RLayout
       save_toc if @toc
       # save_line_log # used for debug
       self
+    end
+
+    def default_document_layout
+      case @paper_size
+      when "A4"
+        @body_line_count  = 40 
+      when "A5"
+        @body_line_count  = 25
+      when "16절", "197x272", "197X272"
+        @body_line_count  = 25
+      else
+        @body_line_count  = 25
+      end
+      @body_line_count  = 25
+      @top_margin = 30
+      @left_margin = 110
+      @right_margin = 110
+      @bottom_margin = 110
+      doc_options= {}
+      doc_options[:paper_size] = @paper_size
+      doc_options[:left_margin] = @left_margin
+      doc_options[:top_margin] = @top_margin
+      doc_options[:right_margin] = @right_margin
+      doc_options[:bottom_margin] = @bottom_margin
+      doc_options[:body_line_count] = @body_line_count
+      layout =<<~EOF
+        RLayout::RDocument.new(#{doc_options})
+      EOF
     end
 
     def save_line_log

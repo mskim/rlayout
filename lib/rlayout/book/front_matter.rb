@@ -41,6 +41,7 @@ module RLayout
           h = {}
           h[:paper_size] = @paper_size
           h[:document_path] = prologue_path
+          h[:book_info]  = @book_info
           h[:page_pdf] = true
           h[:toc] = true
           h[:starting_page] = @starting_page_number
