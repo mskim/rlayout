@@ -90,7 +90,7 @@ module RLayout
     def pdf_pages
       pdf_pages = []
       @document_folders.each do |chapter|
-        doc_pdf_chapter_pdf_filepages = Dir.glob("#{chapter}/????/page.pdf")
+        chapter_pdf_file = Dir.glob("#{chapter}/????/page.pdf")
         pdf_pages << chapter_pdf_file
       end
       pdf_pages

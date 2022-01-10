@@ -41,7 +41,6 @@ module RLayout
       @page_number    = options[:page_number] || 1
       
       if @document
-
         @column_count      = @document.column_count
         @body_line_height  = @document.body_line_height
         @body_line_count   = @document.body_line_count
@@ -737,24 +736,68 @@ module RLayout
       ObjectBox.new(options)
     end
 
-    def create_header(header_erb)
+    def create_header(info_hash)
       if page_number.even?
-        erb = ERB.new(header_erb[:left_header])
+        erb = ERB.new(left_header_erb)
       else
-        erb = ERB.new(header_erb[:right_header])
+        erb = ERB.new(right_header_erb)
       end
-      layout = erb.result(binding)
-      @header_object = eval(layout)  
-    end
-
-    def create_footer(footer_erb)
-      if page_number.even?
-        erb = ERB.new(footer_erb[:left_footer])
-      else
-        erb = ERB.new(footer_erb[:right_footer])
-      end
+      @book_title = info_hash[:book_titile]
+      @title = info_hash[:chapter_title]
       layout = erb.result(binding)
       @footer_object = eval(layout)
+    end
+
+    def left_header_erb
+      footer_options  = "parent:self, x:#{@left_margin}, y:20, width: #{footer_width}, height: 12, fill_color: 'clear'"
+      s=<<~EOF
+      RLayout::Container.new(#{footer_options}) do
+        text("<%= @page_number %>", font_size: 10, x: #{left_margin}, width: #{footer_width}, text_alignment: 'left')
+      end
+      EOF
+    end
+
+    def right_header_erb
+      footer_options  = "parent:self, x:#{@left_margin}, y:20, width: #{footer_width}, height: 12, fill_color: 'clear'"
+      s=<<~EOF
+      RLayout::Container.new(#{footer_options}) do
+        text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
+      end
+      EOF
+    end
+
+    def create_footer(info_hash)
+      if page_number.even?
+        erb = ERB.new(left_footer_erb)
+      else
+        erb = ERB.new(right_footer_erb)
+      end
+      @book_title = info_hash[:book_titile]
+      @title = info_hash[:chapter_title]
+      layout = erb.result(binding)
+      @footer_object = eval(layout)
+    end
+
+    def footer_width
+      @width  - @left_margin - @right_margin
+    end
+
+    def left_footer_erb
+      footer_options  = "parent:self, x:#{@left_margin}, y:#{@height - 100}, width: #{footer_width}, height: 12, fill_color: 'clear'"
+      s=<<~EOF
+      RLayout::Container.new(#{footer_options}) do
+        text("<%= @page_number %>", font_size: 10, x:0, y:0, width: #{footer_width}, text_alignment: 'left')
+      end
+      EOF
+    end
+
+    def right_footer_erb
+      footer_options  = "parent:self, x:#{@left_margin}, y:#{@height - 100}, width: #{footer_width}, height: 12, fill_color: 'clear'"
+      s=<<~EOF
+      RLayout::Container.new(#{footer_options}) do
+        text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
+      end
+      EOF
     end
 
     def side_bar(options={})

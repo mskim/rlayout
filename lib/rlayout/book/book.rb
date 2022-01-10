@@ -23,7 +23,7 @@ module RLayout
       @height = SIZES[@paper_size][1]
       @starting_page_number = 1
       @gripper_margin = options[:gripper_margin] || 1*28.34646
-      @binding_margin = options[:binding_margin] || 10
+      @binding_margin = options[:binding_margin] || 20
       @bleed_margin = options[:bleed_margin] || 3*2.834646
       create_book_cover
       @front_matter = FrontMatter.new(@project_path)

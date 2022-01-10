@@ -20,22 +20,6 @@ module RLayout
       @story  = Story.new(@story_path).story2line_text
       @heading  = @story[:heading] || {}
       @title    = @heading[:title] || @heading['title'] || @heading['제목'] || "Untitled"
-      # if @first_page && @first_page.has_heading?
-      #   @first_page.get_heading.set_heading_content(@heading)
-      #   @first_page.relayout!
-      # elsif @first_page = @document.pages[0]
-      #   if @first_page.floats.length == 0
-      #     @heading[:parent] = @first_page
-      #     @heading[:x]      = @first_page.left_margin
-      #     @heading[:y]      = @first_page.top_margin
-      #     @heading[:width]  = @first_page.width - @first_page.left_margin - @first_page.right_margin
-      #     @heading[:is_float] = true
-      #     RHeading.new(@heading)
-      #   elsif @first_page.has_heading?
-      #     @first_page.get_heading.set_heading_content(@heading)
-      #   end
-      # end
-
       @text_lines = []
       @story[:line_text].each do |line_text|
         @text_lines << line_text

@@ -903,7 +903,7 @@ module RLayout
     attr_reader :book_title, :title, :starting_page, :heading_height_type, :heading
     attr_reader :body_line_count, :body_line_height
     attr_reader :max_page_number, :page_floats
-    attr_reader :header_footer, :header_erb, :footer_erb
+    attr_reader :has_footer, :has_header
     attr_reader :belongs_to_part, :paper_size
 
     # page_by_page is used for page proof reading

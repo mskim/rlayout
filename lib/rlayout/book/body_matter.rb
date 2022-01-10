@@ -70,13 +70,12 @@ module RLayout
             next
           end
           h = {}
+          h[:book_info]  = @book_info
           h[:document_path] = chapter_folder
           h[:paper_size] = @paper_size
           h[:page_pdf] = true
           h[:toc] = true
           h[:starting_page] = @starting_page_number
-          # h[:header_erb] = header_erb
-          h[:footer_erb] = footer_erb
           r = RLayout::RChapter.new(h)
           @starting_page_number += r.page_count
           chapter_number += 1
@@ -161,50 +160,6 @@ module RLayout
       "parent:self, x:#{left_margin}, y:#{top_margin - 10}, width: #{width}, fill_color: 'clear'"
     end
 
-    def header_erb
-      nil
-    end
-
-    def footer_width
-      width - left_margin - right_margin
-    end
-
-    def footer_options
-      "parent:self, x:#{left_margin}, y:#{height - bottom_margin - 40}, width: #{footer_width}, height: 12, fill_color: 'clear'"
-    end
-
-    def left_footer_erb
-      # put book title on the left side 
-      # s=<<~EOF
-      # RLayout::Container.new(#{footer_options}) do
-      #   text("<%= @page_number %>  #{book_title} ", font_size: 9, x: 0, width: #{footer_width}, text_alignment: 'left')
-      # end
-      # EOF
-      s=<<~EOF
-      RLayout::Container.new(#{footer_options}) do
-        text("<%= @page_number %>", font_size: 9, x: 0, width: #{footer_width}, text_alignment: 'left')
-      end
-      EOF
-    end
-
-    def right_footer_erb
-      # put chapter title on the right side 
-      # chapter title and page_number is place by the layout 
-      s=<<~EOF
-      RLayout::Container.new(#{footer_options}) do
-        text("<%= title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
-      end
-      EOF
-    end
-
-    def footer_erb
-      info = {}
-      info[:left_footer] = left_footer_erb
-      info[:right_footer] = right_footer_erb
-      info
-    end  
-
-
     # placing images for the chapter
     # images for the chapter should be plced in the folder with same name as chpater md file
     # this folder should have page_floats.yml and images folder.
@@ -218,7 +173,5 @@ module RLayout
       end
     end
       
-
-
   end
 end

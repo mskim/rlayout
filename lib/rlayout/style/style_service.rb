@@ -3,26 +3,17 @@
 # StyleService is a singleton class object that stays around be be accessed globally by and graphics.
 # StyleService has current_style instance_variable which can be set for differnt publications,
 # such as chapter, magazine_article, newspaper, or default.
-# We can set current_style of StyleService with custom styles at load time. This allows us to apply custom styles for different job. current_style Hash is merge with custom style.
+# We can set current_style of StyleService with custom styles at loading time. 
+# This allows us to apply custom styles for different jobs. 
+# Current_style Hash is merged with custom style.
 
 # Style should be defined as constants
 # DEFAULT_STYLES
 # custom styles should be defined in CUSTOM_STYLE and merged with DEFAULT_STYLES of its kind
 # Style are defined in following keys
-#  doc_info
-#  heading
-#  main
-#  fixtures
-#  text_styles
-
 
 # Stylea are predefined Hash tables
 # They can be merged with custom styles at run time,
-# making them very flexible components.
-# We can define default component and override only what we need at run time.
-# We can override content as well as styles.
-# Operations can be achieved simply by using Hadh#merge,
-# changing only those that are specified in merging Hash(custom element).
 
 # NAMECARD_1 = {
 #   doc_type: "NAMECARD",
