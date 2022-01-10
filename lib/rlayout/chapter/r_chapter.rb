@@ -1071,12 +1071,6 @@ module RLayout
       File.open(story_by_page_path, 'w'){|f| f.write @story_by_page_hash.to_yaml}
     end
 
-    def default_document
-      layout =<<~EOF
-        RLayout::RDocument.new(paper_size:'<%= @paper_size %>')
-      EOF
-    end
-
     def read_page_floats
       unless File.exists?(page_floats_path)
         # puts "Can not find file #{page_floats_path}!!!!"

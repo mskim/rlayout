@@ -16,7 +16,9 @@ module RLayout
   # line_height = body_style[:font_size] # default line_height, set to font_size*1.3
   # @body_line_height = (line_height + body_style[:text_line_spacing])
 
-
+  # article_bottom_space_in_lines
+  # this is used for intensionally putting emtype space at the bottom of the columns.
+  # some newspapder articles use it as such.
   class RColumn < Container
     attr_accessor :current_position, :current_grid_index
     attr_accessor :line_count, :current_line_index, :current_line
@@ -34,12 +36,13 @@ module RLayout
       @empty_lines          = options[:empty_lines] || false
       @column_type          = options[:column_type] || 'regular_column'
       @current_line_index   = 0
-      @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 2
-      @body_line_height     = options[:body_line_height] || 18
-      @line_count           = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
-      @line_count           = options[:column_line_count] if options[:column_line_count]
-      @line_count           -= @article_bottom_space_in_lines
-      @height               -= @body_line_height*@article_bottom_space_in_lines
+      @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 0
+      @body_line_height     = options[:body_line_height]    
+      @body_line_count      = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
+      @body_line_count      = options[:body_line_count] if options[:body_line_count]
+      @body_line_count      -= @article_bottom_space_in_lines
+      @line_count           =  @body_line_count
+      # @height               -= @body_line_height*@article_bottom_space_in_lines
       @current_position     = @top_margin + @top_inset
       @show_grid_rects      = options[:show_grid_rects] || true
       @layout_space         = options.fetch(:column_layout_space, 0)
