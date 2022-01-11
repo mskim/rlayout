@@ -54,10 +54,10 @@ module RLayout
       self
     end
 
-    def inspect
+    def log
       column_log = ""
       @graphics.each do |l| 
-        column_log += l.inspect
+        column_log += l.log
       end
       column_log
     end
@@ -299,10 +299,10 @@ module RLayout
       @graphics.last
     end
 
-    def first_text_line_in_column
+    def first_text_line
       first_text_line = nil
       @graphics.each do |line|
-        return line if line.text_line? || line.graphics.length > 0
+        return line if line.text_line?
       end
       nil
     end

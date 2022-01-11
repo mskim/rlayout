@@ -192,7 +192,7 @@ module RLayout
 
     def first_text_line
       @graphics.each do |column|
-        line = column.first_text_line_in_column
+        line = column.first_text_line
         return line if line
       end
       @overflow_column.graphics.first

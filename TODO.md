@@ -14,25 +14,24 @@
   - add inline float marking support??
       floats_1
 
-### 2022_01_09
-  - fix footer x position
-    - should align it to left and right margin
-
-  - make 25 lines/column
-
+### 2022_01_11
+  - fix bug: displaying only 24 lines when line_count is 25
   - fix when body font size is changed, line gets cullutered
     - seems like token_width calculation has bug 
-  
+  - replace missing glyph with some ? character , instead of crashing
+    -filter story file for unsupported chars and replace them
   - customr text_style support put it in styles folder
       text_style.yml
       body_style.yml
         header, footer
       front_matter_style.yml
 
-
   - set_body_starting_page
   - use pre-made frontmatter
     book_cover
+### 2022_01_09
+  - fix footer x position
+    - should align it to left and right margin
   - change  footer style
 ### 2022_01_09
   - front_matter

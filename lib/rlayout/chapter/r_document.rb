@@ -38,7 +38,7 @@ module RLayout
       else
         @body_line_count  = 40 if @paper_size == "A4"
         @body_line_count  = 25 if @paper_size == "A5"
-        @body_line_count  = 25 if @paper_size == "16절" || "197x272" || "197X272"
+        @body_line_count  = 25 if @paper_size == "16절" || @paper_size == "197x272" || @paper_size == "197X272"
       end
       @left_margin      = options[:left_margin]     || 110
       @top_margin       = options[:top_margin]      || 30
@@ -63,10 +63,10 @@ module RLayout
       self
     end
 
-    def inspect
+    def log
       log = ""
       @pages.each do |page|
-        log += page.inspect
+        log += page.log
       end
       log
     end
@@ -85,7 +85,7 @@ module RLayout
       else
         page_index = @pages.index(page)
         @pages[(page_index + 1)..-1].each do |page|
-          next_page_text_line = @pages[page_index + 1].first_text_line_in_page
+          next_page_text_line = @pages[page_index + 1].first_text_line
           return next_page_text_line if next_page_text_line
         end
       end

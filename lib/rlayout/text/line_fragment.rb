@@ -9,7 +9,7 @@ module RLayout
   class	LineFragment < Container
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent, :para_style, :text_alignment, :starting_position
-    attr_accessor :x, :y, :width, :height, :total_token_width, :room
+    attr_accessor :x, :y, :width, :height, :total_token_width
     attr_accessor :text_area, :has_text, :space_width, :debug
     def	initialize(options={})
       # options[:stroke_color]      = 'red'
@@ -24,7 +24,6 @@ module RLayout
       @starting_position = @left_inset || 0
       @stroke_width     = 1
       @text_area        = [@x, @y, @width, @height]
-      @room             = @text_area[2]
       self
     end
 
@@ -46,8 +45,11 @@ module RLayout
       translated_rect[1] += @parent.y
       if intersects_rect(overlapping_float_rect, translated_rect)
         @text_area[2] = 0
-        @room         = @text_area[2]
       end
+    end
+
+    def room
+      @text_area[2]
     end
 
     def has_text_room?
@@ -59,8 +61,8 @@ module RLayout
       self == @parent.graphics.first
     end
 
-    def first_text_line_in_column?
-      self == @parent.first_text_line_in_column
+    def first_text_line?
+      self == @parent.first_text_line
     end
 
     # is it the last line of the column
@@ -73,7 +75,7 @@ module RLayout
     end
 
     def text_line?
-      @room > 20 || @graphics.length > 0
+      room > 20 || @graphics.length > 0
     end
 
     def char_count
@@ -85,12 +87,12 @@ module RLayout
     # return false if no leftvver tokens
     #CharHalfWidthCushion = 5.0
     def place_token(token, options={})
-      if @room + CharHalfWidthCushion >= token.width
+      if room + CharHalfWidthCushion >= token.width
         # place token in line.
         token.parent = self
         @graphics << token
-        @room -= token.width
-        @room -= @space_width
+        @text_area[2] -= token.width
+        @text_area[2] -= @space_width
         return true
       else
         return false if options[:do_not_break]
@@ -99,12 +101,12 @@ module RLayout
         options[:cushion] = 0 if @graphics.length < 4
         options[:cushion] = 0 if @style_name != 'body'
 
-        result = token.hyphenate_token(@room, options)
+        result = token.hyphenate_token(room, options)
         if result == "front forbidden character"
           # this ss when the last char is "." and we can sqeezed it into the line.
           # token is not broken
           @graphics << token
-          @room = 0
+          @text_area[2] = 0
           return true
         elsif result.class == TextToken
           # token is broken into two

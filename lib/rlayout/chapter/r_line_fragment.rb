@@ -12,7 +12,7 @@ module RLayout
 
   class	RLineFragment < Container
     attr_accessor :next_line, :layed_out_line
-    attr_accessor :total_token_width, :room, :overlap
+    attr_accessor :total_token_width, :overlap
     attr_accessor :text_area, :space_width, :char_half_width_cushion
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent
@@ -51,14 +51,17 @@ module RLayout
       @starting_position = @left_inset || 0
       @stroke_width     = 1
       @text_area        = [@x, @y, @width, @height]
-      @room             = @width
       @overlap          = false
       @layed_out_line   = false
       @token_union_style = @parent.token_union_style if @parent.respond_to?(:token_union_style)
       self
     end
 
-    def inspect
+    def room
+      @text_area[2]
+    end
+    
+    def log
       "#{page_number}_#{line_index}:#{line_string}\n"
     end
 
@@ -95,12 +98,6 @@ module RLayout
         @graphics << token
       end
       @layed_out_line = true
-    end
-
-    def reset_text_line
-      @graphics = []
-      @layed_out_line = false
-      @room = text_area[2]
     end
 
     def clear_tokens
@@ -173,13 +170,12 @@ module RLayout
         un_covered    = un_covered_rect(translated_line_rect, overlapping_float_rect)
         un_covered[0] -= @parent.x # offset relative x back to local coordinate 
         @text_area    = un_covered
-        @room         = @text_area[2]
         @overlap      = true
       end
     end
 
     def has_text_room?
-      @room > 20
+      @text_area[2] > 20
     end
 
     # is it the first line of the column
@@ -191,8 +187,8 @@ module RLayout
       @parent.graphics.index(self)
     end
     
-    def first_text_line_in_column?
-      self == @parent.first_text_line_in_column
+    def first_text_line?
+      self == @parent.first_text_line
     end
 
     # is it the last line of the column
@@ -205,7 +201,7 @@ module RLayout
     end
 
     def text_line?
-      @room > 20 || @graphics.length > 0
+      @text_area[2] > 20
     end
 
     def previous_line
@@ -279,7 +275,6 @@ module RLayout
         @starting_position  = para_style[:left_indent] || 0
         @text_area[2]    = @middle_line_width
       end
-      @room  = @text_area[2]
     end
 
     # place tokens in the line, given tokens array
@@ -288,25 +283,17 @@ module RLayout
     # CharHalfWidthCushion = 5.0
     def place_token(token, options={})
       return if token.nil?
-      return false if @room < 0
-      if (@room + CharHalfWidthCushion >= token.width)
-      # if @room + @char_half_width_cushion >= token.width
-        # place token in line.
+      return false if @text_area[2] < 0
+      if (@text_area[2] + CharHalfWidthCushion >= token.width)
         token.parent = self
         @graphics << token
-        @room -= token.width
-          @room -= @space_width
+        @text_area[2] -= token.width
+        @text_area[2] -= @space_width
         @layed_out_line = true
         return true
       else
         return false if @text_alignment != 'justified'
         return false if options[:do_not_break]
-        # no more room, try hyphenating token
-        # give cushion only when there are more than 4 tokens
-        # puts "++++++++ token.string:#{token.string}"
-        # puts "@graphics.length:#{@graphics.length}"
-        # puts "@room:#{@room}"
-        # puts "token.width:#{token.width}"
         if @graphics.length < 4
           options[:char_half_width_cushion] = @graphics.length
         elsif @graphics.length <= 5
@@ -315,30 +302,23 @@ module RLayout
         else
           options[:char_half_width_cushion] = @graphics.length + 3
         end
-        
-        # options[:char_half_width_cushion] = @graphics.length
-        # puts "options[:char_half_width_cushion]:#{options[:char_half_width_cushion]}"
-        #Todo fix this so that only body has cushion
-        # puts "@room + options[:char_half_width_cushion]:#{@room + options[:char_half_width_cushion]}"
-        if @room + options[:char_half_width_cushion] >= token.width
-          # puts "+++++++++ stuffing token into line"
+        if @text_area[2] + options[:char_half_width_cushion] >= token.width
           token.parent = self
           @graphics << token
-          @room -= token.width
-          @room -= @space_width
+          @text_area[2] -= token.width
+          @text_area[2] -= @space_width
           @layed_out_line = true
           return true
         end
-        #TODO ????? fix this ????
         options[:char_half_width_cushion] = 0 unless options[:char_half_width_cushion]
-        over_line = @room + options[:char_half_width_cushion] - token.width
+        over_line = @text_area[2] + options[:char_half_width_cushion] - token.width
         if over_line < @space_width && token.width > @space_width*4
-          # this is case where token width slightly exceeds room, make sure that this token is cut
-          @result = token.hyphenate_token(@room - @space_width, options)
+          # this is case where token width slightly exceeds @text_area[2], make sure that this token is cut
+          @result = token.hyphenate_token(@text_area[2] - @space_width, options)
         elsif @graphics.length < 4
-          @result = token.hyphenate_token(@room - 2, options)
+          @result = token.hyphenate_token(@text_area[2] - 2, options)
         else
-          @result = token.hyphenate_token(@room, options)
+          @result = token.hyphenate_token(@text_area[2], options)
         end
 
         if @result == "front forbidden character"
@@ -346,7 +326,7 @@ module RLayout
           # token is not broken
           token.parent = self
           @graphics << token
-          @room = 0
+          @text_area[2] = 0
           return true
         elsif @result.class == RTextToken || @result.class == TextToken
           token.parent = self

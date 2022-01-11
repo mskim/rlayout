@@ -338,7 +338,7 @@ module RLayout
       line = nil
       @graphics.each_with_index do |column, i|
         next if @has_left_side_bar && i == 0
-        line = column.first_text_line_in_column
+        line = column.first_text_line
         return line if line
       end
       @overflow_column.graphics.first

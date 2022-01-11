@@ -74,10 +74,10 @@ module RLayout
       self
     end
 
-    def inspect
+    def log
       page_log = ""
       @graphics.each do |c| 
-        page_log += c.inspect
+        page_log += c.log
       end
       page_log
     end
@@ -121,20 +121,13 @@ module RLayout
       else
         column_index = @graphics.index(column)
         @graphics[(column_index + 1)..-1].each do |coloum|
-          next_column_text_line = coloum.first_text_line_in_column
+          next_column_text_line = coloum.first_text_line
           return next_column_text_line if next_column_text_line
         end
       end
       @parent.next_text_line(self)
     end
 
-    def first_text_line_in_page
-      @graphics.each do |column|
-        column_first_text_line = column.first_text_line_in_column
-        return column_first_text_line if column_first_text_line
-      end
-      nil
-    end
 
     # set next_line to every line in column
     def link_column_lines
@@ -379,8 +372,16 @@ module RLayout
       body_lines.select{|l| l.text_line?}
     end
 
+    # def first_text_line
+    #   body_lines.select{|l| l.text_line?}.first
+    # end
+
     def first_text_line
-      body_lines.select{|l| l.text_line?}.first
+      @graphics.each do |column|
+        column_first_text_line = column.first_text_line
+        return column_first_text_line if column_first_text_line
+      end
+      nil
     end
 
     def add_new_page
@@ -563,7 +564,9 @@ module RLayout
     end
 
     def update_column_areas
+      # TODO:
 
+      self
     end
 
     def layout_default

@@ -82,7 +82,7 @@ module RLayout
     # and call create_plain_tokens for regular string segment
     def create_tokens
       if @markup == "h4" || @markup == "h1"
-        # for author and linked to page, check if there is markup for moving up the text, if there is enoung room
+        # for author and linked to page, check if there is markup for moving up the text, if there is enoung text_area[2]
         if  @para_string =~/\s?\^\s?$/
           @para_string = @para_string.sub(/\s?\^\s?$/, "")
           @move_up_if_room = true
@@ -268,14 +268,14 @@ module RLayout
       token = tokens_copy.shift
       if token && token.token_type == 'diamond_emphasis'
         # if first token is diamond emphasis, no head indent
-        unless @current_line.first_text_line_in_column?
+        unless @current_line.first_text_line?
           
           @current_line = @current_line.next_text_line
         end
         @current_line.layed_out_line = true
         @current_line.set_paragraph_info(self, "middle_line")
       elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4'
-        unless @current_line.first_text_line_in_column?
+        unless @current_line.first_text_line?
           if @para_style[:space_before_in_lines] == 1
             @current_line.layed_out_line = true
             unless @current_line.next_text_line
@@ -334,17 +334,17 @@ module RLayout
         page.add_float(@float_info)
       end
 
-      if @current_line.room != @current_line.text_area[2]
-        @current_line.room = @current_line.text_area[2]
+      if @current_line.text_area[2] != @current_line.text_area[2]
+        @current_line.text_area[2] = @current_line.text_area[2]
       end
       while token
         return unless @current_line
-        # binding.pry if token.string == "“그리고요……”" #&& @current_line.first_text_line_in_column?
+        # binding.pry if token.string == "“그리고요……”" #&& @current_line.first_text_line?
         result = @current_line.place_token(token)
         # token is broken into two, second part is returned
         if result.class == RTextToken
           @current_line.align_tokens
-          @current_line.room = 0
+          @current_line.text_area[2] = 0
           new_line = @current_line.next_text_line
           if new_line
             @current_line = new_line
@@ -365,7 +365,7 @@ module RLayout
         # entire token was rejected,
         else
           @current_line.align_tokens
-          @current_line.room = 0
+          @current_line.text_area[2] = 0
           new_line = @current_line.next_text_line
           if new_line
             @current_line = new_line
@@ -409,7 +409,7 @@ module RLayout
 
     def previous_line_has_room(current_line)
       previous_line = current_line.previous_text_line
-      return previous_line if previous_line.room > current_line.text_length
+      return previous_line if previous_line.text_area[2] > current_line.text_length
       false
     end
 
@@ -549,7 +549,7 @@ module RLayout
         if result.class == RTextToken
           # token is broken into two, second part is returned
           @current_line.align_tokens
-          @current_line.room = 0
+          @current_line.text_area[2] = 0
           @current_line = RLayout::RLineFragment.new(line_type: "middle_line", width: @line_width)
           @para_lines << @current_line
           token = result          
@@ -559,7 +559,7 @@ module RLayout
         else
           # entire token was rejected,
           @current_line.align_tokens
-          @current_line.room = 0
+          @current_line.text_area[2] = 0
           @current_line = RLayout::RLineFragment.new(line_type: "middle_line", width: @line_width)
           @para_lines << @current_line
         end
