@@ -520,61 +520,60 @@ module RLayout
     def intersects_rect(rect_1, rect_2)
       intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
     end
-    ############
 
-    def set_fully_covered_grid
+    def set_line_as_fully_covered
       @fully_covered = true
       @text_area = @rect.dup
       @text_area[0] = 0
-      # for fully covered text_area, set width as very thin, for path construction porpose.
-      # I want continuos path for entire column.
-      # by making fully covered text_area as very thin rect, I can similate the empty line effect,
-      # yet have the entire column as continus text region.
-      @text_area[2] = 3
+      @text_area[2] = 0
+      @room = 0
     end
 
-    # when grid_rect overlaps with given float,
-    # update available text area.
-    def update_text_area(floating_rect)
-      return unless intersects_rect(floating_rect, @rect)
-      return if @fully_covered == true
-
-      if contains_rect(floating_rect, @rect)
-        set_fully_covered_grid
-        @overlap = true
-      elsif max_x(floating_rect) < max_x(@rect)
-        # puts "left side is covered"
-        @text_area = @rect.dup
-        # float is on the left side
-        overlap_width = max_x(floating_rect) - min_x(@rect)
-        @text_area[0] = overlap_width
-        @text_area[2] -= overlap_width
-        set_fully_covered_grid if @text_area[2] < 5  # if the layout area is too small, treat is as fully covered
-        @overlap = true
-      elsif min_x(floating_rect) > min_x(@rect)
-        # float is on the right side
-        @text_area = @rect.dup
-        @text_area[0] = 0 # @text_area is in local cordinate
-        @text_area[2] = min_x(floating_rect) - min_x(@rect)
-        set_fully_covered_grid if @text_area[2] < 5 # if the uncovered area is too small, treat is as fully covered
-        @overlap = true
-      else
-        @text_area = @rect.dup
-        @text_area[0] = 0 # @text_area uses local cordinate
-        # overlap is in the middle of the line
-        # take one side only, the larger side, not both
-        left_side_room = min_x(floating_rect) - min_x(@rect)
-        right_side_room = min_x(@rect) - max_x(floating_rect)
-        if left_side_room >= right_side_room
-          @text_area[2] = left_side_room
-        else
-          @text_area[0] = max_x(floating_rect) - min_x(@rect)
-          @text_area[2] = right_side_room
-        end
-        @overlap = true
-        set_fully_covered_grid if left_side_room < 50 && right_side_room < 50
-      end
-    end
+    # # when grid_rect overlaps with given float,
+    # # update available text area.
+    # def update_text_area(floating_rect)
+    #   return unless intersects_rect(floating_rect, @rect)
+    #   return if @fully_covered == true
+    #   if contains_rect(floating_rect, @rect)
+    #     set_line_as_fully_covered
+    #     @overlap = true
+    #   elsif max_x(floating_rect) < max_x(@rect)
+    #     # puts "left side is covered"
+    #     @text_area = @rect.dup
+    #     # float is on the left side
+    #     overlap_width = max_x(floating_rect) - min_x(@rect)
+    #     @text_area[0] = overlap_width
+    #     @text_area[2] -= overlap_width
+    #     @room = @text_area[2]
+    #     set_line_as_fully_covered if @text_area[2] < 5  # if the layout area is too small, treat is as fully covered
+    #     @overlap = true
+    #   elsif min_x(floating_rect) > min_x(@rect)
+    #     # float is on the right side
+    #     @text_area = @rect.dup
+    #     @text_area[0] = 0 # @text_area is in local cordinate
+    #     @text_area[2] = min_x(floating_rect) - min_x(@rect)
+    #     @room = @text_area[2]
+    #     set_line_as_fully_covered if @text_area[2] < 5 # if the uncovered area is too small, treat is as fully covered
+    #     @overlap = true
+    #   else
+    #     @text_area = @rect.dup
+    #     @text_area[0] = 0 # @text_area uses local cordinate
+    #     # overlap is in the middle of the line
+    #     # take one side only, the larger side, not both
+    #     left_side_room = min_x(floating_rect) - min_x(@rect)
+    #     right_side_room = min_x(@rect) - max_x(floating_rect)
+    #     if left_side_room >= right_side_room
+    #       @text_area[2] = left_side_room
+    #       @room = @text_area[2]
+    #     else
+    #       @text_area[0] = max_x(floating_rect) - min_x(@rect)
+    #       @text_area[2] = right_side_room
+    #       @room = @text_area[2]
+    #     end
+    #     @overlap = true
+    #     set_line_as_fully_covered if left_side_room < 50 && right_side_room < 50
+    #   end
+    # end
 
     #TODO
     def fully_covered?

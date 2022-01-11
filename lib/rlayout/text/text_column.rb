@@ -365,7 +365,7 @@ module RLayout
     end
     ############
 
-    def set_fully_covered_grid
+    def set_line_as_fully_covered
       @fully_covered = true
       @text_area = @rect.dup
       @text_area[0] = 0
@@ -383,7 +383,7 @@ module RLayout
       return if @fully_covered == true
 
       if contains_rect(floating_rect, @rect)
-        set_fully_covered_grid
+        set_line_as_fully_covered
         @overlap = true
       elsif max_x(floating_rect) < max_x(@rect)
         # puts "left side is covered"
@@ -392,14 +392,14 @@ module RLayout
         overlap_width = max_x(floating_rect) - min_x(@rect)
         @text_area[0] = overlap_width
         @text_area[2] -= overlap_width
-        set_fully_covered_grid if @text_area[2] < 5  # if the layout area is too small, treat is as fully covered
+        set_line_as_fully_covered if @text_area[2] < 5  # if the layout area is too small, treat is as fully covered
         @overlap = true
       elsif min_x(floating_rect) > min_x(@rect)
         # float is on the right side
         @text_area = @rect.dup
         @text_area[0] = 0 # @text_area is in local cordinate
         @text_area[2] = min_x(floating_rect) - min_x(@rect)
-        set_fully_covered_grid if @text_area[2] < 5 # if the uncovered area is too small, treat is as fully covered
+        set_line_as_fully_covered if @text_area[2] < 5 # if the uncovered area is too small, treat is as fully covered
         @overlap = true
       else
         @text_area = @rect.dup
@@ -415,7 +415,7 @@ module RLayout
           @text_area[2] = right_side_room
         end
         @overlap = true
-        set_fully_covered_grid if left_side_room < 50 && right_side_room < 50
+        set_line_as_fully_covered if left_side_room < 50 && right_side_room < 50
       end
     end
 

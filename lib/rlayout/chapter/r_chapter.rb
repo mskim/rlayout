@@ -327,21 +327,26 @@ module RLayout
     end
 
     def default_document_layout
+      @top_margin = 50
+      @left_margin = 110
+      @right_margin = 110
+      @bottom_margin = 110
       case @paper_size
       when "A4"
         @body_line_count  = 40 
       when "A5"
         @body_line_count  = 25
+        @top_margin = 50
+        @left_margin = 80
+        @right_margin = 80
+        @bottom_margin = 110
       when "16절", "197x272", "197X272"
         @body_line_count  = 25
       else
         @body_line_count  = 25
       end
       @body_line_count  = 25
-      @top_margin = 30
-      @left_margin = 110
-      @right_margin = 110
-      @bottom_margin = 110
+
       doc_options= {}
       doc_options[:paper_size] = @paper_size
       doc_options[:left_margin] = @left_margin
@@ -426,12 +431,10 @@ module RLayout
       @left_margin = @document.pages[0].left_margin
       @top_margin = @document.pages[0].top_margin
       @width = @document.pages[0].width
-
       # for debug
       # puts "+++++++++++++ document page width in MM: #{pt2mm(@width)}"
       # @height = @document.pages[0].height
       # puts "+++++++++++++ document page height in MM: #{pt2mm(@height)}"
-
       @story[:paragraphs].each do |para, i|
         if  para[:markup] == "image"
           @image_count += 1
@@ -453,7 +456,6 @@ module RLayout
               float_info.merge!(image_info)
             end
           end
-
           para_options = {}
           para_options[:markup] = "image"
           para_options[:float_info] = float_info

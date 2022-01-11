@@ -334,9 +334,9 @@ module RLayout
         page.add_float(@float_info)
       end
 
-      if @current_line.text_area[2] != @current_line.text_area[2]
-        @current_line.text_area[2] = @current_line.text_area[2]
-      end
+      # if @current_line.text_area[2] != @current_line.text_area[2]
+      #   @current_line.text_area[2] = @current_line.text_area[2]
+      # end
       while token
         return unless @current_line
         # binding.pry if token.string == "“그리고요……”" #&& @current_line.first_text_line?
@@ -344,7 +344,7 @@ module RLayout
         # token is broken into two, second part is returned
         if result.class == RTextToken
           @current_line.align_tokens
-          @current_line.text_area[2] = 0
+          @current_line.room = 0
           new_line = @current_line.next_text_line
           if new_line
             @current_line = new_line
@@ -365,7 +365,7 @@ module RLayout
         # entire token was rejected,
         else
           @current_line.align_tokens
-          @current_line.text_area[2] = 0
+          @current_line.room = 0
           new_line = @current_line.next_text_line
           if new_line
             @current_line = new_line
@@ -409,7 +409,7 @@ module RLayout
 
     def previous_line_has_room(current_line)
       previous_line = current_line.previous_text_line
-      return previous_line if previous_line.text_area[2] > current_line.text_length
+      return previous_line if previous_line.room > current_line.text_length
       false
     end
 
@@ -549,7 +549,7 @@ module RLayout
         if result.class == RTextToken
           # token is broken into two, second part is returned
           @current_line.align_tokens
-          @current_line.text_area[2] = 0
+          @current_line.room = 0
           @current_line = RLayout::RLineFragment.new(line_type: "middle_line", width: @line_width)
           @para_lines << @current_line
           token = result          
@@ -559,7 +559,7 @@ module RLayout
         else
           # entire token was rejected,
           @current_line.align_tokens
-          @current_line.text_area[2] = 0
+          @current_line.room = 0
           @current_line = RLayout::RLineFragment.new(line_type: "middle_line", width: @line_width)
           @para_lines << @current_line
         end
