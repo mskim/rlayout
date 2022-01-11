@@ -21,6 +21,8 @@ module RLayout
           canvas.line(@start_x, @start_y - @height, @start_x + @width, @start_y).stroke
         end
       end
+      # draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
+
       # can we use style_name here???
       # if  @para_style && @para_style[:korean_name] == "본문명조"
       #   # TODO redo mixed token strategy, 
@@ -92,6 +94,7 @@ module RLayout
           token.x += @start_x 
           token.draw_pdf(canvas) # draw token_union_rect
         else
+          # binding.pry if token.string == "사이에"
           canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])
         end
       end

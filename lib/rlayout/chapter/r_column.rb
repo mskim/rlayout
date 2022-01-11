@@ -37,12 +37,14 @@ module RLayout
       @column_type          = options[:column_type] || 'regular_column'
       @current_line_index   = 0
       @article_bottom_space_in_lines  = options[:article_bottom_space_in_lines] || 0
-      @body_line_height     = options[:body_line_height]    
-      @body_line_count      = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
-      @body_line_count      = options[:body_line_count] if options[:body_line_count]
-      @body_line_count      -= @article_bottom_space_in_lines
-      @line_count           =  @body_line_count
-      # @height               -= @body_line_height*@article_bottom_space_in_lines
+      if options[:column_line_count]
+        @line_count = options[:column_line_count]
+        @body_line_height = ((@height - @top_margin - @bottom_margin)/@line_count)
+      elsif options[:body_line_height]
+        @body_line_height     = options[:body_line_height]    
+        @line_count      = ((@height - @top_margin - @bottom_margin)/@body_line_height).to_i
+      end
+      @line_count           =  @line_count - @article_bottom_space_in_lines
       @current_position     = @top_margin + @top_inset
       @show_grid_rects      = options[:show_grid_rects] || true
       @layout_space         = options.fetch(:column_layout_space, 0)

@@ -18,7 +18,6 @@ module RLayout
         float.draw_pdf(canvas) 
       end
       draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
-
       @pdf_doc.write(output_path)
       if options[:page_pdf]
         split_pdf(output_path)

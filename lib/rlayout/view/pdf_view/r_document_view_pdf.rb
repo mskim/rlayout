@@ -14,6 +14,7 @@ module RLayout
       pages.each do |page|
         pdf_page    = @pdf_doc.pages.add([0, 0, @width, @height])
         canvas      = pdf_page.canvas
+        # binding.pry
         page.draw_pdf(canvas)
       end
       @pdf_doc.write(output_path)

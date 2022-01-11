@@ -44,6 +44,7 @@ module RLayout
       @top_margin       = options[:top_margin]      || 30
       @right_margin     = options[:right_margin]    || 110
       @bottom_margin    = options[:bottom_margin]   || 110
+      @body_line_count  = options[:body_line_count]  if options[:body_line_count]
       @column_count     = options[:column_count]    || 1
       @row_count        = options[:row_count]       || 6
       @gutter           = options[:gutter]          || 20

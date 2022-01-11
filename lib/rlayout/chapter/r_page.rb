@@ -77,7 +77,7 @@ module RLayout
     def log
       page_log = ""
       @graphics.each do |c| 
-        page_log += c.log
+        page_log += c.log if c.class ==  RLayout::RColumn
       end
       page_log
     end

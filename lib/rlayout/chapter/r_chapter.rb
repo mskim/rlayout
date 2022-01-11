@@ -487,7 +487,6 @@ module RLayout
       else
         @current_line = @first_text_page.first_text_line
       end
-      # binding.pry
       page_key                    = @current_line.page_number
       @story_by_page_hash         = {} # this is used to capter story_by_page info
       @toc_content                = []
