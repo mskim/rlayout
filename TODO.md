@@ -16,20 +16,33 @@
 
 ### 2022_01_11
   - fix bug: displaying only 24 lines when line_count is 25
-  
   - fix when body font size is changed, line gets cullutered
     - seems like token_width calculation has bug 
-  - replace missing glyph with some ? character , instead of crashing
-    -filter story file for unsupported chars and replace them
+
+
   - customr text_style support put it in styles folder
       text_style.yml
       body_style.yml
         header, footer
       front_matter_style.yml
-
+  - replace missing glyph with some ? character , instead of crashing
+    -filter story file for unsupported chars and replace them
   - set_body_starting_page
   - use pre-made frontmatter
-    book_cover
+    - book_cover
+      - 01
+      - 02
+      - 03
+      - 04
+      - seneca
+      - spread.jpg
+    - 01_title_page
+    - 02_info
+    - 03_dedication
+    - 04_prologue
+    - 05_toc.md
+
+
 ### 2022_01_09
   - fix footer x position
     - should align it to left and right margin

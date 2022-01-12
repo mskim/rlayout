@@ -734,11 +734,13 @@ body:
   korean_name: 본문명조
   font_family: Shinmoon
   font: Shinmoon
-  font_size: 9.8
+  font_size: 11
+  # font_size: 9.8
   text_color: CMYK=100,0,0,100
   alignment: justified
   tracking: -0.4
-  space_width: 3.0
+  space_width: 4.0
+  # space_width: 3.0
   scale: 98.0
   text_line_spacing:
   space_before_in_lines:
@@ -751,11 +753,13 @@ body_gothic:
   korean_name: 본문고딕
   font_family: KoPub돋움체_Pro Light
   font: KoPubDotumPL
-  font_size: 9.6
+  font_size: 11
+  # font_size: 9.6
   text_color: CMYK=0,0,0,100
   alignment: justified
   tracking: -0.2
-  space_width: 3.0
+  space_width: 4.0
+  # space_width: 3.0
   scale: 100.0
   first_line_indent: 0
   text_line_spacing:
