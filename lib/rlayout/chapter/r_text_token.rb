@@ -1,25 +1,26 @@
 
 module RLayout
-
-
   class RTextToken < Graphic
-    attr_accessor :string, :token_type, :has_text, :char_half_width_cushion
-    attr_reader :adjust_size, :style_name, :current_style, :char_width_array
+    attr_accessor :string, :font_size
+    attr_accessor  :token_type, :has_text, :char_half_width_cushion
+    attr_reader :adjust_size
+    attr_reader :style_name, :current_style
+    attr_reader :font_wrapper, :glyphs, :style_object, :has_missing_glyph
+
     def initialize(options={})
       options[:fill_color] = options.fetch(:token_color, 'clear')
       super
+      @style_object  = options[:style_object]
+      @font_wrapper  = @style_object.font
+      @font_size = @style_object.scaled_font_size
+      @string = options[:string] || options[:text_string]
+      @glyphs = filter_glyph(@string)
+      @width= @glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
       @has_text         = true
-      @string           = options[:string] || options[:text_string]
       @token_type       = options[:token_type] if options[:token_type]
-      @para_style       = options[:para_style]
-      @style_name       = options[:style_name]
       @char_half_width_cushion = 0
-      @char_half_width_cushion  = @para_style[:font_size]/2 if @para_style[:font_size]
-      if options[:width]
-        @width = options[:width]
-      else
-        @width    = width_of_string(@string)
-      end
+      @char_half_width_cushion  = @font_size/2
+
       if options[:text_line_spacing] && options[:text_line_spacing].class != String
         @height += options[:text_line_spacing]
       end
@@ -30,27 +31,77 @@ module RLayout
       [@width, @height]
     end
 
-    # TODO keep char_width_array
-    # if we have char_width_array, get the string width from this
+    #####  checking for missing glyphs and replace it with  ???
+    def filter_glyph(token_string)
+      glyphs = @font_wrapper.decode_utf8(token_string)
+      glyph_class_list = glyphs.map{|g| g.class}
+      if glyph_class_list.include?(HexaPDF::Font::InvalidGlyph)
+        @has_missing_glyph = true
+        missing_chars = []
+        missing_chars_indexes = []
+        glyph_class_list.each_with_index do |g, i|
+          if g == HexaPDF::Font::InvalidGlyph
+            missing_chars << token_string[i]
+            missing_chars_indexes << i
+          end
+        end
+        missing_chars.each do |char|
+          token_string.sub!(char, "???")
+        end
+        glyphs = @font_wrapper.decode_utf8(token_string)
+      end
+      glyphs
+    end
+
+    def draw_text(canvas)
+      if @string.length > 0 
+        font_name = @para_style[:font] 
+        size = @para_style[:font_size]
+        text_color = @para_style[:text_color]
+        text_color = "CMYK=0,0,0,100" unless text_color
+        text_color = RLayout::color_from_string(text_color)
+        canvas.fill_color(text_color) if text_color
+        if canvas.font
+          canvas_font_name = canvas.font.wrapped_font.font_name
+          canvas_font_size  = canvas.font_size
+          canvas_fill_color = canvas.fill_color
+          if font_name == canvas_font_name && size == canvas_font_size
+          elsif font_name != canvas_font_name
+            font_foleder  = "/Users/Shared/SoftwareLab/font_width"
+            font_file     = font_foleder + "/#{font_name}.ttf"
+            doc           = canvas.context.document
+            font_wapper   = doc.fonts.add(font_file)
+            canvas.font(font_wapper, size: size)
+          elsif size != canvas_font_size
+            canvas.font(canvas.font, size: size)
+          else
+            font_foleder  = "/Users/Shared/SoftwareLab/font_width"
+            font_file     = font_foleder + "/#{font_name}.ttf"
+            doc           = canvas.context.document
+            font_wapper   = doc.fonts.add(font_file)
+            canvas.font(font_wapper, size: size)
+          end
+        else
+          size = @para_style[:font_size] || 16
+          font_foleder  = "/Users/Shared/SoftwareLab/font_width"
+          font_file     = font_foleder + "/Shinmoon.ttf"
+          font_file     = font_foleder + "/#{font_name}.ttf" if font_name
+          doc           = canvas.context.document
+          font_wapper   = doc.fonts.add(font_file)
+          canvas.font(font_wapper, size: size)
+        end
+        f = flipped_origin
+        x_offset = f[0]
+        y_offset = f[1]
+        canvas.text(@string, at: [x_offset, y_offset - size])
+      end
+    end
+  
     def width_of_string(string, options={})
       return 0 if string.nil?
       return 0 if string == ""
-      if @char_width_array 
-        @char_width_array[0..(string.length - 1)].sum
-      elsif @style_name
-        @current_style_service = RLayout::StyleService.shared_style_service
-        @current_style ||= RLayout::StyleService.shared_style_service.current_style
-        @style_hash ||= current_style[@style_name]
-        @style_object, @font_wrapper = @current_style_service.style_object(@style_name) 
-        glyphs     = @font_wrapper.decode_utf8(string)
-        width      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
-      else
-        # If we dont have @style_name, use @para_style
-        @current_style_service = RLayout::StyleService.shared_style_service
-        @style_object, @font_wrapper = @current_style_service.style_object_from_para_style(@para_style) 
-        glyphs     = @font_wrapper.decode_utf8(string)
-        width      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
-      end
+      glyphs     = @font_wrapper.decode_utf8(string)
+      glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
     end
 
     def tracking_count
@@ -135,10 +186,7 @@ module RLayout
           elsif sub_string_incremented =~ FORBIDDEN_FIRST_CHARS_AT_END
             #TODO
             # puts "FORBIDDEN_FIRST_CHARS_AT_END of first string"
-
           end
-
-
           return second_half_string
         end
       end
@@ -163,7 +211,7 @@ module RLayout
         @width = width_of_string(@string)
         # "‘회"  10.372000000000002
         second_half_width = width_of_string(hyphenated_result) + @left_margin + @right_margin
-        second_half = RTextToken.new(string: hyphenated_result, para_style: @para_style, width: second_half_width, height: @height)
+        second_half = RTextToken.new(string: hyphenated_result, style_object: @style_object, width: second_half_width, height: @height)
         return second_half
       else
         return false
@@ -238,22 +286,5 @@ module RLayout
       end
       false
     end
-
-    def draw_text
-      style = @para_style
-      style[:font_size] += @adjust_size if @adjust_size
-      if RUBY_ENGINE == "rubymotion"
-        atts = NSUtils.ns_atts_from_style(style)
-        att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
-        # att_string.drawAtPoint(NSMakePoint(@left_margin,0))
-        att_string.drawAtPoint(NSMakePoint(@left_margin,-3.0))
-      else
-        # draw_text(canvas) is called when RUBY_ENGINE == 'ruby'
-      end
-    end
-  end
-
-  class VTextToken < RTextToken
-
   end
 end
