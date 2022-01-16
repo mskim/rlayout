@@ -32,8 +32,8 @@ module RLayout
       @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number, paper_size: @paper_size)
       @rear_matter = RearMatter.new(@project_path)
       generate_toc
-      generate_pdf_for_print
       generate_pdf_book 
+      generate_pdf_for_print
       generate_ebook unless options[:no_ebook]
       # push_to_git_repo if options[:push_to_git_repo]
     end
@@ -101,11 +101,12 @@ module RLayout
       save_book_toc
       h = {}
       h[:document_path] = toc_folder
+      h[:paper_size]    = @paper_size
       h[:page_pdf]      = true
       h[:max_page]      = 1
       h[:toc_item_count] = @book_toc.length
       # h[:parts_count]   = @parts_count
-      h[:no_table_title] = true # tells not to creat toc title
+      h[:no_table_title] = false # tells not to creat toc title
       r = RLayout::Toc.new(h)
       new_page_count = r.page_count
       @toc_doc_page_count = new_page_count
@@ -239,9 +240,11 @@ module RLayout
         pdf = HexaPDF::Document.open(front_cover_2_pdf_path)
         pdf.pages.each {|page| target.pages << target.import(page)}
       end
-      pdf = HexaPDF::Document.open(book_without_cover_path)
-      pdf.pages.each {|page| target.pages << target.import(page)}
-
+      flattened_pdf_files = pdf_pages_for_inner_book.flatten
+      flattened_pdf_files.each do |page_path|
+        pdf = HexaPDF::Document.open(page_path)
+        pdf.pages.each {|page| target.pages << target.import(page)}
+      end
       pdf = HexaPDF::Document.open(back_cover_1_pdf_path)
       pdf.pages.each {|page| target.pages << target.import(page)}
       if @has_no_cover_inside_page

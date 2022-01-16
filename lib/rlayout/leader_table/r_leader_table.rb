@@ -18,10 +18,12 @@ module RLayout
     attr_reader :kind, :data
     attr_reader :body_styles
     attr_reader :table_data, :table_style
-    attr_reader :pdf_doc, :style_serice
+    attr_reader :style_serice, :leader_style_object
 
     def initialize(options={})
+      options[:stroke_width] = 1
       super
+      @pdf_doc = @parent.pdf_doc if @parent
       @table_data = options[:table_data]
       if options[:box_text_style]
         @box_text_style = options[:box_text_style]
@@ -30,9 +32,22 @@ module RLayout
         RLayout::StyleService.shared_style_service.current_style = YAML::load_file(options[:box_text_style_path])
       end
       set_style
+      set_leader_style_object
       @row_count  = @table_data.length
       create_rows
       self
+    end
+
+    def set_leader_style_object
+      h = {}
+      h[:font]                = @font       || 'KoPubDotumPL'
+      h[:font_size]           = @font_size  || 12
+      h[:tracking]            = @tracking   || 0     
+      h[:scale]               = @scale      || 100  
+      h
+      @current_style_service = RLayout::StyleService.shared_style_service
+      @leader_style_object = @current_style_service.style_object_from_para_style(h) 
+
     end
 
     def create_rows

@@ -4,27 +4,26 @@ describe "save r_text_token" do
   before do
     options                 = {}
     options[:string]        = '여기는'
-    @c = RLayout::Container.new(width:400, height:400, fill_color: 'yellow') do
-      options                 = {}
-      options[:string]        = '여기는'
-      @current_style          = RLayout::StyleService.shared_style_service.current_style
-      if @current_style.class == String
-        @current_style        = YAML::load(@current_style)
-      end
-      @para_style             = @current_style['body']
-      @para_style             = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
-      options[:para_style]    = @para_style
-      options[:height]        = 20
-      options[:parent]        = self
-      RTextToken.new(options)
-    end
-    @pdf_path = "/Users/Shared/rlayout/output/r_text_token_test.pdf"
+    options[:string]        = 'Zöglings'
+    @current_style_service  = RLayout::StyleService.shared_style_service
+    @style_object = @current_style_service.style_object('body')
+    options[:height]        = 20
+    options[:parent]        = self
+    options[:style_object]  = @style_object
+    @t = RTextToken.new(options)
+    options2                 = {}
+    options2[:string]        = 'Zöglings'
+    @style_object2 = @current_style_service.style_object('title')
+    options2[:style_object]  = @style_object2
+    @t2 = RTextToken.new(options2)
   end
 
-  it 'should save pdf' do
-    @c.save_pdf(@pdf_path)
-    File.exist?(@pdf_path).must_equal true
-    system("open #{@pdf_path}")
+  it 'should filter token string' do
+    assert_equal @t.string, 'Zöglings'
+  end
+
+  it 'should filter token2 string' do
+    assert @t2.has_missing_glyph
   end
 end
 

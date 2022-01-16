@@ -16,6 +16,7 @@ module RLayout
     attr_reader :empty_first_column
     attr_reader :header_footer, :portrait_mode, :binding_margin
     attr_accessor :page_log
+
     def initialize(options={}, &block)
       options[:fill_color] = 'white'
       super
@@ -24,6 +25,7 @@ module RLayout
       if options[:parent] || options[:document]
         @parent       = options[:parent] || options[:document]
         @document     = @parent
+        @pdf_doc = @document.pdf_doc
         @column_count   = @document.column_count
         @row_count      = @document.row_count
       else

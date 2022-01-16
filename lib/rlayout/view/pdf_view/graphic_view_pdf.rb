@@ -101,7 +101,7 @@ module RLayout
       end
     end
 
-    def draw_pdf(canvas)
+    def draw_pdf(canvas, options={})
       @pdf_doc = parent.pdf_doc if parent
       @flipped = flipped_origin
       draw_fill(canvas)

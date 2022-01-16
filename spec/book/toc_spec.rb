@@ -24,9 +24,9 @@ describe 'create Toc' do
     first_page = @document.pages.first
     assert_equal TocPage, first_page.class
     assert_equal 50, first_page.left_margin
-    assert_equal 50, first_page.top_margin
+    assert_equal 80, first_page.top_margin
     assert_equal 50, first_page.right_margin
-    assert_equal 50, first_page.bottom_margin
+    assert_equal 80, first_page.bottom_margin
   end  
 
   it 'document should have one RLeaderTable' do
@@ -36,9 +36,9 @@ describe 'create Toc' do
     assert_equal 50, table.x
   end  
 
-  it 'document should have one RHeading' do
+  it 'document should have one Text' do
     first_page = @document.pages.first
     heading = first_page.heading
-    assert_equal RHeading, heading.class
+    assert_equal RLayout::Text, heading.class
   end  
 end

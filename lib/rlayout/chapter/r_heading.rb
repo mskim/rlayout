@@ -51,6 +51,7 @@ module RLayout
       super
       @chapter_heading_height  = options[:chapter_heading_height] || "half"
       if @parent
+        @pdf_doc = @parent.pdf_doc
         case @chapter_heading_height
         when "natural"
         when "quarter"

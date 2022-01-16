@@ -44,7 +44,6 @@ else
   require File.dirname(__FILE__) + "/rlayout/graphic/fill"
   require File.dirname(__FILE__) + "/rlayout/graphic/graphic_struct"
   require File.dirname(__FILE__) + "/rlayout/graphic/text"
-  require File.dirname(__FILE__) + '/rlayout/graphic/text_cell.rb'
 
   require File.dirname(__FILE__) + "/rlayout/graphic/image"
   require File.dirname(__FILE__) + "/rlayout/graphic/layout"
@@ -83,7 +82,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/view/svg_view/r_page_view_svg'
   require File.dirname(__FILE__) + '/rlayout/view/svg_view/r_document_view_svg'
 
-  require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_text_token_view_pdf'
+  # require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_text_token_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_line_fragment_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_document_view_pdf'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/r_heading_pdf_view'  
@@ -109,6 +108,16 @@ else
   require File.dirname(__FILE__) + '/rlayout/chapter/r_page'
   require File.dirname(__FILE__) + '/rlayout/chapter/r_chapter'
 
+  require File.dirname(__FILE__) + '/rlayout/text/font'
+  require File.dirname(__FILE__) + '/rlayout/text/announcement_text'
+  require File.dirname(__FILE__) + '/rlayout/text/quote_text'
+  require File.dirname(__FILE__) + '/rlayout/text/title_text'
+  require File.dirname(__FILE__) + "/rlayout/text/text_token"
+  require File.dirname(__FILE__) + '/rlayout/graphic/text_cell'
+
+  require File.dirname(__FILE__) + "/rlayout/text/text_train"
+  require File.dirname(__FILE__) + '/rlayout/text/heading'
+  
   require File.dirname(__FILE__) + '/rlayout/table/list.rb'
   require File.dirname(__FILE__) + '/rlayout/table/simple_table.rb'
   require File.dirname(__FILE__) + '/rlayout/table/table.rb'
@@ -193,13 +202,7 @@ else
   # require File.dirname(__FILE__) + '/rlayout/page/composite_page'
   # require File.dirname(__FILE__) + '/rlayout/page/page_variables_extend'
 
-  require File.dirname(__FILE__) + '/rlayout/text/font'
-  require File.dirname(__FILE__) + '/rlayout/text/announcement_text'
-  require File.dirname(__FILE__) + '/rlayout/text/quote_text'
-  require File.dirname(__FILE__) + '/rlayout/text/title_text'
-  require File.dirname(__FILE__) + "/rlayout/text/text_token"
-  require File.dirname(__FILE__) + "/rlayout/text/text_train"
-  require File.dirname(__FILE__) + '/rlayout/text/heading'
+
   
   require File.dirname(__FILE__) + "/rlayout/deco_text/deco_string"
   require File.dirname(__FILE__) + "/rlayout/deco_text/deco_char"

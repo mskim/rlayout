@@ -193,7 +193,7 @@ module RLayout
       self
     end
 
-    def draw_pdf(canvas)
+    def draw_pdf(canvas, options={})
 
     end
     

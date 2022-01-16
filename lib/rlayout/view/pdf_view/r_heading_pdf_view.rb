@@ -36,7 +36,7 @@ module RLayout
     end
 
     # def to_pdf(canvas)
-    def draw_pdf(canvas)
+    def draw_pdf(canvas, options={})
       @pdf_doc = parent.pdf_doc if parent
       flipped = flipped_origin
       @graphics.each do |g|

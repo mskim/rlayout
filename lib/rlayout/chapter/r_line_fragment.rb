@@ -19,6 +19,9 @@ module RLayout
     attr_accessor :token_union_rect, :token_union_style
     attr_accessor :font, :font_size, :para_style, :content_cleared
     attr_accessor :style_name, :has_mixed_token, :adjust_size
+    attr_accessor :content_source # r_paragraph, title_text, text
+
+    # set content_source and use style_object from content_source
 
     def	initialize(options={})
       options[:layout_direction]  = 'horizontal'
@@ -30,6 +33,7 @@ module RLayout
       @char_half_width_cushion    = @space_width/3
       options[:right_margin]      = 2 
       super
+      @content_source = options[:content_source]
 
       if options[:para_style]
         @para_style       = options[:para_style]
@@ -57,9 +61,9 @@ module RLayout
       self
     end
 
-    def room
-      @text_area[2]
-    end
+    # def room
+    #   @text_area[2]
+    # end
     
     def log
       "#{page_number}_#{line_index}:#{line_string}\n"

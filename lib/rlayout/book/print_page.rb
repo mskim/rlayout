@@ -11,21 +11,20 @@ module RLayout
       @gripper_margin = option[:gripper_margin]
       @bleed_margin = option[:bleed_margin]
       @binding_margin = option[:binding_margin]
-      place_pdf
-      draw_cutting_line
+      shift_and_place_page
+      draw_cutting_lines
       pdf_page
     end
 
-    def draw_cutting_line
+    def draw_cutting_lines
       line_length = @gripper_margin - @bleed_margin
+      # drawing vertical lines
       vertical_line_position = [@gripper_margin, @width - @gripper_margin]
       vertical_line_position.each do |x_position|
-        # line(x:x_position,y:0, width:0.5, height: line_length)
-        # line(x:x_position,y: @height - @gripper_margin + @bleed_margin, width:0.5, height: line_length)
-        
         line(x1: x_position, y1: 0, x2: x_position, y2: line_length)
         line(x1: x_position, y1: @height - @gripper_margin + @bleed_margin, x2: x_position, y2: @height)
       end
+      # drawing horizontal lines
       horozontal_line_position = [@gripper_margin, @height - @gripper_margin]
       horozontal_line_position.each do |y_position|
         line(x1: 0, y1: y_position, x2: line_length, y2: y_position)
@@ -33,7 +32,8 @@ module RLayout
       end
     end
 
-    def place_pdf
+    # pages are shifted left and right by binding margin
+    def shift_and_place_page
       if side == 'left'
         Image.new(parent: self, image_path:@page_path, x: @gripper_margin - @binding_margin, y: @gripper_margin, width: @width - @gripper_margin*2, height: @height - @gripper_margin*2)
       else

@@ -11,6 +11,7 @@ module RLayout
       if options[:parent] || options[:document]
         @parent       = options[:parent] || options[:document]
         @document     = @parent
+        @pdf_doc      = @document.pdf_doc
         @column_count   = @document.column_count
         @row_count      = @document.row_count
       else
@@ -21,10 +22,29 @@ module RLayout
       end
 
       if @document
-        @left_margin    = @document.left_margin
-        @top_margin     = @document.top_margin
-        @right_margin   = @document.right_margin
-        @bottom_margin  = @document.bottom_margin
+        case @document.paper_size
+        when "A4"
+          @left_margin    = 100
+          @top_margin     = 100
+          @right_margin   = 100
+          @bottom_margin  = 100
+        when "16절"
+          @left_margin    = 80
+          @top_margin     = 100
+          @right_margin   = 80
+          @bottom_margin  = 100
+        when "A5"
+          @left_margin    = 50
+          @top_margin     = 80
+          @right_margin   = 50
+          @bottom_margin  = 80
+        else 
+          @left_margin    = 50
+          @top_margin     = 50
+          @right_margin   = 50
+          @bottom_margin  = 50
+        end
+
         if !@document.pages.include?(self)
           @document.pages << self
         end
@@ -37,14 +57,25 @@ module RLayout
       page_number == 1
     end
 
-    def add_heading(options={})
+    # def add_heading(options={})
+    #   options[:parent] = self
+    #   options[:x] = @left_margin
+    #   options[:y] = @top_margin
+    #   options[:width] = @width - @left_margin - @right_margin
+    #   @heading  = RHeading.new(options)
+    # end
+
+    def add_toc_title(options={})
+      options[:parent] = self
       options[:x] = @left_margin
       options[:y] = @top_margin
+      options[:alignment] = "center"
       options[:width] = @width - @left_margin - @right_margin
-      @heading  = RHeading.new(options)
+      @heading  = Text.new(options)
     end
 
     def add_toc_table(options={})
+      options[:parent] = self
       options[:x] = @left_margin
       options[:y] = @top_margin
       options[:width] = @width - @left_margin - @right_margin

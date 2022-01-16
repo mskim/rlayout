@@ -16,7 +16,8 @@ module RLayout
   class LeaderCell < Text
     attr_reader :leader_char 
     attr_accessor :column_index, :row_index
-
+    attr_accessor :column_index, :row_index
+    attr_accessor :style_object
     def initialize(options={})
       super
       # @height = @parent.height if @parent
@@ -33,8 +34,13 @@ module RLayout
     end
     
     def fillup_with_leader
-      @current_style_service = RLayout::StyleService.shared_style_service
-      @style_object, @font_wrapper = @current_style_service.style_object_from_para_style(para_style) 
+      # if parent.leader_style_object
+      #   @style_object = parent.leader_style_object
+      # else
+        @current_style_service = RLayout::StyleService.shared_style_service
+        @style_object = @current_style_service.style_object_from_para_style(para_style) 
+      # end
+      @font_wrapper = @style_object.font
       glyphs        = @font_wrapper.decode_utf8(@text_string)
       @string_width = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
       if @string_width < @width

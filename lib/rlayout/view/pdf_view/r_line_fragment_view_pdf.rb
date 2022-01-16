@@ -94,7 +94,6 @@ module RLayout
           token.x += @start_x 
           token.draw_pdf(canvas) # draw token_union_rect
         else
-          # binding.pry if token.string == "사이에"
           canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])
         end
       end

@@ -1,7 +1,22 @@
 
-# Paragraph Object is used in middle to long document.
-# Paragraph is not a Graphic subclass.
-# Paragraph holds data tokens and resposible for laying out them out in lines.
+# There are three types of Text.
+# Text, TitleText, and RParagraph
+
+# Text 
+# supports single line untiform styled text.
+
+# TitleText 
+# supports multiple line text.
+# used for title, subject_head, quote
+# adjust_size  adjusts font size from default text_style value
+# ex: My title text{-5} will reduce title text by 5 points
+# only sinngle digit change is allowed, to keep design integrity.
+
+# RParagraph
+# supports multiple line text using style_name.
+# used with RLineFragment of RColumn 
+# it lays out  text_tokens in series of linkd RLineFragment's
+# RParagraph is used in middle to long document.
 
 # announcement paragragraph
 # line takes up 2 or multples of body_line_height
@@ -31,7 +46,6 @@
 # * Style#underlay_callback
 # * Style#overlay_callback
 
-
 module RLayout
   #TODO
   # tab stop
@@ -47,7 +61,9 @@ module RLayout
     attr_reader :line_width,  :token_heights_are_equal
     attr_accessor :tokens, :para_lines, :pdf_doc
     attr_reader :para_rect
-    attr_reader :float_info
+    attr_reader :float_info 
+    attr_reader :style_object, :style_object_bold, :style_object_itaic
+    
     def initialize(options={})
       @tokens = []
       @markup         = options.fetch(:markup, 'p')
@@ -55,7 +71,9 @@ module RLayout
       @line_count     = 0
       @line_width     = options[:line_width] || 130
       @article_type   = options[:article_type]
+      # create_style_objects
       parse_style_name
+
       if @markup == 'br'
       else
         @tokens       = []
@@ -76,10 +94,9 @@ module RLayout
       h
     end
 
-    # before we create any text_tokens,
-    # check if we have any special token mark EMPASIS_STRONG or EMPASIS_DIAMOND
+    # check if we have any empasized tokens, marked EMPASIS_STRONG or EMPASIS_DIAMOND
     # if EMPASIS_STRONG or EMPASIS_DIAMOND are found, split para string with EMPASIS_STRONG and EMPASIS_DIAMOND segments
-    # and call create_plain_tokens for regular string segment
+    # and handle them separately.
     def create_tokens
       if @markup == "h4" || @markup == "h1"
         # for author and linked to page, check if there is markup for moving up the text, if there is enoung text_area[2]
@@ -113,19 +130,15 @@ module RLayout
       return unless para_string
       tokens_strings = para_string.split(" ")
       @current_style_service = RLayout::StyleService.shared_style_service
-      @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
+      @style_object = @current_style_service.style_object(@style_name)
       tokens_strings.each do |token_string|
         next unless token_string
         token_options = {}
         token_options[:string]      = token_string
-        token_options[:style_name]  = @style_name
-        token_options[:para_style]  = @para_style
+        # token_options[:style_name]  = @style_name
+        # token_options[:para_style]  = @para_style
         token_options[:height]      = @para_style[:font_size]
-        # if RUBY_ENGINE != "rubymotion"
-        glyphs                     = @font_wrapper.decode_utf8(token_string)
-        width= glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
-        token_options[:width]      = width  
-        # end
+        token_options[:style_object] = @style_object
         @tokens << RLayout::RTextToken.new(token_options)
       end
     end
@@ -143,18 +156,15 @@ module RLayout
           style_hash = current_style['body_gothic'] #'strong_emphasis'
           @emphasis_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
           @current_style_service = RLayout::StyleService.shared_style_service
-          @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
+          @style_object = @current_style_service.style_object(@style_name) 
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
-            emphasis_style[:style_name] = 'body_gothic'
-            emphasis_style[:para_style] = @emphasis_para_style
+            # emphasis_style[:style_name] = 'body_gothic'
+            # emphasis_style[:para_style] = @emphasis_para_style
             emphasis_style[:height]     = @emphasis_para_style[:font_size]
-            # if RUBY_ENGINE != "rubymotion"
-              glyphs                     = @font_wrapper.decode_utf8(token_string)
-              emphasis_style[:width]      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
-            # end
+            token_options[:style_object] = @style_object
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
@@ -183,20 +193,16 @@ module RLayout
           style_hash = current_style['body_gothic'] #'diamond_emphasis'
           @diamond_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
           @current_style_service = RLayout::StyleService.shared_style_service
-          @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
-          # @style_object = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
+          @style_object = @current_style_service.style_object(@style_name) 
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
-            emphasis_style[:style_name] = 'body_gothic'
-            emphasis_style[:para_style] = @diamond_para_style
+            # emphasis_style[:style_name] = 'body_gothic'
+            # emphasis_style[:para_style] = @diamond_para_style
             emphasis_style[:height]     = @diamond_para_style[:font_size]
             emphasis_style[:token_type] = 'diamond_emphasis'
-            # if RUBY_ENGINE != "rubymotion"
-              glyphs                     = @font_wrapper.decode_utf8(token_string)
-              emphasis_style[:width]      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
-            # end
+            token_options[:style_object] = @style_object
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
@@ -222,33 +228,24 @@ module RLayout
             token_group.strip!
             token_group = "▲" + token_group
           end
-          # unless token_group =~ /\=/
-          #   token_group.strip!
-          #   token_group += " ="
-          # end
           current_style = RLayout::StyleService.shared_style_service.current_style
           style_hash = current_style['body_gothic'] #'diamond_emphasis'
           @diamond_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
           @current_style_service = RLayout::StyleService.shared_style_service
-          @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
-          # @style_object = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
+          @style_object = @current_style_service.style_object(@style_name)
           tokens_array = token_group.split(" ")
           tokens_array.each do |token_string|
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
-            emphasis_style[:style_name] = 'body_gothic'
-            emphasis_style[:para_style] = @diamond_para_style
+            # emphasis_style[:style_name] = 'body_gothic'
+            # emphasis_style[:para_style] = @diamond_para_style
             emphasis_style[:height]     = @diamond_para_style[:font_size]
             emphasis_style[:token_type] = 'diamond_emphasis'
-            if RUBY_ENGINE != "rubymotion"
-              glyphs                     = @font_wrapper.decode_utf8(token_string)
-              emphasis_style[:width]      = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
-            end
+            token_options[:style_object] = @style_object
             @tokens << RLayout::RTextToken.new(emphasis_style)
           end
         else
           # line text with just noral text tokens
-          # puts "token_group for plain: #{token_group}"
           create_plain_tokens(token_group)
         end
       end

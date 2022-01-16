@@ -1,4 +1,12 @@
 module RLayout
+  
+  # 00_blank_page
+  # 01_title_page
+  # 02_some_graphic_page
+  # 03_book_info
+  # 04_dedication
+  # 05_prologue
+  # 06_toc
 
   class FrontMatter
     attr_reader :project_path, :book_info, :page_width, :height

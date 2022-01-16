@@ -1,4 +1,4 @@
-# Cover is used to create Book Cover.
+# MagazineCover is used to create MagazineCover Cover.
 # It has 4 pages, 1,2,3,4
 # Each page can have bg_image
 # First TocPage strats with RHeading
@@ -6,7 +6,7 @@
 # handles folded wing, and senaca
 
 module RLayout
-  class Cover 
+  class MagazineCover 
     attr_reader :document_path
     attr_reader :document, :output_path, :column_count
     attr_reader :toc_content
@@ -30,7 +30,7 @@ module RLayout
         return
       end
       read_story
-      layout_toc
+      # layout_toc
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
       self
     end
@@ -51,8 +51,6 @@ module RLayout
       else
         @story_md = File.open(@story_path, 'r'){|f| f.read}
       end
-
-
     end
 
     def layout_toc

@@ -38,10 +38,11 @@ module RLayout
     h = {}
     h[:document_path] = toc_folder
     h[:page_pdf]      = true
+    h[:paper_size]    = @paper_size
     h[:max_page]      = 1
     h[:toc_item_count] = 20
     # h[:parts_count]   = @parts_count
-    h[:no_table_title] = true # tells not to creat toc title
+    h[:no_table_title] = false # tells not to creat toc title
     r = RLayout::Toc.new(h)
     new_page_count = r.page_count
     @toc_doc_page_count = new_page_count

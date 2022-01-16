@@ -43,6 +43,10 @@
     - 05_toc.md
 
 
+### 2022_01_14
+  - for RLineFragment
+    - add content_source and get @style_object from content_source
+    - so fix r_paragraph, title_text, text, and TextToken
 ### 2022_01_09
   - fix footer x position
     - should align it to left and right margin

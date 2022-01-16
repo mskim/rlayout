@@ -16,6 +16,7 @@ module RLayout
     attr_reader :row_data, :leading_char
     attr_accessor :row_index
     def initialize(options={})
+      options[:stroke_width] = 1
       super
       @row_index    = options[:row_index]
       @row_data     = options[:row_data]
@@ -24,6 +25,10 @@ module RLayout
       insert_leader_cells
       align_cells
       self
+    end
+
+    def leader_style_object
+      parent.leader_style_object
     end
 
     def align_cells
@@ -67,7 +72,6 @@ module RLayout
         h[:style_name]        = 'subtitle'
         h[:v_alignment]       = 'top'
         h[:text_fit_type]     = 'fit_box_to_text'
-        # h[:adjust_width_to_string_width] = true
         t = TextCell.new(h)
       end
     end
@@ -79,6 +83,7 @@ module RLayout
       insert_position = 1
       @leader_cell_count.times do |i|
         h = {}
+        # h[:parent]  = self
         h[:width]   = cell_width
         h[:height]  = @height
         h[:text_string] = "."

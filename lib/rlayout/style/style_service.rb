@@ -751,9 +751,9 @@ body:
   graphic_attributes: ''
 body_gothic:
   korean_name: 본문고딕
-  font_family: KoPub돋움체_Pro Light
-  font: KoPubDotumPL
-  font_size: 11
+  font_family: KoPub돋움체_Pro Medium
+  font: KoPubDotumPM
+  font_size: 13
   # font_size: 9.6
   text_color: CMYK=0,0,0,100
   alignment: justified
@@ -773,7 +773,8 @@ running_head:
   korean_name: 본문중제
   font_family: KoPub돋움체_Pro Medium
   font: KoPubDotumPM
-  font_size: 9.6
+  font_size: 11
+  # font_size: 9.6
   text_color: CMYK=0,0,0,100
   alignment: left
   tracking: -0.2
@@ -1613,7 +1614,7 @@ module RLayout
       h[:horizontal_scaling]  = style[:scale]           if style[:scale] && style[:scale] != 100
       h
       style_object = HexaPDF::Layout::Style.new(**h)
-      return style_object, font_wrapper
+      # return style_object, font_wrapper
     end
 
     def style_object_from_para_style(para_style, options={})
@@ -1630,7 +1631,7 @@ module RLayout
       h[:horizontal_scaling]  = para_style[:scale]           if para_style[:scale] && para_style[:scale] != 100
       h
       style_object = HexaPDF::Layout::Style.new(**h)
-      return style_object, font_wrapper
+      # return style_object, font_wrapper
     end
 
     def width_of_string(style_name, string, adjust_size)

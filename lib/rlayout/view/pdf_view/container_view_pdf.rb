@@ -2,6 +2,8 @@ module RLayout
   class Container < Graphic
     attr_accessor :pdf_doc, :flipped 
 
+    # This is called when the class is the root class
+    # so, it has to create root @pdf_doc 
     def save_pdf_with_ruby(output_path, options={})
       style_service = RLayout::StyleService.shared_style_service
       @pdf_doc      = HexaPDF::Document.new
@@ -12,7 +14,7 @@ module RLayout
       style_service.set_canvas_text_style(canvas, 'body')
       draw_fill(canvas) unless self.class == RDocument
       @graphics.each do |g|
-        g.draw_pdf(canvas)
+        g.draw_pdf(canvas, pdf_doc: @pdf_doc)
       end
       @floats.each do |float|
         float.draw_pdf(canvas) 
@@ -37,14 +39,15 @@ module RLayout
       end
     end
 
-    # def to_pdf(canvas)
+    # This is called from parent
     def draw_pdf(canvas, options={})
-      draw_fill(canvas) unless self.class == RDocument
+      @pdf_doc = parent.pdf_doc
+      draw_fill(canvas)
       @graphics.each do |g|
-        g.draw_pdf(canvas)
+        g.draw_pdf(canvas, pdf_doc: @pdf_doc)
       end
       @floats.each do |g|
-        g.draw_pdf(canvas)
+        g.draw_pdf(canvas, pdf_doc: @pdf_doc)
       end
       # end
     end
@@ -59,23 +62,17 @@ module RLayout
       end
     end
 
-    # This is used for creating print_page, 
-    # where a page gets embbed into a larger page with print_page with gripper_margin amd cutting marks
+    # This is called from class PrintPage to generate pdf page.
+    # PrintPage had embeded a pdf_page into a larger page as Image, 
+    # and drawn cutter marks and so on ...
     def to_pdf(options={})
-      # style_service = RLayout::StyleService.shared_style_service
       @pdf_doc      = HexaPDF::Document.new
-      # style_service.pdf_doc = @pdf_doc
-      # load_fonts(@pdf_doc)
       page          = @pdf_doc.pages.add([0, 0, @width, @height])
       canvas        = page.canvas      
-      # style_service.set_canvas_text_style(canvas, 'body')
       draw_fill(canvas) unless self.class == RDocument
       @graphics.each do |g|
         g.draw_pdf(canvas)
       end
-      # @floats.each do |float|
-      #   float.draw_pdf(canvas) 
-      # end
       draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
       @pdf_doc
     end

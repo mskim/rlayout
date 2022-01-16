@@ -1,8 +1,10 @@
 # text('2021년 3월 19일 금요일 (3호)', x: 828.00, y: 107.25, fill_color:'clear', width: 200, font: 'KoPubBatangPM', font_size: 9.5, font_color: "CMYK=0,0,0,100", text_alignment: 'right')
 
 module RLayout
+  
+  # single line uniform attributes text.
   class Text < Graphic
-    attr_reader :text_string, :font, :font_size, :font_color, :tracking
+    attr_reader :text_string, :font_name, :font_size, :font_color, :tracking
     attr_reader :text_style, :string_width
     attr_accessor :text_alignment, :v_alignment, :text_fit_type
 
@@ -10,21 +12,24 @@ module RLayout
       # @stroke[:thickness] = 1
       # @stroke[:color] = 'black'
       # @fill[:color] = 'yellow'
+      @text_string    = options[:text_string] ||  options[:string]
       @has_text       = true
       @text_fit_type  = options[:text_fit_type]   || 'normal' # fit_box_to_text
       @tracking       = options[:tracking]        || 0
       @scale          = options[:scale]           || 100
       if options[:para_style]
-        @font           = options[:para_style][:font]  || 'KoPubBatangPM' #'KoPubDotumPL'
-        @font_color     = options[:para_style][:font_color]      || 'black'
+        @para_style = options[:para_style]
       else
-        @font           = options[:font]            || 'KoPubBatangPM'
-        @font_color     = options[:font_color]      || 'black'
+        @para_style = {}
+        @para_style[:font] = options[:font]            || 'KoPubBatangPM'
+        @para_style[:font_size] = options[:font_size] || 16
+        @para_style[:font_color] = options[:font_color] || 'black'
+        @para_style[:fill_color] = options[:fill_color] || 'clear'
       end
-      @fill_color     = options[:fill_color]      || 'clear'
-      @font_size      = options[:font_size]       || 16
-      @text_string    = options[:text_string]     || options[:string]
-      @text_style     = options[:style]           || 'normal'
+      unless  @para_style[:font]
+        @para_style[:font] = 'KoPubBatangPM'
+      end
+
       if options[:position] 
         @options = options[:position]
         set_position
@@ -41,7 +46,10 @@ module RLayout
 
     def set_string_width
       @current_style_service = RLayout::StyleService.shared_style_service
-      @style_object, @font_wrapper = @current_style_service.style_object_from_para_style(para_style) 
+      @font_name = @para_style[:font] || @para_style['font']
+      @style_object = @current_style_service.style_object_from_para_style(@para_style) 
+      @font_wrapper =  @style_object.font
+      @font_size = @style_object.font_size
       glyphs        = @font_wrapper.decode_utf8(@text_string)
       @string_width = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
     end
@@ -55,7 +63,7 @@ module RLayout
         when 'center'
           @x += diff/2
         when 'right'
-          # @x += diff
+          @x += diff
         end
       end
     end
@@ -64,29 +72,23 @@ module RLayout
       if @text_string.length > 0
         # canvas.fill_color(@fill_color)
         if canvas.font
-          canvase_font_name = canvas.font.wrapped_font.font_name
+          canvas_font_name = canvas.font.wrapped_font.font_name
           canvas_font_size  = canvas.font_size
           canvas_fill_color = canvas.fill_color
-          if @font == canvase_font_name && @font_size == canvas_font_size
-          elsif @font != canvase_font_name
+          if @font_name == canvas_font_name && @font_size == canvas_font_size
+          elsif @font_name != canvas_font_name
             font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-            font_file     = font_foleder + "/#{@font}.ttf"
+            font_file     = font_foleder + "/#{@font_name}.ttf"
             doc           = canvas.context.document
             font_wapper   = doc.fonts.add(font_file)
             canvas.font(font_wapper, size: @font_size)
           elsif @font_size != canvas_font_size
             canvas.font(canvas.font, size: @font_size)
-          else
-            font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-            font_file     = font_foleder + "/#{@font}.ttf"
-            doc           = canvas.context.document
-            font_wapper   = doc.fonts.add(font_file)
-            canvas.font(font_wapper, size: @font_size)
           end
         else
           font_foleder  = "/Users/Shared/SoftwareLab/font_width"
           font_file     = font_foleder + "/Shinmoon.ttf"
-          font_file     = font_foleder + "/#{@font}.ttf" if @font
+          font_file     = font_foleder + "/#{@font_name}.ttf" if @font_name
           doc           = canvas.context.document
           font_wapper   = doc.fonts.add(font_file)
           canvas.font(font_wapper, size: @font_size)

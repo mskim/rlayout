@@ -1,23 +1,34 @@
 module RLayout
 
-  # TitleText single or multiple line, uniform styled text
+  # There are three types of Text.
+  # Text, TitleText, and RParagraph
+
+  # Text 
+  # supports single line untiform styled text.
+
+  # TitleText 
+  # supports multiple line text.
   # used for title, subject_head, quote
   # adjust_size  adjusts font size from default text_style value
   # ex: My title text{-5} will reduce title text by 5 points
   # only sinngle digit change is allowed, to keep design integrity.
+  
+  # RParagraph
+  # supports multiple line text using style_name.
+  # used with RLineFragment of RColumn 
+  # it lays out  text_tokens in series of linkd RLineFragment's
   class TitleText < Container
-    attr_accessor :tokens, :string, :style_name, :para_style, :room, :height_in_lines
+    attr_accessor :tokens, :text_string, :string, :style_name, :para_style, :room, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title, :token_union_style, :adjust_size
-    attr_reader :style_category
+    attr_reader :style_object
     def initialize(options={})
-      @style_category = options[:style_category]
-      @string                 = options.delete(:text_string)
+      @text_string                 = options.delete(:text_string)
       # parse for adjust_size pattern, which is at the end of string with {}
-      # if @string =~/\{\s*(-?\d)\s?\}\s?$/
-      if @string =~/\{\s*(-*\+*\d)\s*\}\s*$/
+      # if @text_string =~/\{\s*(-?\d)\s?\}\s?$/
+      if @text_string =~/\{\s*(-*\+*\d)\s*\}\s*$/
         @adjust_size = $1.to_i
-        @string = @string.sub(/\{\s?(-?\d)\s?\}\s?$/, "")
+        @text_string = @text_string.sub(/\{\s?(-?\d)\s?\}\s?$/, "")
       end
       options[:fill_color]    = options.fetch(:fill_color, 'clear')
       super
@@ -27,85 +38,42 @@ module RLayout
       @tokens                 = []
       @room                   = @width
       @single_line_title      = options[:single_line_title]
+      @current_style_service = RLayout::StyleService.shared_style_service
       if @style_name
-        current_style         = RLayout::StyleService.shared_style_service.current_style
-        if current_style.class == String
-          current_style       = YAML::load(current_style)
-          @para_style         = current_style[@style_name]
-          unless @para_style
-            # @para_style = current_style['body_gothic']
-            @para_style = current_style['body']
-          end
-          # this is used to apply additional attribute on top of given style name
-          if options[:font_size]
-            @para_style['font_size'] = options[:font_size]
-          end
-          if options[:font_color]
-            @para_style['font_color'] = options[:font_color]
-          end
-          if options[:text_alignment]
-            @para_style['text_alignment'] = options[:text_alignment]
-          end
-
-        else
-          @para_style         = RLayout::StyleService.shared_style_service.current_style[@style_name]
-        end
-        @para_style           = Hash[@para_style.map{ |k, v| [k.to_sym, v] }]
-        @graphic_attributes   = @para_style[:graphic_attributes]
-        if @graphic_attributes && @graphic_attributes['token_union_style']
-          @token_union_style  = Hash[@graphic_attributes['token_union_style'].map{ |k, v| [k.to_sym, v] }]
-        end
-        @space_width            = @para_style[:space_width] || @para_style[:font_size]/2
-        if @adjust_size && @adjust_size != 0
-          @space_width = @space_width*(@para_style[:font_size] + @adjust_size)/@para_style[:font_size]
-        end
+        @style_object = @current_style_service.style_object(@style_name, adjust_size: @adjust_size)
       elsif options[:para_style]
-        @para_style             = options[:para_style]
+        if @adjust_size
+          @para_style[:font_size] += @adjust_size
+        end
+        @style_object = @current_style_service.style_object_with_para_style(options[:para_style])
       else
         @para_style             = {}
         @para_style[:font]      = options.fetch(:font, 'KoPubBatangPM')
         @para_style[:font_size] = options.fetch(:font_size, 16)
+        if @adjust_size
+          @para_style[:font_size] += @adjust_size
+        end
         @para_style[:text_alignment] = options[:text_alignment] || 'left'
         @para_style[:font_color] = options[:font_color] || 'black'
         @para_style[:text_color] = options[:text_color] || 'black'
         @para_style[:fill_color] = options[:fill_color] || 'clear'
+        @para_style[:tracking]   = options[:tracking] || 0
+        @style_object = @current_style_service.style_object_with_para_style(options[:para_style])
       end
-      @body_line_height = @para_style[:font_size] unless @body_line_height
-      @para_style[:font_size] += @adjust_size if @adjust_size
-      @para_style[:alignment] = options[:text_alignment] if options[:text_alignment]
-      @para_style[:font_color] = options[:font_color] if options[:font_color]
-      @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
-      @text_height_in_lines   = 2 if @text_height_in_lines == ""
-      @space_before_in_lines  = @para_style[:space_before_in_lines] || 0
-      @space_before_in_lines  = 0 if @space_before_in_lines == ""
-      @top_inset              = @space_before_in_lines*@body_line_height
-      @top_inset              += options[:top_inset] if options[:top_inset]
-      @space_after_in_lines   = @para_style[:space_after_in_lines] || 0
-      @space_after_in_lines   = 0 if @space_after_in_lines == ""
-      @bottom_inset           = @space_after_in_lines*@body_line_height
-      @tracking               = @para_style.fetch(:tracking, 0)
-      @height_in_lines        = @space_before_in_lines + @text_height_in_lines + @space_after_in_lines
-      @height                 = @height_in_lines*@body_line_height
-      if options[:line_space]
-        @line_space           =  options[:line_space]
-      elsif @para_style[:text_line_spacing] == "" || @para_style[:text_line_spacing].nil?
-        @line_space           =  @para_style[:font_size]*0.4
-      else
-        @line_space           = @para_style[:text_line_spacing]
-      end
-      @line_height            = @para_style[:font_size] + @line_space
       @current_line_y         = @top_margin + @top_inset
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @current_style_service        = RLayout::StyleService.shared_style_service      
-      @style_object, @font_wrapper  = @current_style_service.style_object(@style_name, adjust_size: @adjust_size) 
+      @font_wrapper = @style_object.font
       space_glyph             = @font_wrapper.decode_utf8(" ").first
       @space_width            = @style_object.scaled_item_width(space_glyph)
-      @current_line           = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
+      @line_height            = @style_object.font_size*2
+      # @line_height            = @font_wrapper[:font_size] + @line_space
+      @current_line           = RLineFragment.new(parent:self, contnet_source: self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
       @current_line_y         +=@current_line.height
       create_tokens
       layout_tokens
-      ajust_height_as_body_height_multiples
+      # TODO: 
+      # ajust_height_as_body_height_multiples
       self
     end
 
@@ -130,20 +98,20 @@ module RLayout
     def create_tokens
       return unless @string
       # we are getting "\r\n" or "\n" for new line
-      if @string.include?("\r\n")
-        @string.split("\r\n").each do |line_string|
+      if @text_string.include?("\r\n")
+        @text_string.split("\r\n").each do |line_string|
           create_tokens_from_string(line_string)
           @tokens <<  NewLineToken.new()
         end
         @tokens.pop if @tokens.last.class == RLayout::NewLineToken # delete last NewLineToken
-      elsif @string.include?("\n")
-        @string.split("\n").each do |line_string|
+      elsif @text_string.include?("\n")
+        @text_string.split("\n").each do |line_string|
           create_tokens_from_string(line_string)
           @tokens <<  NewLineToken.new()
         end
         @tokens.pop if @tokens.last.class == RLayout::NewLineToken # delete last NewLineToken
       else
-        create_tokens_from_string(@string)
+        create_tokens_from_string(@text_string)
       end
     end
 
@@ -151,15 +119,8 @@ module RLayout
       @tokens += string.split(" ").collect do |token_string|
         options = {}
         options[:string]      = token_string
-        options[:para_style]  = @para_style
-        # options[:style_name]  = @style_name
+        options[:style_object]  = @style_object
         options[:y]           = 0
-        options[:adjust_size] = @adjust_size if @adjust_size
-        options[:height]      = para_style[:font_size]
-        if RUBY_ENGINE != 'rubymotion'
-          glyphs                = @font_wrapper.decode_utf8(token_string)
-          options[:width]       = glyphs.map { |g| @style_object.scaled_item_width(g)}.reduce(:+)  
-        end
         RLayout::RTextToken.new(options)
       end
       #code
@@ -171,7 +132,7 @@ module RLayout
 
     def add_new_line
       # new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, adjust_size: adjust_size)
-      new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
+      new_line                = RLineFragment.new(parent:self, contnet_source: self,  x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
       @current_line.next_line = new_line if @current_line
       @current_line           = new_line
       @current_line_y         += @current_line.height
