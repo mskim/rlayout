@@ -43,6 +43,21 @@
     - 05_toc.md
 
 
+### 2022_01_16
+  - class PdfSection
+  - fix FrontMatter folder parsing
+    01_some_folder
+    02_second_doc
+    03_second_doc
+  - suppoert pre-made PDF file as class PDFSection
+  - suppoert custom styles by provideing "style" folder in book level, and document level
+    - text_style.yml, 
+    - book_info.yml
+      - paper_size
+      - 4margins
+    - doc_info.yml
+      - paper_size
+      - 4margins
 ### 2022_01_14
   - for RLineFragment
     - add content_source and get @style_object from content_source
