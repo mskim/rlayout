@@ -43,10 +43,10 @@ module RLayout
       if section_file =~/.pdf$/
         @pdf_path = File.expand_path(section_file)
         @pdf_doc = HexaPDF::Document.open(@pdf_path)
-        @original_page_width = source.pages[0].box.width
-        @original_page_height = source.pages[0].box.height
+        @original_page_width = @pdf_doc.pages[0].box.width
+        @original_page_height = @pdf_doc.pages[0].box.height
         adjust_pdf_size
-        RLayout::split_pdf(@pdf_path)
+        # RLayout::split_pdf(@pdf_path)
       elsif section_file =~/.yml$/ || section_file =~/.yaml$/
         @doc_info = YAML::load_file(section_file)
         create_blank_page_pdf

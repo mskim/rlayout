@@ -157,6 +157,7 @@ else
   require File.dirname(__FILE__) + '/rlayout/book/poetry_book'
   require File.dirname(__FILE__) + '/rlayout/book/print_page'
   require File.dirname(__FILE__) + '/rlayout/book/pdf_section'
+  require File.dirname(__FILE__) + '/rlayout/book/isbn_page'
 
   require File.dirname(__FILE__) + '/rlayout/newspaper/news_box'
   require File.dirname(__FILE__) + '/rlayout/view/pdf_view/news_article_view'

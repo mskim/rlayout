@@ -50,19 +50,10 @@ module RLayout
 
     def generate_pdf
       @updated = false
-      # check if  content.md file exists,
-      # if so use it.
-      # if not save new default_content as content.md
-      # designer should modify from this file.
       if File.exist?(content_path)
       else
         File.open(content_path,'w'){|f| f.write default_content }
       end
-
-      # check if  layout.rb file exists,
-      # if so use it to generate pdf.
-      # if not save new default layout.rb
-      # designer should modify from this file.
       if File.exist?(layout_path)
         layout_text = File.open(layout_path,'r'){|f| f.read}
         @column = eval(layout_text)
@@ -93,15 +84,8 @@ module RLayout
 
       @story  = Story.new(content_path).markdown2para_data
       @heading = @story[:heading] || {}
-
-      # if @heading
-      #   @column.make_article_heading(@heading)
-      #   # make other floats quotes, opinition writer's personal_picture
-      #   @column.make_floats(@heading)
-      # end
       @paragraphs =[]
       @story[:paragraphs].each do |para|
-
         para_options = {}
         para_options[:markup]         = para[:markup]
         para_options[:layout_expand]  = [:width]
@@ -121,24 +105,9 @@ module RLayout
       if  current_line
         @current_column  = current_line.column
       end
-
-      # TODO: show overflow
-      # @overflow  = true if @overflow_column.graphics.first && @overflow_column.graphics.first.layed_out_line?
-      # if @overflow && !@adjustable_height
-      #   last_line_of_box.fill.color = 'red'
-      # else
-      #   @empty_lines    = article_box_unoccupied_lines_count
-      #   @underflow = true if @empty_lines > 0
-      # end
-      # unless @fill_up_enpty_lines
-      #   # when @adjustable_height == true, save article_info after adjusting new height 
-      #   save_article_info unless @adjustable_height
-      # end
     end
 
     def default_layout
-      # before rotating 90 
-      # TODO: fix right_inset not working properly
       layout =<<~EOF
       RLayout::RColumn.new(width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 16) do
       end

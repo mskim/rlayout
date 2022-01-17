@@ -44,12 +44,13 @@
 
 
 ### 2022_01_16
-  - class PdfSection
+  - suppoert pre-made PDF file as class PDFSection
+
   - fix FrontMatter folder parsing
     01_some_folder
     02_second_doc
     03_second_doc
-  - suppoert pre-made PDF file as class PDFSection
+    
   - suppoert custom styles by provideing "style" folder in book level, and document level
     - text_style.yml, 
     - book_info.yml

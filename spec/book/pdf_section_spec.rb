@@ -7,10 +7,6 @@ describe 'test PdfSection' do
     @pdf_path = @section_path + "/blank.pdf"
     @pdf_section = RLayout::PdfSection.new(@section_path)
     FileUtils.mkdir_p(@section_path) unless File.exist?(@section_path)
-
-    # FileUtils.mkdir_p(@project_path) unless File.exist?(@project_path)
-
-
   end
 
   it 'should create PdfSection' do

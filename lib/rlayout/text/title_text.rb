@@ -45,7 +45,7 @@ module RLayout
         if @adjust_size
           @para_style[:font_size] += @adjust_size
         end
-        @style_object = @current_style_service.style_object_with_para_style(options[:para_style])
+        @style_object = @current_style_service.style_object_from_para_style(options[:para_style])
       else
         @para_style             = {}
         @para_style[:font]      = options.fetch(:font, 'KoPubBatangPM')
@@ -58,7 +58,7 @@ module RLayout
         @para_style[:text_color] = options[:text_color] || 'black'
         @para_style[:fill_color] = options[:fill_color] || 'clear'
         @para_style[:tracking]   = options[:tracking] || 0
-        @style_object = @current_style_service.style_object_with_para_style(options[:para_style])
+        @style_object = @current_style_service.style_object_from_para_style(options[:para_style])
       end
       @current_line_y         = @top_margin + @top_inset
       @starting_x             = @left_margin + @left_inset
