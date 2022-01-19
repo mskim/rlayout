@@ -54,10 +54,11 @@ class Graphic
   def draw_gutter_stroke(canvas)
   end 
   
-  def draw_line(canvas, starting_x, starting_y, ending_x, ending_y)
+  def draw_line(canvas, starting_x, starting_y, ending_x, ending_y, options={})
     # TODO fix stroke_color setting
     canvas.save_graphics_state do
       thickness = @stroke[:thickness]
+      thickness = if options[:thickness]
       canvas.line_width(thickness)
       stroke_color  = @stroke[:color]
       canvas.stroke_color(stroke_color)
@@ -102,45 +103,45 @@ class Graphic
 
         if @stroke[:sides][0] > 0
           if @open_left_inset_line
-            draw_line(canvas, open_bottom_left[0], open_bottom_left[1] , open_top_left[0] , open_top_left[1], @stroke[:thickness]*@stroke[:sides][0])
+            draw_line(canvas, open_bottom_left[0], open_bottom_left[1] , open_top_left[0] , open_top_left[1], thickness: @stroke[:thickness]*@stroke[:sides][0])
           else
-            draw_line(canvas, bottom_left[0], bottom_left[1] , top_left[0] , top_left[1], @stroke[:thickness]*@stroke[:sides][0])
+            draw_line(canvas, bottom_left[0], bottom_left[1] , top_left[0] , top_left[1],  thickness: @stroke[:thickness]*@stroke[:sides][0])
           end
         end
 
         if @stroke[:sides][1] > 0
           if @open_left_inset_line
-            draw_line(canvas, open_inner_top_left[0], open_inner_top_left[1], top_right[0], top_right[1], @stroke[:thickness]*@stroke[:sides][1])
+            draw_line(canvas, open_inner_top_left[0], open_inner_top_left[1], top_right[0], top_right[1],  thickness: @stroke[:thickness]*@stroke[:sides][1])
           else
-            draw_line(canvas, top_left[0], top_left[1], top_right[0], top_right[1], @stroke[:thickness]*@stroke[:sides][1])
+            draw_line(canvas, top_left[0], top_left[1], top_right[0], top_right[1],  thickness: @stroke[:thickness]*@stroke[:sides][1])
           end
         end
 
         if @stroke[:sides][2] > 0
           if @open_left_inset_line
-            draw_line(canvas, open_top_right[0], open_top_right[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][2])
+            draw_line(canvas, open_top_right[0], open_top_right[1], bottom_right[0], bottom_right[1], thickness:  @stroke[:thickness]*@stroke[:sides][2])
           else
-            draw_line(canvas, top_right[0], top_right[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][2])
+            draw_line(canvas, top_right[0], top_right[1], bottom_right[0], bottom_right[1],  thickness: @stroke[:thickness]*@stroke[:sides][2])
           end
         end
 
         if @stroke[:sides][3] > 0
           if @open_left_inset_line
-            draw_line(canvas, open_inner_bottom_left[0], open_inner_bottom_left[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][3])
+            draw_line(canvas, open_inner_bottom_left[0], open_inner_bottom_left[1], bottom_right[0], bottom_right[1],  thickness: @stroke[:thickness]*@stroke[:sides][3])
           else
-            draw_line(canvas, bottom_left[0], bottom_left[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][3])
+            draw_line(canvas, bottom_left[0], bottom_left[1], bottom_right[0], bottom_right[1],  thickness:  @stroke[:thickness]*@stroke[:sides][3])
           end
         end
 
         # if [1,1,1,1,1,1] drawing x mark
         # draw top-left to bottom-right
         if @stroke[:sides][4] && @stroke[:sides][4].class != String && @stroke[:sides][4] > 0
-          draw_line(canvas, top_left[0] , top_left[1], bottom_right[0], bottom_right[1], @stroke[:thickness]*@stroke[:sides][4])
+          draw_line(canvas, top_left[0] , top_left[1], bottom_right[0], bottom_right[1],  thickness: @stroke[:thickness]*@stroke[:sides][4])
         end
 
         # draw bottom-left to top-right
         if @stroke[:sides][5] &&  @stroke[:sides][5] > 0
-          draw_line(canvas, top_right[0], top_right[1], bottom_left[0], bottom_left[1], @stroke[:thickness]*@stroke[:sides][5])
+          draw_line(canvas, top_right[0], top_right[1], bottom_left[0], bottom_left[1],  thickness: @stroke[:thickness]*@stroke[:sides][5])
         end
       else
         canvas.line_width(@stroke[:thickness]).stroke_color(@stroke[:color]).rectangle(flipped[0] + @left_margin, flipped[1] + @top_margin - @height, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin).stroke
