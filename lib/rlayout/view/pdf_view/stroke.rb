@@ -58,7 +58,7 @@ class Graphic
     # TODO fix stroke_color setting
     canvas.save_graphics_state do
       thickness = @stroke[:thickness]
-      thickness = if options[:thickness]
+      thickness = options[:thickness] if options[:thickness]
       canvas.line_width(thickness)
       stroke_color  = @stroke[:color]
       canvas.stroke_color(stroke_color)
@@ -111,7 +111,7 @@ class Graphic
 
         if @stroke[:sides][1] > 0
           if @open_left_inset_line
-            draw_line(canvas, open_inner_top_left[0], open_inner_top_left[1], top_right[0], top_right[1],  thickness: @stroke[:thickness]*@stroke[:sides][1])
+            draw_line(canvas, open_inner_top_left[0], open_inner_top_left[1], top_right[0], top_right[1], thickness: @stroke[:thickness]*@stroke[:sides][1])
           else
             draw_line(canvas, top_left[0], top_left[1], top_right[0], top_right[1],  thickness: @stroke[:thickness]*@stroke[:sides][1])
           end
