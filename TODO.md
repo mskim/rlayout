@@ -14,6 +14,8 @@
   - add inline float marking support??
       floats_1
 
+### 2022_01_20
+
 ### 2022_01_11
   - fix bug: displaying only 24 lines when line_count is 25
   - fix when body font size is changed, line gets cullutered
