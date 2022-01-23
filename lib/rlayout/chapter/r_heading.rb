@@ -49,6 +49,7 @@ module RLayout
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
+      # binding.pry
       @chapter_heading_height  = options[:chapter_heading_height] || "half"
       if @parent
         @pdf_doc = @parent.pdf_doc
@@ -209,16 +210,45 @@ module RLayout
     end
 
     ######## PageScript verbes
-    def title(string, options={})
+
+    def book_title(string, options={})
       atts                        = {}
-      atts[:style_name]           = 'title'
+      atts[:style_name]           = 'book_title'
       atts[:text_string]          = string
+      if atts[:text_string] =~/\n/
+        atts[:text_fit_type]        = 'adjust_box_height'
+      else
+        atts[:text_fit_type]        = 'fit_text_to_box' #
+      end
       atts[:width]                = @width
       atts[:text_alignment]       = options[:text_alignment] || 'center'
-      atts[:text_fit_type]        = 'adjust_box_height'
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts[:parent]               = self
+      # @title_object               = Text.new(atts)
+      @title_object               = TitleText.new(atts)
+      @title_object.layout_length = @title_object.height
+      @title_object
+    end
+    def title(string, options={})
+      atts                        = {}
+      atts[:style_name]           = 'title'
+      if @parent.class == RLayout::FrontPage
+        atts[:style_name]         = 'book_title'
+      end
+      atts[:text_string]          = string
+      if atts[:text_string] =~/\n/
+        atts[:text_fit_type]        = 'adjust_box_height'
+      else
+        atts[:text_fit_type]        = 'fit_text_to_box' #
+      end
+      atts[:width]                = @width
+      atts[:text_alignment]       = options[:text_alignment] || 'center'
+      atts[:layout_expand]        = [:width]
+      atts[:fill_color]           = options.fetch(:fill_color, 'clear')
+      atts[:parent]               = self
+      # @title_object               = Text.new(atts)
+
       @title_object               = TitleText.new(atts)
       @title_object.layout_length = @title_object.height
       @title_object
@@ -229,7 +259,11 @@ module RLayout
       atts[:style_name]             = 'subtitle'
       atts[:text_string]            = string
       atts[:width]                  = @width
-      atts[:text_fit_type]          = 'adjust_box_height'
+      if atts[:text_string] =~/\n/
+        atts[:text_fit_type]        = 'adjust_box_height'
+      else
+        atts[:text_fit_type]        = 'fit_text_to_box' #
+      end
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       # atts                          = options.merge(atts)
       atts[:parent]                 = self

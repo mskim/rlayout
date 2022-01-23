@@ -21,7 +21,7 @@ module RLayout
     attr_accessor :tokens, :text_string, :string, :style_name, :para_style, :room, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title, :token_union_style, :adjust_size
-    attr_reader :style_object
+    attr_reader :style_object, :text_alignment
     def initialize(options={})
       @text_string                 = options.delete(:text_string)
       # parse for adjust_size pattern, which is at the end of string with {}
@@ -41,11 +41,23 @@ module RLayout
       @current_style_service = RLayout::StyleService.shared_style_service
       if @style_name
         @style_object = @current_style_service.style_object(@style_name, adjust_size: @adjust_size)
+        # binding.pry
+        para_hash = @current_style_service.current_style[@style_name]
+        if para_hash.class == String
+          @para_style = YAML::load(para_hash)
+          @text_alignment = @para_style[:text_alignment] || @para_style['text_alignment']
+        else
+          @text_alignment = para_hash[:text_alignment] || para_hash['text_alignment']
+        end
       elsif options[:para_style]
         if @adjust_size
           @para_style[:font_size] += @adjust_size
+
         end
         @style_object = @current_style_service.style_object_from_para_style(options[:para_style])
+        if options[:para_style][:text_alignment]
+          @text_alignment = options[:para_style][:text_alignment] || 'left'
+        end
       else
         @para_style             = {}
         @para_style[:font]      = options.fetch(:font, 'KoPubBatangPM')
@@ -59,16 +71,17 @@ module RLayout
         @para_style[:fill_color] = options[:fill_color] || 'clear'
         @para_style[:tracking]   = options[:tracking] || 0
         @style_object = @current_style_service.style_object_from_para_style(options[:para_style])
+        @text_alignment = 'left'
       end
       @current_line_y         = @top_margin + @top_inset
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
-      @font_wrapper = @style_object.font
+      @font_wrapper           = @style_object.font
       space_glyph             = @font_wrapper.decode_utf8(" ").first
       @space_width            = @style_object.scaled_item_width(space_glyph)
       @line_height            = @style_object.font_size*2
       # @line_height            = @font_wrapper[:font_size] + @line_space
-      @current_line           = RLineFragment.new(parent:self, contnet_source: self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
+      @current_line           = RLineFragment.new(parent:self, contnet_source: self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, style_name: @style_name, para_style: @para_style,  text_alignment: @text_alignment, space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
       @current_line_y         +=@current_line.height
       create_tokens
       layout_tokens
@@ -82,7 +95,7 @@ module RLayout
     # end
 
     def set_text(new_sting)
-      @string    = new_sting
+      @text_string    = new_sting
       @tokens    = []
       clear_lines
       create_tokens
@@ -96,7 +109,7 @@ module RLayout
     end
 
     def create_tokens
-      return unless @string
+      return unless @text_string
       # we are getting "\r\n" or "\n" for new line
       if @text_string.include?("\r\n")
         @text_string.split("\r\n").each do |line_string|
@@ -132,7 +145,7 @@ module RLayout
 
     def add_new_line
       # new_line                = RLineFragment.new(parent:self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, debug: true, top_margin: @top_margin, style_name:@style_name, adjust_size: adjust_size)
-      new_line                = RLineFragment.new(parent:self, contnet_source: self,  x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, para_style: @para_style,  space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
+      new_line                = RLineFragment.new(parent:self, contnet_source: self,  x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, style_name: @style_name, para_style: @para_style,  text_alignment: @text_alignment, space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
       @current_line.next_line = new_line if @current_line
       @current_line           = new_line
       @current_line_y         += @current_line.height
@@ -171,6 +184,7 @@ module RLayout
     end
 
     def layout_tokens
+
       token = tokens.shift
       while token
         if token.is_a?(NewLineToken)
