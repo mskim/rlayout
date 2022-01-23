@@ -26,7 +26,7 @@ module RLayout
     end
 
     def draw_line_text_svg
-      if @text_alignment == 'justified'
+      if @text_alignment == 'justify'
         if @font_size
           line_svg = "\n<g font-size=\"#{@font_size}\" font-face=\"sans-serif\">\n"
         else

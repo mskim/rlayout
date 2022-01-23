@@ -12,8 +12,8 @@ module RLayout
     #  Second case is when none of the children are expanding at layout direction
     #    when this happns, we could have some left over rooms,
     #    we need to aligmn them at layout direction,
-    #       top, middle, bottom, justified for vertical mode
-    #       left, center, right, justified for horizontal mode, they can be used interchablly
+    #       top, middle, bottom, justify for vertical mode
+    #       left, center, right, justify for horizontal mode, they can be used interchablly
     #       we can still have graphics expanding at perpendicular diretion to the layout direct to take care of
     #  have_expanding_child is set to false at first
     #  and in the first pass, if we detect andy expanding graphic, it is set to true
@@ -71,8 +71,8 @@ module RLayout
          current_position = room/2.0
        when "bottom", "right"
          current_position = room
-       when "justified"
-         # we need different @layout_space for justified case
+       when "justify"
+         # we need different @layout_space for justify case
          @layout_space = room/spacing_number.to_f if spacing_number !=0
        end
       end

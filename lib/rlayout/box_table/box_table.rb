@@ -152,7 +152,7 @@ body_gothic:
   font: KoPubDotumPL
   font_size: 9.6
   text_color: CMYK=0,0,0,100
-  text_alignment: justified
+  text_alignment: justify
   tracking: -0.2
   space_width: 3.0
   scale: 100.0
@@ -265,7 +265,7 @@ caption:
   font: KoPubDotumPL
   font_size: 7.5
   text_color: CMYK=0,0,0,100
-  text_alignment: justified
+  text_alignment: justify
   tracking: -0.5
   space_width: 1.0
   scale: 100.0

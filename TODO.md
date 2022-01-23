@@ -453,7 +453,7 @@
 	- add English hyphenation 
 	
 ### 2020_2_23
-	- TextToken should have hyphenation info for English word(for justified alignment)
+	- TextToken should have hyphenation info for English word(for justify alignment)
 		- dictionary for each language is needed
 
 ### 2020_2_11
@@ -496,7 +496,7 @@
 		# 상하 
 
 ### 2020_1_1
-	- do not break token unless alignment is justified
+	- do not break token unless alignment is justify
 	
 ### 2019_12_20
 	- empty_first_column
@@ -998,7 +998,7 @@
 		- add page_heading to page
 
 ### 2017_5_5
-	- relayout! align justified
+	- relayout! align justify
 
 ### 2017_4_30
 	- image, cation_title, caption
@@ -1016,7 +1016,7 @@
 		1. position of substrings comes before the title.
 
 ### 2017_3_22
-	- fix last line alignment of justified mode to align left, when token in too few.
+	- fix last line alignment of justify mode to align left, when token in too few.
 
 ### 2017_3_21
 	- space_before_in_lines, text_height_in_lines, space_after_in_lines,
@@ -2249,7 +2249,7 @@
 	- find hosting middleman build static book,
 	- BitBalloon, CodeShip, Netlify
 ### 2014 11 12
-	- auto_layout align top, center, bottom, justified
+	- auto_layout align top, center, bottom, justify
 	- layout non-expanding children column
 	- fix set_frame, should reset text layout_size
 

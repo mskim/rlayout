@@ -21,7 +21,7 @@ describe 'text overflow' do
       font_size: 12,
       font: 'Times',
       text_line_spacing: 10,
-      text_alignment: 'justified',
+      text_alignment: 'justify',
       text_string: "This is test. And this is the second paragraph. And some more sentence."*2,
       width: 250,
       text_fit_type:  1
@@ -51,7 +51,7 @@ describe 'dropcap' do
       font_size: 12,
       font: 'Times',
       text_line_spacing: 10,
-      text_alignment: 'justified',
+      text_alignment: 'justify',
       text_string: '끓여 내오신 라면은 정말 꿀맛이었다. 감사한 마음에 온갖 애교와 아양을 떨었다.
       “전국노래자랑 좋아하시는 걸보니 할머니께서도 예전엔 한가락 하셨을 것 같아요.” “그러믄. 왕년에 내가 노래 좀 했지.”
       어르신들은 누구나 자랑하고 싶은 ‘왕년에’가 있으신가보다.
@@ -80,7 +80,7 @@ end
 
 # describe 'create TextLayoutManager' do
 #   before do
-#     # @att_string = {:fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>200, :text_alignment=>'justified', :text_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
+#     # @att_string = {:fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>200, :text_alignment=>'justify', :text_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
 #     @g = Graphic.new(proposed_height: 1000, text_string: "This is some sample string. And some more text is here.")
 #     @pdf_path = "/Users/Shared/rlayout/output/text_layout_manager_test.pdf"
 #   end
@@ -97,7 +97,7 @@ end
 
 # describe 'split TextLayoutManager' do
 #   before do
-#     # @att_string = {:fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>200, :text_alignment=>'justified', :text_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
+#     # @att_string = {:fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>200, :text_alignment=>'justify', :text_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
 #     @g = Graphic.new(proposed_height: 100, text_string: "This is some sample string. And some more overflowing text.")
 #   end
 #

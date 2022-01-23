@@ -11,13 +11,13 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 # NSTextAlignmentLeft       = 0,
 # NSTextAlignmentCenter     = 1,
 # NSTextAlignmentRight      = 2,
-# NSTextAlignmentJustified  = 3,
+# NSTextAlignmentjustify  = 3,
 # NSTextAlignmentNatural    = 4,
 
 
 describe 'create Paragraph' do
   before do
-    options = {layout_lines: true, :fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>300, :text_alignment=>'justified', :para_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
+    options = {layout_lines: true, :fill_color=>'lightGray', :text_first_line_head_indent=>10, :text_paragraph_spacing_before=>10, :width=>300, :text_alignment=>'justify', :para_string=>"This is a paragraph test string and it looks good to me.", :markup=>'h6', :text_line_spacing=>10}
     @para = Paragraph.new(options)
     puts @para.graphics.length
   end

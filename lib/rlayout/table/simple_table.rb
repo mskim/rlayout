@@ -67,7 +67,7 @@ TABLE_START = /^#{OPT_SPACE}(?=\S)#{TABLE_LINE}/
       divider_array.shift
       divider_array.each do |cell_string|
         if cell_string =~/^\S*:/ && cell_string =~/:\S*$/
-          @column_align_array << 'justified'
+          @column_align_array << 'justify'
         elsif cell_string =~/^\S*:/
           @column_align_array << 'left'
         elsif cell_string =~/:\S*$/

@@ -258,7 +258,7 @@ module RLayout
       @first_line_indent = @para_style[:font_size] if @first_line_indent.nil?
       @right_indent      = @para_style[:right_indent] || 0
       @left_indent       = @para_style[:left_indent] || 0
-      if @text_alignment == "left" || @text_alignment == "justified"
+      if @text_alignment == "left" || @text_alignment == "justify"
         @first_line_width   = @text_area[2] - @first_line_indent - @right_indent
         @middle_line_width  = @text_area[2] - @left_indent - @right_indent
       else
@@ -295,7 +295,7 @@ module RLayout
         @layed_out_line = true
         return true
       else
-        return false if @text_alignment != 'justified'
+        return false if @text_alignment != 'justify'
         return false if options[:do_not_break]
         if @graphics.length < 4
           options[:char_half_width_cushion] = @graphics.length
@@ -367,7 +367,7 @@ module RLayout
       @starting_position += @text_area[0] if @text_area[0] != 0
       x  = @starting_position
       case @text_alignment
-      when 'justified'
+      when 'justify'
         # in justifed paragraph, we have to treat the last line as left aligned.
         x = @starting_position
         if @line_type == "last_line" && leftover_room > 0
@@ -455,9 +455,9 @@ module RLayout
         mark_overflow
         return
       elsif over_width < space_width_sum/2
-        @text_alignment = 'justified'
+        @text_alignment = 'justify'
       else
-        @text_alignment = 'justified'
+        @text_alignment = 'justify'
         reduce_amount = over_width/2
         reduce_tracking_values_of_tokens_by(reduce_amount)
       end

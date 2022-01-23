@@ -139,7 +139,7 @@ module RLayout
       end
 
       case @text_alignment
-      when 'justified'
+      when 'justify'
         # in justifed paragraph, we have to treat the last line as left aligned.
         if @line_type == "last_line" && room > 0
           x = @starting_position
@@ -212,9 +212,9 @@ module RLayout
         mark_overflow
         return
       elsif over_width < space_width_sum/2
-        @text_alignment = 'justified'
+        @text_alignment = 'justify'
       else
-        @text_alignment = 'justified'
+        @text_alignment = 'justify'
         reduce_amount = over_width/2
         reduce_tracking_values_of_tokens_by(reduce_amount)
       end

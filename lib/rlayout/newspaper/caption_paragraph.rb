@@ -95,7 +95,7 @@ module RLayout
       @current_line               = caption_column.graphics.first
       @current_line.style_name    = 'caption'
       @current_line.space_width   = @space_width
-      @current_line.text_alignment = 'justified'
+      @current_line.text_alignment = 'justify'
       @current_line.room          = @current_line.width
       token = @tokens.shift
       while token
@@ -107,7 +107,7 @@ module RLayout
         if result.class == RTextToken # case 1
           @current_line.align_tokens
           @current_line = caption_column.add_new_line
-          @current_line.text_alignment = 'justified'
+          @current_line.text_alignment = 'justify'
           @current_line.place_token(result)
           token = tokens.shift
         elsif result # case 2
@@ -118,7 +118,7 @@ module RLayout
           @current_line.align_tokens
           @current_line                 = caption_column.add_new_line
           @current_line.style_name      = 'caption'
-          @current_line.text_alignment  = 'justified'
+          @current_line.text_alignment  = 'justify'
           @current_line.place_token(token)
           token = tokens.shift
         end

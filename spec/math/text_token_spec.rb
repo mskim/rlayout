@@ -90,10 +90,10 @@ describe 'create Paragraph with h_alignment' do
     assert @tm.para_style[:h_alignment] == "right"
   end
   
-  it 'shuld h_alignment justified' do
-    para_style = {h_alignment: "justified"}
+  it 'shuld h_alignment justify' do
+    para_style = {h_alignment: "justify"}
     @tm = Paragraph.new(para_string: "this is a test string "*5, width: 200, height: 500, para_style: para_style)
-    assert @tm.para_style[:h_alignment] == "justified"
+    assert @tm.para_style[:h_alignment] == "justify"
   end
   
 end

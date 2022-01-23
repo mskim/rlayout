@@ -73,7 +73,7 @@ body:
   font: Shinmoon
   font_size: 9.8
   text_color: CMYK=0,0,0,100
-  text_alignment: justified
+  text_alignment: justify
   tracking: -0.4
   space_width: 3.0
   scale: 98.0
@@ -91,7 +91,7 @@ body_gothic:
   font: KoPubDotumPL
   font_size: 9.6
   text_color: CMYK=0,0,0,100
-  text_alignment: justified
+  text_alignment: justify
   tracking: -0.2
   space_width: 3.0
   scale: 100.0
@@ -217,7 +217,7 @@ caption:
   font: KoPubDotumPL
   font_size: 7.5
   text_color: CMYK=0,0,0,100
-  text_alignment: justified
+  text_alignment: justify
   tracking: -0.5
   space_width: 1.0
   scale: 100.0
@@ -737,7 +737,7 @@ body:
   font_size: 11
   # font_size: 9.8
   text_color: CMYK=100,0,0,100
-  text_alignment: justified
+  text_alignment: justify
   tracking: -0.4
   space_width: 4.0
   # space_width: 3.0
@@ -756,7 +756,7 @@ body_gothic:
   font_size: 13
   # font_size: 9.6
   text_color: CMYK=0,0,0,100
-  text_alignment: justified
+  text_alignment: justify
   tracking: -0.2
   space_width: 4.0
   # space_width: 3.0
@@ -877,7 +877,7 @@ caption:
   font: KoPubDotumPL
   font_size: 7.5
   text_color: CMYK=0,0,0,100
-  text_alignment: justified
+  text_alignment: justify
   tracking: -0.5
   space_width: 1.0
   scale: 100.0
@@ -1442,8 +1442,8 @@ MAGAZINE_STYLES={
   "Head"    =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black'},
   "head"    =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black'},
   "h6"      =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_color => 'black'},
-  "p"       =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>10},
-  "body"    =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_first_line_head_indent=>10},
+  "p"       =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justify', :text_first_line_head_indent=>10},
+  "body"    =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justify', :text_first_line_head_indent=>10},
   "caption" =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:font => 'KoPubBatangPM', :font_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'KoPubBatangPM', :font_size=>8.0, :text_color => 'black', :footer_margin=>30},
@@ -1464,8 +1464,8 @@ NEWS_STYLES={
   "h5"      =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
   "head"    =>{:font => 'KoPubDotumPM', :font_size=>12.0, :text_line_spacing=>5, :text_color => 'black'},
   "h6"      =>{:font => 'KoPubDotumPM', :font_size=>10.0, :text_line_spacing=>5, :text_color => 'black'},
-  "p"       =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black'},
-  "body"    =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justified', :text_color => 'black', :text_first_line_head_indent=>9},
+  "p"       =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justify', :text_color => 'black'},
+  "body"    =>{:font => 'KoPubBatangPM',     :font_size=>10.0, :text_line_spacing=>5, :text_alignment=>'justify', :text_color => 'black', :text_first_line_head_indent=>9},
   "caption" =>{:font => 'KoPubBatangPM',     :font_size=>8.0, :text_color => 'black', :text_alignment=>'center'},
   "header"  =>{:font => 'KoPubBatangPM', :font_size=>8.0, :text_color => 'black'},
   "footer"  =>{:font => 'KoPubBatangPM', :font_size=>8.0, :text_color => 'black'},
@@ -1612,11 +1612,7 @@ module RLayout
       h[:font_size]           += options[:adjust_size]  if options[:adjust_size]
       h[:character_spacing]   = style[:tracking]        if style[:tracking] && style[:tracking] != 0
       h[:horizontal_scaling]  = style[:scale]           if style[:scale] && style[:scale] != 100
-      if style[:text_alignment] && style[:text_alignment] == 'justified'
-        h[:align]             = :justify
-      else
-        h[:align]               = style[:text_alignment].to_sym
-      end
+      h[:align]               = style[:text_alignment].to_sym
       h
       style_object = HexaPDF::Layout::Style.new(**h)
       # return style_object, font_wrapper

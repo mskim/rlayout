@@ -338,7 +338,7 @@ module RLayout
       @width            = @column_width
       @first_line_width = @column_width
       @text_line_width  = @column_width
-      if @para_style[:h_alignment] == "left" || @para_style[:h_alignment] == "justified"
+      if @para_style[:h_alignment] == "left" || @para_style[:h_alignment] == "justify"
         @first_line_width = @column_width - @para_style[:first_line_indent] - @para_style[:right_indent]
         @text_line_width  = @column_width - @para_style[:left_indent] - @para_style[:right_indent]
 
@@ -640,7 +640,7 @@ module RLayout
           t.x += room
         end
       #TODO
-      # when 'justified'
+      # when 'justify'
       #   if is_last_line?
       #   else
       #     just_space = room/(@graphics.length - 1)

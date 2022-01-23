@@ -2,7 +2,7 @@ module RLayout
 
 
   # LeaderRow
-  # create the table_row with leader_cell to fill the justified cells.
+  # create the table_row with leader_cell to fill the justify cells.
   # Fill the cell with leader char
   # sometext ................. some_ending
   # sometext_text ............ some_ending
