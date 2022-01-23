@@ -132,10 +132,15 @@ module RLayout
       options[:parent] = self
       MemoArea.new(options)
     end
-
+  
     def heading(options={}, &block)
       options[:parent] = self
-      Heading.new(options, &block)
+      options[:is_float] = true
+      options[:x] = 50
+      options[:y] = 100
+      options[:width] = @width - 100
+
+      RHeading.new(options, &block)
     end
 
     def heading_container(options={}, &block)

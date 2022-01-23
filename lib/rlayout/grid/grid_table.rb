@@ -44,7 +44,7 @@ module RLayout
       h[:head][:color] = %w[DarkGray]
       h[:head][:font] = RLayout.Korean_sanserif_bold # 고딕계열
       h[:head][:text_color] = RLayout.contrasting_color(h[:head][:color][0])
-      h[:head][:alignment] = %w[center]
+      h[:head][:text_alignment] = %w[center]
       h[:body] = {}
       h[:body][:color] = %w[white AliceBlue]
       h[:body][:font] = RLayout.Korean_serif_medium # 명조계열
@@ -92,7 +92,7 @@ module RLayout
           h[:stroke_width] = 1
           # h[:fill_color] = default_style[:head][:color][0]
           h[:fill_color] = 'white'
-          h[:alignment]  = 'center'
+          h[:text_alignment]  = 'center'
           h[:font_size]  = cell[:height]*0.5
           h[:text_string] = cell_text
           if @has_head && j == 0

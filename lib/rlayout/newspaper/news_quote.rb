@@ -30,7 +30,7 @@ module RLayout
   class NewsQuote < Container
     attr_accessor :article_column, :column, :article_row, :row, :image_size, :caption_title
     attr_accessor :quote_box, :caption_paragraph, :position, :before_title, :fit_type, :expand, :has_caption
-    attr_reader   :x_grid, :quote, :alignment
+    attr_reader   :x_grid, :quote, :text_alignment
 
     def initialize(options={})
       if options[:parent]
@@ -53,10 +53,10 @@ module RLayout
       @position               = 9  if @position > 9
       @position               = 1  if @position < 0
       @x_grid                 = options[:quote_x_grid]
-      @alignment              = options[:quote_alignment] || 'left'
-      @alignment              = 'left'    if @alignment == '좌측'
-      @alignment              = 'right'   if @alignment == '우측'
-      @alignment              = 'center'  if @alignment == '중간'
+      @text_alignment              = options[:quote_alignment] || 'left'
+      @text_alignment              = 'left'    if @text_alignment == '좌측'
+      @text_alignment              = 'right'   if @text_alignment == '우측'
+      @text_alignment              = 'center'  if @text_alignment == '중간'
       @line_type              = options[:quote_line_type] || '상하'
       @grid_frame             = position_to_grid_frame(options)
       @fit_type               = options[:fit_type] if options[:fit_type]
@@ -88,7 +88,7 @@ module RLayout
       quote_options[:layout_expand]  = @expand if @expand
       quote_options[:text_string]    = @quote
       quote_options[:style_name]     = 'quote'
-      quote_options[:text_alignment] = @alignment
+      quote_options[:text_alignment] = @text_alignment
       quote_options[:y]              = @parent.body_line_height
       # quote_options[:top_margin]     = @parent.body_line_height
       quote_options[:parent]         = self

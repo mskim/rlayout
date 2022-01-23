@@ -34,7 +34,7 @@ module RLayout
         @options = options[:position]
         set_position
       else
-        @text_alignment = options[:text_alignment] || options[:alignment] || 'left'
+        @text_alignment = options[:text_alignment] || 'left'
         @v_alignment    = options[:v_alignment]     || 'center'
       end
       set_string_width

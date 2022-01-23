@@ -34,20 +34,18 @@ module RLayout
       options[:right_margin]      = 2 
       super
       @content_source = options[:content_source]
+      if options[:style_name]
+        @style_name = options[:style_name]
 
-      if options[:para_style]
+      elsif options[:para_style]
         @para_style       = options[:para_style]
+        @font             = @para_style[:font]
+        @font_size        = @para_style[:font_size]
+        @text_alignment   = @para_style[:text_alignment] || 'left'
       elsif options[:parent] && options[:parent].respond_to?(:para_style)
         @para_style       = options[:parent].para_style
       end
-      @adjust_size         = options[:adjust_size] if options[:adjust_size]
-
-      if @para_style
-        @font             = @para_style[:font]
-        @font_size        = @para_style[:font_size]
-        @text_alignment   = @para_style[:alignment]
-      end
-      @style_name       = options[:style_name]
+      @adjust_size      = options[:adjust_size] if options[:adjust_size]
       @text_alignment   = options[:text_alignment] if options[:text_alignment]
       @debug            = options[:debug]
       @graphics         = options[:tokens] || []
@@ -254,7 +252,7 @@ module RLayout
       @font             = @para_style[:font]
       @font_size        = @para_style[:font_size]
       @space_width      = @para_style[:space_width] || 3.0
-      @text_alignment   = @para_style[:alignment] || "left"
+      @text_alignment   = @para_style[:text_alignment] || "left"
       @v_offset         = @para_style[:v_offset] || 0
       @first_line_indent = @para_style[:first_line_indent] 
       @first_line_indent = @para_style[:font_size] if @first_line_indent.nil?

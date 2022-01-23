@@ -31,7 +31,7 @@ describe 'test ColorList colors' do
         h[:height] = box_height
         h[:fill_color] = color_name
         h[:text_string] = color_name
-        h[:alignment] = "center"
+        h[:text_alignment] = "center"
         h[:font_size] = 9
         RLayout::Text.new(h)
         x_pos += box_width

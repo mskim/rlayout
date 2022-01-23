@@ -104,7 +104,7 @@ module RLayout
       # atts[:stroke_width]         = 1
       # atts[:layout_length_in_lines] = true
       atts[:single_line_title]    = true
-      atts[:alignment] = 'center' if @heading_columns == 6
+      atts[:text_alignment] = 'center' if @heading_columns == 6
 
       # options.delete(:parent)
       @title_object               = TitleText.new(atts)

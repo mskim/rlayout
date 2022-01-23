@@ -25,7 +25,7 @@ module RLayout
       if options[:parent] || options[:document]
         @parent       = options[:parent] || options[:document]
         @document     = @parent
-        @pdf_doc = @document.pdf_doc
+        @pdf_doc      = @document.pdf_doc
         @column_count   = @document.column_count
         @row_count      = @document.row_count
       else
@@ -605,6 +605,12 @@ module RLayout
       false
     end
 
+    def heading(options={}, &block)
+      options[:parent] = self
+      options[:is_float] = true
+      RHeading.new(options, &block)
+    end
+
     def get_heading
       @floats.each do |g|
         return g if g.class == RLayout::RHeading
@@ -667,9 +673,9 @@ module RLayout
         h[:font] = 'shinmoon'
         h[:font_size] = 7.0
         if page_number.odd?
-          h[:alignment] = 'right'
+          h[:text_alignment] = 'right'
         else
-          h[:alignment] = 'left'
+          h[:text_alignment] = 'left'
         end
         Text.new(h)
       end

@@ -28,7 +28,7 @@ module RLayout
         @para_style[:text_height_in_lines]  = options.fetch(:text_height_in_lines, 1)
         @para_style[:space_before_in_lines] = options.fetch(:space_before_in_lines, 1)
       end
-      @para_style[:alignment] = options[:text_alignment] if options[:text_alignment]
+      @para_style[:text_alignment] = options[:text_alignment] if options[:text_alignment]
       @body_line_height       = options[:body_line_height] || 14
       @text_height_in_lines   = @para_style[:text_height_in_lines] || 2
       @text_height_in_lines   = 1 if @text_height_in_lines == ""

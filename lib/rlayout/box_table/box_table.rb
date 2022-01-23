@@ -133,7 +133,7 @@ body:
   font: Shinmoon
   font_size: 9.8
   text_color: CMYK=0,0,0,100
-  alignment: center
+  text_alignment: center
   tracking: -0.4
   space_width: 3.0
   scale: 98.0
@@ -152,7 +152,7 @@ body_gothic:
   font: KoPubDotumPL
   font_size: 9.6
   text_color: CMYK=0,0,0,100
-  alignment: justified
+  text_alignment: justified
   tracking: -0.2
   space_width: 3.0
   scale: 100.0
@@ -172,7 +172,7 @@ running_head:
   font: KoPubDotumPM
   font_size: 9.6
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.2
   space_width: 3.0
   scale: 100.0
@@ -191,7 +191,7 @@ quote:
   font: KoPubBatangPM
   font_size: 12.0
   text_color: CMYK=0,0,0,100
-  alignment: center
+  text_alignment: center
   tracking: -0.5
   space_width: 6.0
   scale: 100.0
@@ -209,7 +209,7 @@ announcement_1:
   font: KoPubDotumPM
   font_size: 12.0
   text_color: CMYK=0,0,0,0
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 6.0
   scale: 100.0
@@ -227,7 +227,7 @@ announcement_2:
   font: KoPubDotumPM
   font_size: 9.6
   text_color: CMYK=0,0,0,0
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 6.0
   scale: 100.0
@@ -246,7 +246,7 @@ caption_title:
   font: KoPubDotumPB
   font_size: 9.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.2
   space_width: 2.0
   scale: 100.0
@@ -265,7 +265,7 @@ caption:
   font: KoPubDotumPL
   font_size: 7.5
   text_color: CMYK=0,0,0,100
-  alignment: justified
+  text_alignment: justified
   tracking: -0.5
   space_width: 1.0
   scale: 100.0
@@ -284,7 +284,7 @@ source:
   font: KoPubDotumPL
   font_size: 7.5
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: -0.2
   space_width: 2.0
   scale: 70.0
@@ -303,7 +303,7 @@ reporter:
   font: KoPubDotumPL
   font_size: 7.0
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: 0.0
   space_width: 2.0
   scale: 100.0
@@ -322,7 +322,7 @@ linked_story:
   font: KoPubDotumPM
   font_size: 9.0
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: 0
   space_width: 2.0
   scale: 100.0
@@ -341,7 +341,7 @@ reporter_editorial:
   font: KoPubDotumPL
   font_size: 9.4
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: 0.0
   space_width: 2.0
   scale: 100.0
@@ -368,7 +368,7 @@ title_main:
   font: KoPubBatangPB
   font_size: 42.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -387,7 +387,7 @@ title_4_5:
   font: KoPubBatangPM
   font_size: 32.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.5
   space_width: 10.0
   scale: 100.0
@@ -406,7 +406,7 @@ title_4:
   font: KoPubBatangPM
   font_size: 30.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 7.0
   scale: 100.0
@@ -425,7 +425,7 @@ title_3:
   font: KoPubBatangPM
   font_size: 27.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 4.0
   scale: 100.0
@@ -444,7 +444,7 @@ title_2:
   font: KoPubBatangPM
   font_size: 23.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 4.0
   scale: 100.0
@@ -463,7 +463,7 @@ title_1:
   font: KoPubBatangPM
   font_size: 18.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 4.0
   scale: 100.0
@@ -482,7 +482,7 @@ subtitle_main:
   font: KoPubBatangPM
   font_size: 18.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 5.0
   scale: 100.0
@@ -501,7 +501,7 @@ subtitle_M:
   font: KoPubBatangPM
   font_size: 14.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 5.0
   scale: 100.0
@@ -520,7 +520,7 @@ subtitle_S:
   font: KoPubBatangPM
   font_size: 13.5
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 4.0
   scale: 100.0
@@ -539,7 +539,7 @@ subtitle_s_gothic:
   font: KoPubDotumPM
   font_size: 12.0
   text_color: CMYK=0,0,0,100
-  alignment: center
+  text_alignment: center
   tracking: -1.0
   space_width: 4.0
   scale: 100.0
@@ -558,7 +558,7 @@ news_line_title:
   font: KoPubDotumPM
   font_size: 13.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -577,7 +577,7 @@ brand_name:
   font: KoPubDotumPM
   font_size: 13.0
   text_color: CMYK=0,0,0,100
-  alignment: center
+  text_alignment: center
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -596,7 +596,7 @@ subject_head_main:
   font: KoPubDotumPB
   font_size: 16.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -615,7 +615,7 @@ subject_head_L:
   font: KoPubDotumPB
   font_size: 18.0
   text_color: CMYK=100,50,0,0
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 0.0
   scale: 100.0
@@ -634,7 +634,7 @@ subject_head_M:
   font: KoPubDotumPB
   font_size: 14.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -653,7 +653,7 @@ subject_head_S:
   font: KoPubDotumPB
   font_size: 12.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -672,7 +672,7 @@ subject_head_editorial:
   font: KoPubDotumPB
   font_size: 12.0 
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0
   space_width: 3
   scale: 100.0
@@ -699,7 +699,7 @@ editor_note:
   font: KoPubDotumPM
   font_size: 8.8
   text_color: CMYK=0,0,0,80
-  alignment: left
+  text_alignment: left
   tracking: -0.3
   space_width: 3.0
   scale: 100.0
@@ -718,7 +718,7 @@ title_opinion:
   font: KoPubBatangPM
   font_size: 22.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.5
   space_width: 7.0
   scale: 100.0
@@ -737,7 +737,7 @@ title_editorial:
   font: KoPubBatangPM
   font_size: 19.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.5
   space_width: 5.0
   scale: 100.0
@@ -756,7 +756,7 @@ title_7:
   font: KoPubBatangPM
   font_size: 36.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 7.0
   scale: 100.0
@@ -775,7 +775,7 @@ title_6:
   font: KoPubBatangPM
   font_size: 34.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 7.0
   scale: 100.0
@@ -794,7 +794,7 @@ title_5:
   font: KoPubBatangPM
   font_size: 32.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 7.0
   scale:
@@ -813,7 +813,7 @@ title_main_7:
   font: KoPubBatangPB
   font_size: 45.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -832,7 +832,7 @@ title_main_6:
   font: KoPubBatangPB
   font_size: 45.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -851,7 +851,7 @@ title_main_5:
   font: KoPubBatangPB
   font_size: 42.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0

@@ -73,7 +73,7 @@ body:
   font: Shinmoon
   font_size: 9.8
   text_color: CMYK=0,0,0,100
-  alignment: justified
+  text_alignment: justified
   tracking: -0.4
   space_width: 3.0
   scale: 98.0
@@ -91,7 +91,7 @@ body_gothic:
   font: KoPubDotumPL
   font_size: 9.6
   text_color: CMYK=0,0,0,100
-  alignment: justified
+  text_alignment: justified
   tracking: -0.2
   space_width: 3.0
   scale: 100.0
@@ -110,7 +110,7 @@ running_head:
   font: KoPubDotumPM
   font_size: 9.6
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.2
   space_width: 3.0
   scale: 100.0
@@ -128,7 +128,7 @@ quote:
   font: KoPubBatangPM
   font_size: 12.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 6.0
   scale: 100.0
@@ -145,7 +145,7 @@ announcement_1:
   font: KoPubDotumPM
   font_size: 12.0
   text_color: CMYK=0,0,0,0
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 6.0
   scale: 100.0
@@ -162,7 +162,7 @@ announcement_2:
   font: KoPubDotumPM
   font_size: 9.6
   text_color: CMYK=0,0,0,0
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 6.0
   scale: 100.0
@@ -181,7 +181,7 @@ related_story:
   font: KoPubDotumPM
   font_size: 9.0
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -199,7 +199,7 @@ caption_title:
   font: KoPubDotumPB
   font_size: 9.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.2
   space_width: 2.0
   scale: 100.0
@@ -217,7 +217,7 @@ caption:
   font: KoPubDotumPL
   font_size: 7.5
   text_color: CMYK=0,0,0,100
-  alignment: justified
+  text_alignment: justified
   tracking: -0.5
   space_width: 1.0
   scale: 100.0
@@ -235,7 +235,7 @@ source:
   font: KoPubDotumPL
   font_size: 7.5
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: -0.2
   space_width: 2.0
   scale: 70.0
@@ -253,7 +253,7 @@ author:
   font: KoPubDotumPL
   font_size: 10.0
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: 0.0
   space_width: 2.0
   scale: 100.0
@@ -271,7 +271,7 @@ linked_story:
   font: KoPubDotumPL
   font_size: 7.0
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: 0.0
   space_width: 2.0
   scale: 100.0
@@ -290,7 +290,7 @@ title_main:
   font: KoPubBatangPB
   font_size: 42.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -308,7 +308,7 @@ title_4_5:
   font: KoPubBatangPM
   font_size: 32.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.5
   space_width: 10.0
   scale: 100.0
@@ -326,7 +326,7 @@ title_4:
   font: KoPubBatangPM
   font_size: 30.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 7.0
   scale: 100.0
@@ -344,7 +344,7 @@ title_3:
   font: KoPubBatangPM
   font_size: 27.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 4.0
   scale: 100.0
@@ -362,7 +362,7 @@ title_2:
   font: KoPubBatangPM
   font_size: 23.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 4.0
   scale: 100.0
@@ -373,14 +373,14 @@ title_2:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
-title_1:
-  korean_name: 제목_1단
+book_title:
+  korean_name: 표지제목
   category:
   font_family: KoPub바탕체_Pro Medium
   font: KoPubBatangPM
-  font_size: 18.0
+  font_size: 24.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: center
   tracking: -2.0
   space_width: 4.0
   scale: 100.0
@@ -398,7 +398,7 @@ title:
   font: KoPubBatangPB
   font_size: 28.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -416,7 +416,7 @@ subtitle_main:
   font: KoPubBatangPM
   font_size: 18.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 5.0
   scale: 100.0
@@ -434,7 +434,7 @@ subtitle_M:
   font: KoPubBatangPM
   font_size: 14.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 5.0
   scale: 100.0
@@ -452,7 +452,7 @@ subtitle_S:
   font: KoPubBatangPM
   font_size: 12.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 4.0
   scale: 100.0
@@ -470,7 +470,7 @@ subtitle:
   font: KoPubDotumPM
   font_size: 18.0
   text_color: CMYK=100,0,0,100
-  alignment: center
+  text_alignment: center
   tracking: -1.0
   space_width: 6.0
   scale: 100.0
@@ -488,7 +488,7 @@ news_line_title:
   font: KoPubDotumPM
   font_size: 13.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -506,7 +506,7 @@ brand_name:
   font: KoPubDotumPM
   font_size: 13.0
   text_color: CMYK=0,0,0,100
-  alignment: center
+  text_alignment: center
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -524,7 +524,7 @@ subject_head_L:
   font: KoPubDotumPB
   font_size: 18.0
   text_color: CMYK=100,50,0,0
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 0.0
   scale: 100.0
@@ -550,7 +550,7 @@ subject_head_M:
   font: KoPubDotumPB
   font_size: 14.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -568,7 +568,7 @@ editor_note:
   font: KoPubDotumPM
   font_size: 8.8
   text_color: CMYK=0,0,0,80
-  alignment: left
+  text_alignment: left
   tracking: -0.3
   space_width: 3.0
   scale: 100.0
@@ -586,7 +586,7 @@ title_opinion:
   font: KoPubBatangPM
   font_size: 22.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.5
   space_width: 7.0
   scale: 100.0
@@ -604,7 +604,7 @@ title_editorial:
   font: KoPubBatangPM
   font_size: 19.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.5
   space_width: 5.0
   scale: 100.0
@@ -622,7 +622,7 @@ title_7:
   font: KoPubBatangPM
   font_size: 36.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 7.0
   scale: 100.0
@@ -640,7 +640,7 @@ title_6:
   font: KoPubBatangPM
   font_size: 34.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 7.0
   scale: 100.0
@@ -658,7 +658,7 @@ title_5:
   font: KoPubBatangPM
   font_size: 32.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 7.0
   scale:
@@ -676,7 +676,7 @@ title_main_7:
   font: KoPubBatangPB
   font_size: 45.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -694,7 +694,7 @@ title_main_6:
   font: KoPubBatangPB
   font_size: 45.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -712,7 +712,7 @@ title_main_5:
   font: KoPubBatangPB
   font_size: 42.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -737,7 +737,7 @@ body:
   font_size: 11
   # font_size: 9.8
   text_color: CMYK=100,0,0,100
-  alignment: justified
+  text_alignment: justified
   tracking: -0.4
   space_width: 4.0
   # space_width: 3.0
@@ -756,7 +756,7 @@ body_gothic:
   font_size: 13
   # font_size: 9.6
   text_color: CMYK=0,0,0,100
-  alignment: justified
+  text_alignment: justified
   tracking: -0.2
   space_width: 4.0
   # space_width: 3.0
@@ -776,7 +776,7 @@ running_head:
   font_size: 11
   # font_size: 9.6
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.2
   space_width: 3.0
   scale: 100.0
@@ -793,7 +793,7 @@ quote:
   font: KoPubBatangPM
   font_size: 12.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 6.0
   scale: 100.0
@@ -809,7 +809,7 @@ announcement_1:
   font: KoPubDotumPM
   font_size: 12.0
   text_color: CMYK=0,0,0,0
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 6.0
   scale: 100.0
@@ -825,7 +825,7 @@ announcement_2:
   font: KoPubDotumPM
   font_size: 9.6
   text_color: CMYK=0,0,0,0
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 6.0
   scale: 100.0
@@ -843,7 +843,7 @@ related_story:
   font: KoPubDotumPM
   font_size: 9.0
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -860,7 +860,7 @@ caption_title:
   font: KoPubDotumPB
   font_size: 9.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.2
   space_width: 2.0
   scale: 100.0
@@ -877,7 +877,7 @@ caption:
   font: KoPubDotumPL
   font_size: 7.5
   text_color: CMYK=0,0,0,100
-  alignment: justified
+  text_alignment: justified
   tracking: -0.5
   space_width: 1.0
   scale: 100.0
@@ -894,7 +894,7 @@ source:
   font: KoPubDotumPL
   font_size: 7.5
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: -0.2
   space_width: 2.0
   scale: 70.0
@@ -911,7 +911,7 @@ reporter:
   font: KoPubDotumPL
   font_size: 7.0
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: 0.0
   space_width: 2.0
   scale: 100.0
@@ -928,7 +928,7 @@ author:
   font: KoPubDotumPL
   font_size: 7.0
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: 0.0
   space_width: 2.0
   scale: 100.0
@@ -945,7 +945,7 @@ linked_story:
   font: KoPubDotumPL
   font_size: 7.0
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: 0.0
   space_width: 2.0
   scale: 100.0
@@ -963,7 +963,7 @@ reporter_editorial:
   font: KoPubDotumPL
   font_size: 9.4
   text_color: CMYK=0,0,0,100
-  alignment: right
+  text_alignment: right
   tracking: 0.0
   space_width: 2.0
   scale: 100.0
@@ -988,7 +988,7 @@ title_main:
   font: KoPubBatangPB
   font_size: 42.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -1005,7 +1005,7 @@ title_4_5:
   font: KoPubBatangPM
   font_size: 32.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.5
   space_width: 10.0
   scale: 100.0
@@ -1022,7 +1022,7 @@ title_4:
   font: KoPubBatangPM
   font_size: 30.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 7.0
   scale: 100.0
@@ -1039,7 +1039,7 @@ title_3:
   font: KoPubBatangPM
   font_size: 27.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 4.0
   scale: 100.0
@@ -1050,13 +1050,13 @@ title_3:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
-title_2:
+toc_title:
   korean_name: 제목_2단
   font_family: KoPub바탕체_Pro Medium
   font: KoPubBatangPM
   font_size: 23.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 4.0
   scale: 100.0
@@ -1067,15 +1067,15 @@ title_2:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
-title_1:
+book_title:
   korean_name: 제목_1단
   font_family: KoPub바탕체_Pro Medium
   font: KoPubBatangPM
-  font_size: 18.0
+  font_size: 24.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: center
   tracking: -2.0
-  space_width: 4.0
+  space_width: 10.0
   scale: 100.0
   text_line_spacing:
   space_before_in_lines: 1
@@ -1090,7 +1090,7 @@ title:
   font: KoPubBatangPB
   font_size: 24.0
   text_color: CMYK=100,0,0,0
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -1107,7 +1107,7 @@ subtitle_main:
   font: KoPubBatangPM
   font_size: 18.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 6.0
   scale: 100.0
@@ -1124,7 +1124,7 @@ subtitle_M:
   font: KoPubBatangPM
   font_size: 14.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 5.0
   scale: 100.0
@@ -1141,7 +1141,7 @@ subtitle_S:
   font: KoPubBatangPM
   font_size: 12.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 4.0
   scale: 100.0
@@ -1158,7 +1158,7 @@ subtitle:
   font: KoPubDotumPM
   font_size: 18.0
   text_color: CMYK=0,0,0,100
-  alignment: center
+  text_alignment: center
   tracking: -1.0
   space_width: 9.0
   scale: 100.0
@@ -1175,7 +1175,7 @@ news_line_title:
   font: KoPubDotumPM
   font_size: 13.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -1192,7 +1192,7 @@ brand_name:
   font: KoPubDotumPM
   font_size: 13.0
   text_color: CMYK=0,0,0,100
-  alignment: center
+  text_alignment: center
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -1209,7 +1209,7 @@ subject_head_L:
   font: KoPubDotumPB
   font_size: 18.0
   text_color: CMYK=100,50,0,0
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 0.0
   scale: 100.0
@@ -1234,7 +1234,7 @@ subject_head_M:
   font: KoPubDotumPB
   font_size: 14.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -1251,7 +1251,7 @@ subject_head_editorial:
   font: KoPubDotumPB
   font_size: 12.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -0.5
   space_width: 3.0
   scale: 100.0
@@ -1276,7 +1276,7 @@ editor_note:
   font: KoPubDotumPM
   font_size: 8.8
   text_color: CMYK=0,0,0,80
-  alignment: left
+  text_alignment: left
   tracking: -0.3
   space_width: 3.0
   scale: 100.0
@@ -1293,7 +1293,7 @@ title_opinion:
   font: KoPubBatangPM
   font_size: 22.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.5
   space_width: 7.0
   scale: 100.0
@@ -1310,7 +1310,7 @@ title_editorial:
   font: KoPubBatangPM
   font_size: 19.0
   text_color: CMYK=0,0,0,100
-  alignment: left
+  text_alignment: left
   tracking: -1.5
   space_width: 5.0
   scale: 100.0
@@ -1327,7 +1327,7 @@ title_7:
   font: KoPubBatangPM
   font_size: 36.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 7.0
   scale: 100.0
@@ -1344,7 +1344,7 @@ title_6:
   font: KoPubBatangPM
   font_size: 34.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 7.0
   scale: 100.0
@@ -1361,7 +1361,7 @@ title_5:
   font: KoPubBatangPM
   font_size: 32.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -2.0
   space_width: 7.0
   scale:
@@ -1378,7 +1378,7 @@ title_main_7:
   font: KoPubBatangPB
   font_size: 45.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -1395,7 +1395,7 @@ title_main_6:
   font: KoPubBatangPB
   font_size: 45.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -1412,7 +1412,7 @@ title_main_5:
   font: KoPubBatangPB
   font_size: 42.0
   text_color: ''
-  alignment: left
+  text_alignment: left
   tracking: -1.0
   space_width: 10.0
   scale: 100.0
@@ -1612,6 +1612,11 @@ module RLayout
       h[:font_size]           += options[:adjust_size]  if options[:adjust_size]
       h[:character_spacing]   = style[:tracking]        if style[:tracking] && style[:tracking] != 0
       h[:horizontal_scaling]  = style[:scale]           if style[:scale] && style[:scale] != 100
+      if style[:text_alignment] && style[:text_alignment] == 'justified'
+        h[:align]             = :justify
+      else
+        h[:align]               = style[:text_alignment].to_sym
+      end
       h
       style_object = HexaPDF::Layout::Style.new(**h)
       # return style_object, font_wrapper
@@ -1629,6 +1634,7 @@ module RLayout
       h[:font_size]           += options[:adjust_size]  if options[:adjust_size]
       h[:character_spacing]   = para_style[:tracking]        if para_style[:tracking] && para_style[:tracking] != 0
       h[:horizontal_scaling]  = para_style[:scale]           if para_style[:scale] && para_style[:scale] != 100
+      h[:align]               = para_style[:text_alignment]  if para_style[:text_alignment] && para_style[:text_alignment] != 'left'
       h
       style_object = HexaPDF::Layout::Style.new(**h)
       # return style_object, font_wrapper

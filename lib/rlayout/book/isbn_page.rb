@@ -24,16 +24,6 @@ module RLayout
       self
     end
 
-    # def default_layout
-    #   s=<<~EOF
-    #   RLayout::Container.new(width:#{@width}, height:#{@height}) do
-    #     title_text('#{@info_text}', x: 100, from_bottom: 100, width: 400, alignment:'left', v_alignment:'bottom')
-    #   end
-
-    #   EOF
-    # end
-
-
     def default_layout
       # before rotating 90 
       # TODO: fix right_inset not working properly

@@ -43,6 +43,9 @@
     - 05_toc.md
 
 
+### 2022_01_23
+  - r_line_fragement set text_alignment  from style_object
+
 ### 2022_01_16
   - suppoert pre-made PDF file as class PDFSection
 

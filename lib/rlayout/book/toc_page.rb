@@ -69,7 +69,7 @@ module RLayout
       options[:parent] = self
       options[:x] = @left_margin
       options[:y] = @top_margin
-      options[:alignment] = "center"
+      options[:text_alignment] = "center"
       options[:width] = @width - @left_margin - @right_margin
       @heading  = Text.new(options)
     end
