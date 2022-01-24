@@ -3,8 +3,8 @@ module RLayout
   # With Title, author, publisher, logo
   class Prologue < RChapter
     attr_reader :book, :path, :layout_template_path
-
     def initialize(options={})
+      options[:chapter_heading_height] = "quarter"
       # @path = path
       # @width = options[:width]
       # @height = options[:height]

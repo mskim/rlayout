@@ -46,10 +46,10 @@ module RLayout
 
     
     def initialize(options={}, &block)
-      # options[:stroke_width] = 1.0
-      # options[:stroke_width] = 1
+      options[:stroke_width] = 1.0
+      options[:stroke_width] = 1
       super
-      @chapter_heading_height  = options[:chapter_heading_height] || "half"
+      @chapter_heading_height  = options[:chapter_heading_height] || "quarter"
       if @parent
         @pdf_doc = @parent.pdf_doc
         case @chapter_heading_height

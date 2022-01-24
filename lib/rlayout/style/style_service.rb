@@ -396,7 +396,7 @@ title:
   category:
   font_family: KoPub바탕체_Pro Bold
   font: KoPubBatangPB
-  font_size: 28.0
+  font_size: 24.0
   text_color: CMYK=0,0,0,100
   text_alignment: left
   tracking: -1.0

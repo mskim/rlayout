@@ -346,7 +346,6 @@ module RLayout
         @body_line_count  = 25
       end
       @body_line_count  = 25
-
       doc_options= {}
       doc_options[:paper_size] = @paper_size
       doc_options[:left_margin] = @left_margin
@@ -411,20 +410,18 @@ module RLayout
       end
       @heading  = @story[:heading] || {}
       @title    = @heading[:title] || @heading['title'] || @heading['제목'] || "Untitled"
-      if @document.pages[0].has_heading?
+      @first_page = @document.pages[0]
+      if @first_page.has_heading?
         @document.pages[0].get_heading.set_heading_content(@heading)
         @document.pages[0].relayout!
-      elsif @first_page = @document.pages[0]
-        if @first_page.floats.length == 0
-          @heading[:parent] = @first_page
-          @heading[:x]      = @first_page.left_side_margin # left_margin + binding_margin
-          @heading[:y]      = @first_page.top_margin
-          @heading[:width]  = @first_page.content_width # - @first_page.left_margin - @first_page.right_margin
-          @heading[:is_float] = true
-          RHeading.new(@heading)
-        elsif @document.pages[0].has_heading?
-          @document.pages[0].get_heading.set_heading_content(@heading)
-        end
+      else
+        @heading[:parent] = @first_page
+        @heading[:x]      = @first_page.left_side_margin # left_margin + binding_margin
+        @heading[:y]      = 0
+        @heading[:y]      = 0
+        @heading[:width]  = @first_page.content_width # - @first_page.left_margin - @first_page.right_margin
+        @heading[:is_float] = true
+        RHeading.new(@heading)
       end
       @paragraphs =[]
       @image_count = 0

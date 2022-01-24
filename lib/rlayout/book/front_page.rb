@@ -26,8 +26,8 @@ module RLayout
 
     def generate_pdf
       FileUtils.mkdir_p(@project_path) unless File.exist?(@project_path)
-      image(image_path: @spread_image_path, x: @front_page_spread_off_set, width:@cover_spread_width, height:@height, layout_member:false)
-      heading_options = default_content
+      image(image_path: @spread_image_path, x: -@front_page_spread_off_set, width:@cover_spread_width, height:@height, layout_member:false)
+      heading_options = @content
       heading_options[:layout_length] = 10
       heading_options[:x] = @left_margin
       heading_options[:y] = @top_margin
