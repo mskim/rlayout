@@ -32,7 +32,7 @@ module RLayout
       end
       options[:fill_color]    = options.fetch(:fill_color, 'clear')
       super
-      @body_line_height       = options[:body_line_height] || 14
+      @body_line_height       = options[:body_line_height] #|| 14
       @style_name             = options[:style_name]
       @token_union_style      = options[:token_union_style]
       @tokens                 = []
@@ -41,7 +41,6 @@ module RLayout
       @current_style_service = RLayout::StyleService.shared_style_service
       if @style_name
         @style_object = @current_style_service.style_object(@style_name, adjust_size: @adjust_size)
-        # binding.pry
         para_hash = @current_style_service.current_style[@style_name]
         if para_hash.class == String
           @para_style = YAML::load(para_hash)
@@ -79,14 +78,13 @@ module RLayout
       @font_wrapper           = @style_object.font
       space_glyph             = @font_wrapper.decode_utf8(" ").first
       @space_width            = @style_object.scaled_item_width(space_glyph)
-      @line_height            = @style_object.font_size*2
+      @line_height            = @style_object.font_size*1.5
       # @line_height            = @font_wrapper[:font_size] + @line_space
       @current_line           = RLineFragment.new(parent:self, contnet_source: self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, style_name: @style_name, para_style: @para_style,  text_alignment: @text_alignment, space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
       @current_line_y         +=@current_line.height
       create_tokens
       layout_tokens
-      # TODO: 
-      # ajust_height_as_body_height_multiples
+      ajust_height_as_body_height_multiples
       self
     end
 
@@ -161,6 +159,11 @@ module RLayout
     end
 
     def ajust_height_as_body_height_multiples
+      # if @body_line_height is not given, return the height sum of lines
+      unless  @body_line_height
+        @height = @graphics.map{|line| line.height}.reduce(:+)
+        return 
+      end
       # We want to keeep it as multple of body_line_height
       if @graphics.length <= 1
         # to avoid edge case overloap adding 2 pixels would do it

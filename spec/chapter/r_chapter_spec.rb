@@ -14,6 +14,11 @@ describe "create RChapter with page_floats" do
     assert_equal RChapter, @chapter.class 
   end
 
+  it 'should save PDF' do
+    @pdf_path = "/Users/mskim/test_data/chapter_1/chapter.pdf"
+    assert File.exist?(@pdf_path)
+    system("open #{@pdf_path}")
+  end
 end
 
 __END__

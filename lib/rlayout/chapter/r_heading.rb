@@ -49,7 +49,6 @@ module RLayout
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
-      # binding.pry
       @chapter_heading_height  = options[:chapter_heading_height] || "half"
       if @parent
         @pdf_doc = @parent.pdf_doc
@@ -111,7 +110,7 @@ module RLayout
       if options[:background]
         # place image in the background, change size, width, or height as instructed
       end
-      @y_position = 10
+      @y_position = 0
       if options[:title]
         text_alignment = options[:text_alignment] || 'center'
         t = @title_object = title(options[:title], text_alignment:text_alignment)
@@ -230,6 +229,7 @@ module RLayout
       @title_object.layout_length = @title_object.height
       @title_object
     end
+
     def title(string, options={})
       atts                        = {}
       atts[:style_name]           = 'title'
@@ -248,7 +248,6 @@ module RLayout
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
       atts[:parent]               = self
       # @title_object               = Text.new(atts)
-
       @title_object               = TitleText.new(atts)
       @title_object.layout_length = @title_object.height
       @title_object
@@ -280,10 +279,9 @@ module RLayout
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
-      # atts                          = options.merge(atts)
       atts[:parent]                 = self
       @quote_object               = TitleText.new(atts)
-      @quote_object.layout_expand = [:width]
+      # @quote_object.layout_expand = [:width]
       @quote_object.layout_length = @quote_object.height
       @quote_object
     end
@@ -295,12 +293,12 @@ module RLayout
       atts[:text_string]            = string
       atts[:width]                  = @width
       atts[:text_fit_type]          = 'adjust_box_height'
-      atts[:right_indent]           = 10
+      # atts[:right_indent]           = 10
       atts[:fill_color]             = options.fetch(:fill_color, 'clear')
       # atts                          = options.merge(atts)
       atts[:parent]                 = self
       @author_object                = TitleText.new(atts)
-      @author_object.layout_expand  = [:width]
+      # @author_object.layout_expand  = [:width]
       @author_object.layout_length  = @author_object.height
       @author_object
     end

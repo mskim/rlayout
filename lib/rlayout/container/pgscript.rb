@@ -136,10 +136,9 @@ module RLayout
     def heading(options={}, &block)
       options[:parent] = self
       options[:is_float] = true
-      options[:x] = 50
-      options[:y] = 100
-      options[:width] = @width - 100
-
+      # options[:x] = 50
+      # options[:y] = 0
+      # options[:width] = @width - 100
       RHeading.new(options, &block)
     end
 

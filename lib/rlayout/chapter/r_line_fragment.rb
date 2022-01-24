@@ -26,7 +26,7 @@ module RLayout
     def	initialize(options={})
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
-      options[:stroke_width]      = 0.3
+      options[:stroke_width]      = 1
       options[:stroke_color]      = 'black'
       options[:fill_color]        = 'gray'
       @space_width                = options[:space_width] || 3

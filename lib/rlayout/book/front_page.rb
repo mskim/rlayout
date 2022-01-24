@@ -5,6 +5,8 @@ module RLayout
     attr_reader :updated
 
     def initialize(options={})
+      @left_margin = options[:left_margin] ||  100
+      @right_margin = options[:right_margin] ||  100
       super
       @content = options[:content] || default_content
       @project_path = options[:project_path]
@@ -13,6 +15,7 @@ module RLayout
       @height = SIZES[@paper_size][1]
       @width = options[:width] if  options[:width]
       @height = options[:height] if  options[:height]
+
       @updated = false
       @spread_image_path = options[:spread_image_path]
       @front_page_spread_off_set = options[:front_page_spread_off_set] ||  @width
@@ -32,6 +35,9 @@ module RLayout
       heading_options[:stroke_width] = 1
       heading_options[:fill_color] = 'gray'
       heading(heading_options)
+
+      text("#{default_content[:publisher]}", x: 0, y: @height - 150, width: @width, font:'KoPubBatangPB',font_size: 16, text_alignment:'center', fill_color: 'clear')
+
       save_pdf_with_ruby(output_path, jpg:true)
       @updated = true
     end
@@ -105,7 +111,7 @@ module RLayout
 
     def default_content
       h = {}
-      h[:title] = "소설을 쓰고 있네 소설을 쓰고 있네  소설을 쓰고 있네  "
+      h[:title] = "소설 쓰고 있네 "
       h[:subtitle] = "정말로 소설을 쓰고 있네 그려"
       h[:author] = "홍길동"
       h[:publisher] = "활빈당출판"
