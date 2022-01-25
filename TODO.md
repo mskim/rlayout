@@ -1,7 +1,9 @@
 ## TODO List
 
 ### 2022_01_??
-
+  - footnote, ref
+  - hwp
+  - newspaper
   - add table support
   - fix cover title text overflow
     - set title_text fit_to_box
@@ -14,19 +16,44 @@
   - add inline float marking support??
       floats_1
 
+### 2022_01_26
+  - add layout:custom to metadata to indicate custom layout mode
+    - save layout.rb and text_style.yml file to style folder
+
 ### 2022_01_20
+  - layout:cover_1, 
+  - layout:cover_2, 
+  - layout:cover_3, 
+  - layout:cover_4,
+  - layout:wing_front, 
+  - layout:wing_back, 
+  - layout:isbn, 
+  - layout:title_page, 
+  - layout:prologue,
+  - layout:dedication,
+  - layout:toc,
+  - layout:part_cover, 
+  - layout:chapter
 
-### 2022_01_11
-  - fix bug: displaying only 24 lines when line_count is 25
-  - fix when body font size is changed, line gets cullutered
-    - seems like token_width calculation has bug 
+  - custom text_style support put it in styles folder
+    - by size
+      text_style_A4_1.yml
+      text_style_A4_2.yml
 
+      text_style_16_1.yml
+      text_style_16_2.yml
 
-  - customr text_style support put it in styles folder
-      text_style.yml
+      text_style_A5_1.yml
+      text_style_A5_1.yml
+
       body_style.yml
         header, footer
       front_matter_style.yml
+### 2022_01_11
+  - fix bug: displaying only 24 lines when line_count is 25
+  - fix token_width calculation has bug 
+
+
   - replace missing glyph with some ? character , instead of crashing
     -filter story file for unsupported chars and replace them
   - set_body_starting_page
@@ -43,7 +70,6 @@
     - 03_dedication
     - 04_prologue
     - 05_toc.md
-
 
 ### 2022_01_23
   - r_line_fragement set text_alignment  from style_object

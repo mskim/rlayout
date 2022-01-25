@@ -3,7 +3,7 @@ module RLayout
   # With Title, author, publisher, logo
   # Replica of front cover image
   
-  class IsbnPage
+  class Isbn < Chapter
     attr_reader :section_path, :paper_size, :info_text
 
     def initialize(section_path, options={})

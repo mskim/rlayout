@@ -35,41 +35,92 @@ module RLayout
     def process_front_matter
       @document_folders = []
       FileUtils.mkdir_p(build_front_matter_path) unless File.exist?(build_front_matter_path)
-      Dir.glob("#{source_front_matter_path}/*.md").sort.each do |md|
-        case File.basename(md)
-        # when 'book_info.md'
-        # when 'title.md'
-        # when 'dedication.md'
-        # when 'thankyou.md'
-        when 'prologue.md'
-          prologue_path = build_front_matter_path + "/prologue"
-          story_md_path = prologue_path + "/story.md"
-          FileUtils.mkdir_p(prologue_path) unless File.exist?(prologue_path)
-          system("cp #{md} #{story_md_path}")
-          h = {}
-          h[:paper_size] = @paper_size
-          h[:document_path] = prologue_path
-          h[:book_info]  = @book_info
-          h[:page_pdf] = true
-          h[:toc] = true
-          h[:starting_page] = @starting_page_number
-          # h[:header_erb] = header_erb
-          # h[:footer_erb] = footer_erb
-          r = RLayout::RChapter.new(h)
-          @page_count += r.page_count
-          @starting_page_number += page_count
-          @document_folders << 'prologue'
-        when 'toc.md'
-          @has_toc = true
-          @document_folders << 'toc' 
-          # TODO fix this
-          @page_count += 1
-          @toc_first_page_number = @starting_page_number + 1
-          @starting_page_number += 1
-          @book_toc = []
+      # Dir.glob("#{source_front_matter_path}/*.md").sort.each do |md|
+      Dir.entries(@project_path).sort.each do |file|
+        h = {}
+        h[:paper_size] = @paper_size
+        h[:book_info]  = @book_info
+        h[:page_pdf] = true
+        h[:toc] = true
+        h[:starting_page] = @starting_page_number
+        # copy source to build 
+        if file =~/^(\d\d)/
+          basename = File.basename(file)
+          case basename
+          when /isbn/
+            isbn_path = build_front_matter_path + "/#{$1}_isbn"
+            copy_source_to_build(file, isbn_path,)
+            h[:document_path] = isbn_pat
+            r = RLayout::Isbn.new(h)
+            @page_count += r.page_count
+            @starting_page_number += page_count
+            @document_folders << 'isbn'
+          when /inside_cover/
+            inside_cover_path = build_front_matter_path + "/#{$1}_inside_cover"
+            copy_source_to_build(file, inside_cover_path,)
+            h[:document_path] = inside_cover_path
+            r = RLayout::InsideCover.new(h)
+            @page_count += r.page_count
+            @starting_page_number += page_count
+            @document_folders << 'inside_cover'
+          when /dedication/, /헌정사/
+            dedication_path = build_front_matter_path + "/#{$1}_dedication"
+            copy_source_to_build(file, dedication_path,)
+            h[:document_path] = dedication_path
+            r = RLayout::Dedication.new(h)
+            @page_count += r.page_count
+            @starting_page_number += page_count
+            @document_folders << 'dedication'
+          when /thanks/, /감사/
+            thanks_path = build_front_matter_path + "/#{$1}_thanks"
+            copy_source_to_build(file, thanks_path,)
+            h[:document_path] = thanks_path
+            r = RLayout::RThankYou.new(h)
+            @page_count += r.page_count
+            @starting_page_number += page_count
+            @document_folders << 'thanks'
+          when /prologue/, /머릿글/
+            prologue_path = build_front_matter_path + "/#{$1}_prologue"
+            copy_source_to_build(file, prologue_path,)
+            h[:document_path] = prologue_path
+            r = RLayout::RChapter.new(h)
+            @page_count += r.page_count
+            @starting_page_number += page_count
+            @document_folders << 'prologue'
+          when /toc/, /목차/ , /차례/
+            toc_path = build_front_matter_path + "/#{$1}_toc"
+            copy_source_to_build(file, toc_path,)
+            @has_toc = true
+            @document_folders << 'toc' 
+            # TODO fix this
+            @page_count += 1
+            @toc_first_page_number = @starting_page_number + 1
+            @starting_page_number += 1
+            @book_toc = []
+          end
         end
       end
       generate_front_matter_toc
+    end
+
+    # copy front_matter source file or folder to _build
+    def copy_source_to_build(source_path, destination_path)
+      FileUtils.mkdir_p(isbn_path) unless File.exist?(source_path)
+      story_md_path = source_path + "/story.md"
+      if File.directory?(source_path)
+        # copy files to build area
+        Dir.glob("#{source_path}.*").each do |folder_file|
+          if file=~/.md$/
+            # copy .md file  as story.md
+            system("cp #{folder_file} #{story_md_path}"
+          elsif File.directory?(folder_file)
+            # copy folder 
+            system("cp #{folder_file} #{story_md_path}/"
+          end
+        end
+      else
+        system("cp #{source_path} #{story_md_path}")
+      end
     end
 
     def generate_front_matter_toc
