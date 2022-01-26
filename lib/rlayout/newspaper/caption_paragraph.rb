@@ -31,11 +31,6 @@ module RLayout
         options[:para_style]  = @para_style
         options[:style_name]  = @style_name
         options[:string]      = token_string
-        if RUBY_ENGINE != 'rubymotion'
-          glyphs                = @font_wrapper.decode_utf8(token_string)
-          width                 = glyphs.map { |g| @style_object.scaled_item_width(g)}.reduce(:+)
-          options[:width]       = width  
-        end
         options[:height]      = para_style[:font_size]
         RLayout::RTextToken.new(options)
       end
@@ -52,7 +47,8 @@ module RLayout
         @space_width = @space_width
       end
       @current_style_service = RLayout::StyleService.shared_style_service
-      @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
+      @style_object = @current_style_service.style_object(@style_name)
+      @font_wrapper = @style_object.font
       @tokens += @caption.split(" ").collect do |token_string|
         options = {}
         options[:para_style]  = @para_style

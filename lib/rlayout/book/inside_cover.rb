@@ -3,7 +3,7 @@ module RLayout
   # With Title, author, publisher, logo
   # Replica of front cover image
   
-  class InsideCover < Chapter
+  class InsideCover < RChapter
     attr_reader :project_path, :cover_image_path, :starting_page
     def initialize(options={})
       @paper_size = options[:paper_size] || "A4"

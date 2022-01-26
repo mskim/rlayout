@@ -1,5 +1,15 @@
 
 module RLayout
+  class NewLineToken < Graphic
+    attr_accessor :string
+    def initialize(options={})
+      super
+      @string = ""
+      @width  = 0
+      self
+    end
+  end
+
   class RTextToken < Graphic
     attr_accessor :string, :font_size
     attr_accessor  :token_type, :has_text, :char_half_width_cushion

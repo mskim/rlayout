@@ -63,7 +63,7 @@ module RLayout
       if @parent.nil?
         return self
       end
-      if @parent.kind_of?(Document) || @parent.kind_of?(RDocument) || @parent.kind_of?(PictureSpread)
+      if @parent.kind_of?(RDocument) || @parent.kind_of?(PictureSpread)
         @parent.pages << self if  !parent.pages.include?(self)
       elsif options[:is_float]
         @parent.floats << self if @parent.floats && !@parent.floats.include?(self)
@@ -110,23 +110,7 @@ module RLayout
     end
 
     def get_stroke_rect
-      if RUBY_ENGINE == "rubymotion"
-        # r = NSMakeRect(@x,@y,@width,@height)
-        r = NSMakeRect(@left_margin,@top_margin,@width - (@left_margin + @right_margin) ,@height- (@top_margin + @bottom_margin))
-
-        if @line_position == 1 #LINE_POSITION_MIDDLE
-          return r
-        elsif @line_position == 2
-          #LINE_POSITION_OUTSIDE)
-          return NSInsetRect(r, - @stroke[:thickness]/2.0, - @stroke[:thickness]/2.0)
-        else
-          # LINE_POSITION_INSIDE
-          return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
-        end
-      else
-        #TODO
-        [@left_margin, @top_margin, @width - (@left_margin + @right_margin) ,@height- (@top_margin + @bottom_margin)]
-      end
+      [@left_margin, @top_margin, @width - (@left_margin + @right_margin) ,@height- (@top_margin + @bottom_margin)]
     end
 
     def update_shape

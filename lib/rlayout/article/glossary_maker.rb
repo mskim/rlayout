@@ -1,6 +1,5 @@
-if RUBY_ENGINE != 'rubymotion'
-  require 'json'
-end
+
+require 'json'
 
 module RLayout
   

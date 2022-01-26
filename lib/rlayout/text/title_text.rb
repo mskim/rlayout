@@ -214,7 +214,7 @@ module RLayout
             @current_line.reduce_to_fit(force_fit: @force_fit_title)
             return
           else
-            if result.class == TextToken || result.class == RTextToken
+            if result.class == RTextToken
               token = result
             end
             @current_line.align_tokens

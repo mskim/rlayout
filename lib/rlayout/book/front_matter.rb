@@ -112,10 +112,10 @@ module RLayout
         Dir.glob("#{source_path}.*").each do |folder_file|
           if file=~/.md$/
             # copy .md file  as story.md
-            system("cp #{folder_file} #{story_md_path}"
+            system("cp #{folder_file} #{story_md_path}")
           elsif File.directory?(folder_file)
             # copy folder 
-            system("cp #{folder_file} #{story_md_path}/"
+            system("cp #{folder_file} #{story_md_path}/")
           end
         end
       else

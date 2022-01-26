@@ -19,7 +19,8 @@
 ### 2022_01_26
   - add layout:custom to metadata to indicate custom layout mode
     - save layout.rb and text_style.yml file to style folder
-
+  - if custom: true
+    - save  layout and text_style to style folder, so user can customize desing
 ### 2022_01_20
   - layout:cover_1, 
   - layout:cover_2, 
@@ -28,7 +29,7 @@
   - layout:wing_front, 
   - layout:wing_back, 
   - layout:isbn, 
-  - layout:title_page, 
+  - layout:inside_cover, 
   - layout:prologue,
   - layout:dedication,
   - layout:toc,

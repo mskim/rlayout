@@ -1527,11 +1527,6 @@ module RLayout
       if File.exist?(@quiz_style_path)
         @quiz_item_style = eval(File.open(@quiz_style_path,'r'){|f| f.read})
       end
-
-      # if RUBY_ENGINE != 'rubymotion'
-      #   @pdf_doc ||= HexaPDF::Document.new
-      #   load_fonts(@pdf_doc)
-      # end
       self
     end
 
@@ -1641,11 +1636,6 @@ module RLayout
       style = @current_style['body'] unless style
       style = Hash[style.map{ |k, v| [k.to_sym, v] }]
       style[:font_size] += adjust_size if adjust_size
-      if RUBY_ENGINE == "rubymotion"
-        atts = NSUtils.ns_atts_from_style(style)
-        att_string     = NSAttributedString.alloc.initWithString(string, attributes: atts)
-        return att_string.size.width
-      end
       rfont = RLayout::RFont.new(style[:font], style[:font_size])
       rfont.string_width(string)
     end

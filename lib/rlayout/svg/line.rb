@@ -27,21 +27,6 @@ module RLayout
         @attributes['stroke-width'] || 0
       end
 
-      def draw
-        nsview_draw if RUBY_ENGINE != 'rubymotion'
-        puts "line draw a line"
-      end
-
-      def nsview_draw
-        NSBezierPath.new
-        starting  = NSPoint.new(@x1, @y1)
-        ending    = NSPoint.new(@x2, @y2)
-        path      = NSBezierPath.bezierPath
-        path.setLineWidth(stroke_width)
-        path.moveToPoint(starting)
-        path.lineToPoint(ending)
-        path.stroke
-      end
     end
 
 end

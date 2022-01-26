@@ -134,23 +134,7 @@ module RLayout
     end
 
     def get_stroke_rect
-      if RUBY_ENGINE == "rubymotion"
-        # r = NSMakeRect(@x,@y,@width,@height)
-        y_position = @top_margin
-        y_position += @page_heading_place_holder.height if @page_heading_place_holder
-        r = NSMakeRect(@left_margin,y_position,@width - (@left_margin + @right_margin) , @height - y_position)
-        if @line_position == 1 #LINE_POSITION_MIDDLE
-          return r
-        elsif @line_position == 2
-          #LINE_POSITION_OUTSIDE)
-          return NSInsetRect(r, - @stroke[:thickness]/2.0, - @stroke[:thickness]/2.0)
-        else
-          # LINE_POSITION_INSIDE
-          return NSInsetRect(r, @stroke[:thickness]/2.0, @stroke[:thickness]/2.0)
-        end
-      else
-        [@x, @y, @width, @height]
-      end
+      [@x, @y, @width, @height]
     end
 
     def stroke_rect

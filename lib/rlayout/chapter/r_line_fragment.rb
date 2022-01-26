@@ -331,7 +331,7 @@ module RLayout
           @graphics << token
           @room  = 0
           return true
-        elsif @result.class == RTextToken || @result.class == TextToken
+        elsif @result.class == RTextToken
           token.parent = self
           @graphics << token  # insert front part to line_count
           return @result       # return second part

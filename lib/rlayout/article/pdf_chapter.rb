@@ -87,10 +87,8 @@ module RLayout
     def merge_pdf_files
       pdf_backup = @project_path + "/pdf_backup"
       system("mkdir -p #{pdf_backup}") unless File.directory?(pdf_backup)
-      unless RUBY_ENGINE == 'rubymotion'
-        puts "in Ruby mode"
-        return
-      end
+      puts "in Ruby mode"
+      return
 
       merged_pdf = PDFDocument.new
       @original_pdf_files.each do |path|

@@ -168,54 +168,29 @@ module RLayout
     end
 
     def fit_original
-      if RUBY_ENGINE == 'rubymotion'
-        @image_frame.size = @image_object.size
-        # mid_x = NSMidX(@image_frame)
-        # mid_y = NSMidY(@image_frame)
-        if frame
-          @source_frame = frame_rect.dup
-        else
-          @source_frame = NSZeroRect
-          return
-        end
-        @source_frame.origin.x = @image_frame.size.width/2.0 - frame_rect[2]/2.0
-        @source_frame.origin.y = @image_frame.size.height/2.0 - frame_rect[3]/2.0
-      else
 
-      end
+      #TODO:
     end
 
     def fit_crop_rect
-      if RUBY_ENGINE == 'rubymotion'
-        # @crop_rect[1] += 400 # this is a hack, quess there are some difference in offset from cropper.js
-        image_height = @image_object.size.height
-        image_width = @image_object.size.width
-        @zoom_factor = @width/@image_object.size.width
-        @source_frame = NSZeroRect
-        @source_frame.origin.x = @crop_rect[0]
-        @source_frame.origin.y = (@height - @crop_rect[3] + @crop_rect[1]).abs
-        @source_frame.size.width = @crop_rect[2]
-        @source_frame.size.height = @crop_rect[3]
 
-      else
-        # we should have @crop_rect 
-        # In order to crop image, we need to draw image that is larger than the
-        # cropping rect, final cropped result shoud be our image_rect
-        # so the drawing rect should be drawing larger than the resulting clipped image
-        # so we need to make drawing rect that surround clipping final rect
-        # drawing_rect is what we draw, and we pass @drawing_x_offset, and @drawing_y_offset, @drawing_width, @drawing_height
-        #  
-        image_to_canvas_ratio = @crop_rect[2]/@width
-        @drawing_width    = image_dimension[0]/@crop_rect[2].to_f*@width
-        @drawing_height   = image_dimension[1]/@crop_rect[3].to_f*@height
-        @drawing_top      = @crop_rect[1]/image_to_canvas_ratio
-        @drawing_bottom   = @drawing_top + @drawing_height
-        @drawing_y_offset = (image_dimension[1] - @crop_rect[1] - @crop_rect[3])/image_to_canvas_ratio
-        @drawing_x_offset = @crop_rect[0]/image_to_canvas_ratio
-        # @drawing_x_offset = (@crop_rect[0] + image_dimension[0] )/image_to_canvas_ratio
-        # 
-        @clip_rect        = [@drawing_x_offset, @drawing_y_offset, @drawing_width, @drawing_height]
-      end
+      # we should have @crop_rect 
+      # In order to crop image, we need to draw image that is larger than the
+      # cropping rect, final cropped result shoud be our image_rect
+      # so the drawing rect should be drawing larger than the resulting clipped image
+      # so we need to make drawing rect that surround clipping final rect
+      # drawing_rect is what we draw, and we pass @drawing_x_offset, and @drawing_y_offset, @drawing_width, @drawing_height
+      #  
+      image_to_canvas_ratio = @crop_rect[2]/@width
+      @drawing_width    = image_dimension[0]/@crop_rect[2].to_f*@width
+      @drawing_height   = image_dimension[1]/@crop_rect[3].to_f*@height
+      @drawing_top      = @crop_rect[1]/image_to_canvas_ratio
+      @drawing_bottom   = @drawing_top + @drawing_height
+      @drawing_y_offset = (image_dimension[1] - @crop_rect[1] - @crop_rect[3])/image_to_canvas_ratio
+      @drawing_x_offset = @crop_rect[0]/image_to_canvas_ratio
+      # @drawing_x_offset = (@crop_rect[0] + image_dimension[0] )/image_to_canvas_ratio
+      # 
+      @clip_rect        = [@drawing_x_offset, @drawing_y_offset, @drawing_width, @drawing_height]
     end
 
     # It took me a while to figure this one out!!
@@ -244,169 +219,27 @@ module RLayout
 
     def fit_vertical
       return unless @image_object
-      if RUBY_ENGINE == 'rubymotion'
-        @image_frame      = NSZeroRect
-        @image_frame.size = @image_object.size
-        if @image_frame
-          @source_frame = @image_frame.dup
-        else
-          @source_frame = NSZeroRect
-          return
-        end
-        # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-         # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
-        puts "++++++++ In fit_vertical"
-        if @zoom_level !='0%' && @zoom_anchor !=5
-          source_width = @width / (@height/@image_frame.size.height)
-          @source_frame.origin.x = (@image_frame.size.width - source_width)/2.0
-          @source_frame.origin.y = 0
-          @source_frame.size.width = source_width
-          @source_frame.size.height = @image_frame.size.height
-
-          @source_frame.size.height*@zoom_factor
-          @source_frame.size.width*@zoom_factor
-          case @zoom_anchor
-          when 1
-          when 2
-            @source_frame.origin.y += @source_frame.origin.y*@zoom_factor/2
-          when 3
-            @source_frame.origin.y += @source_frame.origin.y*@zoom_factor
-          when 4
-            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor/2
-            @source_frame.size.width -= @source_frame.size.width*@zoom_factor
-          when 5
-            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor/2
-            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor/2
-          when 6
-            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor
-            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor/2
-          when 7
-            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor
-            @source_frame.size.width -= @source_frame.size.width*@zoom_factor
-          when 8
-            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor/2
-            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
-          when 9
-            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor
-            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
-          end
-        else
-          source_width = @width / (@height/@image_frame.size.height)
-          @source_frame.origin.x = (@image_frame.size.width - source_width)/2.0
-          @source_frame.origin.y = 0
-          @source_frame.size.width = source_width
-          @source_frame.size.height = @image_frame.size.height
-        end
-      else
-        # w/dim_w = h/dim_h
-        # w = h/dim_h*w
-        clip_width = @height/@image_dimension[1].to_f*@image_dimension[0]
-        @clip_rect_delta_x = (@width - clip_width)/2.0
-        @clip_rect_delta_y = 0
-      end
+      # w/dim_w = h/dim_h
+      # w = h/dim_h*w
+      clip_width = @height/@image_dimension[1].to_f*@image_dimension[0]
+      @clip_rect_delta_x = (@width - clip_width)/2.0
+      @clip_rect_delta_y = 0
     end
 
     def fit_horizontal
       return unless @image_object
-      if RUBY_ENGINE == 'rubymotion'
-        @image_frame      = NSZeroRect
-        @image_frame.size = @image_object.size
-        if @image_frame
-          @source_frame = @image_frame.dup
-        else
-          @source_frame = NSZeroRect
-          return
-        end
-        # @image_object.drawInRect(rect, fromRect:@source_frame, operation:NSCompositeSourceOver, fraction:1.0, respectFlipped:true, hints:nil) if @image_object
-        # This is really confusing. If I want to make smaller image , I have to make the source_frame larger
-        if @zoom_level !='0%' || @zoom_anchor !=5
-          puts "+++++ in adjusting "
-          # set_zoom_factor converts @zoom_level to @zoom_factor
-          source_height = @height / (@width/@image_frame.size.width)
-          @source_frame.origin.x = 0
-          @source_frame.origin.y = (@image_frame.size.height - source_height)/2.0
-          @source_frame.size.height = source_height
-          @source_frame.size.width = @image_frame.size.width
-          
-          @source_frame.size.height*@zoom_factor
-          @source_frame.size.width*@zoom_factor
-          case @zoom_anchor
-          when 1
-            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
-          when 2
-            puts "+++++++ anchor when 2"
-            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
-            if @zoom_level !='0%'
-              @source_frame.origin.x += @source_frame.origin.x*@zoom_factor/2
-            end
-          when 3
-            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
-            @source_frame.origin.x += @source_frame.origin.x*@zoom_factor
-          when 4
-            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor/2
-          when 5
-            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor/2
-            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor/2
-          when 6
-            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor
-            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor/2
-          when 7
-            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
-            @source_frame.size.height -= @source_frame.size.height*@zoom_factor
-          when 8
-            @source_frame.origin.y = 0
-
-            # @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor/2
-            # @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
-
-          when 9
-            @source_frame.origin.y = 0
-
-            @source_frame.origin.x    += @source_frame.origin.x*@zoom_factor
-            @source_frame.origin.y    += @source_frame.origin.y*@zoom_factor
-          end
-        else
-          source_height = @height / (@width/@image_frame.size.width)
-          @source_frame.origin.x = 0
-          @source_frame.origin.y = (@image_frame.size.height - source_height)/2.0
-          @source_frame.size.height = source_height
-          @source_frame.size.width = @image_frame.size.width
-        end
-      else
-        @clip_rect_delta_x = 0
-        @clip_rect_delta_y = (@height/@image_dimension[1]/@image_dimension[0] - @height)/2.0
-      end
+      @clip_rect_delta_x = 0
+      @clip_rect_delta_y = (@height/@image_dimension[1]/@image_dimension[0] - @height)/2.0
     end
 
     def fit_direction
       return unless @image_object
-      if RUBY_ENGINE == 'rubymotion'
-        @image_frame      = NSZeroRect
-        @image_frame.size = @image_object.size
-        grapaphic_rect_width_to_height_ratio  = @width/ @height
-        image_frame_width_to_height_ratio     = @image_frame.size.width/@image_frame.size.height
-        if @crop_rect
-          crop_rect_width_to_height_ratio       = @crop_rect[2]/@crop_rect[3]
-          if grapaphic_rect_width_to_height_ratio > crop_rect_width_to_height_ratio
-            return 'fit_horizontal'
-          else
-            return 'fit_vertical'
-          end
-
-        end
-        if grapaphic_rect_width_to_height_ratio > image_frame_width_to_height_ratio
-          'fit_horizontal'
-        else
-          'fit_vertical'
-        end
+      grapaphic_rect_width_to_height_ratio  = @width / @height.to_f
+      image_frame_width_to_height_ratio     = @image_dimension[0] / @image_dimension[1].to_f
+      if grapaphic_rect_width_to_height_ratio > image_frame_width_to_height_ratio
+        return 'fit_horizontal'
       else
-        grapaphic_rect_width_to_height_ratio  = @width / @height.to_f
-        image_frame_width_to_height_ratio     = @image_dimension[0] / @image_dimension[1].to_f
-        if grapaphic_rect_width_to_height_ratio > image_frame_width_to_height_ratio
-          return 'fit_horizontal'
-        else
-          return 'fit_vertical'
-        end
+        return 'fit_vertical'
       end
     end
 

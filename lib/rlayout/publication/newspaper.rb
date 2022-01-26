@@ -425,21 +425,9 @@ module RLayout
       layout_path    = article_path + "/layout.rb"
       layout_content = SAMPLE_ARTICLE_LATOUT.gsub("<%= @story_options %>", @story_options.to_s)
       layout_content = layout_content.gsub("<%= @image_text %>", @image_text)
-      # ERB doesn' seem to work in rubymotion
-      # erb           = ::ERB.new(SAMPLE_ARTICLE_LATOUT)
       File.open(layout_path, 'w'){|f| f.write layout_content}
     end
 
-    # TODO if Rubymotion YAML kit has fixed the symbol issue in YAML kit, fix it
-    # Each section folder has config.yml.
-    # config.yml contains information about the section.
-    # At the moment, Rubymotion YAML kit doesn't seem to work with symbols it reads symbols as ':key' String.
-    # So, to make it work, I am saving keys  as String instead of symbol.
-    # It can play OK since I could distinguish whether the options are coming from new or open
-    # for  NewspaperSection new, options keys are passed as symbols,
-    # And for  NewspaperSection open, options keys are stored as String, when reading from section config file.
-    # YAML kit also haves true as 1 and false as 0
-    # YAML kit also reads 1. as 1.0 and 0 as 0.0, so be careful!!!! need to convert it to_i after reading.
     def make_section_config
       info ={}
       info['publication'] = @issue && @issue.publication_name || "OurTimes"

@@ -8,9 +8,8 @@
 # photo_section
 # pdf_insert_section
 
-if RUBY_ENGINE != 'rubymotion'
-  require 'Asciidoctor'
-end
+
+require 'Asciidoctor'
 
 module RLayout
   class AsciiPDF
