@@ -23,7 +23,7 @@ module RLayout
       @page_options[:column_layout_space]  = 10
       @page_options[:layout_space]  = 10
       @page_count.times do |i|
-        @page_options[:page_number] = @starting_page + i
+        @page_options[:page_number] = @starting_page_number + i
         @page_options[:parent]      = self
         Page.new(@page_options)
       end
@@ -57,7 +57,7 @@ module RLayout
           @page_options[:grid_box]    = true
           @page_options[:column_count]= 4
           @page_options[:layout_space]  = 5
-          @page_options[:page_number] = @starting_page + page_index
+          @page_options[:page_number] = @starting_page_number + page_index
           @page_options[:parent]      = self
           Page.new(@page_options)
         end

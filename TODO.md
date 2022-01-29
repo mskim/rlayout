@@ -15,7 +15,10 @@
   - math suppoert
   - add inline float marking support??
       floats_1
+### 2022_01_28
+  - add starting_page_side, :left, :right, :either_side
 
+  - page_type toc_page, inside_cover, column_text, front_matter, chapter, index
 ### 2022_01_26
   - add layout:custom to metadata to indicate custom layout mode
     - save layout.rb and text_style.yml file to style folder
@@ -335,7 +338,7 @@
   - generate ebook_indexe.html 
   
   - TOC with multiple page
-  - book_part  set starting_page
+  - book_part  set starting_page_number
 
   - text_style auto generator
       - give font, page_size, margin, body_line_count
@@ -1779,7 +1782,7 @@
 	- master_page
 		doc,
 		pages
-			starting_page, middle_page, ending_page
+			starting_page_number, middle_page, ending_page
 			left_side, right_side
 			starting_left_page, starting_right_page,
 			middle_left_page, middle_right_page,

@@ -177,7 +177,11 @@ module RLayout
     end
 
     def content_width
-      @width - @left_margin - @right_margin - @binding_margin
+      @width - @left_margin - @right_margin
+    end
+
+    def content_height
+      @height - @top_margin - @bottom_margin
     end
 
     def left_side_margin
@@ -187,11 +191,6 @@ module RLayout
         @left_margin
       end
     end
-
-    # def left_side?
-    #   return true if page_number.even?
-    #   false
-    # end
 
     def content_height
       @height - @top_margin - @bottom_margin
@@ -720,6 +719,17 @@ module RLayout
     def table(options={}, &block)
       options[:parent] = self
       Table.new(options, &block)
+    end
+
+    def add_image(image_path)
+      options = {}
+      options[:parent] = self
+      options[:image_path] = image_path
+      options[:x] = @left_margin
+      options[:y] = @top_margin
+      options[:width] = content_width
+      options[:height] = content_height
+      Image.new(options)
     end
 
     def image_plus(options={}, &block)

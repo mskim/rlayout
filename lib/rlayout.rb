@@ -23,8 +23,6 @@ require File.dirname(__FILE__) + '/rlayout/base/utility'
 require File.dirname(__FILE__) + '/rlayout/base/color'
 require File.dirname(__FILE__) + '/rlayout/base/graphic'
 require File.dirname(__FILE__) + '/rlayout/base/container'
-# require File.dirname(__FILE__) + '/rlayout/base/page'
-# require File.dirname(__FILE__) + '/rlayout/base/document'
 require File.dirname(__FILE__) + '/rlayout/base/rjob'
 
 require File.dirname(__FILE__) + "/rlayout/graphic/fill"

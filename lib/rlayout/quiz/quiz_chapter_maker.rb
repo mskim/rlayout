@@ -102,7 +102,7 @@ module RLayout
   # QuizChapterMaker
   class QuizChapterMaker
     attr_accessor :project_path, :template_path, :quiz_data_path, :answer_page
-    attr_accessor :document, :output_path, :starting_page, :column_count
+    attr_accessor :document, :output_path, :starting_page_number, :column_count
     attr_accessor :layout_style
     def initialize(options={} ,&block)
       if options[:project_path]
@@ -156,7 +156,7 @@ module RLayout
         $quiz_item_style      = @quiz_item_style
       end
       $layout_style         = @layout_style
-      @starting_page = options.fetch(:starting_page,1)
+      @starting_page_number = options.fetch(:starting_page_number,1)
       read_quiz_items
       layout_quiz_items
       output_options = {:preview=>true}
@@ -267,7 +267,7 @@ module RLayout
         options[:header]      = true
         options[:text_box]    = true
         options[:text_box_options]    = @layout_style[:text_box]
-        options[:page_number] = @starting_page
+        options[:page_number] = @starting_page_number
         options[:parent]      = @document
         p=Page.new(options)
         p.relayout!
@@ -311,7 +311,7 @@ module RLayout
           options[:header]      = true
           options[:text_box]    = true
           options[:text_box_options]    = @layout_style[:text_box]
-          options[:page_number] = @starting_page + page_index
+          options[:page_number] = @starting_page_number + page_index
           options[:parent]      = @document
           p=Page.new(options)
           p.relayout!
@@ -331,7 +331,7 @@ module RLayout
         options[:text_box]    = true
         options[:text_box_options]    = @layout_style[:text_box]
         options[:text_box_options][:column_count] = 4
-        options[:page_number] = @starting_page + page_index
+        options[:page_number] = @starting_page_number + page_index
         options[:parent]      = @document
         p = Page.new(options)
         p.relayout!
@@ -352,7 +352,7 @@ module RLayout
             options[:text_box]    = true
             options[:text_box_options]    = @layout_style[:text_box]
             options[:text_box_options][:column_count] = 4
-            options[:page_number] = @starting_page + page_index
+            options[:page_number] = @starting_page_number + page_index
             options[:parent]      = @document
             p=Page.new(options)
             p.relayout!

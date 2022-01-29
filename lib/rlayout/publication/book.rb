@@ -70,7 +70,7 @@
 module RLayout
 
   class Book
-    attr_accessor :project_path, :starting_page
+    attr_accessor :project_path, :starting_page_number
     def initialize(project_path, options={})
       @project_path  = project_path
       unless File.directory?(@project_path)
@@ -78,7 +78,7 @@ module RLayout
         copy_template(options)
       end
       @book_tree      = {}
-      @starting_page  = 1
+      @starting_page_number  = 1
       self
     end
 
@@ -140,7 +140,7 @@ module RLayout
       Dir["#{@project_path}/front_matter/**/doc_info.yml"].each do |front_mater_info|
         yml     = YAML::load(File.open(front_mater_info, 'r'){|f| f.read})
         content += yml[:toc]
-        # @starting_page += yml[:page_count]
+        # @starting_page_number += yml[:page_count]
       end
       content
     end
@@ -149,8 +149,8 @@ module RLayout
       content = ""
       Dir["#{@project_path}/*chapter*/doc_info.yml"].each do |chapter_info|
         yml     = YAML::load(File.open(chapter_info, 'r'){|f| f.read})
-        content += yml[:toc].gsub(/0$/, @starting_page.to_s)
-        @starting_page += yml[:page_count]
+        content += yml[:toc].gsub(/0$/, @starting_page_number.to_s)
+        @starting_page_number += yml[:page_count]
       end
       content
     end
@@ -182,7 +182,7 @@ EOF
       File.open(toc_path, 'w'){|f| f.write content}
     end
 
-    #update markdown files metadata starting_page:
+    #update markdown files metadata starting_page_number:
     def update_starting_page
       @new_starting_page = 1
       Dir["#{@project_path}/*chapter*/doc_info.yml"].each_with_index do |chapter_info, i|
@@ -193,7 +193,7 @@ EOF
           @new_starting_page += page_count
           next
         end
-        yml[:starting_page] = @new_starting_page
+        yml[:starting_page_number] = @new_starting_page
         File.open(chapter_info, 'w'){|f| f.write yml.to_yaml}
         @new_starting_page += yml[:page_count]
 

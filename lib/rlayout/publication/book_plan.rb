@@ -45,7 +45,7 @@
 # ---
 # book_title: "Title of the book"
 # document_title: "Title of chapter"
-# starting_page: 34
+# starting_page_number: 34
 # page_count: 4
 # ---
 # 

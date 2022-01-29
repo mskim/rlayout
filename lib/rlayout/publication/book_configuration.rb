@@ -6,7 +6,7 @@ doc_info = {
   page_size: 'A5',
   portrait: true,
   double_side: true,
-  starting_page: 1,
+  starting_page_number: 1,
 }
 
 chapter_starting_page_rule ={

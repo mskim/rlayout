@@ -32,7 +32,7 @@ module RLayout
 
   class ItemChapter
     attr_accessor :project_path, :config_hash, :template_path, :items
-    attr_accessor :document, :output_path, :starting_page, :column_count
+    attr_accessor :document, :output_path, :starting_page_number, :column_count
     attr_accessor :layout_style
     def initialize(options={} ,&block)
       unless options[:project_path]
@@ -74,7 +74,7 @@ module RLayout
         $object_item_style      = @object_item_style
       end
       $layout_style         = @layout_style
-      @starting_page = options.fetch(:starting_page,1)
+      @starting_page_number = options.fetch(:starting_page_number,1)
       read_items
       layout_items_list
       @document.save_pdf(@output_path) unless options[:no_output]
@@ -98,7 +98,7 @@ module RLayout
       page_options[:column_count] = @config_hash['column_count'] if @config_hash['column_count']
       page_options[:parent]     = @document
       if @document.pages.length == 0
-        page_options[:page_number] = @starting_page
+        page_options[:page_number] = @starting_page_number
         p=Page.new(page_options)
         p.relayout!
         p.main_box.create_column_grid_rects
@@ -134,7 +134,7 @@ module RLayout
       while @items.length > 0
         if page_index >= @document.pages.length
           # options[:text_box_options]    = @layout_style[:text_box]
-          page_options[:page_number] = @starting_page + page_index
+          page_options[:page_number] = @starting_page_number + page_index
           p=Page.new(page_options)
           p.relayout!
           p.main_box.create_column_grid_rects

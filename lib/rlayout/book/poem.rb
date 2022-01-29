@@ -104,7 +104,7 @@ module RLayout
       @document_path  = File.dirname(@output_path)
       toc_path        = @document_path + "/toc.yml"
       toc_item = {}
-      toc_item[:page] = @starting_page
+      toc_item[:page] = @starting_page_number
       toc_item[:markup] = 'h1'
       toc_item[:markup] = 'h2' if @belongs_to_part
       toc_item[:para_string] = @title

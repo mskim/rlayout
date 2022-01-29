@@ -5,7 +5,7 @@ module RLayout
     attr_reader :spread_path, :project_path, :bg_image_path
     attr_reader :left_page_text_location, :right_page_text_location
     attr_accessor :page_size, :width, :height
-    attr_accessor :pages, :starting_page
+    attr_accessor :pages, :starting_page_number
     attr_reader :left_margin, :top_margin, :right_margin, :bottom_margin, :gutter
     attr_reader :page_type, :toc_data
     attr_reader :spread_image_path, :left_page_image_path, :right_page_image_path

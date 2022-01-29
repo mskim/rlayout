@@ -75,7 +75,7 @@ module RLayout
           h[:paper_size] = @paper_size
           h[:page_pdf] = true
           h[:toc] = true
-          h[:starting_page] = @starting_page_number
+          h[:starting_page_number] = @starting_page_number
           r = RLayout::RChapter.new(h)
           @starting_page_number += r.page_count
           chapter_number += 1

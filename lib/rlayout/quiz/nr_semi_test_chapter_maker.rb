@@ -23,7 +23,7 @@ module RLayout
 	class NRSemiTestChapterMaker
     attr_accessor :project_path, :quiz_items, :layout_rb, :output_path
     attr_accessor :text_data, :title, :heading
-    attr_reader :column_count, :starting_page
+    attr_reader :column_count, :starting_page_number
 
     def initialize(options={})
       if options[:project_path]
@@ -40,7 +40,7 @@ module RLayout
         return
       end
       @column_count         = options.fetch(:column_count, 2)
-      @starting_page = options.fetch(:starting_page, 1)
+      @starting_page_number = options.fetch(:starting_page_number, 1)
       template = File.open(@layout_rb,'r'){|f| f.read}
       @document = eval(template)
       if @document.is_a?(SyntaxError)
@@ -102,7 +102,7 @@ module RLayout
         options[:header]      = true
         options[:text_box]    = true
         options[:column_count]= @column_count
-        options[:page_number] = @starting_page
+        options[:page_number] = @starting_page_number
         options[:parent]      = @document
         p=Page.new(options)
         p.relayout!
@@ -126,7 +126,7 @@ module RLayout
           options[:header]      = true
           options[:text_box]    = true
           options[:column_count]= @column_count
-          options[:page_number] = @starting_page + page_index
+          options[:page_number] = @starting_page_number + page_index
           options[:parent]      = @document
           p=Page.new(options)
           p.relayout!
@@ -147,7 +147,7 @@ module RLayout
         options[:text_box]    = true
         options[:text_box_options]    = @layout_style[:text_box]
         options[:text_box_options][:column_count] = 4
-        options[:page_number] = @starting_page + page_index
+        options[:page_number] = @starting_page_number + page_index
         options[:parent]      = @document
         p = Page.new(options)
         p.relayout!
@@ -168,7 +168,7 @@ module RLayout
             options[:text_box]    = true
             options[:text_box_options]    = @layout_style[:text_box]
             options[:text_box_options][:column_count] = 4
-            options[:page_number] = @starting_page + page_index
+            options[:page_number] = @starting_page_number + page_index
             options[:parent]      = @document
             p=Page.new(options)
             p.relayout!

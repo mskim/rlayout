@@ -1,16 +1,16 @@
 # encoding: utf-8
 
 # Chapter
-# - Chapter converts given Story into a document.
-# - Story is parsed to heading and body. 
-# - Each story has heading and body, heding is placed at the top in yaml format.
-# - Body part follows the headinng, in markdown format.
-# - Body part are converted to series of paragraphs,
+# Chapter converts given Story into a document.
+# - story.md is parsed to heading and body. 
+# - Heading is placed at the top in yaml format.
+# - Body markups are converted to series of paragraphs,
 
 ## How to place images in long document?
-# There are three ways of placing images in the long document.
+# There are two ways of placing images in the long document.
 # 1. inline image markup
 # 2. pre-planed separate yaml file containeing image info for page.
+
 # 3. inserting pre-made PDF photo pages with markup at insertion point
 
 ### First method is to inline image markup in the text.
@@ -70,7 +70,6 @@
 # when we encounter page triggering node, add new page
 #    section_1, photo_page, image_group
 
-
 # LongDocument
 # LongDocument is made to handle collection of document parts, for long document.
 # Typical LongDocument parts are, title_page, section, photo_page, image_group_page.
@@ -78,11 +77,6 @@
 
 # pdf_insert is pre-made pdf pages that are inserted in the middle of chapter.
 
-# Asciidoctor
-# Asciidoctor is used for creating books from Asciidoctor content.
-# Asciidoctor content is parsed and broken into parts.
-# Broken parts are handed to LongDocument as parts.
-# LongDocument is also reponsible for generating TOC, index, and x-ref.
 
 # Story file
 # story files are markuped text, with markdown or asciidoctor syntax.
@@ -119,20 +113,6 @@
 # leading:
 # author:
 # description:
-
-
-# # Section
-# ## Section
-# ### Section
-# #### Section
-# ##### Section
-
-# section mark
-# = Section
-# == Section
-# === Section
-# ==== Section
-# ===== Section
 
 # paragraph mark
 # [p]
@@ -203,33 +183,43 @@
 # default_image_size: 6x6
 # 2. second way is to create page_image_layut.yml file specifiying page_number and image_name, locatin, size
 # 
+# page_by_page is used for page proof reading
+# if page_by_page is true,
+# folders are created for each page, with jpg image and, markdown text for that page
+# this allow the proofer to work on that specific page rather than dealing with entire chapter text.
+# page_pdf options indicates to split docemnt into pages
+# page_folder are 4 digit numbered 0001, 0002, 0003
+
+# page_pdf
+# if page_pdf options is true, create a folder for each page.
+# 0001, 0002 so and put page.pdf and page.jpg
+# This is used for  ebook generation
+
+# toc
+# if toc options is true, save toc.yml for the chapter
 module RLayout
 
   class RChapter
     attr_reader :document_path, :story_path
     attr_reader :document, :output_path, :column_count
     attr_reader :doc_info, :toc_content
-    attr_reader :book_title, :title, :starting_page, :heading_height_type, :heading
+    attr_reader :book_title, :title, :starting_page_number, :heading_height_type, :heading
     attr_reader :body_line_count, :body_line_height
     attr_reader :max_page_number, :page_floats
     attr_reader :has_footer, :has_header
     attr_reader :belongs_to_part, :paper_size
-
-    # page_by_page is used for page proof reading
-    # if page_by_page is true,
-    # folders are created for each page, with jpg image and, markdown text for that page
-    # this allow the proofer to work on that specific page rather than dealing with entire chapter text.
-    # page_pdf options indicates to split docemnt into pages
-    # page_folder are 4 digit numbered 0001, 0002, 0003
-
     attr_reader :page_by_page, :story_md, :story_by_page, :toc
     attr_reader :belongs_to_part
     attr_reader :grid, :default_image_location, :default_image_size
     attr_reader :local_image_folder, :paper_size, :has_header, :has_footer
     attr_reader :book_info
-    
+    # In some documents pages are places in fixed side, isbn left(even), inside_cover right(odd),
+    # in mis-matched cases, blank page is inserted in  front of the document.
+    attr_reader :starting_page_side # :left, :right, :either
+
     def initialize(options={} ,&block)
       @document_path  = options[:document_path] || options[:chapter_path]
+      @starting_page_side = options[:starting_page_side] || :either_side
       if options[:book_info]
         @book_info      = options[:book_info]
         @paper_size     = @book_info[:paper_size] || "A5"
@@ -249,6 +239,7 @@ module RLayout
       @grid = options[:grid] || [6,12]
       @default_image_location = options[:default_image_location] || 1
       @default_image_size = options[:default_image_size] || [6,6]
+      binding.pry if self.class == RLayout::Isbn
       unless @layout_rb
         layout_path = @document_path + "/layout.rb"
         unless File.exist?(layout_path)
@@ -258,7 +249,7 @@ module RLayout
           @layout_rb = File.open(layout_path, 'r'){|f| f.read}
         end
       end
-      @starting_page  = options[:starting_page] || 1
+      @starting_page_number  = options[:starting_page_number] || 1
       @page_by_page   = options[:page_by_page]
       @page_pdf       = options[:page_pdf]
       @svg            = options[:svg]
@@ -275,7 +266,7 @@ module RLayout
         return
       end
       @document.document_path = @document_path
-      @document.starting_page = @starting_page
+      @document.starting_page_number = @starting_page_number
       read_story
       # save_para_string # used for debug
       # place floats to pages
@@ -421,6 +412,7 @@ module RLayout
         @heading[:y]      = 0
         @heading[:width]  = @first_page.content_width # - @first_page.left_margin - @first_page.right_margin
         @heading[:is_float] = true
+        binding.pry if self.class == RLayout::Prologue
         RHeading.new(@heading)
       end
       @paragraphs =[]
@@ -517,9 +509,9 @@ module RLayout
     end
 
     def next_chapter_starting_page
-      @starting_page = 1 if @starting_page.nil?
+      @starting_page_number = 1 if @starting_page_number.nil?
       @page_view_count = 0   if @page_view_count.nil?
-      @starting_page + @page_view_count
+      @starting_page_number + @page_view_count
     end
 
     def doc_info_path
@@ -541,7 +533,7 @@ module RLayout
       toc_path        = @document_path + "/toc.yml"
       if @toc_level == 'title'
         toc_item = {}
-        toc_item[:page] = @starting_page
+        toc_item[:page] = @starting_page_number
         toc_item[:markup] = 'h1'
         toc_item[:markup] = 'h2' if @belongs_to_part
         toc_item[:para_string] = @title

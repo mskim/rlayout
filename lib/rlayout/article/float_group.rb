@@ -73,7 +73,7 @@ module RLayout
     def layout_page(options={})
       @document     = options[:document]
       @page_index   = options[:page_index]
-      @starting_page = options.fetch(:@starting_page, 1)
+      @starting_page_number = options.fetch(:@starting_page_number, 1)
       @page         = @document.pages[@page_index]
       @main_box     = @page.main_box
 
@@ -89,7 +89,7 @@ module RLayout
           options[:footer]      = true
           options[:header]      = true
           options[:text_box]    = true
-          options[:page_number] = @starting_page + @page_index
+          options[:page_number] = @starting_page_number + @page_index
           options[:column_count]= @document.column_count
           p=Page.new(options)
           p.relayout!

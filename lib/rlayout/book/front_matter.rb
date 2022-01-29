@@ -36,35 +36,43 @@ module RLayout
       @document_folders = []
       FileUtils.mkdir_p(build_front_matter_path) unless File.exist?(build_front_matter_path)
       # Dir.glob("#{source_front_matter_path}/*.md").sort.each do |md|
-      Dir.entries(@project_path).sort.each do |file|
-        h = {}
-        h[:paper_size] = @paper_size
-        h[:book_info]  = @book_info
-        h[:page_pdf] = true
-        h[:toc] = true
-        h[:starting_page] = @starting_page_number
+      Dir.entries(source_front_matter_path).sort.each do |file|
         # copy source to build 
-        if file =~/^(\d\d)/
+        if file =~/^\d\d/
           basename = File.basename(file)
+          h = {}
+          h[:paper_size] = @paper_size
+          h[:book_info]  = @book_info
+          h[:page_pdf] = true
+          h[:toc] = true
+          h[:starting_page_number] = @starting_page_number
           case basename
           when /isbn/
-            isbn_path = build_front_matter_path + "/#{$1}_isbn"
-            copy_source_to_build(file, isbn_path,)
-            h[:document_path] = isbn_pat
+            isbn_path = build_front_matter_path + "/isbn"
+            copy_source_to_build(file, isbn_path)
+            h[:document_path] = isbn_path
+            
+            h[:toc] = false
+            h[:has_footer] = false
+            h[:has_header] = false
             r = RLayout::Isbn.new(h)
             @page_count += r.page_count
             @starting_page_number += page_count
             @document_folders << 'isbn'
           when /inside_cover/
-            inside_cover_path = build_front_matter_path + "/#{$1}_inside_cover"
+            inside_cover_path = build_front_matter_path + "/inside_cover"
             copy_source_to_build(file, inside_cover_path,)
             h[:document_path] = inside_cover_path
+            h[:front_page_pdf] = @project_path + "/_build/book_cover/front_page/output.pdf"
+            h[:toc] = false
+            h[:has_footer] = false
+            h[:has_header] = false
             r = RLayout::InsideCover.new(h)
             @page_count += r.page_count
             @starting_page_number += page_count
             @document_folders << 'inside_cover'
           when /dedication/, /헌정사/
-            dedication_path = build_front_matter_path + "/#{$1}_dedication"
+            dedication_path = build_front_matter_path + "/dedication"
             copy_source_to_build(file, dedication_path,)
             h[:document_path] = dedication_path
             r = RLayout::Dedication.new(h)
@@ -72,7 +80,7 @@ module RLayout
             @starting_page_number += page_count
             @document_folders << 'dedication'
           when /thanks/, /감사/
-            thanks_path = build_front_matter_path + "/#{$1}_thanks"
+            thanks_path = build_front_matter_path + "/thanks"
             copy_source_to_build(file, thanks_path,)
             h[:document_path] = thanks_path
             r = RLayout::RThankYou.new(h)
@@ -80,15 +88,16 @@ module RLayout
             @starting_page_number += page_count
             @document_folders << 'thanks'
           when /prologue/, /머릿글/
-            prologue_path = build_front_matter_path + "/#{$1}_prologue"
+            binding.pry
+            prologue_path = build_front_matter_path + "/prologue"
             copy_source_to_build(file, prologue_path,)
             h[:document_path] = prologue_path
-            r = RLayout::RChapter.new(h)
+            r = RLayout::Prologue.new(h)
             @page_count += r.page_count
             @starting_page_number += page_count
             @document_folders << 'prologue'
           when /toc/, /목차/ , /차례/
-            toc_path = build_front_matter_path + "/#{$1}_toc"
+            toc_path = build_front_matter_path + "/toc"
             copy_source_to_build(file, toc_path,)
             @has_toc = true
             @document_folders << 'toc' 
@@ -105,21 +114,42 @@ module RLayout
 
     # copy front_matter source file or folder to _build
     def copy_source_to_build(source_path, destination_path)
-      FileUtils.mkdir_p(isbn_path) unless File.exist?(source_path)
-      story_md_path = source_path + "/story.md"
+      FileUtils.mkdir_p(destination_path) unless File.exist?(destination_path)
+      source_full_path = source_front_matter_path + "/#{source_path}"
+      story_md_destination_path = destination_path + "/story.md"
       if File.directory?(source_path)
+        if  Dir.glob("#{source_path}/*.md").length == 0
+          # handle case when there is no .md file
+          # save sample story.md file
+          sample_md_path = source_path + "/story.md"
+          File.open(sample_md_path, 'w'){|f| sample_front_matter_story(source_path)}
+          return
+        end
         # copy files to build area
         Dir.glob("#{source_path}.*").each do |folder_file|
           if file=~/.md$/
             # copy .md file  as story.md
-            system("cp #{folder_file} #{story_md_path}")
+            system("cp #{folder_file} #{story_md_destination_path}")
           elsif File.directory?(folder_file)
             # copy folder 
-            system("cp #{folder_file} #{story_md_path}/")
+            system("cp #{folder_file} #{destination_path}/")
           end
         end
       else
-        system("cp #{source_path} #{story_md_path}")
+        system("cp #{source_full_path} #{story_md_destination_path}")
+      end
+    end
+
+    def sample_front_matter_story(source_path)
+      case source_path
+      when /isbn/
+        Isbn.sample_story
+      when /thanks/
+        Thanks.sample_story
+      when /dedication/
+        Dedication.sample_story
+      when /prologue/
+        Prologue.sample_story
       end
     end
 
@@ -240,4 +270,5 @@ module RLayout
       info
     end  
   end
+
 end

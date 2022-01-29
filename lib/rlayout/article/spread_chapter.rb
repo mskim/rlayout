@@ -80,8 +80,8 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
-      @starting_page = options.fetch(:starting_page,2)
-      @document.starting_page = @starting_page
+      @starting_page_number = options.fetch(:starting_page_number,2)
+      @document.starting_page_number = @starting_page_number
       read_story
       layout_story
       output_options = {:preview=>true}
@@ -190,7 +190,7 @@ module RLayout
             options[:footer]      = true
             options[:header]      = true
             options[:text_box]    = true
-            options[:page_number] = @starting_page + @page_index
+            options[:page_number] = @starting_page_number + @page_index
             options[:column_count]= @document.column_count
             p=Page.new(options)
             p.relayout!

@@ -57,14 +57,6 @@ module RLayout
       page_number == 1
     end
 
-    # def add_heading(options={})
-    #   options[:parent] = self
-    #   options[:x] = @left_margin
-    #   options[:y] = @top_margin
-    #   options[:width] = @width - @left_margin - @right_margin
-    #   @heading  = RHeading.new(options)
-    # end
-
     def add_toc_title(options={})
       options[:parent] = self
       options[:x] = @left_margin
@@ -87,4 +79,55 @@ module RLayout
     end
   end
 
+
+  ############ page  variations ##############
+  class BlackPage < RPage
+    def initialzie(options={})
+      super
+      self
+    end
+  end
+
+  # Prolog, Forward
+  class FrontMatterPage < RPage
+    def initialize(options={})
+      super
+      self
+    end
+  end
+
+  # Isbn, dedication, thanks
+  class ColumnTextPage < RPage
+    attr_reader :isbn_text
+    def initialzie(options={})
+      @isbn_text = options[:isbn_text]
+      super
+      self
+    end
+
+    def default_page_layout
+      <<~EOF
+      RLayout::RPage.new( width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 16)
+        column_text(#{@isbn_text})
+      EOF
+      EOF
+    end
+  end
+
+  class InsideCoverPage < RPage
+    attr_reader :cover_image_path
+    def initialzie(options={})
+      @cover_image_pdf_path = options[:cover_image_path]
+      super
+      self
+    end
+
+    def default_page_layout
+      <<~EOF
+      RLayout::RPage.new( width:#{@width}, height:#{@height}, left_margin: 30, top_margin: 30, right_margin: 30, bottom_margin: 30)
+        image(#{@cover_image_pdf_path}, x: 0, y:0 , width: #{content_width})
+      EOF
+      EOF
+    end
+  end
 end

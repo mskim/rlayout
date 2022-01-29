@@ -49,8 +49,8 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
-      # @starting_page = options.fetch(:starting_page,2)
-      # @document.starting_page = @starting_page
+      # @starting_page_number = options.fetch(:starting_page_number,2)
+      # @document.starting_page_number = @starting_page_number
       read_toc
       layout_toc
       output_options = {:preview=>true}

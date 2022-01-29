@@ -9,7 +9,7 @@ module RLayout
 
   class MagazineArticle
     attr_accessor :article_path, :layout_path, :story_path, :images_dir, :tables_dir
-    attr_accessor :document, :style, :starting_page, :page_count, :page_type # spread, left, right
+    attr_accessor :document, :style, :starting_page_number, :page_count, :page_type # spread, left, right
     attr_accessor :doc_info_path, :page_floats, :output_path
     attr_reader   :save_page_story
     attr_reader :article_path
@@ -17,7 +17,7 @@ module RLayout
       $publication_type = "magazine"
       @article_path     = options[:article_path] || options[:project_path]
       @doc_info_path    = @article_path + "/doc_info.yml"
-      @starting_page    = options.fetch(:starting_page, 1)
+      @starting_page_number    = options.fetch(:starting_page_number, 1)
       @page_count       = options.fetch(:page_count, 1)
       read_page_floats 
       @article_path     = options[:article_path]
@@ -41,7 +41,7 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
-      @document.starting_page = @starting_page
+      @document.starting_page_number = @starting_page_number
       @document.fixed_page_document = true
       # place floats to pages
       read_story
@@ -145,9 +145,9 @@ module RLayout
     end
 
     def next_chapter_starting_page
-      @starting_page=1 if @starting_page.nil?
+      @starting_page_number=1 if @starting_page_number.nil?
       @page_view_count = 0   if @page_view_count.nil?
-      @starting_page + @page_view_count
+      @starting_page_number + @page_view_count
     end
 
     def save_toc(path)

@@ -28,7 +28,7 @@ module RLayout
   end
   
   class PdfSection < Document
-    attr_accessor :starting_page, :section_title
+    attr_accessor :starting_page_number, :section_title
     
     
   end
