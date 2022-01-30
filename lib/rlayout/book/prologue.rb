@@ -6,9 +6,17 @@ module RLayout
     def initialize(options={})
       @document_path  = options[:document_path] || options[:chapter_path]
       options[:chapter_heading_height] = "quarter"
-      binding.pry
       super
     end
+
+    # def read_story
+
+    # end
+
+    # def layout_story
+
+
+    # end
 
     def self.sample_story
       <<~EOF

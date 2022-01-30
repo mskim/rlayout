@@ -9,6 +9,8 @@ module RLayout
     def initialize(options={})
       options[:starting_page_side] = :left_side
       options[:page_type] = :column_text
+
+
       super
       @isbn_text_path  = @document_path + "/isbn.md"
       if File.exist?(@isbn_text_path)
@@ -21,12 +23,48 @@ module RLayout
       self
     end
 
+    # subclasses implementation
+
+    def read_story
+      if File.exist?(@story_path) 
+        @text_lines  = File.open(@story_path, 'r'){|f| f.read}.each_line
+      else
+        @text_lines  = Isbn.sample_story.each_line
+      end
+    end
+    
+    def layout_story
+      # body
+      @starting_y = 100
+      line_height = 20
+      @last_page = @document.pages.last
+      @text_lines.each do |line_text|
+        line_options = {}
+        line_options[:x]  = 50
+        line_options[:y]  = @starting_y
+        line_options[:width]  = @last_page.width
+        line_options[:height]  = line_height
+        line_options[:text_string]    = line_text
+        line_options[:parent] = @last_page
+        line_options[:font_size] = 12
+        Text.new(line_options)
+        @starting_y += line_height
+      end
+    end
+
     def self.sample_story
       <<~EOF
-      ---
-      layout:isbn
+
+
+
+
+
+
+
+
+
+
       
-      ---
 
       지은이: 홍길동
       책임편집: 임꺽정

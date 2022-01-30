@@ -15,9 +15,11 @@
   - math suppoert
   - add inline float marking support??
       floats_1
+
+### 2022_01_30
+  - fix prologue isbn heading
 ### 2022_01_28
   - add starting_page_side, :left, :right, :either_side
-
   - page_type toc_page, inside_cover, column_text, front_matter, chapter, index
 ### 2022_01_26
   - add layout:custom to metadata to indicate custom layout mode

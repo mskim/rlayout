@@ -209,10 +209,8 @@ module RLayout
     attr_reader :has_footer, :has_header
     attr_reader :belongs_to_part, :paper_size
     attr_reader :page_by_page, :story_md, :story_by_page, :toc
-    attr_reader :belongs_to_part
     attr_reader :grid, :default_image_location, :default_image_size
-    attr_reader :local_image_folder, :paper_size, :has_header, :has_footer
-    attr_reader :book_info
+    attr_reader :local_image_folder
     # In some documents pages are places in fixed side, isbn left(even), inside_cover right(odd),
     # in mis-matched cases, blank page is inserted in  front of the document.
     attr_reader :starting_page_side # :left, :right, :either
@@ -232,23 +230,12 @@ module RLayout
       @story_path     = @document_path + "/story.md"
       @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
       @story_md       = options[:story_md]
-      @layout_rb      = options[:layout_rb]
       @has_footer    =  options[:has_footer] || true
       @has_header    =  options[:has_header] || false
       @belongs_to_part = options[:belongs_to_part]
       @grid = options[:grid] || [6,12]
       @default_image_location = options[:default_image_location] || 1
       @default_image_size = options[:default_image_size] || [6,6]
-      binding.pry if self.class == RLayout::Isbn
-      unless @layout_rb
-        layout_path = @document_path + "/layout.rb"
-        unless File.exist?(layout_path)
-          @paper_size = "A5" unless @paper_size
-          @layout_rb = default_document_layout
-        else
-          @layout_rb = File.open(layout_path, 'r'){|f| f.read}
-        end
-      end
       @starting_page_number  = options[:starting_page_number] || 1
       @page_by_page   = options[:page_by_page]
       @page_pdf       = options[:page_pdf]
@@ -256,6 +243,15 @@ module RLayout
       @story_by_page  = options[:story_by_page]
       @toc            = options[:toc]
       @toc_level      = options[:toc_level] || 'title'
+      @layout_rb      = options[:layout_rb]
+      unless @layout_rb
+        layout_path = @document_path + "/layout.rb"
+        if File.exist?(layout_path)
+          @layout_rb = File.open(layout_path, 'r'){|f| f.read}
+        else
+          @layout_rb = default_document_layout
+        end
+      end
       @document       = eval(@layout_rb)
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@document} !!!!"
@@ -265,50 +261,13 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
+      @toc_content                = []
       @document.document_path = @document_path
       @document.starting_page_number = @starting_page_number
       read_story
-      # save_para_string # used for debug
-      # place floats to pages
-      if options[:page_floats]
-        @page_floats      = options.fetch(:page_floats, [])
-      else
-        read_page_floats 
-      end
-      if has_page_floats_info?
-        @has_page_floats_info = true
-        last_floats_page_number = @page_floats.keys.sort.last
-        need_page_count = last_floats_page_number - @document.pages.length
-        if need_page_count > 0
-          need_page_count.times do 
-            @document.add_new_page
-          end
-        end
-        @document.pages.each_with_index do |p,i|
-          page_floats_for_page = @page_floats[i + 1]
-          if page_floats_for_page
-            p.add_floats(page_floats_for_page) 
-          end
-        end
-      end
+      place_page_floats(options)
       layout_story
-      # draw header and footers
-      chapter_info ={}
-      chapter_info[:book_title] = @book_info[:title] if @book_info
-      chapter_info[:chapter_title] = @title if @title
-      if @has_header
-        @document.pages.each_with_index do |p,i|
-          # use comstom layout if given in book_info
-          chapter_info[:footer_layout]  = chapter_info[:footer_layout] if @book_info
-          p.create_header(chapter_info) 
-        end
-      end
-      if @has_footer
-        @document.pages.each_with_index do |p,i|
-          chapter_info[:footer_layout]  = chapter_info[:footer_layout] if @book_info
-          p.create_footer(chapter_info) 
-        end
-      end
+      place_header_and_footer
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
       @document.save_svg(@document_path) if @svg
       save_story_by_page if @story_by_page
@@ -383,16 +342,6 @@ module RLayout
       File.open(story_by_page_path, 'w'){|f| f.write @story_by_page_hash.to_yaml}
     end
 
-    def read_page_floats
-      unless File.exists?(page_floats_path)
-        # puts "Can not find file #{page_floats_path}!!!!"
-        # return {}
-        @page_floats = {}
-      else
-        @page_floats = YAML::load_file(page_floats_path)
-      end
-    end
-
     def read_story
       if @story_md 
         @story  = Story.new(nil).markdown2para_data(source:@story_md)
@@ -412,7 +361,7 @@ module RLayout
         @heading[:y]      = 0
         @heading[:width]  = @first_page.content_width # - @first_page.left_margin - @first_page.right_margin
         @heading[:is_float] = true
-        binding.pry if self.class == RLayout::Prologue
+        # binding.pry if self.class == RLayout::Prologue
         RHeading.new(@heading)
       end
       @paragraphs =[]
@@ -420,10 +369,6 @@ module RLayout
       @left_margin = @document.pages[0].left_margin
       @top_margin = @document.pages[0].top_margin
       @width = @document.pages[0].width
-      # for debug
-      # puts "+++++++++++++ document page width in MM: #{pt2mm(@width)}"
-      # @height = @document.pages[0].height
-      # puts "+++++++++++++ document page height in MM: #{pt2mm(@height)}"
       @story[:paragraphs].each do |para, i|
         if  para[:markup] == "image"
           @image_count += 1
@@ -461,6 +406,43 @@ module RLayout
       end
     end
     
+    def place_page_floats(options)
+      if options[:page_floats]
+        @page_floats      = options.fetch(:page_floats, [])
+      else
+        read_page_floats 
+      end
+
+      if has_page_floats_info?
+        @has_page_floats_info = true
+        last_floats_page_number = @page_floats.keys.sort.last
+        need_page_count = last_floats_page_number - @document.pages.length
+        if need_page_count > 0
+          need_page_count.times do 
+            @document.add_new_page
+          end
+        end
+        @document.pages.each_with_index do |p,i|
+          page_floats_for_page = @page_floats[i + 1]
+          if page_floats_for_page
+            p.add_floats(page_floats_for_page) 
+          end
+        end
+      end
+    end
+
+    def page_floats_path
+      @document_path + "/page_floats.yml"
+    end
+
+    def read_page_floats
+      unless File.exists?(page_floats_path)
+        @page_floats = {}
+      else
+        @page_floats = YAML::load_file(page_floats_path)
+      end
+    end
+
     def layout_story
       current_style = RLayout::StyleService.shared_style_service
       current_style.current_style = CHAPTER_STYLES
@@ -478,7 +460,6 @@ module RLayout
       end
       page_key                    = @current_line.page_number
       @story_by_page_hash         = {} # this is used to capter story_by_page info
-      @toc_content                = []
       current_page_paragraph_list = []
       while @paragraph = @paragraphs.shift
         # TODO: capturing paragraph info to save @story_by_page
@@ -508,6 +489,25 @@ module RLayout
       end
     end
 
+    def place_header_and_footer
+      chapter_info ={}
+      chapter_info[:book_title] = @book_info[:title] if @book_info
+      chapter_info[:chapter_title] = @title if @title
+      if @has_header
+        @document.pages.each_with_index do |p,i|
+          # use comstom layout if given in book_info
+          chapter_info[:footer_layout]  = chapter_info[:footer_layout] if @book_info
+          p.create_header(chapter_info) 
+        end
+      end
+      if @has_footer
+        @document.pages.each_with_index do |p,i|
+          chapter_info[:footer_layout]  = chapter_info[:footer_layout] if @book_info
+          p.create_footer(chapter_info) 
+        end
+      end
+    end
+
     def next_chapter_starting_page
       @starting_page_number = 1 if @starting_page_number.nil?
       @page_view_count = 0   if @page_view_count.nil?
@@ -516,10 +516,6 @@ module RLayout
 
     def doc_info_path
       @document_path + "/doc_info.yml"
-    end
-
-    def page_floats_path
-      @document_path + "/page_floats.yml"
     end
 
     def save_doc_info

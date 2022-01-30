@@ -51,7 +51,7 @@ module RLayout
             isbn_path = build_front_matter_path + "/isbn"
             copy_source_to_build(file, isbn_path)
             h[:document_path] = isbn_path
-            
+
             h[:toc] = false
             h[:has_footer] = false
             h[:has_header] = false
@@ -88,7 +88,6 @@ module RLayout
             @starting_page_number += page_count
             @document_folders << 'thanks'
           when /prologue/, /머릿글/
-            binding.pry
             prologue_path = build_front_matter_path + "/prologue"
             copy_source_to_build(file, prologue_path,)
             h[:document_path] = prologue_path

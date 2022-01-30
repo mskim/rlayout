@@ -142,7 +142,8 @@ module RLayout
         @author_object.y = @y_position + 10
         @y_position += t.height
       end
-      @height = @y_position + 50 #if @height_type == 'natural'
+      content_height = @y_position + 100
+      @height = content_height if content_height >  @height
       # relayout!
 
       self
