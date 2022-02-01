@@ -16,8 +16,9 @@ module RLayout
   class Paperback < Book
 
     def initialize(project_path, options={})
-      super
+      @book_text_style_name = "paperback"
       @body_doc_type = 'chapter'
+      super
       # @project_path = project_path
       # @book_info_path = @project_path + "/book_info.yml"
       # @book_info = YAML::load_file(@book_info_path)

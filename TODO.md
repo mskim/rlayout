@@ -15,6 +15,12 @@
   - math suppoert
   - add inline float marking support??
       floats_1
+### 2022_01_31
+  - add title_A4, title_4x6_16, title_A5
+  - add subtitle_A4, subtitle_4x6_16, subtitle_A5
+  - add book_title_A4, book_title_4x6_16, book_title_A5
+  - add book_subtitle_A4, book_subtitle_4x6_16, book_subtitle_A5
+  - add frontmatter_title_A4, frontmatter_title_4x6_16, frontmatter_title_A5
 
 ### 2022_01_30
   - fix prologue isbn heading

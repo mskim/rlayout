@@ -3,10 +3,10 @@ module RLayout
 
   # 2021-11-04
   class Book
-    attr_reader :project_path, :book_info, :page_width, :width, :height
+    attr_reader :book_type, :body_doc_type, :project_path, :book_info, :page_width, :width, :height
     attr_reader :has_cover_inside_page, :has_wing, :has_toc
     attr_reader :book_toc, :body_matter_toc, :rear_matter_toc, :starting_page_number
-    attr_reader :rear_matter_docs, :body_doc_type, :ebook_page_contents
+    attr_reader :rear_matter_docs, :ebook_page_contents
     attr_reader :toc_first_page_number, :toc_doc_page_count, :toc_page_links
     attr_reader :front_matter, :body_matter, :rear_matter
     attr_reader :gripper_margin, :bleed_margin, :binding_margin
@@ -16,12 +16,13 @@ module RLayout
       @book_info_path = @project_path + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
-      @title = @book_info[:title]
       @paper_size = @book_info[:paper_size] || 'A5'
-      @paper_size = options[:paper_size] if options[:paper_size]
+      load_text_style
+      @title = @book_info[:title]
       @page_width = SIZES[@paper_size][0]
       @width = @page_width
       @height = SIZES[@paper_size][1]
+      @title = @book_info[:title]
       @starting_page_number = 1
       @gripper_margin = options[:gripper_margin] || 1*28.34646
       @binding_margin = options[:binding_margin] || 20
@@ -36,6 +37,31 @@ module RLayout
       generate_pdf_for_print
       generate_ebook unless options[:no_ebook]
       # push_to_git_repo if options[:push_to_git_repo]
+    end
+
+    def style_folder
+      @project_path +  "/_style"
+    end
+
+    def custom_text_style_path
+      style_folder + "/book_text_style.yml"
+    end
+
+    #  use custom_style if @book_info[:custome_sylte] is true
+    def load_text_style
+      if @book_info[:custom_style]
+        if File.exist?(custom_text_style_path)
+          RLayout::StyleService.shared_style_service.current_style = YAML::load_file(custom_text_style_path)
+        else
+          book_text_style_hash  = StyleService.shared_style_service.set_book_style("paperback","#{@paper_size}")
+          FileUtils.mkdir_p(style_folder) unless File.exist?(style_folder)
+          File.open(custom_text_style_path, 'w'){|f| f.write book_text_style_hash.to_yaml}
+        end
+      else
+        book_text_style_hash  = StyleService.shared_style_service.set_book_style("paperback","#{@paper_size}")
+        FileUtils.mkdir_p(style_folder) unless File.exist?(style_folder)
+        File.open(custom_text_style_path, 'w'){|f| f.write book_text_style_hash.to_yaml}
+      end
     end
 
     def toc_first_page_number

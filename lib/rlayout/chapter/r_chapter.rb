@@ -198,7 +198,6 @@
 # toc
 # if toc options is true, save toc.yml for the chapter
 module RLayout
-
   class RChapter
     attr_reader :document_path, :story_path
     attr_reader :document, :output_path, :column_count
@@ -211,9 +210,9 @@ module RLayout
     attr_reader :page_by_page, :story_md, :story_by_page, :toc
     attr_reader :grid, :default_image_location, :default_image_size
     attr_reader :local_image_folder
-    # In some documents pages are places in fixed side, isbn left(even), inside_cover right(odd),
-    # in mis-matched cases, blank page is inserted in  front of the document.
     attr_reader :starting_page_side # :left, :right, :either
+                                    # Some document should start on specific side, isbn left(even), inside_cover right(odd),
+                                    # blank page is inserted in front of the document to make it work.
 
     def initialize(options={} ,&block)
       @document_path  = options[:document_path] || options[:chapter_path]
@@ -443,9 +442,11 @@ module RLayout
       end
     end
 
+    def document_text_style_path
+      @document_path + "/document_text_style.yml"
+    end
+
     def layout_story
-      current_style = RLayout::StyleService.shared_style_service
-      current_style.current_style = CHAPTER_STYLES
       @document.pages.each do |page|
         page.layout_floats
         page.adjust_overlapping_columns
