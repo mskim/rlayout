@@ -98,6 +98,7 @@ module RLayout
     # if EMPASIS_STRONG or EMPASIS_DIAMOND are found, split para string with EMPASIS_STRONG and EMPASIS_DIAMOND segments
     # and handle them separately.
     def create_tokens
+      # TODO: fix this ???
       if @markup == "h4" || @markup == "h1"
         # for author and linked to page, check if there is markup for moving up the text, if there is enoung text_area[2]
         if  @para_string =~/\s?\^\s?$/
@@ -105,6 +106,9 @@ module RLayout
           @move_up_if_room = true
         end
       end
+
+      # TODO: fix this does not handle cases when
+      # mutiple emphsiss are present in a paragraph
       if @para_string =~EMPASIS_STRONG
         create_tokens_with_emphasis_strong(@para_string)
       elsif @para_string =~EMPASIS_ARROW
@@ -112,6 +116,7 @@ module RLayout
       elsif @para_string =~EMPASIS_DIAMOND
         create_tokens_with_emphasis_diamond(@para_string)
       else
+        # all tokens are plaine token
         create_plain_tokens(@para_string)
       end
       token_heights_are_equal = true
@@ -135,8 +140,6 @@ module RLayout
         next unless token_string
         token_options = {}
         token_options[:string]      = token_string
-        # token_options[:style_name]  = @style_name
-        # token_options[:para_style]  = @para_style
         token_options[:height]      = @para_style[:font_size]
         token_options[:style_object] = @style_object
         @tokens << RLayout::RTextToken.new(token_options)
@@ -161,8 +164,6 @@ module RLayout
           tokens_array.each do |token_string|
             emphasis_style              = {}
             emphasis_style[:string]     = token_string
-            # emphasis_style[:style_name] = 'body_gothic'
-            # emphasis_style[:para_style] = @emphasis_para_style
             emphasis_style[:height]     = @emphasis_para_style[:font_size]
             token_options[:style_object] = @style_object
             @tokens << RLayout::RTextToken.new(emphasis_style)

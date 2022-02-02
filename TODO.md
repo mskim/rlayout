@@ -1,9 +1,10 @@
 ## TODO List
 
 ### 2022_01_??
-  - footnote, ref
-  - hwp
+  - hwp parse
   - newspaper
+    - move_up_if_room in text_style
+
   - add table support
   - fix cover title text overflow
     - set title_text fit_to_box
@@ -15,6 +16,14 @@
   - math suppoert
   - add inline float marking support??
       floats_1
+  - OrderedList, UnorderedList
+  - add markup: "#", "##", "###" to text_style
+  - add char_style for emphasis
+      - font, font_color, font_style, prefix, postfix
+### 2022_02_02
+  - add test for all sizes
+    - paperback_A4, paperback_4x6_16, paperback_A5
+    - add paper_size cm
 ### 2022_01_31
   - add title_A4, title_4x6_16, title_A5
   - add subtitle_A4, subtitle_4x6_16, subtitle_A5
@@ -33,34 +42,26 @@
   - if custom: true
     - save  layout and text_style to style folder, so user can customize desing
 ### 2022_01_20
-  - layout:cover_1, 
-  - layout:cover_2, 
-  - layout:cover_3, 
-  - layout:cover_4,
-  - layout:wing_front, 
-  - layout:wing_back, 
-  - layout:isbn, 
-  - layout:inside_cover, 
-  - layout:prologue,
-  - layout:dedication,
-  - layout:toc,
-  - layout:part_cover, 
-  - layout:chapter
+  - cover_1, 
+  - cover_2, 
+  - cover_3, 
+  - cover_4,
+  - wing_front, 
+  - wing_back, 
+  - isbn, 
+  - inside_cover, 
+  - prologue,
+  - dedication,
+  - toc,
+  - part_cover, 
+  - chapter,
+  - footer_left,  
+  - footer_right, 
+  - header_left, 
+  - header_right
 
-  - custom text_style support put it in styles folder
-    - by size
-      text_style_A4_1.yml
-      text_style_A4_2.yml
-
-      text_style_16_1.yml
-      text_style_16_2.yml
-
-      text_style_A5_1.yml
-      text_style_A5_1.yml
-
-      body_style.yml
-        header, footer
-      front_matter_style.yml
+  - save custom text_style in _style folder
+    - apply custom_style  if @book_info[:custom_style] = true
 ### 2022_01_11
   - fix bug: displaying only 24 lines when line_count is 25
   - fix token_width calculation has bug 
