@@ -265,6 +265,16 @@ module RLayout
       end
     end
 
+    # called by RColumnArticle
+    def adjust_overlapping_lines_with_floats
+      @floats.each do |float|
+        float_rect = float.frame_rect
+        @graphics.each do |line|
+          line.adjust_text_area_away_from(float_rect)
+        end
+      end
+    end
+
     def char_count
       lines_char_count = 0
       @graphics.each do |line|
@@ -453,6 +463,46 @@ module RLayout
       max_y(@grid_rects.last.rect)
     end
 
+  
+    # this is used to place overlapping floars to non-overlapping position
+    def layout_floats
+      return unless @floats
+      @occupied_rects =[]
+      @floats.each_with_index do |float, i|
+        @float_rect = float.frame_rect
+        if i==0
+          @occupied_rects << float.frame_rect
+        elsif intersects_with_occupied_rects?(@occupied_rects, @float_rect)
+          move_float_to_unoccupied_area(@occupied_rects, float)
+          @occupied_rects << float.frame_rect
+        else
+          @occupied_rects << @float_rect
+        end
+      end
+      true
+    end
+
+    def intersects_with_occupied_rects?(occupied_arry, new_rect)
+      occupied_arry.each do |occupied_rect|
+        return true if intersects_rect(occupied_rect, new_rect)
+      end
+      false
+    end
+
+    # if float is overlapping, move float to unoccupied area
+    # by moving float to the bottom of the overlapping float.
+    def move_float_to_unoccupied_area(occupied_arry, float)
+      occupied_arry.each do |occupied_rect|
+        if intersects_rect(occupied_rect, float.frame_rect)
+          float.y = max_y(occupied_rect) + 0
+          if max_y(float.frame_rect) > @column_bottom
+            float.height = @column_bottom - float.y
+            float.adjust_image_height if float.respond_to?(:adjust_image_height)
+          end
+        end
+      end
+    end
+
   end
 
 
@@ -531,53 +581,6 @@ module RLayout
       @room = 0
     end
 
-    # # when grid_rect overlaps with given float,
-    # # update available text area.
-    # def update_text_area(floating_rect)
-    #   return unless intersects_rect(floating_rect, @rect)
-    #   return if @fully_covered == true
-    #   if contains_rect(floating_rect, @rect)
-    #     set_line_as_fully_covered
-    #     @overlap = true
-    #   elsif max_x(floating_rect) < max_x(@rect)
-    #     # puts "left side is covered"
-    #     @text_area = @rect.dup
-    #     # float is on the left side
-    #     overlap_width = max_x(floating_rect) - min_x(@rect)
-    #     @text_area[0] = overlap_width
-    #     @text_area[2] -= overlap_width
-    #     @room = @text_area[2]
-    #     set_line_as_fully_covered if @text_area[2] < 5  # if the layout area is too small, treat is as fully covered
-    #     @overlap = true
-    #   elsif min_x(floating_rect) > min_x(@rect)
-    #     # float is on the right side
-    #     @text_area = @rect.dup
-    #     @text_area[0] = 0 # @text_area is in local cordinate
-    #     @text_area[2] = min_x(floating_rect) - min_x(@rect)
-    #     @room = @text_area[2]
-    #     set_line_as_fully_covered if @text_area[2] < 5 # if the uncovered area is too small, treat is as fully covered
-    #     @overlap = true
-    #   else
-    #     @text_area = @rect.dup
-    #     @text_area[0] = 0 # @text_area uses local cordinate
-    #     # overlap is in the middle of the line
-    #     # take one side only, the larger side, not both
-    #     left_side_room = min_x(floating_rect) - min_x(@rect)
-    #     right_side_room = min_x(@rect) - max_x(floating_rect)
-    #     if left_side_room >= right_side_room
-    #       @text_area[2] = left_side_room
-    #       @room = @text_area[2]
-    #     else
-    #       @text_area[0] = max_x(floating_rect) - min_x(@rect)
-    #       @text_area[2] = right_side_room
-    #       @room = @text_area[2]
-    #     end
-    #     @overlap = true
-    #     set_line_as_fully_covered if left_side_room < 50 && right_side_room < 50
-    #   end
-    # end
-
-    #TODO
     def fully_covered?
       @fully_covered == true
     end

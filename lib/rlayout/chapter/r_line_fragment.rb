@@ -32,6 +32,8 @@ module RLayout
       @space_width                = options[:space_width] || 3
       @char_half_width_cushion    = @space_width/3
       options[:right_margin]      = 2 
+      # options[:stroke_width] = 1.0
+      # options[:stroke_color] = 'red' 
       super
       @content_source = options[:content_source]
       if options[:style_name]
@@ -364,7 +366,9 @@ module RLayout
       @total_token_width = token_width_sum
       @total_space_width = (@graphics.length - 1)*@space_width
       leftover_room  = @text_area[2] - (@total_token_width + @total_space_width)
-      @starting_position += @text_area[0] if @text_area[0] != 0
+      # when column @inset > 0,  @text_area[0] is not 0
+      # so handle it by @text_area[0] - @x
+      @starting_position += @text_area[0] - @x if @text_area[0] - @x != 0
       x  = @starting_position
       case @text_alignment
       when 'justify'
@@ -420,6 +424,10 @@ module RLayout
         strings << token.string if token.class != Rectangle
       end
       string = strings.join(" ")
+    end
+
+    def text_string
+      line_string
     end
 
     def force_fit

@@ -294,7 +294,6 @@ module RLayout
       else
         @body_line_count  = 25
       end
-      @body_line_count  = 25
       doc_options= {}
       doc_options[:paper_size] = @paper_size
       doc_options[:left_margin] = @left_margin
@@ -355,13 +354,14 @@ module RLayout
         @document.pages[0].relayout!
       else
         @heading[:parent] = @first_page
-        @heading[:x]      = @first_page.left_side_margin # left_margin + binding_margin
-        @heading[:y]      = 0
-        @heading[:y]      = 0
+        @heading[:x]      = @first_page.left_margin # left_margin + binding_margin
+        @heading[:y]      = @first_page.top_margin
         @heading[:width]  = @first_page.content_width # - @first_page.left_margin - @first_page.right_margin
         @heading[:is_float] = true
-        # binding.pry if self.class == RLayout::Prologue
+        @heading[:heading_height_type] = 'quarter'
         RHeading.new(@heading)
+        @first_page.layout_floats
+        @first_page.adjust_overlapping_columns
       end
       @paragraphs =[]
       @image_count = 0

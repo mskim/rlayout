@@ -3,7 +3,7 @@ module RLayout
   class Thanks < RChapter
     attr_reader :book, :path
     def initialize(options={})
-      options[:chapter_heading_height] = "quarter"
+      options[:heading_height_type] = "quarter"
       # @path = path
       # @width = options[:width]
       # @height = options[:height]

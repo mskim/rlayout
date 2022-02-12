@@ -39,6 +39,10 @@ module RLayout
       # push_to_git_repo if options[:push_to_git_repo]
     end
 
+    def custom_style?
+      @book_info[:custom_style]
+    end
+
     def style_folder
       @project_path +  "/_style"
     end
@@ -49,7 +53,7 @@ module RLayout
 
     #  use custom_style if @book_info[:custome_sylte] is true
     def load_text_style
-      if @book_info[:custom_style]
+      if custom_style?
         if File.exist?(custom_text_style_path)
           RLayout::StyleService.shared_style_service.current_style = YAML::load_file(custom_text_style_path)
         else

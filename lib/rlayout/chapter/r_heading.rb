@@ -38,21 +38,15 @@ module RLayout
   class RHeading < Container
     attr_accessor :number_object, :title_object, :subtitle_object, :quote_object, :author_object
     attr_reader :align_to_body_text, :output_path
-    attr_reader :height_sum, :chapter_heading_height # natural, quarter, half, full
-    
-    
-    # TODO
-    #   - make TitleText support para_style as well as style_name
+    attr_reader :height_sum, :heading_height_type # natural, quarter, half, full
 
-    
     def initialize(options={}, &block)
-      options[:stroke_width] = 1.0
-      options[:stroke_width] = 1
+      # options[:stroke_width] = 1.0
+      # options[:stroke_color] = 'yellow'
       super
-      @chapter_heading_height  = options[:chapter_heading_height] || "quarter"
+      @heading_height_type  = options[:heading_height_type] || "natural"
       if @parent
-        @pdf_doc = @parent.pdf_doc
-        case @chapter_heading_height
+        # @pdf_doc = @parent.pdf_doc        case @heading_height_type
         when "natural"
         when "quarter"
           @height = @parent.layout_size[1]/4
@@ -125,7 +119,7 @@ module RLayout
 
       if options[:subtitle]
         t = @subtitle_object = subtitle(options[:subtitle])
-        @subtitle_object.y = @y_position + 10
+        @subtitle_object.y = @y_position
         @y_position += t.height
       end
 
@@ -137,13 +131,17 @@ module RLayout
 
       if options[:author]
         text_alignment = options[:text_alignment] || 'center'
-        @y_position += 40
+        # @y_position += 40
         t = @author_object = author(options[:author])
-        @author_object.y = @y_position + 10
+        @author_object.y = @y_position
         @y_position += t.height
       end
-      content_height = @y_position + 100
-      @height = content_height if content_height >  @height
+      content_height = @y_position
+      if  @heading_height_type == 'natural'
+        @height = content_height + 10
+      else
+        @height = content_height if content_height >  @height
+      end
       # relayout!
 
       self

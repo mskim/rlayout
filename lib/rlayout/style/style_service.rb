@@ -63,6 +63,12 @@
 # my_namecard = NAMECARD_1[:page_front][:stack_personal] = my_personal
 # merge
 # my_namecard = NAMECARD_1[:page_front][:stack_personal].merge(my_personal)
+GOTHIC_L = "KoPubDotumPL"
+GOTHIC_M = "KoPubDotumPM"
+GOTHIC_B = "KoPubDotumPB"
+MYUNGJO_L = "KoPubBatangPL"
+MYUNGJO_M = "KoPubBatangPM"
+MYUNGJO_B = "KoPubBatangPB"
 
 DEFAULT_STYLES=<<EOF
 ---
@@ -80,7 +86,6 @@ body:
   text_line_spacing:
   space_before_in_lines:
   space_after_in_lines:
-  text_height_in_lines:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -98,9 +103,7 @@ body_gothic:
   first_line_indent: 0
   text_line_spacing:
   space_before_in_lines:
-  space_after_in_lines:
-  text_height_in_lines:
-  box_attributes: ''
+  space_after_in_lines:  box_attributes: ''
   markup: ''
   graphic_attributes: ''
 running_head:
@@ -117,7 +120,6 @@ running_head:
   text_line_spacing:
   space_before_in_lines: 1
   space_after_in_lines:
-  text_height_in_lines:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -135,7 +137,6 @@ quote:
   text_line_spacing: 2
   space_before_in_lines: 2
   space_after_in_lines: 0
-  text_height_in_lines: 1
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -152,7 +153,6 @@ announcement_1:
   text_line_spacing:
   space_before_in_lines: 2
   space_after_in_lines: 0
-  text_height_in_lines: 1
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -169,7 +169,6 @@ announcement_2:
   text_line_spacing:
   space_before_in_lines: 2
   space_after_in_lines: 0
-  text_height_in_lines: 1
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -188,7 +187,6 @@ related_story:
   text_line_spacing:
   space_before_in_lines:
   space_after_in_lines:
-  text_height_in_lines:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -206,7 +204,6 @@ caption_title:
   text_line_spacing:
   space_before_in_lines:
   space_after_in_lines:
-  text_height_in_lines:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -224,7 +221,6 @@ caption:
   text_line_spacing:
   space_before_in_lines:
   space_after_in_lines:
-  text_height_in_lines:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -260,7 +256,6 @@ author:
   text_line_spacing:
   space_before_in_lines: 0
   space_after_in_lines:
-  text_height_in_lines:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -278,7 +273,6 @@ linked_story:
   text_line_spacing:
   space_before_in_lines: 0
   space_after_in_lines:
-  text_height_in_lines:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -315,7 +309,6 @@ title_4_5:
   text_line_spacing:
   space_before_in_lines: 1
   space_after_in_lines: 2
-  text_height_in_lines: 2
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -333,7 +326,6 @@ title_4:
   text_line_spacing:
   space_before_in_lines: 1
   space_after_in_lines: 2
-  text_height_in_lines: 2
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -351,7 +343,6 @@ title_3:
   text_line_spacing:
   space_before_in_lines: 1
   space_after_in_lines: 2
-  text_height_in_lines: 2
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -369,7 +360,6 @@ title_2:
   text_line_spacing:
   space_before_in_lines: 1
   space_after_in_lines: 2
-  text_height_in_lines: 2
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -387,7 +377,6 @@ book_title:
   text_line_spacing:
   space_before_in_lines: 1
   space_after_in_lines: 1
-  text_height_in_lines: 2
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -405,7 +394,6 @@ title:
   text_line_spacing: 0
   space_before_in_lines: 0
   space_after_in_lines: 0
-  text_height_in_lines: 3
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -423,7 +411,6 @@ subtitle_main:
   text_line_spacing: 6.0
   space_before_in_lines: 1
   space_after_in_lines: 2
-  text_height_in_lines: 2
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -441,7 +428,6 @@ subtitle_M:
   text_line_spacing: 7.0
   space_before_in_lines: 0
   space_after_in_lines: 1
-  text_height_in_lines: 2
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -459,7 +445,6 @@ subtitle_S:
   text_line_spacing: 6.0
   space_before_in_lines: 0
   space_after_in_lines: 1
-  text_height_in_lines: 2
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -477,7 +462,6 @@ subtitle:
   text_line_spacing: 6.0
   space_before_in_lines: 0.5
   space_after_in_lines: 0.5
-  text_height_in_lines: 1
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -495,7 +479,6 @@ news_line_title:
   text_line_spacing:
   space_before_in_lines:
   space_after_in_lines:
-  text_height_in_lines:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -513,7 +496,6 @@ brand_name:
   text_line_spacing:
   space_before_in_lines:
   space_after_in_lines:
-  text_height_in_lines:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -530,8 +512,7 @@ subject_head_L:
   scale: 100.0
   text_line_spacing:
   space_before_in_lines:
-  space_after_in_lines:
-  text_height_in_lines:
+  space_after_in_lines
   box_attributes: ''
   markup: ''
   graphic_attributes:
@@ -557,7 +538,6 @@ subject_head_M:
   text_line_spacing:
   space_before_in_lines:
   space_after_in_lines:
-  text_height_in_lines:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -575,7 +555,6 @@ editor_note:
   text_line_spacing:
   space_before_in_lines:
   space_after_in_lines:
-  text_height_in_lines:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -593,7 +572,6 @@ title_opinion:
   text_line_spacing:
   space_before_in_lines: 1
   space_after_in_lines: 2
-  text_height_in_lines: 2
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -611,7 +589,6 @@ title_editorial:
   text_line_spacing:
   space_before_in_lines: 0
   space_after_in_lines: 1
-  text_height_in_lines: 2
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -629,7 +606,6 @@ title_7:
   text_line_spacing:
   space_before_in_lines: 1
   space_after_in_lines: 2
-  text_height_in_lines: 2
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -647,7 +623,6 @@ title_6:
   text_line_spacing:
   space_before_in_lines: 1
   space_after_in_lines: 2
-  text_height_in_lines: 2
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
@@ -1250,8 +1225,8 @@ module RLayout
       if @current_style.class == String
         @current_style = YAML::load(@current_style)
       end
-      style = @current_style[style_name]
-      style = @current_style['body'] unless style
+      style = @current_style[style_name] || @current_style[style_name.to_sym]
+      style = @current_style['body'] || @current_style[:body] unless style
       style = Hash[style.map{ |k, v| [k.to_sym, v] }]
       @pdf_doc      ||= HexaPDF::Document.new
       font_folder   = "/Users/Shared/SoftwareLab/font_width"
@@ -1364,8 +1339,6 @@ body:
   text_line_spacing:
   space_before_in_lines:
   space_after_in_lines:
-  text_height_in_lines:
-  box_attributes: ''
   markup: ''
   graphic_attributes: ''
 body_gothic:
@@ -1558,11 +1531,6 @@ body:
   tracking: -0.4
   space_width: 4.0
   scale: 98.0
-  text_line_spacing:
-  space_before_in_lines:
-  space_after_in_lines:
-  text_height_in_lines:
-  box_attributes: ''
   markup: ''
   graphic_attributes: ''
 body_gothic:
@@ -1575,12 +1543,8 @@ body_gothic:
   text_alignment: justify
   tracking: -0.2
   space_width: 4.0
-  # space_width: 3.0
   scale: 100.0
-  first_line_indent: 0
-  text_line_spacing:
-  space_before_in_lines:
-  space_after_in_lines:
+  first_line_indent: 
 running_head:
   korean_name: 본문중제
   font_family: KoPub돋움체_Pro Medium
@@ -1591,9 +1555,6 @@ running_head:
   tracking: -0.2
   space_width: 3.0
   scale: 100.0
-  text_line_spacing:
-  space_before_in_lines: 1
-  space_after_in_lines:
 quote:
   korean_name: 발문
   font_family: KoPub바탕체_Pro Medium
@@ -1876,7 +1837,7 @@ title:
   korean_name: 본문제목_A5
   font_family: KoPub바탕체_Pro Bold
   font: KoPubBatangPB
-  font_size: 20.0
+  font_size: 18.0
   text_color: CMYK=100,0,0,0
   text_alignment: left
   tracking: -1.0

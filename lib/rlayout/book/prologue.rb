@@ -5,7 +5,7 @@ module RLayout
     attr_reader :book, :path, :layout_template_path
     def initialize(options={})
       @document_path  = options[:document_path] || options[:chapter_path]
-      options[:chapter_heading_height] = "quarter"
+      options[:heading_height_type] = "quarter"
       super
     end
 

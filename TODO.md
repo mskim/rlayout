@@ -1,5 +1,5 @@
 ## TODO List
-
+  - add save_rakefile to Book, RDOcument, ColumnArticle 
 ### 2022_01_??
   - hwp parse
   - newspaper
@@ -20,6 +20,34 @@
   - add markup: "#", "##", "###" to text_style
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
+
+### 2022_02_13
+  - apply line_space, space_before_in_line, space_after_in_line
+### 2022_02_04
+
+    story.md
+    ---
+    title: we are the world
+    subtile: so lets starting giving
+
+
+    style.yml
+    ---
+    layout: |
+      Isbn.a4 do
+      end
+    text_style:
+      title: 
+        font: Myungjo_B
+        font_size: 18
+      subtitle: Gothic_M
+        font_size: 14
+
+### 2022_02_03
+
+### 2022_02_03
+  - custom style
+  - author_wing, other_books_wing
 ### 2022_02_02
   - add test for all sizes
     - paperback_A4, paperback_4x6_16, paperback_A5
@@ -30,7 +58,6 @@
   - add book_title_A4, book_title_4x6_16, book_title_A5
   - add book_subtitle_A4, book_subtitle_4x6_16, book_subtitle_A5
   - add frontmatter_title_A4, frontmatter_title_4x6_16, frontmatter_title_A5
-
 ### 2022_01_30
   - fix prologue isbn heading
 ### 2022_01_28

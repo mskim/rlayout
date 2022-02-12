@@ -31,6 +31,8 @@ module RLayout
         @text_string = @text_string.sub(/\{\s?(-?\d)\s?\}\s?$/, "")
       end
       options[:fill_color]    = options.fetch(:fill_color, 'clear')
+      # options[:stroke_width]  = 1.0
+      # options[:stroke_color] = 'blue'
       super
       @body_line_height       = options[:body_line_height] #|| 14
       @style_name             = options[:style_name]
@@ -44,9 +46,9 @@ module RLayout
         para_hash = @current_style_service.current_style[@style_name]
         if para_hash.class == String
           @para_style = YAML::load(para_hash)
-          @text_alignment = @para_style[:text_alignment] || @para_style['text_alignment']
+          @text_alignment = @para_style[:text_alignment] || @para_style['text_alignment'] || 'left'
         else
-          @text_alignment = para_hash[:text_alignment] || para_hash['text_alignment']
+          @text_alignment = para_hash[:text_alignment] || para_hash['text_alignment'] || 'left'
         end
       elsif options[:para_style]
         if @adjust_size
@@ -78,7 +80,7 @@ module RLayout
       @font_wrapper           = @style_object.font
       space_glyph             = @font_wrapper.decode_utf8(" ").first
       @space_width            = @style_object.scaled_item_width(space_glyph)
-      @line_height            = @style_object.font_size*1.5
+      @line_height            = @style_object.font_size*1.2
       # @line_height            = @font_wrapper[:font_size] + @line_space
       @current_line           = RLineFragment.new(parent:self, contnet_source: self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, style_name: @style_name, para_style: @para_style,  text_alignment: @text_alignment, space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
       @current_line_y         +=@current_line.height
@@ -130,6 +132,7 @@ module RLayout
       @tokens += string.split(" ").collect do |token_string|
         options = {}
         options[:string]      = token_string
+        options[:height]      = @line_height
         options[:style_object]  = @style_object
         options[:y]           = 0
         RLayout::RTextToken.new(options)

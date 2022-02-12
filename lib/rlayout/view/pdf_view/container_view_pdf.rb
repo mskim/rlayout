@@ -49,7 +49,7 @@ module RLayout
       @floats.each do |g|
         g.draw_pdf(canvas, pdf_doc: @pdf_doc)
       end
-      # end
+      draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
     end
 
     def flipped_origin

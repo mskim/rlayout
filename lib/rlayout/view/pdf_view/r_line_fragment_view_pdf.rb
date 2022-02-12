@@ -23,13 +23,6 @@ module RLayout
       end
       # draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
 
-      # can we use style_name here???
-      # if  @para_style && @para_style[:korean_name] == "본문명조"
-      #   # TODO redo mixed token strategy, 
-      #   # set style_name to empasied token only
-      #     draw_tokens(canvas)
-      #   # end
-
       if  @style_name && @style_name == "caption"
         canvas.save_graphics_state do
           draw_mixed_style_tokens(canvas)
@@ -67,6 +60,10 @@ module RLayout
           end
           canvas.font(font_wapper, size: font_size)
           draw_tokens(canvas)
+          if @parent.class == RLayout::TitleText
+            @stroke[:stroke_thickness] = 1
+            draw_stroke(canvas) 
+          end
         end
       end
     end
@@ -83,7 +80,6 @@ module RLayout
     end
 
     def draw_tokens(canvas)
-      # puts line_string for debug
       @graphics.each do |token|
         if @font_size.nil?
           @font_size = 9.4

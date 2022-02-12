@@ -46,19 +46,10 @@ module RLayout
     end
 
     def generate_pdf
-      # check if  content.md file exists,
-      # if so use it.
-      # if not save new default_content as content.md
-      # designer should modify from this file.
       if File.exist?(content_path)
       else
         File.open(content_path,'w'){|f| f.write default_content }
       end
-
-      # check if  layout.rb file exists,
-      # if so use it to generate pdf.
-      # if not save new default layout.rb
-      # designer should modify from this file.
       if File.exist?(layout_path)
         layout_text = File.open(layout_path,'r'){|f| f.read}
         @column = eval(layout_text)
@@ -82,20 +73,12 @@ module RLayout
     def read_content
       @story  = Story.new(content_path).markdown2para_data
       @heading = @story[:heading] || {}
-
-      # if @heading
-      #   @column.make_article_heading(@heading)
-      #   # make other floats quotes, opinition writer's personal_picture
-      #   @column.make_floats(@heading)
-      # end
-
       @paragraphs =[]
       @story[:paragraphs].each do |para|
         para_options = {}
         para_options[:markup]         = para[:markup]
         para_options[:layout_expand]  = [:width]
         para_options[:para_string]    = para[:para_string]
-        # para_options[:text_fit]       = FIT_FONT_SIZE
         para_options[:line_width]     = @column.column_width  if para_options[:create_para_lines]
         @paragraphs << RParagraph.new(para_options)
       end

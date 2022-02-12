@@ -39,12 +39,14 @@ module RLayout
     def draw_pdf(canvas, options={})
       @pdf_doc = parent.pdf_doc if parent
       flipped = flipped_origin
+      puts  "flipped:#{flipped}"
       @graphics.each do |g|
         g.draw_pdf(canvas)
       end
       @floats.each do |g|
         g.draw_pdf(canvas)
       end
+      draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
     end
 
 

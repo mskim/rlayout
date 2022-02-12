@@ -117,6 +117,8 @@ require File.dirname(__FILE__) + "/rlayout/book/book_cover"
 require File.dirname(__FILE__) + "/rlayout/book/cover_spread"
 require File.dirname(__FILE__) + "/rlayout/book/back_wing"
 require File.dirname(__FILE__) + "/rlayout/book/back_page"
+require File.dirname(__FILE__) + "/rlayout/book/column_article"
+
 require File.dirname(__FILE__) + "/rlayout/book/seneca"
 require File.dirname(__FILE__) + "/rlayout/book/front_page"
 require File.dirname(__FILE__) + "/rlayout/book/front_wing"
