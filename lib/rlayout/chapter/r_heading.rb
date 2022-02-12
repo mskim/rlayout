@@ -46,7 +46,8 @@ module RLayout
       super
       @heading_height_type  = options[:heading_height_type] || "natural"
       if @parent
-        # @pdf_doc = @parent.pdf_doc        case @heading_height_type
+        # @pdf_doc = @parent.pdf_doc        
+        case @heading_height_type
         when "natural"
         when "quarter"
           @height = @parent.layout_size[1]/4
