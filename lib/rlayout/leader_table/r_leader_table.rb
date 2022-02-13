@@ -21,7 +21,7 @@ module RLayout
     attr_reader :style_serice, :leader_style_object
 
     def initialize(options={})
-      options[:stroke_width] = 1
+      options[:stroke_width] = 0
       super
       @pdf_doc = @parent.pdf_doc if @parent
       @table_data = options[:table_data]

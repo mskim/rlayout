@@ -16,7 +16,7 @@ module RLayout
     attr_reader :row_data, :leading_char
     attr_accessor :row_index
     def initialize(options={})
-      options[:stroke_width] = 1
+      options[:stroke_width] = 0
       super
       @row_index    = options[:row_index]
       @row_data     = options[:row_data]
