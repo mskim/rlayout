@@ -168,8 +168,8 @@ require File.dirname(__FILE__) + "/rlayout/newspaper/news_toc"
 require File.dirname(__FILE__) + "/rlayout/newspaper/news_pillar"
 require File.dirname(__FILE__) + "/rlayout/newspaper/news_page"
 
-require File.dirname(__FILE__) + "/rlayout/magazine/magazine_article.rb"
-require File.dirname(__FILE__) + "/rlayout/magazine/cover.rb"
+# require File.dirname(__FILE__) + "/rlayout/magazine/magazine_article.rb"
+# require File.dirname(__FILE__) + "/rlayout/magazine/magazine_cover.rb"
 
 require File.dirname(__FILE__) + "/rlayout/svg/circle"
 require File.dirname(__FILE__) + "/rlayout/svg/image"
