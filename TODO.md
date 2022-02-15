@@ -21,6 +21,39 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+### 2022_02_15
+  - run rake in doc folder
+  - line_color
+  - ZineGo for Magazine
+  - _design_guide
+      chapter
+      toc
+      isbn
+      front_matter_doc
+      part_cover
+      cover
+      wing_author
+      wing_book_promo
+
+
+
+### 2022_02_14
+  - add text_style to ColumnArticle
+  - TitleText
+    space_unit # body_line_height, line_height, cm, mm, inch
+    line_spacing, space_above, space_after, line_spacing
+  - add pg methods
+
+    heading, 
+    height_height_type # natural, quarter, half, full
+    fit_type  fit_to_box, 
+    v_alingment
+    
+    title, subtitle, author, quote, leading
+    authomatically set text_style
+
+    Seneca
+      - direction 
 ### 2022_02_13
   - apply line_space, space_before_in_line, space_after_in_line
 ### 2022_02_04

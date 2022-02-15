@@ -171,7 +171,7 @@ module RLayout
     end
 
     def save_text_style
-      File.open(text_style_path, 'w'){|f| f.write default_text_style.to_yaml}
+      File.open(text_style_path, 'w'){|f| f.write default_text_style.to_yaml} unless File.exist?(text_style_path)
     end
 
     def default_text_style

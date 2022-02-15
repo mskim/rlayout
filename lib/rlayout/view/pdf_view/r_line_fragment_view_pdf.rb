@@ -22,7 +22,6 @@ module RLayout
         end
       end
       # draw_stroke(canvas) if @stroke.sides != [0,0,0,0]
-
       if  @style_name && @style_name == "caption"
         canvas.save_graphics_state do
           draw_mixed_style_tokens(canvas)

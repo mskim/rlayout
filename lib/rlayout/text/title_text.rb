@@ -21,7 +21,8 @@ module RLayout
     attr_accessor :tokens, :text_string, :string, :style_name, :para_style, :room, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
     attr_accessor :single_line_title, :force_fit_title, :token_union_style, :adjust_size
-    attr_reader :style_object, :text_alignment
+    attr_reader :style_object, :text_alignment, :text_line_spacing
+    
     def initialize(options={})
       @text_string                 = options.delete(:text_string)
       # parse for adjust_size pattern, which is at the end of string with {}
@@ -41,7 +42,13 @@ module RLayout
       @room                   = @width
       @single_line_title      = options[:single_line_title]
       @current_style_service = RLayout::StyleService.shared_style_service
+      @text_line_spacing = 0
+      @space_before = 0
+      @space_after = 0
       if @style_name
+        @text_line_spacing = @current_style_service.current_style[@style_name]['text_line_spacing'] || 0
+        @space_before = @current_style_service.current_style[@style_name]['space_before'] || 0
+        @space_after = @current_style_service.current_style[@style_name]['space_after'] || 0
         @style_object = @current_style_service.style_object(@style_name, adjust_size: @adjust_size)
         para_hash = @current_style_service.current_style[@style_name]
         if para_hash.class == String
@@ -53,12 +60,11 @@ module RLayout
       elsif options[:para_style]
         if @adjust_size
           @para_style[:font_size] += @adjust_size
-
         end
         @style_object = @current_style_service.style_object_from_para_style(options[:para_style])
-        if options[:para_style][:text_alignment]
-          @text_alignment = options[:para_style][:text_alignment] || 'left'
-        end
+        @text_alignment = options[:para_style][:text_alignment] || 'left'
+        @space_before = @current_style_service.current_style[@style_name][:space_before] || 0
+        @space_after = @current_style_service.current_style[@style_name][:space_after] || 0
       else
         @para_style             = {}
         @para_style[:font]      = options.fetch(:font, 'KoPubBatangPM')
@@ -74,7 +80,7 @@ module RLayout
         @style_object = @current_style_service.style_object_from_para_style(options[:para_style])
         @text_alignment = 'left'
       end
-      @current_line_y         = @top_margin + @top_inset
+      @current_line_y         = @top_margin + @top_inset + @space_before
       @starting_x             = @left_margin + @left_inset
       @line_width             = @width - @starting_x - @right_margin - @right_inset
       @font_wrapper           = @style_object.font
@@ -83,7 +89,7 @@ module RLayout
       @line_height            = @style_object.font_size*1.2
       # @line_height            = @font_wrapper[:font_size] + @line_space
       @current_line           = RLineFragment.new(parent:self, contnet_source: self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, style_name: @style_name, para_style: @para_style,  text_alignment: @text_alignment, space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
-      @current_line_y         +=@current_line.height
+      @current_line_y         +=@current_line.height + @text_line_spacing
       create_tokens
       layout_tokens
       ajust_height_as_body_height_multiples
@@ -149,22 +155,24 @@ module RLayout
       new_line                = RLineFragment.new(parent:self, contnet_source: self,  x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, style_name: @style_name, para_style: @para_style,  text_alignment: @text_alignment, space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
       @current_line.next_line = new_line if @current_line
       @current_line           = new_line
-      @current_line_y         += @current_line.height
+      @current_line_y         += @current_line.height + @text_line_spacing
       @current_line
     end
 
     def line_height_sum
-      @graphics.map{|line| line.height}.reduce(:+)
+      @graphics.map{|line| line.height + @text_line_spacing}.reduce(:+)
     end
 
-    def adjust_height_as_height_in_lines
-      @height = @height_in_lines*@body_line_height
-    end
+    # def adjust_height_as_height_in_lines
+    #   @height = @height_in_lines*@body_line_height
+    # end
 
     def ajust_height_as_body_height_multiples
       # if @body_line_height is not given, return the height sum of lines
       unless  @body_line_height
-        @height = @graphics.map{|line| line.height}.reduce(:+)
+        @height = @space_before
+        @height += line_height_sum
+        @height += @space_after
         return 
       end
       # We want to keeep it as multple of body_line_height

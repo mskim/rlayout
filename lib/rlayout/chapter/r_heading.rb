@@ -246,6 +246,10 @@ module RLayout
       atts[:text_alignment]       = options[:text_alignment] || 'center'
       atts[:layout_expand]        = [:width]
       atts[:fill_color]           = options.fetch(:fill_color, 'clear')
+      atts[:line_spacing]         = options.fetch(:fill_color, 0)
+      atts[:space_before]         = options.fetch(:space_before, 0)
+      atts[:space_after]         = options.fetch(:space_before, 0)
+
       atts[:parent]               = self
       # @title_object               = Text.new(atts)
       @title_object               = TitleText.new(atts)
