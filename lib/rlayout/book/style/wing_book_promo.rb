@@ -1,25 +1,7 @@
 require 'yaml'
 module RLayout
-  class RChapter
-    def style_hash
-      h = {
-        doc_info: @doc_info,
-        text_style: text_style,
-        char_style: char_style,
-      } 
-    end
-
-    def default_doc_info
-      doc_info = {
-        doc_type: 'chapter',
-        paper_size: 'A4',
-        starting_page_side: 'either',
-        margins: [50,50,50,50],
-        starting_page: 1,
-        height_type: 'half'
-        has_footer: true
-      }
-    end
+  class WingBookPromo
+    include Styleable
 
     def text_style
       text_style = {
@@ -50,9 +32,7 @@ module RLayout
       }
     end
     
-    def save_style(style_path)
-      File.open(style_path, 'w'){|f| f.write style_hash.to_yaml}
-    end
+
   end
 
 end

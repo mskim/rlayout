@@ -21,19 +21,39 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+### 2022_02_16
+  - base, global, and local text_style
+  - rake save_custom_style
+  - replace global style with custom style 
+  - replace font name with Global Constant
 ### 2022_02_15
+  - web_githook
+    - book_info, 
+    - doc_info for each doc
+      paper_size:
+      doc_type: chapter, prologue, etc ...
+
+  - if book_info cutom_style: true
+      save text_style and rake file
+  - put self.class name in text_style file name
+    - chapter_text_style.yml
+    - cover_text_style.yml
+    - toc_text_style.yml
+    - prologue_text_style.yml
+    - isbn_text_style.yml
+
   - run rake in doc folder
   - line_color
   - ZineGo for Magazine
-  - _design_guide
-      chapter
-      toc
-      isbn
-      front_matter_doc
-      part_cover
-      cover
-      wing_author
-      wing_book_promo
+  - _style
+      chapter.yml
+      toc.yml
+      isbn.yml
+      front_matter_doc.yml
+      part_cover.yml
+      cover.yml
+      wing_author.yml
+      wing_book_promo.yml
 
 
 

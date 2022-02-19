@@ -4,19 +4,10 @@ module RLayout
   class Prologue < RChapter
     attr_reader :book, :path, :layout_template_path
     def initialize(options={})
-      @document_path  = options[:document_path] || options[:chapter_path]
+      @document_path  = options[:document_path] || options[:document_path]
       options[:heading_height_type] = "quarter"
       super
     end
-
-    # def read_story
-
-    # end
-
-    # def layout_story
-
-
-    # end
 
     def self.sample_story
       <<~EOF

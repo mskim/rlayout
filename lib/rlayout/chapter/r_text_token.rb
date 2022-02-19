@@ -64,7 +64,6 @@ module RLayout
     end
 
     # def draw_text(canvas)
-    #   binding.pry
     #   if @string.length > 0 
     #     # TODO replace it with set_
     #     @style_service = RLayout::StyleService.shared_style_service

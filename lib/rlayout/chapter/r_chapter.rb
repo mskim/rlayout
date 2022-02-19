@@ -215,7 +215,8 @@ module RLayout
                                     # blank page is inserted in front of the document to make it work.
 
     def initialize(options={} ,&block)
-      @document_path  = options[:document_path] || options[:chapter_path]
+      @document_path  = options[:document_path]
+      @custom_style = options[:custom_style]
       @starting_page_side = options[:starting_page_side] || :either_side
       if options[:book_info]
         @book_info      = options[:book_info]
@@ -263,6 +264,7 @@ module RLayout
       @toc_content                = []
       @document.document_path = @document_path
       @document.starting_page_number = @starting_page_number
+      load_text_style
       read_story
       place_page_floats(options)
       layout_story

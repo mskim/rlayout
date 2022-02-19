@@ -4,13 +4,15 @@
 
 module RLayout
   class ColumnArticle
-    attr_reader :project_path
+    attr_reader :document_path
     attr_reader :width, :height, :left_margin, :top_margin, :right_margin,  :bottom_margin
     attr_reader :custom_style, :column
     attr_reader :save_rakefile
 
-    def initialize(project_path, options={})
-      @project_path = project_path
+    include Styleable
+
+    def initialize(document_path, options={})
+      @document_path = document_path
       @paper_size = options[:paper_size] || 'A4'
       @width = options[:width] || SIZES[@paper_size][0]
       @height = options[:height] || SIZES[@paper_size][1]
@@ -42,29 +44,29 @@ module RLayout
     end
 
     def layout_path
-      @project_path + "/layout.rb"
+      @document_path + "/layout.rb"
     end
 
     def output_path
-      @project_path + "/output.pdf"
+      @document_path + "/output.pdf"
     end
 
     def story_path
-      @project_path + "/story.md"
+      @document_path + "/story.md"
     end
 
     #  use custom_style if @book_info[:custome_sylte] is true
-    def load_text_style
-      if @custom_style
-        if File.exist?(text_style_path)
-          RLayout::StyleService.shared_style_service.current_style = YAML::load_file(text_style_path)
-        else
-          text_style_hash  = StyleService.shared_style_service.set_book_style("paperback","#{@paper_size}")
-          FileUtils.mkdir_p(style_folder) unless File.exist?(style_folder)
-          File.open(text_style_path, 'w'){|f| f.write text_style_hash.to_yaml}
-        end
-      end
-    end
+    # def load_text_style
+    #   if @custom_style
+    #     if File.exist?(text_style_path)
+    #       RLayout::StyleService.shared_style_service.current_style = YAML::load_file(text_style_path)
+    #     else
+    #       text_style_hash  = StyleService.shared_style_service.set_book_style("paperback","#{@paper_size}")
+    #       FileUtils.mkdir_p(style_folder) unless File.exist?(style_folder)
+    #       File.open(text_style_path, 'w'){|f| f.write text_style_hash.to_yaml}
+    #     end
+    #   end
+    # end
 
     def read_story
       @story  = Story.new(story_path).markdown2para_data
@@ -103,7 +105,7 @@ module RLayout
     end
 
     def pdf_path
-      @project_path + "/output.pdf"
+      @document_path + "/output.pdf"
     end
   
     def default_story
@@ -135,84 +137,82 @@ module RLayout
     end
 
     def layout_path
-      @project_path + "/layout.rb"
+      @document_path + "/layout.rb"
     end
     
     def save_layout
       File.open(layout_path, 'w'){|f| f.write default_layout} unless File.exist?(layout_path)
     end
 
-    def rakefile_path
-      @project_path + "/Rakefile"
-    end
+    # def rakefile_path
+    #   @document_path + "/Rakefile"
+    # end
 
-    def rakefile
-      s=<<~EOF
-      require 'rlayout'
+    # def rakefile
+    #   s=<<~EOF
+    #   require 'rlayout'
       
-      task :default => [:generate_book]
+    #   task :default => [:generate_pdf]
       
-      desc 'generate book pdf, ebook'
-      task :generate_book do
-        project_path = File.dirname(__FILE__)
-        RLayout::ColumnArticle.new(project_path)
-      end
-      
+    #   desc 'generate pdf'
+    #   task :generate_pdf do
+    #     document_path = File.dirname(__FILE__)
+    #     #{self.class}.new(document_path)
+    #   end
+    #   EOF
+    # end
 
-      EOF
-    end
-
-    def save_rakefile
-      File.open(rakefile_path, 'w'){|f| f.write rakefile} unless File.exist?(rakefile_path)
-    end
+    # def save_rakefile
+    #   File.open(rakefile_path, 'w'){|f| f.write rakefile} unless File.exist?(rakefile_path)
+    # end
     
-    def text_style_path
-      @project_path + "/text_style.yml"
-    end
+    # def text_style_path
+    #   @document_path + "/text_style.yml"
+    # end
 
-    def save_text_style
-      File.open(text_style_path, 'w'){|f| f.write default_text_style.to_yaml} unless File.exist?(text_style_path)
-    end
+    # def save_text_style
+    #   File.open(text_style_path, 'w'){|f| f.write default_text_style.to_yaml} unless File.exist?(text_style_path)
+    # end
 
-    def default_text_style
-      {
-        'body'=> {
-          'font'=>  'Shinmoon',
-          'font_size'=>  11.0,
-          'text_alignment'=>  'justify',
-          'first_line_indent'=>  11.0,
-        },
-        'title'=>  {
-          'font'=>  MYUNGJO_B,
-          'font_size'=>  16.0,
-          'text_alignment'=>  'left',
-          # line_space: 'single' # half, single, double
-        },
-        'subtitle'=>  {
-          'font'=>  GOTHIC_L,
-          'font_size'=>  12.0,
-          'text_alignment'=>  'left',
-        },
-        'running_head'=>  {
-          'font'=>  GOTHIC_M,
-          'font_size'=>  12.0,
-          'markup'=>  '#',
-          'text_alignment'=>  'left',
-          'space_before'=>  1,
-        },
-        'running_head_2'=>  {
-          'font'=>  GOTHIC_L,
-          'font_size'=>  11.0,
-          'markup'=>  '##',
-          'text_alignment'=>  'middle',
-          'space_before'=>  1,
-        },
-        'footer'=>  {
-          'font'=>  MYUNGJO_M,
-          'font_size'=>  7.0, 
-        },
-      }
-    end
+    # def default_text_style
+    #   {
+    #     'body'=> {
+    #       'font'=>  'Shinmoon',
+    #       'font_size'=>  11.0,
+    #       'text_alignment'=>  'justify',
+    #       'first_line_indent'=>  11.0,
+    #     },
+    #     'title'=>  {
+    #       'font'=>  MYUNGJO_B,
+    #       'font_size'=>  16.0,
+    #       'text_alignment'=>  'left',
+    #       # line_space: 'single' # half, single, double
+    #     },
+    #     'subtitle'=>  {
+    #       'font'=>  GOTHIC_L,
+    #       'font_size'=>  12.0,
+    #       'text_alignment'=>  'left',
+    #     },
+    #     'running_head'=>  {
+    #       'font'=>  GOTHIC_M,
+    #       'font_size'=>  12.0,
+    #       'markup'=>  '#',
+    #       'text_alignment'=>  'left',
+    #       'space_before'=>  1,
+    #     },
+    #     'running_head_2'=>  {
+    #       'font'=>  GOTHIC_L,
+    #       'font_size'=>  11.0,
+    #       'markup'=>  '##',
+    #       'text_alignment'=>  'middle',
+    #       'space_before'=>  1,
+    #     },
+    #     'footer'=>  {
+    #       'font'=>  MYUNGJO_M,
+    #       'font_size'=>  7.0, 
+    #     },
+    #   }
+    # end
     
   end
 

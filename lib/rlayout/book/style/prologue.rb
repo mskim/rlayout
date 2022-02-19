@@ -13,7 +13,7 @@ require 'yaml'
 # MYUNGJO_B = "KoPubBatangPB"i
 
 module RLayout
-  class Isbn
+  class Prologue
     include Styleable
 
 
@@ -92,30 +92,6 @@ module RLayout
 
     end
     
-    # def char_style 
-    #   char_style = {
-    #     itatic: { 
-    #       font: 'Shinmoon',
-    #       marker: "__"
-    #     },
-    #     bold: {
-    #         font: 'Shinmoon',
-    #       marker: "__" 
-    #     }
-    #   }
-    # end
-
-    # def footer_style
-    #   footer_style = {
-    #     left: 
-    #       x: "@left_margin",
-    #       text_string: "#{@page_number}",
-    #     right:
-    #       from_right: "@right_margin",
-    #       text_string: "#{@chapter_title} #{@page_number}",
-    #   }
-    # end
-
     def save_style(style_path)
       File.open(style_path, 'w'){|f| f.write style_hash.to_yaml}
     end

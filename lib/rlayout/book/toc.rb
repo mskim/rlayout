@@ -13,10 +13,11 @@ module RLayout
     attr_reader :toc_content, :toc_title
     attr_reader :title, :paper_size, :page_count
     attr_reader :link_info, :max_page, :parts_count, :no_table_title
-    attr_reader :toc_item_count, :paper_size
+    attr_reader :toc_item_count, :paper_size, :custom_style
 
     def initialize(options={})
       @document_path  = options[:document_path]
+      @custom_style = options[:custom_style]
       @max_page = options[:max_page]
       @toc_item_count = options[:toc_item_count] || 20
       @parts_count = options[:parts_count]
@@ -37,7 +38,7 @@ module RLayout
         puts "Not a @document kind created !!!"
         return
       end
-      
+      load_text_style
       read_toc
       layout_toc
       @link_info = update_link_info

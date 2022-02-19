@@ -51,6 +51,8 @@ require File.dirname(__FILE__) + "/rlayout/grid/grid_table"
 # require File.dirname(__FILE__) + "/rlayout/container_extended/memo_area"
 
 require File.dirname(__FILE__) + "/rlayout/style/style_service"
+require File.dirname(__FILE__) + "/rlayout/style/styleable"
+
 # require File.dirname(__FILE__) + "/rlayout/style/grid_layout"
 # require File.dirname(__FILE__) + "/rlayout/style/image_layout"
 require File.dirname(__FILE__) + "/rlayout/pdf/pdf_utils"
@@ -142,6 +144,7 @@ require File.dirname(__FILE__) + "/rlayout/book/isbn"
 require File.dirname(__FILE__) + "/rlayout/book/thanks"
 require File.dirname(__FILE__) + "/rlayout/book/dedication"
 require File.dirname(__FILE__) + "/rlayout/book/inside_cover"
+require File.dirname(__FILE__) + "/rlayout/book/style/chapter"
 
 require File.dirname(__FILE__) + "/rlayout/newspaper/news_box"
 require File.dirname(__FILE__) + "/rlayout/view/pdf_view/news_article_view"

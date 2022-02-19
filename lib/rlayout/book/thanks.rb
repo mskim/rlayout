@@ -4,15 +4,8 @@ module RLayout
     attr_reader :book, :path
     def initialize(options={})
       options[:heading_height_type] = "quarter"
-      # @path = path
-      # @width = options[:width]
-      # @height = options[:height]
-      # @layout_template_path = options[:layout_template_path]
-      # generate_pdf
-      # self
       super
     end
-
 
     def self.sample_story
       <<~EOF
