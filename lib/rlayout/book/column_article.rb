@@ -3,13 +3,11 @@
 # A single column text or item
 
 module RLayout
-  class ColumnArticle
+  class ColumnArticle < DocumentBase
     attr_reader :document_path
     attr_reader :width, :height, :left_margin, :top_margin, :right_margin,  :bottom_margin
     attr_reader :custom_style, :column
     attr_reader :save_rakefile
-
-    include Styleable
 
     def initialize(document_path, options={})
       @document_path = document_path

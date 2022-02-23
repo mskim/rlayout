@@ -13,9 +13,7 @@ require 'yaml'
 # MYUNGJO_B = "KoPubBatangPB"i
 
 module RLayout
-  class Prologue
-    include Styleable
-
+  class Prologue < DocumentBase
 
     def default_text_style
       s=<<~EOF

@@ -13,9 +13,7 @@ require 'yaml'
 # MYUNGJO_B = "KoPubBatangPB"i
 
 module RLayout
-  class PartCover
-    include Styleable
-
+  class PartCover < DocumentBase
 
     def default_text_style
       s=<<~EOF

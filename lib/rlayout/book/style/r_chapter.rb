@@ -13,10 +13,20 @@ require 'yaml'
 # MYUNGJO_B = "KoPubBatangPB"i
 
 module RLayout
-  class RChapter
-    include Styleable
-
-
+  class RChapter < DocumentBase
+    #  use custom_style if @book_info[:custome_sylte] is true
+    def load_text_style
+      if @custom_style
+        if File.exist?(text_style_path)
+          RLayout::StyleService.shared_style_service.current_style = YAML::load_file(text_style_path)
+        else
+          File.open(text_style_path, 'w'){|f| f.write default_text_style}
+        end
+      else
+        RLayout::StyleService.shared_style_service.current_style = YAML::load(default_text_style)
+      end
+    end
+    
     def default_text_style
       s=<<~EOF
       ---

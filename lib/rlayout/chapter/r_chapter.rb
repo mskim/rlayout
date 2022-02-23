@@ -198,7 +198,7 @@
 # toc
 # if toc options is true, save toc.yml for the chapter
 module RLayout
-  class RChapter
+  class RChapter < DocumentBase
     attr_reader :document_path, :story_path
     attr_reader :document, :output_path, :column_count
     attr_reader :doc_info, :toc_content
@@ -250,9 +250,11 @@ module RLayout
           @layout_rb = File.open(layout_path, 'r'){|f| f.read}
         else
           @layout_rb = default_document_layout
+          File.open(layout_path, 'w'){|f| f.write @layout_rb}
         end
       end
       @document       = eval(@layout_rb)
+
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@document} !!!!"
         return
@@ -265,6 +267,7 @@ module RLayout
       @document.document_path = @document_path
       @document.starting_page_number = @starting_page_number
       load_text_style
+      save_custom_style if options[:custom_style]
       read_story
       place_page_floats(options)
       layout_story
@@ -522,9 +525,10 @@ module RLayout
     end
 
     def save_doc_info
-      # doc_info_path   = @document_path + "/doc_info.yml"
-      @doc_info[:toc] = @toc_content
-      File.open(toc_path, 'w') { |f| f.write @doc_info.to_yaml}
+      @doc_info = {}
+      @doc_info[:paper_size] = @paper_size
+      @doc_info[:doc_type] = 'chapter'
+      File.open(doc_info_path, 'w') { |f| f.write @doc_info.to_yaml}
     end
 
     def save_toc

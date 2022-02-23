@@ -1,14 +1,42 @@
-module RLayouot
-  # Styleable
-  # Styleable module is included in Class for customizable text_style support.
+module RLayout
+  # DocumentBase
+  # DocumentBase module is included in Class for customizable text_style support.
   # Chapter, Toc, Front_matter_doc, Column_Article, MagazineArticle, 
   # CoverPage, PartCover, Isbn, etc ...
-
-  module RLayout::Styleable
+  class DocumentBase
+    attr_reader :document_path, :paper_size, :height
     attr_reader :global_text_style_path
 
+    def initialize(options={})
+      @document_path = options[:document_path]
+      @paper_size = options[:paper_size] || "A4"
+      size_from_paper_size
+      save_custom_style if options[:custom_style]
+      self
+    end
+
+    # set width and height from @paper_size
+    def size_from_paper_size
+      if SIZES[@paper_size]
+        @width = SIZES[@paper_size][0]
+        @height = SIZES[@paper_size][1]
+      elsif @paper_size.include?("*")
+        @width = mm2pt(@paper_size.split("*")[0].to_i)
+        @height = mm2pt(@paper_size.split("*")[1].to_i)
+      elsif @paper_size.include?("x")
+        @width = mm2pt(@paper_size.split("x")[0].to_i)
+        @height = mm2pt(@paper_size.split("x")[1].to_i)
+      end
+    end
+
+    def save_custom_style
+      save_doc_info
+      save_text_style
+      save_rakefile #??? or use cli at the path
+    end
+
     def text_style_path
-      @document_path + "/#{self.class}_text_style.yml"
+      @document_path + "/text_style.yml"
     end
     
     def save_text_style
@@ -33,11 +61,36 @@ module RLayouot
       end
     end
 
+    def width_ratio
+      @width/SIZES['A4'][0]
+    end
+
+    def title_relative_size
+      24*width_ratio.to_i
+    end
+
+    def subtitle_relative_size
+      20*width_ratio.to_i
+    end
+
+    def author_relative_size
+      16*width_ratio.to_i
+    end
+
+    def quote_relative_size
+      18*width_ratio.to_i
+    end
+
     def default_text_style
       s=<<~EOF
       ---
       body:
         font: Shinmoon
+        font_size: 11.0
+        text_alignment: justify
+        first_line_indent: 11.0
+      body_gothic:
+        font: KoPubBatangPM
         font_size: 11.0
         text_alignment: justify
         first_line_indent: 11.0
@@ -54,6 +107,13 @@ module RLayouot
         text_alignment: center
         text_line_spacing: 5
         space_after: 30
+      author:
+        font: KoPubDotumPL
+        font_size: 10.0
+        text_color: 'DarkGray'
+        text_alignment: center
+        text_line_spacing: 5
+        space_after: 30
       running_head:
         font: KoPubDotumPM
         font_size: 12.0
@@ -66,6 +126,9 @@ module RLayouot
         markup: "##"
         text_alignment: middle
         space_before: 1
+      header:
+        font: KoPubBatangPM
+        font_size: 7.0      
       footer:
         font: KoPubBatangPM
         font_size: 7.0
@@ -110,7 +173,7 @@ module RLayouot
     def default_doc_info
       h=<<~EOF
       ---
-      paper_size: A4
+      paper_size: #{@paper_size}
       doc_type: #{self.class}
       EOF
     end
@@ -138,8 +201,7 @@ module RLayouot
       desc 'generate pdf'
       task :generate_pdf do
         document_path = File.dirname(__FILE__)
-        # RLayout::ColumnArticle.new(document_path, custom_style: true)
-        #{self.class}.new(document_path, custom_style: true)
+        #{self.class}.new(document_path:document_path, custom_style: true)
       end
       
       EOF
@@ -147,8 +209,5 @@ module RLayouot
 
 
   end
-
-
-
 
 end

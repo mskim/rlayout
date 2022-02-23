@@ -1,7 +1,6 @@
 require 'yaml'
 module RLayout
-  class WingBookPromo
-    include Styleable
+  class WingBookPromo < DocumentBase
 
     def text_style
       text_style = {

@@ -62,11 +62,6 @@ module RLayout
       Label.new(options)
     end
 
-    def quote(string, options={})
-      options[:parent] = self
-      Quote.new(options)
-    end
-
     def text_runs(strings_array, atts_array, options={})
       options[:parent] = self
       options[:text_string_array] = strings_array
@@ -139,20 +134,34 @@ module RLayout
       RHeading.new(options, &block)
     end
 
-    def title
-      # TODO
-    end
+    # def title(options={})
+    #   options[:parent] = self
+    #   options[:style_name] = 'title'
+    #   TitleText.new(options)
+    # end
 
-    def subtitle
-      # TODO
-    end
+    # def subtitle(options={})
+    #   options[:parent] = self
+    #   options[:style_name] = 'subtitle'
+    #   TitleText.new(options)     
+    # end
 
-    def author
-      # TODO
-    end
+    # def author(options={})
+    #   options[:parent] = self
+    #   options[:style_name] = 'author'
+    #   TitleText.new(options)   
+    # end
 
-    def leading
-      # TODO
+    # def leading(options={})
+    #   options[:parent] = self
+    #   options[:style_name] = 'leading'
+    #   TitleText.new(options)   
+    # end
+
+    def quote(string)
+      options[:parent] = self
+      options[:style_name] = 'quote'
+      TitleText.new(options)   
     end
 
     def heading_container(options={}, &block)

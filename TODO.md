@@ -21,6 +21,16 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+
+### 2022_02_21
+  - UnitDocument
+    a basic unit of PDF document
+      chpater, toc, didication, thanks, prologue, foreward, preface, cover_1, cover_4, wing_author, wing_book_prpmo, isbn, part_cover
+    UnitDocument has layout.rb, text_style.yml and images
+    content.md, story.md,
+    TopHeading HeadingContainer?
+      - free formatted horizontal heading that is place at the top of page.
+      - study_book, newspaper catalog_heading
 ### 2022_02_16
   - base, global, and local text_style
   - rake save_custom_style
