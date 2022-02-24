@@ -16,7 +16,7 @@ module RLayout
   # RParagraph
   # supports multiple line text using style_name.
   # used with RLineFragment of RColumn 
-  # it lays out  text_tokens in series of linkd RLineFragment's
+  # it lays out text_tokens in series of linkd RLineFragment's
   class TitleText < Container
     attr_accessor :tokens, :text_string, :string, :style_name, :para_style, :room, :height_in_lines
     attr_accessor :current_line, :current_line_y, :starting_x, :line_width
@@ -116,15 +116,16 @@ module RLayout
 
     def create_tokens
       return unless @text_string
-      # we are getting "\r\n" or "\n" for new line
-      if @text_string.include?("\r\n")
-        @text_string.split("\r\n").each do |line_string|
+      # make sure we test it with '\r\n' or '\n' and not "\r\n" or "\n"
+      # this  was causing error
+      if @text_string.include?('\r\n')
+        @text_string.split('\r\n').each do |line_string|
           create_tokens_from_string(line_string)
           @tokens <<  NewLineToken.new()
         end
         @tokens.pop if @tokens.last.class == RLayout::NewLineToken # delete last NewLineToken
-      elsif @text_string.include?("\n")
-        @text_string.split("\n").each do |line_string|
+      elsif @text_string.include?('\n')
+        @text_string.split('\n').each do |line_string|
           create_tokens_from_string(line_string)
           @tokens <<  NewLineToken.new()
         end

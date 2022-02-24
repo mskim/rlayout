@@ -5,7 +5,7 @@ describe 'create Prologue' do
   before do
     @document_path  = "/Users/mskim/test_data/prologue"
     @pdf_path = "/Users/mskim/test_data/prologue/chapter.pdf"
-    @prologue = Prologue.new(document_path: @document_path)
+    @prologue = Prologue.new(document_path: @document_path, custom_style:true)
   end
 
   it 'should create FrontWing' do

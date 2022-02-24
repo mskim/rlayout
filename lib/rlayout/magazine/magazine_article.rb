@@ -7,14 +7,12 @@
 
 module RLayout
 
-  class MagazineArticle
+  class MagazineArticle < DocumentBase
     attr_accessor :article_path, :layout_path, :story_path, :images_dir, :tables_dir
     attr_accessor :document, :style, :starting_page_number, :page_count, :page_type # spread, left, right
     attr_accessor :doc_info_path, :page_floats, :output_path
     attr_reader   :save_page_story
-    attr_reader :article_path
     def initialize(options={} ,&block)
-      $publication_type = "magazine"
       @article_path     = options[:article_path] || options[:project_path]
       @doc_info_path    = @article_path + "/doc_info.yml"
       @starting_page_number    = options.fetch(:starting_page_number, 1)

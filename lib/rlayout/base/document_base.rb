@@ -1,8 +1,11 @@
 module RLayout
   # DocumentBase
-  # DocumentBase module is included in Class for customizable text_style support.
+  # DocumentBase class  serves customizable text_style support.
+  # So, this is 
   # Chapter, Toc, Front_matter_doc, Column_Article, MagazineArticle, 
   # CoverPage, PartCover, Isbn, etc ...
+  
+  # MagazineArticle, MagazineToc, MagazineEditorNote, MagazinePreface
   class DocumentBase
     attr_reader :document_path, :paper_size, :height
     attr_reader :global_text_style_path
