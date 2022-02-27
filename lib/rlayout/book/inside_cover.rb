@@ -3,7 +3,7 @@ module RLayout
   # With Title, author, publisher, logo
   # Replica of front cover image
   
-  class InsideCover < RChapter
+  class InsideCover < Chapter
     attr_reader :project_path, :document_path, :cover_image_path, :starting_page_number
     # def initialize(options={})
     #   @starting_page_number = options[:starting_page_number]

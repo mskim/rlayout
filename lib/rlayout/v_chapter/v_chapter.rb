@@ -1,5 +1,5 @@
 module RLayout
-  class VChapter < RChapter
+  class VChapter < Chapter
     def initialize(options={})
       super
 

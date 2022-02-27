@@ -1,7 +1,7 @@
 module RLayout
   # Page that starts the book.
   # With Title, author, publisher, logo
-  class Poem < RChapter
+  class Poem < Chapter
     def initialize(options={})
       # @path = options[:document_path]
       # @width = options[:width] || 400

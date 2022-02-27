@@ -50,7 +50,7 @@ module RLayout
     end
 
     # def save_style_guide
-    #   RChapter.save_style_guide(style_guide_folder)
+    #   Chapter.save_style_guide(style_guide_folder)
     #   Toc.save_style_guide(style_guide_folder)
     #   Prologue.save_style_guide(style_guide_folder)
     # end
@@ -660,27 +660,27 @@ module RLayout
         ext = File.extname(source_file)
         pdf_file = source_file.sub(ext, ".pdf")
         file pdf_file => source_file do
-          RLayout::RChapter.new(document_path: "#{source}")  
+          RLayout::Chapter.new(document_path: "#{source}")  
         end
       end
       
       task :force_layout do
         chapter_files.each do |source|
-          RLayout::RChapter.new(document_path: "#{source}")  
+          RLayout::Chapter.new(document_path: "#{source}")  
         end
       end
       
       front_files = Dir.glob("#{File.dirname(__FILE__)}/front_matter/**")
       task :layout_front do
         front_files.each do |source|
-          RLayout::RChapter.new(document_path: "#{source}")  
+          RLayout::Chapter.new(document_path: "#{source}")  
         end
       end
       
       rear_files = Dir.glob("#{File.dirname(__FILE__)}/rear_matter/*{.md, .markdown}")
       task :layout_rear do
         rear_files.each do |source|
-          RLayout::RChapter.new(document_path: "#{source}")  
+          RLayout::Chapter.new(document_path: "#{source}")  
         end
       end
       EOF

@@ -121,7 +121,6 @@ module RLayout
 
     # copy front_matter source file or folder to _build
     def copy_source_to_build(source_path, destination_path)
-      binding.pry
       FileUtils.mkdir_p(destination_path) unless File.exist?(destination_path)
       source_full_path = source_front_matter_path + "/#{source_path}"
       story_md_destination_path = destination_path + "/story.md"

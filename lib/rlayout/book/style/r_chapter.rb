@@ -13,7 +13,7 @@ require 'yaml'
 # MYUNGJO_B = "KoPubBatangPB"i
 
 module RLayout
-  class RChapter < DocumentBase
+  class Chapter < DocumentBase
     #  use custom_style if @book_info[:custome_sylte] is true
     def load_text_style
       if @custom_style

@@ -97,12 +97,12 @@ module RLayout
           h[:starting_page_number] = @starting_page_number
           h[:belongs_to_part] = true
           if @body_doc_type == 'chapter'
-            r = RLayout::RChapter.new(h)
+            r = RLayout::Chapter.new(h)
           elsif @body_doc_type == 'poem'
             r = RLayout::Poem.new(h)
           elsif @body_doc_type == 'essay'
             h[:heeading_height] = 'quarter'
-            r = RLayout::RChapter.new(h)
+            r = RLayout::Chapter.new(h)
           end
           @starting_page_number += r.page_count
           chapter_number += 1

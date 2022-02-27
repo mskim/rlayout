@@ -79,7 +79,7 @@ module RLayout
           h[:starting_page_number] = @starting_page_number
           h[:chapter_order] = chapter_order
           h[:style_guide_folder] = style_guide_folder
-          r = RLayout::RChapter.new(h)
+          r = RLayout::Chapter.new(h)
           @starting_page_number += r.page_count
           chapter_order += 1
         else

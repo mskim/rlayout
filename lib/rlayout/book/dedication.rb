@@ -1,7 +1,7 @@
 module RLayout
   # Page that starts the book.
   # With Title, author, publisher, logo
-  class Dedication  < RChapter
+  class Dedication  < Chapter
     attr_reader :document_path
     def initialize(options={})
       @page_count = 1
