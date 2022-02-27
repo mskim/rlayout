@@ -21,6 +21,17 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+### 2022_02_26
+  - _style_guide
+  change RChapter to Chapter
+
+
+### 2022_02_25
+  - paperback custome_style support
+  - save text_style and layout into source folder
+    and copy it to build folder
+    first make sure source chapter must be in folder, 
+    for it to be customr_style chapter.
 
 ### 2022_02_21
   - UnitDocument

@@ -17,6 +17,7 @@ module RLayout
 
     def initialize(options={})
       @document_path  = options[:document_path]
+      @style_guide_folder = options[:style_guide_folder] || @document_path
       @custom_style = options[:custom_style]
       @max_page = options[:max_page]
       @toc_item_count = options[:toc_item_count] || 20

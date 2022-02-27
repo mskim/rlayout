@@ -6,7 +6,6 @@ module RLayout
     def initialize(options={})
       @document_path  = options[:document_path] || options[:document_path]
       options[:heading_height_type] = "natural"
-      binding.pry
       super
     end
 

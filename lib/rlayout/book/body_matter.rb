@@ -20,6 +20,7 @@ module RLayout
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @title = @book_info[:title]
+      # @custom_style = @book_info[:custom_style]
       @paper_size = @book_info[:paper_size]  || "A5"
       @paper_size = options[:paper_size] if options[:paper_size]
       @page_width = SIZES[@paper_size][0]
@@ -41,11 +42,11 @@ module RLayout
     def process_body_matter
       @document_folders = []
       # Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
-      chapter_number = 1
+      chapter_order = 1
       Dir.entries(@project_path).sort.each do |file|
         # copy source to build 
         if file =~/^\d\d/
-          chapter_folder = build_folder + "/chapter_#{chapter_number}"
+          chapter_folder = build_folder + "/chapter_#{chapter_order}"
           FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
           source_path = @project_path + "/#{file}"
           if File.directory?(source_path)
@@ -76,14 +77,20 @@ module RLayout
           h[:page_pdf] = true
           h[:toc] = true
           h[:starting_page_number] = @starting_page_number
+          h[:chapter_order] = chapter_order
+          h[:style_guide_folder] = style_guide_folder
           r = RLayout::RChapter.new(h)
           @starting_page_number += r.page_count
-          chapter_number += 1
+          chapter_order += 1
         else
           next
         end
       end
       generate_body_matter_toc
+    end
+
+    def style_guide_folder
+      @project_path + "/_style_guide"
     end
 
     def generate_body_matter_toc

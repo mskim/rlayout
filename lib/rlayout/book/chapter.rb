@@ -197,6 +197,8 @@
 
 # toc
 # if toc options is true, save toc.yml for the chapter
+
+
 module RLayout
   class RChapter < DocumentBase
     attr_reader :document_path, :story_path
@@ -209,14 +211,14 @@ module RLayout
     attr_reader :belongs_to_part, :paper_size
     attr_reader :page_by_page, :story_md, :story_by_page, :toc
     attr_reader :grid, :default_image_location, :default_image_size
-    attr_reader :local_image_folder
+    attr_reader :local_image_fold
     attr_reader :starting_page_side # :left, :right, :either
                                     # Some document should start on specific side, isbn left(even), inside_cover right(odd),
                                     # blank page is inserted in front of the document to make it work.
 
     def initialize(options={} ,&block)
       @document_path  = options[:document_path]
-      @custom_style = options[:custom_style]
+      @style_guide_folder = options[:style_guide_folder] || @document_path
       @starting_page_side = options[:starting_page_side] || :either_side
       if options[:book_info]
         @book_info      = options[:book_info]
@@ -267,7 +269,6 @@ module RLayout
       @document.document_path = @document_path
       @document.starting_page_number = @starting_page_number
       load_text_style
-      save_custom_style if options[:custom_style]
       read_story
       place_page_floats(options)
       layout_story

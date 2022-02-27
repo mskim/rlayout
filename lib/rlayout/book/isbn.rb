@@ -9,8 +9,6 @@ module RLayout
     def initialize(options={})
       options[:starting_page_side] = :left_side
       options[:page_type] = :column_text
-
-
       super
       @isbn_text_path  = @document_path + "/isbn.md"
       if File.exist?(@isbn_text_path)

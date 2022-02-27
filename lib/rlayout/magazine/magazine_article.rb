@@ -8,28 +8,31 @@
 module RLayout
 
   class MagazineArticle < DocumentBase
-    attr_accessor :article_path, :layout_path, :story_path, :images_dir, :tables_dir
-    attr_accessor :document, :style, :starting_page_number, :page_count, :page_type # spread, left, right
-    attr_accessor :doc_info_path, :page_floats, :output_path
-    attr_reader   :save_page_story
+    attr_reader :document_path, :layout_path, :story_path, :images_dir, :tables_dir
+    attr_reader :document, :style, :starting_page_number, :page_count, :page_type # spread, left, right
+    attr_reader :doc_info_path, :page_floats, :output_path
+    attr_reader   :save_page_story, :page_count, :column_count, :gutter
+    
     def initialize(options={} ,&block)
-      @article_path     = options[:article_path] || options[:project_path]
-      @doc_info_path    = @article_path + "/doc_info.yml"
-      @starting_page_number    = options.fetch(:starting_page_number, 1)
-      @page_count       = options.fetch(:page_count, 1)
+      @document_path = options[:document_path] || options[:project_path]
+      @doc_info_path = @document_path + "/doc_info.yml"
+      @starting_page_number = options.fetch(:starting_page_number, 1)
+      @page_count = options.fetch(:page_count, 1)
+      @column_count = options.fetch(:column_count, 2)
+      @gutter = options.fetch(:gutter, 10)
       read_page_floats 
-      @article_path     = options[:article_path]
-      @story_path       = Dir.glob("#{@article_path}/*.{md,markdown}").first
-      if !@story_path && @article_path
+      @document_path     = options[:document_path]
+      @story_path       = Dir.glob("#{@document_path}/*.{md,markdown}").first
+      if !@story_path && @document_path
         puts "No story_path !!!"
         return
       end
-      @layout_path    = @article_path + "/layout.rb"
-      @output_path  = @article_path + "/article.pdf"
-      @pages_path   = @article_path + "/pages"
+      @layout_path    = @document_path + "/layout.rb"
+      @output_path  = @document_path + "/article.pdf"
+      @pages_path   = @document_path + "/pages"
       @save_page_story = options[:save_page_story]
-      @images_dir = @article_path + "/images"
-      @tables_dir = @article_path + "/tables"
+      @images_dir = @document_path + "/images"
+      @tables_dir = @document_path + "/tables"
       @document     = eval(File.open(@layout_path,'r'){|f| f.read})
       if @document.is_a?(SyntaxError)
         puts "SyntaxError in #{@layout_path} !!!!"
@@ -51,13 +54,16 @@ module RLayout
       self
     end
 
+    def page_floats_path
+      @document_path + "/page_floats.yml"
+    end
+
     def read_page_floats
-      unless File.exists?(@doc_info_path)
-        puts "Can not find file #{@doc_info_path}!!!!"
+      unless File.exists?(page_floats_path)
+        puts "Can not find file #{page_floats_path}!!!!"
         return {}
       end
-      @doc_info = YAML::load_file(@doc_info_path)
-      @page_floats = @doc_info[:page_floats]
+      @page_floats = YAML::load_file(page_floats_path)
     end
 
     def read_story
@@ -125,6 +131,18 @@ module RLayout
           @paragraphs << RParagraph.new(para)
         end
       end
+    end
+
+    def default_layout_rb
+      h  = {}
+      h[:paper_size] = @paper_size
+      h[:column_count] = @column_count
+      h[:gutter] = @gutter
+      s=<<~EOF
+      RLayout::RDocument.new(#{h})
+    
+      EOF
+
     end
 
     def layout_story
@@ -213,16 +231,16 @@ module RLayout
       File.open(path, 'w'){|f| f.write rake_text}
     end
 
-    def self.update_if_changed(article_path, options={})
-      story_path = article_path + "/story.md"
-      pdf_path = article_path + "/story.pdf"
-      layout_path = article_path + "/layout.rb"
+    def self.update_if_changed(document_path, options={})
+      story_path = document_path + "/story.md"
+      pdf_path = document_path + "/story.pdf"
+      layout_path = document_path + "/layout.rb"
       if !File.exist?(pdf_path)
-        MagazineArticle.new(article_path: article_path)
+        MagazineArticle.new(document_path: document_path)
       elsif File.mtime(story_path) > File.mtime(pdf_path)
-        MagazineArticle.new(article_path: article_path)
+        MagazineArticle.new(document_path: document_path)
       elsif File.exist?(layout_path) && File.mtime(layout_path) > File.mtime(pdf_path)
-        MagazineArticle.new(article_path: article_path)
+        MagazineArticle.new(document_path: document_path)
       else
         puts "story is upto date..."
       end

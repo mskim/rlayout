@@ -10,7 +10,7 @@ module RLayout
       style_service.pdf_doc = @pdf_doc
       load_fonts(@pdf_doc)
       page          = @pdf_doc.pages.add([0, 0, @width, @height])
-      canvas        = page.canvas      
+      canvas        = page.canvas   
       style_service.set_canvas_text_style(canvas, 'body')
       draw_fill(canvas) unless self.class == RDocument
       @graphics.each do |g|

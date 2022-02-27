@@ -103,7 +103,8 @@ body_gothic:
   first_line_indent: 0
   text_line_spacing:
   space_before_in_lines:
-  space_after_in_lines:  box_attributes: ''
+  space_after_in_lines:  
+  box_attributes: ''
   markup: ''
   graphic_attributes: ''
 running_head:
@@ -512,7 +513,7 @@ subject_head_L:
   scale: 100.0
   text_line_spacing:
   space_before_in_lines:
-  space_after_in_lines
+  space_after_in_lines:
   box_attributes: ''
   markup: ''
   graphic_attributes:

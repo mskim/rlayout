@@ -13,7 +13,7 @@ require 'yaml'
 # MYUNGJO_B = "KoPubBatangPB"i
 
 module RLayout
-  class Isbn < DocumentBase
+  class Isbn < RDocument
 
     def default_text_style
       s=<<~EOF

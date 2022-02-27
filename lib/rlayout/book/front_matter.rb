@@ -38,6 +38,7 @@ module RLayout
       # Dir.glob("#{source_front_matter_path}/*.md").sort.each do |md|
       Dir.entries(source_front_matter_path).sort.each do |file|
         # copy source to build 
+
         if file =~/^\d\d/
           basename = File.basename(file)
           h = {}
@@ -46,6 +47,8 @@ module RLayout
           h[:page_pdf] = true
           h[:toc] = true
           h[:starting_page_number] = @starting_page_number
+          h[:style_guide_folder] = style_guide_folder
+
           case basename
           when /isbn/
             isbn_path = build_front_matter_path + "/isbn"
@@ -55,6 +58,7 @@ module RLayout
             h[:toc] = false
             h[:has_footer] = false
             h[:has_header] = false
+            
             r = RLayout::Isbn.new(h)
             @page_count += r.page_count
             @starting_page_number += page_count
@@ -111,16 +115,21 @@ module RLayout
       generate_front_matter_toc
     end
 
+    def style_guide_folder
+      @project_path + "/_style_guide"
+    end
+
     # copy front_matter source file or folder to _build
     def copy_source_to_build(source_path, destination_path)
+      binding.pry
       FileUtils.mkdir_p(destination_path) unless File.exist?(destination_path)
       source_full_path = source_front_matter_path + "/#{source_path}"
       story_md_destination_path = destination_path + "/story.md"
-      if File.directory?(source_path)
-        if  Dir.glob("#{source_path}/*.md").length == 0
+      if File.directory?(source_full_path)
+        if Dir.glob("#{source_path}/*.md").length == 0
           # handle case when there is no .md file
           # save sample story.md file
-          sample_md_path = source_path + "/story.md"
+          sample_md_path = source_full_path + "/story.md"
           File.open(sample_md_path, 'w'){|f| sample_front_matter_story(source_path)}
           return
         end

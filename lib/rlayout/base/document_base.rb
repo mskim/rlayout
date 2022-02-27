@@ -1,20 +1,27 @@
 module RLayout
-  # DocumentBase
-  # DocumentBase class  serves customizable text_style support.
-  # So, this is 
-  # Chapter, Toc, Front_matter_doc, Column_Article, MagazineArticle, 
-  # CoverPage, PartCover, Isbn, etc ...
   
-  # MagazineArticle, MagazineToc, MagazineEditorNote, MagazinePreface
+  # The goal is to create a re-usable publication with style_guide,
+  # where style_guide contains all design related information for the publication.
+  # Once style_guide is tweaked by the designer, 
+  # similar publications can re-use the copy of the style_guide with new content.
+  
+  # DocumentBase class is created for that purpose.
+  # DocumentBase supports both text_styles and layout for each "unit document".
+  # DocumentBase is super class for
+  #  Chapter, Toc, Front_matter_doc, Column_Article, MagazineArticle, 
+  #  CoverPage, PartCover, Isbn, etc ...
+  #  MagazineArticle, MagazineToc, MagazineEditorNote, MagazinePreface
+
+
   class DocumentBase
-    attr_reader :document_path, :paper_size, :height
-    attr_reader :global_text_style_path
+    attr_reader :document_path, :paper_size, :width, :height
+    attr_reader :style_klass_name
 
     def initialize(options={})
       @document_path = options[:document_path]
+      @style_guide_folder = options[:style_guide_folder] || @document_path
       @paper_size = options[:paper_size] || "A4"
       size_from_paper_size
-      save_custom_style if options[:custom_style]
       self
     end
 
@@ -38,6 +45,14 @@ module RLayout
       save_rakefile #??? or use cli at the path
     end
 
+    def local_text_style_path
+      @document_path + "/#{style_klass_name}_text_style.yml"
+    end
+
+    def save_text_style
+      File.open(text_style_path, 'w'){|f| f.write default_text_style} unless File.exist?(text_style_path)
+    end
+
     def text_style_path
       @document_path + "/text_style.yml"
     end
@@ -46,21 +61,43 @@ module RLayout
       File.open(text_style_path, 'w'){|f| f.write default_text_style} unless File.exist?(text_style_path)
     end
 
-    def save_text_style_to_global_style(global_style_folder)
-      global_style_path = global_style_folder + "/#{self.class}_text_style.yml"
-      File.open(global_style_path, 'w'){|f| f.write default_text_style} unless File.exist?(text_style_path)
+    def style_guide_path
+      @style_guide_folder + "/#{style_klass_name}_text_style.yml"
+    end
+
+    def save_style_guide
+      FileUtils.mkdir_p(@style_guide_folder) unless File.exist?(@style_guide_folder)
+      File.open(style_guide_path, 'w'){|f| f.write self.default_text_style} unless File.exist?(style_guide_path)
     end
     
-    #  use custom_style if @book_info[:custome_sylte] is true
+    def style_klass_name
+      camel_cased_word = self.class.to_s.split("::")[1]
+      underscore camel_cased_word
+    end
+
+    def underscore(camel_cased_word)
+      camel_cased_word.to_s.gsub(/::/, '/').
+        gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+        gsub(/([a-z\d])([A-Z])/,'\1_\2').
+        tr("-", "_").
+        downcase
+    end
+
+    # 1. check if there is local_text_style file
+    # 2. check if there is global_text_style(style_guide_path) file
+    # 3. save default_text_style to style_guide_path
+    # to override global style, copy text_style file to local folder
+    # if style_guide_folder is not given, style_guide_folder is set to document_folder
+    #   - this is useful when designing single unit documents
     def load_text_style
-      if @custom_style
-        if File.exist?(text_style_path)
-          RLayout::StyleService.shared_style_service.current_style = YAML::load_file(text_style_path)
-        else
-          File.open(text_style_path, 'w'){|f| f.write default_text_style}
-        end
+      if File.exist?(local_text_style_path)
+        RLayout::StyleService.shared_style_service.current_style = YAML::load_file(local_text_style_path)
+      elsif File.exist?(style_guide_path)
+        RLayout::StyleService.shared_style_service.current_style = YAML::load_file(style_guide_path)
       else
         RLayout::StyleService.shared_style_service.current_style = YAML::load(default_text_style)
+        save_style_guide
+        # File.open(style_guide_path, 'w'){|f| f.write default_text_style}
       end
     end
 
@@ -204,7 +241,7 @@ module RLayout
       desc 'generate pdf'
       task :generate_pdf do
         document_path = File.dirname(__FILE__)
-        #{self.class}.new(document_path:document_path, custom_style: true)
+        #{self.class}.new(document_path:document_path)
       end
       
       EOF

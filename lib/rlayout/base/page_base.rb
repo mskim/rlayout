@@ -12,7 +12,7 @@ module RLayout
       @document_path = options[:document_path]
       @paper_size = options[:paper_size] || "A4"
       size_from_paper_size
-      save_custom_style if options[:custom_style]
+      # save_custom_style if options[:custom_style]
       self
     end
 
