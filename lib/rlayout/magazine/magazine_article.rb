@@ -7,7 +7,7 @@
 
 module RLayout
 
-  class MagazineArticle < DocumentBase
+  class MagazineArticle < StyleGuide
     attr_reader :document_path, :layout_path, :story_path, :images_dir, :tables_dir
     attr_reader :document, :style, :starting_page_number, :page_count, :page_type # spread, left, right
     attr_reader :doc_info_path, :page_floats, :output_path

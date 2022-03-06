@@ -91,8 +91,7 @@ module RLayout
     end
 
     def parse_csv
-      puts __method__
-      puts @csv_text = File.read(@csv_path)
+      @csv_text = File.read(@csv_path)
       @csv       = CSV.parse(@csv_text, :headers => true)
       # heders    = @csv.headers
       @current_section  = @csv.first.first[1].gsub(" ","_")

@@ -200,7 +200,7 @@
 
 
 module RLayout
-  class Chapter < DocumentBase
+  class Chapter < StyleGuide
     attr_reader :document_path, :story_path
     attr_reader :document, :output_path, :column_count
     attr_reader :doc_info, :toc_content
@@ -217,17 +217,10 @@ module RLayout
                                     # blank page is inserted in front of the document to make it work.
 
     def initialize(options={} ,&block)
-      @document_path  = options[:document_path]
-      @style_guide_folder = options[:style_guide_folder] || @document_path
-      @starting_page_side = options[:starting_page_side] || :either_side
-      if options[:book_info]
-        @book_info      = options[:book_info]
-        @paper_size     = @book_info[:paper_size] || "A5"
-        @book_title     = @book_info[:tittle] || "untitled"
-      else
-        @paper_size     = options[:paper_size] || "A5"
-        @book_title     = options[:book_tittle] || "untitled"
-      end
+      super
+      # @document_path  = options[:document_path]
+      # @style_guide_folder = options[:style_guide_folder] || @document_path
+      @starting_page_side = options[:starting_page_side] || :either_sid
       @local_image_folder = @document_path + "/images"
       @story_path     = @document_path + "/story.md"
       @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
@@ -245,30 +238,9 @@ module RLayout
       @story_by_page  = options[:story_by_page]
       @toc            = options[:toc]
       @toc_level      = options[:toc_level] || 'title'
-      @layout_rb      = options[:layout_rb]
-      unless @layout_rb
-        layout_path = @document_path + "/layout.rb"
-        if File.exist?(layout_path)
-          @layout_rb = File.open(layout_path, 'r'){|f| f.read}
-        else
-          @layout_rb = default_document_layout
-          File.open(layout_path, 'w'){|f| f.write @layout_rb}
-        end
-      end
-      @document       = eval(@layout_rb)
-
-      if @document.is_a?(SyntaxError)
-        puts "SyntaxError in #{@document} !!!!"
-        return
-      end
-      unless @document.kind_of?(RLayout::RDocument)
-        puts "Not a @document kind created !!!"
-        return
-      end
       @toc_content                = []
       @document.document_path = @document_path
       @document.starting_page_number = @starting_page_number
-      load_text_style
       read_story
       place_page_floats(options)
       layout_story
@@ -281,7 +253,7 @@ module RLayout
       self
     end
 
-    def default_document_layout
+    def default_layout_rb
       @top_margin = 50
       @left_margin = 110
       @right_margin = 110

@@ -6,14 +6,16 @@ module RLayout
     def initialize(options={})
       @page_count = 1
       super
+
       self
     end
 
     def self.sample_story
-      <<~EOF
+      s=<<~EOF
       ---
-      layout:dedication
-      title: 이글을 홍길동님에게 바침지다
+
+      title: 이글을 홍길동님에게 바침니다
+
       ---
 
 

@@ -22,7 +22,6 @@ module RLayout
     end
 
     def process_rear_matter
-      # puts __method__
       @rear_matter_docs = []
       generate_rear_matter_toc
     end

@@ -1,106 +1,107 @@
 module RLayout
+  # Page that starts the book.
+  # With Title, subtitle, author, publisher_logo
+  # Replica of front cover image
+  # use RCover
+  # 
+  class BackPage < StyleGuide
+    attr_reader :book_cover_folder, :document_path, :book_info
 
-  class BackPage
-    attr_reader :project_path, :content
-    attr_reader :width, :height, :updated
     def initialize(options={})
-      @content = options[:content]
-      @project_path = options[:project_path]
-      @paper_size = options[:paper_size] || 'A5'
-      @width = SIZES[@paper_size][0]
-      @height = SIZES[@paper_size][1]
-      @spread_image_path = options[:spread_image_path]
-      @cover_spread_width = options[:cover_spread_width]
-      generate_pdf
+      options[:starting_page_side] = :left_side
+      options[:page_type] = :column_text
+      super
+      @book_cover_folder = options[:book_cover_folder] || @document_path
+      @book_info = options[:book_info]
+      read_content
+      @document.set_content(@content) if @content && @content != {}
+      @document.save_pdf(output_path)
       self
     end
 
-    def generate_pdf
-      @updated = false
-      # check if  layout.rb file exists,
-      # if so use it to generate pdf.
-      # if not merge data and layout.erb and save new layout.rb file
-      if File.exist?(layout_path)
-        mergerd = File.open(layout_path,'r'){|f| f.read}
-        layout = eval(mergerd)
-      else
-        FileUtils.mkdir_p(@project_path) unless File.exist?(@project_path)
-        erb = ERB.new(default_layout_erb)
-        @content = default_content
-        mergerd = erb.result(binding)
-        layout = eval(mergerd)
-        File.open(layout_path,'w'){|f| f.write mergerd }
-      end
-      # return unless is_dirty?
-      layout.save_pdf_with_ruby(output_path, jpg:true)
-      @updated = true
+    def page_count
+      1
     end
 
-    def is_dirty?
-      return true unless File.exist?(output_path)
-      return true if File.mtime(layout_path) > File.mtime(output_path)
-      return false
-    end
-
-    def default_layout_erb
-      # before rotating 90 
-      layout =<<~EOF
-      RLayout::Container.new(width:#{@width}, height:#{@height}, fill_color: 'clear') do
-        image(image_path: "#{@spread_image_path}", x: 0, width: #{@cover_spread_width}, height:#{@height}, layout_member:false)
-      end
-
-      EOF
-    end
-
-
-    def layout_path
-      @project_path + "/layout.rb"
-    end
-
-    def layout_erb_path
-      @project_path + "/layout.erb"
+    def source_content_path
+      @book_cover_folder + "/#{style_klass_name}_content.yml"
     end
 
     def output_path
-      @project_path + "/output.pdf"
+      @document_path + "/output.pdf"
     end
 
-    def content_path
-      project_path + "/content.yml"
+    def read_content
+      if File.exist?(source_content_path)
+        @content = YAML::load_file source_content_path
+        # 
+      else
+        @content = YAML::load default_content
+        File.open(source_content_path, 'w'){|f| f.write default_content}
+      end
     end
+    
 
     def default_content
       h = {}
-      h[:title] = "소설을 쓰고 있네"
-      h[:subtitle] = "정말로 소설을 쓰고 있네 그려"
-      h[:author] = "홍길동"
-      h[:publisher] = "활빈당출판"
-      h
     end
 
-    def self.sample_layout
+    def default_layout_rb
       layout =<<~EOF
-      RLayout::Container.new(fill_color:'clear',width:500, height:20, direction: 'horizontal') do
-
+      RLayout::RCoverPage.new(fill_color:'clear',width:#{@width}, height:#{@height}) do
       end
       EOF
     end
 
-    def self.default_content
-      h = {}
-      h[:title] = "소설을 쓰고 있네"
-      h[:subtitle] = "정말로 소설을 쓰고 있네 그려"
-      h[:author] = "홍길동"
-      h[:publisher] = "활빈당출판"
-      h
-    end
+    def default_text_style
+      s=<<~EOF
+      ---
 
-    def self.save_sample(project_path)
-      layout_path = project_path + "/layout.rb"
-      content_path = project_path + "/content.yml"
-      File.open(layout_path, 'w'){|f| f.write Senca.default_layout}
-      File.open(content_path, 'w'){|f| f.write Senca.default_content.to_yaml}
+      title:
+        font: KoPubBatangPB
+        font_size: 24.0
+        text_alignment: center
+        text_line_spacing: 10
+        space_before: 100
+      subtitle:
+        font: KoPubDotumPL
+        font_size: 18.0
+        text_alignment: center
+        text_line_spacing: 5
+        space_before: 50
+        space_after: 30
+      author:
+        font: KoPubDotumPL
+        font_size: 14.0
+        text_color: 'DarkGray'
+        text_alignment: center
+        text_line_spacing: 5
+        space_after: 30
+      running_head:
+        font: KoPubDotumPM
+        font_size: 12.0
+        markup: "#"
+        text_alignment: left
+        space_before: 1
+      logo:
+        from_bottom: 50
+        width: 50
+        height: 50
+        position: 8
+        image_path: local.pdf      
+      body:
+        font: Shinmoon
+        font_size: 11.0
+        text_alignment: justify
+        first_line_indent: 11.0
+      body_gothic:
+        font: KoPubBatangPM
+        font_size: 11.0
+        text_alignment: justify
+        first_line_indent: 11.0
+      EOF
+
     end
+    
   end
-
 end

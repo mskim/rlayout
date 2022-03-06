@@ -22,6 +22,7 @@ module RLayout
       @book_info = options[:book_info]
       @project_path = options[:project_path]
       @source_path = options[:source_path]
+      @style_guide_path = File.dirname(@source_path) + "/_style_guide"
       @portrait  = options[:portrait] || true
       @has_no_cover_inside_page = options[:has_no_cover_inside_page]
       @has_no_wing = options[:has_no_wing]
@@ -180,13 +181,15 @@ module RLayout
     def create_back_page
       # part_path = @project_path + "/back_page"
       h = {}
-      h[:project_path] = @project_path + "/back_page"
+      h[:style_guide_folder] = File.dirname(@source_path) + "/_style_guide"
+      h[:book_cover_folder] = @source_path
+      h[:document_path] = @project_path + "/back_page"
       h[:width] = @page_width
       h[:height] = @height
       h[:cover_spread_width] = cover_spread_width
       h[:front_page_spread_off_set] = 0
       h[:spread_image_path] = @cover_spread.output_path
-      h[:content] = @book_info
+      h[:book_info] = @book_info
       @back_page = RLayout::BackPage.new(h)
       @current_x += @page_width
     end
@@ -205,13 +208,16 @@ module RLayout
     def create_front_page
       # part_path = @project_path + "/front_page"
       h = {}
-      h[:project_path] = @project_path + "/front_page"
+      # h[:project_path] = @project_path + "/front_page"
+      h[:style_guide_folder] = File.dirname(@source_path) + "/_style_guide"
+      h[:book_cover_folder] = @source_path
+      h[:document_path] = @project_path + "/front_page"
       h[:width] = @page_width
       h[:height] = @height
       h[:cover_spread_width] = cover_spread_width
       h[:front_page_spread_off_set] = @page_width + @seneca_width
       h[:spread_image_path] = @cover_spread.output_path
-      h[:content] = @book_info
+      h[:book_info] = @book_info
       @front_page = RLayout::FrontPage.new(h)
       @current_x += @page_width
     end

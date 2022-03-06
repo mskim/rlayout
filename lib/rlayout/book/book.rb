@@ -41,40 +41,9 @@ module RLayout
       # push_to_git_repo if options[:push_to_git_repo]
     end
 
-    # def custom_style?
-    #   @book_info[:custom_style]
-    # end
-
     def style_guide_folder
       @project_path +  "/_style_guide"
     end
-
-    # def save_style_guide
-    #   Chapter.save_style_guide(style_guide_folder)
-    #   Toc.save_style_guide(style_guide_folder)
-    #   Prologue.save_style_guide(style_guide_folder)
-    # end
-
-    # def custom_text_style_path
-    #   style_guide_folder + "/book_text_style.yml"
-    # end
-
-    #  use custom_style if @book_info[:custome_sylte] is true
-    # def load_text_style
-    #   if custom_style?
-    #     if File.exist?(custom_text_style_path)
-    #       RLayout::StyleService.shared_style_service.current_style = YAML::load_file(custom_text_style_path)
-    #     else
-    #       book_text_style_hash  = StyleService.shared_style_service.set_book_style("paperback","#{@paper_size}")
-    #       FileUtils.mkdir_p(style_folder) unless File.exist?(style_folder)
-    #       File.open(custom_text_style_path, 'w'){|f| f.write book_text_style_hash.to_yaml}
-    #     end
-    #   else
-    #     book_text_style_hash  = StyleService.shared_style_service.set_book_style("paperback","#{@paper_size}")
-    #     FileUtils.mkdir_p(style_folder) unless File.exist?(style_folder)
-    #     File.open(custom_text_style_path, 'w'){|f| f.write book_text_style_hash.to_yaml}
-    #   end
-    # end
 
     def toc_first_page_number
       @front_matter.toc_first_page_number
@@ -104,10 +73,6 @@ module RLayout
     def book_title
       @book_info[:title] || 'untitled'
     end
-  
-    # def width
-    #   @page_width
-    # end
   
     def left_margin
       50

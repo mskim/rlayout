@@ -54,11 +54,9 @@ module RLayout
             isbn_path = build_front_matter_path + "/isbn"
             copy_source_to_build(file, isbn_path)
             h[:document_path] = isbn_path
-
             h[:toc] = false
             h[:has_footer] = false
             h[:has_header] = false
-            
             r = RLayout::Isbn.new(h)
             @page_count += r.page_count
             @starting_page_number += page_count
@@ -87,7 +85,7 @@ module RLayout
             thanks_path = build_front_matter_path + "/thanks"
             copy_source_to_build(file, thanks_path,)
             h[:document_path] = thanks_path
-            r = RLayout::RThankYou.new(h)
+            r = RLayout::Thanks.new(h)
             @page_count += r.page_count
             @starting_page_number += page_count
             @document_folders << 'thanks'
@@ -125,24 +123,19 @@ module RLayout
       source_full_path = source_front_matter_path + "/#{source_path}"
       story_md_destination_path = destination_path + "/story.md"
       if File.directory?(source_full_path)
-        if Dir.glob("#{source_path}/*.md").length == 0
+        if Dir.glob("#{source_full_path}/*.md").length == 0
           # handle case when there is no .md file
           # save sample story.md file
-          sample_md_path = source_full_path + "/story.md"
-          File.open(sample_md_path, 'w'){|f| sample_front_matter_story(source_path)}
-          return
+          sample_story  = sample_front_matter_story(source_path)
+          source_full_story_path = source_full_path + "/story.md"
+          File.open(source_full_story_path, 'w'){|f| f.write sample_story}
+          File.open(story_md_destination_path, 'w'){|f| f.write sample_story}
         end
-        # copy files to build area
-        Dir.glob("#{source_path}.*").each do |folder_file|
-          if file=~/.md$/
-            # copy .md file  as story.md
-            system("cp #{folder_file} #{story_md_destination_path}")
-          elsif File.directory?(folder_file)
-            # copy folder 
-            system("cp #{folder_file} #{destination_path}/")
-          end
-        end
+
+        # copy folder to build area
+        system("cp -r #{source_full_path}/ #{destination_path}/")
       else
+        # source is a file
         system("cp #{source_full_path} #{story_md_destination_path}")
       end
     end

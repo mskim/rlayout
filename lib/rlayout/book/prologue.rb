@@ -10,10 +10,11 @@ module RLayout
     end
 
     def self.sample_story
-      <<~EOF
+      s =<<~EOF
       ---
-      layout:prologue
+
       title: 이글을 쓰면서
+
       ---
 
       여기는 프로로그 본문입니다. 여기는 프로로그 본문입니다. 여기는 프로로그 본문입니다. 여기는 프로로그 본문입니다. 여기는 프로로그 본문입니다. 

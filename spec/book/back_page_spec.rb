@@ -3,9 +3,9 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create BackPage' do
   before do
-    @project_path  = "/Users/mskim/test_data/book_cover/back_page"
-    @pdf_path = "/Users/mskim/test_data/book_cover/back_page/output.pdf"
-    @back_page = BackPage.new(project_path: @project_path)
+    @document_path  = "/Users/mskim/test_data/back_page"
+    @pdf_path = "/Users/mskim/test_data/back_page/output.pdf"
+    @back_page = BackPage.new(document_path: @document_path)
   end
 
   it 'should create BackPage' do

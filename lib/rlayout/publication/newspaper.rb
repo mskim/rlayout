@@ -181,7 +181,6 @@ module RLayout
     end
 
     def setup
-      puts __method__
       system "mkdir -p #{@publication_path}" unless File.exist?(@publication_path)
       save_config_file
       save_ad_plan

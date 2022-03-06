@@ -1,27 +1,55 @@
 module RLayout
   
-  # The goal is to create a re-usable publication with style_guide,
+  # The goal is to create a re-usable document with customiable style_guide,
   # where style_guide contains all design related information for the publication.
   # Once style_guide is tweaked by the designer, 
   # similar publications can re-use the copy of the style_guide with new content.
   
-  # DocumentBase class is created for that purpose.
-  # DocumentBase supports both text_styles and layout for each "unit document".
-  # DocumentBase is super class for
+  # StyleGuide class.
+  # There are text_styles and layout_rb for each "unit document".
+  # StyleGuide is super class for customizable document.
   #  Chapter, Toc, Front_matter_doc, Column_Article, MagazineArticle, 
   #  CoverPage, PartCover, Isbn, etc ...
   #  MagazineArticle, MagazineToc, MagazineEditorNote, MagazinePreface
+  #  NamecardMaker, Jubo
 
+  #  def load_text_style
+  #  read text_style if they exist or save default style so that designer can customize it.
 
-  class DocumentBase
+  # def load_layout_rb
+  # read rlayout.rb if they exist or save default layout_rb so that designer can customize it.
+
+  # style_guide_folder
+  # for books where multiple documents with same style are used, like chapters
+  # text_styles are put in style_guide_folder
+  class StyleGuide
+    attr_reader :style_guide_folder
     attr_reader :document_path, :paper_size, :width, :height
-    attr_reader :style_klass_name
+    attr_reader :document
 
     def initialize(options={})
       @document_path = options[:document_path]
       @style_guide_folder = options[:style_guide_folder] || @document_path
-      @paper_size = options[:paper_size] || "A4"
+      if options[:book_info]
+        @book_info      = options[:book_info]
+        @paper_size     = @book_info[:paper_size] || "A5"
+        @book_title     = @book_info[:tittle] || "untitled"
+      else
+        @paper_size     = options[:paper_size] || "A5"
+        @book_title     = options[:book_tittle] || "untitled"
+      end      
       size_from_paper_size
+      load_text_style
+      load_layout_rb
+      @document = eval(@layout_rb)
+      if @document.is_a?(SyntaxError)
+        puts "SyntaxError in #{@document} !!!!"
+        return
+      end
+      unless @document.kind_of?(RLayout::RDocument) || @document.kind_of?(RLayout::Container)
+         puts "Not a @document kind created !!!"
+        return
+      end
       self
     end
 
@@ -45,10 +73,6 @@ module RLayout
       save_rakefile #??? or use cli at the path
     end
 
-    def local_text_style_path
-      @document_path + "/#{style_klass_name}_text_style.yml"
-    end
-
     def save_text_style
       File.open(text_style_path, 'w'){|f| f.write default_text_style} unless File.exist?(text_style_path)
     end
@@ -61,13 +85,13 @@ module RLayout
       File.open(text_style_path, 'w'){|f| f.write default_text_style} unless File.exist?(text_style_path)
     end
 
-    def style_guide_path
+    def style_guide_text_style_path
       @style_guide_folder + "/#{style_klass_name}_text_style.yml"
     end
 
     def save_style_guide
       FileUtils.mkdir_p(@style_guide_folder) unless File.exist?(@style_guide_folder)
-      File.open(style_guide_path, 'w'){|f| f.write self.default_text_style} unless File.exist?(style_guide_path)
+      File.open(style_guide_text_style_path, 'w'){|f| f.write self.default_text_style} unless File.exist?(style_guide_text_style_path)
     end
     
     def style_klass_name
@@ -84,20 +108,31 @@ module RLayout
     end
 
     # 1. check if there is local_text_style file
-    # 2. check if there is global_text_style(style_guide_path) file
-    # 3. save default_text_style to style_guide_path
+    # 2. check if there is style_guide_text_style_path file
+    # 3. save default_text_style to style_guide_text_style_path
     # to override global style, copy text_style file to local folder
     # if style_guide_folder is not given, style_guide_folder is set to document_folder
     #   - this is useful when designing single unit documents
     def load_text_style
-      if File.exist?(local_text_style_path)
-        RLayout::StyleService.shared_style_service.current_style = YAML::load_file(local_text_style_path)
-      elsif File.exist?(style_guide_path)
-        RLayout::StyleService.shared_style_service.current_style = YAML::load_file(style_guide_path)
+      if File.exist?(style_guide_text_style_path)
+        RLayout::StyleService.shared_style_service.current_style = YAML::load_file(style_guide_text_style_path)
       else
         RLayout::StyleService.shared_style_service.current_style = YAML::load(default_text_style)
         save_style_guide
-        # File.open(style_guide_path, 'w'){|f| f.write default_text_style}
+        # File.open(style_guide_text_style_path, 'w'){|f| f.write default_text_style}
+      end
+    end
+
+    def style_guide_layout_path
+      @style_guide_folder + "/#{style_klass_name}_layout.rb"
+    end
+
+    def load_layout_rb
+      if File.exist?(style_guide_layout_path)
+        @layout_rb = File.open(style_guide_layout_path, 'r'){|f| f.read}
+      else
+        @layout_rb = default_layout_rb
+        File.open(style_guide_layout_path, 'w'){|f| f.write default_layout_rb}
       end
     end
 
@@ -119,6 +154,12 @@ module RLayout
 
     def quote_relative_size
       18*width_ratio.to_i
+    end
+
+    def default_layout_rb
+      s=<<~EOF
+      RLayout::RDocument.new(width:#{@width}, heihgt:#{@height})
+      EOF
     end
 
     def default_text_style

@@ -21,6 +21,33 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+### 2022_03_06
+  - save front_page_content.yml
+  - save back_page_content.yml
+### 2022_03_04
+  - class FrontPage < StyleGuide 
+  - class BackPage < StyleGuide 
+### 2022_03_2
+  - namecard
+  - namecard_maker < 
+  - def load_text_style
+  - def load_layout
+
+  - FrontPage < StyleGuide
+  - FrontWing < StyleGuide
+  - BackPage < StyleGuide
+  - BackWing < StyleGuide
+
+### 2022_02_28
+
+  - default_layout_rb
+  - default_layout_yml
+  - def layout_from_yml
+  - def layout_to_yml
+
+  - faker_korean 0.0.2
+    - company
+    - member
 ### 2022_02_26
   - _style_guide
   change RChapter to Chapter

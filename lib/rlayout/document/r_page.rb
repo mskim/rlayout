@@ -1,10 +1,10 @@
 
-# The decision time!:
 # whether to create main_text within page or not is the question?
 # RPage need to implement bleeding image, and floats.
-# if we have main_text as main text hendling object, bleeding implementation could be tricky.
+# if we have main_text as main text hendling object, 
+# bleeding implementation could be tricky.
 # But if we implement r_page as big text_box with columns, this would be simpler to implent.
-# So, let do it without main_box.
+# So, lets do it without main_box.
 # use text_box as side_box.
 
 module RLayout
@@ -824,6 +824,13 @@ module RLayout
       Page.new(:parent=>document, :header=>true, :footer=>true, :text_box=>true)
     end
     
+    ############ pgscript ###############
+    def column_text(text_string)
+      h = {}
+      h[:parent] = self
+      h[:text_string] = text_string
+      RLayout::ColumnText.new(h)
+    end
   end
 
 
