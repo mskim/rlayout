@@ -16,7 +16,7 @@ describe 'testing container creation' do
 
   it 'should save svg' do
     @container.save_svg(@svg_path)
-    File.exists?(@svg_path).must_equal true
+    File.exist?(@svg_path).must_equal true
     # system "open #{@svg_path}"
   end
 end
@@ -47,7 +47,7 @@ describe 'testing container creation' do
 
   it 'should save svg' do
     @container.save_svg(@svg_path)
-    File.exists?(@svg_path).must_equal true
+    File.exist?(@svg_path).must_equal true
     # system "open #{@svg_path}"
   end
 

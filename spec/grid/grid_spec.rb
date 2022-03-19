@@ -22,7 +22,7 @@ describe 'create Grid' do
 
   it 'should draw image' do
     @g.save_svg(@path)
-    assert File.exists?(@path)
+    assert File.exist?(@path)
     # system("open #{@path}")
   end
 

@@ -413,7 +413,7 @@ module RLayout
     end
 
     def read_page_floats
-      unless File.exists?(page_floats_path)
+      unless File.exist?(page_floats_path)
         @page_floats = {}
       else
         @page_floats = YAML::load_file(page_floats_path)

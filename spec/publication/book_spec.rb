@@ -11,7 +11,7 @@ describe 'create new book' do
   end
 
   it 'should create a folder ' do
-    File.exists?(@path).must_equal true
+    File.exist?(@path).must_equal true
   end
 
   it 'should add page number to doc_info.yml' do

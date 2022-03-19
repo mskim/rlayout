@@ -142,7 +142,7 @@ end
 #  end
 #
 #  it 'should create pdf section' do
-#    File.exists?(@output_path).must_equal true
+#    File.exist?(@output_path).must_equal true
 #    system("open #{@output_path}")
 #  end
 # end
@@ -218,7 +218,7 @@ end
 #   end
 #
 #   it 'should create pdf section' do
-#     File.exists?(@output_path).must_equal true
+#     File.exist?(@output_path).must_equal true
 #     system("open #{@output_path}")
 #   end
 # end

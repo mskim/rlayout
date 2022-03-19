@@ -6,7 +6,7 @@ module RLayout
     attr_reader :section_pdf_path
     def initialize(options={})
       @section_path = options[:section_path]
-      unless File.exists?(@section_path)
+      unless File.exist?(@section_path)
         puts "Section #{@section_path} not found!!!"
       end
       @starting_page_number = options[:starting_page_number] || 1

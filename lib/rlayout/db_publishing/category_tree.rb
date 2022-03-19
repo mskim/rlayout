@@ -14,7 +14,7 @@ module RLayout
         # remove emtpty row
         @rows.pop if @rows.last.length == 0
       elsif options[:csv_path]
-        unless File.exists?(csv_path)
+        unless File.exist?(csv_path)
           puts "#{csv_path} doesn't exist ..."
           return self
         end

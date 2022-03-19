@@ -37,7 +37,7 @@ describe 'create idcard from hash' do
 
   it 'should save document pdf' do
     @doc.save_pdf(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
+    File.exist?(@pdf_path).must_equal true
     system("open #{@pdf_path}")
   end
   

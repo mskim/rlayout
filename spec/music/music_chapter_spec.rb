@@ -16,7 +16,7 @@ script = <<-EOF
   RLayout::MusicChapter.new(title: @title, source_path: "#{@source_path}", grid_base: [3,7])
 EOF
     system "echo '#{script}' | /Applications/rjob.app/Contents/MacOS/rjob"
-    File.exists?(@pdf_path).must_equal true
+    File.exist?(@pdf_path).must_equal true
   end
 end
 
@@ -36,7 +36,7 @@ script = <<-EOF
   RLayout::MusicChapter.new(title: @title, source_path: "#{@source_path}", grid_base: [3,7])
 EOF
     system "echo '#{script}' | /Applications/rjob.app/Contents/MacOS/rjob"
-    File.exists?(@pdf_path).must_equal true
+    File.exist?(@pdf_path).must_equal true
   end
 end
 
@@ -56,7 +56,7 @@ describe 'create music_chapter' do
   it 'should save yml' do
      @yml_path = "/Users/Shared/rlayout/output/music_chapter_sample.yml"
      @music_ch.save_yml(@yml_path)
-     File.exists?(@yml_path).must_equal true
+     File.exist?(@yml_path).must_equal true
    end
 end 
 

@@ -12,7 +12,7 @@ describe 'create new magazine' do
   end
 
   it 'should create a folder ' do
-    File.exists?(@path).must_equal true
+    File.exist?(@path).must_equal true
   end
   
 end

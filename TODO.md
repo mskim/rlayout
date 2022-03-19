@@ -21,6 +21,17 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+### 2022_03_07
+  - namecard
+  - magazine
+  - email based workflow
+  - using async gem in 3.0
+    - compile: generate pdf documents without pdf
+      - put pdf with source
+      - complile only needed document file mtime
+    - link: 
+      - post process header/footer workflow
+
 ### 2022_03_06
   - save front_page_content.yml
   - save back_page_content.yml

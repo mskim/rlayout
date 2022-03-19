@@ -167,7 +167,7 @@ module RLayout
       variables_hash[:data] = options.fetch(:data, {})
       hash = nil
       if options[:template]
-        unless File.exists?(options[:template])
+        unless File.exist?(options[:template])
           puts "Can't find template file #{options[:template]} "
           return
         end
@@ -192,7 +192,7 @@ module RLayout
     def self.news_page_heading(options={})
       publication = options.fetch(:publication, "B2")
       path    = "/Users/shared/SoftwareLab/heading/news_page/#{publication}.rlib"
-      unless File.exists?(path)
+      unless File.exist?(path)
         puts "Can't find #{path} !!!"
         return
       end

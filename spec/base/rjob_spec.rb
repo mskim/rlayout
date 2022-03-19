@@ -12,7 +12,7 @@ describe 'test Color named color' do
 
       end
     EOF
-    unless File.exists?(@project_path)
+    unless File.exist?(@project_path)
       FileUtils.mkdir_p(@project_path)
     end
     File.open(@layout_path, 'w'){|f| f.write rlayout_rb }

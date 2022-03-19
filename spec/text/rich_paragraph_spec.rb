@@ -22,7 +22,7 @@
 #       # puts "@para.inspect:#{@para.inspect}"
 #       @pdf_path = "/Users/Shared/rlayout/output/paragraph_test.pdf"
 #       @para.save_pdf(@pdf_path)
-#       File.exists?(@pdf_path).must_equal true
+#       File.exist?(@pdf_path).must_equal true
 #       system "open #{@pdf_path}"
 #     end
 # end
@@ -59,7 +59,7 @@
 #   it 'should have lines' do
 #     @para.graphics.length.must_equal 2
 #     @para.save_svg(@path)
-#     File.exists?(@path).must_equal true
+#     File.exist?(@path).must_equal true
 #   end
 # end
 # 

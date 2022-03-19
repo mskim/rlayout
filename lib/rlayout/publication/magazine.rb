@@ -57,7 +57,7 @@ module RLayout
     attr_accessor :page_plan, :style_sheet
     
     def initialize(options={}, &block)
-      # system("mkdir -p #{publication_path}") unless File.exists?(publication_path)
+      # system("mkdir -p #{publication_path}") unless File.exist?(publication_path)
       @name         = options.fetch(:name,"MyMagazine")
       @path         = options.fetch(:path, "/Users/Shared/Newspaper")
       @publication_path = "#{@path}/#{@name}"

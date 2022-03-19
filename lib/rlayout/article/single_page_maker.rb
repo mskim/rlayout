@@ -73,7 +73,7 @@ module RLayout
     end
     
     def read_story
-      unless File.exists?(@story_path)
+      unless File.exist?(@story_path)
         puts "Can not find file #{@story_path}!!!!"
         return {}
       end

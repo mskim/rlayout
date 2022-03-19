@@ -19,6 +19,6 @@ describe 'sample ad' do
 
   it 'should save pdf' do
     @ad.save_pdf(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
+    File.exist?(@pdf_path).must_equal true
   end
 end

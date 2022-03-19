@@ -48,7 +48,7 @@ describe 'save multiple page document' do
 
   it 'should save 50 pages' do
     @doc.save_pdf(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
+    File.exist?(@pdf_path).must_equal true
   end
 end
 
@@ -102,7 +102,7 @@ describe "document" do
     @pdf_path = "/Users/Shared/rlayout/output/document_test.pdf"
     @doc.save_svg(@svg_path)
     @doc.save_pdf(@pdf_path)
-    File.exists?(@svg0_path).must_equal true
-    File.exists?(@pdf_path).must_equal true
+    File.exist?(@svg0_path).must_equal true
+    File.exist?(@pdf_path).must_equal true
   end
 end

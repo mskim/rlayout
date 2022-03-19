@@ -72,7 +72,7 @@ module RLayout
       @image_path       = options[:image_path]
       @image_fit_type   = options.fetch(:image_fit_type, image_defaults[:image_fit_type])
       @image_fit_type   = @image_fit_type.to_i
-      unless File.exists?(@image_path)
+      unless File.exist?(@image_path)
         @image_path = "/Users/Shared/SoftwareLab/images/dummy.jpg"
         @stroke[:color] = 'CMYK=0,0,0,100'
         @stroke[:thickness] = 1.0

@@ -222,7 +222,7 @@ module  RLayout
   end
 
   def parse_csv(csv_path)
-    unless File.exists?(csv_path)
+    unless File.exist?(csv_path)
       puts "#{csv_path} doesn't exist ..."
       return nil
     end

@@ -98,7 +98,7 @@ describe 'TextBox test' do
   #   puts "@column.current_position:#{@column.current_position}"
   #   @pdf_path = File.dirname(__FILE__) + "/output/text_column_grid_path.pdf"
   #   @tb.save_pdf(@pdf_path)
-  #   File.exists?(@pdf_path).must_equal true
+  #   File.exist?(@pdf_path).must_equal true
   #   system("open #{@pdf_path}")
   # end
 end
@@ -207,7 +207,7 @@ describe 'TextColumn creation test' do
 
     # @tb.save_svg(@path)
     @tb.save_pdf(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
+    File.exist?(@pdf_path).must_equal true
   end
 
 end

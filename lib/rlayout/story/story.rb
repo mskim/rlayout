@@ -480,7 +480,7 @@ module RLayout
     def save_story(path)
       unless path =~/.yml$/
         path += ".yml"
-        system("mkdir -p #{File.dirname(path)} ") unless File.exists?(File.dirname(path))
+        system("mkdir -p #{File.dirname(path)} ") unless File.exist?(File.dirname(path))
         File.open(path, 'w'){|f| f.write to_hash.to_yaml}
       end
     end

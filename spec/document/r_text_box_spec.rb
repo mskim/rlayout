@@ -46,15 +46,15 @@ describe ' RTextBox creation' do
 
   it 'should save' do
     @tb.save_svg(@svg_path)
-    File.exists?(@svg_path).must_equal true
-    # system("open #{@svg_path}") if File.exists?(@svg_path)
+    File.exist?(@svg_path).must_equal true
+    # system("open #{@svg_path}") if File.exist?(@svg_path)
   end
 
   it 'should layout_items' do
      result = @tb.layout_items(@flowomg_graphics)
      @flowing_path = "/Users/Shared/rlayout/output/text_box_flowing_test.svg"
      @tb.save_svg(@flowing_path)
-     File.exists?(@flowing_path).must_equal true
+     File.exist?(@flowing_path).must_equal true
   end
 end
 
@@ -79,6 +79,6 @@ describe 'test float layout' do
   # end
   it 'should save floats' do
     @tb.save_svg(@svg_path)
-    File.exists?(@svg_path).must_equal true
+    File.exist?(@svg_path).must_equal true
   end
 end

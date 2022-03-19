@@ -39,7 +39,7 @@ describe 'batch_variable_pages' do
     
   it 'should save pdf' do
     pdf_path = "/Users/mskim/membership/pdf/김민수.pdf"
-    File.exists?(pdf_path).must_equal true
+    File.exist?(pdf_path).must_equal true
   end
 end
 

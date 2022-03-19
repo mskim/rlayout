@@ -1,10 +1,6 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe "create Chapter with page_floats" do
   before do
-    # @document_path = "/Users/mskim/test_data/chapter"
-    # @pdf_path     = "/Users/mskim/test_data/chapter_1/chapter.pdf"
-    # @pdf_path     = "/Users/mskim/test_data/chapter_1/chapter.pdf"
-    # @document_path  = "/Users/mskim/test_data/chapter_with_page_floats"
     @document_path = "/Users/mskim/test_data/chapter_1"
     @chapter      = RLayout::Chapter.new(document_path: @document_path, custom_style: true)
     @doc          = @chapter.document

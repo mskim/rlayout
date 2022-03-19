@@ -20,7 +20,7 @@ describe 'create PhotoSpread' do
   
   it 'should save document' do
     @pdf_path = "/Users/mskim/Development/photo_layout/photos/photobook.pdf"
-    File.exists?(@pdf_path).must_equal true
+    File.exist?(@pdf_path).must_equal true
     # system("open #{@pdf_path}")
   end
 end

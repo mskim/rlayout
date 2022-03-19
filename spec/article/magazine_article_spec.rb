@@ -14,7 +14,7 @@ describe 'create MagazineChapter with Image' do
   # it 'should save yml' do
   #   @yml_path = "/Users/Shared/rlayout/output/magazine_article_with_imag.yml"
   #   @m.save_yml(@yml_path)
-  #   File.exists?(@yml_path).must_equal true
+  #   File.exist?(@yml_path).must_equal true
   # end
 end
 
@@ -28,14 +28,14 @@ describe 'create MagazineChapter with Image' do
   it 'should save' do
     @pdf_path = "/Users/Shared/rlayout/output/magazine_article_with_imag.pdf"
     @m.save_pdf(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
+    File.exist?(@pdf_path).must_equal true
     system("open #{@pdf_path}")
   end
 
   # it 'should save yml' do
   #   @yml_path = "/Users/Shared/rlayout/output/magazine_article_with_imag.yml"
   #   @m.save_yml(@yml_path)
-  #   File.exists?(@yml_path).must_equal true
+  #   File.exist?(@yml_path).must_equal true
   # end
 end
 
@@ -69,13 +69,13 @@ end
 #   it 'should save' do
 #     @pdf_path = "/Users/Shared/rlayout/output/magazine_article2.pdf"
 #     @m.save_pdf(@pdf_path)
-#     File.exists?(@pdf_path).must_equal true
+#     File.exist?(@pdf_path).must_equal true
 #     system("open #{@pdf_path}")
 #   end
 #
 #   it 'should save yml' do
 #     @yml_path = "/Users/Shared/rlayout/output/magazine_article2.yml"
 #     @m.save_yml(@yml_path)
-#     File.exists?(@yml_path).must_equal true
+#     File.exist?(@yml_path).must_equal true
 #   end
 # end

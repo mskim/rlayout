@@ -194,7 +194,7 @@ module  RLayout
     # 1. fine file with number of children
     # 1. see if the duplicate exists
     def save_map(options={})
-      if File.exists?(grid_map_path)
+      if File.exist?(grid_map_path)
         # check if the contetn is equal
         if map == read_grid_map
         else
@@ -205,7 +205,7 @@ module  RLayout
         end
       else
         folder = File.dirname(grid_map_path)
-        system("mkdir -p #{folder}") unless File.exists?(folder)
+        system("mkdir -p #{folder}") unless File.exist?(folder)
         File.open(grid_map_path, 'w'){|f| f.write map.to_yaml}
       end
     end
@@ -233,17 +233,17 @@ module  RLayout
     end
 
     def duplicate_map_exists?
-      File.exists?(grid_map_path)
+      File.exist?(grid_map_path)
     end
 
     # create an other name
     def make_an_other_grid_map_name
       current = grid_map_path
       cadidate = current.gsub(".yml","_1.yml")
-      return cadidate unless File.exists?(cadidate)
+      return cadidate unless File.exist?(cadidate)
       20.times do |i|
         cadidate.gsub!(/_(\d+).yml$/,"_#{i+1}.yml")
-        return cadidate unless File.exists?(cadidate)
+        return cadidate unless File.exist?(cadidate)
       end
       nil
     end

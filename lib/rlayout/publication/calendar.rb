@@ -97,7 +97,7 @@ module RLayout
       @events           = CalendarEvents.new(@events_path)
 
       info_path       = @path + "/info.yml"
-      if File.exists?(info_path)
+      if File.exist?(info_path)
         @config           = YAML::load(File.open(info_path,'r'){|f| f.read})
         @type             = @config['type']
         @year             = @config['year']
@@ -454,7 +454,7 @@ module RLayout
       personal_path = path + "/events.txt"
       @personal = []
 
-      if File.exists?(personal_path)
+      if File.exist?(personal_path)
         data = ''
         f = File.open(personal_path, "r")
         f.each_line do |line|
@@ -474,7 +474,7 @@ module RLayout
     # parse event file
     def read_events
       national_path = "/Users/Shared/SoftwareLab/calendar/events" + "/national.events"
-      if File.exists?(national_path)
+      if File.exist?(national_path)
         @national = YAML::load(File.open(@path + "/national.events", 'r'){|f| f.read})
       else
         @national = KOREAN_HOLYDAYS

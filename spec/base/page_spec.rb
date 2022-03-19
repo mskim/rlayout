@@ -15,7 +15,7 @@ describe 'create page' do
 
   it 'should save svg' do
      @p.save_svg(@page_svg_test)
-     assert File.exists?(@page_svg_test)
+     assert File.exist?(@page_svg_test)
    end
 end
 
@@ -39,7 +39,7 @@ describe 'create page with fixtures' do
   it 'should save svg' do
     @svg_path = "/Users/Shared/rlayout/output/page_fixture_test.svg"
     @p.save_svg(@svg_path)
-    File.exists?(@svg_path).must_equal true
+    File.exist?(@svg_path).must_equal true
     # system("open #{@svg_path}")
   end
 
@@ -65,7 +65,7 @@ describe 'create right_side page  ' do
   it 'should save svg' do
     @svg_path = "/Users/Shared/rlayout/output/page_fixture_right_side.svg"
     @p.save_svg(@svg_path)
-    File.exists?(@svg_path).must_equal true
+    File.exist?(@svg_path).must_equal true
     # system("open #{@svg_path}")
   end
 end

@@ -46,15 +46,25 @@ module RLayout
       @space_before = 0
       @space_after = 0
       if @style_name
-        @text_line_spacing = @current_style_service.current_style[@style_name]['text_line_spacing'] || 0
-        @space_before = @current_style_service.current_style[@style_name]['space_before'] || 0
-        @space_after = @current_style_service.current_style[@style_name]['space_after'] || 0
+        binding.pry unless @current_style_service.current_style[@style_name]
+        if @current_style_service.current_style[@style_name]
+          @text_line_spacing = @current_style_service.current_style[@style_name]['text_line_spacing'] || 0
+          @space_before = @current_style_service.current_style[@style_name]['space_before'] || 0
+          @space_after = @current_style_service.current_style[@style_name]['space_after'] || 0
+        else
+          @text_line_spacing = 0
+          @space_before =  0
+          @space_after =  0
+        end
         @style_object = @current_style_service.style_object(@style_name, adjust_size: @adjust_size)
         para_hash = @current_style_service.current_style[@style_name]
+
         if para_hash.class == String
           @para_style = YAML::load(para_hash)
           @text_alignment = @para_style[:text_alignment] || @para_style['text_alignment'] || 'left'
-        else
+        elsif para_hash.nil?
+          @text_alignment =  'left'
+        else 
           @text_alignment = para_hash[:text_alignment] || para_hash['text_alignment'] || 'left'
         end
       elsif options[:para_style]

@@ -68,7 +68,7 @@ module RLayout
 
     def layout_background_image
       bg_image = bg_image_path
-      if File.exists?(bg_image)
+      if File.exist?(bg_image)
         options = {}
         options[:parent] = self
         options[:x] = -5

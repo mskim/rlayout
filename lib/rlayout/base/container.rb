@@ -127,6 +127,16 @@ module RLayout
       h
     end
 
+    def grid_rect_to_frame(grid_frame)
+      @grid_width = (@width - @left_margin - @right_margin)/12
+      @grid_height = (@height - @top_margin - @bottom_margin)/6
+      x = grid_frame[0]*@grid_width
+      y = grid_frame[1]*@grid_height
+      width = grid_frame[2]*@grid_width
+      height = grid_frame[3]*@grid_height
+      [x,y,width,height]
+    end
+
     def to_data
       h = {}
       instance_variables.each{|a|

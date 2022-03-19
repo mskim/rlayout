@@ -8,7 +8,7 @@ require 'yaml'
 # starting with "---"
 # and ending with "---"
 def parse_meta_markdown(filename, optins={})
-  unless File.exists?(filename)
+  unless File.exist?(filename)
     puts "Can not find file #{filename}!!!!"
     return 
   end

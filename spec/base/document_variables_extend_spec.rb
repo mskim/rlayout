@@ -40,7 +40,7 @@ describe 'create idcard from hash' do
 
   it 'should save document pdf' do
     @pdf_path =  "/Users/mskim/Development/rails32/business_card5/public/member_files/2/pdf/김민수.pdf"
-    File.exists?(@pdf_path).must_equal true
+    File.exist?(@pdf_path).must_equal true
     system("open #{@pdf_path}")
   end
 end
@@ -71,7 +71,7 @@ describe 'batch_variable_document' do
     
   it 'should save pdf' do
     pdf_path = "/Users/mskim/idcard/pdf/김민수.pdf"
-    File.exists?(pdf_path).must_equal true
+    File.exist?(pdf_path).must_equal true
   end
 end
 

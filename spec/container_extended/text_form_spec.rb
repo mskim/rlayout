@@ -62,7 +62,7 @@ describe 'TextForm' do
 
   it 'should save_pdf' do
     @page.save_pdf(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
+    File.exist?(@pdf_path).must_equal true
     system("open #{@pdf_path}")
   end
 end

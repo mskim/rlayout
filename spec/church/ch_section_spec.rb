@@ -16,7 +16,7 @@ describe 'create ChSection' do
   end
 
   it 'should create section_pdf' do
-    assert File.exists?(@pdf_path)
+    assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
   end
 end

@@ -41,14 +41,16 @@ module RLayout
       size_from_paper_size
       load_text_style
       load_layout_rb
-      @document = eval(@layout_rb)
-      if @document.is_a?(SyntaxError)
-        puts "SyntaxError in #{@document} !!!!"
-        return
-      end
-      unless @document.kind_of?(RLayout::RDocument) || @document.kind_of?(RLayout::Container)
-         puts "Not a @document kind created !!!"
-        return
+      if @layout_rb
+        @document = eval(@layout_rb)
+        if @document.is_a?(SyntaxError)
+          puts "SyntaxError in #{@document} !!!!"
+          return
+        end
+        unless @document.kind_of?(RLayout::RDocument) || @document.kind_of?(RLayout::Container)
+          puts "Not a @document kind created !!!"
+          return
+        end
       end
       self
     end

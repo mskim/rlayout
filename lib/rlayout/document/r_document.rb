@@ -139,6 +139,7 @@ module RLayout
       [@left_margin, @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
     end
 
+  
     # create new page and return first line of new page
     def add_new_page(options={})
       if @page_type == "toc_page"
@@ -206,6 +207,10 @@ module RLayout
       end
     end
 
+    def add_page(a_page)
+      a_page.parent = self
+      @pages << a_page
+    end
 
     def save_pdf(path, options={})
       save_pdf_with_ruby(path, options)

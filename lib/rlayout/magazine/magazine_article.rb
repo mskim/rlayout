@@ -59,7 +59,7 @@ module RLayout
     end
 
     def read_page_floats
-      unless File.exists?(page_floats_path)
+      unless File.exist?(page_floats_path)
         puts "Can not find file #{page_floats_path}!!!!"
         return {}
       end
@@ -67,7 +67,7 @@ module RLayout
     end
 
     def read_story
-      unless File.exists?(@story_path)
+      unless File.exist?(@story_path)
         puts "Can not find file #{@story_path}!!!!"
         return {}
       end

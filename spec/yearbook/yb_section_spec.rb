@@ -17,7 +17,7 @@ describe 'create YbPage even' do
 
   it 'should create section_pdf' do
     assert RLayout::YbSection,  @y.class
-    assert File.exists?(@y.section_pdf_path)
+    assert File.exist?(@y.section_pdf_path)
     system("open #{@y.section_pdf_path}")
   end
 end

@@ -15,12 +15,12 @@ describe 'create db_chapter' do
   
   it 'should save pdf' do
     @db_ch.save_pdf(@pdf_path)
-    File.exists?(@pdf_path).must_equal true
+    File.exist?(@pdf_path).must_equal true
   end
   
   it 'should save yml' do
     @yml_path = "/Users/Shared/rlayout/output/db_chapter_sample.yml"
     @db_ch.save_yml(@yml_path)
-    File.exists?(@yml_path).must_equal true
+    File.exist?(@yml_path).must_equal true
   end
 end 

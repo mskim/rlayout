@@ -163,7 +163,7 @@ describe 'testing container with graphics' do
   it 'should save pdf' do
     @svg_path = "/Users/Shared/rlayout/output/container_nested_test.svg"
     @container.save_svg(@svg_path)
-    File.exists?(@svg_path = "/Users/Shared/rlayout/output/container_nested_test.svg").must_equal true
+    File.exist?(@svg_path = "/Users/Shared/rlayout/output/container_nested_test.svg").must_equal true
 
   end
 end

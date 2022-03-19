@@ -56,10 +56,10 @@ describe 'testing heading block' do
   it 'should save heading' do
     @svg_path = "/Users/Shared/rlayout/output/heading_test.svg"
     @h.save_svg(@svg_path)
-    File.exists?(@svg_path).must_equal true
+    File.exist?(@svg_path).must_equal true
     # system "open #{@svg_path}"
     # @h.save_pdf(@pdf_path)
-    # File.exists?(@pdf_path).must_equal true
+    # File.exist?(@pdf_path).must_equal true
   end
 
 end

@@ -29,7 +29,7 @@ end
 #   
 #   upcString=label.getUPCString
 #   upcPath=barcodePath+"#{upcString}"+".png"
-#   if File.exists?(eanPath) && File.exists?(upcPath)
+#   if File.exist?(eanPath) && File.exist?(upcPath)
 #     if label.zimgc==' ' || label.zimgc=='nb'
 #       label.markZigmc("'b'")
 #       

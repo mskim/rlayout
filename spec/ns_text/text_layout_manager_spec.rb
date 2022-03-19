@@ -91,7 +91,7 @@ end
 #
 #   it 'should save TextLayoutManager' do
 #     @g.save_pdf(@pdf_path)
-#     File.exists?(@pdf_path).must_equal true
+#     File.exist?(@pdf_path).must_equal true
 #   end
 # end
 
@@ -105,6 +105,6 @@ end
 #   #
 #   # it 'should save TextLayoutManager' do
 #   #   @g.save_pdf(@pdf_path)
-#   #   File.exists?(@pdf_path).must_equal true
+#   #   File.exist?(@pdf_path).must_equal true
 #   # end
 # end

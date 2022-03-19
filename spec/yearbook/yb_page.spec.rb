@@ -14,7 +14,7 @@ describe 'create YbPage even' do
 
   it 'should save PDF ' do
     @y.save_pdf(@pdf_path)
-    assert File.exists?(@pdf_path)
+    assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
   end
 end
@@ -33,7 +33,7 @@ describe 'create YbPage Odd' do
 
   it 'should save PDF ' do
     @y.save_pdf(@pdf_path)
-    assert File.exists?(@pdf_path)
+    assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
   end
 end
