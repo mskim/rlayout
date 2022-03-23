@@ -1,9 +1,10 @@
 module RLayout
-  class CardFront < Container
+  class CardPage < Container
     attr_reader :grid
     attr_accessor :text_style, :document_path
-    attr_accessor :personal_info, :company_info, :logo_info
-    attr_reader :personal_object, :company_object, :logo_object
+    attr_accessor :personal_info, :company_info, :logo_info, :picture_info
+    attr_reader :personal_object, :company_object, :logo_object, :picture_object
+    attr_accessor :picture_path
 
     def initialize(options={}, &block)
       options[:paper_size] = 'NAMECARD'
@@ -16,7 +17,7 @@ module RLayout
       @grid = options[:paper_size] || [6,12]
 
       super
-      if self.class == RLayout::CardFront
+      if self.class == RLayout::CardPage
         if block
           instance_eval(&block)
         end
@@ -39,11 +40,17 @@ module RLayout
       if @personal_info
         @personal_object.set_content(@personal_info) 
       end
+
       if @company_info
         @company_object.set_content(@company_info) 
       end
+
       if @logo_info      
         @logo_object.set_content(@logo_info) 
+      end
+
+      if @picture_info
+        @picture_object.set_content(@picture_info)
       end
     end
 
@@ -56,6 +63,15 @@ module RLayout
         font_size: 11.0
         text_alignment: left
         first_line_indent: 11.0
+        space_before: 10.0
+        space_after: 5.0
+      en_fullname:
+        font: KoPubDotumPM
+        korean_name: 이름
+        font_size: 11.0
+        text_alignment: left
+        first_line_indent: 11.0
+        space_before: 10.0
         space_after: 5.0
       cell:
         font: Shinmoon
@@ -94,6 +110,12 @@ module RLayout
         text_alignment: left
         first_line_indent: 8.0
       company_name:
+        font: KoPubDotumPM
+        korean_name: 회사명
+        font_size: 8.0
+        text_alignment: left
+        first_line_indent: 8.0
+      en_company_name:
         font: KoPubDotumPM
         korean_name: 회사명
         font_size: 8.0
@@ -171,7 +193,6 @@ module RLayout
 
     end
 
-
     # TODO make it customizable
     def personal(grid_frame, options={})
       h = {}
@@ -202,6 +223,17 @@ module RLayout
       h[:tag] = "logo"
       h[:fill_color]  = options[:fill_color] || 'red'
       @logo_object = RLayout::Area.new(h)
+    end
+
+    # This places person picture
+    def picture(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:grid_frame]  = grid_frame
+      # TODO set frame rect
+      h[:tag] = "picture"
+      h[:image_path] = @picture_path
+      @picture_object = RLayout::Image.new(h)
     end
 
     def copy_1(grid_frame, options={})

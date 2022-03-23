@@ -33,6 +33,7 @@ module RLayout
     attr_reader :compnay_name, :member_data, :text_style
     attr_reader :cards_array
     attr_reader :imposition
+    attr_reader :company_hash
 
     def initialize(options={})
       @compnay_name = options[:compnay_name]
@@ -63,6 +64,10 @@ module RLayout
       @document_path + "/back_layout.rb"
     end
 
+    def company_info_path
+      @document_path + "/company.yml"
+    end
+
     def load_layout_rb
       if File.exist?(front_layout_path)
         @front_layout_rb = File.open(front_layout_path, 'r'){|f| f.read}
@@ -76,19 +81,13 @@ module RLayout
         @back_layout_rb = default_back_layout_rb
         @back_layout_rb = File.open(back_layout_path, 'w'){|f| f.write default_back_layout_rb}
       end
+      if File.exist?(company_info_path)
+        @company_info = File.open(company_info_path, 'r'){|f| f.read}
+      else
+        @company_info = default_company_info
+        @back_layout_rb = File.open(company_info_path, 'w'){|f| f.write default_company_info.to_yaml}
+      end    
     end
-
-    # def sample_member_csv
-    #   # s =<<~EOF
-    #   # name,title,email,cell
-    #   # 홍길동,영업부/부장,honggitdong@gmail.com,010-111-4444
-    #   # 김길동,영업부/부장,honggitdong@gmail.com,010-111-4444
-    #   # 강길동,영업부/부장,honggitdong@gmail.com,010-111-4444
-    #   # 나길동,영업부/부장,honggitdong@gmail.com,010-111-4444
-    #   # 노길동,영업부/부장,honggitdong@gmail.com,010-111-4444
-    #   # 오길동,영업부/부장,honggitdong@gmail.com,010-111-4444
-    #   # EOF
-    # end
 
     def sample_member_csv(options={})
       require 'fake_korean'
@@ -96,27 +95,17 @@ module RLayout
       count = options[:count] || 20
       count.times do |i|
         card = FakeKorean::KoreanNameCard.new
-        card_hash = card.to_hash
+        personal_info = card.personal_info
+        @company_info = card.company_info
         if i == 0
-          data += card_hash.keys.map{|k| k.to_s}.join(",")
+          data += personal_info.keys.map{|k| k.to_s}.join(",")
           data += "\n"
         else
-          data += card_hash.values.join(",")
+          data += personal_info.values.join(",")
           data += "\n"
         end
       end
       data
-    end
-
-
-
-    def default_personal_info_erb
-      "{name:'<%= @name %>', title: '<%= @title %>', cell: '010-7468-8222', email: 'mskimsid@gmail.com'}"
-    end
-
-    def default_company_info_erb
-      @company_info  = {company_name:"SoftwareLab", address_1:"401-206 Woomi-inosvill " , address_2: 'YounginSi, GyungGiDO. 11359'}
-
     end
 
     def default_company_info
@@ -125,14 +114,15 @@ module RLayout
       h[:phone] = "02-135-5555"
       h[:address_1] = "서을특별시 중구 을지로"
       h[:address_2] = "135-5"
+      h[:en_company_name] = 'Hankook Trading'
+      h[:en_address_1] = '135-5 UljeeRo'
+      h[:en_address_2] = "Jung-GU Seoul, Korea 10033"
       h
     end
 
-
-
     def default_front_layout_rb
       s=<<~EOF
-      RLayout::CardFront.new(paper_size:'NAMECARD') do
+      RLayout::CardPage.new(paper_size:'NAMECARD') do
         logo([1,1,1,1])
         personal([5,0,7,3])
         company([2,3,10,3])
@@ -141,28 +131,12 @@ module RLayout
       EOF
     end
 
-    def default_personal_layout_rb
-
-    end
-
-    def default_company_layout_rb
-      
-    end
-
-    def default_logo_layout_rb
-
-    end
-
-    def default_copy_1_layout_rb
-
-    end
-
     def default_back_layout_rb
       s=<<~EOF
-      RLayout::CardBack.new(paper_size:'NAMECARD') do
-        logo([0,0,1,1])
-        en_personal([2,0,4,3])
-        en_company([2,3,4,3])
+      RLayout::CardPage.new(paper_size:'NAMECARD') do
+        logo([1,1,1,1])
+        personal([5,0,7,3])
+        company([2,3,10,3])
       end
 
       EOF
@@ -177,6 +151,15 @@ module RLayout
         font_size: 11.0
         text_alignment: left
         first_line_indent: 11.0
+        space_before: 10.0
+        space_after: 5.0
+      en_fullname:
+        font: KoPubDotumPM
+        korean_name: 이름
+        font_size: 11.0
+        text_alignment: left
+        first_line_indent: 11.0
+        space_before: 10.0
         space_after: 5.0
       cell:
         font: Shinmoon
@@ -215,6 +198,12 @@ module RLayout
         text_alignment: left
         first_line_indent: 8.0
       company_name:
+        font: KoPubDotumPM
+        korean_name: 회사명
+        font_size: 8.0
+        text_alignment: left
+        first_line_indent: 8.0
+      en_company_name:
         font: KoPubDotumPM
         korean_name: 회사명
         font_size: 8.0
@@ -319,8 +308,7 @@ module RLayout
       if File.exist?(company_info_path)
         @company_info = YAML::load_file(company_info_path)
       else
-        @company_info = default_company_info
-        File.open(company_info_path, 'w'){|f| f.write default_company_info.to_yaml}
+        File.open(company_info_path, 'w'){|f| f.write @company_info.to_yaml}
       end      
       FileUtils.mkdir_p(members_path) unless File.exist?(members_path)
       @member_rows = CSV.parse(@member_data)
@@ -337,26 +325,47 @@ module RLayout
         slug = @personal_info[:name].gsub(" ", "_")
         @member_pdf_path =  members_path + "/#{slug}.pdf"
         @member_card = RLayout::RDocument.new(paper_size: 'NAMECARD', page_count: 0)
+        # do front side
         front_card = eval(@front_layout_rb)
         front_card.text_style = text_style
-        front_card.personal_info = @personal_info
-        front_card.company_info = @company_info
+        @personal_info_front = {}
+        @personal_info_front[:name]  = @personal_info[:name]
+        # @personal_info_front[:division]  = @personal_info[:division]
+        @personal_info_front[:title]  = "#{@personal_info[:division]}/#{@personal_info[:title]}"
+        @personal_info_front[:email]  = @personal_info[:email]
+        @personal_info_front[:cell]  = @personal_info[:cell]
+        front_card.personal_info = @personal_info_front
+        @company_info_front =  {}
+        @company_info_front[:company_name] = @company_info[:company_name]
+        @company_info_front[:address_1] = @company_info[:address_1]
+        @company_info_front[:address_2] = @company_info[:address_2]
+        front_card.company_info = @company_info_front
+        front_card.picture_path = @document_path + "/images/#{slug}"
+        # binding.pry
         front_card.set_content
         @member_card.add_page(front_card)
+        # do back side
         back_card = eval(@back_layout_rb)
         back_card.text_style = @text_style
-        back_card.personal_info = @personal_info
-        back_card.company_info = @company_info
+        @personal_info_back = {}
+        @personal_info_back[:en_fullname]  = @personal_info[:en_fullname]
+        @personal_info_back[:en_title]  = "#{@personal_info[:en_division]}/#{@personal_info[:en_title]}"
+        @personal_info_back[:email]  = @personal_info[:email]
+        @personal_info_back[:cell]  = @personal_info[:cell]
+        back_card.personal_info = @personal_info_back
+        @company_info_back =  {}
+        @company_info_back[:en_company_name] = @company_info[:en_company_name]
+        @company_info_back[:en_address_1] = @company_info[:en_address_1]
+        @company_info_back[:en_address_2] = @company_info[:en_address_2]
+        back_card.company_info = @company_info_back
+        back_card.picture_path = @document_path + "/images/#{slug}"
         back_card.set_content
         @member_card.add_page(back_card)
-
         @member_card.save_pdf(@member_pdf_path)
-
         if @imposition
           make_imposition(@member_pdf_path)
         end
       end
-
     end
 
     def make_imposition(member_pdf_path)

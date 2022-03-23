@@ -21,6 +21,25 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+### 2022_03_23
+  - picture, picture_path, picture_object
+  - imposition
+### 2022_03_20
+  - book
+    - _style_guide folder by document_kind with size
+    - compile: build pdf without page_number 
+      - with mdate dependancy
+    - link: add header/footer and generate toc
+    - generate print as option
+    - generate ebook as option
+  - site
+  - github-action
+  - divide gem by function
+    - rlayout
+    - bookcheego
+    - newsgo
+    - namecard
+
 ### 2022_03_07
   - namecard
   - magazine
