@@ -149,6 +149,7 @@ require File.dirname(__FILE__) + "/rlayout/book/inside_cover"
 require File.dirname(__FILE__) + "/rlayout/namecard/area"
 require File.dirname(__FILE__) + "/rlayout/namecard/card_page"
 require File.dirname(__FILE__) + "/rlayout/namecard/namecard"
+require File.dirname(__FILE__) + "/rlayout/namecard/card_step_and_reapeat"
 
 require File.dirname(__FILE__) + "/rlayout/newspaper/news_box"
 require File.dirname(__FILE__) + "/rlayout/view/pdf_view/news_article_view"

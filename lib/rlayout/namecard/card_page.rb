@@ -3,8 +3,8 @@ module RLayout
     attr_reader :grid
     attr_accessor :text_style, :document_path
     attr_accessor :personal_info, :company_info, :logo_info, :picture_info
-    attr_reader :personal_object, :company_object, :logo_object, :picture_object
-    attr_accessor :picture_path
+    attr_reader :personal_object, :company_object, :logo_object, :picture_object, :qrcode_object
+    attr_accessor :picture_path, :qrcode_path
 
     def initialize(options={}, &block)
       options[:paper_size] = 'NAMECARD'
@@ -31,7 +31,6 @@ module RLayout
 
     def set_content
       if @text_style
-        # current_style = RLayout::StyleService.shared_style_service.current_style = YAML::load(@text_style)
         current_style = RLayout::StyleService.shared_style_service.current_style = @text_style
       else  
         current_style = RLayout::StyleService.shared_style_service.current_style = YAML::load(default_text_style)
@@ -233,6 +232,17 @@ module RLayout
       # TODO set frame rect
       h[:tag] = "picture"
       h[:image_path] = @picture_path
+      @picture_object = RLayout::Image.new(h)
+    end
+
+    # This places person picture
+    def qrcode(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:grid_frame]  = grid_frame
+      # TODO set frame rect
+      h[:tag] = "qrcode"
+      h[:image_path] = @qrcode_path
       @picture_object = RLayout::Image.new(h)
     end
 
