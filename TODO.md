@@ -21,9 +21,33 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+### 2022_03_25
+  - Container pgscript add Area
+    - grid_size?, grid_base?
+    - bg_color, fill entire area ,  content_bg_color fill area inside of margin
+  - chnage Area < Contrainer
+  - change Heading pgscriopt to heading([0,0,6,6])
+  - chnage RDocument chapter_layout.rb with heading
+  ```ruby
+    RLayout::RDocument.new(paper_size: 'A5') do
+      page do
+        heading([0,0,6,6])
+      end
+    end
+  ```
+  - create CoverText < Area
+
+### 2022_03_24
+  - style_guide
+    - front_page, back_page, seneca, front_wing, back_wing, toc
+  - JobgeeGo, for magazine publishing
+  - place font under /fonts
+  - vips gem ?
 ### 2022_03_23
   - picture, picture_path, picture_object
+  - qrcode, qrcode_path, qrcode_object
   - imposition
+
 ### 2022_03_20
   - book
     - _style_guide folder by document_kind with size

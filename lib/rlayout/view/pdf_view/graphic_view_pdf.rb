@@ -17,7 +17,6 @@ module RLayout
         canvas        = page.canvas     
       end
       style_service.pdf_doc = @pdf_doc
-      # load_fonts(@pdf_doc)
       # style_service.set_canvas_text_style(canvas, 'body')
       draw_pdf(canvas)
       @pdf_doc.write(output_path)
@@ -28,13 +27,6 @@ module RLayout
       # puts "It took:#{ending_time - start_time}" if options[:time]
     end
 
-    # read fonts from disk
-    def load_fonts(pdf_doc)
-      font_foleder = "/Users/Shared/SoftwareLab/font_width"
-      Dir.glob("#{font_foleder}/*.ttf").each do |font_file|
-        pdf_doc.fonts.add(font_file)
-      end
-    end
 
 
     # split pdf_file_path file into single page pdf and move it to page folder

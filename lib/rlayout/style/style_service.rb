@@ -1136,11 +1136,13 @@ module RLayout
   class StyleService
     attr_accessor :current_style, :default_style, :chapter_style, :news_style, :magazine_style, :quiz_item_style
     attr_accessor :custom_style, :pdf_doc, :font_wrappers, :canvas
+    attr_reader :font_folder
     def initialize
       @custom_style   = nil
       @current_style  = DEFAULT_STYLES
       @chapter_style  = CHAPTER_STYLES
       @poem_style  = POEM_STYLES
+      @font_folder  = "#{__dir__}/font"
 
       # @chapter_style_path = "/Users/Shared/SoftwareLab/article_template/chapter_style.rb"
       # if File.exist?(@chapter_style_path)
@@ -1211,14 +1213,8 @@ module RLayout
       text_color    = "CMYK=0,0,0,100" unless text_color
       text_color    = RLayout::color_from_string(text_color)
       canvas.fill_color(text_color) if text_color
-      #TODO
-      # find font_wapper with font_name
-      # font_wapper  = @pdf_doc.fonts.loaded_fonts_cache[style_name]
-      # unless font_wapper
-        font_folder  = "/Users/Shared/SoftwareLab/font_width"
-        font_file     = font_folder + "/#{font_name}.ttf"
-        font_wapper   = @pdf_doc.fonts.add(font_file)
-      # end
+      font_file     = @font_folder + "/#{font_name}.ttf"
+      font_wapper   = @pdf_doc.fonts.add(font_file)
       font_size = style[:font_size]
       font_size += options[:adjust_size] if options[:adjust_size]
       canvas.font(font_wapper, size: font_size)
@@ -1240,25 +1236,22 @@ module RLayout
         if font_name == canvas_font_name && size == canvas_font_size
         elsif font_name != canvas_font_name
           # TODO do not load font, just change the font_wapper
-          font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-          font_file     = font_foleder + "/#{font_name}.ttf"
+          font_file     = @font_folder + "/#{font_name}.ttf"
           doc           = canvas.context.document
           font_wapper   = doc.fonts.add(font_file)
           canvas.font(font_wapper, size: size)
         elsif size != canvas_font_size
           canvas.font(canvas.font, size: size)
         else
-          font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-          font_file     = font_foleder + "/#{font_name}.ttf"
+          font_file     = @font_folder + "/#{font_name}.ttf"
           doc           = canvas.context.document
           font_wapper   = doc.fonts.add(font_file)
           canvas.font(font_wapper, size: size)
         end
       else
         size = para_style[:font_size] || 16
-        font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-        font_file     = font_foleder + "/Shinmoon.ttf"
-        font_file     = font_foleder + "/#{font_name}.ttf" if font_name
+        font_file     = @font_folder + "/Shinmoon.ttf"
+        font_file     = @font_folder + "/#{font_name}.ttf" if font_name
         doc           = canvas.context.document
         font_wapper   = doc.fonts.add(font_file)
         canvas.font(font_wapper, size: size)
@@ -1274,9 +1267,8 @@ module RLayout
       style = @current_style['body'] || @current_style[:body] unless style
       style = Hash[style.map{ |k, v| [k.to_sym, v] }]
       @pdf_doc      ||= HexaPDF::Document.new
-      font_folder   = "/Users/Shared/SoftwareLab/font_width"
       font_name     = style[:font]
-      font_file     = font_folder + "/#{font_name}.ttf"
+      font_file     = @font_folder + "/#{font_name}.ttf"
       font_wrapper = @pdf_doc.fonts.add(font_file)
       h = {}
       h[:font]                = font_wrapper
@@ -1292,9 +1284,8 @@ module RLayout
 
     def style_object_from_para_style(para_style, options={})
       @pdf_doc      ||= HexaPDF::Document.new
-      font_folder   = "/Users/Shared/SoftwareLab/font_width"
       font_name     = para_style[:font]
-      font_file     = font_folder + "/#{font_name}.ttf"
+      font_file     = @font_folder + "/#{font_name}.ttf"
       font_wrapper = @pdf_doc.fonts.add(font_file)
       h = {}
       h[:font]                = font_wrapper

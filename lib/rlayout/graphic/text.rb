@@ -77,8 +77,7 @@ module RLayout
           canvas_fill_color = canvas.fill_color
           if @font_name == canvas_font_name && @font_size == canvas_font_size
           elsif @font_name != canvas_font_name
-            font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-            font_file     = font_foleder + "/#{@font_name}.ttf"
+            font_file     = @font_folder + "/#{@font_name}.ttf"
             doc           = canvas.context.document
             font_wapper   = doc.fonts.add(font_file)
             canvas.font(font_wapper, size: @font_size)
@@ -86,9 +85,8 @@ module RLayout
             canvas.font(canvas.font, size: @font_size)
           end
         else
-          font_foleder  = "/Users/Shared/SoftwareLab/font_width"
-          font_file     = font_foleder + "/Shinmoon.ttf"
-          font_file     = font_foleder + "/#{@font_name}.ttf" if @font_name
+          font_file     = @font_folder + "/Shinmoon.ttf"
+          font_file     = @font_folder + "/#{@font_name}.ttf" if @font_name
           doc           = canvas.context.document
           font_wapper   = doc.fonts.add(font_file)
           canvas.font(font_wapper, size: @font_size)

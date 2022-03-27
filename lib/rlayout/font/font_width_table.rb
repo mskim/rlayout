@@ -15,7 +15,7 @@ module RLayout
       h.each do |name, style|
         font_name = style['font']
         result = get_font_info_for_unicode_font(font_name)
-        font_width_folder = "/Users/Shared/SoftwareLab/font_width"
+        font_width_folder = @font_folder
         system("mkdir -p #{font_width_folder}") unless File.exist?(font_width_folder)
         font_width_file = font_width_folder + "/#{font_name}.rb"
         File.open(font_width_file, 'w'){|f| f.write result.to_s}

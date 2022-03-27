@@ -47,7 +47,7 @@ module RLayout
           h[:page_pdf] = true
           h[:toc] = true
           h[:starting_page_number] = @starting_page_number
-          h[:style_guide_folder] = style_guide_folder
+          # h[:style_guide_folder] = style_guide_folder
 
           case basename
           when /isbn/
@@ -57,6 +57,8 @@ module RLayout
             h[:toc] = false
             h[:has_footer] = false
             h[:has_header] = false
+            h[:style_guide_folder] = style_guide_folder + "/isbn"
+
             r = RLayout::Isbn.new(h)
             @page_count += r.page_count
             @starting_page_number += page_count
@@ -69,6 +71,8 @@ module RLayout
             h[:toc] = false
             h[:has_footer] = false
             h[:has_header] = false
+            h[:style_guide_folder] = style_guide_folder + "/inside_cover"
+
             r = RLayout::InsideCover.new(h)
             @page_count += r.page_count
             @starting_page_number += page_count
@@ -77,6 +81,8 @@ module RLayout
             dedication_path = build_front_matter_path + "/dedication"
             copy_source_to_build(file, dedication_path,)
             h[:document_path] = dedication_path
+            h[:style_guide_folder] = style_guide_folder + "/dedication"
+
             r = RLayout::Dedication.new(h)
             @page_count += r.page_count
             @starting_page_number += page_count
@@ -85,6 +91,7 @@ module RLayout
             thanks_path = build_front_matter_path + "/thanks"
             copy_source_to_build(file, thanks_path,)
             h[:document_path] = thanks_path
+            h[:style_guide_folder] = style_guide_folder + "/thanks"
             r = RLayout::Thanks.new(h)
             @page_count += r.page_count
             @starting_page_number += page_count
@@ -93,6 +100,7 @@ module RLayout
             prologue_path = build_front_matter_path + "/prologue"
             copy_source_to_build(file, prologue_path,)
             h[:document_path] = prologue_path
+            h[:style_guide_folder] = style_guide_folder + "/prologue"
             r = RLayout::Prologue.new(h)
             @page_count += r.page_count
             @starting_page_number += page_count

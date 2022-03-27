@@ -46,8 +46,7 @@ module RLayout
             font_name = 'KoPubBatangPM'
           end
           font_size     = @para_style[:font_size]
-          font_folder   = "/Users/Shared/SoftwareLab/font_width"
-          font_file     = font_folder + "/#{font_name}.ttf"
+          font_file     = @font_folder + "/#{font_name}.ttf"
           doc           = canvas.context.document
           font_wapper   = doc.fonts.add(font_file)
           canvas.font(font_wapper, size: font_size) 

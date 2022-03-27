@@ -17,7 +17,7 @@ module RLayout
     attr_accessor :fill, :stroke, :shape, :text_record, :image_record
     attr_accessor :frame_image, :shadow, :rotation
     attr_reader   :pdf_doc, :project_path , :from_right, :from_bottom
-
+    attr_reader :font_folder
 
     def initialize(options={}, &block)
       @parent = options[:parent] if options[:parent]
@@ -32,6 +32,7 @@ module RLayout
         @width = size[0]
         @height = size[1]
       end
+      @font_folder = "#{__dir__}/../style/font"
       if @parent 
         if options[:parent_frame]
           set_frame(@parent.layout_rect)
