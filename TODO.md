@@ -21,6 +21,10 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+### 2022_03_28
+  - style_guide
+    toc, seneca, inside_cover, part_cover
+    CoverPageText, InsideC0ver
 ### 2022_03_25
   - Container pgscript add Area
     - grid_size?, grid_base?
@@ -79,18 +83,18 @@
   - save front_page_content.yml
   - save back_page_content.yml
 ### 2022_03_04
-  - class FrontPage < StyleGuide 
-  - class BackPage < StyleGuide 
+  - class FrontPage < StyleableDoc 
+  - class BackPage < StyleableDoc 
 ### 2022_03_2
   - namecard
   - namecard_maker < 
   - def load_text_style
   - def load_layout
 
-  - FrontPage < StyleGuide
-  - FrontWing < StyleGuide
-  - BackPage < StyleGuide
-  - BackWing < StyleGuide
+  - FrontPage < StyleableDoc
+  - FrontWing < StyleableDoc
+  - BackPage < StyleableDoc
+  - BackWing < StyleableDoc
 
 ### 2022_02_28
 

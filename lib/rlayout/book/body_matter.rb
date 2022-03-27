@@ -89,10 +89,6 @@ module RLayout
       generate_body_matter_toc
     end
 
-    # def style_guide_folder
-    #   @project_path + "/_style_guide"
-    # end
-
     def style_guide_folder
       @project_path + "/_style_guide/chapter"
     end

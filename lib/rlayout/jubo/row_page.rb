@@ -6,7 +6,7 @@ module RLayout
   # RowPage
   # BoxArticles flow as horizontal direction
 
-  class RowPage < StyleGuide
+  class RowPage < StyleableDoc
     attr_reader :level_count, :story_count
     
     def initialize(options={})

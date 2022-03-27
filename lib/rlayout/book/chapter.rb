@@ -200,7 +200,7 @@
 
 
 module RLayout
-  class Chapter < StyleGuide
+  class Chapter < StyleableDoc
     attr_reader :document_path, :story_path
     attr_reader :document, :output_path, :column_count
     attr_reader :doc_info, :toc_content

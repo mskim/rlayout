@@ -1,6 +1,6 @@
 module RLayout
 
-  class Calendar  < StyleGuide
+  class Calendar  < StyleableDoc
     attr_reader :year, :titile, :events
 
     def initialize(options={})

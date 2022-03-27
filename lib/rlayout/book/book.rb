@@ -10,7 +10,6 @@ module RLayout
     attr_reader :toc_first_page_number, :toc_doc_page_count, :toc_page_links
     attr_reader :front_matter, :body_matter, :rear_matter
     attr_reader :gripper_margin, :bleed_margin, :binding_margin
-    attr_reader :custom_style
 
     def initialize(project_path, options={})
       @project_path = project_path
@@ -18,8 +17,6 @@ module RLayout
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @paper_size = @book_info[:paper_size] || 'A5'
-      @custom_style = @book_info[:custom_style] || false
-      # save_style_guide
       @title = @book_info[:title]
       @page_width = SIZES[@paper_size][0]
       @width = @page_width
@@ -38,7 +35,6 @@ module RLayout
       generate_pdf_book 
       generate_pdf_for_print
       generate_ebook unless options[:no_ebook]
-      # push_to_git_repo if options[:push_to_git_repo]
     end
 
     def style_guide_folder

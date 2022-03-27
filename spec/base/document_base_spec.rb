@@ -1,14 +1,14 @@
 require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
-describe 'create StyleGuide' do
+describe 'create StyleableDoc' do
   before do
     @document_base = "/Users/mskim/test_data/document_base"
     FileUtils.mkdir_p(@document_base)  unless File.exist?(@document_base)
-    @doc = StyleGuide.new(document_base: @document_path)
+    @doc = StyleableDoc.new(document_base: @document_path)
   end
 
-  it 'should create StyleGuide' do
-    assert_equal StyleGuide, @doc.class
+  it 'should create StyleableDoc' do
+    assert_equal StyleableDoc, @doc.class
   end
 
   # it 'should create one line' do

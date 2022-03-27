@@ -3,7 +3,7 @@
 # A single column text or item
 
 module RLayout
-  class ColumnArticle < StyleGuide
+  class ColumnArticle < StyleableDoc
     attr_reader :document_path
     attr_reader :width, :height, :left_margin, :top_margin, :right_margin,  :bottom_margin
     attr_reader :custom_style, :column

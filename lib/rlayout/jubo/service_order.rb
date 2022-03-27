@@ -1,6 +1,6 @@
 module RLayout
 
-  class ServiceOrder < StyleGuide
+  class ServiceOrder < StyleableDoc
 
     def initialize(options={})
       super

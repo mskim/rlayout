@@ -29,7 +29,7 @@ module RLayout
   # personal_info = "{name: '#{@name}', title: '#{@divistion}/#{@title}', email:'#{@email}'}"
   # company_info = "{company_name: '#{@company_name}', address_1: '#{@address_1 #{@address_1}', address_2: '#{@city} #{@state} #{@zip}' }"
 
-  class Namecard < StyleGuide
+  class Namecard < StyleableDoc
     attr_reader :compnay_name, :member_data, :text_style
     attr_reader :cards_array
     attr_reader :imposition

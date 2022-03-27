@@ -3,7 +3,7 @@ module RLayout
   # With Title, author, publisher, logo
   # Replica of front cover image
   
-  class Isbn < StyleGuide
+  class Isbn < StyleableDoc
     attr_reader :document_path, :info_text, :isbn_text
 
     def initialize(options={})

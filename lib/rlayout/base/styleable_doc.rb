@@ -5,9 +5,9 @@ module RLayout
   # Once style_guide is tweaked by the designer, 
   # similar publications can re-use the copy of the style_guide with new content.
   
-  # StyleGuide class.
+  # StyleableDoc class.
   # There are text_styles and layout_rb for each "unit document".
-  # StyleGuide is super class for customizable document.
+  # StyleableDoc is super class for customizable document.
   #  Chapter, Toc, Front_matter_doc, Column_Article, MagazineArticle, 
   #  CoverPage, PartCover, Isbn, etc ...
   #  MagazineArticle, MagazineToc, MagazineEditorNote, MagazinePreface
@@ -22,7 +22,7 @@ module RLayout
   # style_guide_folder
   # for books where multiple documents with same style are used, like chapters
   # text_styles are put in style_guide_folder
-  class StyleGuide
+  class StyleableDoc
     attr_reader :style_guide_folder
     attr_reader :document_path, :paper_size, :width, :height
     attr_reader :document

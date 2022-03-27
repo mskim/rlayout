@@ -7,7 +7,7 @@
 # some_text ............ 12
 
 module RLayout
-  class Toc < StyleGuide
+  class Toc < StyleableDoc
     attr_reader :document_path
     attr_reader :document, :output_path, :column_count
     attr_reader :toc_content, :toc_title
