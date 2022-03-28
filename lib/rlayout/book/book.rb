@@ -10,8 +10,10 @@ module RLayout
     attr_reader :toc_first_page_number, :toc_doc_page_count, :toc_page_links
     attr_reader :front_matter, :body_matter, :rear_matter
     attr_reader :gripper_margin, :bleed_margin, :binding_margin
+    attr_reader :html
 
     def initialize(project_path, options={})
+      @html  = options[:html]
       @project_path = project_path
       @book_info_path = @project_path + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
@@ -22,19 +24,23 @@ module RLayout
       @width = @page_width
       @height = SIZES[@paper_size][1]
       @title = @book_info[:title]
-      @starting_page_number = 1
-      @gripper_margin = options[:gripper_margin] || 1*28.34646
-      @binding_margin = options[:binding_margin] || 20
-      @bleed_margin = options[:bleed_margin] || 3*2.834646
-      create_book_cover
-      @front_matter = FrontMatter.new(@project_path)
-      @starting_page_number += @front_matter.page_count
-      @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number, paper_size: @paper_size)
-      @rear_matter = RearMatter.new(@project_path)
-      generate_toc
-      generate_pdf_book 
-      generate_pdf_for_print
-      generate_ebook unless options[:no_ebook]
+      if @html 
+        generate_html
+      else
+        @starting_page_number = 1
+        @gripper_margin = options[:gripper_margin] || 1*28.34646
+        @binding_margin = options[:binding_margin] || 20
+        @bleed_margin = options[:bleed_margin] || 3*2.834646
+        create_book_cover
+        @front_matter = FrontMatter.new(@project_path)
+        @starting_page_number += @front_matter.page_count
+        @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number, paper_size: @paper_size)
+        @rear_matter = RearMatter.new(@project_path)
+        generate_toc
+        generate_pdf_book 
+        generate_pdf_for_print
+        generate_ebook unless options[:no_ebook]
+      end
     end
 
     def style_guide_folder
@@ -94,6 +100,11 @@ module RLayout
       build_folder + "/rear_matter"
     end
     
+    ########### toc ###########
+    def  generate_html
+      puts "generating html ..."
+    end
+
     ########### toc ###########
     def generate_toc
       FileUtils.mkdir_p(toc_folder) unless File.exist?(toc_folder)
