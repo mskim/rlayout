@@ -6,12 +6,18 @@ module RLayout
   # similar publications can re-use the copy of the style_guide with new content.
   
   # StyleableDoc class.
-  # There are text_styles and layout_rb for each "unit document".
+  # There are text_styles and layout_rb for each "styleable document".
   # StyleableDoc is super class for customizable document.
-  #  Chapter, Toc, Front_matter_doc, Column_Article, MagazineArticle, 
-  #  CoverPage, PartCover, Isbn, etc ...
+  # book_cover_docs
+  #     front_page, back_page, seneca, front_wing, back_wing
+  # front_matter_doc
+  #     Toc, InsideCover, Isbn, Prologue, Preface, Thanks, Dedication
+  # body_matter
+  #     Chapter, PartCover, Column_Article, 
+  # MagazineArticle, 
   #  MagazineArticle, MagazineToc, MagazineEditorNote, MagazinePreface
-  #  NamecardMaker, Jubo
+  #  NamecardMaker, 
+  # Jubo
 
   #  def load_text_style
   #  read text_style if they exist or save default style so that designer can customize it.
@@ -22,6 +28,7 @@ module RLayout
   # style_guide_folder
   # for books where multiple documents with same style are used, like chapters
   # text_styles are put in style_guide_folder
+  
   class StyleableDoc
     attr_reader :style_guide_folder
     attr_reader :document_path, :paper_size, :width, :height
