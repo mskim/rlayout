@@ -50,7 +50,6 @@ module RLayout
     def read_toc
       @toc_content_path = @document_path + "/toc_content.yml"
       unless File.exist?(@toc_content_path)
-        # puts "/toc_content.yml not found!!!"
         @toc_content = [
           ['차    례'],
           ['여기는 제목 1',  '4'],

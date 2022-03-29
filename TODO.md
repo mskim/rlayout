@@ -22,6 +22,9 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+### 2022_03_29
+  - fix toc hug, setup rails bookcheego app
+
 ### 2022_03_28
   - style_guide
     toc, seneca, inside_cover, part_cover
