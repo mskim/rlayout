@@ -53,36 +53,7 @@ module RLayout
     def content_path
       document_path + "/content.yml"
     end
-
-    # def generate_pdf
-    #   @updated = false
-    #   if File.exist?(content_path)
-    #     @content = YAML::load_file(content_path)
-    #   else
-    #     @content = default_content
-    #     File.open(content_path, 'w'){|f| f.write default_content}
-    #   end
-
-    #   # template = File.open(layout_erb_path,'r'){|f| f.read }
-    #   # erb = ERB.new(template)
-    #   mergerd = erb.result(binding)
-    #   mergerd = eval(@layout_rb)
-
-    #   # check if  layout.rb file exists,
-    #   # if so use it to generate pdf.
-    #   # if not merge data and layout.erb and save new layout.rb file
-    #   if File.exist?(layout_path)
-    #     mergerd = File.open(layout_path,'r'){|f| f.read}
-    #     layout = eval(mergerd)
-    #   else
-    #     layout = eval(mergerd)
-    #     File.open(layout_path,'w'){|f| f.write mergerd }
-    #   end
-    #   # return unless is_dirty?
-    #   layout.save_pdf_with_ruby(output_path, jpg:true)
-    #   @updated = true
-    # end
-
+    
     def default_layout_rb
       # before rotating 90 
       # TODO: change  it  to 
