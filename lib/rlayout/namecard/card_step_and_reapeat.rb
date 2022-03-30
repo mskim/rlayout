@@ -202,8 +202,6 @@ class CardStepAndRepeat
       # 0001.pdf, 0002.pdf, 0003.pdf ...
       system("cd #{folder_path} && hexapdf split #{pdf_basename}.pdf --force")
       # system("cd hexapdf split #{@card_path}")
-      # binding.pry
-
       @snr_back_page = RLayout::CardSnrPage.new(paper_size: @paper_size, card_path: @back_card_pdf, front_page_mode: false)
       snr_doc.add_page(@snr_back_page)
       # delete spit pages

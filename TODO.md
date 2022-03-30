@@ -23,12 +23,17 @@
       - font, font_color, font_style, prefix, postfix
 
 ### 2022_03_29
-  - fix toc hug, setup rails bookcheego app
-
-### 2022_03_28
   - style_guide
     toc, seneca, inside_cover, part_cover
-    CoverPageText, InsideC0ver
+    
+    CoverPageText
+
+### 2022_03_29
+  - remove vips or imagemagik dependency check the status and  choose one.
+    read image size with Hexapdf or image-processing
+### 2022_03_29
+  - fix toc bug, setup rails bookcheego app
+
 ### 2022_03_25
   - Container pgscript add Area
     - grid_size?, grid_base?

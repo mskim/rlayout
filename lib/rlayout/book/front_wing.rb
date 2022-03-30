@@ -20,7 +20,7 @@ module RLayout
   # 4. contents  are layed-out.
   # 5. PDF,jpg is generated from layed-out 
 
-  class FrontWing
+  class FrontWing < StyleableDoc
     attr_reader :project_path, :output_path, :column, :content
     attr_reader :width, :height, :updated
 

@@ -74,6 +74,7 @@ module RLayout
         @enlarged_pdf_base_name = File.basename(enlarged_path)
         @jpg_base_name = File.basename(output_path).gsub(/.pdf$/, ".jpg")
         commend  = "cd #{@pdf_folder} && vips copy #{@enlarged_pdf_base_name}[n=-1] #{@jpg_base_name}"
+        # TODO use imagemagick
         system(commend)
         system("rm #{enlarged_path}")
       else

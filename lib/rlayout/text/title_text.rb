@@ -47,10 +47,8 @@ module RLayout
       @space_after = 0
       if @style_name
         unless @current_style_service.current_style[@style_name]
-          # binding.pry 
           @style_name = 'body'
         end
-        # binding.pry if @style_name == 'name'
         if @current_style_service.current_style[@style_name]
           @text_line_spacing = @current_style_service.current_style[@style_name]['text_line_spacing'] || 0
           @space_before = @current_style_service.current_style[@style_name]['space_before'] || 0

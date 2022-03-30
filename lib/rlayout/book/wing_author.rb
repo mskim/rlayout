@@ -1,6 +1,6 @@
 
 module RLayout
-  class WingAuthor < Container
+  class WingAuthor < StyleableDoc
     def initialize(options={})
       
       self

@@ -14,89 +14,132 @@ module RLayout
   # These two files are merged and PDF, jpg files are produced.
   
   # steps
-  # 1. process is triggered by calling Seneca.new(project_path)
+  # 1. process is triggered by calling Seneca.new(document_path)
   # 2. layout.erb is read 
   # 3. content is read.
   # 4. two are merged into layout object
   # 5. PDF is generated frim merged layout 
 
-  class Seneca
-    attr_reader :project_path, :content, :updated
-
+  class Seneca < StyleableDoc
+    attr_reader :content, :updated
 
     def initialize(options={}, &block)
-      @content = options[:content]
-      @project_path = options[:project_path]
+      @document_path = options[:document_path]
+      if File.exist?(content_path)
+        @content = YAML::load_file(content_path)
+      else
+        @content = default_content
+        File.open(content_path, 'w'){|f| f.write default_content}
+      end
+      super
       @width = options[:width] || 500
       @height = options[:height] || 20
-      save_sample unless File.exist?(layout_erb_path)
-
-      if block
-        instance_eval(&block)
-      end
-      generate_pdf
+      @document.save_pdf(output_path, jpg:true)
       self
     end
 
-    def layout_path
-      @project_path + "/layout.rb"
-    end
+    # def layout_path
+    #   @document_path + "/layout.rb"
+    # end
 
-    def layout_erb_path
-      @project_path + "/layout.erb"
-    end
+    # def layout_erb_path
+    #   @document_path + "/layout.erb"
+    # end
 
     def output_path
-      @project_path + "/output.pdf"
+      @document_path + "/output.pdf"
     end
 
     def content_path
-      project_path + "/content.yml"
+      document_path + "/content.yml"
     end
 
-    def generate_pdf
-      @updated = false
-      @content = YAML::load_file(content_path)
-      template = File.open(layout_erb_path,'r'){|f| f.read }
-      erb = ERB.new(template)
-      mergerd = erb.result(binding)
+    # def generate_pdf
+    #   @updated = false
+    #   if File.exist?(content_path)
+    #     @content = YAML::load_file(content_path)
+    #   else
+    #     @content = default_content
+    #     File.open(content_path, 'w'){|f| f.write default_content}
+    #   end
 
-      # check if  layout.rb file exists,
-      # if so use it to generate pdf.
-      # if not merge data and layout.erb and save new layout.rb file
-      if File.exist?(layout_path)
-        mergerd = File.open(layout_path,'r'){|f| f.read}
-        layout = eval(mergerd)
-      else
-        layout = eval(mergerd)
-        File.open(layout_path,'w'){|f| f.write mergerd }
-      end
-      return unless is_dirty?
-      layout.save_pdf_with_ruby(output_path, jpg:true)
-      @updated = true
-    end
+    #   # template = File.open(layout_erb_path,'r'){|f| f.read }
+    #   # erb = ERB.new(template)
+    #   mergerd = erb.result(binding)
+    #   mergerd = eval(@layout_rb)
 
-    def is_dirty?
-      return true unless File.exist?(output_path)
-      return true if File.mtime(content_path) > File.mtime(output_path)
-      return true if File.mtime(layout_path) > File.mtime(output_path)
-      return false
-    end
+    #   # check if  layout.rb file exists,
+    #   # if so use it to generate pdf.
+    #   # if not merge data and layout.erb and save new layout.rb file
+    #   if File.exist?(layout_path)
+    #     mergerd = File.open(layout_path,'r'){|f| f.read}
+    #     layout = eval(mergerd)
+    #   else
+    #     layout = eval(mergerd)
+    #     File.open(layout_path,'w'){|f| f.write mergerd }
+    #   end
+    #   # return unless is_dirty?
+    #   layout.save_pdf_with_ruby(output_path, jpg:true)
+    #   @updated = true
+    # end
 
-    def default_layout_erb
+    def default_layout_rb
       # before rotating 90 
+      # TODO: change  it  to 
+      #  title('#{@content[:title]}')
+      #  subtitle('#{@content[:subtitle]}')
+      #  author('#{@content[:author]}')
+      #  publisher('#{@content[:author]}')
       layout =<<~EOF
       RLayout::Container.new(fill_color:'clear', width:#{@width}, height:#{@height}, layout_direction: 'horizontal') do
-        text("<%= @content[:title] %>", font_size: 16, text_alignment: 'center', layout_length:2, fill_color: 'white')
-        text("<%= @content[:subtitle] %>", font_size: 10, text_alignment: 'center', layout_length:2)
-        text("<%= @content[:author] %>", font_size: 12)
-        text("<%= @content[:publisher] %>", font_size: 9)
+        text('#{@content[:title]}', font_size: 16, text_alignment: 'center', layout_length:2, fill_color: 'white')
+        text('#{@content[:subtitle] }', font_size: 10, text_alignment: 'center', layout_length:2)
+        text('#{@content[:author] }', font_size: 12)
+        text('#{@content[:publisher] }', font_size: 9)
         relayout!
       end
 
       EOF
     end
 
+    def default_text_style
+      s=<<~EOF
+      ---
+      body:
+        font: Shinmoon
+        font_size: 11.0
+        text_alignment: justify
+        first_line_indent: 11.0
+      body_gothic:
+        font: KoPubBatangPM
+        font_size: 11.0
+        text_alignment: justify
+        first_line_indent: 11.0
+      title:
+        font: KoPubBatangPB
+        font_size: 16.0
+        text_alignment: left
+        text_line_spacing: 10
+        space_before: 0
+      subtitle:
+        font: KoPubDotumPL
+        font_size: 12.0
+        text_color: 'DarkGray'
+        text_alignment: center
+        text_line_spacing: 5
+        space_after: 30
+      author:
+        font: KoPubDotumPL
+        font_size: 10.0
+        text_color: 'DarkGray'
+        text_alignment: center
+        text_line_spacing: 5
+        space_after: 30
+
+      EOF
+
+    end
+    
     def default_content
       h = {}
       h[:title] = "소설을 쓰고 있네"
@@ -106,14 +149,9 @@ module RLayout
       h
     end
 
-    # generate layout from erb
-    def save_layout_erb
-
-    end
-
     def save_sample
-      FileUtils.mkdir_p(@project_path) unless File.exist?(@project_path)
-      File.open(layout_erb_path, 'w'){|f| f.write default_layout_erb}
+      FileUtils.mkdir_p(@document_path) unless File.exist?(@document_path)
+      File.open(layout_erb_path, 'w'){|f| f.write default_layout_rb}
       File.open(content_path, 'w'){|f| f.write default_content.to_yaml}
     end
 
@@ -137,43 +175,6 @@ module RLayout
       h
     end
 
-    def self.save_sample(project_path)
-      layout_path = project_path + "/layout.rb"
-      content_path = project_path + "/content.yml"
-      File.open(layout_path, 'w'){|f| f.write Senca.default_layout}
-      File.open(content_path, 'w'){|f| f.write Senca.default_content.to_yaml}
-    end
-
-
-      # RLayout::TextTrain.new(fill_color:'clear', width:#{@width}, height:#{@height}, layout_direction: 'horizontal') do
-      #   text("<%= @content[:title] %>", font_size: 16, text_alignment: 'center', layout_length:2, fill_color: 'white')
-      #   text("<%= @content[:subtitle] %>", font_size: 10, text_alignment: 'center', layout_length:2)
-      #   text("<%= @content[:author] %>", font_size: 12)
-      #   text("<%= @content[:publisher] %>", font_size: 9)
-      #   relayout!
-      # end
-
-    ########## metaprograming
-    # def gothic
-
-    # end
-
-    # def myunjo
-
-    # end
-
-    def change_style(string, options={})
-      if options[:font]
-
-      end      
-      if options[:font_size]
-
-      end
-      if options[:font_color]
-        
-      end
-
-    end
   end
 
 end

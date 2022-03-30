@@ -11,6 +11,7 @@ module RLayout
     attr_reader :front_matter, :body_matter, :rear_matter
     attr_reader :gripper_margin, :bleed_margin, :binding_margin
     attr_reader :html
+    attr_reader :toc_page_count
 
     def initialize(project_path, options={})
       @html  = options[:html]
@@ -19,6 +20,7 @@ module RLayout
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @paper_size = @book_info[:paper_size] || 'A5'
+      @toc_page_count = @book_info[:paper_size] || 
       @title = @book_info[:title]
       @page_width = SIZES[@paper_size][0]
       @width = @page_width
@@ -71,7 +73,7 @@ module RLayout
     def build_front_matter_path
       build_folder + "/front_matter"
     end
-  
+
     def book_title
       @book_info[:title] || 'untitled'
     end

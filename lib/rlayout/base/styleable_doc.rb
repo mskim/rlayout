@@ -33,10 +33,16 @@ module RLayout
     attr_reader :style_guide_folder
     attr_reader :document_path, :paper_size, :width, :height
     attr_reader :document
+    attr_reader :page_pdf
+    attr_reader :starting_page_number
+    attr_reader :output_path
 
     def initialize(options={})
       @document_path = options[:document_path]
       @style_guide_folder = options[:style_guide_folder] || @document_path
+      @starting_page_number  = options[:starting_page_number] || 1
+      @output_path = options[:output_path] || @document_path + "/chapter.pdf"
+
       if options[:book_info]
         @book_info      = options[:book_info]
         @paper_size     = @book_info[:paper_size] || "A5"

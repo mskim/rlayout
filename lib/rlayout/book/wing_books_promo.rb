@@ -1,6 +1,6 @@
 
 module RLayout
-  class WingBookPromotion < Container
+  class WingBookPromotion < StyleableDoc
     attr_reader :publisher, :items
     def initialize(options={})
       super

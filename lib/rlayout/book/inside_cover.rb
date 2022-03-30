@@ -3,8 +3,9 @@ module RLayout
   # With Title, author, publisher, logo
   # Replica of front cover image
   
-  class InsideCover < Chapter
+  class InsideCover < StyleableDoc
     attr_reader :project_path, :document_path, :cover_image_path, :starting_page_number
+    attr_reader :page_count
     # def initialize(options={})
     #   @starting_page_number = options[:starting_page_number]
     #   @front_page_pdf = options[:front_page_pdf]
@@ -23,34 +24,38 @@ module RLayout
 
     
     def initialize(options={} ,&block)
-      @document_path  = options[:document_path]
+      super
       @front_page_pdf = options[:front_page_pdf]
-
-      if options[:book_info]
-        @book_info      = options[:book_info]
-        @paper_size     = @book_info[:paper_size] || "A5"
+      if @starting_page_number.even?
+        @page_count = 2
       else
-        @paper_size     = options[:paper_size] || "A5"
+        @page_count = 1
       end
-      @story_path     = @document_path + "/story.md"
-      @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
-      @story_md       = options[:story_md]
-      @layout_rb      = options[:layout_rb]
-      @has_footer    =  options[:has_footer] || true
-      @has_header    =  options[:has_header] || false
-      @layout_rb = default_document_layout
-      @starting_page_number  = options[:starting_page_number] || 1
-      @page_pdf       = options[:page_pdf]
-      @document       = eval(@layout_rb)
-      if @document.is_a?(SyntaxError)
-        puts "SyntaxError in #{@document} !!!!"
-        return
-      end
-      unless @document.kind_of?(RLayout::RDocument)
-        puts "Not a @document kind created !!!"
-        return
-      end
-      @document.document_path = @document_path
+      # if options[:book_info]
+      #   @book_info      = options[:book_info]
+      #   @paper_size     = @book_info[:paper_size] || "A5"
+      # else
+      #   @paper_size     = options[:paper_size] || "A5"
+      # end
+      # @story_path     = @document_path + "/story.md"
+      # @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
+      # @story_md       = options[:story_md]
+      # @layout_rb      = options[:layout_rb]
+      # @has_footer    =  options[:has_footer] || true
+      # @has_header    =  options[:has_header] || false
+      # @layout_rb = default_document_layout
+      # @starting_page_number  = options[:starting_page_number] || 1
+      # @page_pdf       = options[:page_pdf]
+      # @document       = eval(@layout_rb)
+      # if @document.is_a?(SyntaxError)
+      #   puts "SyntaxError in #{@document} !!!!"
+      #   return
+      # end
+      # unless @document.kind_of?(RLayout::RDocument)
+      #   puts "Not a @document kind created !!!"
+      #   return
+      # end
+      # @document.document_path = @document_path
       @document.starting_page_number = @starting_page_number
       page = @document.pages.last
       page.add_image(@front_page_pdf)
@@ -60,7 +65,7 @@ module RLayout
     end
 
 
-    def default_document_layout
+    def default_layout_rb
       @top_margin = 50
       @left_margin = 50
       @right_margin = 50

@@ -196,8 +196,13 @@ module RLayout
     end
 
     def create_seneca
-      part_path = @project_path + "/seneca"
-      @seneca = RLayout::Seneca.new(project_path:part_path, width:@height, height: @seneca_width)
+      seneca_path = @project_path + "/seneca"
+      h = {}
+      h[:document_path] = seneca_path
+      h[:width] =  @height
+      h[:height] =  @seneca_widt 
+      h[:style_guide_folder] = File.dirname(@source_path) + "/_style_guide/seneca"
+      @seneca = RLayout::Seneca.new(h)
       # rotae PDF 90 degree
       @current_x += @seneca_width
     end

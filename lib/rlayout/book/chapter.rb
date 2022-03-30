@@ -217,6 +217,8 @@ module RLayout
                                     # blank page is inserted in front of the document to make it work.
 
     def initialize(options={} ,&block)
+      # @starting_page_number  = options[:starting_page_number] || 1
+
       super
       # @document_path  = options[:document_path]
       # @style_guide_folder = options[:style_guide_folder] || @document_path
@@ -231,9 +233,7 @@ module RLayout
       @grid = options[:grid] || [6,12]
       @default_image_location = options[:default_image_location] || 1
       @default_image_size = options[:default_image_size] || [6,6]
-      @starting_page_number  = options[:starting_page_number] || 1
       @page_by_page   = options[:page_by_page]
-      @page_pdf       = options[:page_pdf]
       @svg            = options[:svg]
       @story_by_page  = options[:story_by_page]
       @toc            = options[:toc]

@@ -16,30 +16,12 @@ module RLayout
     attr_reader :toc_item_count, :paper_size, :custom_style
 
     def initialize(options={})
-      @document_path  = options[:document_path]
-      @style_guide_folder = options[:style_guide_folder] || @document_path
-      @custom_style = options[:custom_style]
-      @max_page = options[:max_page]
+      super
       @toc_item_count = options[:toc_item_count] || 20
+      @output_path    = options[:output_path] || @document_path + "/toc.pdf"
+      @max_page = options[:max_page]
       @parts_count = options[:parts_count]
       @no_table_title = options[:no_table_title]
-      @paper_size      = options[:paper_size] || 'A5'
-      @page_count     = options[:page_count] || 1
-      @story_path     = @document_path + "/story.md"
-      @output_path    = options[:output_path] || @document_path + "/toc.pdf"
-      @layout_rb      = default_document
-      @page_pdf       = options[:page_pdf]
-      @document       = eval(@layout_rb)
-      @link_info      = [] # array of page with toc link
-      if @document.is_a?(SyntaxError)
-        puts "SyntaxError in #{@document} !!!!"
-        return
-      end
-      unless @document.kind_of?(RLayout::RDocument)
-        puts "Not a @document kind created !!!"
-        return
-      end
-      load_text_style
       read_toc
       layout_toc
       @link_info = update_link_info
@@ -107,7 +89,7 @@ module RLayout
 
     end
 
-    def default_document
+    def default_layout_rb
       case @paper_size
       when "A4"
         @left_margin    = 100

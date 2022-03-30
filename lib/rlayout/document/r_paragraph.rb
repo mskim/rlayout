@@ -337,7 +337,6 @@ module RLayout
       # end
       while token
         return unless @current_line
-        # binding.pry if token.string == "“그리고요……”" #&& @current_line.first_text_line?
         result = @current_line.place_token(token)
         # token is broken into two, second part is returned
         if result.class == RTextToken

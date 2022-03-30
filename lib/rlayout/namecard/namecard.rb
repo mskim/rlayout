@@ -341,7 +341,6 @@ module RLayout
         @company_info_front[:address_2] = @company_info[:address_2]
         front_card.company_info = @company_info_front
         front_card.picture_path = @document_path + "/images/#{slug}"
-        # binding.pry
         front_card.set_content
         @member_card.add_page(front_card)
         # do back side
