@@ -49,8 +49,17 @@ module RLayout
       end
     end
 
+    # using vips
+    # require 'fileutils'
+    # require 'vips'
+    # Dir.glob('preview/*.pdf') do |file|
+    #   im = Vips::Image.new_from_file file, scale: 2.5
+    #   im.write_to_file("#{file}.jpg")
+    # end
+
     # using imagemagik
     # convert -density 300 -quality 95 pdf_file.pdf png_file.png
+    #!/usr/bin/ruby
 
     # using vips convert pdf 2 jpg
     # if enlarging ratio is given as options, it enlarges pdf canvas to the given ratio, 

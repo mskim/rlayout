@@ -265,7 +265,8 @@ module RLayout
     def build_front_cover_path
       @project_path + "/front_cover"
     end
-  
+    
+    # copy front_page and  empty_page  and  make front_cover
     def create_front_cover
       FileUtils.mkdir_p(build_front_cover_path) unless File.exist?(build_front_cover_path)
       page1_path = build_front_cover_path + "/0001"

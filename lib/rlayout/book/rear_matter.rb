@@ -3,7 +3,7 @@ module RLayout
   class RearMatter
     attr_reader :project_path, :book_info, :page_width, :height
     attr_reader :rear_matter_docs, :body_doc_type
-    attr_reader :starting_page_number, :toc_doc_page_count, :toc_page_links
+    attr_reader :starting_page_number, :toc_page_count, :toc_page_links
     attr_reader :page_count
     
     def initialize(project_path, options={})

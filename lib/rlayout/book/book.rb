@@ -7,11 +7,10 @@ module RLayout
     attr_reader :has_cover_inside_page, :has_wing, :has_toc
     attr_reader :book_toc, :body_matter_toc, :rear_matter_toc, :starting_page_number
     attr_reader :rear_matter_docs, :ebook_page_contents
-    attr_reader :toc_first_page_number, :toc_doc_page_count, :toc_page_links
+    attr_reader :toc_first_page_number, :toc_page_count, :toc_page_links
     attr_reader :front_matter, :body_matter, :rear_matter
     attr_reader :gripper_margin, :bleed_margin, :binding_margin
     attr_reader :html
-    attr_reader :toc_page_count
 
     def initialize(project_path, options={})
       @html  = options[:html]
@@ -20,29 +19,25 @@ module RLayout
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @paper_size = @book_info[:paper_size] || 'A5'
-      @toc_page_count = @book_info[:paper_size] || 
+      @toc_page_count = @book_info[:toc_page_count] || 1
       @title = @book_info[:title]
       @page_width = SIZES[@paper_size][0]
       @width = @page_width
       @height = SIZES[@paper_size][1]
       @title = @book_info[:title]
-      if @html 
-        generate_html
-      else
-        @starting_page_number = 1
-        @gripper_margin = options[:gripper_margin] || 1*28.34646
-        @binding_margin = options[:binding_margin] || 20
-        @bleed_margin = options[:bleed_margin] || 3*2.834646
-        create_book_cover
-        @front_matter = FrontMatter.new(@project_path)
-        @starting_page_number += @front_matter.page_count
-        @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number, paper_size: @paper_size)
-        @rear_matter = RearMatter.new(@project_path)
-        generate_toc
-        generate_pdf_book 
-        generate_pdf_for_print
-        generate_ebook unless options[:no_ebook]
-      end
+      @starting_page_number = 1
+      @gripper_margin = options[:gripper_margin] || 1*28.34646
+      @binding_margin = options[:binding_margin] || 20
+      @bleed_margin = options[:bleed_margin] || 3*2.834646
+      create_book_cover
+      @front_matter = FrontMatter.new(@project_path)
+      @starting_page_number += @front_matter.starting_page_number
+      @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number, paper_size: @paper_size)
+      @rear_matter = RearMatter.new(@project_path)
+      generate_toc
+      generate_pdf_book 
+      generate_pdf_for_print
+      generate_ebook unless options[:no_ebook]
     end
 
     def style_guide_folder
@@ -115,13 +110,11 @@ module RLayout
       h[:document_path] = toc_folder
       h[:paper_size]    = @paper_size
       h[:page_pdf]      = true
-      h[:max_page]      = 1
+      h[:max_page]      = @toc_page_count
       h[:toc_item_count] = @book_toc.length
-      # h[:parts_count]   = @parts_count
       h[:no_table_title] = false # tells not to creat toc title
       r = RLayout::Toc.new(h)
       new_page_count = r.page_count
-      @toc_doc_page_count = new_page_count
       @toc_page_links = r.link_info
     end
 
@@ -499,7 +492,9 @@ module RLayout
           template = even_page_templage
         end
       end
-      @toc_first_page_number = toc_first_page_number + 2
+      # @toc_first_page_number = toc_first_page_number + 2
+      # pdf_pages array is 0 based and page_numbers are 1 based
+      @toc_first_page_number = toc_first_page_number + 1
       erb = ERB.new(template)
       r = erb.result(binding)
     end

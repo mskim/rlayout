@@ -10,20 +10,23 @@ module RLayout
 
   class FrontMatter
     attr_reader :project_path, :book_info, :page_width, :height
-    attr_reader :starting_page_number, :toc_doc_page_count, :toc_page_links
+    attr_reader :starting_page_number, :toc_page_count, :toc_page_links
     attr_reader :page_count, :toc_content, :document_folders
     attr_reader :toc_first_page_number
+
     def initialize(project_path, options={})
       @project_path = project_path
       @book_info_path = @project_path + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @title = @book_info[:title]
+      @toc_page_count = @book_info[:toc_page_count] || 1
       @paper_size = @book_info[:paper_size] || 'A5'
       @page_width = SIZES[@paper_size][0]
       @height = SIZES[@paper_size][1]
       @starting_page_number = options[:starting_page_number] || 1
-      @page_count = 0
+      @toc_page_count = options[:toc_page_count] || 1
+      # @page_count = 0
       process_front_matter
       self
     end
@@ -58,10 +61,8 @@ module RLayout
             h[:has_footer] = false
             h[:has_header] = false
             h[:style_guide_folder] = style_guide_folder + "/isbn"
-
             r = RLayout::Isbn.new(h)
-            @page_count += r.page_count
-            @starting_page_number += page_count
+            @starting_page_number += r.page_count
             @document_folders << 'isbn'
           when /inside_cover/
             inside_cover_path = build_front_matter_path + "/inside_cover"
@@ -74,18 +75,15 @@ module RLayout
             h[:style_guide_folder] = style_guide_folder + "/inside_cover"
 
             r = RLayout::InsideCover.new(h)
-            @page_count += r.page_count
-            @starting_page_number += page_count
+            @starting_page_number += r.page_count
             @document_folders << 'inside_cover'
           when /dedication/, /헌정사/
             dedication_path = build_front_matter_path + "/dedication"
             copy_source_to_build(file, dedication_path,)
             h[:document_path] = dedication_path
             h[:style_guide_folder] = style_guide_folder + "/dedication"
-
             r = RLayout::Dedication.new(h)
-            @page_count += r.page_count
-            @starting_page_number += page_count
+            @starting_page_number += r.page_count
             @document_folders << 'dedication'
           when /thanks/, /감사/
             thanks_path = build_front_matter_path + "/thanks"
@@ -93,8 +91,7 @@ module RLayout
             h[:document_path] = thanks_path
             h[:style_guide_folder] = style_guide_folder + "/thanks"
             r = RLayout::Thanks.new(h)
-            @page_count += r.page_count
-            @starting_page_number += page_count
+            @starting_page_number += r.page_count
             @document_folders << 'thanks'
           when /prologue/, /머릿글/
             prologue_path = build_front_matter_path + "/prologue"
@@ -102,18 +99,16 @@ module RLayout
             h[:document_path] = prologue_path
             h[:style_guide_folder] = style_guide_folder + "/prologue"
             r = RLayout::Prologue.new(h)
-            @page_count += r.page_count
-            @starting_page_number += page_count
+            @starting_page_number += r.page_count
             @document_folders << 'prologue'
           when /toc/, /목차/ , /차례/
             toc_path = build_front_matter_path + "/toc"
             copy_source_to_build(file, toc_path,)
             @has_toc = true
             @document_folders << 'toc' 
-            # TODO fix this
-            @page_count += 1
-            @toc_first_page_number = @starting_page_number + 1
-            @starting_page_number += 1
+            # TODO fix this toc_page_count
+            @toc_first_page_number = @starting_page_number
+            @starting_page_number += @toc_page_count
             @book_toc = []
           end
         end

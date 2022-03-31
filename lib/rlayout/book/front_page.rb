@@ -5,14 +5,15 @@ module RLayout
   # use RCover
   # 
   class FrontPage < StyleableDoc
-    attr_reader :book_cover_folder, :document_path, :book_info, :pdf_page
+    attr_reader :book_cover_folder, :book_info, :pdf_page
 
     def initialize(options={})
       options[:starting_page_side] = :left_side
-      options[:page_type] = :column_text
       super
+
       @pdf_page = options[:pdf_page]
       @book_cover_folder = options[:book_cover_folder] || @document_path
+      
       FileUtils.mkdir_p(@book_cover_folder) unless File.exist?(@book_cover_folder)
       FileUtils.mkdir_p(@document_path) unless File.exist?(@document_path)
       @book_info = options[:book_info]
@@ -51,10 +52,14 @@ module RLayout
       h
     end
 
+    def cover_spread_pdf_path
+      File.dirname(@document_path) + "/cover_spread/output.pdf"
+    end
+
     def default_layout_rb
       layout =<<~EOF
       RLayout::RCoverPage.new(fill_color:'clear',width:#{@width}, height:#{@height}) do
-
+        image(image_path: '#{cover_spread_pdf_path}',  x: -#{@width}, y: 0,  width: #{@width}*2,  height: #{@height} )
       end
       EOF
     end

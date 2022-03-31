@@ -16,6 +16,7 @@ module RLayout
 
       read_story
       layout_story
+      @document.save_pdf(@output_path, page_pdf:true, jpg:true)
       self
     end
 

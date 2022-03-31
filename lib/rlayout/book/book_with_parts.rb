@@ -45,7 +45,7 @@ module RLayout
     h[:no_table_title] = false # tells not to creat toc title
     r = RLayout::Toc.new(h)
     new_page_count = r.page_count
-    @toc_doc_page_count = new_page_count
+    @toc_page_count = new_page_count
     @toc_page_links = r.link_info
   end
 

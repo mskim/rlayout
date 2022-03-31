@@ -25,15 +25,16 @@ module RLayout
 
     def initialize(options={}, &block)
       @document_path = options[:document_path]
+      FileUtils.mkdir_p(@document_path) unless File.exist?(@document_path)
       if File.exist?(content_path)
         @content = YAML::load_file(content_path)
       else
         @content = default_content
-        File.open(content_path, 'w'){|f| f.write default_content}
+        File.open(content_path, 'w'){|f| f.write default_content.to_yaml}
       end
       super
-      @width = options[:width] || 500
-      @height = options[:height] || 20
+      # @width = options[:width] || 500
+      # @height = options[:height] || 20
       @document.save_pdf(output_path, jpg:true)
       self
     end
@@ -51,9 +52,9 @@ module RLayout
     end
 
     def content_path
-      document_path + "/content.yml"
+      @document_path + "/content.yml"
     end
-    
+
     def default_layout_rb
       # before rotating 90 
       # TODO: change  it  to 

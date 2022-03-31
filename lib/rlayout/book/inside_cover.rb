@@ -5,32 +5,11 @@ module RLayout
   
   class InsideCover < StyleableDoc
     attr_reader :project_path, :document_path, :cover_image_path, :starting_page_number
-    attr_reader :page_count
-    # def initialize(options={})
-    #   @starting_page_number = options[:starting_page_number]
-    #   @front_page_pdf = options[:front_page_pdf]
-    #   #TODO : get it from @document_path
-    #   @cover_image_path = options[:cover_image_path]
-    #   if @starting_page_number.even?
-    #     @page_count = 2
-    #   else
-    #     @page_count = 1
-    #   end
-    #   super
-    #   page = @document.pages.last
-    #   page.add_image(@front_page_pdf)
-    #   self
-    # end
-
     
     def initialize(options={} ,&block)
       super
       @front_page_pdf = options[:front_page_pdf]
-      if @starting_page_number.even?
-        @page_count = 2
-      else
-        @page_count = 1
-      end
+
       # if options[:book_info]
       #   @book_info      = options[:book_info]
       #   @paper_size     = @book_info[:paper_size] || "A5"
@@ -64,6 +43,13 @@ module RLayout
       self
     end
 
+    def page_count
+      if @starting_page_number.even?
+        2
+      else
+        1
+      end
+    end
 
     def default_layout_rb
       @top_margin = 50

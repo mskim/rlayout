@@ -37,15 +37,20 @@ module RLayout
       @layout_expand  = options.fetch(:layout_expand,[:width, :height])
       @line_type=0
       options.delete(:stroke_width)
-      # if block
-      #   instance_eval(&block)
-      # end
+      if block
+        instance_eval(&block)
+      end
 
       # if @output_path
       #   save_pdf_with_ruby(@output_path)
       # end
       self
     end
+
+    # def image
+
+
+    # end
 
     def transform_keys_to_symbols(value)
       return value if not value.is_a?(Hash)

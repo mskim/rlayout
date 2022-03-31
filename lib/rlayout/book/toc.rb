@@ -12,15 +12,14 @@ module RLayout
     attr_reader :document, :output_path, :column_count
     attr_reader :toc_content, :toc_title
     attr_reader :title, :paper_size, :page_count
-    attr_reader :link_info, :max_page, :parts_count, :no_table_title
+    attr_reader :link_info, :max_page, :no_table_title
     attr_reader :toc_item_count, :paper_size, :custom_style
 
     def initialize(options={})
+      @max_page = options[:max_page] || 1
       super
       @toc_item_count = options[:toc_item_count] || 20
       @output_path    = options[:output_path] || @document_path + "/toc.pdf"
-      @max_page = options[:max_page]
-      @parts_count = options[:parts_count]
       @no_table_title = options[:no_table_title]
       read_toc
       layout_toc
@@ -113,9 +112,8 @@ module RLayout
         @bottom_margin  = 50
       end
 
-
       layout =<<~EOF
-        RLayout::RDocument.new(paper_size:"#{@paper_size}", page_count: 1, page_type: "toc_page")
+        RLayout::RDocument.new(paper_size:"#{@paper_size}", page_count: #{@max_page}, page_type: "toc_page")
       EOF
     end
   end

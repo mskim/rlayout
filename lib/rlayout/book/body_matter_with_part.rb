@@ -3,7 +3,7 @@ module RLayout
   class BodyMatterWithPart
     attr_reader :project_path, :book_info, :page_width, :height
     attr_reader :document_folders, :body_matter_toc, :body_doc_type
-    attr_reader :starting_page_number, :toc_doc_page_count, :toc_page_links
+    attr_reader :starting_page_number, :toc_page_count, :toc_page_links
     attr_reader :toc_content
     def initialize(project_path, options={})
       @project_path = project_path
