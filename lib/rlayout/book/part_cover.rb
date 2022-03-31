@@ -3,7 +3,7 @@ module RLayout
   # TODO
   # hande two page part_cover
   class PartCover < StyleableDoc
-    attr_reader :book, :project_path, :title, :order
+    attr_reader :book, :title, :order
 
     def initialize(options={})
       super
@@ -41,7 +41,7 @@ module RLayout
     end
 
     def save_toc
-      toc_path = @project_path + "/toc.yml"
+      toc_path = @document_path + "/toc.yml"
       @toc_content = []
       toc_item = {}
       toc_item[:page] = @starting_page_number

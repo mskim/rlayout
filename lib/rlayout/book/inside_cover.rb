@@ -4,42 +4,15 @@ module RLayout
   # Replica of front cover image
   
   class InsideCover < StyleableDoc
-    attr_reader :project_path, :document_path, :cover_image_path, :starting_page_number
+    attr_reader :cover_image_path
     
     def initialize(options={} ,&block)
+      @starting_page_number = options[:starting_page_number] || 1
       super
       @front_page_pdf = options[:front_page_pdf]
-
-      # if options[:book_info]
-      #   @book_info      = options[:book_info]
-      #   @paper_size     = @book_info[:paper_size] || "A5"
-      # else
-      #   @paper_size     = options[:paper_size] || "A5"
-      # end
-      # @story_path     = @document_path + "/story.md"
-      # @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
-      # @story_md       = options[:story_md]
-      # @layout_rb      = options[:layout_rb]
-      # @has_footer    =  options[:has_footer] || true
-      # @has_header    =  options[:has_header] || false
-      # @layout_rb = default_document_layout
-      # @starting_page_number  = options[:starting_page_number] || 1
-      # @page_pdf       = options[:page_pdf]
-      # @document       = eval(@layout_rb)
-      # if @document.is_a?(SyntaxError)
-      #   puts "SyntaxError in #{@document} !!!!"
-      #   return
-      # end
-      # unless @document.kind_of?(RLayout::RDocument)
-      #   puts "Not a @document kind created !!!"
-      #   return
-      # end
-      # @document.document_path = @document_path
-      @document.starting_page_number = @starting_page_number
       page = @document.pages.last
       page.add_image(@front_page_pdf)
-      @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
-      @document.save_svg(@document_path) if @svg
+      @document.save_pdf(@output_path, page_pdf:@page_pdf)
       self
     end
 

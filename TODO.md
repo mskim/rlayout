@@ -22,11 +22,15 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+### 2022_04_01
+  - part_cover
+  - vertical seneca
+  
 ### 2022_03_29
   - style_guide
-    toc, seneca, inside_cover, part_cover
+    toc, seneca, inside_cover, 
     
-    CoverPageText
+    add def image to RCoverPage
 
 ### 2022_03_29
   - remove vips or imagemagik dependency check the status and  choose one.
