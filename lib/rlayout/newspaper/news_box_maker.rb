@@ -199,7 +199,7 @@ module RLayout
       end
       if @news_box
         delete_old_files
-        @news_box.save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
+        @news_box.save_pdf(@output_path, :jpg=>true, :ratio => 2.0)
         if @time_stamp
           stamped_path      = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")
           output_jpg_path   = @output_path.sub(/pdf$/, "jpg")

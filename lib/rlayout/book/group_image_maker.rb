@@ -22,7 +22,7 @@ module RLayout
     def create_group_image
       result = GroupImage.new()
       result = GroupImage.new(@width, @height, @member_images)
-      result.save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
+      result.save_pdf(@output_path, :jpg=>true, :ratio => 2.0)
     end
   end
 end

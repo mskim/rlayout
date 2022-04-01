@@ -71,7 +71,6 @@ module RLayout
       @line_count     = 0
       @line_width     = options[:line_width] || 130
       @article_type   = options[:article_type]
-      # create_style_objects
       parse_style_name
 
       if @markup == 'br'

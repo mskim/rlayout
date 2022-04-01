@@ -69,7 +69,7 @@ module RLayout
       # RLayout::Rectangle.new(h)
       # h = {parent:@column, from_right:0, width:10, height:10, fill_color:'red'}
       # RLayout::Rectangle.new(h)
-      @column.save_pdf_with_ruby(output_path, jpg:true)
+      @column.save_pdf(output_path, jpg:true)
       @updated = true
     end
 

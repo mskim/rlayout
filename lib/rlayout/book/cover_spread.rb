@@ -29,7 +29,7 @@ module RLayout
       @spread = eval(generate_layout)
       # end
       return unless is_dirty?
-      @spread.save_pdf_with_ruby(output_path, jpg:true)
+      @spread.save_pdf(output_path, jpg:true)
       @updated = true
     end
 

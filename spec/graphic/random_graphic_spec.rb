@@ -13,7 +13,7 @@ describe 'ramdom_graphic test' do
   end
 
   it 'should save PDF' do
-    @random_g.save_pdf_with_ruby(@pdf_path, jpg:true)
+    @random_g.save_pdf(@pdf_path, jpg:true)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
   end

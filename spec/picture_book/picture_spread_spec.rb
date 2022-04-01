@@ -23,7 +23,7 @@ describe "create PictureSpread" do
 
   it 'shoud save pdf' do
     assert File.exist? @pdf_path
-    @doc.save_pdf_with_ruby(@pdf_path)
+    @doc.save_pdf(@pdf_path)
     system "open #{@pdf_path}"
   end
 end

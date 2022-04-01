@@ -498,10 +498,6 @@ module RLayout
       File.open(path, 'w'){|f| f.write to_svg}
     end
 
-    def save_pdf(path, options={})
-      save_pdf_with_ruby(path, options)
-    end
-
     def fit_text_to_box
       @text_layout_manager.fit_text_to_box  if @text_layout_manager
     end

@@ -13,7 +13,7 @@ describe 'create TItleText with line break' do
 
   it 'should save pdf' do
     @pdf_path = "/Users/mskim/test_data/title_text/output.pdf"
-    @title.save_pdf_with_ruby(@pdf_path)
+    @title.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
   end

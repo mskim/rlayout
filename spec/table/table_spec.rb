@@ -10,7 +10,7 @@ describe 'create page with table' do
   end
 
   it 'should save_pdf ' do
-    @t1.save_pdf_with_ruby(@pdf_path)
+    @t1.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system "open #{@pdf_path}"
   end
@@ -50,7 +50,7 @@ describe 'create page with table' do
   # end
 
   it 'should save_pdf ' do
-    @page.save_pdf_with_ruby(@pdf_path)
+    @page.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system "open #{@pdf_path}"
   end

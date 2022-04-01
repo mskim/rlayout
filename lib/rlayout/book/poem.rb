@@ -136,7 +136,7 @@ module RLayout
     def generate_pdf
       save_layout
       d = eval(layout_rb)
-      d.save_pdf_with_ruby(output_path, jpg:true)
+      d.save_pdf(output_path, jpg:true)
     end
 
     def save_default_layout

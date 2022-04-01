@@ -10,7 +10,7 @@ describe 'should process image_caption' do
   end
 
   it 'should save pdf page with line' do
-    @current_page.save_pdf_with_ruby(@pdf_path)
+    @current_page.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
   end

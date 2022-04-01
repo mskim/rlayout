@@ -26,7 +26,7 @@ module RLayout
       # detemine the font_size
 
       t = Table.new(@width, @height, @table_data, @table_style)
-      t.save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
+      t.save_pdf(@output_path, :jpg=>true, :ratio => 2.0)
 
     end
 

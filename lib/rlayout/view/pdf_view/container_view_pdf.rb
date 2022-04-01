@@ -4,7 +4,7 @@ module RLayout
 
     # This is called when the class is the root class
     # so, it has to create root @pdf_doc 
-    def save_pdf_with_ruby(output_path, options={})
+    def save_pdf(output_path, options={})
       style_service = RLayout::StyleService.shared_style_service
       @pdf_doc      = HexaPDF::Document.new
       style_service.pdf_doc = @pdf_doc

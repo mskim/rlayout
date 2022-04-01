@@ -175,7 +175,7 @@ module RLayout
       self
     end
 
-    def save_pdf_with_ruby(output_path, options={})
+    def save_pdf(output_path, options={})
       start_time    = Time.now
       @pdf_doc      = HexaPDF::Document.new
       page          = @pdf_doc.pages.add([0, 0, @width, @height])

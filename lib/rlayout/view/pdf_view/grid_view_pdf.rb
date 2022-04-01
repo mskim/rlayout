@@ -2,7 +2,7 @@ module RLayout
   class Grid < Graphic
     attr_accessor :pdf_doc, :flipped 
 
-    def save_pdf_with_ruby(output_path, options={})
+    def save_pdf(output_path, options={})
       start_time    = Time.now
       style_service = RLayout::StyleService.shared_style_service
       @pdf_doc      = HexaPDF::Document.new

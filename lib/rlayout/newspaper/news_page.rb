@@ -177,7 +177,7 @@ module RLayout
 
       create_pillar_divider_lines if @draw_divider
       delete_old_files
-      save_pdf_with_ruby(@output_path, :jpg=>true, :ratio => 2.0)
+      save_pdf(@output_path, :jpg=>true, :ratio => 2.0)
       if @time_stamp
         output_jpg_path       = @output_path.sub(/\.pdf$/, ".jpg")
         time_stamped_path     = @output_path.sub(/\.pdf$/, "#{@time_stamp}.pdf")

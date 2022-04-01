@@ -42,7 +42,7 @@ module RLayout
       end
 
       # if @output_path
-      #   save_pdf_with_ruby(@output_path)
+      #   save_pdf(@output_path)
       # end
       self
     end

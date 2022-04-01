@@ -60,7 +60,7 @@ module RLayout
       return unless is_dirty?
       read_content
       layout_content
-      @column.save_pdf_with_ruby(output_path, jpg:true)
+      @column.save_pdf(output_path, jpg:true)
     end
 
     def is_dirty?

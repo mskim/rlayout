@@ -19,7 +19,7 @@ describe 'create Line' do
 
   it  'should save pdf' do
     @line = Line.new(with:200, height:400)
-    @line.save_pdf_with_ruby(@pdf_path)
+    @line.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
   end

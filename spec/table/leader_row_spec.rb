@@ -12,7 +12,7 @@ describe 'create LeaderRow' do
   end
 
   it 'should generate pdf ' do
-    @tr1.save_pdf_with_ruby(@pdf_path)
+    @tr1.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system "open #{@pdf_path}"  
   end

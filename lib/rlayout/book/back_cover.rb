@@ -30,7 +30,7 @@ module RLayout
         File.open(layout_path,'w'){|f| f.write mergerd }
       end
       # return unless is_dirty?
-      layout.save_pdf_with_ruby(output_path, jpg:true)
+      layout.save_pdf(output_path, jpg:true)
       @updated = true
     end
 

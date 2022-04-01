@@ -7,7 +7,7 @@ module RLayout
       @heading_path     = options[:heading_path]
       heading_layout    = layout
       output_path       = @heading_path + "/ouput.pdf"
-      heading_layout.save_pdf_with_ruby(output_path: output_path)
+      heading_layout.save_pdf(output_path: output_path)
       self
     end
 

@@ -18,7 +18,7 @@ describe "create Mindrian" do
 
   it 'should save Mindrian' do
     FileUtils.mkdir_p(@project_path) unless File.exist?(@project_path)
-    @min.save_pdf_with_ruby(@pdf_path)
+    @min.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system "open #{@pdf_path}"
   end

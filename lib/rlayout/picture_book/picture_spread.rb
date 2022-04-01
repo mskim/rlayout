@@ -48,7 +48,7 @@ module RLayout
       # @right_page_text_location = @text_location_name.split("_")[1]
       add_pages
       FileUtils.mkdir_p(@build_spread_path) unless File.exist?(@build_spread_path)
-      save_pdf_with_ruby(@pdf_path, page_pdf:true)
+      save_pdf(@pdf_path, page_pdf:true)
       self
     end
 

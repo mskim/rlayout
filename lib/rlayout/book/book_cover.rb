@@ -238,7 +238,7 @@ module RLayout
     def generate_pdf
       @updated = false
       @book_cover = eval(default_layout)
-      @book_cover.save_pdf_with_ruby(output_path, jpg:true)
+      @book_cover.save_pdf(output_path, jpg:true)
       @updated = true
     end
 
@@ -259,7 +259,7 @@ module RLayout
   
     def create_empty_page
       page_with_empty = eval(empty_page_layout)
-      page_with_empty.save_pdf_with_ruby(empty_page_pdf_path, jpg:true)
+      page_with_empty.save_pdf(empty_page_pdf_path, jpg:true)
     end
   
     def build_front_cover_path

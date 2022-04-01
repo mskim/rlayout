@@ -17,7 +17,7 @@ describe 'should save yaml' do
   end
 
   it 'should save yaml' do
-    @c.save_pdf_with_ruby(@pdf_path)
+    @c.save_pdf(@pdf_path)
     assert File.exist? @pdf_path
     system "open #{@pdf_path}"
   end

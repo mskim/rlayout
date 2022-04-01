@@ -3,7 +3,7 @@ module RLayout
   class RDocument
     attr_accessor :pdf_doc
 
-    def save_pdf_with_ruby(output_path, options={})
+    def save_pdf(output_path, options={})
       # puts "genrateing pdf ruby "
       start_time    = Time.now
       style_service = RLayout::StyleService.shared_style_service
