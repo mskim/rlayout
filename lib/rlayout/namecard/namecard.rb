@@ -19,9 +19,10 @@ module RLayout
 
   # data_source and area_name should match
   #  personal.csv
-  #  compant.yml
+  #  company.yml
   #  copy_1.yml
-  #  logo.pdf,  logo.svg,  logo.jpg 
+  #  logo.pdf,  logo.svg,  logo.jpg
+  #  qr_code.png, en_qr_code.png
 
 
 
@@ -34,6 +35,7 @@ module RLayout
     attr_reader :cards_array
     attr_reader :imposition
     attr_reader :company_hash
+    attr_reader :qr_code
 
     def initialize(options={})
       @compnay_name = options[:compnay_name]
@@ -297,6 +299,10 @@ module RLayout
       @document_path + "/members"
     end
 
+    def qrcode_folder
+      @document_path + "/members/qrcode"
+    end
+
     def create_cards
       @cards_array = []
       if File.exist?(csv_path)
@@ -311,11 +317,10 @@ module RLayout
         File.open(company_info_path, 'w'){|f| f.write @company_info.to_yaml}
       end      
       FileUtils.mkdir_p(members_path) unless File.exist?(members_path)
+      FileUtils.mkdir_p(qrcode_folder) unless File.exist?(qrcode_folder)
       @member_rows = CSV.parse(@member_data)
       keys  = @member_rows.shift
       keys.map!{|e| e.to_sym}
-      # for first card create @member_card from scratch 
-      # and the rest of following cards replace the conent on that card and save pdf.
       @member_rows.each_with_index do |personal_info, i|
         @personal_info = Hash[keys.zip personal_info]
         h = {}
@@ -325,46 +330,81 @@ module RLayout
         slug = @personal_info[:name].gsub(" ", "_")
         @member_pdf_path =  members_path + "/#{slug}.pdf"
         @member_card = RLayout::RDocument.new(paper_size: 'NAMECARD', page_count: 0)
-        # do front side
-        front_card = eval(@front_layout_rb)
-        front_card.text_style = text_style
-        @personal_info_front = {}
-        @personal_info_front[:name]  = @personal_info[:name]
-        # @personal_info_front[:division]  = @personal_info[:division]
-        @personal_info_front[:title]  = "#{@personal_info[:division]}/#{@personal_info[:title]}"
-        @personal_info_front[:email]  = @personal_info[:email]
-        @personal_info_front[:cell]  = @personal_info[:cell]
-        front_card.personal_info = @personal_info_front
-        @company_info_front =  {}
-        @company_info_front[:company_name] = @company_info[:company_name]
-        @company_info_front[:address_1] = @company_info[:address_1]
-        @company_info_front[:address_2] = @company_info[:address_2]
-        front_card.company_info = @company_info_front
-        front_card.picture_path = @document_path + "/images/#{slug}"
-        front_card.set_content
+        front_card = create_front_side(@personal_info, @company_info)
         @member_card.add_page(front_card)
-        # do back side
-        back_card = eval(@back_layout_rb)
-        back_card.text_style = @text_style
-        @personal_info_back = {}
-        @personal_info_back[:en_fullname]  = @personal_info[:en_fullname]
-        @personal_info_back[:en_title]  = "#{@personal_info[:en_division]}/#{@personal_info[:en_title]}"
-        @personal_info_back[:email]  = @personal_info[:email]
-        @personal_info_back[:cell]  = @personal_info[:cell]
-        back_card.personal_info = @personal_info_back
-        @company_info_back =  {}
-        @company_info_back[:en_company_name] = @company_info[:en_company_name]
-        @company_info_back[:en_address_1] = @company_info[:en_address_1]
-        @company_info_back[:en_address_2] = @company_info[:en_address_2]
-        back_card.company_info = @company_info_back
-        back_card.picture_path = @document_path + "/images/#{slug}"
-        back_card.set_content
+        back_card = create_back_side(@personal_info, @company_info)
         @member_card.add_page(back_card)
         @member_card.save_pdf(@member_pdf_path)
         if @imposition
           make_imposition(@member_pdf_path)
         end
       end
+    end
+
+    def create_front_side(personal_info, company_info)
+      front_card = eval(@front_layout_rb)
+      if front_card.qrcode_obejct
+        vcard_info = {}
+        vcard_info[:name] = personal_info[:name]
+        vcard_info[:email] = personal_info[:email]
+        vcard_info[:tel] = personal_info[:cell]
+        vcard_info[:org] = company_info[:company_name]
+        vcard_info[:title] = personal_info[:title]
+        vcard_info[:address] = "#{@company_info[:address_1]} #{@company_info[:address_2]}"
+        qrcode_path = qrcode_folder + "/#{slug}.png"
+        h[:qr_code_path] = qr_code_path
+        generarate_vcard_qrcode(vcard_info, qrcode_path)
+      end
+      front_card.text_style = text_style
+      personal_info_front = {}
+      personal_info_front[:name]  = personal_info[:name]
+      personal_info_front[:title]  = "#{personal_info[:division]}/#{personal_info[:title]}"
+      personal_info_front[:email]  = personal_info[:email]
+      personal_info_front[:cell]  = personal_info[:cell]
+      front_card.personal_info = personal_info_front
+      company_info_front =  {}
+      company_info_front[:company_name] = company_info[:company_name]
+      company_info_front[:address_1] = company_info[:address_1]
+      company_info_front[:address_2] = company_info[:address_2]
+      front_card.company_info = company_info_front
+      front_card.picture_path = @document_path + "/images/#{slug}"
+      front_card.set_content
+      front_card
+    end
+
+    def create_back_side(personal_info, company_info)
+      back_card = eval(@back_layout_rb)
+      if back_card.qr_code_obejct
+        en_vcard_info = {}
+        en_vcard_info[:name] = personal_info[:en_name]
+        en_vcard_info[:email] = personal_info[:email]
+        en_vcard_info[:tel] = personal_info[:cell]
+        en_vcard_info[:org] = @company_info[:en_company_name]
+        en_vcard_info[:title] = personal_info[:en_title]
+        en_vcard_info[:address] = "#{@company_info[:en_address_1]} #{@company_info[:en_address_2]}"
+        en_qrcode_path = qrcode_folder + "/#{slug}_en.png"
+        h[:en_qrcode_path] = en_qrcode_path
+        generarate_vcard_qrcode(en_vcard_info, en_qrcode_path)
+      end
+      back_card.text_style = @text_style
+      personal_info_back = {}
+      personal_info_back[:en_fullname]  = personal_info[:en_fullname]
+      personal_info_back[:en_title]  = "#{personal_info[:en_division]}/#{personal_info[:en_title]}"
+      personal_info_back[:email]  = personal_info[:email]
+      personal_info_back[:cell]  = personal_info[:cell]
+      back_card.personal_info = personal_info_back
+      company_info_back =  {}
+      company_info_back[:en_company_name] = @company_info[:en_company_name]
+      company_info_back[:en_address_1] = @company_info[:en_address_1]
+      company_info_back[:en_address_2] = @company_info[:en_address_2]
+      back_card.company_info = company_info_back
+      back_card.picture_path = @document_path + "/images/#{slug}"
+      back_card.set_content
+      back_card
+    end
+
+    def generarate_vcard_qrcode(vcard, output_path
+      VcardQrcode::QrGenerator.generate(vcard, output_path)
     end
 
     def make_imposition(member_pdf_path)

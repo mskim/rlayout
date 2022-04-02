@@ -2,9 +2,9 @@ module RLayout
   class CardPage < Container
     attr_reader :grid
     attr_accessor :text_style, :document_path
-    attr_accessor :personal_info, :company_info, :logo_info, :picture_info
-    attr_reader :personal_object, :company_object, :logo_object, :picture_object, :qrcode_object
-    attr_accessor :picture_path, :qrcode_path
+    attr_accessor :personal_info, :company_info, :logo_info, :picture_info, :qrcode_vcard, :en_qrcode_vcard
+    attr_reader :personal_object, :company_object, :logo_object, :picture_object, :qrcode_object, :en_qrcode_object
+    attr_accessor :picture_path, :qrcode_path, :en_qrcode_path
 
     def initialize(options={}, &block)
       options[:paper_size] = 'NAMECARD'
@@ -243,9 +243,18 @@ module RLayout
       # TODO set frame rect
       h[:tag] = "qrcode"
       h[:image_path] = @qrcode_path
-      @picture_object = RLayout::Image.new(h)
+      @qrcode_object = RLayout::Image.new(h)
     end
 
+    def en_qrcode(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:grid_frame]  = grid_frame
+      # TODO set frame rect
+      h[:tag] = "qrcode"
+      h[:image_path] = @qrcode_path
+      @en_qrcode_object = RLayout::Image.new(h)
+    end
     def copy_1(grid_frame, options={})
       h = {}
       h[:parent] = self
