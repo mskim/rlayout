@@ -81,20 +81,6 @@ module RLayout
 
 
   ############ page  variations ##############
-  class BlackPage < RPage
-    def initialzie(options={})
-      super
-      self
-    end
-  end
-
-  # Prolog, Forward
-  class FrontMatterPage < RPage
-    def initialize(options={})
-      super
-      self
-    end
-  end
 
   # Isbn, dedication, thanks
   class ColumnTextPage < RPage

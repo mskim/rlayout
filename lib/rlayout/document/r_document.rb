@@ -16,7 +16,6 @@ module RLayout
     # example Toc can create Doc with TocPages
     attr_reader :page_type, :toc_data
     def initialize(options={}, &block)
-      @chpater = options[:chapter]
       if options[:paper_size] && SIZES[options[:paper_size]]
         @paper_size      = options[:paper_size]
         @width          = SIZES[options[:paper_size]][0]
@@ -32,7 +31,7 @@ module RLayout
       @page_type        = options[:page_type]
       @toc_data         = options[:toc_data]
       @fixed_page_document = false
-      @starting_page_number    = options[:starting_page_number]   || 1
+      @starting_page_number = options[:starting_page_number]   || 1
       @max_page_number  = options[:max_page_number] || 999
       if options[:body_line_count]
         @body_line_count  = options[:body_line_count]
@@ -69,6 +68,18 @@ module RLayout
         instance_eval(&block)
       end
       self
+    end
+
+    def set_margins
+
+    end
+
+    def set_column_size
+
+    end
+    
+    def set_body_line_height
+      
     end
 
     def log
@@ -169,16 +180,6 @@ module RLayout
         h[:page_number]   = @pages.length + 1
         # h[:toc_data]      = @toc_data
         new_page          = ColumnTextPage.new(h)
-      elsif @page_type == "front_matter"
-        # long text with short heading
-        # prologue, forward
-        h                 = {}
-        h[:parent]        = self
-        h[:width]         = @width
-        h[:height]        = @height
-        h[:page_number]   = @pages.length + 1
-        # h[:toc_data]      = @toc_data
-        new_page          = FrontMatterPage.new(h)
       else
         h                 = {}
         h[:parent]        = self
