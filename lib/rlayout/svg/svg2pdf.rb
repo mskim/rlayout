@@ -31,9 +31,5 @@ module RLayout
       puts __method__
     end
 
-    def save_pdf(output_path)
-      puts __method__
-    end
-
   end
 end

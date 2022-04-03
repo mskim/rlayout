@@ -242,7 +242,7 @@ module RLayout
       h[:grid_frame]  = grid_frame
       # TODO set frame rect
       h[:tag] = "qrcode"
-      h[:image_path] = @qrcode_path
+      h[:image_path] = options[:qrcode_path] || 'temp_path'
       @qrcode_object = RLayout::Image.new(h)
     end
 
@@ -251,8 +251,8 @@ module RLayout
       h[:parent] = self
       h[:grid_frame]  = grid_frame
       # TODO set frame rect
-      h[:tag] = "qrcode"
-      h[:image_path] = @qrcode_path
+      h[:tag] = "en_qrcode"
+      h[:image_path] = options[:qrcode_path] || 'temp_path'
       @en_qrcode_object = RLayout::Image.new(h)
     end
     def copy_1(grid_frame, options={})

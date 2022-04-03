@@ -49,8 +49,5 @@ module RLayout
       @first_pdf_page = pdf_view.pages.first
     end
 
-    def save_pdf(output_path)
-      save_pdf(output_path)
-    end
   end
 end

@@ -48,15 +48,10 @@ module RLayout
 	  end
 	  
 	  def save_pdf(path)
-      if RUBY_ENGINE == 'rubymotion'
-        @ns_view ||= GraphicViewMac.from_graphic(self)
-        @ns_view.save_pdf(path, options)
-      elsif RUBY_ENGINE == 'ruby' 
-        text = "\n@output_path = \"#{path}\"\n"
-        text += @template
-        system("echo '#{text}' | /Applications/rjob.app/Contents/MacOS/rjob")
-      end
-	  end
+      text = "\n@output_path = \"#{path}\"\n"
+      text += @template
+      system("echo '#{text}' | /Applications/rjob.app/Contents/MacOS/rjob")
+    end
   end
 	  
 end

@@ -1,4 +1,5 @@
 require 'csv'
+require 'vcard_qrcode'
 module RLayout
   # Namecard Naming Convention
   # text_style name and csv head should match
@@ -343,17 +344,19 @@ module RLayout
 
     def create_front_side(personal_info, company_info)
       front_card = eval(@front_layout_rb)
-      if front_card.qrcode_obejct
+      if front_card.qrcode_object
         vcard_info = {}
         vcard_info[:name] = personal_info[:name]
+        slug = personal_info[:name].gsub(" ", "_")
         vcard_info[:email] = personal_info[:email]
         vcard_info[:tel] = personal_info[:cell]
         vcard_info[:org] = company_info[:company_name]
         vcard_info[:title] = personal_info[:title]
         vcard_info[:address] = "#{@company_info[:address_1]} #{@company_info[:address_2]}"
         qrcode_path = qrcode_folder + "/#{slug}.png"
-        h[:qr_code_path] = qr_code_path
         generarate_vcard_qrcode(vcard_info, qrcode_path)
+        front_card.qrcode_object.image_path = qrcode_path
+
       end
       front_card.text_style = text_style
       personal_info_front = {}
@@ -374,17 +377,18 @@ module RLayout
 
     def create_back_side(personal_info, company_info)
       back_card = eval(@back_layout_rb)
-      if back_card.qr_code_obejct
+      if back_card.en_qrcode_object
         en_vcard_info = {}
         en_vcard_info[:name] = personal_info[:en_name]
+        slug = personal_info[:name].gsub(" ", "_")
         en_vcard_info[:email] = personal_info[:email]
         en_vcard_info[:tel] = personal_info[:cell]
         en_vcard_info[:org] = @company_info[:en_company_name]
         en_vcard_info[:title] = personal_info[:en_title]
         en_vcard_info[:address] = "#{@company_info[:en_address_1]} #{@company_info[:en_address_2]}"
         en_qrcode_path = qrcode_folder + "/#{slug}_en.png"
-        h[:en_qrcode_path] = en_qrcode_path
         generarate_vcard_qrcode(en_vcard_info, en_qrcode_path)
+        back_card.qrcode_object.image_path = qrcode_path
       end
       back_card.text_style = @text_style
       personal_info_back = {}
@@ -403,7 +407,7 @@ module RLayout
       back_card
     end
 
-    def generarate_vcard_qrcode(vcard, output_path
+    def generarate_vcard_qrcode(vcard, output_path)
       VcardQrcode::QrGenerator.generate(vcard, output_path)
     end
 

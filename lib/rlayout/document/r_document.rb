@@ -213,10 +213,6 @@ module RLayout
       @pages << a_page
     end
 
-    def save_pdf(path, options={})
-      save_pdf(path, options)
-    end
-
     def save_toc(path)
       File.open(path, 'w'){|f| f.write toc_element.to_yaml}
     end
