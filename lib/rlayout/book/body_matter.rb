@@ -37,42 +37,21 @@ module RLayout
     def build_folder
       @project_path + "/_build"
     end
-    
+  
+    def source_body_md_path
+      @project_path + "/body.md"
+    end
     # support folder as well as .md file as chapter source
     def process_body_matter
       @document_folders = []
-      # Dir.glob("#{@project_path}/*.md").sort.each_with_index do |file, i|
       chapter_order = 1
-      Dir.entries(@project_path).sort.each do |file|
-        # copy source to build 
+      Dir.entries(build_folder).sort.each do |file|
         if file =~/^\d\d/
-          chapter_folder = build_folder + "/chapter_#{chapter_order}"
-          FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
-          source_path = @project_path + "/#{file}"
-          if File.directory?(source_path)
-            # look for .md file and copy it as story.md in build
-            Dir.glob("#{source_path}/*").each do |souce_folder_file|
-              if File.directory?(souce_folder_file)
-                # copy images folder to build chpater folder
-                FileUtils.cp_r souce_folder_file, chapter_folder
-              elsif souce_folder_file =~/.md$/
-                # if a file is .md file, rename it as story.md in build chapter folder
-                FileUtils.cp souce_folder_file, "#{chapter_folder}/story.md"
-              else
-                FileUtils.cp souce_folder_file, "#{chapter_folder}"
-              end
-            end
-            @document_folders << chapter_folder
-          elsif source_path =~/[.md,.markdown]$/
-            FileUtils.cp source_path, "#{chapter_folder}/story.md"
-            @document_folders << chapter_folder
-          else
-            # this is case when a file starts with \d\d but not a .md file nor folder
-            next
-          end
+          file_full_path = build_folder + "/#{file}"
+          @document_folders << file_full_path
           h = {}
           h[:book_info]  = @book_info
-          h[:document_path] = chapter_folder
+          h[:document_path] = file_full_path
           h[:paper_size] = @paper_size
           h[:page_pdf] = true
           h[:toc] = true

@@ -15,6 +15,7 @@ module RLayout
     def initialize(project_path, options={})
       @html  = options[:html]
       @project_path = project_path
+      FileUtils.mkdir_p(build_folder) unless File.exist?(build_folder)
       @book_info_path = @project_path + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
@@ -29,6 +30,7 @@ module RLayout
       @gripper_margin = options[:gripper_margin] || 1*28.34646
       @binding_margin = options[:binding_margin] || 20
       @bleed_margin = options[:bleed_margin] || 3*2.834646
+      parse_book_source
       create_book_cover
       @front_matter = FrontMatter.new(@project_path)
       @starting_page_number += @front_matter.starting_page_number
@@ -38,6 +40,22 @@ module RLayout
       generate_pdf_book 
       generate_pdf_for_print
       generate_ebook unless options[:no_ebook]
+    end
+
+    def source_front_matter_path
+      @project_path + "/front_matter"
+    end
+
+    def source_front_md_path
+      @project_path + "/front.md"
+    end
+
+    def source_body_md_path
+      @project_path + "/book.md"
+    end
+
+    def source_rear_md_path
+      @project_path + "/rear.md"
     end
 
     def style_guide_folder
@@ -59,7 +77,93 @@ module RLayout
     def build_book_cover_path
       build_folder + "/book_cover"
     end
-  
+
+    def parse_book_source
+      parse_front_matter
+      parse_body_matter
+      parse_rear_matter
+    end
+
+    def parse_front_matter
+      if File.exist?(source_front_md_path)
+        RLayout::BookParser.new(source_front_md_path)
+      else
+        FileUtils.mkdir_p(build_front_matter_path) unless File.exist?(build_front_matter_path)
+        return unless File.exist?(source_front_matter_path)
+        Dir.entries(source_front_matter_path).sort.each do |file|
+          # copy source to build 
+          if file =~/^\d\d/
+            case basename
+            when /isbn/
+              isbn_path = build_front_matter_path + "/isbn"
+              copy_source_to_build(file, isbn_path)
+            when /inside_cover/
+              inside_cover_path = build_front_matter_path + "/inside_cover"
+              copy_source_to_build(file, inside_cover_path,)
+            when /dedication/, /헌정사/
+              dedication_path = build_front_matter_path + "/dedication"
+              copy_source_to_build(file, dedication_path,)
+            when /thanks/, /감사/
+              thanks_path = build_front_matter_path + "/thanks"
+              copy_source_to_build(file, thanks_path,)
+            when /prologue/, /머릿글/
+              prologue_path = build_front_matter_path + "/prologue"
+              copy_source_to_build(file, prologue_path,)
+            when /toc/, /목차/ , /차례/
+              toc_path = build_front_matter_path + "/toc"
+              copy_source_to_build(file, toc_path,)
+              @has_toc = true
+            end
+          end
+        end
+      end
+    end
+
+    def parse_body_matter
+      if File.exist?(source_body_md_path)
+        RLayout::BookParser.new(source_body_md_path)
+      else
+        Dir.entries(@project_path).sort.each do |file|
+          # copy source to build 
+          if file =~/^\d\d/
+            chapter_folder = build_folder + "/chapter_#{chapter_order}"
+            FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
+            source_path = @project_path + "/#{file}"
+            if File.directory?(source_path)
+              # look for .md file and copy it as story.md in build
+              Dir.glob("#{source_path}/*").each do |souce_folder_file|
+                if File.directory?(souce_folder_file)
+                  # copy images folder to build chpater folder
+                  FileUtils.cp_r souce_folder_file, chapter_folder
+                elsif souce_folder_file =~/.md$/
+                  # if a file is .md file, rename it as story.md in build chapter folder
+                  FileUtils.cp souce_folder_file, "#{chapter_folder}/story.md"
+                else
+                  FileUtils.cp souce_folder_file, "#{chapter_folder}"
+                end
+              end
+              @document_folders << chapter_folder
+            elsif source_path =~/[.md,.markdown]$/
+              FileUtils.cp source_path, "#{chapter_folder}/story.md"
+            else
+              # this is case when a file starts with \d\d but not a .md file nor folder
+              next
+            end
+          else
+            next
+          end
+        end
+      end
+    end
+
+    def parse_rear_matter
+      if File.exist?(source_rear_md_path)
+        RLayout::BookParser.new(source_rear_md_path)
+      else
+      # TODO parse rear_matter 
+      end
+    end
+
     def create_book_cover
       FileUtils.mkdir_p(build_folder) unless File.exist?(build_folder)
       RLayout::BookCover.new(project_path: build_book_cover_path, source_path: source_book_cover_path, book_info: @book_info)

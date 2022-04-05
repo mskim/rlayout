@@ -37,11 +37,7 @@ module RLayout
     # create prolog, forward, isbn
     def process_front_matter
       @document_folders = []
-      FileUtils.mkdir_p(build_front_matter_path) unless File.exist?(build_front_matter_path)
-      # Dir.glob("#{source_front_matter_path}/*.md").sort.each do |md|
-      Dir.entries(source_front_matter_path).sort.each do |file|
-        # copy source to build 
-
+      Dir.entries(build_front_matter_path).sort.each do |file|
         if file =~/^\d\d/
           basename = File.basename(file)
           h = {}
@@ -51,11 +47,9 @@ module RLayout
           h[:toc] = true
           h[:starting_page_number] = @starting_page_number
           # h[:style_guide_folder] = style_guide_folder
-
           case basename
           when /isbn/
             isbn_path = build_front_matter_path + "/isbn"
-            copy_source_to_build(file, isbn_path)
             h[:document_path] = isbn_path
             h[:toc] = false
             h[:has_footer] = false
@@ -66,20 +60,17 @@ module RLayout
             @document_folders << 'isbn'
           when /inside_cover/
             inside_cover_path = build_front_matter_path + "/inside_cover"
-            copy_source_to_build(file, inside_cover_path,)
             h[:document_path] = inside_cover_path
             h[:front_page_pdf] = @project_path + "/_build/book_cover/front_page/output.pdf"
             h[:toc] = false
             h[:has_footer] = false
             h[:has_header] = false
             h[:style_guide_folder] = style_guide_folder + "/inside_cover"
-
             r = RLayout::InsideCover.new(h)
             @starting_page_number += r.page_count
             @document_folders << 'inside_cover'
           when /dedication/, /헌정사/
             dedication_path = build_front_matter_path + "/dedication"
-            copy_source_to_build(file, dedication_path,)
             h[:document_path] = dedication_path
             h[:style_guide_folder] = style_guide_folder + "/dedication"
             r = RLayout::Dedication.new(h)
@@ -87,7 +78,6 @@ module RLayout
             @document_folders << 'dedication'
           when /thanks/, /감사/
             thanks_path = build_front_matter_path + "/thanks"
-            copy_source_to_build(file, thanks_path,)
             h[:document_path] = thanks_path
             h[:style_guide_folder] = style_guide_folder + "/thanks"
             r = RLayout::Thanks.new(h)
@@ -95,7 +85,6 @@ module RLayout
             @document_folders << 'thanks'
           when /prologue/, /머릿글/
             prologue_path = build_front_matter_path + "/prologue"
-            copy_source_to_build(file, prologue_path,)
             h[:document_path] = prologue_path
             h[:style_guide_folder] = style_guide_folder + "/prologue"
             r = RLayout::Prologue.new(h)
@@ -103,15 +92,21 @@ module RLayout
             @document_folders << 'prologue'
           when /toc/, /목차/ , /차례/
             toc_path = build_front_matter_path + "/toc"
-            copy_source_to_build(file, toc_path,)
             @has_toc = true
             @document_folders << 'toc' 
             # TODO fix this toc_page_count
-            @toc_first_page_number = @starting_page_number
+            @toc_first_page_number = @starting_page_number + 1 unless @toc_first_page_number
             @starting_page_number += @toc_page_count
             @book_toc = []
           end
         end
+      end
+      unless @has_toc
+        @has_toc = true
+        @document_folders << 'toc' 
+        @toc_first_page_number = @starting_page_number + 1 unless @toc_first_page_number
+        @starting_page_number += @toc_page_count
+        @book_toc = []
       end
       generate_front_matter_toc
     end
@@ -205,6 +200,17 @@ module RLayout
 
     def source_front_matter_path
       @project_path + "/front_matter"
+    end
+
+    def source_body_md_path
+      @project_path + "/body.md"
+    end
+    
+    # front.md file contains front_matter_docs content
+    # front_matter_docs content can also be written in side of body.md file
+    # it depsend on how the write want to orgazined  the content
+    def source_front_md_path
+      @project_path + "/front.md"
     end
 
     def book_title
