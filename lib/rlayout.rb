@@ -177,6 +177,7 @@ require File.dirname(__FILE__) + "/rlayout/newspaper/news_box_maker"
 require File.dirname(__FILE__) + "/rlayout/newspaper/news_toc"
 require File.dirname(__FILE__) + "/rlayout/newspaper/news_pillar"
 require File.dirname(__FILE__) + "/rlayout/newspaper/news_page"
+require File.dirname(__FILE__) + "/rlayout/newspaper/newspage_parser"
 
 # require File.dirname(__FILE__) + "/rlayout/magazine/magazine_article.rb"
 # require File.dirname(__FILE__) + "/rlayout/magazine/magazine_cover.rb"
