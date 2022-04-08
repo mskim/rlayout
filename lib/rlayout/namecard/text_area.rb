@@ -1,17 +1,18 @@
 module RLayout
-  # Area serves as a place holder for item group.
-  # Area is create with grid_frame, and area_type as an option
+
+  # TextArea serves as a place holder for item group.
+  # TextArea is create with grid_frame, and area_type as an option
   # grid_frame is an array of x,y,width,height in parant grid value 
 
   # set_content
-  # used to set Area's  content value from parent.
+  # used to set TextArea's  content value from parent.
   # lays out given content with text_style
   # example
   # def person_area([0,2,4,3], [{name: 'Min Soo Kim}, {email: 'mskimsid@gmail.com'}])
   
-  # defines person area with grid_frame
+  # defines person text_area with grid_frame
 
-  class Area < Container
+  class TextArea < Container
     attr_reader :grid_frame
     attr_reader :content
     attr_reader :v_alignment
@@ -40,6 +41,7 @@ module RLayout
         h[:style_name] = k.to_s if v
         h[:x] = 3
         h[:y] = y_position
+        h[:width] = @width
         h[:text_string] = v
         object = TitleText.new(h)
         y_position += object.height

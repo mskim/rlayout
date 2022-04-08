@@ -1,15 +1,14 @@
 
 module RLayout
-  # RCoverPage
+  # StyleablePage
   # given text_style.yml and story.md
   # create cover page
   # set_content lays out content
-
-  class RCoverPage < Container
-    attr_accessor :number_object, :title_object, :subtitle_object, :quote_object, :author_object
+  # story.md containes hash of hashes for each  area object as info
+  class RCoverPage < StyleablePage
     attr_reader :align_to_body_text, :output_path
     attr_reader :height_sum, :heading_height_type # natural, quarter, half, full
-
+    
     def initialize(options={}, &block)
       # options[:stroke_width] = 1.0
       # options[:stroke_color] = 'yellow'
@@ -37,13 +36,7 @@ module RLayout
       @layout_expand  = options.fetch(:layout_expand,[:width, :height])
       @line_type=0
       options.delete(:stroke_width)
-      if block
-        instance_eval(&block)
-      end
 
-      # if @output_path
-      #   save_pdf(@output_path)
-      # end
       self
     end
 
@@ -119,6 +112,76 @@ module RLayout
       # relayout!
 
       self
+    end
+
+    def heading(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:tag] = "part_cover_heading"
+      h[:grid_frame]  = grid_frame
+      h[:content]  = @part_heading_info
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      RLayout::TextArea.new(h)
+    end
+
+    def isbn_text(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:tag] = "isbn_text"
+      h[:grid_frame]  = grid_frame
+      h[:content]  = @isbn_text_info
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      RLayout::TextArea.new(h)
+    end
+
+    def box_1(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:tag] = "box_1"
+      h[:grid_frame]  = grid_frame
+      h[:content]  = @isbn_text_info
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      @box_1_object = RLayout::TextArea.new(h)
+    end
+
+    def box_2(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:tag] = "box_2"
+      h[:grid_frame]  = grid_frame
+      h[:content]  = @isbn_text_info
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      @box_2_object = RLayout::TextArea.new(h)
+    end
+
+    def box_3(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:tag] = "box_3"
+      h[:grid_frame]  = grid_frame
+      h[:content]  = @isbn_text_info
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      @box_3_object = RLayout::TextArea.new(h)
+    end
+
+    def box_4(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:tag] = "box_4"
+      h[:grid_frame]  = grid_frame
+      h[:content]  = @isbn_text_info
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      @box_4_object = RLayout::TextArea.new(h)
+    end
+
+    def box_5(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:tag] = "box_5"
+      h[:grid_frame]  = grid_frame
+      h[:content]  = @isbn_text_info
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      @box_5_object = RLayout::TextArea.new(h)
     end
 
     def align_vertically

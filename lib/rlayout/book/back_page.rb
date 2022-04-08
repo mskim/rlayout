@@ -51,7 +51,7 @@ module RLayout
 
     def default_layout_rb
       layout =<<~EOF
-      RLayout::RCoverPage.new(fill_color:'clear',width:#{@width}, height:#{@height}) do
+      RLayout::StyleablePage.new(fill_color:'clear',width:#{@width}, height:#{@height}) do
       end
       EOF
     end

@@ -6,8 +6,9 @@ module RLayout
   REAR_MATTER_TYPE = %w[appendix index]
 
   class  BookParser
-    attr_reader :project_path, :content, :metadata,  :body
-    attr_reader :docs, :md_file
+    attr_reader :project_path
+    # attr_reader :docs, :md_file
+    attr_reader :part_titles
     def initialize(md_file)
       @md_file = md_file
       @project_path = File.dirname(@md_file)
@@ -21,6 +22,10 @@ module RLayout
     
     def build_folder
       @project_path + "/_build"
+    end
+
+    def book_info_path
+      @project_path + "/book_info.yml"
     end
 
     def book_cover_folder
@@ -56,7 +61,8 @@ module RLayout
 
       reader = RLayout::Reader.new @contents, nil
       text_blocks = reader.text_blocks.dup
-      @part_order =1
+      @part_titles = []
+      @part_order = 1
       @chapter_order = 1
       @rear_matter_order = 0
       @current_doc_foler = build_folder
@@ -66,7 +72,11 @@ module RLayout
           @current_part_folder = build_folder + "/part_#{@part_order.to_s.rjust(2,'0')}"
           FileUtils.mkdir_p(@current_part_folder) unless File.exist?(@current_part_folder)
           @current_doc_foler = @current_part_folder
+          part_cover_foler = @current_doc_foler + "/0_part_cover"
+          FileUtils.mkdir_p(part_cover_foler) unless File.exist?(part_cover_foler)
           @part_order += 1
+          part_title = first_line.split(":")[1] || ""
+          @part_titles << part_title
           @chapter_order = 1
 
         elsif first_line=~DOC_START
@@ -133,6 +143,14 @@ module RLayout
         end
 
       end
+      update_part_titles if @part_titles.length > 0
+    end
+
+    # update book_info part
+    def update_part_titles
+      book_info = YAML::load_file(book_info_path)
+      book_info['part'] = @part_titles
+      File.open(book_info_path, 'w'){|f| f.write book_info.to_yaml}
     end
 
     def self.save_sample(path)

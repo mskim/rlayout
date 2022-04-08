@@ -22,10 +22,33 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
-### 2022_04_01
+
+### 2022_04_08
+  - fix part_cover text_style layout_rb using StyleablePage
+  - fix toc not including part_cover
+  - fix part_cover always showing part_1 
+### 2022_04_06
+  - generate book_info.yml from source folder, 
+    save or copy it to _build folder
+    put it in book.md
   - part_cover
+    when parsing book.md, add part heading to book_info.yml
+    add default_text_style
+    title, layout, 
+    add part to book_info
+  - add to toc
   - vertical seneca
-  
+  - use StyleablePage 
+    -  predefined text_area
+      heading, logo, picture, image
+    
+    change Area to TextArea
+      naming convention
+      def name          pgscript
+
+  - CardPage < StyleablePage  
+    -  predefined text_area
+      personal, company, en_personal, en_company
 ### 2022_03_29
   - style_guide
     toc, seneca, inside_cover, 

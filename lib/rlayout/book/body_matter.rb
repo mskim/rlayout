@@ -20,6 +20,7 @@ module RLayout
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @title = @book_info[:title]
+      @part_titles = @book_info[:part]
       # @custom_style = @book_info[:custom_style]
       @paper_size = @book_info[:paper_size]  || "A5"
       @paper_size = options[:paper_size] if options[:paper_size]
@@ -43,15 +44,17 @@ module RLayout
     end
     # support folder as well as .md file as chapter source
     def process_body_matter
+      
       @document_folders = []
+      part_order = 1
       chapter_order = 1
-      Dir.entries(build_folder).sort.each do |file|
-        if file =~/^\d\d/
-          file_full_path = build_folder + "/#{file}"
-          @document_folders << file_full_path
+      Dir.glob("#{build_folder}/*").sort.each do |file|
+        # if file =~/^\d\d/
+        if file =~/chapter/
+          @document_folders << file
           h = {}
           h[:book_info]  = @book_info
-          h[:document_path] = file_full_path
+          h[:document_path] = file
           h[:paper_size] = @paper_size
           h[:page_pdf] = true
           h[:toc] = true
@@ -61,8 +64,32 @@ module RLayout
           r = RLayout::Chapter.new(h)
           @starting_page_number += r.page_count
           chapter_order += 1
-        else
-          next
+        elsif file =~/part/
+          # we have part folder 
+          Dir.glob("#{file}/*").sort.each do |part_file|
+            h = {}
+            h[:book_info]  = @book_info
+            h[:document_path] = part_file
+            h[:paper_size] = @paper_size
+            h[:page_pdf] = true
+            h[:toc] = true
+            h[:starting_page_number] = @starting_page_number
+            h[:style_guide_folder] = style_guide_folder
+            if part_file =~/chapter/
+              @document_folders << part_file
+              h[:chapter_order] = chapter_order
+              r = RLayout::Chapter.new(h)
+              @starting_page_number += r.page_count
+              chapter_order += 1 
+            elsif part_file =~/part_cover/
+              @document_folders << part_file
+              h[:order] = part_order
+              h[:title] = @part_titles[part_order - 1]
+              h[:style_guide_folder] = style_guide_folder_for_part_cover
+              r = RLayout::PartCover.new(h)
+              @starting_page_number += r.page_count
+            end
+          end
         end
       end
       generate_body_matter_toc
@@ -70,6 +97,10 @@ module RLayout
 
     def style_guide_folder
       @project_path + "/_style_guide/chapter"
+    end
+
+    def style_guide_folder_for_part_cover
+      @project_path + "/_style_guide/part_cover"
     end
 
     def generate_body_matter_toc

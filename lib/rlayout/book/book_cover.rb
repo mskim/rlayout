@@ -1,13 +1,38 @@
 module RLayout
-
-  # spread
-  # Image that spreads across back_page seneca and front_page
+  # BookCover
+  # BookCover is create with series of steps
+  # Several documents created and merge as bookcover
   
+  # spread
+  # PDF Image that spreads across back_cover seneca and front_cocer
+  # there are two cases 
+  # 1. when spread image spread.jpg is given
+  # 2. when front side image1.jpg and back side image 2.jpg is given
+
   # front_page
+  #   text of front cover
+
   # front_wing
+  #   pdf of front page
+
+  # back_page
+  #  text of back cover
 
   # back_wing
-  # back_page
+  #   pdf of front page
+
+  # create_spread
+  #   create background image spread with spread.jpg, 1.jpg, 2.jpg with widht and height of spread
+  # create_pages_and_wings
+  #   create front_page front_wing seneca back_wing back_page
+  # create_empty_page
+  #   create empty_page for back_side of front cover and back side of back cover
+  # create_front_cover
+  #   merge spread with front_page
+  # create_back_cover
+  #   merge spread with back_page
+  # generate_pdf
+  #   generate book cover pdf with generated parts
 
   CENTI2POINT = 28.34646
   MM2POINT = 2.834646
@@ -52,42 +77,6 @@ module RLayout
       create_back_cover
       generate_pdf
       self
-    end
-
-    def default_layout
-      layout =<<~EOF
-      RLayout::Container.new(width:#{@width + @gripper_width*2}, height:#{@height + @gripper_width*2}, layout_direction:'horizontal') do
-        vertical_line_position = []
-        x_position = #{@gripper_width}
-        vertical_line_position << x_position
-        image(image_path: "#{back_wing_pdf_path}", x: x_position, y:#{@gripper_height}, width: #{@wing_width}, height:#{@height}, fill_color: 'clear')
-        x_position += #{@wing_width}
-        vertical_line_position << x_position
-        image(image_path: "#{cover_spread_pdf_path}" , x: x_position, y:#{@gripper_height}, width:#{@spread_width}, height:#{@height}, layout_member: false)
-        image(image_path: "#{back_page_pdf_path}", x: x_position, y:#{@gripper_height},  width: #{@page_width}, height:#{@height}, fill_color: 'clear')
-        x_position += #{@page_width}
-        vertical_line_position << x_position
-        image(image_path: "#{seneca_pdf_path}", x: x_position, y:#{@gripper_height}, width: #{@seneca_width},  height:#{@height}, fill_color: 'white', rotate_content: -90)
-        x_position += #{@seneca_width}
-        vertical_line_position << x_position
-        image(image_path: "#{front_page_pdf_path}", x: x_position, y:#{@gripper_height}, width: #{@page_width}, height:#{@height}, fill_color: 'clear')
-        x_position += #{@page_width}
-        vertical_line_position << x_position
-        image(image_path: "#{front_wing_pdf_path}", x: x_position, y:#{@gripper_height}, width: #{@wing_width}, height:#{@height}, fill_color: 'clear')
-        x_position += #{@wing_width}
-        vertical_line_position << x_position
-        vertical_line_position.each do |x_position|
-          line(x:x_position,y:0, width:0.5, height: #{@gripper_height - @cutting_margin})
-          line(x:x_position,y:#{@gripper_height + @height + @cutting_margin}, width:0.5, height: #{@gripper_height})
-        end
-        horozontal_line_position = [#{@gripper_height}, #{@gripper_height + @height}]
-        horozontal_line_position.each do |y_position|
-          line(x:0, y:y_position, width:#{@gripper_width - @cutting_margin}, height: 0.5)
-          line(x:#{@width + @gripper_width + @cutting_margin}, y:y_position, width:#{@gripper_width - @cutting_margin}, height: 0.5)
-        end
-      
-      end
-      EOF
     end
 
     def layout_path
@@ -237,13 +226,49 @@ module RLayout
 
     def generate_pdf
       @updated = false
-      @book_cover = eval(default_layout)
+      @book_cover = eval(default_layout_rb)
       @book_cover.save_pdf(output_path, jpg:true)
       @updated = true
     end
 
-    def empty_page_layout
+    def default_layout_rb
       layout =<<~EOF
+      RLayout::Container.new(width:#{@width + @gripper_width*2}, height:#{@height + @gripper_width*2}, layout_direction:'horizontal') do
+        vertical_line_position = []
+        x_position = #{@gripper_width}
+        vertical_line_position << x_position
+        image(image_path: "#{back_wing_pdf_path}", x: x_position, y:#{@gripper_height}, width: #{@wing_width}, height:#{@height}, fill_color: 'clear')
+        x_position += #{@wing_width}
+        vertical_line_position << x_position
+        image(image_path: "#{cover_spread_pdf_path}" , x: x_position, y:#{@gripper_height}, width:#{@spread_width}, height:#{@height}, layout_member: false)
+        image(image_path: "#{back_page_pdf_path}", x: x_position, y:#{@gripper_height},  width: #{@page_width}, height:#{@height}, fill_color: 'clear')
+        x_position += #{@page_width}
+        vertical_line_position << x_position
+        image(image_path: "#{seneca_pdf_path}", x: x_position, y:#{@gripper_height}, width: #{@seneca_width},  height:#{@height}, fill_color: 'white', rotate_content: -90)
+        x_position += #{@seneca_width}
+        vertical_line_position << x_position
+        image(image_path: "#{front_page_pdf_path}", x: x_position, y:#{@gripper_height}, width: #{@page_width}, height:#{@height}, fill_color: 'clear')
+        x_position += #{@page_width}
+        vertical_line_position << x_position
+        image(image_path: "#{front_wing_pdf_path}", x: x_position, y:#{@gripper_height}, width: #{@wing_width}, height:#{@height}, fill_color: 'clear')
+        x_position += #{@wing_width}
+        vertical_line_position << x_position
+        vertical_line_position.each do |x_position|
+          line(x:x_position,y:0, width:0.5, height: #{@gripper_height - @cutting_margin})
+          line(x:x_position,y:#{@gripper_height + @height + @cutting_margin}, width:0.5, height: #{@gripper_height})
+        end
+        horozontal_line_position = [#{@gripper_height}, #{@gripper_height + @height}]
+        horozontal_line_position.each do |y_position|
+          line(x:0, y:y_position, width:#{@gripper_width - @cutting_margin}, height: 0.5)
+          line(x:#{@width + @gripper_width + @cutting_margin}, y:y_position, width:#{@gripper_width - @cutting_margin}, height: 0.5)
+        end
+      
+      end
+      EOF
+    end
+
+    def empty_page_layout
+      <<~EOF
       RLayout::Container.new(fill_color:'clear', width:#{@page_width}, height:#{@height}) do
       end
       EOF

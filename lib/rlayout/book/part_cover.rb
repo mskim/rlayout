@@ -3,16 +3,25 @@ module RLayout
   # TODO
   # hande two page part_cover
   class PartCover < StyleableDoc
-    attr_reader :book, :title, :order
+    attr_reader :book, :title, :order, :page_count
 
     def initialize(options={})
-      super
       @page_count = options[:page_count] || 1
       @title = options[:title] || 'The Name of the Part'
       @order = options[:order] || '01'
-      @order_string = options[:order_string] || '01'
-      @title = options[:title] || 'The Name of the Part'
+      @order = options[:order] || '01'
+      super
+      @document.set_contents_for_area(part_cover_data)
       @document.save_pdf(output_path, page_pdf:true, jpg:true)
+    end
+
+    def part_cover_data
+      heading = {}
+      heading[:part_order] = "PART_#{order}"
+      heading[:title] = @title
+      h = {}
+      h[:heading] = heading
+      h
     end
 
     def output_path
@@ -25,21 +34,65 @@ module RLayout
       h[:width] = @width
       h[:height] = @height
       # h[:fill_color] = 'blue'
-      h[:fill_color] = 'cyan'
+      h[:fill_color] = 'clear'
       h[:toc]        = true
       h
     end
 
-    def default_layout_rb
-      s =<<~EOF
-      RLayout::Container.new(#{layout_options}) do
-        text("#{@order}부 ", font_size:#{20}, x: 100, y: 200, width:200, text_alignment: "right")
-        text("#{@title}", font_size:#{18}, x: 100, y: 250, width:200, text_alignment: "right")
+    def filler_page_layout
+      <<~EOF
+      RLayout::StyleablePage.new(fill_color:'clear', width:#{layout_options}) do
       end
-  
       EOF
     end
 
+    def default_layout_rb
+      <<~EOF
+      RLayout::StyleablePage.new(#{layout_options}) do
+        heading(1,4,3,4)
+      end
+      EOF
+    end
+
+    def default_text_style
+      s=<<~EOF
+      ---
+      body:
+        font: Shinmoon
+        font_size: 11.0
+        text_alignment: justify
+        first_line_indent: 11.0
+      title:
+        font: KoPubBatangPB
+        font_size: 16.0
+        text_color: 'red'
+        text_alignment: right
+        text_line_spacing: 10
+        space_before: 0
+      subtitle:
+        font: KoPubDotumPL
+        font_size: 12.0
+        text_alignment: center
+        text_line_spacing: 5
+        space_after: 30
+      part_order:
+        font: KoPubDotumPL
+        font_size: 12.0
+        text_color: 'red'
+        text_alignment: right
+        text_line_spacing: 5
+        space_after: 10
+      author:
+        font: KoPubDotumPL
+        font_size: 10.0
+        text_color: 'DarkGray'
+        text_alignment: center
+        text_line_spacing: 5
+        space_after: 30      
+      EOF
+
+    end
+    
     def save_toc
       toc_path = @document_path + "/toc.yml"
       @toc_content = []

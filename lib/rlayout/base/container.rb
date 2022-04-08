@@ -128,8 +128,8 @@ module RLayout
     end
 
     def grid_rect_to_frame(grid_frame)
-      @grid_width = (@width - @left_margin - @right_margin)/12
-      @grid_height = (@height - @top_margin - @bottom_margin)/6
+      @grid_width = (@width - @left_margin - @right_margin)/@grid[0]
+      @grid_height = (@height - @top_margin - @bottom_margin)/@grid[1]
       x = grid_frame[0]*@grid_width
       y = grid_frame[1]*@grid_height
       width = grid_frame[2]*@grid_width
