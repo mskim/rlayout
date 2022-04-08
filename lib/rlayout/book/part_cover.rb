@@ -13,6 +13,7 @@ module RLayout
       super
       @document.set_contents_for_area(part_cover_data)
       @document.save_pdf(output_path, page_pdf:true, jpg:true)
+      save_toc
     end
 
     def part_cover_data
