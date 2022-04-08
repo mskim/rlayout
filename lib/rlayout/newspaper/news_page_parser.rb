@@ -3,31 +3,38 @@ module RLayout
   PILLAR_START = /PILLAE|pillar|글기둥/
   ARTICLE_START = /^#\s/
 
-  class NewspageParser
-    attr_reader :project_path, :md_file, :page_number
+  class NewsPageParser
+    attr_reader :page_md_path, :project_path, :md_file, :page_number
 
     def initialize(options={})
-      @page_number = options[:page_number] || 1
+      @page_md_path = options[:page_md_path]
       if options[project_path]
         @project_path = options[project_path]
         @md_file_path = Dir.glob("#{@project_path}/*.md").first
-      elsif options[:article_path]
-        @md_file_path = options[:article_path]
+      elsif options[:page_md_path]
+        @md_file_path = options[:page_md_path]
         @project_path = File.dirname(@md_file_path)
       end
-
+      @page_number = File.basename(@md_file_path, '.md')
       newspage_md2articles
       self
     end
     
     def build_folder
-      @project_path + "/page_#{@page_number.to_s.rjust(2,'0')}"
+      @project_path + "/#{@page_number.to_s.rjust(2,'0')}"
     end
 
-    def book_info_path
-      @project_path + "/book_info.yml"
+    def publication_path
+      File.dirname(@project_path)
     end
 
+    def publication_info_path
+      @publication_path + "/publication_info.yml"
+    end
+
+    def issue_info_path
+      @project_path + "/issue_info.yml"
+    end
 
     # parse newspage.md and create article folders and save it as story.md 
     def newspage_md2articles
@@ -56,27 +63,34 @@ module RLayout
       text_blocks = reader.text_blocks.dup
       @pillar_order = 1
       @article_order = 1
-      @current_doc_foler = build_folder
+      @current_pillar_folder = build_folder + "/pilar_#{@pillar_order.to_s.rjust(2,'0')}"
+      # @current_doc_foler = build_folder
+      FileUtils.mkdir_p(@current_pillar_folder) unless File.exist?(@current_pillar_folder)
+
       while lines_block = text_blocks.shift do
         first_line = lines_block[0]
         if first_line =~ PILLAR_START
-          @current_pillar_folder = build_folder + "/part_#{@pillar_order.to_s.rjust(2,'0')}"
-          FileUtils.mkdir_p(@current_pillar_folder) unless File.exist?(@current_pillar_folder)
-          @current_doc_foler = @current_pillar_folder
           @pillar_order += 1
           @article_order = 1
+          @current_pillar_folder = build_folder + "/pilar_#{@pillar_order.to_s.rjust(2,'0')}"
+          FileUtils.mkdir_p(@current_pillar_folder) unless File.exist?(@current_pillar_folder)
         elsif first_line=~ARTICLE_START
           # save current article
           article_doc = ""
           while lines_block = text_blocks.shift do
             first_line = lines_block[0]
-            if first_line =~PILLAR_START || first_line =~ARTICLE_START
-              chapter_folder =  @current_doc_foler + "/article_#{@pillar_order.to_s.rjust(1,'0')}_#{@article_order.to_s.rjust(2,'0')}"
-              FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
-              doc_path =  chapter_folder + "/story.md"
+            if first_line =~ARTICLE_START 
+              # TODO handle cut, over, drop case
+              
+              article_folder =  @current_pillar_folder + "/article_#{@article_order.to_s.rjust(1,'0')}"
+              FileUtils.mkdir_p(article_folder) unless File.exist?(article_folder)
+              doc_path =  article_folder + "/story.md"
               File.open(doc_path, 'w'){|f| f.write article_doc}
               text_blocks.unshift(lines_block)
               @article_order += 1
+              break
+            elsif first_line =~PILLAR_START
+              text_blocks.unshift(lines_block)
               break
             else
               article_doc += "\n\n" + lines_block.join("\n")
@@ -87,15 +101,14 @@ module RLayout
     end
 
     def self.save_sample_newspage(path)
-      File.open(path, 'w'){|f| f.write NewspageParser.sample_newspage}
+      File.open(path, 'w'){|f| f.write NewsPageParser.sample_newspage}
     end
 
     def self.sample_newspage
       <<~EOF
 
       ---
-      date: Book Title Here
-      page_number: 1
+
       section: FrontPage
 
       ---
