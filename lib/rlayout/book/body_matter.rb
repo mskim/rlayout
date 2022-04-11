@@ -9,7 +9,7 @@ module RLayout
   # They are copied to _build foler as chapter_01, chapter_02
   # amd *.md files are copied as story.md under _build/chapter_01/story.md
   class BodyMatter
-    attr_reader :project_path, :book_info, :page_width, :height
+    attr_reader :book_type, :project_path, :book_info, :page_width, :height
     attr_reader :document_folders, :body_matter_toc, :body_doc_type
     attr_reader :starting_page_number, :toc_page_count, :toc_page_links
     attr_reader :toc_content, :paper_size
@@ -19,6 +19,7 @@ module RLayout
       @book_info_path = @project_path + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
+      @book_type = @book_info[:book_type] || 'chapter'
       @title = @book_info[:title]
       @part_titles = @book_info[:part]
       # @custom_style = @book_info[:custom_style]
@@ -66,6 +67,7 @@ module RLayout
           h[:chapter_order] = chapter_order
           h[:style_guide_folder] = style_guide_folder
           h[:belongs_to_part] = @belongs_to_part
+          h[:doc_type]  = @book_type
           r = RLayout::Chapter.new(h)
           @starting_page_number += r.page_count
           chapter_order += 1
@@ -82,6 +84,7 @@ module RLayout
             h[:starting_page_number] = @starting_page_number
             h[:style_guide_folder] = style_guide_folder
             h[:belongs_to_part] = true
+            h[:doc_type]  = @book_type
 
             if part_file =~/chapter/
               @document_folders << part_file

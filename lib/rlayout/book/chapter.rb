@@ -218,7 +218,7 @@ module RLayout
 
     def initialize(options={} ,&block)
       # @starting_page_number  = options[:starting_page_number] || 1
-
+      @doc_type = options[:doc_type] || 'chapter'
       super
       # @document_path  = options[:document_path]
       # @style_guide_folder = options[:style_guide_folder] || @document_path
@@ -241,9 +241,14 @@ module RLayout
       @toc_content                = []
       @document.document_path = @document_path
       @document.starting_page_number = @starting_page_number
-      read_story
       place_page_floats(options)
-      layout_story
+      if @doc_type == 'poem' || @doc_type == 'poetry_book'
+        read_poem
+        layout_poem
+      else
+        read_story
+        layout_story
+      end
       place_header_and_footer
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
       @document.save_svg(@document_path) if @svg
@@ -467,6 +472,46 @@ module RLayout
         end
       end
     end
+
+    def read_poem
+      @first_page = @document.pages[0]
+      @story  = Story.new(@story_path).story2line_text
+      @heading  = @story[:heading] || {}
+      @title    = @heading[:title] || @heading['title'] || @heading['제목'] || "Untitled"
+      @text_lines = []
+      @story[:line_text].each do |line_text|
+        @text_lines << line_text
+      end
+    end
+  
+    def layout_poem
+      @toc_content = []
+      line_options = {}
+      line_options[:x]  = 50
+      line_options[:y]  = 30
+      line_options[:width]  = @first_page.width
+      line_options[:height]  = 50
+      line_options[:text_string]    = @title
+      line_options[:parent] = @first_page
+      line_options[:font_size] = 16
+      Text.new(line_options)
+      @starting_y = 100
+      line_height = 20
+      @text_lines.each do |line_text|
+        line_options = {}
+        line_options[:x]  = 50
+        line_options[:y]  = @starting_y
+        line_options[:width]  = @first_page.width
+        line_options[:height]  = line_height
+        line_options[:text_string]    = line_text
+        line_options[:parent] = @first_page
+        line_options[:font_size] = 12
+        Text.new(line_options)
+        @starting_y += line_height
+      end
+    end
+
+
 
     def place_header_and_footer
       chapter_info ={}
