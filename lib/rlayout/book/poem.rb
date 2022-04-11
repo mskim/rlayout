@@ -1,17 +1,11 @@
 module RLayout
-  # Page that starts the book.
-  # With Title, author, publisher, logo
+
+  # Poem text is layed out as is, unlike paragraph.
+  # It respets 'return keys' and 'empty lines' as is.
   class Poem < Chapter
     def initialize(options={})
-      # @path = options[:document_path]
-      # @width = options[:width] || 400
-      # @height = options[:height] || 500
-      # @layout_template_path = options[:layout_template_path]
-      # read_poem
-      # RLayout::StyleService.shared_style_service.set_poem_style
       @belongs_to_part = options[:belongs_to_part]
       super
-
       self
     end
 
@@ -27,24 +21,7 @@ module RLayout
     end
   
     def layout_story
-      # current_style = RLayout::StyleService.shared_style_service.set_poem_style
-      # RLayout::StyleService.shared_style_service.set_poem_style
-
-      # current_style.current_style = POEM_STYLES
-
-      # @document.pages.each do |page|
-      #   page.layout_floats
-      #   page.adjust_overlapping_columns
-      #   page.set_overlapping_grid_rect
-      #   page.update_column_areas
-      # end
-      # @current_line               = @first_page.first_text_line
-      # @story_by_page_hash         = {} # this is used to capter story_by_page info
-      @toc_content                = []
-      # page_key                    = @current_line.page_number
-      # current_page_paragraph_list = []
-
-      # title
+      @toc_content = []
       line_options = {}
       line_options[:x]  = 50
       line_options[:y]  = 30
@@ -54,8 +31,6 @@ module RLayout
       line_options[:parent] = @first_page
       line_options[:font_size] = 16
       Text.new(line_options)
-
-      # body
       @starting_y = 100
       line_height = 20
       @text_lines.each do |line_text|
@@ -70,34 +45,6 @@ module RLayout
         Text.new(line_options)
         @starting_y += line_height
       end
-
-      # while @paragraph = @paragraphs.shift
-      #   # capturing paragraph info to save @story_by_page
-      #   @current_line                   = @paragraph.layout_lines(@current_line)
-      #   current_page_paragraph_list     << @paragraph.para_info
-      #   if @toc_level == 'title'
-      #   elsif @paragraph.markup != 'p'
-      #     toc_item = {}
-      #     toc_item[:page] = page_key
-      #     toc_item[:markup] = @paragraph.markup
-      #     toc_item[:para_string] = @paragraph.para_string
-      #     @toc_content << toc_item
-      #   end
-      #   unless @current_line
-      #     @current_line                 = @document.add_new_page
-      #     @story_by_page_hash[page_key] = current_page_paragraph_list
-      #     current_page_paragraph_list   = []
-      #     page_key                      = @current_line.page_number
-      #   end
-
-      #   if @current_line.page_number != page_key
-      #     @story_by_page_hash[page_key] = current_page_paragraph_list
-      #     current_page_paragraph_list   = []
-      #     # current_page_hash             = {}
-      #     page_key                      = @current_line.page_number
-      #     # current_page_hash[page_key]   = []
-      #   end
-      # end
     end
 
     def save_toc

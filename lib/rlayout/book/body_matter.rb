@@ -46,10 +46,14 @@ module RLayout
     def process_body_matter
       
       @document_folders = []
+      @belongs_to_part = false
       part_order = 1
       chapter_order = 1
       Dir.glob("#{build_folder}/*").sort.each do |file|
         # if file =~/^\d\d/
+        # if file =~/book_cover/
+        # elsif file =~/front_matter/
+
         if file =~/chapter/
           @document_folders << file
           h = {}
@@ -61,9 +65,11 @@ module RLayout
           h[:starting_page_number] = @starting_page_number
           h[:chapter_order] = chapter_order
           h[:style_guide_folder] = style_guide_folder
+          h[:belongs_to_part] = @belongs_to_part
           r = RLayout::Chapter.new(h)
           @starting_page_number += r.page_count
           chapter_order += 1
+
         elsif file =~/part/
           # we have part folder 
           Dir.glob("#{file}/*").sort.each do |part_file|
@@ -82,6 +88,7 @@ module RLayout
               @starting_page_number += r.page_count
               chapter_order += 1 
             elsif part_file =~/part_cover/
+              @belongs_to_part = true
               @document_folders << part_file
               h[:order] = part_order
               h[:title] = @part_titles[part_order - 1]

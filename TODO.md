@@ -49,6 +49,18 @@
   - CardPage < StyleablePage  
     -  predefined text_area
       personal, company, en_personal, en_company
+
+### 2022_04_11
+  - toc style_guide_path
+
+  - fix prologue not generating pdf
+    when parsing create doc folders with \d\d 
+  - fix toc h2 first_line_indent
+  - get rid of 
+    essay_book.rb
+    book_with_part
+    body_matter_with_part
+
 ### 2022_03_29
   - style_guide
     toc, seneca, inside_cover, 

@@ -37,30 +37,24 @@ module RLayout
     # create prolog, forward, isbn
     def process_front_matter
       @document_folders = []
-      Dir.entries(build_front_matter_path).sort.each do |file|
-        if file =~/^\d\d/
-          basename = File.basename(file)
+      Dir.glob("#{build_front_matter_path}/*").sort.each do |file|
           h = {}
           h[:paper_size] = @paper_size
           h[:book_info]  = @book_info
           h[:page_pdf] = true
           h[:toc] = true
           h[:starting_page_number] = @starting_page_number
-          # h[:style_guide_folder] = style_guide_folder
-          case basename
-          when /isbn/
-            isbn_path = build_front_matter_path + "/isbn"
-            h[:document_path] = isbn_path
+          if file =~ /isbn$/
+            h[:document_path] = file
             h[:toc] = false
             h[:has_footer] = false
             h[:has_header] = false
             h[:style_guide_folder] = style_guide_folder + "/isbn"
             r = RLayout::Isbn.new(h)
             @starting_page_number += r.page_count
-            @document_folders << 'isbn'
-          when /inside_cover/
-            inside_cover_path = build_front_matter_path + "/inside_cover"
-            h[:document_path] = inside_cover_path
+            @document_folders << file
+          elsif file =~ /inside_cover$/
+            h[:document_path] = file
             h[:front_page_pdf] = @project_path + "/_build/book_cover/front_page/output.pdf"
             h[:toc] = false
             h[:has_footer] = false
@@ -68,38 +62,32 @@ module RLayout
             h[:style_guide_folder] = style_guide_folder + "/inside_cover"
             r = RLayout::InsideCover.new(h)
             @starting_page_number += r.page_count
-            @document_folders << 'inside_cover'
-          when /dedication/, /헌정사/
-            dedication_path = build_front_matter_path + "/dedication"
-            h[:document_path] = dedication_path
+            @document_folders << file
+          elsif  file =~/dedication$/
+            h[:document_path] = file
             h[:style_guide_folder] = style_guide_folder + "/dedication"
             r = RLayout::Dedication.new(h)
             @starting_page_number += r.page_count
-            @document_folders << 'dedication'
-          when /thanks/, /감사/
-            thanks_path = build_front_matter_path + "/thanks"
-            h[:document_path] = thanks_path
+            @document_folders << file
+          elsif  file =~/thanks$/
+            h[:document_path] = file
             h[:style_guide_folder] = style_guide_folder + "/thanks"
             r = RLayout::Thanks.new(h)
             @starting_page_number += r.page_count
-            @document_folders << 'thanks'
-          when /prologue/, /머릿글/
-            prologue_path = build_front_matter_path + "/prologue"
-            h[:document_path] = prologue_path
+            @document_folders << file
+          elsif file =~/prologue$/
+            h[:document_path] = file
             h[:style_guide_folder] = style_guide_folder + "/prologue"
             r = RLayout::Prologue.new(h)
             @starting_page_number += r.page_count
-            @document_folders << 'prologue'
-          when /toc/, /목차/ , /차례/
-            toc_path = build_front_matter_path + "/toc"
+            @document_folders << file
+          elsif file =~ /toc$/
             @has_toc = true
-            @document_folders << 'toc' 
-            # TODO fix this toc_page_count
+            @document_folders << file
             @toc_first_page_number = @starting_page_number + 1 unless @toc_first_page_number
             @starting_page_number += @toc_page_count
             @book_toc = []
           end
-        end
       end
       unless @has_toc
         @has_toc = true
@@ -155,7 +143,7 @@ module RLayout
       @doc_generated_toc_info = []
       # doc_info [document_kind, page_count]
       @document_folders.each do |doc_name|
-        toc = build_front_matter_path + "/#{doc_name}/toc.yml"
+        toc =  "/#{doc_name}/toc.yml"
         @doc_generated_toc_info << YAML::load_file(toc) if File.exist?(toc)
       end
       @front_matter_toc = []
@@ -173,10 +161,10 @@ module RLayout
     def pdf_docs
       pdf_files = []
       @document_folders.each do |doc_folder|
-        if doc_folder == 'toc'
-          doc_pdf_file = build_front_matter_path + "/#{doc_folder}/toc.pdf"
+        if doc_folder =~ /toc$/
+          doc_pdf_file = "#{doc_folder}/toc.pdf"
         else
-          doc_pdf_file = build_front_matter_path + "/#{doc_folder}/chapter.pdf"
+          doc_pdf_file = "/#{doc_folder}/chapter.pdf"
         end
         pdf_files << doc_pdf_file
       end
@@ -186,8 +174,7 @@ module RLayout
     def pdf_pages
       pdf_pages = []
       @document_folders.each do |doc_folder|
-        full_path = build_front_matter_path + "/#{doc_folder}"
-        doc_pdf_pages = Dir.glob("#{full_path}/????/page.pdf")
+        doc_pdf_pages = Dir.glob("#{doc_folder}/????/page.pdf")
         pdf_pages << doc_pdf_pages
       end
       pdf_pages.flatten

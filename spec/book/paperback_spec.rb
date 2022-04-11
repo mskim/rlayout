@@ -1,10 +1,9 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
-
-describe 'create Essay from body.md' do
+describe 'create Paperback from body.md' do
   before do
     # @project_path  = "/Users/mskim/test_data/book/paperback"
-    @project_path  = "/Users/mskim/test_data/book/essay_with_book_md"
+    @project_path  = "/Users/mskim/test_data/book/paperback_with_book_md"
     @paperback = Paperback.new(@project_path)
   end
 
@@ -12,19 +11,6 @@ describe 'create Essay from body.md' do
     assert_equal RLayout::Paperback, @paperback.class 
   end
 end
-
-
-# describe 'create Paperback from body.md' do
-#   before do
-#     # @project_path  = "/Users/mskim/test_data/book/paperback"
-#     @project_path  = "/Users/mskim/test_data/book/paperback_with_book_md"
-#     @paperback = Paperback.new(@project_path)
-#   end
-
-#   it 'should create Book' do
-#     assert_equal RLayout::Paperback, @paperback.class 
-#   end
-# end
 
 
 # describe 'create Paperback' do

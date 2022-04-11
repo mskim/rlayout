@@ -2,7 +2,7 @@ module RLayout
   # PART_START = %w[PART part 파트]
   PART_START = /PART|part|파트/
   DOC_START = /^#\s/
-  FRONT_MATTER_TYPE = %w[prologue thanks dedication]
+  FRONT_MATTER_TYPE = /prologue|thanks|dedication/
   REAR_MATTER_TYPE = %w[appendix index]
 
   class  BookParser
@@ -62,6 +62,7 @@ module RLayout
       reader = RLayout::Reader.new @contents, nil
       text_blocks = reader.text_blocks.dup
       @part_titles = []
+      @front_matter_order = 1
       @part_order = 1
       @chapter_order = 1
       @rear_matter_order = 0
@@ -72,7 +73,7 @@ module RLayout
           @current_part_folder = build_folder + "/part_#{@part_order.to_s.rjust(2,'0')}"
           FileUtils.mkdir_p(@current_part_folder) unless File.exist?(@current_part_folder)
           @current_doc_foler = @current_part_folder
-          part_cover_foler = @current_doc_foler + "/0_part_cover"
+          part_cover_foler = @current_doc_foler + "/00_part_cover"
           FileUtils.mkdir_p(part_cover_foler) unless File.exist?(part_cover_foler)
           @part_order += 1
           part_title = first_line.split(":")[1] || ""
@@ -85,11 +86,13 @@ module RLayout
           else
             @doc_type = 'chapter'
           end
-          if FRONT_MATTER_TYPE.include?(@doc_type)
+          if first_line=~FRONT_MATTER_TYPE
             @title = first_line.split(":")[1]
             # save current doc
-            @front_matter_doc_foler = front_matter_folder + "/#{@doc_type}"
+            front_matter_order_string = @front_matter_order.to_s.rjust(2,'0')
+            @front_matter_doc_foler = front_matter_folder + "/#{front_matter_order_string}_#{@doc_type}"
             FileUtils.mkdir_p(@front_matter_doc_foler) unless File.exist?(@front_matter_doc_foler)
+            @front_matter_order += 1
             front_matter_doc =<<~EOF
             ---
             doc_type: #{@doc_type}

@@ -62,6 +62,10 @@ module RLayout
       @project_path +  "/_style_guide"
     end
 
+    def style_guide_folder_for_toc
+      @project_path + "/_style_guide/toc"
+    end
+
     def toc_first_page_number
       @front_matter.toc_first_page_number
     end    
@@ -216,7 +220,8 @@ module RLayout
       h[:page_pdf]      = true
       h[:max_page]      = @toc_page_count
       h[:toc_item_count] = @book_toc.length
-      h[:no_table_title] = false # tells not to creat toc title
+      h[:no_table_title] = false # tells not to creat toc titl
+      h[:style_guide_folder] = style_guide_folder_for_toc
       r = RLayout::Toc.new(h)
       new_page_count = r.page_count
       @toc_page_links = r.link_info
