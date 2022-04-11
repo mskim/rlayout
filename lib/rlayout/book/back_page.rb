@@ -39,8 +39,8 @@ module RLayout
         @content = YAML::load_file source_content_path
         # 
       else
-        @content = YAML::load default_content
-        File.open(source_content_path, 'w'){|f| f.write default_content}
+        @content = default_content
+        File.open(source_content_path, 'w'){|f| f.write default_content.to_yaml}
       end
     end
     

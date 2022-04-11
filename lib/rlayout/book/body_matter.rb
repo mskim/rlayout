@@ -71,7 +71,7 @@ module RLayout
           chapter_order += 1
 
         elsif file =~/part/
-          # we have part folder 
+          @belongs_to_part = true
           Dir.glob("#{file}/*").sort.each do |part_file|
             h = {}
             h[:book_info]  = @book_info
@@ -81,6 +81,8 @@ module RLayout
             h[:toc] = true
             h[:starting_page_number] = @starting_page_number
             h[:style_guide_folder] = style_guide_folder
+            h[:belongs_to_part] = true
+
             if part_file =~/chapter/
               @document_folders << part_file
               h[:chapter_order] = chapter_order
@@ -88,7 +90,6 @@ module RLayout
               @starting_page_number += r.page_count
               chapter_order += 1 
             elsif part_file =~/part_cover/
-              @belongs_to_part = true
               @document_folders << part_file
               h[:order] = part_order
               h[:title] = @part_titles[part_order - 1]

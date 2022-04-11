@@ -50,6 +50,7 @@ module RLayout
       @project_path + "/front.md"
     end
 
+
     def source_body_md_path
       @project_path + "/book.md"
     end
@@ -94,32 +95,53 @@ module RLayout
       else
         FileUtils.mkdir_p(build_front_matter_path) unless File.exist?(build_front_matter_path)
         return unless File.exist?(source_front_matter_path)
-        Dir.entries(source_front_matter_path).sort.each do |file|
+        Dir.glob("#{source_front_matter_path}/*").sort.each do |file|
           # copy source to build 
-          if file =~/^\d\d/
-            case basename
-            when /isbn/
+          if file =~/isbn$/
               isbn_path = build_front_matter_path + "/isbn"
               copy_source_to_build(file, isbn_path)
-            when /inside_cover/
+          elsif file =~/inside_cover$/
               inside_cover_path = build_front_matter_path + "/inside_cover"
-              copy_source_to_build(file, inside_cover_path,)
-            when /dedication/, /헌정사/
+              copy_source_to_build(file, inside_cover_path)
+          elsif file =~/dedication$/
               dedication_path = build_front_matter_path + "/dedication"
-              copy_source_to_build(file, dedication_path,)
-            when /thanks/, /감사/
+              copy_source_to_build(file, dedication_path)
+          elsif file =~/thanks$/
               thanks_path = build_front_matter_path + "/thanks"
-              copy_source_to_build(file, thanks_path,)
-            when /prologue/, /머릿글/
+              copy_source_to_build(file, thanks_path)
+          elsif file =~/prologue$/
               prologue_path = build_front_matter_path + "/prologue"
-              copy_source_to_build(file, prologue_path,)
-            when /toc/, /목차/ , /차례/
+              copy_source_to_build(file, prologue_path)
+          elsif file =~/toc$/
               toc_path = build_front_matter_path + "/toc"
-              copy_source_to_build(file, toc_path,)
+              copy_source_to_build(file, toc_path)
               @has_toc = true
-            end
           end
         end
+
+      end
+    end
+
+    # copy front_matter source file or folder to _build
+    def copy_source_to_build(source_path, destination_path)
+      FileUtils.mkdir_p(destination_path) unless File.exist?(destination_path)
+      source_full_path = source_front_matter_path + "/#{source_path}"
+      story_md_destination_path = destination_path + "/story.md"
+      if File.directory?(source_full_path)
+        if Dir.glob("#{source_full_path}/*.md").length == 0
+          # handle case when there is no .md file
+          # save sample story.md file
+          sample_story  = sample_front_matter_story(source_path)
+          source_full_story_path = source_full_path + "/story.md"
+          File.open(source_full_story_path, 'w'){|f| f.write sample_story}
+          File.open(story_md_destination_path, 'w'){|f| f.write sample_story}
+        end
+
+        # copy folder to build area
+        system("cp -r #{source_full_path}/ #{destination_path}/")
+      else
+        # source is a file
+        system("cp #{source_full_path} #{story_md_destination_path}")
       end
     end
 

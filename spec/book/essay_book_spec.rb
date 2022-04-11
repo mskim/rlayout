@@ -4,11 +4,11 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe 'test EssayBook' do
   before do
     @project_path  = "/Users/mskim/test_data/book/essay_book"
-    @essey = EssayBook.new(@project_path)
+    @essey = Book.new(@project_path)
   end
 
   it 'should create EssayBook' do
-    assert_equal RLayout::EssayBook, @essey.class 
+    assert_equal RLayout::Book, @essey.class 
   end
 
   # it 'should create Seneca' do
