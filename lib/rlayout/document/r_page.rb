@@ -477,11 +477,11 @@ module RLayout
         frame_width         = @graphics[0].x_max - frame_x
       end
       frame_height          = @grid_size[1]*grid_frame[3]
-      # if image is on bottom, move up by @article_bottom_spaces_in_lines*@body_line_height
+      # if image is on bottom, move up by @article_bottom_space_in_lines*@body_line_height
 
       # bottom   = (grid_frame[1] + grid_frame[3])*7
       if options[:bottom_position] == true
-        frame_y  = @height - frame_height - @bottom_margin #@article_bottom_spaces_in_lines*@body_line_height
+        frame_y  = @height - frame_height - @bottom_margin #@article_bottom_space_in_lines*@body_line_height
       end
       [frame_x, frame_y, frame_width, frame_height]
     end

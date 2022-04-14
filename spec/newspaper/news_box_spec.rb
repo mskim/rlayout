@@ -7,9 +7,9 @@ describe 'NewsBox extended_lines ' do
     @maker          = NewsBoxMaker.new(article_path: @article_path)
     @news_box       = @maker.news_box
     @row            = @news_box.row_count
-    @article_bottom_spaces_in_lines = @news_box.article_bottom_spaces_in_lines
+    @article_bottom_space_in_lines = @news_box.article_bottom_space_in_lines
     @lines_per_grid = @news_box.lines_per_grid
-    @original_line_count = @row*@lines_per_grid - @article_bottom_spaces_in_lines
+    @original_line_count = @row*@lines_per_grid - @article_bottom_space_in_lines
   end
 
   it 'should have extended_line_count 0' do
@@ -31,9 +31,9 @@ describe 'NewsBox pushed_lines ' do
     @maker          = NewsBoxMaker.new(article_path: @article_path)
     @news_box       = @maker.news_box
     @row            = @news_box.row_count
-    @article_bottom_spaces_in_lines = @news_box.article_bottom_spaces_in_lines
+    @article_bottom_space_in_lines = @news_box.article_bottom_space_in_lines
     @lines_per_grid = @news_box.lines_per_grid
-    @original_line_count = @row*@lines_per_grid - @article_bottom_spaces_in_lines
+    @original_line_count = @row*@lines_per_grid - @article_bottom_space_in_lines
     @first_column   = @news_box.graphics.first
   end
 

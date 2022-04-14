@@ -222,8 +222,8 @@ module RLayout
       l_next = next_line
       return nil if l_next.nil?
       return l_next if l_next.has_text_room?
-      # next_text_line = l_next.next_text_line
-      next_text_line = @parent.next_text_line(self)
+      next_text_line = l_next.next_text_line
+      # next_text_line = @parent.next_text_line(self)
       return next_text_line if next_text_line
       nil
     end

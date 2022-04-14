@@ -96,10 +96,18 @@ module RLayout
       h = options.dup
       h[:parent] = self
       h[:tag] = name
-      h[:tag] = 
       h[:grid_frame]  = [grid_x, grid_y, grid_width, grid_height]
       h[:fill_color]  = options[:fill_color] || 'clear'
       RLayout::Image.new(h)    
+    end
+
+    def table_area(grid_x, grid_y, grid_width, grid_height, name, options={})
+      h = options.dup
+      h[:parent] = self
+      h[:tag] = name
+      h[:grid_frame]  = [grid_x, grid_y, grid_width, grid_height]
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      RLayout::Table.new(h)   
     end
 
     def heading(grid_x, grid_y, grid_width, grid_height, options={})

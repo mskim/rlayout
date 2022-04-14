@@ -22,6 +22,44 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+### 2022_04_13
+  - fix article_bottom_spaces_in_lines to article_bottom_space_in_lines
+  - add page_heading to news_page
+    - save front_page_heading, odd_page_heading, even_page_heading
+    - save front_page_heading_bg.pdf,
+    - save odd_page_heading_bg.pdf,
+    - save even_page_heading_bg.pdf,
+
+  - add ad to news_page
+      create ad folder in publication folder
+### 2022_04_13
+  - NewsPageParser
+  - NewsPageBuilder
+  - NewsPageMerger
+  - NewsIssuePlan
+  - NewsIssueBuilder
+  - NewsPublication
+
+### 2022_04_13
+  - fix news_article_text_style
+  - fix StyleableNewsArticle
+    -  news_article_box_style
+    -  opinion_style
+    -  editorial_style
+    -  book_review_style
+    -  obituary_style
+### 2022_04_11
+  - toc style_guide
+  - fix prologue not generating pdf
+    when parsing create doc folders with \d\d 
+  - fix toc h2 first_line_indent
+  - get rid of 
+    essay_book.rb
+    book_with_part
+    body_matter_with_part
+
+  - handle poetry if @doc_type = 'poetry'
+  - handle multiple md source file    - 
 
 ### 2022_04_08
   - fix part_cover text_style layout_rb using StyleablePage
@@ -50,18 +88,6 @@
     -  predefined text_area
       personal, company, en_personal, en_company
 
-### 2022_04_11
-  - toc style_guide_pat
-  - fix prologue not generating pdf
-    when parsing create doc folders with \d\d 
-  - fix toc h2 first_line_indent
-  - get rid of 
-    essay_book.rb
-    book_with_part
-    body_matter_with_part
-
-  - handle poetry if @doc_type = 'poetry'
-  - handle multiple md source file  
 ### 2022_03_29
   - style_guide
     toc, seneca, inside_cover, 

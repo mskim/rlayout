@@ -23,6 +23,7 @@ require File.dirname(__FILE__) + "/rlayout/base/container"
 require File.dirname(__FILE__) + "/rlayout/base/rjob"
 require File.dirname(__FILE__) + "/rlayout/base/styleable_page"
 require File.dirname(__FILE__) + "/rlayout/base/styleable_doc"
+require File.dirname(__FILE__) + "/rlayout/base/styleable_news_article"
 
 require File.dirname(__FILE__) + "/rlayout/graphic/fill"
 require File.dirname(__FILE__) + "/rlayout/graphic/graphic_struct"
@@ -177,10 +178,13 @@ require File.dirname(__FILE__) + "/rlayout/newspaper/news_toc"
 require File.dirname(__FILE__) + "/rlayout/newspaper/news_pillar"
 require File.dirname(__FILE__) + "/rlayout/newspaper/news_page"
 
+require File.dirname(__FILE__) + "/rlayout/news/news_article"
 require File.dirname(__FILE__) + "/rlayout/news/news_page_parser"
 require File.dirname(__FILE__) + "/rlayout/news/news_page_builder"
 require File.dirname(__FILE__) + "/rlayout/news/news_publication"
-
+require File.dirname(__FILE__) + "/rlayout/news/news_page_pdf_merger"
+require File.dirname(__FILE__) + "/rlayout/news/news_issue_plan"
+require File.dirname(__FILE__) + "/rlayout/news/news_issue_builder"
 # require File.dirname(__FILE__) + "/rlayout/magazine/magazine_article.rb"
 # require File.dirname(__FILE__) + "/rlayout/magazine/magazine_cover.rb"
 

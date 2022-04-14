@@ -98,12 +98,13 @@ module RLayout
       @font_wrapper           = @style_object.font
       space_glyph             = @font_wrapper.decode_utf8(" ").first
       @space_width            = @style_object.scaled_item_width(space_glyph)
-      @line_height            = @style_object.font_size*1.2
+      @line_height            = @style_object.font_size
       # @line_height            = @font_wrapper[:font_size] + @line_space
       @current_line           = RLineFragment.new(parent:self, contnet_source: self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, style_name: @style_name, para_style: @para_style,  text_alignment: @text_alignment, space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
       @current_line_y         +=@current_line.height + @text_line_spacing
       create_tokens
       layout_tokens
+      # TODO
       ajust_height_as_body_height_multiples
       self
     end
@@ -189,29 +190,34 @@ module RLayout
         return 
       end
       # We want to keeep it as multple of body_line_height
-      if @graphics.length <= 1
-        # to avoid edge case overloap adding 2 pixels would do it
-        @height = @height_in_lines*@body_line_height + @bottom_margin - 2
-        return
-      end
-
+      # if @graphics.length <= 1
+      #   # to avoid edge case overloap adding 2 pixels would do it
+      #   # @height_in_lines = @height/@body_line_height + 1
+      #   @height = @height_in_lines*@body_line_height + @bottom_margin - 2
+      #   return
+      # end
       natural_height          =  @top_margin + @top_inset +  line_height_sum + @bottom_inset + @bottom_margin if line_height_sum
       body_height_multiples   = natural_height/@body_line_height
       @height_in_lines        = body_height_multiples.to_i
       float_delta             = body_height_multiples - body_height_multiples.to_i
       if float_delta > 0.7
         # @height_in_lines      += (@space_after_in_lines + 1)
-        @height_in_lines      += @space_before_in_lines + @space_after_in_lines + 1
+        if @space_before_in_lines 
+          @height_in_lines += @space_before_in_lines
+        end
+        if @space_after_in_lines
+          @height_in_lines += @space_after_in_lines + 1
+        end
+        # @height_in_lines      += @space_before_in_lines + @space_after_in_lines + 1
         @bottom_margin        += @body_line_height - float_delta
       else
-        @height_in_lines      += @space_after_in_lines
+        @height_in_lines      += @space_after_in_lines if @space_after_in_lines
       end
       @height = @height_in_lines*@body_line_height - 1
       @height -= 3
     end
 
     def layout_tokens
-
       token = tokens.shift
       while token
         if token.is_a?(NewLineToken)

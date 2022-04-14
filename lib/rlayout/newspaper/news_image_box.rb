@@ -6,7 +6,7 @@ module RLayout
 
   class NewsImageBox < NewsBox
     # attr_accessor :on_left_edge, :on_right_edge, :is_front_page, :top_story, :top_position,:grid_size, :grid_frame, :body_line_height
-    # attr_accessor :page_heading_margin_in_lines, :article_bottom_spaces_in_lines
+    # attr_accessor :page_heading_margin_in_lines, :article_bottom_space_in_lines
     # attr_accessor :column_count, :row_count
     # Use news_image instead of float_image
     attr_accessor :news_image
@@ -26,7 +26,7 @@ module RLayout
     def grid_frame_to_rect(grid_frame, bottom_position=false)
       x_position  = 0
       y_position  = 0
-      height      = @height - @article_bottom_spaces_in_lines*@body_line_height
+      height      = @height - @article_bottom_space_in_lines*@body_line_height
       width       = @width
       if  @top_position
         y_position = 0

@@ -188,8 +188,14 @@ module RLayout
       @graphics[next_line_index..-1].each do |line|
         return line if line.has_text_room?
       end
-      @parent.next_text_line(self)
-      # nil
+      # TODO 
+      # if @parent.class == NewsArticleBox
+      #   @overflow_column
+      # else
+      #   do something
+      # end
+      # @parent.next_text_line(self)
+      nil
     end
 
     def column_index

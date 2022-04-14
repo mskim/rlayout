@@ -65,7 +65,7 @@ module RLayout
       current_x = @starting_column_x
       column_height = @height
       @column_count.times do
-        g= RColumn.new(parent:self, x: current_x, y: 0, width: @column_width, height: column_height, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        g= RColumn.new(parent:self, x: current_x, y: 0, width: @column_width, height: column_height, body_line_height: @body_line_height, article_bottom_space_in_lines: @article_bottom_space_in_lines)
         current_x += @column_width + @gutter
       end
       @column_bottom = max_y(@graphics.first.frame_rect)
@@ -363,7 +363,7 @@ module RLayout
       text_height_in_lines  = @quote_box_size.to_i
       box_height        = (text_height_in_lines + QUOTE_BOX_SPACE_BEFORE)*@body_line_height
       # box_height += QUOTE_BOX_SPACE_BEFORE*@body_line_height
-      y                 = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
+      y                 = @height - box_height - @article_bottom_space_in_lines*@body_line_height
       x                 = 0 #TODO
       text_options           = {}
       if @kind == '기고' || @kind == 'opinion'
@@ -393,7 +393,7 @@ module RLayout
       text_options[:v_alignment]            = 'bottom'
       text_options[:height]                 = box_height
       @quote_box = QuoteText.new(text_options)
-      @quote_box.y = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
+      @quote_box.y = @height - @quote_box.height - @article_bottom_space_in_lines*@body_line_height
 
     end
 
@@ -446,10 +446,10 @@ module RLayout
       end
       frame_height        = @grid_size[1]*grid_frame[3]
 
-      # if image is on bottom, move up by @article_bottom_spaces_in_lines*@body_line_height
+      # if image is on bottom, move up by @article_bottom_space_in_lines*@body_line_height
       if (grid_frame[1] + grid_frame[3]) == @row_count
-        frame_height      -= @article_bottom_spaces_in_lines*@body_line_height
-        # frame_y             = @grid_size[1]*grid_frame[1] - @article_bottom_spaces_in_lines*@body_line_height
+        frame_height      -= @article_bottom_space_in_lines*@body_line_height
+        # frame_y             = @grid_size[1]*grid_frame[1] - @article_bottom_space_in_lines*@body_line_height
       end
       [frame_x, frame_y, frame_width, frame_height]
     end
