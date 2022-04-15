@@ -26,8 +26,12 @@ module RLayout
       self
     end
 
-    def publication_path
+    def issue_path
       File.dirname(@page_path)
+    end
+
+    def publication_path
+      File.dirname(issue_path)
     end
 
     def publication_info_path
@@ -38,16 +42,17 @@ module RLayout
       h = {}
       h[:page_heading_margin_in_lines] = 3
       h[:lines_per_grid] = 7
-      h[:body_line_height] = 14.1222 # ???
+      h[:body_line_height] = 13.903 # ???
       h[:width] = 1114.015
       h[:height] = 1544.881
-      h[:grid_width] = 146.996
-      h[:grid_height] = 97.322
       h[:left_margin] = 42.519
       h[:top_margin] = 42.519
       h[:right_margin] = 42.519
       h[:bottom_margin] = 42.519
-      h[:gutter] = 12.755
+      h[:column_count] = 6
+      h[:grid_width] = (h[:width] - h[:left_margin] - h[:right_margin])/h[:column_count]
+      h[:grid_height] = (h[:height] - h[:top_margin] - h[:bottom_margin])/15 
+      h[:grid_height] = 97.322
       h[:article_line_draw_sides] = [0, 1, 0, 1]
       h[:article_bottom_space_in_lines] = 2
       h[:article_line_thickness] = 0.3
@@ -77,15 +82,11 @@ module RLayout
       FileUtils.mkdir_p(style_guide_folder) unless File.exist?(style_guide_folder)      
     end
 
-    # page has single pillar
-    def process_articles_in_folder
-      @articles = Dir.glob("#{@page_path}/pillar_*")
-
-    end
-
     # create_pillar_map and save it in page config.yml
     # update layout_rb for each article by pillar
-    # filtere heading folder
+
+    # select article folders, do not include heading folder
+    # filter out heading folder using grep
     # use Dir.glob('/usr/lib/*').grep(/\d\d$/)
     # instead of   
     # Dir.glob("#{@page_path}/*").each_with_index do |pillar_folder, i|
@@ -157,7 +158,9 @@ module RLayout
     def generate_article_pdf
       @pillar_map.each_with_index do |pillar, pillar_index|
         next if pillar == []
-        pillar_height_in_grid = 10 # pillar[:rows] || 10
+        #TODO fix this pillar[:rows] || 10
+        # for front_page with 5단통 광고
+        pillar_height_in_grid = 9 
         article_count = pillar.length
         binding.pry if  article_count == 0
         article_rows = (pillar_height_in_grid/article_count).to_i
@@ -165,13 +168,12 @@ module RLayout
         layout_options = article_base_info.dup
         layout_options[:column] = page_config[:pillar_width][pillar_index]# @pillar_width[pillar_index
         layout_options[:on_left_edge] = true if pillar_index == 0
-        layout_options[:on_right_edge] = true if pillar_index + 1 == layout_options[:columns]
+        layout_options[:on_right_edge] = true if pillar_index + 1 == @pillar_map.length
         pillar.each_with_index do |article, article_index|
           # filtere heading folder
           next unless article=~/\d\d$/
           layout_path = article + "/layout.yml"
           layout_rb_path = article + "/layout.rb"
-
           article_info = layout_options
           article_info[:pillar_order] = pillar_index + 1
           article_info[:order] = article_index + 1
@@ -179,18 +181,17 @@ module RLayout
           article_info[:row] += 1 if article_index < remainder 
           article_info[:top_story] = true if article_index == 0 && pillar_index ==0
           article_info[:top_position] = true if article_index == 0
-          article_info[:article_bottom_space_in_lines] = 2          
-          article_info[:width] = layout_options[:grid_width]*layout_options[:column]
-          article_info[:height] = layout_options[:grid_height]*article_info[:row]
-          
-          layout_rb = layout_tempalte(layout_options)
+          article_info[:article_bottom_space_in_lines] = 2
+          article_info[:gutter] = 12.759
+          article_info[:page_heading_margin_in_lines] = 3
+          article_info[:article_line_draw_sides] = '[0, 0, 0, 1]'
+          layout_rb = layout_tempalte(article_info)
           File.open(layout_rb_path, 'w'){|f| f.write layout_rb}
           story_path = article + "/story.md"
           # TODO
           # should use diffence classes for different article_type
           # NewsEditorial, NewsOpinion, NewsBookReview, NewsObituary, NewsSpecialReport etc...
           RLayout::NewsArticle.new(document_path: article, style_guide_folder: style_guide_folder)
-          
         end
       end
     end
@@ -199,6 +200,9 @@ module RLayout
       RLayout::NewsPagePdfMerger.new(page_path: @page_path)
     end
 
+    # RLayout::NewsArticleBox.new({:kind=>"기고", :reporter=>"홍길동", :column=>4, :row=>5, :grid_width=>171.49606299212363, :grid_height=>97.32283464566795, :gutter=>12.755905511810848, :on_left_edge=>true, :on_right_edge=>false, :is_front_page=>false, :top_story=>true, :top_position=>true, :bottom_article=>false, :page_heading_margin_in_lines=>4, :article_bottom_spaces_in_lines=>2, :article_line_draw_sides=>"[0, 0, 0, 1]", :article_line_thickness=>0.3, :draw_divider=>nil}) do
+    #   news_image({:image_path=>"/Users/mskim/Development/style_guide/public/1/opinion/홍길동.pdf", :column=>1, :row=>1, :extra_height_in_lines=>5, :stroke_width=>0, :position=>1, :is_float=>true, :fit_type=>4, :before_title=>true, :layout_expand=>nil})
+    # end
     def layout_tempalte(layout_options)
       <<~EOF
       RLayout::NewsArticleBox.new(#{layout_options})

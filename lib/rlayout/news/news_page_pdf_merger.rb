@@ -7,20 +7,32 @@ module RLayout
       @page_path = options[:page_path]
       @publication_info = YAML::load_file(publication_info_path)
       @page_config = YAML::load_file(page_config_path)
+      @pillar_width = @page_config[:pillar_width]
+      @page_column = @pillar_width[0] + @pillar_width[1]
+      @ad_type = @page_config[:ad_type]
+      @advertiser = @page_config[:advertiser] || @ad_type
       options.merge!(@publication_info)
       @body_line_height = @publication_info[:body_line_height] #  14.1222
 
       super
+      @grid_width = (@width - @left_margin - @right_margin)/@page_column
+      @grid_height = (@height - @top_margin - @bottom_margin)/15
       layout_page_heading
-      layout_ad_box if @ad_box_rect
+      layout_ad if @ad_type
       merge_article_pdf
+
       self
     end
 
-    def publication_path
+    def issue_path
       File.dirname(@page_path)
     end
 
+    def publication_path
+      File.dirname(issue_path)
+    end
+
+    
     def publication_info_path
       publication_path + "/publication_info.yml"
     end
@@ -48,8 +60,22 @@ module RLayout
       puts __method__
     end
 
-    def layout_ad_box
-      puts __method__
+    def ad_images_path
+      publication_path + "/ad"
+    end
+
+    def layout_ad
+      ad_list = YAML::load(NEWS_AD_SIZES)
+      ad_size = ad_list[@ad_type]
+      ad_column = ad_size['column']
+      ad_row = ad_size['row']
+      x_position = @left_margin || 42
+      y_position = @top_margin + @grid_height*(15 - ad_row)
+      ad_width = ad_column*@grid_width
+      ad_height = ad_row*@grid_height
+      ad_image_path = ad_images_path + "/#{@advertiser}.pdf"
+      ad_image_path = ad_images_path + "/1.pdf"
+      Image.new(parent:self, x: x_position, y: y_position, width:ad_width, height: ad_height, image_path: ad_image_path)
     end
 
     def merge_article_pdf
@@ -57,22 +83,13 @@ module RLayout
       @column_count = @page_config[:pillar_width].map{|f| f}.reduce(:+) # TODO
       @column_width = @width/@column_count
       @pillar_x_grid = 0
+      pillar_x = @left_margin
       pillars.each_with_index do |pillar, pillar_index|
         # TODO should not have empty array fix this!!!!!
         next if pillar == []
-        pillar_x = @left_margin + @pillar_x_grid*@column_width
-        @pillar_x_grid += @page_config[:pillar_width][pillar_index]
-        pillar_y = 150 # TODO heading heigh
         pillar_top =  @body_line_height*10
-        # pillar_top = @heading_space + pillar_rect[1]
-
-        # pillar_rect = pillar[:pillar_rect]
+        pillar_y = pillar_top # TODO heading heigh
         article_height_sum = 0
-        # parent_y = 0
-        # parent_height = 0
-        # parent_x   = 0
-        # # pillar_top = pillar_rect[1] +
-        # parent_articles_count = pillar[:article_map].select{|a| !a[:attache_type]}.length
         pillar.each do |article_path|
           h = {}
           h[:parent] = self
@@ -113,10 +130,13 @@ module RLayout
             article_height_sum += article_height 
           end
         end
+        @pillar_x_grid = @page_config[:pillar_width][pillar_index]
+        pillar_x += @pillar_x_grid*@grid_width
       end
 
       # create_pillar_divider_lines if @draw_divider
       # delete_old_files
+      # binding.pry
       save_pdf(output_path, :jpg=>true, :ratio => 2.0)
 
     end

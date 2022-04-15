@@ -1,3 +1,20 @@
+
+  NEWS_AD_SIZES =<<~EOF
+  ---
+  5단통:
+    column: 6
+    row: 5
+  9단21:
+    column: 21cm
+    row: 9
+  4단통:
+    column: 6
+    row: 4
+  전면광고:
+    column: 6
+    row: 15
+  EOF
+
 module RLayout
 
   class NewsPublication
@@ -108,21 +125,6 @@ module RLayout
       
     end
 
-    NEWS_AD_SIZES =<<~EOF
-    ---
-    5단통:
-      column: 6
-      row: 5
-    9단21:
-      column: 21cm
-      row: 9
-    4단통:
-      column: 6
-      row: 4
-    전면광고:
-      column: 6
-      row: 15
-    EOF
 
   end
 
