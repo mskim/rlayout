@@ -1,5 +1,17 @@
 
 module RLayout
+
+  # Page Heading and Top Position articles
+  # Becase of Page Heading space, Top positioned article's top portion 
+  # overlaps with page heading. So, top positions article should be creadted short than ussual,
+  # and be placed at 3 body lines lower from the top.
+  # for front page the space is 7 + 3, and rest of page is 3 or 4.
+  # Heading_space_in_lines value should be passed when creating the article, so that is can adjust the height.
+
+  # if top_position?(box_frame)
+  #   heading_margin = @body_line_height*@page_heading_margin_in_lines
+  #   y_position +=  heading_margin + @body_line_height
+  #   box_height -=  heading_margin + @body_line_height
   class NewsPagePdfMerger < Container
     attr_reader :page_path, :page_config
 
@@ -8,12 +20,17 @@ module RLayout
       @publication_info = YAML::load_file(publication_info_path)
       @page_config = YAML::load_file(page_config_path)
       @pillar_width = @page_config[:pillar_width]
+      @page_number = @page_config[:page_number] || 1
+      @page_heading_margin_in_lines = @page_config[:page_heading_margin_in_lines]
+      unless @page_heading_margin_in_lines
+        @page_heading_margin_in_lines = 3
+        @page_heading_margin_in_lines = 10 if @page_number == 1
+      end
       @page_column = @pillar_width[0] + @pillar_width[1]
       @ad_type = @page_config[:ad_type]
       @advertiser = @page_config[:advertiser] || @ad_type
       options.merge!(@publication_info)
       @body_line_height = @publication_info[:body_line_height] #  14.1222
-
       super
       @grid_width = (@width - @left_margin - @right_margin)/@page_column
       @grid_height = (@height - @top_margin - @bottom_margin)/15
@@ -55,9 +72,8 @@ module RLayout
 
     def layout_page_heading
       # width: 1028.9763779528, height: 139.0326207874
-      Image.new(parent:self, x: 42, y: 42, width:1028.9763779528, heihgt: 139.0326207874, image_path: heading_pdf_path)
-
-      puts __method__
+      # Image.new(parent:self, x: 42, y: 42, width:1028.9763779528, heihgt: 139.0326207874, image_path: heading_pdf_path, image_fit_type: IMAGE_FIT_TYPE_VERTICAL)
+      Image.new(parent:self, x: 42, y: 42, width:1028.9763779528, height: 139.0326207874, image_path: heading_pdf_path)
     end
 
     def ad_images_path
@@ -83,12 +99,13 @@ module RLayout
       @column_count = @page_config[:pillar_width].map{|f| f}.reduce(:+) # TODO
       @column_width = @width/@column_count
       @pillar_x_grid = 0
+      puts "@page_heading_margin_in_lines:#{@page_heading_margin_in_lines}"
+      @pillar_top_position =  @body_line_height*@page_heading_margin_in_lines + @top_margin
       pillar_x = @left_margin
       pillars.each_with_index do |pillar, pillar_index|
         # TODO should not have empty array fix this!!!!!
         next if pillar == []
-        pillar_top =  @body_line_height*10
-        pillar_y = pillar_top # TODO heading heigh
+        pillar_top = @pillar_top_position
         article_height_sum = 0
         pillar.each do |article_path|
           h = {}

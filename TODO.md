@@ -22,6 +22,23 @@
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
 
+### 2022_04_16
+  - NewsArticle top_position
+  - NewsHeading, NewsAd
+  
+  - table_area
+  - image_area
+  - text_area
+
+  - outline_color
+  - outline_thickness
+  - outline2_color
+  - outline2_thickness
+
+  - line_type
+  - arrow_type
+
+  - DesignPage < Container
 ### 2022_04_13
   - fix article_bottom_spaces_in_lines to article_bottom_space_in_lines
   - add page_heading to news_page

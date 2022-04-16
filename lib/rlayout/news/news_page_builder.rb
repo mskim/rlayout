@@ -114,6 +114,8 @@ module RLayout
       h[:section_name] = @section_name
       h[:page_number] = @page_number || 1
       h[:pillar_width] = [4,2] #@pillar_width_array
+      h[:page_heading_margin_in_lines] = 3
+      h[:page_heading_margin_in_lines] = 10 if h[:page_number] == 1
       h[:pillar_map] = @pillar_map
       h[:ad_type] = '5단통'
       h
@@ -135,8 +137,20 @@ module RLayout
       heading_path + "/layout.rb"
     end
 
+    def heading_bg_image_path
+      publication_path + "/heading_bg_image"
+    end
+
     def front_page_heading_bg_path
-      heading_path + "/images/1_bg.pdf"
+      heading_bg_image_path + "/front_bg.pdf"
+    end
+
+    def odd_page_heading_bg_path
+      heading_bg_image_path + "/odd_bg.pdf"
+    end
+
+    def even_page_heading_bg_path
+      heading_bg_image_path + "/even_bg.pdf"
     end
 
     def generate_page_heading
