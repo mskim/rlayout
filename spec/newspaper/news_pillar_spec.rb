@@ -17,7 +17,7 @@ describe ' NewsPillar creation' do
     assert_equal @height_in_lines, @pillar.height_in_lines_sum
   end
 
-  # it 'should auto_adjust_heigth' do
+  # it 'should auto_adjust_height' do
   #   @pillar.auto_adjust_height_all
   #   assert_equal @pillar.height_in_lines, @pillar.height_in_lines_sum
   # end

@@ -9,6 +9,8 @@ module RLayout
     def initialize(options={})
       @grid_width       = options.fetch(:grid_width, 2)
       options[:stroke_color]    = "CMYK=0,0,0,100"
+      # options[:fill_color]    = "red"
+      
       super
       @heading_columns  = @parent.column_count
       @heading_columns  = options[:column_count] if options[:column_count]
@@ -32,6 +34,7 @@ module RLayout
       y = @height_sum
       options[:y] = y
       options[:x] = 0
+      # options[:fill_color] = 'yellow'
       if options['title'] && options['title'] != ""
         if @parent.top_story
           @title_object = main_title(options)
@@ -50,13 +53,11 @@ module RLayout
         end
         @height_sum       +=@subtitle_object.height    if @subtitle_object
       end
+
       #TODO calculate with actual sum of heigh and make body_line multiple
       # in and verticslly center it?
-      @line_multiple  = @height_sum/@body_line_height
-      @line_multiple  = 1 if @line_multiple < 1
-      @delta          = @line_multiple - @line_multiple.to_i
-      @height         = @line_multiple.to_i*@body_line_height
-      @height         += @body_line_height if @delta >= 0.5
+      @line_multiple  = (@height_sum/@body_line_height).ceil + 1
+      @height         = @line_multiple*@body_line_height
       relayout!
       self
     end

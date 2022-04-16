@@ -33,7 +33,8 @@ module RLayout
     attr_reader :direction # horizontal, verticcal
     attr_reader :starting_column_y, :max_height_in_lines, :min_height_in_lines
     attr_accessor :adjustable_height
-    
+    attr_accessor :document_path
+
     def initialize(options={}, &block)
       super
       @overflow             = false
@@ -149,7 +150,7 @@ module RLayout
         if @heading_columns == 6
           editorial_column_width = @column_width
           @column_count.times do
-            g= RColumn.new(parent:self, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+            g= RColumn.new(parent:self, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_space_in_lines: @article_bottom_space_in_lines)
             current_x += @column_width + @gutter
             @column_type  = "editorial"
           end
@@ -168,11 +169,11 @@ module RLayout
             current_x += @gutter
             @starting_column_x = current_x
           end
-          g= RColumn.new(parent:self, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+          g= RColumn.new(parent:self, column_type: @column_type, x: current_x, y: 0, width: editorial_column_width, height: @height, stroke_sides: @stroke_sides, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_space_in_lines: @article_bottom_space_in_lines)
           
         end
         # current_y += @top_margin + @top_inset
-        @overflow_column = RColumn.new(parent:self, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        @overflow_column = RColumn.new(parent:self, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_space_in_lines: @article_bottom_space_in_lines)
         @overflow_column.parent = self
       elsif @kind == '박스기고' || @kind == 'box_opinion'
         @column_width = (@width - @gutter*3 - (@column_count - 1)*@gutter)/@column_count
@@ -181,25 +182,25 @@ module RLayout
         current_x += @gutter
         @starting_column_x = current_x
         @column_count.times do
-          g= RColumn.new(parent:self, x: current_x, y: @body_line_height, width: @column_width, height: @height - @body_line_height, column_line_count: @column_line_count - 1, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+          g= RColumn.new(parent:self, x: current_x, y: @body_line_height, width: @column_width, height: @height - @body_line_height, column_line_count: @column_line_count - 1, body_line_height: @body_line_height, article_bottom_space_in_lines: @article_bottom_space_in_lines)
           current_x += @column_width + @gutter
           @column_type  = "box_opinion"
         end
 
-        @overflow_column = RColumn.new(parent:self, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        @overflow_column = RColumn.new(parent:self, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_space_in_lines: @article_bottom_space_in_lines)
         @overflow_column.parent = self
       else
         @column_count.times do |i|
           if @empty_first_column && i == 0
-            g= RColumn.new(parent:self, empty_lines: true, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+            g= RColumn.new(parent:self, empty_lines: true, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_space_in_lines: @article_bottom_space_in_lines)
             current_x += @column_width + @gutter
           else
             # TODO: why? parent:self
-            g= RColumn.new(parent:self, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+            g= RColumn.new(parent:self, x: current_x, y: 0, width: @column_width, height: @height, column_line_count: @column_line_count, body_line_height: @body_line_height, article_bottom_space_in_lines: @article_bottom_space_in_lines)
             current_x += @column_width + @gutter
           end
         end
-        @overflow_column = RColumn.new(parent:nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_spaces_in_lines: @article_bottom_spaces_in_lines)
+        @overflow_column = RColumn.new(parent:nil, column_type: "overflow_column", x: current_x, y: 0, width: @column_width, height: @height*20, column_line_count: @column_line_count*20, body_line_height: @body_line_height, article_bottom_space_in_lines: @article_bottom_space_in_lines)
         @overflow_column.parent = self
       end
       @column_bottom = max_y(@graphics.first.frame_rect)
@@ -321,7 +322,13 @@ module RLayout
     end
 
     def save_article_info
-      info_path = "#{$ProjectPath}/article_info.yml"
+      # TODO fix this
+      if $ProjectPath
+        info_path = "#{$ProjectPath}/article_info.yml"
+      else
+        info_path = "#{@document_path}/article_info.yml"
+      end
+
       File.open(info_path, 'w'){|f| f.write article_info.to_yaml}
     end
 
@@ -601,7 +608,8 @@ module RLayout
     # does current text_box include Heading in floats
     def has_heading?
       @floats.each do |float|
-        return true if float.class == RLayout::Heading
+        # return true if float.class == RLayout::Heading
+        return true if float.class == RLayout::RHeading
       end
       false
     end
@@ -735,7 +743,7 @@ module RLayout
         text_options                    = {}
         text_options[:x]                = @left_margin
         text_options[:height]           = box_height
-        text_options[:y]                = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
+        text_options[:y]                = @height - box_height - @article_bottom_space_in_lines*@body_line_height
         text_options[:width]            = @grid_width*2 - @gutter
         text_options[:left_margin]      = 3
         text_options[:right_margin]     = 3
@@ -748,7 +756,7 @@ module RLayout
         text_options[:v_alignment]      = 'bottom'
         text_options[:height]           = box_height
         @quote_box                      = QuoteText.new(text_options)
-        @quote_box.y                    = @height - @quote_box.height - @article_bottom_spaces_in_lines*@body_line_height
+        @quote_box.y                    = @height - @quote_box.height - @article_bottom_space_in_lines*@body_line_height
       else # for 23면 10단 기고
         quote_options                     = {}
         quote_options[:column]            = @quote_box_column
@@ -774,7 +782,7 @@ module RLayout
       box_height                    = 3*@body_line_height 
       text_options                  = {}
       text_options[:height]         = box_height
-      text_options[:y]              = @height - box_height - @article_bottom_spaces_in_lines*@body_line_height
+      text_options[:y]              = @height - box_height - @article_bottom_space_in_lines*@body_line_height
       text_options[:top_margin]     = @body_line_height
       text_options[:bottom_margin]  = 4 #TODO body_leading
       text_options[:x]              = @graphics.last.x
@@ -860,11 +868,11 @@ module RLayout
         frame_width         = @graphics[0].x_max - frame_x
       end
       frame_height          = @grid_size[1]*grid_frame[3]
-      # if image is on bottom, move up by @article_bottom_spaces_in_lines*@body_line_height
+      # if image is on bottom, move up by @article_bottom_space_in_lines*@body_line_height
 
       # bottom   = (grid_frame[1] + grid_frame[3])*7
       if options[:bottom_position] == true
-        frame_y  = @height - frame_height - @article_bottom_spaces_in_lines*@body_line_height
+        frame_y  = @height - frame_height - @article_bottom_space_in_lines*@body_line_height
       end
       [frame_x, frame_y, frame_width, frame_height]
     end
