@@ -25,7 +25,7 @@
 ### 2022_04_16
   - NewsArticle top_position
   - NewsHeading, NewsAd
-  
+
   - table_area
   - image_area
   - text_area
@@ -711,7 +711,7 @@
 
 ### 2021_03_03
 	- update article folders when saving article_info
-	- fix bug when auto_ajdust max_heigth, articles that are shorter than max_height
+	- fix bug when auto_ajdust max_height, articles that are shorter than max_height
 	- write test
 
 ### 2021_03_01
