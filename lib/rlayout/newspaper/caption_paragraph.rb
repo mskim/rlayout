@@ -21,66 +21,38 @@ module RLayout
     end
 
     def make_caption_title_tokens
-      @style_name           = 'caption_title'
-      @caption_title_style  = @current_style[@style_name]
-      @para_style           = Hash[@caption_title_style.map{ |k, v| [k.to_sym, v] }]
+
       @current_style_service = RLayout::StyleService.shared_style_service
-      @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
+      @style_object = @current_style_service.style_object('caption_title')
       @tokens += @caption_title.split(" ").collect do |token_string|
         options = {}
-        options[:para_style]  = @para_style
-        options[:style_name]  = @style_name
         options[:string]      = token_string
-        options[:height]      = para_style[:font_size]
+        options[:height]      = @style_object.font_size
+        options[:style_object] = @style_object
         RLayout::RTextToken.new(options)
       end
     end
 
     def make_caption_tokens
-      @style_name           = 'caption'
-      @caption_style        = @current_style[@style_name]
-      @para_style           = Hash[@caption_style.map{ |k, v| [k.to_sym, v] }]
-      @space_width          = @caption_title_style['space_width']
-      if @space_width.nil?
-        font_size   = @caption_style['font_size']
-        @space_width = font_size/2
-        @space_width = @space_width
-      end
       @current_style_service = RLayout::StyleService.shared_style_service
-      @style_object = @current_style_service.style_object(@style_name)
-      @font_wrapper = @style_object.font
+      @style_object = @current_style_service.style_object('caption')
       @tokens += @caption.split(" ").collect do |token_string|
         options = {}
-        options[:para_style]  = @para_style
-        options[:style_name]  = @style_name
         options[:string]      = token_string
-        if RUBY_ENGINE != 'rubymotion'
-          glyphs                = @font_wrapper.decode_utf8(token_string)
-          width                 = glyphs.map { |g| @style_object.scaled_item_width(g)}.reduce(:+)
-          options[:width]       = width  
-        end
-        options[:height]      = para_style[:font_size]
+        options[:height]      = @style_object.font_size
+        options[:style_object] = @style_object
         RLayout::RTextToken.new(options)
       end
     end
 
     def make_source_tokens
-      @style_name             = 'source'
-      @source_style           = @current_style[@style_name]
-      @para_style             = Hash[@source_style.map{ |k, v| [k.to_sym, v] }]
-      @current_style_service  = RLayout::StyleService.shared_style_service
-      @style_object, @font_wrapper = @current_style_service.style_object(@style_name) if RUBY_ENGINE != "rubymotion"
+      @current_style_service = RLayout::StyleService.shared_style_service
+      @style_object = @current_style_service.style_object('source')
       @source_tokens  += @source.split(" ").collect do |token_string|
         options = {}
-        options[:para_style]  = @para_style
-        options[:style_name]  = @style_name
         options[:string]      = token_string
-        if RUBY_ENGINE != 'rubymotion'
-          glyphs                = @font_wrapper.decode_utf8(token_string)
-          width                 = glyphs.map { |g| @style_object.scaled_item_width(g)}.reduce(:+)
-          options[:width]       = width  
-        end
-        options[:height]      = para_style[:font_size]
+        options[:height]      = @style_object.font_size
+        options[:style_object] = @style_object
         RLayout::RTextToken.new(options)    
       end
     end
@@ -121,6 +93,7 @@ module RLayout
       end
       @current_line.text_alignment = 'left' # align left for last line
       @current_line.align_tokens
+
       if @source && @source != ""
         line_width                = @current_line.width
         token_list                = @current_line.graphics

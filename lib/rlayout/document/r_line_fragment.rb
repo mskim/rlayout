@@ -29,7 +29,7 @@ module RLayout
       # options[:stroke_width]      = 1
       options[:stroke_color]      = 'black'
       options[:fill_color]        = 'gray'
-      @space_width                = options[:space_width] || 3
+      @space_width                = options[:space_width] || 7
       @char_half_width_cushion    = @space_width/3
       options[:right_margin]      = 2 
       super
@@ -291,6 +291,8 @@ module RLayout
         token.parent = self
         @graphics << token
         @room -= token.width
+        #TODO fix this
+        @space_width = 7 if @space_width.nil?
         @room -= @space_width
         @layed_out_line = true
         return true

@@ -21,15 +21,6 @@
   - add markup: "#", "##", "###" to text_style
   - add char_style for emphasis
       - font, font_color, font_style, prefix, postfix
-
-### 2022_04_16
-  - NewsArticle top_position
-  - NewsHeading, NewsAd
-
-  - table_area
-  - image_area
-  - text_area
-
   - outline_color
   - outline_thickness
   - outline2_color
@@ -37,6 +28,22 @@
 
   - line_type
   - arrow_type
+
+### 2022_04_18
+  - copy? link? news image to page folder
+
+### 2022_04_17
+  - fix image caption layout
+
+  - table_area
+
+### 2022_04_16
+  - NewsArticle top_position
+  - NewsHeading, NewsAd
+
+  - image_area
+  - text_area
+
 
   - DesignPage < Container
 ### 2022_04_13

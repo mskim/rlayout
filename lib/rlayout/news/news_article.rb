@@ -2,7 +2,7 @@
 module RLayout
 
   class NewsArticle < StyleableNewsArticle
-    attr_reader :layout_info
+    attr_reader :layout_info, :page_images
     def initialize(options={})
       @layout_info = options[:layout_info]
       super
@@ -21,6 +21,9 @@ module RLayout
       end
       @output_path = options[:output_path] || @document_path + "/story.pdf"
       @story_path = @document_path + "/story.md"
+      @page_path = File.dirname(File.dirname(@document_path))
+      @page_images_path = @page_path + "/images"
+      @issue_images_path = File.dirname(@page_path) + "/images"
       layout_rb_path  = @document_path + "/layout.rb"
       layout_rb = File.open(layout_rb_path, 'r'){|f| f.read }
       @news_article = eval(layout_rb)
@@ -45,6 +48,25 @@ module RLayout
         @news_article.make_article_heading(@heading)
         # make other floats quotes, opinition writer's personal_picture
         @news_article.make_floats(@heading)
+        # make other floats quotes, opinition writer's personal_picture
+        if @heading['image']
+          @image_info = {}
+          @image_info[:image_path] = @issue_images_path + "/#{@heading['image']}"
+          @image_info[:row] = @heading['row'] || 2
+          @image_info[:column] = @heading['column'] || 2 
+          @image_info[:position] = @heading['image_position'] || 3
+          @image_info[:caption] = @heading['caption']
+          @image_info[:caption_title] = @heading['caption_title']
+          
+          @news_article.news_image(@image_info)
+        end
+        if @heading['quote']
+          @quote_info = {}
+          @quote_info[:quote_box_size] = @heading['quote_box_size'] || 4
+          @quote_info[:column] = @heading['column'] || 2 
+          @quote_info[:position] = @heading['image_position'] || 3
+          @news_article.float_quote(@quote_info)
+        end
       end
 
       @paragraphs =[]

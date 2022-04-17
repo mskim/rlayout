@@ -129,19 +129,34 @@ module RLayout
       end
     end
 
+    # def create_plain_tokens(para_string)
+    #   # parse for tab first
+    #   return unless para_string
+    #   tokens_strings = para_string.split(" ")
+    #   @current_style_service = RLayout::StyleService.shared_style_service
+    #   @style_object = @current_style_service.style_object(@style_name)
+    #   tokens_strings.each do |token_string|
+    #     next unless token_string
+    #     token_options = {}
+    #     token_options[:string]      = token_string
+    #     token_options[:height]      = @para_style[:font_size]
+    #     token_options[:style_object] = @style_object
+    #     @tokens << RLayout::RTextToken.new(token_options)
+    #   end
+    # end
+
     def create_plain_tokens(para_string)
       # parse for tab first
       return unless para_string
-      tokens_strings = para_string.split(" ")
       @current_style_service = RLayout::StyleService.shared_style_service
       @style_object = @current_style_service.style_object(@style_name)
-      tokens_strings.each do |token_string|
+      para_string.split(" ").each do |token_string|
         next unless token_string
-        token_options = {}
-        token_options[:string]      = token_string
-        token_options[:height]      = @para_style[:font_size]
-        token_options[:style_object] = @style_object
-        @tokens << RLayout::RTextToken.new(token_options)
+        options = {}
+        options[:string]      = token_string
+        options[:height]      = @style_object.font_size
+        options[:style_object] = @style_object
+        @tokens << RLayout::RTextToken.new(options)
       end
     end
 

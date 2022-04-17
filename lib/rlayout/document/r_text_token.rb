@@ -24,7 +24,8 @@ module RLayout
       @font_wrapper  = @style_object.font
       @font_size = @style_object.scaled_font_size
       @string = options[:string] || options[:text_string]
-      @glyphs = filter_glyph(@string)
+      #filter unsupported glyph!!!! replace it with ???
+      @glyphs = filter_glyph(@string) 
       @width= @glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
       @has_text         = true
       @token_type       = options[:token_type] if options[:token_type]

@@ -736,6 +736,7 @@ module RLayout
     end
 
     def float_quote(options={})
+      @quote_box_size = options[:quote_box_size] if options[:quote_box_size]
       return if @quote_box_size == '0'
       if (@kind == '기고' || @kind == 'opinion') && @height_in_lines < 70 #@row_count < 10
         box_height                      = (@quote_box_size.to_i + QUOTE_BOX_SPACE_BEFORE)*@body_line_height
