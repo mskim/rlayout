@@ -18,7 +18,7 @@ module RLayout
   #   config.yml
   #
   class NewsPageParser
-    attr_reader :project_path, :page_md_path, :md_file, :page_number
+    attr_reader :project_path, :page_md_path, :md_file_path, :page_number
     attr_reader :filtered_metadata
     attr_reader :page_map
     attr_reader :ad_type
@@ -34,8 +34,12 @@ module RLayout
       # @page_number = @basename.split("_")[1].to_i
       @build_folder = @project_path + "/#{@date}/#{@page_number.to_s.rjust(2,'0')}"
       FileUtils.mkdir_p(@build_folder) unless File.exist?(@build_folder)
-      parse_newspage_md
-      # RLayout::NewsPageBuilder.new(page_path: @build_folder)
+      if options[:merge_story]
+        # merge edited stoies back to page source markdown file. 
+        merge_story
+      else
+        parse_newspage_md 
+      end
       self
     end
     
@@ -150,21 +154,7 @@ module RLayout
       h[:page_number] = 1
       h[:column] = 5
       h[:row] = 5
-      # h[:height_in_lines]
-      # h[:grid_width]
-      # h[:grid_height]
-      # h[:gutter]
-      # h[:on_left_edge]
-      # h[:on_right_edge]
-      # h[:top_story]
-      # h[:top_position]
-      # h[:bottom_article]
-      # h[:article_bottom_space_in_lines]
-      # h[:article_line_thickness]
-      # h[:article_line_draw_sides]
-      # h[:draw_divider]
-      h
-
+      
     end
 
 
@@ -333,7 +323,22 @@ module RLayout
       EOF
     end
 
-
+    def merge_story
+      @page_story =@page_config_yaml
+      pillars = @page_config[:pillar_map]
+      pillars.each_with_index do |pillar, pillar_index|
+        @page_story += "\n\npillar\n\n"
+        pillar.each do |article_path|
+          article_story_path = article_path + "/story.md"
+          article_story = File.open(article_story_path, 'r'){|f| f.read}
+          @page_story += "# article\n"
+          @page_story += article_story + "\n"
+        end
+      end
+      # save it to page story source
+      File.open(md_file_path, 'w'){|f| f.write @page_story}
+    end
+    
   end
 
 
