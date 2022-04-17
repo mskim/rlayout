@@ -56,7 +56,7 @@ module RLayout
 
       #TODO calculate with actual sum of heigh and make body_line multiple
       # in and verticslly center it?
-      @line_multiple  = (@height_sum/@body_line_height).ceil + 1
+      @line_multiple  = (@height_sum/@body_line_height).ceil + 2
       @height         = @line_multiple*@body_line_height
       relayout!
       self
