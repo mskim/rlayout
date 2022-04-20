@@ -1,5 +1,5 @@
 
-# TODO
+# table 
 # Colculate column width
 # get average valude of call columns
 # get the layout_length with the column average
@@ -8,11 +8,6 @@
 # If a cell width exceeds average by less than 20%, sqeeze it in.
 # if a cell width exceeds average by 20 % make multiple line cell
 
-# SimpleTable is a table which with cell text with sigle style, single line text.
-# For SimpleTable TextToken class is used for text_cell
-# And for Table, TitleText class is used for text_cell
-# TitleText can hanlde multiline and mixed style text.
-
 
 # TODO
 # 1. text fitting
@@ -20,13 +15,7 @@
 # 1. row width array
 # 1. Heading style, first row style, body cycling
 
-# I tried motion-csv gem to parse csv files.
-# It fails to display Korean strings correctly.
-# It seems  motion-csv is changing the string encoding to single byte string during parsing.
-# I am getting -[Array _encodingCantBeStoredInEightBitCFString]: unrecognized selector sent to instance
-# So, I am using split("\n") and split(",") for now.
-# I need to fix it for comma wrapped in quotes.
-# 
+
 # Table-data works similar to TextBox's Story.
 # table-data is read from .csv file.
 # table-data can have head_row and body_row
@@ -148,30 +137,27 @@ module RLayout
 # otherwise, calculate_column_width_array is called to create one.
 # calculate_column_width_array scans all cells and get the longest text for each column, including head row.
 
-DEFAULT_TABLE_STYLE = {
-    :head_row_atts   => { row_type: "head_row", fill_color: 'gray', stroke_sides: [1,1,1,1]},
-    :head_cell_atts  => { fill_color: "clear", text_color: 'white', font: "Shinmoon", font_size: 12.0, stroke_sides: [1,0,1,0]},
-    :body_row_atts   => { row_type: "body_row", fill_color: "white", stroke_sides: [0,1,0,1]},
-    :body_cell_atts  => { font: "Shinmoon", font_size: 12.0, stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
-    :category_atts   => { font: "Shinmoon", font_size: 12.0, stroke_sides: [1,1,1,1]},
-    :category_colors => [["CMYK=0.1,0,0,0,1", "CMYK=0.05,0,0,0,1"],["CMYK=0,0.1,0,0,1", "CMYK=0,0.05,0,0,1"],["CMYK=0,0,0.1,0,1", "CMYK=0,0,0.05,0,1"]]
-}
+
   # heading_level is used to for heading that is muliple level
   # default value is 1
   
-  class Table < Container
+  class Table
     attr_reader :title, :source, :category_level, :heading_level
-    attr_reader :has_head_row, :can_grow, :calculate_column_width
-    attr_reader :column_width_array, :column_alignment, :column_v_alignment
-    attr_reader :table_data, :rows, :body
-    attr_reader :table_style, :csv
+    attr_reader :has_head_row, :can_grow
+    attr_reader :calculate_column_width, :column_width_array, :column_alignment, :column_v_alignment
+    attr_reader :table_path, :table_data, :csv
+    attr_reader :rows, :body
+    attr_reader :table_style
     attr_reader :column_count, :next_link, :prev_link
     attr_reader :body_row_colors
     attr_reader :column_line_color, :row_spacing
     attr_accessor :proposed_height, :row_height_sum, :overflow, :underflow
-    
-    def initialize(options={}, &block)
-      super
+    attr_reader :width, :height, :layout_rb
+
+    def initialize(options={})
+      @table_path = options[:table_path]
+      @width = options[:width] || 600
+      @height = options[:height] || 400
       @column_count       = options.fetch(:column_count, 1)
       @category_level     = options.fetch(:category_level, 0)
       @column_width_array = options.fetch(:column_width_array, nil)
@@ -189,24 +175,10 @@ DEFAULT_TABLE_STYLE = {
         puts "No csv data:#{@data}"
         return
       end
-      if options[:table_style_path]        
-        @table_style  = eval(File.open(options[:table_style_path], 'r'){|f| f.read})
-        # merge is with DEFAULT_TABLE_STYLE
-        # this prevents from missing keys in table_style_path hash 
-        @table_style = DEFAULT_TABLE_STYLE.merge(@table_style)
-        unless @table_style.class == Hash
-          puts "invalid table style !!!"
-          @table_style  = DEFAULT_TABLE_STYLE
-        end
-      elsif options[:table_style]  
-        @table_style  = options[:table_style]
-        unless @table_style.class == Hash
-          puts "invalid table style !!!"
-          @table_style  = DEFAULT_TABLE_STYLE
-        end
-      else
-        @table_style  = DEFAULT_TABLE_STYLE
-      end
+
+      load_layout_rb
+      load_table_style
+
       if @category_level > 0 && @table_style[:category_colors]
         # do nothing yet if we are in category type 
       elsif @table_style[:body_row_atts][:cycle_colors]
@@ -220,11 +192,58 @@ DEFAULT_TABLE_STYLE = {
       @source             = options.fetch(:source, nil)
       @table_data = @csv.split("\n")
       @table_data = @table_data.map{|row| row.split(",")}
+      @table = eval(@layout_rb)
       create_rows
-      if block
-        instance_eval(&block)
-      end            
+      @table.save_pdf(output_path)
       self
+    end
+
+    def output_path
+      @table_path + "/output.pdf"
+    end
+
+    def default_layout_rb
+      <<~EOF
+      RLayout::Container.new(width:#{@width}, height:#{@height})
+
+      EOF
+    end
+    
+    def default_table_style
+      {
+        :head_row_atts   => { row_type: "head_row", fill_color: 'gray', stroke_sides: [1,1,1,1]},
+        :head_cell_atts  => { fill_color: "clear", text_color: 'white', font: "Shinmoon", font_size: 12.0, stroke_sides: [1,0,1,0]},
+        :body_row_atts   => { row_type: "body_row", fill_color: "white", stroke_sides: [0,1,0,1]},
+        :body_cell_atts  => { font: "Shinmoon", font_size: 12.0, stroke_sides: [[0,0,1,0], [1,0,1,0], [1,0,0,0]]},
+        :category_atts   => { font: "Shinmoon", font_size: 12.0, stroke_sides: [1,1,1,1]},
+        :category_colors => [["CMYK=0.1,0,0,0,1", "CMYK=0.05,0,0,0,1"],["CMYK=0,0.1,0,0,1", "CMYK=0,0.05,0,0,1"],["CMYK=0,0,0.1,0,1", "CMYK=0,0,0.05,0,1"]]
+      }.to_yaml
+    end
+
+    def layout_rb_path
+      @table_path + "/layout.rb"   
+    end
+
+    def load_layout_rb
+      if File.exist?(layout_rb_path)
+        @layout_rb = File.open(layout_rb_path, 'r'){|f| f.read}
+      else
+        @layout_rb = default_layout_rb
+        File.open(layout_rb_path, 'w'){|f| f.write default_layout_rb}
+      end
+    end
+
+    def table_style_path
+      @table_path + "/table_style.yml"
+    end
+
+    def load_table_style
+      if File.exist?(table_style_path)
+        @table_style = YAML::load_file(table_style_path)
+      else
+        @table_style = YAML::load(default_table_style)
+        File.open(table_style_path, 'w'){|f| f.write default_table_style}
+      end
     end
 
     def create_rows
@@ -241,8 +260,10 @@ DEFAULT_TABLE_STYLE = {
         row_options[:row_data]          = @table_data[0]
         row_options[:cell_atts]         = @table_style[:head_cell_atts]
         row_options[:column_width_array]= @column_width_array
-        row_options[:parent]            = self
+        row_options[:parent]            = @table
         row_options[:line_space]  = 0
+        row_options[:height]  = 20
+
         if @can_grow
           row_options[:layout_expand]= [:width]
         end
@@ -258,23 +279,22 @@ DEFAULT_TABLE_STYLE = {
         row_options[:row_data]          = row_data
         row_options[:cell_atts]         = @table_style[:body_cell_atts]
         row_options[:column_width_array]= @column_width_array
-        row_options[:parent]      = self
+        row_options[:parent]      = @table
         row_options[:line_space]  = 0
+        row_options[:height]  = 20
+        row_options[:row_index]  = i
+
         if @can_grow
           row_options[:layout_expand]= [:width]
         end
         r=TableRow.new(row_options)
         @row_height_sum += r.height
       end  
-      row_space_sum = (@graphics.length - 1)*@layout_space
+      row_space_sum = (@table.graphics.length - 1)*@layout_space
       @row_height_sum +=row_space_sum
-      @height       = @row_height_sum + @top_margin + @bottom_margin + @top_inset + @bottom_inset
-      relayout!
-      make_cetegory_cells if @category_level > 0
-    end
-    
-    def layout_lines(column)
-      
+      @table.height       = @row_height_sum + @table.top_margin + @table.bottom_margin + @table.top_inset + @table.bottom_inset
+      @table.relayout!
+      # make_cetegory_cells if @category_level > 0
     end
     
     def layout_rows(proposed_height)

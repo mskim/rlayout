@@ -47,6 +47,7 @@ module RLayout
     def set_string_width
       @current_style_service = RLayout::StyleService.shared_style_service
       @font_name = @para_style[:font] || @para_style['font']
+      @para_style[:text_alignment] = @para_style[:text_alignment].to_sym if @para_style[:text_alignment]
       @style_object = @current_style_service.style_object_from_para_style(@para_style) 
       @font_wrapper =  @style_object.font
       @font_size = @style_object.font_size

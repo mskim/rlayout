@@ -1,27 +1,24 @@
 # encoding: utf-8
 
-# MagazineArticleMaker should be able to support highly customizable designs.
-# MagazineArticle works with given folder with story, layout.rb, and page_floats.yml
-# layout.rb defines layout and styles
-
-
 module RLayout
-
   class MagazineArticle < StyleableDoc
-    attr_reader :document_path, :layout_path, :story_path, :images_dir, :tables_dir
+    attr_reader :date
+    attr_reader :layout_path, :story_path, :images_dir, :tables_dir
     attr_reader :document, :style, :starting_page_number, :page_count, :page_type # spread, left, right
     attr_reader :doc_info_path, :page_floats, :output_path
-    attr_reader   :save_page_story, :page_count, :column_count, :gutter
+    attr_reader :page_count, :column_count, :gutter
     
     def initialize(options={} ,&block)
-      @document_path = options[:document_path] || options[:project_path]
+      @paper_size = options[:paper_size] || 'A4' 
+      @page_count = options[:page_count] || 2 
+      @gutter = options[:gutter] || 10
+      @column_count = options[:column_count] || 3
+      @document_path = options[:document_path]
+      @style_guide_folder = options[:style_guide_folder] || @document_path
       @doc_info_path = @document_path + "/doc_info.yml"
-      @starting_page_number = options.fetch(:starting_page_number, 1)
-      @page_count = options.fetch(:page_count, 1)
-      @column_count = options.fetch(:column_count, 2)
-      @gutter = options.fetch(:gutter, 10)
+      load_text_style
+      load_layout_rb
       read_page_floats 
-      @document_path     = options[:document_path]
       @story_path       = Dir.glob("#{@document_path}/*.{md,markdown}").first
       if !@story_path && @document_path
         puts "No story_path !!!"
@@ -30,7 +27,6 @@ module RLayout
       @layout_path    = @document_path + "/layout.rb"
       @output_path  = @document_path + "/article.pdf"
       @pages_path   = @document_path + "/pages"
-      @save_page_story = options[:save_page_story]
       @images_dir = @document_path + "/images"
       @tables_dir = @document_path + "/tables"
       @document     = eval(File.open(@layout_path,'r'){|f| f.read})
@@ -49,8 +45,6 @@ module RLayout
       layout_story
       h = {}
       @document.save_pdf(@output_path, save_page_preview: true)
-      # save page by page story
-      @document.save_story_page_by_page(@pages_path) if @save_page_story
       self
     end
 
@@ -86,8 +80,6 @@ module RLayout
           @heading[:is_float] = true
           @heading[:heading_height_type] = 'natural'
           RHeading.new(@heading)
-        elsif @document.pages[0].has_heading?
-          @document.pages[0].get_heading.set_heading_content(@heading)
         end
       end
 
@@ -136,8 +128,11 @@ module RLayout
     def default_layout_rb
       h  = {}
       h[:paper_size] = @paper_size
+      h[:page_count] = @page_count
       h[:column_count] = @column_count
       h[:gutter] = @gutter
+      h[:fixed_page] = true
+
       s=<<~EOF
       RLayout::RDocument.new(#{h})
     

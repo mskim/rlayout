@@ -4,7 +4,7 @@ describe 'overlapping floats' do
   before do
     @article_path   = "/Users/mskim/test_data/magazine/1_article"
     h = {}
-    h[:article_path] = @article_path
+    h[:document_path] = @article_path
     @article_maker  = MagazineArticle.new(h)
     @article        = @article_maker.document
     @pdf_path       = @article_path + '/article.pdf'

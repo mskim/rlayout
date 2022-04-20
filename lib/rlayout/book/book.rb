@@ -89,6 +89,8 @@ module RLayout
       parse_rear_matter
     end
 
+
+
     def parse_front_matter
       if File.exist?(source_front_md_path)
         RLayout::BookParser.new(source_front_md_path)

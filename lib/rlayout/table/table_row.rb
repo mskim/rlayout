@@ -4,11 +4,14 @@ module RLayout
     attr_accessor :row_type, :fit_type, :font
     attr_accessor :column_sytle_array, :column_alignment
     attr_reader :para_style
+    attr_reader :row_index
     def initialize(options={}, &block)
       options[:stroke_width] = 1
       options[:stroke_sides] = [0,1,0,1]
       options[:fill_color]    = "black"
+      options[:height]    = options[:height] || 20
       super
+      @row_index = options[:row_index]
       @width              = parent.width if parent
       @para_style         = options[:para_style]
       @cell_atts          = options[:cell_atts] || {}
@@ -37,6 +40,8 @@ module RLayout
           @cell_atts[:width]  = cell_width
           @cell_atts[:height]  = 12
           @cell_atts[:layout_length]  = cell_width
+          @cell_atts[:fill_color]  = 'gray'
+
           @cell_x += cell_width
         else
           @column_width_array << 1
@@ -71,6 +76,7 @@ module RLayout
           end
 
         end
+        # binding.pry
         table_cell = td(@cell_atts)
       end
       case @fit_type
@@ -84,6 +90,16 @@ module RLayout
       self
     end
     
+    def cycle_color
+      %w[ #F9DED7 #CCE1FE  #C6F8E5 ]
+      # %w[#FBF7D5 #F9DED7 #CCE1FE  #C6F8E5 #F5DCDE]
+    end
+
+    def row_cycle_color
+      mod = @row_index % cycle_color.length
+      cycle_color[mod]
+    end
+
     def adjust_height
       @height = tallest_cell_height + 1
     end
@@ -93,16 +109,15 @@ module RLayout
       options[:stroke_thickness]  = 1
       options[:text_fit_type]     = 'adjust_box_height'
       options[:parent]            = self
-
-      # TODO
-      # for text_cell, pass width of cell
-      # options[:width]
       if @row_type == "head_row"
+        options[:fill_color]        = 'gray'
         options[:stroke_thickness]  = 1 
         options[:style_name]  = 'body_gothic'
         tc = TextCell.new(options)
       else
+        options[:fill_color]  = row_cycle_color
         options[:style_name]  = 'body'
+        # binding.pry
         tc = TextCell.new(options)
       end
       self

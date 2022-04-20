@@ -157,6 +157,30 @@ module RLayout
 
     end
 
+    def self.heading_and_boby(source)
+
+      begin
+        if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
+          @contents = md.post_match
+          @metadata = YAML.load(md.to_s)
+          # filter smart quptes and stuff
+          # RubyPants filters yaml marker --- so, filter heading after YAML is parsed 
+          @updated_metadata = {}
+          # @metadata = @metadata.each do |k, v|
+          #   next if k == 'demotion'
+          #   # @updated_metadata[k] = RubyPants.new(v).to_html if v
+          # end
+        else
+          @contents = source
+        end
+        # @contents = RubyPants.new(@contents).to_html if @contents
+      rescue => e
+        puts "YAML Exception reading #filename: #{e.message}"
+      end
+      return @metadata, @contents
+    end
+
+
     #read story file and convert it to para_data format
     def markdown2para_data(options={})
       if options[:source]

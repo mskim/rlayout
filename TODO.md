@@ -29,14 +29,46 @@
   - line_type
   - arrow_type
 
+### 2022_04_20
+  - StyleablePage
+      style_guide_path
+      document_path
+      super
+      load_layout_rb
+      load_text_style
+      @page = eval(@layout_rb)
+      @page.save_pdf(output_path)
+
+### 2022_04_19
+  - fix table_row height
+  - color_from_string add hexcode color paring
+    - cyclical light color
+    - category color and light color
+  - chapter 
+    - merge_story
+      - fix chapter title merge
+
+
+  - add position, size
+    - ## table: table_1
+    - {possition:3, size:[3,3]}
+    - create table folder with default values
+      - layout.rb
+      - table_style.yml
+      - output.pdf
+     - ## image: 1.jpg
+     - {possition:3, size:[3,3]}
+
+     - ## float_layout: 1
+
 ### 2022_04_18
-  - copy? link? news image to page folder
-
-### 2022_04_17
-  - fix image caption layout
-
+  - newsgo cli
+  - bookcheego cli
   - table_area
 
+  - fix image caption layout
+
+  - action mailbox integration
 ### 2022_04_16
   - NewsArticle top_position
   - NewsHeading, NewsAd

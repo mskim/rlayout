@@ -28,13 +28,13 @@ module RLayout
     end
   end
 
-  class Table < Container
-    def draw_pdf(canvas, options={})
-      @graphics.each do |table_row|
-        table_row.draw_pdf(canvas) 
-      end
-    end
-  end
+  # class Table < Container
+  #   def draw_pdf(canvas, options={})
+  #     @graphics.each do |table_row|
+  #       table_row.draw_pdf(canvas) 
+  #     end
+  #   end
+  # end
 
   class TableRow < Container
     def draw_pdf(canvas, options={})
