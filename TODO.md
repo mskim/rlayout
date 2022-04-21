@@ -29,6 +29,13 @@
   - line_type
   - arrow_type
 
+
+### 2022_04_21
+  - update book.md from build source
+      update book build to source book.md
+      \d\d files and book_info.yml into single book.md
+  - separate book souce
+      separate book.md into \d\d files and book_info.yml
 ### 2022_04_20
   - StyleablePage
       style_guide_path
@@ -39,6 +46,7 @@
       @page = eval(@layout_rb)
       @page.save_pdf(output_path)
 
+  - paperback rails sample file
 ### 2022_04_19
   - fix table_row height
   - color_from_string add hexcode color paring

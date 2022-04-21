@@ -39,7 +39,7 @@ module RLayout
       generate_toc
       generate_pdf_book 
       generate_pdf_for_print
-      generate_ebook unless options[:no_ebook]
+      generate_ebook #unless options[:no_ebook]
     end
 
     def source_front_matter_path
@@ -154,6 +154,7 @@ module RLayout
         Dir.entries(@project_path).sort.each do |file|
           # copy source to build 
           if file =~/^\d\d/
+            chapter_order = file.split("_")[0]
             chapter_folder = build_folder + "/chapter_#{chapter_order}"
             FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
             source_path = @project_path + "/#{file}"

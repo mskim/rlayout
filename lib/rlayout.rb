@@ -150,7 +150,7 @@ require File.dirname(__FILE__) + "/rlayout/book/thanks"
 require File.dirname(__FILE__) + "/rlayout/book/dedication"
 require File.dirname(__FILE__) + "/rlayout/book/inside_cover"
 
-# require File.dirname(__FILE__) + "/rlayout/namecard/text_area"
+require File.dirname(__FILE__) + "/rlayout/namecard/text_area"
 # require File.dirname(__FILE__) + "/rlayout/namecard/card_page"
 # require File.dirname(__FILE__) + "/rlayout/namecard/namecard"
 # require File.dirname(__FILE__) + "/rlayout/namecard/card_step_and_reapeat"
