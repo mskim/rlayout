@@ -9,6 +9,8 @@ require "image_processing"
 require "hexapdf"
 require "text-hyphen"
 require "rubypants-unicode"
+require 'rqrcode'
+
 # require "debug"
 # require "pry"
 # require "byebug"

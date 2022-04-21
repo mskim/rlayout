@@ -76,7 +76,6 @@ module RLayout
           end
 
         end
-        # binding.pry
         table_cell = td(@cell_atts)
       end
       case @fit_type
@@ -117,7 +116,6 @@ module RLayout
       else
         options[:fill_color]  = row_cycle_color
         options[:style_name]  = 'body'
-        # binding.pry
         tc = TextCell.new(options)
       end
       self

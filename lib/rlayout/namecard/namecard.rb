@@ -408,7 +408,13 @@ module RLayout
     end
 
     def generarate_vcard_qrcode(vcard, output_path)
-      VcardQrcode::QrGenerator.generate(vcard, output_path)
+      RLayout::QrGenerator.generate(vcard, output_path)
+    
+    
+
+
+
+
     end
 
     def make_imposition(member_pdf_path)

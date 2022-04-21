@@ -153,7 +153,6 @@ module RLayout
 
       # create_pillar_divider_lines if @draw_divider
       # delete_old_files
-      # binding.pry
       save_pdf(output_path, :jpg=>true, :ratio => 2.0)
 
     end

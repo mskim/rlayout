@@ -18,7 +18,6 @@ module RLayout
     def create_table_rows
       csv = CSV.parse(@csv_data, :headers => true)
       csv.each_with_index do |row, i|
-        # binding.pry
         row_data = row.to_h
 
         if i == i

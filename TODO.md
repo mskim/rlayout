@@ -31,6 +31,8 @@
 
 
 ### 2022_04_21
+  - get rid of gem rqrcode-
+### 2022_04_21
   - update book.md from build source
       update book build to source book.md
       \d\d files and book_info.yml into single book.md
