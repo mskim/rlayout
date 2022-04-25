@@ -7,8 +7,8 @@ describe "create Mindrian" do
     h[:max_level] = 3
     h[:width] = 600
     h[:height] = 800
-    @project_path = "/Users/mskim/test_data/minsoolian"
-    @pdf_path = "/Users/mskim/test_data/minsoolian/output.pdf"
+    @project_path = "#{ENV["HOME"]}/test_data/minsoolian"
+    @pdf_path = "#{ENV["HOME"]}/test_data/minsoolian/output.pdf"
     @min = Minsoolian.new(h)
   end
 

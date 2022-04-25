@@ -675,19 +675,6 @@ module RLayout
   end
 
 
-  class DropParagraph < Paragraph
-    attr_accessor :image_object, :cap_object, :title, :subtitle, :body
-    def initialize(options={}, &block)
-      super
-
-      self
-    end
-
-    def layout_lines
-
-    end
-  end
-
   # ComboParagraph can have DropCap, DropImage, head, body
   class ComboParagraph < Paragraph
     attr_accessor :image_object, :cap_object, :title, :subtitle, :body

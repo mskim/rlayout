@@ -2,7 +2,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create RLeaderTable' do
   before do
-    # data_path    = "/Users/mskim/test_data/demo_table/story.md"
+    # data_path    = "#{ENV["HOME"]}/test_data/demo_table/story.md"
     @data = [
       ['찬송', '320', '다같이'],
       ['대표기도', '김성근'],
@@ -19,7 +19,7 @@ describe 'create RLeaderTable' do
     @body_row     = @table.graphics[1]
     @cell         = @table.graphics.first.graphics.first
     @second_cell  = @table.graphics.first.graphics[1]
-    @pdf_path     = "/Users/mskim/test_data/leader_table/leader_table.pdf"
+    @pdf_path     = "#{ENV["HOME"]}/test_data/leader_table/leader_table.pdf"
   end
 
   it 'should create RLeaderTable' do
@@ -81,7 +81,7 @@ __END__
 
 describe 'create BoxTable' do
   before do
-    # data_path    = "/Users/mskim/test_data/demo_table/story.md"
+    # data_path    = "#{ENV["HOME"]}/test_data/demo_table/story.md"
     @data = [
       ['this is title'],
       ['this is title'],
@@ -91,7 +91,7 @@ describe 'create BoxTable' do
 
     @table        = RLayout::BoxTable.new( width: 200, height: 300, table_data:@data, table_style: @style)
     @body_row     = @table.graphics[1]
-    @pdf_path     = "/Users/mskim/test_data/box_ad/box_ad2.pdf"
+    @pdf_path     = "#{ENV["HOME"]}/test_data/box_ad/box_ad2.pdf"
   end
 
   it 'should create BoxTable' do

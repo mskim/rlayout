@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe 'test ColorList colors' do
   
   before do
-    @pdf_path = "/Users/mskim/test_data/color/list.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/color/list.pdf"
     h={}
     h[:fill_color] = 'green'
     h[:page_size] = "A4"
@@ -50,7 +50,7 @@ end
 describe 'test Color named color' do
   
   before do
-    @pdf_path = "/Users/mskim/test_data/color/output.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/color/output.pdf"
     h={}
     h[:fill_color] = 'green'
     @g = Graphic.new(h)
@@ -65,7 +65,7 @@ end
 
 describe 'text Color rgb color' do
   before do
-    @pdf_path = "/Users/mskim/test_data/color/05-05-00.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/color/05-05-00.pdf"
     h={}
     h[:fill_color] = [0.5,0.5,0.0]
     @g = Graphic.new(h)
@@ -80,7 +80,7 @@ end
 
 describe 'text Color cmyk color' do
   before do
-    @pdf_path = "/Users/mskim/test_data/color/0-0-0-0tput3.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/color/0-0-0-0tput3.pdf"
     h={}
     h[:fill_color] = [0.0,0.0,0.0,0.0]
     @g = Graphic.new(h)
@@ -94,7 +94,7 @@ end
 
 describe 'text Color color list' do
   before do
-    @pdf_path = "/Users/mskim/test_data/color/LightSalmon.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/color/LightSalmon.pdf"
     h={}
     h[:fill_color] = 'LightSalmon'
     @g = Graphic.new(h)
@@ -108,7 +108,7 @@ end
 
 describe ' color from list' do
   before do
-    @pdf_path = "/Users/mskim/test_data/color/AliceBlue.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/color/AliceBlue.pdf"
     h={}
     # h[:fill_color] = 'LightSalmon'
     # h[:fill_color] = [240,248,255]

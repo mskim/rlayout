@@ -2,8 +2,8 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe ' create Matrix' do
   before do
-    @pdf_path       = "/Users/mskim/test_data/matrix/matrix_image.pdf"
-    @image_folder   = "/Users/mskim/test_data/images"
+    @pdf_path       = "#{ENV["HOME"]}/test_data/matrix/matrix_image.pdf"
+    @image_folder   = "#{ENV["HOME"]}/test_data/images"
     @m = Matrix.new(width:400, height: 400, image_folder: @image_folder)
   end
 
@@ -34,8 +34,8 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe ' create Matrix' do
   before do
-    @pdf_path       = "/Users/mskim/test_data/matrix/matrix_image2.pdf"
-    @image_folder   = "/Users/mskim/test_data/images"
+    @pdf_path       = "#{ENV["HOME"]}/test_data/matrix/matrix_image2.pdf"
+    @image_folder   = "#{ENV["HOME"]}/test_data/images"
     @m = Matrix.new(column: 4, row: 1, width:600, height: 150, image_folder: @image_folder)
   end
 
@@ -47,7 +47,7 @@ end
 
 describe ' create Matrix with TextCell' do
   before do
-    @pdf_path = "/Users/mskim/test_data/matrix/matrix_text.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/matrix/matrix_text.pdf"
     @m = Matrix.new(width:400, height: 400, cell_type: 'text')
   end
 

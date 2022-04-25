@@ -1,5 +1,5 @@
 module RLayout
-  class CardPage < StyleablePage
+  class CardPage < CoverPage
     attr_accessor :text_style, :document_path
     # attr_accessor :personal_info, :company_info, :logo_info, :picture_info, :qrcode_vcard, :en_qrcode_vcard
     # attr_reader :personal_object, :company_object, :logo_object, :picture_object, :qrcode_object, :en_qrcode_object

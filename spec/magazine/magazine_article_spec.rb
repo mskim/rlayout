@@ -2,7 +2,7 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'overlapping floats' do
   before do
-    @article_path   = "/Users/mskim/test_data/magazine/1_article"
+    @article_path   = "#{ENV["HOME"]}/test_data/magazine/1_article"
     h = {}
     h[:document_path] = @article_path
     @article_maker  = MagazineArticle.new(h)

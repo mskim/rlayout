@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'test PdfSection' do
   before do
-    @section_path  = "/Users/mskim/test_data/pdf_section"
+    @section_path  = "#{ENV["HOME"]}/test_data/pdf_section"
     @pdf_path = @section_path + "/blank.pdf"
     @pdf_section = RLayout::PdfSection.new(@section_path)
     FileUtils.mkdir_p(@section_path) unless File.exist?(@section_path)

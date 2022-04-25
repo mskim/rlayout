@@ -2,8 +2,8 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'create YbPage even' do
   before do
-    @page_path =  "/Users/mskim/test_data/book/yearbook/yb_page_even"
-    @pdf_path =  "/Users/mskim/test_data/book/yearbook/yb_page_even/output.pdf"
+    @page_path =  "#{ENV["HOME"]}/test_data/book/yearbook/yb_page_even"
+    @pdf_path =  "#{ENV["HOME"]}/test_data/book/yearbook/yb_page_even/output.pdf"
     @y = YbPage.new(page_path: @page_path, page_number: 12)
   end
 
@@ -21,8 +21,8 @@ end
 
 describe 'create YbPage Odd' do
   before do
-    @page_path =  "/Users/mskim/test_data/yearbook/yb_page_odd"
-    @pdf_path =  "/Users/mskim/test_data/yearbook/yb_page_odd/output.pdf"
+    @page_path =  "#{ENV["HOME"]}/test_data/yearbook/yb_page_odd"
+    @pdf_path =  "#{ENV["HOME"]}/test_data/yearbook/yb_page_odd/output.pdf"
     @y = YbPage.new(page_path: @page_path, page_number: 11)
   end
 

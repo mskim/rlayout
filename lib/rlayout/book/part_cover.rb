@@ -42,14 +42,14 @@ module RLayout
 
     def filler_page_layout
       <<~EOF
-      RLayout::StyleablePage.new(fill_color:'clear', width:#{layout_options}) do
+      RLayout::CoverPage.new(fill_color:'clear', width:#{layout_options}) do
       end
       EOF
     end
 
     def default_layout_rb
       <<~EOF
-      RLayout::StyleablePage.new(#{layout_options}) do
+      RLayout::CoverPage.new(#{layout_options}) do
         heading(1,4,3,4)
       end
       EOF

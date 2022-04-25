@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create PartCover' do
   before do
-    @project_path  = "/Users/mskim/test_data/part_cover"
+    @project_path  = "#{ENV["HOME"]}/test_data/part_cover"
     @pdf_path = @project_path + "/output.pdf"
     @part_cover = RLayout::PartCover.new(@project_path)
   end

@@ -2,7 +2,7 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'create StyleableDoc' do
   before do
-    @document_base = "/Users/mskim/test_data/document_base"
+    @document_base = "#{ENV["HOME"]}/test_data/document_base"
     FileUtils.mkdir_p(@document_base)  unless File.exist?(@document_base)
     @doc = StyleableDoc.new(document_base: @document_path)
   end

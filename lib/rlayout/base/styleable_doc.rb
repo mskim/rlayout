@@ -82,12 +82,6 @@ module RLayout
       end
     end
 
-    def save_custom_style
-      save_doc_info
-      save_text_style
-      save_rakefile #??? or use cli at the path
-    end
-
     def save_text_style
       File.open(text_style_path, 'w'){|f| f.write default_text_style} unless File.exist?(text_style_path)
     end

@@ -20,15 +20,16 @@ module RLayout
   # 4. contents  are layed-out.
   # 5. PDF,jpg is generated from layed-out 
 
-  class BackWing
+  class BackWing < StyleableArticle
     attr_reader :project_path, :column, :content
     attr_reader :width, :height, :updated
     def initialize(options={})
-      @project_path = options[:project_path]
-      FileUtils.mkdir_p(@project_path) unless File.exist?(@project_path)
-      @width = options[:width] || 225
-      @height = options[:height] || 400
-      generate_pdf
+      super
+      # @project_path = options[:project_path]
+      # FileUtils.mkdir_p(@project_path) unless File.exist?(@project_path)
+      # @width = options[:width] || 225
+      # @height = options[:height] || 400
+      # generate_pdf
       self
     end
 
@@ -81,7 +82,6 @@ module RLayout
     end
 
     def read_content
-
       @story  = Story.new(content_path).markdown2para_data
       @heading = @story[:heading] || {}
       @paragraphs =[]
@@ -107,9 +107,20 @@ module RLayout
       end
     end
 
+    # def default_layout
+    #   layout =<<~EOF
+    #   RLayout::RColumn.new(width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 16) do
+    #   end
+
+    #   EOF
+    # end
+
     def default_layout
+      # before rotating 90 
+      # TODO: fix right_inset not working properly
       layout =<<~EOF
-      RLayout::RColumn.new(width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 16) do
+      RLayout::BookCoverWing.new(width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 16) do
+        book_promo(0,0,6,12)
       end
 
       EOF

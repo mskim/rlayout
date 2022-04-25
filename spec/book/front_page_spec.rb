@@ -3,8 +3,8 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create FrontPage' do
   before do
-    @document_path  = "/Users/mskim/test_data/front_page"
-    @pdf_path = "/Users/mskim/test_data/front_page/output.pdf"
+    @document_path  = "#{ENV["HOME"]}/test_data/front_page"
+    @pdf_path = "#{ENV["HOME"]}/test_data/front_page/output.pdf"
     @front_page = FrontPage.new(document_path: @document_path)
   end
 

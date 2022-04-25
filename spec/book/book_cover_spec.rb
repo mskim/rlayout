@@ -2,15 +2,14 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create BookCover' do
   before do
-    @project_path  = "/Users/mskim/test_data/book_cover/build/book_cover"
-    @source_path  = "/Users/mskim/test_data/book_cover/book_cover"
-    @book_info_path = "/Users/mskim/test_data/book_cover/book_info.yml"
+    @project_path  = "#{ENV["HOME"]}/test_data/book_cover/build/book_cover"
+    @source_path  = "#{ENV["HOME"]}/test_data/book_cover/book_cover"
+    @book_info_path = "#{ENV["HOME"]}/test_data/book_cover/book_info.yml"
     h = {}
     h[:project_path] = @project_path
     h[:source_path] = @source_path
     h[:has_wing] = true
     h[:book_info] = YAML::load_file(@book_info_path)
-    # @book_cover = BookCover.new(project_path: @project_path, source_path: @source_path, has_wing:true)
     @book_cover = BookCover.new(h)
   end
 
@@ -52,8 +51,8 @@ end
 __END__
 describe 'create BookCover' do
   before do
-    @project_path  = "/Users/mskim/test_data/book_cover"
-    @pdf_path = "/Users/mskim/test_data/book_cover/cover.pdf"
+    @project_path  = "#{ENV["HOME"]}/test_data/book_cover"
+    @pdf_path = "#{ENV["HOME"]}/test_data/book_cover/cover.pdf"
     @book_cover = BookCover.new(project_path: @project_path, has_wing:true)
   end
 

@@ -2,7 +2,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create BoxTable' do
   before do
-    # data_path    = "/Users/mskim/test_data/demo_table/story.md"
+    # data_path    = "#{ENV["HOME"]}/test_data/demo_table/story.md"
     @data = [
       ['this is cell', 'this is cell', 'this is cell'],
       ['It is a somethig', 'this ', 'this is a cell'],
@@ -17,7 +17,7 @@ describe 'create BoxTable' do
     @table        = RLayout::BoxTable.new( width: 400, height: 500, table_data:@data, table_style: @style)
     @body_row     = @table.graphics[1]
     @cell         = @table.graphics.first.graphics.first
-    @pdf_path     = "/Users/mskim/test_data/box_ad/box_ad1.pdf"
+    @pdf_path     = "#{ENV["HOME"]}/test_data/box_ad/box_ad1.pdf"
   end
 
   it 'should create BoxTable' do
@@ -75,7 +75,7 @@ __END__
 
 describe 'create BoxTable' do
   before do
-    # data_path    = "/Users/mskim/test_data/demo_table/story.md"
+    # data_path    = "#{ENV["HOME"]}/test_data/demo_table/story.md"
     @data = [
       ['this is title'],
       ['this is title'],
@@ -85,7 +85,7 @@ describe 'create BoxTable' do
 
     @table        = RLayout::BoxTable.new( width: 200, height: 300, table_data:@data, table_style: @style)
     @body_row     = @table.graphics[1]
-    @pdf_path     = "/Users/mskim/test_data/box_ad/box_ad2.pdf"
+    @pdf_path     = "#{ENV["HOME"]}/test_data/box_ad/box_ad2.pdf"
   end
 
   it 'should create BoxTable' do

@@ -9,8 +9,8 @@ describe 'create RLaerTable' do
       ["여기는 Chapter_1 제목 입니다", '30'],
       ["여기는 Chapter_1 제목 입니다", '40'],
     ]
-    @document_path  = "/Users/mskim/test_data/r_leader_table"
-    @pdf_path       = "/Users/mskim/test_data/r_leader_table/toc.pdf"
+    @document_path  = "#{ENV["HOME"]}/test_data/r_leader_table"
+    @pdf_path       = "#{ENV["HOME"]}/test_data/r_leader_table/toc.pdf"
     @table          = RLeaderTable.new(document_path: @document_path, table_data: data)
     @link_info      = @table.link_info
   end

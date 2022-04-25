@@ -2,7 +2,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'should save yaml' do
   before do
-    @project_path = "/Users/mskim/test_data/graphic"
+    @project_path = "#{ENV["HOME"]}/test_data/graphic"
     @yaml_path = @project_path + "/layout.yml"
     @g = Graphic.new(:project_path=> @project_path)
   end

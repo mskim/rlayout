@@ -3,7 +3,7 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe ' NewsPillar creation' do
   before do
-    @pillar_path   =  "/Users/mskim/test_data/2021-01-29/2/2"
+    @pillar_path   =  "#{ENV["HOME"]}/test_data/2021-01-29/2/2"
     @height_in_lines = 102
     h = {}
     h[:pillar_path]     = @pillar_path
@@ -25,7 +25,7 @@ end
 
 describe 'NewsPillar w' do
   before do
-    @pillar_path        =  "/Users/mskim/test_data/2017-05-30/17/1"
+    @pillar_path        =  "#{ENV["HOME"]}/test_data/2017-05-30/17/1"
     @pillar             = NewsPillar.new(pillar_path: @pillar_path, adjustable_height: true)
     h[:pillar_path]     = @pillar_path
     h[:relayout]        = true

@@ -19,7 +19,7 @@ describe 'text Text' do
   end
 
   it 'should save pdf' do
-    @pdf_path = "/Users/mskim/test_data/text/output.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/text/output.pdf"
     @t.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
   end
@@ -31,7 +31,7 @@ describe 'text left align Text' do
   end
 
   it 'should save pdf' do
-    @pdf_path = "/Users/mskim/test_data/text/left.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/text/left.pdf"
     @t.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
@@ -44,7 +44,7 @@ describe 'text center align Text' do
   end
 
   it 'should save pdf' do
-    @pdf_path = "/Users/mskim/test_data/text/center.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/text/center.pdf"
     @t.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
@@ -57,7 +57,7 @@ describe 'text right align Text' do
   end
 
   it 'should save pdf' do
-    @pdf_path = "/Users/mskim/test_data/text/right.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/text/right.pdf"
     @t.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
@@ -71,7 +71,7 @@ describe 'text top v_align Text' do
   end
 
   it 'should save pdf' do
-    @pdf_path = "/Users/mskim/test_data/text/top.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/text/top.pdf"
     @t.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
@@ -84,7 +84,7 @@ describe 'text center v_align Text' do
   end
 
   it 'should save pdf' do
-    @pdf_path = "/Users/mskim/test_data/text/v_center.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/text/v_center.pdf"
     @t.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
@@ -97,7 +97,7 @@ describe 'text bottom v_align Text' do
   end
 
   it 'should save pdf' do
-    @pdf_path = "/Users/mskim/test_data/text/bottom.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/text/bottom.pdf"
     @t.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")
@@ -110,7 +110,7 @@ describe 'text center center v_align Text' do
   end
 
   it 'should save pdf' do
-    @pdf_path = "/Users/mskim/test_data/text/leader.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/text/leader.pdf"
     @t.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")

@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create Poem' do
   before do
-    @document_path= "/Users/mskim/test_data/poem"
+    @document_path= "#{ENV["HOME"]}/test_data/poem"
     @pdf_path = @document_path + "/chapter.pdf"
     @poem = Poem.new(document_path: @document_path)
   end

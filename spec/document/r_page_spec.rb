@@ -4,7 +4,7 @@ include RLayout
 describe "create a Page" do
   before do
     @page = RPage.new
-    @pdf_path = "/Users/mskim/test_data/page/r_page.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/page/r_page.pdf"
   end
 
   it 'should create Page' do

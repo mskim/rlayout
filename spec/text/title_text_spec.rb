@@ -12,7 +12,7 @@ describe 'create TItleText with line break' do
   end
 
   it 'should save pdf' do
-    @pdf_path = "/Users/mskim/test_data/title_text/output.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/title_text/output.pdf"
     @title.save_pdf(@pdf_path)
     assert File.exist?(@pdf_path)
     system("open #{@pdf_path}")

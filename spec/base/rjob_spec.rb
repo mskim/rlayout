@@ -4,9 +4,9 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe 'test Color named color' do
   
   before do
-    @pdf_path = "/Users/mskim/test_data/rjob/output.pdf"
-    @project_path = "/Users/mskim/test_data/rjob"
-    @layout_path = "/Users/mskim/test_data/rjob/layout.rb"
+    @pdf_path = "#{ENV["HOME"]}/test_data/rjob/output.pdf"
+    @project_path = "#{ENV["HOME"]}/test_data/rjob"
+    @layout_path = "#{ENV["HOME"]}/test_data/rjob/layout.rb"
     rlayout_rb =<<~EOF
       RLayout::Container.new(page_size: 'A4', fill_color:'red') do
 

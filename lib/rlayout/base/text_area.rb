@@ -49,6 +49,4 @@ module RLayout
     end
   end
 
-
-
 end

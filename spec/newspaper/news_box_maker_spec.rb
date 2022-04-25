@@ -2,8 +2,8 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'NewsBoxMaker with fixed height' do
   before do
-    # @article_path   =  "/Users/mskim/test_data/2017-05-30/1/2/3"
-    @article_path   =  "/Users/mskim/test_data/newspaper/1"
+    # @article_path   =  "#{ENV["HOME"]}/test_data/2017-05-30/1/2/3"
+    @article_path   =  "#{ENV["HOME"]}/test_data/newspaper/1"
 
     @maker           = NewsBoxMaker.new(article_path: @article_path, height_in_lines: 18)
     @article_box     = @maker.news_box
@@ -20,7 +20,7 @@ end
 __END__
 describe 'NewsBoxMaker with minimum height' do
   before do
-    @article_path   =  "/Users/mskim/test_data/2017-05-30/1/1/2"
+    @article_path   =  "#{ENV["HOME"]}/test_data/2017-05-30/1/1/2"
     @maker           = NewsBoxMaker.new(article_path: @article_path, adjustable_height: true)
     @article_box     = @maker.news_box
   end

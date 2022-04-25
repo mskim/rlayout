@@ -2,8 +2,8 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'NewsPageParser' do
   before do
-    news_paper_folder  = "/Users/mskim/test_data/news_page_parser"
-    @page_md_path   =  "/Users/mskim/test_data/news_page_parser/2022-04-01_01.md"
+    news_paper_folder  = "#{ENV["HOME"]}/test_data/news_page_parser"
+    @page_md_path   =  "#{ENV["HOME"]}/test_data/news_page_parser/2022-04-01_01.md"
     FileUtils.mkdir_p(news_paper_folder) unless File.exist?(news_paper_folder)
     page_info = {}
     page_info[:page_number] = 1

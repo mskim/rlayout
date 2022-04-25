@@ -4,11 +4,11 @@ module RLayout
   # And allow others to reuse them, instead of manually creating designing each and every time with Illustrator.
   
   # front_page
-  # StyleablePage is used to set place holder for TextAreas.
-  # With StyleablePage, place holder for heading, qrcode, box_1, box_2, box3, box_4, and box_5 can ne set using &block syntex.
+  # CoverPage is used to set place holder for TextAreas.
+  # With CoverPage, place holder for heading, qrcode, box_1, box_2, box3, box_4, and box_5 can ne set using &block syntex.
   # An instances of TextAreas are created by &block like following
 
-  # RLayout::StyleablePage.new(paper_size: 'A4') do
+  # RLayout::CoverPage.new(paper_size: 'A4') do
   #   heading(1,1,6,10)
   #   box_1(1,10,1,1)
   #   qrcode(10,10, 1,1)
@@ -91,7 +91,7 @@ module RLayout
 
     def default_layout_rb
       layout =<<~EOF
-      RLayout::StyleablePage.new(fill_color:'clear',width:#{@width}, height:#{@height}) do
+      RLayout::CoverPage.new(fill_color:'clear',width:#{@width}, height:#{@height}) do
         image(image_path: '#{cover_spread_pdf_path}',  x: -#{@width}, y: 0,  width: #{@width}*2,  height: #{@height} )
         heading(1,0,4,10)
       end

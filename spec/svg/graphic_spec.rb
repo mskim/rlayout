@@ -3,8 +3,8 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'create Page from SVG' do
   before do
-    @project_path = "/Users/mskim/test_data/svg/graphic"
-    @svg_path = "/Users/mskim/test_data/svg/graphic/output.svg"
+    @project_path = "#{ENV["HOME"]}/test_data/svg/graphic"
+    @svg_path = "#{ENV["HOME"]}/test_data/svg/graphic/output.svg"
     @graphic = Graphic.new(project_path: @project_path)
   end
 

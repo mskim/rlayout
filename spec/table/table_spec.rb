@@ -4,9 +4,9 @@ describe 'create page with table' do
   before do
     @csv_path         = "/Users/mskim//test_data/table/page_with_table/category_demo.csv"
     @table_path        = "/Users/mskim//test_data/table/page_with_table"
-    @pdf_path         = "/Users/mskim/test_data/table/page_with_table/output.pdf"
+    @pdf_path         = "#{ENV["HOME"]}/test_data/table/page_with_table/output.pdf"
 
-    @table_style_path = "/Users/mskim/test_data/table/page_with_table/table_style.rb"
+    @table_style_path = "#{ENV["HOME"]}/test_data/table/page_with_table/table_style.rb"
     @column_width_array     = [1,1,1,1,2,2,4]
     @t1 = Table.new(table_path: @table_path, column_width_array: @column_width_array, csv_path: @csv_path, category_level: 0, layout_length: 7, table_style_path: @table_style_path)
   end

@@ -2,9 +2,9 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'should process image_caption' do
   before do
-    @image_path = "/Users/mskim/test_data/images/1.jpg"
+    @image_path = "#{ENV["HOME"]}/test_data/images/1.jpg"
     @image = Image.new(:image_path=> @image_path)
-    @pdf_path = "/Users/mskim/test_data/image/output.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/image/output.pdf"
 
   end
 

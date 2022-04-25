@@ -4,8 +4,8 @@ describe 'graphic_drawing test' do
   before do
     # @g = Graphic.new(stroke_width: 1, x: 200, y:200, fill_color: 'red', stoke_color:'green')
     @g = Graphic.new(stroke_width: 1, fill_color: 'yellow', stroke_color:'red')
-    @pdf_path = "/Users/mskim/test_data/graphic/stoke_test.pdf"
-    @svg_path = "/Users/mskim/test_data/graphic/stoke_test.svg"
+    @pdf_path = "#{ENV["HOME"]}/test_data/graphic/stoke_test.pdf"
+    @svg_path = "#{ENV["HOME"]}/test_data/graphic/stoke_test.svg"
   end
   
   it 'should create Graphic object' do

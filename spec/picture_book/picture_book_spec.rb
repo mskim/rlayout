@@ -3,7 +3,7 @@ include RLayout
 
 describe "create PictureBook" do
   before do
-    @project_path = "/Users/mskim/test_data/book/picture_book"
+    @project_path = "#{ENV["HOME"]}/test_data/book/picture_book"
     @book = PictureBook.new(@project_path)
   end
 

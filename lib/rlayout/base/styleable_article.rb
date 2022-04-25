@@ -5,9 +5,9 @@ module RLayout
   # Once style_guide is tweaked by the designer, 
   # similar publications can re-use the copy of the style_guide with new content.
   
-  # StyleableNewsArticle class.
+  # StyleableArticle class.
   # There are text_styles and layout_rb for each "styleable document".
-  # StyleableNewsArticle is super class for customizable document.
+  # StyleableArticle is super class for customizable document.
 
   # NewsArticle, 
   #  NewsArticle, Opinion, Editorial, BookReview, Obituary
@@ -25,7 +25,7 @@ module RLayout
   # for books where multiple documents with same style are used, like chapters
   # text_styles are put in style_guide_folder
   
-  class StyleableNewsArticle
+  class  StyleableArticle
     attr_reader :style_guide_folder
     attr_reader :document_path, :paper_size, :width, :height
     attr_reader :document
@@ -49,6 +49,7 @@ module RLayout
       end      
       # size_from_paper_size
       load_text_style
+      load_layout_rb
       self
     end
 
@@ -71,12 +72,6 @@ module RLayout
         @width = mm2pt(@paper_size.split("x")[0].to_i)
         @height = mm2pt(@paper_size.split("x")[1].to_i)
       end
-    end
-
-    def save_custom_style
-      save_doc_info
-      save_text_style
-      save_rakefile #??? or use cli at the path
     end
 
     def save_text_style
@@ -848,7 +843,6 @@ module RLayout
       
       EOF
     end
-
 
   end
 

@@ -2,7 +2,7 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'NewsIssueBuilder' do
   before do
-    @publication_path   =  "/Users/mskim/test_data/news_publication"
+    @publication_path   =  "#{ENV["HOME"]}/test_data/news_publication"
     FileUtils.mkdir_p(@publication_path) unless File.exist?(@publication_path)
     @date = '2022-04-20'
     @builder    = NewsIssueBuilder.new(publication_path: @publication_path, date: @date)

@@ -20,7 +20,7 @@ module RLayout
   # 4. contents  are layed-out.
   # 5. PDF,jpg is generated from layed-out 
 
-  class FrontWing < StyleableDoc
+  class FrontWing < StyleableArticle
     attr_reader :project_path, :output_path, :column, :content
     attr_reader :width, :height, :updated
 
@@ -111,7 +111,8 @@ module RLayout
       # before rotating 90 
       # TODO: fix right_inset not working properly
       layout =<<~EOF
-      RLayout::RColumn.new(width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 16) do
+      RLayout::BookCoverWing.new(width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 16) do
+        author_profile(0,0,6,12)
       end
 
       EOF

@@ -32,6 +32,8 @@
 
 ### 2022_04_21
   - get rid of gem rqrcode-
+  - add wing to ebook front_page
+  - book with tables from book.md
 ### 2022_04_21
   - update book.md from build source
       update book build to source book.md
@@ -108,7 +110,7 @@
 
 ### 2022_04_13
   - fix news_article_text_style
-  - fix StyleableNewsArticle
+  - fix StyleableArticle
     -  news_article_box_style
     -  opinion_style
     -  editorial_style
@@ -128,7 +130,7 @@
   - handle multiple md source file    - 
 
 ### 2022_04_08
-  - fix part_cover text_style layout_rb using StyleablePage
+  - fix part_cover text_style layout_rb using CoverPage
   - fix toc not including part_cover
   - fix part_cover always showing part_1 
 ### 2022_04_06
@@ -142,7 +144,7 @@
     add part to book_info
   - add to toc
   - vertical seneca
-  - use StyleablePage 
+  - use CoverPage 
     -  predefined text_area
       heading, logo, picture, image
     
@@ -150,7 +152,7 @@
       naming convention
       def name          pgscript
 
-  - CardPage < StyleablePage  
+  - CardPage < CoverPage  
     -  predefined text_area
       personal, company, en_personal, en_company
 
@@ -158,7 +160,7 @@
   - style_guide
     toc, seneca, inside_cover, 
     
-    add def image to RCoverPage
+    add def image to CoverPage
 
 ### 2022_03_29
   - remove vips or imagemagik dependency check the status and  choose one.
@@ -268,6 +270,10 @@
     TopHeading HeadingContainer?
       - free formatted horizontal heading that is place at the top of page.
       - study_book, newspaper catalog_heading
+### 2022_02_25
+    - rename StyleablePage to CoverPage
+    - rename StyleableNewsArticle to StyleableArticle
+
 ### 2022_02_16
   - base, global, and local text_style
   - rake save_custom_style
@@ -625,9 +631,9 @@
   - picture_book has_no_cover_inside_page
     - fix back_page image 4.jpg/png not showing 
     - fix
-      cp: /Users/mskim/test_data/book/picture_book/book_cover/*.jpg: No such file or directory
-      cp: /Users/mskim/test_data/book/picture_book/book_cover/front_wing.md: No such file or directory
-      cp: /Users/mskim/test_data/book/picture_book/book_cover/back_wing.md: No such file or directory
+      cp: #{ENV["HOME"]}/test_data/book/picture_book/book_cover/*.jpg: No such file or directory
+      cp: #{ENV["HOME"]}/test_data/book/picture_book/book_cover/front_wing.md: No such file or directory
+      cp: #{ENV["HOME"]}/test_data/book/picture_book/book_cover/back_wing.md: No such file or directory
 
   - localization
     book_cover:표지

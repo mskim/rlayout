@@ -2,8 +2,8 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create TocPage' do
   before do
-    @document_path  = "/Users/mskim/test_data/toc"
-    @pdf_path       = "/Users/mskim/test_data/toc/toc.pdf"
+    @document_path  = "#{ENV["HOME"]}/test_data/toc"
+    @pdf_path       = "#{ENV["HOME"]}/test_data/toc/toc.pdf"
     @toc_content = [
       ['여기는 제목 1',  '4'],
       ['여기는 제목 2',  '12'],

@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'test EssayBook' do
   before do
-    @project_path  = "/Users/mskim/test_data/book/essay_book"
+    @project_path  = "#{ENV["HOME"]}/test_data/book/essay_book"
     @essey = Book.new(@project_path)
   end
 

@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'read story with image_1' do
   before do
-    @story_path  = "/Users/mskim/test_data/chapter_with_images/story.md"
+    @story_path  = "#{ENV["HOME"]}/test_data/chapter_with_images/story.md"
     @story = Story.new(@story_path)
     @story_data  = @story.markdown2para_data
   end
@@ -22,7 +22,7 @@ end
 __END__
 describe 'read poem story' do
   before do
-    @story_path  = "/Users/mskim/test_data/poem/story_01.md"
+    @story_path  = "#{ENV["HOME"]}/test_data/poem/story_01.md"
     @story = Story.new(@story_path)
     @story_data  = @story.story2line_text
   end

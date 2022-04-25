@@ -3,8 +3,8 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create Prologue' do
   before do
-    @document_path  = "/Users/mskim/test_data/prologue"
-    @pdf_path = "/Users/mskim/test_data/prologue/chapter.pdf"
+    @document_path  = "#{ENV["HOME"]}/test_data/prologue"
+    @pdf_path = "#{ENV["HOME"]}/test_data/prologue/chapter.pdf"
     @prologue = Prologue.new(document_path: @document_path, custom_style:true)
   end
 

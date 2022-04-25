@@ -6,7 +6,7 @@ describe 'should process image_caption' do
       line(x1: 0, y1:0, x2:300, y2:400, stroke_color: 'red', stoke_width: 1.0)
       line(x1: 0, y1:100, x2:300, y2:500, stroke_color: 'blue', stoke_width: 0.3)
     end    
-    @pdf_path = "/Users/mskim/test_data/line/output.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/line/output.pdf"
   end
 
   it 'should save pdf page with line' do

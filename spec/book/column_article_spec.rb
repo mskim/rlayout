@@ -2,11 +2,11 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create ColumnArticle' do
   before do
-    @project_path = "/Users/mskim/test_data/column_article"
-    @pdf_path = "/Users/mskim/test_data/column_article/output.pdf"
-    @rakefile_path = "/Users/mskim/test_data/column_article/Rakefile"
-    @text_style_path = "/Users/mskim/test_data/column_article/text_style.yml"
-    @layout_path = "/Users/mskim/test_data/column_article/layout.rb"
+    @project_path = "#{ENV["HOME"]}/test_data/column_article"
+    @pdf_path = "#{ENV["HOME"]}/test_data/column_article/output.pdf"
+    @rakefile_path = "#{ENV["HOME"]}/test_data/column_article/Rakefile"
+    @text_style_path = "#{ENV["HOME"]}/test_data/column_article/text_style.yml"
+    @layout_path = "#{ENV["HOME"]}/test_data/column_article/layout.rb"
     @col = ColumnArticle.new(@project_path,  width: 300, custom_style:true)
   end
 

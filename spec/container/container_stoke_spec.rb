@@ -13,8 +13,8 @@ describe 'container_stroke_drawing test' do
       end
       relayout!
     end
-    @pdf_path = "/Users/mskim/test_data/container/container_stoke.pdf"
-    @svg_path = "/Users/mskim/test_data/container/container_stoke.svg"
+    @pdf_path = "#{ENV["HOME"]}/test_data/container/container_stoke.pdf"
+    @svg_path = "#{ENV["HOME"]}/test_data/container/container_stoke.svg"
   end
 
   it 'should create Graphic object' do

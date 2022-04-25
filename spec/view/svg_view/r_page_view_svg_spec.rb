@@ -6,7 +6,7 @@ describe "create RPageViewSVG" do
 
     end
 
-    @svg_path = "/Users/mskim/test_data/svg/r_page/0001/page.svg"
+    @svg_path = "#{ENV["HOME"]}/test_data/svg/r_page/0001/page.svg"
   end
 
   it 'should save_svg' do

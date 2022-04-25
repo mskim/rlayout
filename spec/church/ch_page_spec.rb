@@ -3,8 +3,8 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 describe 'create ChPage' do
   before do
     starting = Time.now
-    @section_path =  "/Users/mskim/test_data/yearbook/yb_section/학급_3-1"
-    @pdf_path =  "/Users/mskim/test_data/yearbook/yb_section/학급_3-1/output.pdf"
+    @section_path =  "#{ENV["HOME"]}/test_data/yearbook/yb_section/학급_3-1"
+    @pdf_path =  "#{ENV["HOME"]}/test_data/yearbook/yb_section/학급_3-1/output.pdf"
     @y = YbSection.new(section_path: @section_path, page_number: 12)
     ending = Time.now
     puts "It took #{ending - starting}!!!!"

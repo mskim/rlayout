@@ -3,8 +3,8 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe 'testing GridTable' do
   before do
 
-    @pdf_path = "/Users/mskim/test_data/grid_table/output.pdf"
-    @csv_path = "/Users/mskim/test_data/grid_table/data.csv"
+    @pdf_path = "#{ENV["HOME"]}/test_data/grid_table/output.pdf"
+    @csv_path = "#{ENV["HOME"]}/test_data/grid_table/data.csv"
     @t = GridTable.new(has_head: true, :width=>400, :height=>400,  csv_path: @csv_path, output_path: @pdf_path, calculate_column_width:true)
   end
 
@@ -43,8 +43,8 @@ __END__
 describe 'testing GridTable' do
   before do
 
-    @pdf_path = "/Users/mskim/test_data/grid_table/output.pdf"
-    @csv_path = "/Users/mskim/test_data/grid_table/data.csv"
+    @pdf_path = "#{ENV["HOME"]}/test_data/grid_table/output.pdf"
+    @csv_path = "#{ENV["HOME"]}/test_data/grid_table/data.csv"
     @t = GridTable.new(has_head: true, :width=>400, :height=>400,  csv_path: @csv_path, output_path: @pdf_path)
   end
 

@@ -16,7 +16,7 @@ describe "create Container View" do
       relayout!
     end
 
-    @svg_path = "/Users/mskim/test_data/svg/container_test.svg"
+    @svg_path = "#{ENV["HOME"]}/test_data/svg/container_test.svg"
   end
 
   it 'should save_svg' do
@@ -39,7 +39,7 @@ describe "create Container View" do
       relayout!
     end
 
-    @svg_path = "/Users/mskim/test_data/svg/container_test2.svg"
+    @svg_path = "#{ENV["HOME"]}/test_data/svg/container_test2.svg"
   end
 
   it 'should save_svg' do

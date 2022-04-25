@@ -2,8 +2,8 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create Cover' do
   before do
-    @document_path  = "/Users/mskim/test_data/toc"
-    @pdf_path       = "/Users/mskim/test_data/toc/toc.pdf"
+    @document_path  = "#{ENV["HOME"]}/test_data/toc"
+    @pdf_path       = "#{ENV["HOME"]}/test_data/toc/toc.pdf"
     @toc            = Cover.new(document_path: @document_path )
     @document       = @toc.document
   end

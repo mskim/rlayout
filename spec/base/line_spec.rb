@@ -3,7 +3,7 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe 'create Line' do
   before do
     @line = Line.new
-    @pdf_path = "/Users/mskim/test_data/line/output.pdf"
+    @pdf_path = "#{ENV["HOME"]}/test_data/line/output.pdf"
   end
 
   it 'shoud create Line' do

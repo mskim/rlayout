@@ -3,8 +3,8 @@ include RLayout
 
 describe "create PictureSpreadPage" do
   before do
-    @bg_image_path = "/Users/mskim/test_data/picture_book/02_03/1_2.jpg"
-    @story_path = "/Users/mskim/test_data/picture_book/02_03/1.txt"
+    @bg_image_path = "#{ENV["HOME"]}/test_data/picture_book/02_03/1_2.jpg"
+    @story_path = "#{ENV["HOME"]}/test_data/picture_book/02_03/1.txt"
     @story = "여기는 사진에 대한 이야기 입니다.\n여기는 사진에 대한 이야기 입니다.\n여기는 사진에 대한 이야기 입니다."
     @page = PictureSpreadPage.new(bg_image_path: @bg_image_path, left_side:true, story: @story)
   end
