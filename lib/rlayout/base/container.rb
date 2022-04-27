@@ -26,7 +26,7 @@ module RLayout
   class Container < Graphic
     attr_accessor :layout_direction, :layout_space, :layout_align, :stack
     attr_accessor :draw_gutter_stroke, :gutter_stroke
-    attr_accessor :floats, :local_image_path
+    attr_accessor :floats, :document_path
 
     def initialize(options={}, &block)
       @graphics             = []
@@ -61,6 +61,15 @@ module RLayout
         end
       end
       self
+    end
+
+    def local_image_path
+      if @document_path
+        return @document_path + "/images"
+      elsif @parent
+        return @parent.local_image_path
+      end
+      nil
     end
 
     def self.from_hash(h)
