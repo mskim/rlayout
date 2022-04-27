@@ -42,6 +42,7 @@
     - when parsing story, add hash to extra_info
   - add {side_image: local_image_path}
 
+  - fix first_line_indent bug
 ### 2022_04_26
   StyleablePage used content.yml
   - FrontPage < StyleablePage

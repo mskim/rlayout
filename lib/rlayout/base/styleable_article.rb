@@ -51,7 +51,7 @@ module RLayout
       load_text_style
       load_layout_rb
       @document = eval(@layout_rb)
-      @document.local_image_path = local_image_path
+      @document.document_path = @document_path
       load_content
       @document.save_pdf(output_path)
       self
@@ -175,6 +175,7 @@ module RLayout
         font_family: Shinmoon
         font: Shinmoon
         font_size: 9.8
+        first_line_indent: 9.8
         text_color: CMYK=0,0,0,100
         text_alignment: justify
         tracking: -0.4

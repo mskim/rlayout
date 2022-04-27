@@ -63,7 +63,7 @@ module RLayout
         make_heading_and_profile_image
       end
       flowing_items = @paragraphs.dup
-      current_line = @document.graphics.first
+      current_line = @document.first_text_line
       while @item = flowing_items.shift do
         current_line = @item.layout_lines(current_line)
       end
@@ -136,24 +136,25 @@ module RLayout
       ## 내가 살아 가는 법
       {:side_image=> 'book_1.jpg'}
 
-      이책은 홍긱동의 첫번째 소설로 30만부 판매된 인기 소설 입니다.ascii_only?
-      이책은 홍긱동의 첫번째 소설로 30만부 판매된 인기 소설 입니다.ascii_only?
-      이책은 홍긱동의 첫번째 소설로 30만부 판매된 인기 소설 입니다.ascii_only?
+      이책은 홍긱동의 첫번째 소설로 30만부 
+      판매된 인기 소설 입니다. 이책은 홍긱동의 첫번째 소설로 30 만부 판매된 인기 소설 입니다. 
+      이책은 홍긱동의 첫번째 소설로 30 만부 판매된 인기 소설 입니다.
 
 
       ## 우리가 살아 가는 법
       {:side_image=> 'book_2.jpg'}
 
-      이책은 홍긱동의 두번째 소설로 100만부 판매된 인기 소설 입니다.ascii_only?
-      이책은 홍긱동의 두번째 소설로 100만부 판매된 인기 소설 입니다.ascii_only?
-      이책은 홍긱동의 두번째 소설로 100만부 판매된 인기 소설 입니다.ascii_only?
+      이책은 홍긱동의 첫번째 소설로 30만부 
+      판매된 인기 소설 입니다. 이책은 홍긱동의 첫번째 소설로 30 만부 판매된 인기 소설 입니다. 
+      이책은 홍긱동의 첫번째 소설로 30 만부 판매된 인기 소설 입니다.
+
 
       ## 니가 살아 가는 법
       {:side_image=> 'book_3.jpg'}
 
-      이책은 홍긱동의 세번째 소설로 200만부 판매된 인기 소설 입니다.ascii_only?
-      이책은 홍긱동의 세번째 소설로 200만부 판매된 인기 소설 입니다.ascii_only?
-      이책은 홍긱동의 세번째 소설로 200만부 판매된 인기 소설 입니다.ascii_only?
+      이책은 홍긱동의 첫번째 소설로 30만부 
+      판매된 인기 소설 입니다. 이책은 홍긱동의 첫번째 소설로 30 만부 판매된 인기 소설 입니다. 
+      이책은 홍긱동의 첫번째 소설로 30 만부 판매된 인기 소설 입니다.
 
       EOF
     end
@@ -166,6 +167,7 @@ module RLayout
         font_family: Shinmoon
         font: Shinmoon
         font_size: 9.8
+        first_line_indent: 9.8
         text_color: CMYK=0,0,0,100
         text_alignment: justify
         tracking: -0.4
@@ -175,8 +177,7 @@ module RLayout
         space_before_in_lines:
         space_after_in_lines:
         box_attributes: ''
-        markup: ''
-        graphic_attributes: ''
+
       body_gothic:
         korean_name: 본문고딕
         category:

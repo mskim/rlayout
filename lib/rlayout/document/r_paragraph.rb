@@ -306,16 +306,12 @@ module RLayout
             h = {}
             # h[:image_path] = extra_hash['side_image']
             h[:parent] = @current_line.parent
-            # TODO fix this !!!!
-            # this will not work if @current_line.parent is not RColumn
-            # this works for back_wing for now!!!!
             h[:image_path] = h[:parent].local_image_path + "/#{extra_hash[:side_image]}"
             h[:x] = 5
             h[:y] = @current_line.y
             h[:width] = 70
             h[:height] = 80
             RLayout::Image.new(h)
-            # binding.pry 
           end
         end
         # @current_line = @current_line.next_text_line
