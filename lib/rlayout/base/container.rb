@@ -26,7 +26,7 @@ module RLayout
   class Container < Graphic
     attr_accessor :layout_direction, :layout_space, :layout_align, :stack
     attr_accessor :draw_gutter_stroke, :gutter_stroke
-    attr_accessor :floats
+    attr_accessor :floats, :local_image_path
 
     def initialize(options={}, &block)
       @graphics             = []
@@ -130,8 +130,8 @@ module RLayout
     def grid_rect_to_frame(grid_frame)
       @grid_width = (@width - @left_margin - @right_margin)/@grid[0]
       @grid_height = (@height - @top_margin - @bottom_margin)/@grid[1]
-      x = grid_frame[0]*@grid_width
-      y = grid_frame[1]*@grid_height
+      x = grid_frame[0]*@grid_width + @left_margin
+      y = grid_frame[1]*@grid_height + @top_margin
       width = grid_frame[2]*@grid_width
       height = grid_frame[3]*@grid_height
       [x,y,width,height]
@@ -279,8 +279,6 @@ module RLayout
         TextRun.new(options)
       when "TextBox"
         TextBox.new(options)
-      when "TextColumn"
-        TextColumn.new(options)
       when "ObjectBox"
         ObjectBox.new(options)
       when "ObjectColumn"
