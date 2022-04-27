@@ -1,11 +1,16 @@
 module RLayout
 
-  # CoverPage.
-  # CoverPage is used as a flexable page designinng mechanis.
-  # Object-name_area methods are used as creating place-holders, for differnt types of area.
+  # CoverPage
+  # CoverPage is used as a flexable page designinng mechanism.
+  # text_area, image_area, table_area article_area methods are used as creating place-holders, 
+  # for differnt types of areas. text, image, table, article etc...
   # and content for each place holders are filled at run time.
+  # This make it possible to implement flexable and resuable page design system.
+  # where designers can design a page without actual data, 
+  # and authors can later fill the page with data with pre-designed look.
   # CoverPage uses naming convention to match area and data.
   
+  # example:
   # RLayout::CoverPage.new(paper_size: 'A4') do
   #   heading(1,1,6,10)
   #   copy_1(1,10,1,1)
@@ -25,24 +30,23 @@ module RLayout
   # qrcode = {}
   # qrcode[:image_path] = "/path/to/qrcode_image.jpg"
 
-
-  # def text_area(x_grid, y_grid, width_grid, height_grid, options={})
-  # def image_area(x_grid, y_grid, width_grid, height_grid, options={})
-  # def table_area(x_grid, y_grid, width_grid, height_grid, options={})
-  # def article_area(x_grid, y_grid, width_grid, height_grid, options={})
-  # def items_area(x_grid, y_grid, width_grid, height_grid, options={})
-
-
-
-  # heading, copy_box, qrcode blocks will create TextArea instances with tag of "heading", "copy_1", "qrcode"
-  # The numbers represents grid_x, grid_y, grid_width, grid_height
-
-  # CoverPage#set_contents_for_text_area(nested_page_content_hash)
-  # Contents of these TextArea are filled in at later stage, by calling @styablepage.set_contents_for_area(page_data) at run time.
-  #  where page_data is nested hash for each TextAreas
+  # page_content = {}
+  # page_content[:heading] = heading
+  # page_content[:copy_1] = copy_1
+  # page_content[:qrcode] = qrcode
   
-  # set_contents_for_area(page_data) will fill the page with page_data, 
-  # fill each TextArea with values of matching hash key with tag.
+  # Default page grid is 6x12.
+  # The numbers represents grid_x, grid_y, grid_width, grid_height
+  # where heading(1,1,6,10) is place at grid_frame of 1,1,6,10
+  # heading, copy_1, qrcode blocks will create TextArea instances with tag of "heading", "copy_1", "qrcode"
+
+  # "set_page_content" is called with page_content at run time.
+  # set_page_content looks for object with key of page_content that matchs tag of the object, 
+  # 
+  # for example
+  # it calls set_contnet to heding_object with page_content['heading']
+  # it calls set_contnet to copy_1_object with page_content['copy_1']
+  # it calls set_contnet to qrcode_object with page_content['qrcode']
 
 
   # TextArea
@@ -60,13 +64,16 @@ module RLayout
 
     attr_reader :paper_size
     attr_reader :grid
-    # attr_reader :document_path, :style_guide_folder
 
     def initialize(options={}, &block)
       @grid = options[:grid_size] || [6,12]
       @paper_size = options[:paper_size] || "A4"
       options[:width] = SIZES[@paper_size][0]  unless options[:width]
       options[:height] = SIZES[@paper_size][1] unless options[:height]
+      unless options[:left_margin]
+        options[:margin] =  options[:margin] || 10
+      end
+
       # load_text_style
       # load_layout_rb
       super
@@ -79,7 +86,7 @@ module RLayout
     def default_layout_rb
       <<~EOF
       RLayout::Container.new(width: 300, height:500) do
-        heading(1,1,2,2)
+        heading(0,0,2,2)
       end
       EOF
     end
@@ -91,8 +98,8 @@ module RLayout
     end
 
 
-    # look for TextArea objects with key and set values
-    def set_contents_for_area(content_hash)
+    # look for TextArea objects with key and set value
+    def set_page_content(content_hash)
       content_hash.each do |k,v|
         target = find_by_name(k.to_s)
         target.set_content(v) if target.class  == RLayout::TextArea
