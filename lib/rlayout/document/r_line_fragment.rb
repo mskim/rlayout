@@ -276,9 +276,11 @@ module RLayout
       if @line_type == 'first_line'
         @starting_position  = @first_line_indent
         @text_area[2]    = @first_line_width
+        @room = @text_area[2]
       else
         @starting_position  = para_style[:left_indent] || 0
         @text_area[2]    = @middle_line_width
+        @room = @text_area[2]
       end
     end
 
@@ -286,6 +288,9 @@ module RLayout
     # return left over tokens array if not all tokens are layed out
     # return false if no leftvver tokens
     # CharHalfWidthCushion = 5.0
+
+    # TODO reduce room by first_line_indent
+    # if line is first_line 
     def place_token(token, options={})
       return if token.nil?
       return false if @room <= 0
