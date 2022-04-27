@@ -1,5 +1,5 @@
 require 'csv'
-require 'vcard_qrcode'
+# require 'vcard_qrcode'
 module RLayout
   # Namecard Naming Convention
   # text_style name and csv head should match
@@ -31,7 +31,7 @@ module RLayout
   # personal_info = "{name: '#{@name}', title: '#{@divistion}/#{@title}', email:'#{@email}'}"
   # company_info = "{company_name: '#{@company_name}', address_1: '#{@address_1 #{@address_1}', address_2: '#{@city} #{@state} #{@zip}' }"
 
-  class Namecard < StyleableDoc
+  class Namecard
     attr_reader :compnay_name, :member_data, :text_style
     attr_reader :cards_array
     attr_reader :imposition
@@ -41,7 +41,7 @@ module RLayout
     def initialize(options={})
       @compnay_name = options[:compnay_name]
       @imposition = options[:imposition] || true
-      super
+      # super
       create_cards
       self
     end
@@ -356,7 +356,6 @@ module RLayout
         qrcode_path = qrcode_folder + "/#{slug}.png"
         generarate_vcard_qrcode(vcard_info, qrcode_path)
         front_card.qrcode_object.image_path = qrcode_path
-
       end
       front_card.text_style = text_style
       personal_info_front = {}
@@ -409,12 +408,6 @@ module RLayout
 
     def generarate_vcard_qrcode(vcard, output_path)
       RLayout::QrGenerator.generate(vcard, output_path)
-    
-    
-
-
-
-
     end
 
     def make_imposition(member_pdf_path)

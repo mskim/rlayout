@@ -1,66 +1,31 @@
 module RLayout
-  
-  # The goal is to create a re-usable document with customiable style_guide,
-  # where style_guide contains all design related information for the publication.
-  # Once style_guide is tweaked by the designer, 
-  # similar publications can re-use the copy of the style_guide with new content.
-  
-  # StyleableArticle class.
-  # There are text_styles and layout_rb for each "styleable document".
-  # StyleableArticle is super class for customizable document.
 
-  # NewsArticle, 
-  #  NewsArticle, Opinion, Editorial, BookReview, Obituary
-  #  NamecardMaker, 
-
-  # Jubo
-
-  #  def load_text_style
-  #  read text_style if they exist or save default style so that designer can customize it.
-
-  # def load_layout_rb
-  # read rlayout.rb if they exist or save default layout_rb so that designer can customize it.
-
-  # style_guide_folder
-  # for books where multiple documents with same style are used, like chapters
-  # text_styles are put in style_guide_folder
-  
-  class  StyleableArticle
-    attr_reader :style_guide_folder
-    attr_reader :document_path, :paper_size, :width, :height
+  class StyleablePage
+    attr_reader :document_path, :style_guide_folder
+    attr_reader :page_content
+    attr_reader :paper_size, :width, :height
+    attr_reader :pdf_page
     attr_reader :document
-    attr_reader :page_pdf
-    attr_reader :starting_page_number
-    attr_reader :output_path
-
     def initialize(options={})
       @document_path = options[:document_path]
-      @style_guide_folder = options[:style_guide_folder] || @document_path
-      @starting_page_number  = options[:starting_page_number] || 1
-      @output_path = options[:output_path] || @document_path + "/chapter.pdf"
-      @page_pdf =  options[:page_pdf] || true
-      if options[:book_info]
-        @book_info      = options[:book_info]
-        @paper_size     = @book_info[:paper_size] || "A5"
-        @book_title     = @book_info[:tittle] || "untitled"
-      else
-        @paper_size     = options[:paper_size] || "A5"
-        @book_title     = options[:book_tittle] || "untitled"
-      end      
+      @pdf_page = options[:pdf_page]
+      @paper_size = options[:paper_size] || 'A4'
       set_width_and_height_from_paper_size
-      load_text_style
+      @style_guide_folder = options[:style_guide_folder] || @document_path
       load_layout_rb
+      load_text_style
       @document = eval(@layout_rb)
       @document.local_image_path = local_image_path
-      load_content
-      @document.save_pdf(output_path)
+      load_page_content
+      @document.set_page_content(@page_content)
+      @document.save_pdf(output_path, pdf_page:@pdf_page)
       self
     end
 
     def local_image_path
       @document_path + "/images"
     end
-
+    # set width and height from @paper_size
     def set_width_and_height_from_paper_size
       if SIZES[@paper_size]
         @width = SIZES[@paper_size][0]
@@ -74,27 +39,43 @@ module RLayout
       end
     end
 
-    def save_text_style
-      File.open(text_style_path, 'w'){|f| f.write default_text_style} unless File.exist?(text_style_path)
+    def style_klass_name
+      camel_cased_word = self.class.to_s.split("::")[1]
+      underscore camel_cased_word
+    end
+
+    def output_path
+      @document_path + "/output.pdf"
+    end
+
+    def page_content_path
+      @document_path + "/content.yml"
+    end
+
+    def load_page_content
+      if File.exist?(content_path)
+        @page_content = YAML::load_file(content_path)
+      else
+        @page_content = default_page_content
+        File.open(content_path, 'w'){|f| f.write default_page_content}
+      end
+      @document.set_page_content if @document && @document.class == RLayout::CoverPage
     end
 
     def text_style_path
-      @document_path + "/text_style.yml"
-    end
-    
-    def save_text_style
-      File.open(text_style_path, 'w'){|f| f.write default_text_style} unless File.exist?(text_style_path)
-    end
-
-    def style_guide_text_style_path
       @style_guide_folder + "/#{style_klass_name}_text_style.yml"
     end
 
-    def save_style_guide
-      FileUtils.mkdir_p(@style_guide_folder) unless File.exist?(@style_guide_folder)
-      File.open(style_guide_text_style_path, 'w'){|f| f.write self.default_text_style} unless File.exist?(style_guide_text_style_path)
+    def load_text_style
+      if File.exist?(text_style_path)
+        RLayout::StyleService.shared_style_service.current_style = YAML::load_file(text_style_path)
+      else
+        RLayout::StyleService.shared_style_service.current_style = YAML::load(default_text_style)
+        FileUtils.mkdir_p(@style_guide_folder) unless File.exist?(@style_guide_folder)
+        File.open(text_style_path, 'w'){|f| f.write default_text_style}
+      end
     end
-    
+
     def style_klass_name
       camel_cased_word = self.class.to_s.split("::")[1]
       underscore camel_cased_word
@@ -108,64 +89,36 @@ module RLayout
         downcase
     end
 
-    # 1. check if there is local_text_style file
-    # 2. check if there is style_guide_text_style_path file
-    # 3. save default_text_style to style_guide_text_style_path
-    # to override global style, copy text_style file to local folder
-    # if style_guide_folder is not given, style_guide_folder is set to document_folder
-    #   - this is useful when designing single unit documents
-    def load_text_style
-      if File.exist?(style_guide_text_style_path)
-        RLayout::StyleService.shared_style_service.current_style = YAML::load_file(style_guide_text_style_path)
-      else
-        RLayout::StyleService.shared_style_service.current_style = YAML::load(default_text_style)
-        save_style_guide
-        # File.open(style_guide_text_style_path, 'w'){|f| f.write default_text_style}
-      end
-    end
-
-    def style_guide_layout_path
-      @style_guide_folder + "/#{style_klass_name}_layout.rb"
+    def layout_rb_path
+      @document_path + "/layout.rb"
     end
 
     def load_layout_rb
-      if File.exist?(style_guide_layout_path)
-        @layout_rb = File.open(style_guide_layout_path, 'r'){|f| f.read}
+      if File.exist?(layout_rb_path)
+        @layout_rb = File.open(layout_rb_path, 'r'){|f| f.read}
       else
         @layout_rb = default_layout_rb
-        File.open(style_guide_layout_path, 'w'){|f| f.write default_layout_rb}
+        File.open(layout_rb_path, 'w'){|f| f.write default_layout_rb}
       end
     end
 
-    def width_ratio
-      @width/SIZES['A4'][0]
+    def default_layout_rb
+      <<~EOF
+      RLayout::CoverPage::new(width:#{@width}, height:#{@height})
+
+      EOF
     end
 
-    def title_relative_size
-      24*width_ratio.to_i
-    end
+    def default_page_content
+      <<~EOF
+      ---
 
-    def subtitle_relative_size
-      20*width_ratio.to_i
-    end
+      title: 여기는 제목
+      subtitle: 여기는 부제목
+      author: 여기는 저자명
 
-    def author_relative_size
-      16*width_ratio.to_i
+      EOF
     end
-
-    def quote_relative_size
-      18*width_ratio.to_i
-    end
-
-    def page_count
-      @document.pages.length
-    end
-
-    # def default_layout_rb
-    #   s=<<~EOF
-    #   RLayout::RDocument.new(width:#{@width}, heihgt:#{@height})
-    #   EOF
-    # end
 
     def default_text_style
       <<~EOF
@@ -801,49 +754,8 @@ module RLayout
       
     end
     
-    #################  doc_info ##############
-
-    def doc_info_path
-      @document_path + "/doc_info.yml"
-    end
-
-    def default_doc_info
-      h=<<~EOF
-      ---
-      paper_size: #{@paper_size}
-      doc_type: #{self.class}
-      EOF
-    end
-
-    def save_doc_info
-      File.open(doc_info_path, 'w'){|f| f.write default_doc_info} unless File.exist?(doc_info_path)
-    end
-
-    #################  Rakefile ##############
-
-    def rakefile_path
-      @document_path + "/Rakefile"
-    end
-    
-    def save_rakefile
-      File.open(rakefile_path, 'w'){|f| f.write rakefile} unless File.exist?(rakefile_path)
-    end
-
-    def rakefile
-      s=<<~EOF
-      require 'rlayout'
-      
-      task :default => [:generate_pdf]
-      
-      desc 'generate pdf'
-      task :generate_pdf do
-        document_path = File.dirname(__FILE__)
-        #{self.class}.new(document_path:document_path)
-      end
-      
-      EOF
-    end
 
   end
+
 
 end

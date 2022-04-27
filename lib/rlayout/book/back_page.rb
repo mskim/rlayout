@@ -4,7 +4,7 @@ module RLayout
   # Replica of front cover image
   # use RCover
   # 
-  class BackPage < StyleableDoc
+  class BackPage < StyleablePage
     attr_reader :book_cover_folder, :document_path, :book_info, :pdf_page
 
     def initialize(options={})

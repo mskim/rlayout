@@ -47,7 +47,7 @@ module RLayout
       @book_info = options[:book_info]
       @project_path = options[:project_path]
       @source_path = options[:source_path]
-      @style_guide_path = File.dirname(@source_path) + "/_style_guide"
+      @style_guide_folder = File.dirname(@source_path) + "/_style_guide"
       @portrait  = options[:portrait] || true
       @has_no_cover_inside_page = options[:has_no_cover_inside_page]
       @has_no_wing = options[:has_no_wing]

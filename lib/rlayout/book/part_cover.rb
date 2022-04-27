@@ -11,7 +11,7 @@ module RLayout
       @order = options[:order] || '01'
       @order = options[:order] || '01'
       super
-      @document.set_contents_for_area(part_cover_data)
+      @document.set_page_content(part_cover_data)
       @document.save_pdf(output_path, page_pdf:true, jpg:true)
       save_toc
     end

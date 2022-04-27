@@ -318,8 +318,16 @@ module RLayout
         @string = s.sub(/#\s?/, "")
       elsif s =~/^##\s/ || s =~/^==\s/
         @markup = "h#{1 + starting_heading_level}"
-        s = text_block.join("\n")
-        @string = s.sub(/##\s/, "")
+        if text_block[1] =~/\{/
+          # undo single and double smart quote from smarty pants
+          # smart quotes raises error when evaling to hash !!!
+          @extra_info = text_block[1].gsub("‘", "\'").gsub("’", "\'").gsub("“", "\"").gsub("”", "\"")
+          @string = text_block[0].sub(/##\s/, "")
+        else
+          s = text_block.join("\n")
+          @string = s.sub(/##\s/, "")
+        end
+
       elsif s =~/^###\s/ || s =~/^===\s/
         @markup = "h#{2 + starting_heading_level}"
         @string = s.sub(/^###\s/, "")
@@ -393,7 +401,7 @@ module RLayout
       # elsif markup == "image"
       #   {:markup =>markup, :string=>@string}
       else
-        {:markup =>@markup, :para_string=>@string}
+        {:markup =>@markup, :para_string=>@string, :extra_info=>@extra_info}
       end
     end
 

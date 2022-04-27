@@ -51,7 +51,7 @@ module RLayout
         @paper_size     = options[:paper_size] || "A5"
         @book_title     = options[:book_tittle] || "untitled"
       end      
-      size_from_paper_size
+      set_width_and_height_from_paper_size
       load_text_style
       load_layout_rb
       if @layout_rb
@@ -64,12 +64,16 @@ module RLayout
           puts "Not a @document kind created !!!"
           return
         end
+        @document.local_image_path = local_image_path
       end
       self
     end
 
+    def local_image_path
+      @document_path + "/images"
+    end
     # set width and height from @paper_size
-    def size_from_paper_size
+    def set_width_and_height_from_paper_size
       if SIZES[@paper_size]
         @width = SIZES[@paper_size][0]
         @height = SIZES[@paper_size][1]

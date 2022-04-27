@@ -25,6 +25,7 @@ require File.dirname(__FILE__) + "/rlayout/base/container"
 require File.dirname(__FILE__) + "/rlayout/base/rjob"
 require File.dirname(__FILE__) + "/rlayout/base/styleable_doc"
 require File.dirname(__FILE__) + "/rlayout/base/styleable_article"
+require File.dirname(__FILE__) + "/rlayout/base/styleable_page"
 require File.dirname(__FILE__) + "/rlayout/base/text_area"
 require File.dirname(__FILE__) + "/rlayout/base/cover_page"
 

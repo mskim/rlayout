@@ -5,11 +5,12 @@ describe 'create FrontWing' do
   before do
     @project_path  = "#{ENV["HOME"]}/test_data/book_cover/front_wing"
     @pdf_path = "#{ENV["HOME"]}/test_data/book_cover/front_wing/output.pdf"
-    @back_bing = FrontWing.new(project_path: @project_path)
+    @wing = FrontWing.new(document_path: @project_path)
+    FileUtils.mkdir_p(@project_path) unless File.exist?(@project_path)
   end
 
   it 'should create FrontWing' do
-    assert_equal RLayout::FrontWing, @back_bing.class 
+    assert_equal RLayout::FrontWing, @wing.class 
   end
 
   it 'should create FrontWing' do

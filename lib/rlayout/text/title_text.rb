@@ -99,6 +99,9 @@ module RLayout
       space_glyph             = @font_wrapper.decode_utf8(" ").first
       @space_width            = @style_object.scaled_item_width(space_glyph)
       @line_height            = @style_object.font_size
+      unless @body_line_height
+        @body_line_height == @line_height
+      end
       # @line_height            = @font_wrapper[:font_size] + @line_space
       @current_line           = RLineFragment.new(parent:self, contnet_source: self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, style_name: @style_name, para_style: @para_style,  text_alignment: @text_alignment, space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
       @current_line_y         +=@current_line.height + @text_line_spacing
@@ -196,7 +199,7 @@ module RLayout
       #   @height = @height_in_lines*@body_line_height + @bottom_margin - 2
       #   return
       # end
-      natural_height          =  @top_margin + @top_inset +  line_height_sum + @bottom_inset + @bottom_margin if line_height_sum
+      natural_height          =  @top_margin + @top_inset +  line_height_sum + @bottom_inset + @bottom_margin + @space_after if line_height_sum
       body_height_multiples   = natural_height/@body_line_height
       @height_in_lines        = body_height_multiples.to_i
       float_delta             = body_height_multiples - body_height_multiples.to_i

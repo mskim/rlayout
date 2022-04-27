@@ -1,88 +1,62 @@
 module RLayout
-
-  # The goad is to create a design system where designers can create flexable book cover design using scrpt,
-  # And allow others to reuse them, instead of manually creating designing each and every time with Illustrator.
-  
-  # front_page
-  # CoverPage is used to set place holder for TextAreas.
-  # With CoverPage, place holder for heading, qrcode, box_1, box_2, box3, box_4, and box_5 can ne set using &block syntex.
-  # An instances of TextAreas are created by &block like following
-
-  # RLayout::CoverPage.new(paper_size: 'A4') do
-  #   heading(1,1,6,10)
-  #   box_1(1,10,1,1)
-  #   qrcode(10,10, 1,1)
-  # end
-  # The numbers represents grid_x, grid_y, grid_width, grid_height
-
-  # Contents of these TextArea are set by calling @document.set_contents_for_area(front_page_data)
-  #  where front_page_data is nested hash for each TextAreas
-  #  ---
-  # :heading:
-  #   :title: cover title goes here
-  #   :subtitle: cover subtitle goes here
-  #   :author: author name goes here
-  # :box_1:
-  #   :title: box title goes here
-  #   :subtitle: box subtitle goes here
-  #   :body: box body goes here
-  # :qrcode:
-  #   :image_path: /some/qrcode/image_path.jpg
-
-  class FrontPage < StyleableDoc
-    attr_reader :book_cover_folder, :book_info, :pdf_page
+  class FrontPage < StyleablePage
+    attr_reader :book_info
 
     def initialize(options={})
-      options[:starting_page_side] = :left_side
-      super
-
-      @pdf_page = options[:pdf_page]
-      @book_cover_folder = options[:book_cover_folder] || @document_path
-      FileUtils.mkdir_p(@book_cover_folder) unless File.exist?(@book_cover_folder)
-      FileUtils.mkdir_p(@document_path) unless File.exist?(@document_path)
       @book_info = options[:book_info]
-      read_content
-      # @document.set_content(@content)
-      @document.set_contents_for_area(@content)
-      @document.save_pdf(output_path, pdf_page: @pdf_page, jpg:true)
+      super
       self
-    end
-
-    def page_count
-      1
-    end
-
-    def source_content_path
-      @book_cover_folder + "/#{style_klass_name}_content.yml"
     end
 
     def output_path
       @document_path + "/output.pdf"
     end
 
-    def read_content
-      if File.exist?(source_content_path)
-        @content = YAML::load_file(source_content_path)
-      else
-        @content = front_page_content
-        File.open(source_content_path, 'w'){|f| f.write @content.to_yaml}
-      end
+    def content_path
+      @document_path + "/story.md"
     end
-    
-    def front_page_content
-      heading = {}
-      heading[:title] = @book_info[:title]
-      heading[:subtitle] = @book_info[:subtitle]
-      heading[:author] = @book_info[:author]
-      heading[:publisher] = @book_info[:publisher] if @book_info[:publisher]
+
+    def load_page_content
+      if File.exist?(content_path)
+        @page_content = YAML::load_file(content_path)
+        File.open(content_path, 'r'){|f| f.read content_path}
+      else
+        @page_content = default_page_content
+        File.open(content_path, 'w'){|f| f.write default_page_content}
+      end
+      @document.set_page_content
+    end
+
+    def default_page_content
+
+      <<~EOF
+      ---
+      title : 홍길동
+      profile_image: 1.jpg
+
+      ---
+
+      홍길동은 서자의 아들로 태어나 아버지를 아버라고 부르지 못하는 한을 안고 살아온 사람이다.book_info
+      후세에 홍길동은 여러 책내용의 예재 저자 이름으로 사용 되고 있다.
+      홍길동은 서자의 아들로 태어나 아버지를 아버라고 부르지 못하는 한을 안고 살아온 사람이다.book_info
+      후세에 홍길동은 여러 책내용의 예재 저자 이름으로 사용 되고 있다.
+
+
+      홍길동은 서자의 아들로 태어나 아버지를 아버라고 부르지 못하는 한을 안고 살아온 사람이다.book_info
+      후세에 홍길동은 여러 책내용의 예재 저자 이름으로 사용 되고 있다.
+      홍길동은 서자의 아들로 태어나 아버지를 아버라고 부르지 못하는 한을 안고 살아온 사람이다.book_info
+      후세에 홍길동은 여러 책내용의 예재 저자 이름으로 사용 되고 있다.
       
-      box_1 = {}
-      box_1[:subtitle] = "some text"
-      box_1[:body] = "some body text. "*5
+
+      홍길동은 서자의 아들로 태어나 아버지를 아버라고 부르지 못하는 한을 안고 살아온 사람이다.book_info
+      후세에 홍길동은 여러 책내용의 예재 저자 이름으로 사용 되고 있다.
+      홍길동은 서자의 아들로 태어나 아버지를 아버라고 부르지 못하는 한을 안고 살아온 사람이다.book_info
+      후세에 홍길동은 여러 책내용의 예재 저자 이름으로 사용 되고 있다.
       
-      h = {}
-      h[:heading] = heading
-      front_page_content = h
+
+
+
+      EOF
     end
 
     def cover_spread_pdf_path

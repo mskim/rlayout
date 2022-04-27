@@ -46,6 +46,39 @@ module RLayout
       end
     end
 
+    
+    # TODO make it customizable
+    def personal(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:tag] = "personal"
+      h[:grid_frame]  = grid_frame
+      h[:content]  = @personal_info
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      @personal_object = RLayout::TextArea.new(h)
+    end
+
+    # TODO make it customizable
+    def company(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:grid_frame]  = grid_frame
+      h[:tag] = "company"
+      h[:content]  = @company_info
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      @company_object =  RLayout::TextArea.new(h)
+    end
+
+
+    def en_qrcode(grid_frame, options={})
+      h = {}
+      h[:parent] = self
+      h[:grid_frame]  = grid_frame
+      # TODO set frame rect
+      h[:tag] = "en_qrcode"
+      # h[:image_path] = options[:qrcode_path] || 'temp_path'
+      @en_qrcode_object = RLayout::Image.new(h)
+    end
     def default_text_style
       s=<<~EOF
       ---
@@ -185,37 +218,5 @@ module RLayout
 
     end
 
-    # TODO make it customizable
-    def personal(grid_frame, options={})
-      h = {}
-      h[:parent] = self
-      h[:tag] = "personal"
-      h[:grid_frame]  = grid_frame
-      h[:content]  = @personal_info
-      h[:fill_color]  = options[:fill_color] || 'clear'
-      @personal_object = RLayout::TextArea.new(h)
-    end
-
-    # TODO make it customizable
-    def company(grid_frame, options={})
-      h = {}
-      h[:parent] = self
-      h[:grid_frame]  = grid_frame
-      h[:tag] = "company"
-      h[:content]  = @company_info
-      h[:fill_color]  = options[:fill_color] || 'clear'
-      @company_object =  RLayout::TextArea.new(h)
-    end
-
-
-    def en_qrcode(grid_frame, options={})
-      h = {}
-      h[:parent] = self
-      h[:grid_frame]  = grid_frame
-      # TODO set frame rect
-      h[:tag] = "en_qrcode"
-      # h[:image_path] = options[:qrcode_path] || 'temp_path'
-      @en_qrcode_object = RLayout::Image.new(h)
-    end
   end
 end

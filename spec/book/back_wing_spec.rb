@@ -3,9 +3,9 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create BackWing' do
   before do
-    @project_path  = "#{ENV["HOME"]}/test_data/book_cover/back_wing"
+    @document_path  = "#{ENV["HOME"]}/test_data/book_cover/back_wing"
     @pdf_path = "#{ENV["HOME"]}/test_data/book_cover/back_wing/output.pdf"
-    @back_bing = BackWing.new(project_path: @project_path)
+    @back_bing = BackWing.new(document_path: @document_path)
   end
 
   it 'should create BackWing' do

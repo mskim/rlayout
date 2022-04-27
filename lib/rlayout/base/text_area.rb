@@ -31,10 +31,10 @@ module RLayout
     # set_content can be called at intialization time if @content is not nil
     # or called as batch mode with content is passed as options content: content
     # this is to support batch mode with  csv file.
-    def set_content(new_content)
+    def set_content(content_hash)
       @graphics = []
       y_position = 3
-      new_content.each do |k,v|
+      content_hash.each do |k,v|
         h = {}
         h[:parent] = self
         h[:style_name] = 'body'

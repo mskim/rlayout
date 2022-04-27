@@ -706,11 +706,6 @@ module RLayout
 
     ########### PageScritp Verbs #############
 
-    # def text_box(options={}, &block)
-    #   options[:parent] = self
-    #   @main_box = RTextBox.new(options) unless @main_box
-    # end
-
     # def toc_table(options={}, &block)
     #   options[:parent] = self
     #   @main_box = TocTable.new(options) unless @main_box

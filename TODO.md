@@ -28,8 +28,44 @@
 
   - line_type
   - arrow_type
+### 2022_04_27
+
+  - left_side_bar
+  - right_side_bar
+
+```
+  ## 내가 살아 가는 법
+  {side_image: book_1.jpg}
+```
+
+  - fix paragraph layout to handle it
+    - when parsing story, add hash to extra_info
+  - add {side_image: local_image_path}
+
+### 2022_04_26
+  StyleablePage used content.yml
+  - FrontPage < StyleablePage
+  - BackPage < StyleablePage
+
+  StyleableArticle used story.md
+  - FrontWing <  StyleableArticle
+      - profile_image: author.jpg
+
+  - BackWing <  StyleableArticle
+    - ## book_promo: book_1
+
+    - book_promo
+    - markup with ## profile:
+    - markup with ## item:
+    - markup with ## table:
+
+  - update namecard with CoverPage and StyleablePage
 
 
+
+  - for github pages
+    - chnage  docs to _ebook folder
+    - create gh-page
 ### 2022_04_21
   - get rid of gem rqrcode-
   - add wing to ebook front_page
@@ -42,7 +78,7 @@
       separate book.md into \d\d files and book_info.yml
 ### 2022_04_20
   - StyleablePage
-      style_guide_path
+      style_guide_folder
       document_path
       super
       load_layout_rb
@@ -270,8 +306,10 @@
     TopHeading HeadingContainer?
       - free formatted horizontal heading that is place at the top of page.
       - study_book, newspaper catalog_heading
+
 ### 2022_02_25
-    - rename StyleablePage to CoverPage
+    - add StyleablePage
+    - add CoverPage
     - rename StyleableNewsArticle to StyleableArticle
 
 ### 2022_02_16
