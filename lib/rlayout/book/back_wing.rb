@@ -134,7 +134,7 @@ module RLayout
 
 
       ## 내가 살아 가는 법
-      {:side_image=> 'book_1.jpg'}
+      {side_image: 'book_1.jpg'}
 
       이책은 홍긱동의 첫번째 소설로 30만부 
       판매된 인기 소설 입니다. 이책은 홍긱동의 첫번째 소설로 30 만부 판매된 인기 소설 입니다. 
@@ -142,7 +142,7 @@ module RLayout
 
 
       ## 우리가 살아 가는 법
-      {:side_image=> 'book_2.jpg'}
+      {side_image: 'book_2.jpg'}
 
       이책은 홍긱동의 첫번째 소설로 30만부 
       판매된 인기 소설 입니다. 이책은 홍긱동의 첫번째 소설로 30 만부 판매된 인기 소설 입니다. 
@@ -150,7 +150,7 @@ module RLayout
 
 
       ## 니가 살아 가는 법
-      {:side_image=> 'book_3.jpg'}
+      {side_image: 'book_3.jpg'}
 
       이책은 홍긱동의 첫번째 소설로 30만부 
       판매된 인기 소설 입니다. 이책은 홍긱동의 첫번째 소설로 30 만부 판매된 인기 소설 입니다. 
@@ -167,7 +167,7 @@ module RLayout
         font_family: Shinmoon
         font: Shinmoon
         font_size: 9.8
-        first_line_indent: 9.8
+        first_line_indent: 0
         text_color: CMYK=0,0,0,100
         text_alignment: justify
         tracking: -0.4
@@ -177,7 +177,6 @@ module RLayout
         space_before_in_lines:
         space_after_in_lines:
         box_attributes: ''
-
       body_gothic:
         korean_name: 본문고딕
         category:
@@ -198,9 +197,9 @@ module RLayout
         graphic_attributes: ''
       running_head:
         korean_name: 본문중제
-        font_family: KoPub돋움체_Pro Medium
-        font: KoPubDotumPM
-        font_size: 9.6
+        font_family: KoPub돋움체_Pro Bold
+        font: KoPubDotumPB
+        font_size: 11
         text_color: CMYK=0,0,0,100
         text_alignment: left
         tracking: -0.2
