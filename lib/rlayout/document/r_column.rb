@@ -26,6 +26,7 @@ module RLayout
     attr_accessor :complex_rect, :align_body_text, :show_grid_rects
     attr_accessor :article_bottom_space_in_lines
     attr_accessor :column_type, :empty_lines
+    attr_reader  :left_side_bar, :right_side_bar
 
     def initialize(options={}, &block)
       options[:width]     = 200 unless options[:width]
@@ -33,6 +34,8 @@ module RLayout
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
+      @left_side_bar = options[:left_side_bar] 
+      @right_side_bar = options[:right_side_bar] 
       @empty_lines          = options[:empty_lines] || false
       @column_type          = options[:column_type] || 'regular_column'
       @current_line_index   = 0
@@ -127,6 +130,11 @@ module RLayout
       previoust_line = nil
       @line_count.times do
         options = {parent:self, x: current_x, y: current_y , width: line_width, height: @body_line_height}
+        if @left_side_bar
+          options = {parent:self, x: current_x + @left_side_bar, y: current_y , width: line_width - @left_side_bar, height: @body_line_height}
+        elsif @left_side_bar
+          options = {parent:self, x: current_x, y: current_y , width: line_width - @right_side_bar, height: @body_line_height}
+        end
         line = RLineFragment.new(options)        # @graphics << line
         previoust_line.next_line = line if previoust_line
         current_y += @body_line_height
@@ -188,13 +196,6 @@ module RLayout
       @graphics[next_line_index..-1].each do |line|
         return line if line.has_text_room?
       end
-      # TODO 
-      # if @parent.class == NewsArticleBox
-      #   @overflow_column
-      # else
-      #   do something
-      # end
-      # @parent.next_text_line(self)
       nil
     end
 
@@ -357,40 +358,6 @@ module RLayout
       @current_position += y_amount
     end
 
-    # update current_grid_index after paragraph is placed
-    def advance_current_grid_index_with_y_position(y_amount)
-      unless @grid_rects
-        create_grid_rects
-      end
-      grid_avance_count = y_amount/@grid_rects.first.rect[3]
-      int_amount = grid_avance_count.to_i
-      if (grid_avance_count - int_amount) < 0.1
-        @current_grid_index += int_amount
-      else
-        @current_grid_index += int_amount + 1
-      end
-    end
-
-    # create grid_rects after relayou!
-    # make sure the grids are created after adjusting the column size for the final layout
-    def create_grid_rects(options={})
-      if options[:show_grid_rects] == false
-        @show_grid_rects == false
-      end
-      @grid_rects = []
-      column_rect = text_rect
-      x     = column_rect[0] # text_box cordinate
-      y     = column_rect[1] # text_box cordinate
-      width = column_rect[2]
-      height = @body_line_height/2
-      grid_height_sum = 0
-      while (y + height) < column_rect[3]
-        @grid_rects << GridRect.new([x,y,width, height])
-        y += height
-        grid_height_sum += height
-      end
-    end
-
     def overlapping_rects
       overlapping_rects = []
       @grid_rects.each do |rect|
@@ -507,92 +474,6 @@ module RLayout
           end
         end
       end
-    end
-
-  end
-
-
-  # GridRect has two rectangle, rect and text_area
-  # rect represents the position of grid_rect in TexBox cordinate.
-  # rect is used to determine the overlappings with floats, which are in TexBox cordinate.
-  # and text_area represents non overlapping area for text layout in RColumn cordinate(local cordinate)
-  # We have a case where the grid_rect is fully_covered covered by the float.
-  # We also have a case where the grid_rect is partially covered on the left or right side
-  # We also have a case where it is coverd in the middle, with room at each sides
-  # for this case, I am taking the larger area, and ignoreing the smaller area. it is TODO.
-  class GridRect
-    attr_accessor :rect, :text_area, :overlap, :fully_covered
-    def initialize(rect)
-      @rect = rect
-      @text_area = @rect.dup
-      @text_area[0] = 0 # make it a local cordinate
-      @overlap = false
-      @fully_covered = false
-      self
-    end
-
-    def draw_grid_rect
-      grid_rect = NSMakeRect(@text_area[0], @text_area[1], @text_area[2], @text_area[3])
-      path = NSBezierPath.bezierPathWithRect(grid_rect)
-      path.setLineWidth(1)
-      path.stroke
-    end
-
-    #TODO refoctor this ############
-    def min_x(rect)
-      rect[0]
-    end
-
-    def min_y(rect)
-      rect[1]
-    end
-
-    def mid_x(rect)
-      rect[0] + rect[2]/2
-    end
-
-    def mid_y(rect)
-      rect[1] + rect[3]/2
-    end
-
-    def max_x(rect)
-      rect[0] + rect[2]
-    end
-
-    def max_y(rect)
-      rect[1] + rect[3]
-    end
-
-    def contains_rect(rect_1,rect_2)
-      (rect_1[0]<=rect_2[0] && max_x(rect_1) >= max_x(rect_2)) && (rect_1[1]<=rect_2[1] && max_y(rect_1) >= max_y(rect_2))
-    end
-
-    def intersects_x(rect1, rect2)
-      (max_x(rect1) > rect2[0] && max_x(rect2) > rect1[0]) || (max_x(rect2) > rect1[0] && max_x(rect1) > rect2[0])
-    end
-
-    def intersects_y(rect1, rect2)
-      (max_y(rect1) > rect2[1] && max_y(rect2) > rect1[1]) || (max_y(rect2) > rect1[1] && max_y(rect1) > rect2[1])
-    end
-
-    def intersects_rect(rect_1, rect_2)
-      intersects_x(rect_1, rect_2) && intersects_y(rect_1, rect_2)
-    end
-
-    def set_line_as_fully_covered
-      @fully_covered = true
-      @text_area = @rect.dup
-      @text_area[0] = 0
-      @text_area[2] = 0
-      @room = 0
-    end
-
-    def fully_covered?
-      @fully_covered == true
-    end
-
-    def overlap?
-      @overlap == true
     end
 
   end
