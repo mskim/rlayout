@@ -69,7 +69,8 @@ module RLayout
       @grid = options[:grid_size] || [6,12]
       @paper_size = options[:paper_size] || "A4"
       options[:width] = SIZES[@paper_size][0]  unless options[:width]
-      options[:height] = SIZES[@paper_size][1] unless options[:height]
+      options[:height] = SIZES[@paper_size][1]  unless options[:height]
+      
       unless options[:left_margin]
         options[:margin] =  options[:margin] || 10
       end
@@ -91,18 +92,13 @@ module RLayout
       EOF
     end
 
-    def default_text_style
-
-
-
-    end
-
-
     # look for TextArea objects with key and set value
     def set_page_content(content_hash)
+      binding.pry
       content_hash.each do |k,v|
         target = find_by_name(k.to_s)
-        target.set_content(v) if target.class  == RLayout::TextArea
+        target.set_content(v) if target.class  == RLayout::TextArea || target.class  == RLayout::TextBar || target.class  == RLayout::TextBarV
+        # target.set_content(v, style_name:  k.to_s) if target.class  == RLayout::Text
       end
     end
 
@@ -122,6 +118,44 @@ module RLayout
       RLayout::TextArea.new(h)
     end
 
+    # for creating undefined TextArea placeholder in CoverPage
+    def text_area_h(grid_x, grid_y, grid_width, grid_height, name, options={})
+      h = options.dup
+      h[:parent] = self
+      h[:tag] = name
+      h[:grid_frame]  = [grid_x, grid_y, grid_width, grid_height]
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      RLayout::TextAreaH.new(h)
+    end
+
+    # for creating undefined TextArea placeholder in CoverPage
+    def text_area_v(grid_x, grid_y, grid_width, grid_height, name, options={})
+      h = options.dup
+      h[:parent] = self
+      h[:tag] = name
+      h[:grid_frame]  = [grid_x, grid_y, grid_width, grid_height]
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      RLayout::TextAreaV.new(h)
+    end
+    # for creating undefined TextArea placeholder in CoverPage
+    def seneca_h(grid_x, grid_y, grid_width, grid_height, options={})
+      h = options.dup
+      h[:parent] = self
+      h[:tag] = 'seneca'
+      h[:grid_frame]  = [grid_x, grid_y, grid_width, grid_height]
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      RLayout::TextBar.new(h)
+    end
+
+    # for creating undefined TextArea placeholder in CoverPage
+    def seneca_v(grid_x, grid_y, grid_width, grid_height, options={})
+      h = options.dup
+      h[:parent] = self
+      h[:tag] = 'seneca'
+      h[:grid_frame]  = [grid_x, grid_y, grid_width, grid_height]
+      h[:fill_color]  = options[:fill_color] || 'clear'
+      RLayout::TextBarV.new(h)
+    end
     # for creating undefined Image  placeholder in CoverPage
     def image_area(grid_x, grid_y, grid_width, grid_height, name, options={})
       h = options.dup

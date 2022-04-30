@@ -11,14 +11,16 @@ module RLayout
       @pdf_page = options[:pdf_page]
       @paper_size = options[:paper_size] || 'A4'
       set_width_and_height_from_paper_size
+      @width = options[:width] if options[:width]
+      @height = options[:height] if options[:height]
       @style_guide_folder = options[:style_guide_folder] || @document_path
       load_layout_rb
       load_text_style
       @document = eval(@layout_rb)
-      @document.local_image_path = local_image_path
+      @document.document_path = @document_path
       load_page_content
       @document.set_page_content(@page_content)
-      @document.save_pdf(output_path, pdf_page:@pdf_page)
+      @document.save_pdf(output_path, pdf_page:@pdf_page, jpg:true)
       self
     end
 
@@ -48,7 +50,7 @@ module RLayout
       @document_path + "/output.pdf"
     end
 
-    def page_content_path
+    def content_path
       @document_path + "/content.yml"
     end
 
@@ -59,7 +61,7 @@ module RLayout
         @page_content = default_page_content
         File.open(content_path, 'w'){|f| f.write default_page_content}
       end
-      @document.set_page_content if @document && @document.class == RLayout::CoverPage
+      @document.set_page_content(@page_content) if @document && @document.class == RLayout::CoverPage
     end
 
     def text_style_path

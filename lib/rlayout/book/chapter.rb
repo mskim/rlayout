@@ -250,6 +250,7 @@ module RLayout
         layout_story
       end
       place_header_and_footer
+      # binding.pry
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
       @document.save_svg(@document_path) if @svg
       save_story_by_page if @story_by_page

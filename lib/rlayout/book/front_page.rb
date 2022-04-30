@@ -12,51 +12,28 @@ module RLayout
       @document_path + "/output.pdf"
     end
 
-    def content_path
-      @document_path + "/story.md"
-    end
-
     def load_page_content
       if File.exist?(content_path)
         @page_content = YAML::load_file(content_path)
-        File.open(content_path, 'r'){|f| f.read content_path}
       else
         @page_content = default_page_content
         File.open(content_path, 'w'){|f| f.write default_page_content}
       end
-      @document.set_page_content
+      @document.set_page_content(@page_content)
     end
 
     def default_page_content
-
       <<~EOF
       ---
-      title : 홍길동
-      profile_image: 1.jpg
+      heading:
+        title : 2022년에 책만들기
+        subtitle: 지난 40년간 해오던 편식방식을 개선하기
+        author: 김민수
 
       ---
-
-      홍길동은 서자의 아들로 태어나 아버지를 아버라고 부르지 못하는 한을 안고 살아온 사람이다.book_info
-      후세에 홍길동은 여러 책내용의 예재 저자 이름으로 사용 되고 있다.
-      홍길동은 서자의 아들로 태어나 아버지를 아버라고 부르지 못하는 한을 안고 살아온 사람이다.book_info
-      후세에 홍길동은 여러 책내용의 예재 저자 이름으로 사용 되고 있다.
-
-
-      홍길동은 서자의 아들로 태어나 아버지를 아버라고 부르지 못하는 한을 안고 살아온 사람이다.book_info
-      후세에 홍길동은 여러 책내용의 예재 저자 이름으로 사용 되고 있다.
-      홍길동은 서자의 아들로 태어나 아버지를 아버라고 부르지 못하는 한을 안고 살아온 사람이다.book_info
-      후세에 홍길동은 여러 책내용의 예재 저자 이름으로 사용 되고 있다.
       
-
-      홍길동은 서자의 아들로 태어나 아버지를 아버라고 부르지 못하는 한을 안고 살아온 사람이다.book_info
-      후세에 홍길동은 여러 책내용의 예재 저자 이름으로 사용 되고 있다.
-      홍길동은 서자의 아들로 태어나 아버지를 아버라고 부르지 못하는 한을 안고 살아온 사람이다.book_info
-      후세에 홍길동은 여러 책내용의 예재 저자 이름으로 사용 되고 있다.
-      
-
-
-
       EOF
+
     end
 
     def cover_spread_pdf_path

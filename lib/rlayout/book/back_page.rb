@@ -8,17 +8,9 @@ module RLayout
     attr_reader :book_cover_folder, :document_path, :book_info, :pdf_page
 
     def initialize(options={})
-      options[:starting_page_side] = :left_side
-      options[:page_type] = :column_text
+      # binding.pry
       super
-      @pdf_page = options[:pdf_page]
-      @book_cover_folder = options[:book_cover_folder] || @document_path
-      FileUtils.mkdir_p(@book_cover_folder) unless File.exist?(@book_cover_folder)
-      FileUtils.mkdir_p(@document_path) unless File.exist?(@document_path)
-      @book_info = options[:book_info]
-      read_content
-      @document.set_content(@content) if @content && @content != {}
-      @document.save_pdf(output_path, pdf_page: @pdf_page, jpg: true)
+     
       self
     end
 

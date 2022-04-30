@@ -5,7 +5,7 @@ module RLayout
   # single line uniform attributes text.
   class Text < Graphic
     attr_reader :text_string, :font_name, :font_size, :font_color, :tracking
-    attr_reader :text_style, :string_width
+    attr_reader :style_name, :string_width
     attr_accessor :text_alignment, :v_alignment, :text_fit_type
 
     def init_text(options={})
@@ -16,20 +16,41 @@ module RLayout
       @has_text       = true
       @text_fit_type  = options[:text_fit_type]   || 'normal' # fit_box_to_text
       @tracking       = options[:tracking]        || 0
-      @scale          = options[:scale]           || 100
-      if options[:para_style]
-        @para_style = options[:para_style]
-      else
-        @para_style = {}
-        @para_style[:font] = options[:font]            || 'KoPubBatangPM'
-        @para_style[:font_size] = options[:font_size] || 16
-        @para_style[:font_color] = options[:font_color] || 'black'
-        @para_style[:fill_color] = options[:fill_color] || 'clear'
-      end
-      unless  @para_style[:font]
-        @para_style[:font] = 'KoPubBatangPM'
-      end
+      @scale          = options[:scale]           || 10
+      @current_style_service = RLayout::StyleService.shared_style_service
+      @style_name = options[:style_name]
+      if @style_name
+        unless @current_style_service.current_style[@style_name]
+          @style_name = 'body'
+        end
+        @style_object = @current_style_service.style_object(@style_name, adjust_size: @adjust_size)
+        para_hash = @current_style_service.current_style[@style_name]
 
+      elsif options[:para_style]
+        if @adjust_size
+          @para_style[:font_size] += @adjust_size
+        end
+        @style_object = @current_style_service.style_object_from_para_style(options[:para_style])
+      else
+        @para_style             = {}
+        @para_style[:font]      = options.fetch(:font, 'KoPubBatangPM')
+        @para_style[:font_size] = options.fetch(:font_size, 16)
+        if @adjust_size
+          @para_style[:font_size] += @adjust_size
+        end
+        @style_object = @current_style_service.style_object_from_para_style(@para_style)
+        @text_alignment = 'left'
+      end
+      @starting_x             = @left_margin + @left_inset
+      @line_width             = @width - @starting_x - @right_margin - @right_inset
+      @font_wrapper           = @style_object.font
+      space_glyph             = @font_wrapper.decode_utf8(" ").first
+      @space_width            = @style_object.scaled_item_width(space_glyph)
+      @font_size = @style_object.font_size
+      if @text_fit_type == 'fit_box_to_text'
+        @height = @font_size*0.8
+      end
+      @line_height            = @style_object.font_size
       if options[:position] 
         @options = options[:position]
         set_position
@@ -45,10 +66,6 @@ module RLayout
     end
 
     def set_string_width
-      @current_style_service = RLayout::StyleService.shared_style_service
-      @font_name = @para_style[:font] || @para_style['font']
-      @para_style[:text_alignment] = @para_style[:text_alignment].to_sym if @para_style[:text_alignment]
-      @style_object = @current_style_service.style_object_from_para_style(@para_style) 
       @font_wrapper =  @style_object.font
       @font_size = @style_object.font_size
       glyphs        = @font_wrapper.decode_utf8(@text_string)
@@ -76,21 +93,27 @@ module RLayout
           canvas_font_name = canvas.font.wrapped_font.font_name
           canvas_font_size  = canvas.font_size
           canvas_fill_color = canvas.fill_color
-          if @font_name == canvas_font_name && @font_size == canvas_font_size
+          # TODO fix this
+          unless @style_name
+            @style_name = 'bpdy'
+          end
+          @style_object = @current_style_service.style_object(@style_name, adjust_size: @adjust_size)
+          @font_wrapper           = @style_object.font
+          @font_name              = @font_wrapper.wrapped_font.font_name
+          @font_size              = @style_object.font_size
+          space_glyph             = @font_wrapper.decode_utf8(" ").first
+
+          if @font_name == canvas_font_name && @font_size == canvas_font_size            
           elsif @font_name != canvas_font_name
-            font_file     = @font_folder + "/#{@font_name}.ttf"
-            doc           = canvas.context.document
-            font_wapper   = doc.fonts.add(font_file)
-            canvas.font(font_wapper, size: @font_size)
+            canvas.font(@font_wrapper, size: @font_size)
           elsif @font_size != canvas_font_size
             canvas.font(canvas.font, size: @font_size)
           end
         else
-          font_file     = @font_folder + "/Shinmoon.ttf"
-          font_file     = @font_folder + "/#{@font_name}.ttf" if @font_name
-          doc           = canvas.context.document
-          font_wapper   = doc.fonts.add(font_file)
-          canvas.font(font_wapper, size: @font_size)
+          @style_object = @current_style_service.style_object('body')
+          @font_wrapper           = @style_object.font
+          @font_size              = @style_object.font_size
+          canvas.font(@font_wrapper, size: @font_size)
         end
 
         f = flipped_origin
@@ -107,20 +130,20 @@ module RLayout
           @x_offset += @left_margin + @left_inset
         end
 
-        case @v_alignment
-        when 'top'
-        when 'center'
-          @y_offset -= (@height - @font_size)/3
-        when 'bottom'
-          @y_offset -= @height - @font_size
-        else
-        end
+        # case @v_alignment
+        # when 'top'
+        # when 'center'
+        #   @y_offset -= (@height - @font_size)/3
+        # when 'bottom'
+        #   @y_offset -= @height - @font_size
+        # else
+        # end
         # TODO do font_color
         if @font_color.class == String
           canvas.fill_color(RLayout::color_from_string(@font_color))
         end
-
-        canvas.text(@text_string, at: [@x_offset, @y_offset - @font_size])
+        # canvas.text(@text_string, at: [@x_offset, @y_offset + @font_size/2])
+        canvas.text(@text_string, at: [@x_offset, @y_offset])
       end
     end
 

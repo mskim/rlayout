@@ -64,7 +64,7 @@ module RLayout
           puts "Not a @document kind created !!!"
           return
         end
-        @document.local_image_path = local_image_path
+        # @document.local_image_path = local_image_path
       end
       self
     end

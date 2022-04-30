@@ -3,9 +3,14 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create Seneca' do
   before do
-    @project_path  = "#{ENV["HOME"]}/test_data/book_cover/seneca"
-    @pdf_path = "#{ENV["HOME"]}/test_data/book_cover/seneca/seneca.pdf"
-    @seneca = Seneca.new(project_path: @project_path)
+    @document_path  = "#{ENV["HOME"]}/test_data/book_cover/seneca"
+    @pdf_path = "#{ENV["HOME"]}/test_data/book_cover/seneca/output.pdf"
+
+    @document_path  = "#{ENV["HOME"]}/test_data/book_cover/build/book_cover/seneca"
+    @pdf_path       = "#{ENV["HOME"]}/test_data/book_cover/build/book_cover/seneca/output.pdf"
+    # @pdf_path = "#{ENV["HOME"]}/test_data/book_cover/seneca/output.pdf"
+    FileUtils.mkdir_p(@document_path) unless File.exist?(@document_path)
+    @seneca = Seneca.new(document_path: @document_path, height: 41)
   end
 
   it 'should create Seneca' do

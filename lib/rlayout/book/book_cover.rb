@@ -55,12 +55,12 @@ module RLayout
         FileUtils.mkdir_p(@project_path)
       end
       @book_info = options[:book_info]
-      @paper_size = @book_info[:paper_size]
+      @paper_size = @book_info['paper_size'] || @book_info[:paper_size]
       @page_width = SIZES[@paper_size][0]
       @height = SIZES[@paper_size][1]
       @seneca_width_in_cm = options[:seneca_width_in_cm] || 1.5
       @seneca_width = @seneca_width_in_cm*CENTI2POINT
-      @gripper_width_in_cm = options[:seneca_width_in_cm] || 1.0
+      @gripper_width_in_cm = options[:gripper_width_in_cm] || 1.0
       @gripper_height_in_cm = options[:gripper_height_in_cm] || 1.0
       @gripper_width = @gripper_width_in_cm*CENTI2POINT      
       @gripper_height = @gripper_height_in_cm*CENTI2POINT 
@@ -163,7 +163,7 @@ module RLayout
     end
 
     def create_back_wing
-      @back_wing = RLayout::BackWing.new(project_path:build_back_wing_folder,  width:@wing_width, height: @height)
+      @back_wing = RLayout::BackWing.new(document_path:build_back_wing_folder,  width:@wing_width, height: @height)
       @current_x += @wing_width
     end
 
@@ -189,7 +189,7 @@ module RLayout
       h = {}
       h[:document_path] = seneca_path
       h[:width] =  @height
-      h[:height] =  @seneca_widt 
+      h[:height] =  @seneca_width
       h[:style_guide_folder] = File.dirname(@source_path) + "/_style_guide/seneca"
       @seneca = RLayout::Seneca.new(h)
       # rotae PDF 90 degree
@@ -220,7 +220,7 @@ module RLayout
 
     def create_front_wing
       # part_path = @project_path + "/front_wing"
-      @front_wing = RLayout::FrontWing.new(project_path:build_front_wing_folder, width:@wing_width, height: @height)
+      @front_wing = RLayout::FrontWing.new(document_path:build_front_wing_folder, width:@wing_width, height: @height)
       @current_x += @wing_width
     end
 
