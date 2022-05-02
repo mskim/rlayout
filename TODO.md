@@ -28,6 +28,18 @@
 
   - line_type
   - arrow_type
+### 2022_05_01
+  - book.md single file sample
+  - update bookcheego CLI new template with single file
+### 2022_04_30
+
+  - add image
+    - mutiple images for page
+    - should go after ## 
+    - no text support for ## to add images on new page
+    - {image_path: '1.jpg', position: 3, size: [2,2]}
+    - {image_path: '2.jpg', position: 3, size: [2,2]}
+
 ### 2022_04_27
 
   - left_side_bar

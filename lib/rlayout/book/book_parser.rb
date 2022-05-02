@@ -58,7 +58,7 @@ module RLayout
       rescue => e
         puts "YAML Exception reading #filename: #{e.message}"
       end
-
+      update_book_info(@updated_metadata)
       reader = RLayout::Reader.new @contents, nil
       text_blocks = reader.text_blocks.dup
       @part_titles = []
@@ -90,8 +90,8 @@ module RLayout
             @title = first_line.split(":")[1]
             # save current doc
             front_matter_order_string = @front_matter_order.to_s.rjust(2,'0')
-            @front_matter_doc_foler = front_matter_folder + "/#{front_matter_order_string}_#{@doc_type}"
-            FileUtils.mkdir_p(@front_matter_doc_foler) unless File.exist?(@front_matter_doc_foler)
+            @front_matter_doc_folder = front_matter_folder + "/#{front_matter_order_string}_#{@doc_type}"
+            FileUtils.mkdir_p(@front_matter_doc_folder) unless File.exist?(@front_matter_doc_folder)
             @front_matter_order += 1
             front_matter_doc =<<~EOF
             ---
@@ -103,7 +103,8 @@ module RLayout
             while lines_block = text_blocks.shift do
               first_line = lines_block[0]
               if first_line =~PART_START || first_line =~DOC_START
-                doc_path =  @front_matter_doc_foler + "/story.md"
+                doc_path =  front_matter_folder + "/story.md"
+                FileUtils.mkdir_p(front_matter_folder) unless File.exist?(front_matter_folder)
                 File.open(doc_path, 'w'){|f| f.write front_matter_doc}
                 text_blocks.unshift(lines_block)
                 break
@@ -149,6 +150,13 @@ module RLayout
       update_part_titles if @part_titles.length > 0
     end
 
+    def update_book_info(book_info)
+      if File.exist?(book_info_path)
+        # book_info = YAML::load_file(book_info_path)
+      else
+       File.open(book_info_path, 'w'){|f| f.write book_info.to_yaml}
+      end
+    end
     # update book_info part
     def update_part_titles
       book_info = YAML::load_file(book_info_path)
