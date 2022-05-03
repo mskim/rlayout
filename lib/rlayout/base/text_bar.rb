@@ -43,7 +43,6 @@ module RLayout
         when 'bottom'
         else
           # center
-          # binding.pry
           top = (@height - object.height)/2
           object.y = top
         end

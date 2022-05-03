@@ -94,7 +94,6 @@ module RLayout
 
     # look for TextArea objects with key and set value
     def set_page_content(content_hash)
-      binding.pry
       content_hash.each do |k,v|
         target = find_by_name(k.to_s)
         target.set_content(v) if target.class  == RLayout::TextArea || target.class  == RLayout::TextBar || target.class  == RLayout::TextBarV
