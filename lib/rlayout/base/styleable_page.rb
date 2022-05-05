@@ -99,6 +99,7 @@ module RLayout
       if File.exist?(layout_rb_path)
         @layout_rb = File.open(layout_rb_path, 'r'){|f| f.read}
       else
+        FileUtils.mkdir_p(@document_path) unless File.exist?(@document_path)
         @layout_rb = default_layout_rb
         File.open(layout_rb_path, 'w'){|f| f.write default_layout_rb}
       end

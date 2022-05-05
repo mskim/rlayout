@@ -28,6 +28,9 @@
 
   - line_type
   - arrow_type
+### 2022_05_05
+  - add fix_text_to_area text_area
+    adjust styles to fit into given area
 ### 2022_05_01
   - book.md single file sample
   - update bookcheego CLI new template with single file

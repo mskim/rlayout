@@ -46,7 +46,7 @@ module RLayout
       super
       @book_info = options[:book_info]
       @project_path = options[:project_path]
-      @source_path = options[:source_path]
+      @source_path = options[:source_path] || File.dirname(@project_path) + "/book_cover"
       @style_guide_folder = File.dirname(@source_path) + "/_style_guide"
       @portrait  = options[:portrait] || true
       @has_no_cover_inside_page = options[:has_no_cover_inside_page]
@@ -54,8 +54,8 @@ module RLayout
       unless File.exist?(@project_path)
         FileUtils.mkdir_p(@project_path)
       end
-      @book_info = options[:book_info]
-      @paper_size = @book_info['paper_size'] || @book_info[:paper_size]
+      @book_info = options[:book_info] || {}
+      @paper_size = @book_info['paper_size'] || @book_info[:paper_size] || 'A4'
       @page_width = SIZES[@paper_size][0]
       @height = SIZES[@paper_size][1]
       @seneca_width_in_cm = options[:seneca_width_in_cm] || 1.5
@@ -148,8 +148,8 @@ module RLayout
     def copy_wing_contents
       FileUtils.mkdir_p(build_front_wing_folder) unless File.exist?(build_front_wing_folder)
       FileUtils.mkdir_p(build_back_wing_folder) unless File.exist?(build_back_wing_folder)
-      system("cp #{source_front_wing_text} #{build_front_wing_folder}/content.md")
-      system("cp #{source_back_wing_text} #{build_back_wing_folder}/content.md")    
+      system("cp #{source_front_wing_text} #{build_front_wing_folder}/story.md")
+      system("cp #{source_back_wing_text} #{build_back_wing_folder}/story.md")    
     end
 
     def create_pages_and_wings

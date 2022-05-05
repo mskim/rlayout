@@ -20,22 +20,34 @@ module RLayout
       @document_path + "/content.yml"
     end
 
-    def load_layout_rb
-      if File.exist?(layout_rb_path)
-        @layout_rb = File.open(layout_rb_path, 'r'){|f| f.read}
-      else
-        @layout_rb = default_layout_rb
-        File.open(layout_rb_path, 'w'){|f| f.write default_layout_rb}
-      end
-    end
+    # def load_layout_rb
+    #   if File.exist?(layout_rb_path)
+    #     @layout_rb = File.open(layout_rb_path, 'r'){|f| f.read}
+    #   else
+    #     @layout_rb = default_layout_rb
+    #     File.open(layout_rb_path, 'w'){|f| f.write default_layout_rb}
+    #   end
+    # end
     
-    def default_content
-      h = {}
-      h[:title] = "소설을 쓰고 있네"
-      h[:subtitle] = "정말로 소설을 쓰고 있네 그려"
-      h[:author] = "홍길동"
-      h[:publisher] = "활빈당출판"
-      h
+    # def default_content
+    #   h = {}
+    #   h[:title] = "소설을 쓰고 있네"
+    #   h[:subtitle] = "정말로 소설을 쓰고 있네 그려"
+    #   h[:author] = "홍길동"
+    #   h[:publisher] = "활빈당출판"
+    #   h
+    # end
+
+    def default_page_content
+      <<~EOF
+      ---
+      seneca:
+        title: 여기는 책제목
+        subtitle: 여기는 부제목
+        author: 홍길동
+        publisher: 할빈동
+
+      EOF
     end
 
     def default_layout_rb

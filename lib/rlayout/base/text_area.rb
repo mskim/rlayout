@@ -17,9 +17,10 @@ module RLayout
     attr_reader :content
     attr_reader :v_alignment
     attr_reader :tag
+    attr_reader :fit_text_to_area
 
     def initialize(options={})
-      @grid_frame = options[:grid_frame]
+      @fit_text_to_area = options[:fit_text_to_area] || false
       super
       @tag = options[:tag]
       @content = options[:content]
@@ -45,6 +46,13 @@ module RLayout
         h[:text_string] = v
         object = TitleText.new(h)
         y_position += object.height
+        fit_content_to_area
+      end
+
+      def fit_content_to_area
+        return unless @fit_text_to_area
+        # TODO
+        # puts "adjust height to fit content to area"
       end
     end
   end
