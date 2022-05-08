@@ -1,6 +1,6 @@
 module RLayout
   class BookPlan
-
+    attr_reader :project_path
     def initialize(project_path)
       @project_path =  project_path
       File.open(book_info_path, 'w'){|f| f.write sample_book_info}
