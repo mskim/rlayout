@@ -11,10 +11,10 @@ module RLayout
     def self.parse_book_plan(project_path)
       plan_path = project_path + "/book_plan.md"
       File.open(plan_path, 'r'){|f| f.read}
-      
+
     end
 
-    def book_plan_md_path
+    def book_plan_path
       @project_path + "/book_plan.md"
     end
 
