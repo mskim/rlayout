@@ -129,7 +129,6 @@ module RLayout
   end
 
   def color_from_string(color_string)
-    # binding.pry if color_string =~/^#/
     if color_string == nil || color_string==""
       return 'CMYK=0,0,0,0'
     end

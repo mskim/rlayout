@@ -58,7 +58,7 @@ module RLayout
       if File.exist?(content_path)
         @page_content = YAML::load_file(content_path)
       else
-        @page_content = default_page_content
+        @page_content = YAML::load(default_page_content)
         File.open(content_path, 'w'){|f| f.write default_page_content}
       end
       @document.set_page_content(@page_content) if @document && @document.class == RLayout::CoverPage

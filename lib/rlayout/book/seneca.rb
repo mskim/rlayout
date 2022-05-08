@@ -20,23 +20,15 @@ module RLayout
       @document_path + "/content.yml"
     end
 
-    # def load_layout_rb
-    #   if File.exist?(layout_rb_path)
-    #     @layout_rb = File.open(layout_rb_path, 'r'){|f| f.read}
-    #   else
-    #     @layout_rb = default_layout_rb
-    #     File.open(layout_rb_path, 'w'){|f| f.write default_layout_rb}
-    #   end
-    # end
-    
-    # def default_content
-    #   h = {}
-    #   h[:title] = "소설을 쓰고 있네"
-    #   h[:subtitle] = "정말로 소설을 쓰고 있네 그려"
-    #   h[:author] = "홍길동"
-    #   h[:publisher] = "활빈당출판"
-    #   h
-    # end
+    def load_page_content
+      if File.exist?(content_path)
+        @page_content = YAML::load_file(content_path)
+      else
+        @page_content = YAML::load(default_page_content)
+        File.open(content_path, 'w'){|f| f.write default_page_content}
+      end
+      @document.set_page_content(@page_content)
+    end
 
     def default_page_content
       <<~EOF
@@ -51,14 +43,9 @@ module RLayout
     end
 
     def default_layout_rb
-      # text(tag: 'title', font_size: 16, text_alignment: 'center', layout_length:2, fill_color: 'white')
-      # text(tag: 'subtitle', font_size: 10, text_alignment: 'center', layout_length:2)
-      # text(tag: 'author', font_size: 12)
-      # text(tag:  'publisher', font_size: 9)
-      # relayout!
       <<~EOF
-      RLayout::CoverPage.new(fill_color:'clear', width:#{@width}, height:#{@height}) do
-        seneca_h(0, 0, #{@width}, #{@height})
+      RLayout::CoverPage.new(fill_color:'clear', width:#{@width}, height:#{@height}, margin: 0) do
+        seneca_h(0, 0, 6, 12)
       end
 
       EOF

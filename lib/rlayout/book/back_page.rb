@@ -25,24 +25,45 @@ module RLayout
       @document_path + "/output.pdf"
     end
 
-    def read_content
-      if File.exist?(source_content_path)
-        @content = YAML::load_file source_content_path
-        # 
+    def load_page_content
+      if File.exist?(content_path)
+        @page_content = YAML::load_file(content_path)
       else
-        @content = default_content
-        File.open(source_content_path, 'w'){|f| f.write default_content.to_yaml}
+        @page_content = YAML::load(default_page_content)
+        File.open(content_path, 'w'){|f| f.write default_page_content}
       end
+      @document.set_page_content(@page_content)
     end
-    
 
-    def default_content
-      h = {}
+
+    # def read_content
+    #   if File.exist?(source_content_path)
+    #     @content = YAML::load_file source_content_path
+    #     # 
+    #   else
+    #     @content = default_content
+    #     File.open(source_content_path, 'w'){|f| f.write default_content.to_yaml}
+    #   end
+    # end
+
+    def default_page_content
+      <<~EOF
+      ---
+      heading:
+      ---
+      
+      EOF
+
+    end
+
+    def cover_spread_pdf_path
+      File.dirname(@document_path) + "/cover_spread/output.pdf"
     end
 
     def default_layout_rb
-      layout =<<~EOF
+      <<~EOF
       RLayout::CoverPage.new(fill_color:'clear',width:#{@width}, height:#{@height}) do
+        image(image_path: '#{cover_spread_pdf_path}',  x: -#{@width}, y: 0,  width: #{@width}*2,  height: #{@height} )
       end
       EOF
     end

@@ -79,6 +79,7 @@ module RLayout
     end
 
     def set_frame_in_parent_grid(grid_frame)
+
       set_frame(@parent.grid_rect_to_frame(grid_frame))
     end
 

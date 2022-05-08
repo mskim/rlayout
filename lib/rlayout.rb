@@ -124,6 +124,7 @@ require File.dirname(__FILE__) + "/rlayout/leader_table/jubo"
 
 
 require File.dirname(__FILE__) + "/rlayout/book/book_parser"
+require File.dirname(__FILE__) + "/rlayout/book/book_plan"
 require File.dirname(__FILE__) + "/rlayout/book/book_merger"
 require File.dirname(__FILE__) + "/rlayout/book/toc"
 require File.dirname(__FILE__) + "/rlayout/book/toc_page"

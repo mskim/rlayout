@@ -41,7 +41,7 @@ module RLayout
       generate_pdf_for_print
       generate_ebook #unless options[:no_ebook]
     end
-
+    
     def source_front_matter_path
       @project_path + "/front_matter"
     end
@@ -49,7 +49,6 @@ module RLayout
     def source_front_md_path
       @project_path + "/front.md"
     end
-
 
     def source_body_md_path
       @project_path + "/book.md"
@@ -88,8 +87,6 @@ module RLayout
       parse_body_matter
       parse_rear_matter
     end
-
-
 
     def parse_front_matter
       if File.exist?(source_front_md_path)

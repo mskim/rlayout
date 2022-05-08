@@ -43,8 +43,12 @@ module RLayout
         when 'bottom'
         else
           # center
-          top = (@height - object.height)/2
-          object.y = top
+          # top = (@height - object.height)/2
+          # TODO fix this
+          # puts @height
+          # puts object.height
+          top = (@height)/2
+          object.y += top
         end
         x_position += object.width + 10
       end

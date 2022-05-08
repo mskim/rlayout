@@ -16,7 +16,7 @@ module RLayout
       if File.exist?(content_path)
         @page_content = YAML::load_file(content_path)
       else
-        @page_content = default_page_content
+        @page_content = YAML::load(default_page_content)
         File.open(content_path, 'w'){|f| f.write default_page_content}
       end
       @document.set_page_content(@page_content)
@@ -41,7 +41,7 @@ module RLayout
     end
 
     def default_layout_rb
-      layout =<<~EOF
+      <<~EOF
       RLayout::CoverPage.new(fill_color:'clear',width:#{@width}, height:#{@height}) do
         image(image_path: '#{cover_spread_pdf_path}',  x: -#{@width}, y: 0,  width: #{@width}*2,  height: #{@height} )
         heading(1,0,4,10)

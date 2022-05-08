@@ -48,12 +48,12 @@ module RLayout
         y_position += object.height
         fit_content_to_area
       end
+    end
 
-      def fit_content_to_area
-        return unless @fit_text_to_area
-        # TODO
-        # puts "adjust height to fit content to area"
-      end
+    def fit_content_to_area
+      return unless @fit_text_to_area
+      # TODO
+      # puts "adjust height to fit content to area"
     end
   end
 

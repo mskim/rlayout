@@ -71,8 +71,13 @@ module RLayout
       options[:width] = SIZES[@paper_size][0]  unless options[:width]
       options[:height] = SIZES[@paper_size][1]  unless options[:height]
       
-      unless options[:left_margin]
-        options[:margin] =  options[:margin] || 10
+      if options[:margin]
+      elsif options[:top_margin]
+        options[:margin] =  options[:top_margin]
+      elsif options[:left_margin]
+        options[:margin] =  options[:left_margin]
+      else
+        options[:margin] = 10
       end
 
       # load_text_style
@@ -95,6 +100,7 @@ module RLayout
     # look for TextArea objects with key and set value
     def set_page_content(content_hash)
       content_hash.each do |k,v|
+        next if v.nil?
         target = find_by_name(k.to_s)
         target.set_content(v) if target.class  == RLayout::TextArea || target.class  == RLayout::TextBar || target.class  == RLayout::TextBarV
         # target.set_content(v, style_name:  k.to_s) if target.class  == RLayout::Text
