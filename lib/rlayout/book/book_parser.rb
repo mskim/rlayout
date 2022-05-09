@@ -1,9 +1,9 @@
 module RLayout
-  # PART_START = %w[PART part 파트]
   PART_START = /PART|part|파트/
+  # DOC_START  start of chapter or new pdf_document
   DOC_START = /^#\s/
   FRONT_MATTER_TYPE = /prologue|thanks|dedication/
-  REAR_MATTER_TYPE = %w[appendix index]
+  REAR_MATTER_TYPE = /appendix|index/
 
   class  BookParser
     attr_reader :project_path
@@ -34,6 +34,16 @@ module RLayout
 
     def front_matter_folder
       build_folder + "/front_matter"
+    end
+
+    def self.push_to_github
+      BookPlan.create_github_repo(project_path)
+      
+    end
+
+    def self.create_github_repo
+
+
     end
 
     #read bookfile.md and convert it to StyeleableDoc format
@@ -111,10 +121,9 @@ module RLayout
                 front_matter_doc += "\n\n" + lines_block.join("\n")
               end
             end
+            
+          elsif first_line=~REAR_MATTER_TYPE
 
-          elsif REAR_MATTER_TYPE.include?(@doc_type)
-            # block is rear_matter_type
-            # TODO
             file_path = rear_matter_folder + "/#{doc_type}"
             @rear_matter_order += 1
           else # this is a body doc 

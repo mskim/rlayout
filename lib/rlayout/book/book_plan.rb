@@ -1,14 +1,15 @@
 module RLayout
   class BookPlan
     attr_reader :project_path
-    def initialize(project_path)
+    def initialize(project_path, options={})
       @project_path =  project_path
       File.open(book_info_path, 'w'){|f| f.write sample_book_info}
       File.open(book_plan_path, 'w'){|f| f.write sample_book_plan}
       self
+      self
     end
 
-    def self.parse_book_plan(project_path)
+    def self.parse(project_path)
       plan_path = project_path + "/book_plan.md"
       File.open(plan_path, 'r'){|f| f.read}
 
@@ -38,13 +39,13 @@ module RLayout
     def sample_book_plan
       <<~EOF
       ---
-      title: Docker Book
-      subtitle: How Docker is used in BookCheeGo
+      title: How to use Docker
+      subtitle: Docker will change the way you developent!
       author: Min Soo Kim
-      publisher: Tech Books for the Rest
-      paper_size: A4
+      github_repo: mskim/how-to-use-docker
+
       ---
-            
+
       # front_wing: author_proflie
       
       # back_wing: book_promo

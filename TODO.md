@@ -28,6 +28,12 @@
 
   - line_type
   - arrow_type
+### 2022_05_09
+  - use Docker bind-mount
+  - how to use private gem in Dockerfile
+  - how to use private docker image
+  - book_plan.md parser
+
 ### 2022_05_05
   - add fix_text_to_area text_area
     adjust styles to fit into given area
