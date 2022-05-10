@@ -25,12 +25,15 @@ module RLayout
       @page_size = book_info[:paper_size] || book_info['paper_size'] || 'A5'
       @page_width = SIZES[@page_size][0]
       @height = SIZES[@page_size][1]
+      @gripper_margin = options[:gripper_margin] || 1*28.34646
+      @binding_margin = options[:binding_margin] || 20
+      @bleed_margin = options[:bleed_margin] || 3*2.834646
       # @starting_page_number = 1
       @has_no_cover_inside_page = true
       create_book_cover
       @body_matter = BodyMatterWithPictureSpread.new(@project_path)
-      generate_pdf_for_print
       generate_pdf_book
+      generate_pdf_for_print
       @toc_first_page_number = 2
       generate_ebook unless options[:no_ebook]
       self

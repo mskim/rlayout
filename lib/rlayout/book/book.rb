@@ -276,7 +276,7 @@ module RLayout
 
     def pdf_pages_for_inner_book
       pdf_pages = []
-      pdf_pages += @front_matter.pdf_pages
+      pdf_pages += @front_matter.pdf_pages if @front_matter
       pdf_pages += @body_matter.pdf_pages
       # pdf_docs += rear_matter_docs_pdf
       pdf_pages.flatten
@@ -470,21 +470,25 @@ module RLayout
         @ebook_page_contents += page_html_for_ebook(@page_number)
         @page_number += 1
       end
-      # front_matter_pages
-      @front_matter.document_folders.each do |doc|
-        toc_page_index = 0
-        Dir.glob("#{build_front_matter_path}/#{doc}/00**").sort.each do |page_folder|
-          page_image = page_folder + "/page.jpg"
-          target_image = target_folder + "/#{r_justed_number @page_number}.jpg"
-          FileUtils.cp(page_image, target_image)
-          if doc == 'toc'
-            # this page is toc page
-            @ebook_page_contents += page_html_for_ebook(@page_number, toc_page:true, toc_page_index:toc_page_index)
-            toc_page_index += 1
-          else
-            @ebook_page_contents += page_html_for_ebook(@page_number)
+
+      # check for @front_matter,  picture_book does not have @front_matter
+      if @front_matter
+        # front_matter_pages
+        @front_matter.document_folders.each do |doc|
+          toc_page_index = 0
+          Dir.glob("#{build_front_matter_path}/#{doc}/00**").sort.each do |page_folder|
+            page_image = page_folder + "/page.jpg"
+            target_image = target_folder + "/#{r_justed_number @page_number}.jpg"
+            FileUtils.cp(page_image, target_image)
+            if doc == 'toc'
+              # this page is toc page
+              @ebook_page_contents += page_html_for_ebook(@page_number, toc_page:true, toc_page_index:toc_page_index)
+              toc_page_index += 1
+            else
+              @ebook_page_contents += page_html_for_ebook(@page_number)
+            end
+            @page_number += 1
           end
-          @page_number += 1
         end
       end
       # body_matter_pages
@@ -734,7 +738,12 @@ module RLayout
       template = ebook_index_html_container #File.open(ebook_index_html_erb, 'r') { |f| f.read }
       erb = ERB.new(template)
       # @project = self
-      @toc_first_page_number = @front_matter.toc_first_page_number
+      if @front_matter
+        @toc_first_page_number = @front_matter.toc_first_page_number
+      else
+        # for picture book which do not have toc
+        1
+      end
       s = erb.result(binding)
       # File.open(repo_name_ebook_index_html_path, 'w') { |f| f.write s }
       File.open(ebook_index_html_path, 'w') { |f| f.write s }

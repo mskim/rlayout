@@ -39,7 +39,14 @@ module RLayout
       pdf_files
     end
 
-    
+    def pdf_pages
+      pdf_pages = []
+      @document_folders.each do |spread|
+        spread_pdf_pages = Dir.glob("#{spread}/????/page.pdf").sort
+        pdf_pages << spread_pdf_pages #if File.exist?(chapter_pdf_file)
+      end
+      pdf_pages
+    end
 
   end
 end
