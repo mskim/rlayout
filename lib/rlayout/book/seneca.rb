@@ -4,10 +4,11 @@ module RLayout
     attr_reader :content, :updated
 
     # Seneca direction can be horizontal or vertical
-    attr_reader :direction
+    attr_reader :direction, :book_info
 
     def initialize(options={}, &block)
       @document_path = options[:document_path]
+      @book_info = options[:book_info]
       super
       self
     end
@@ -23,6 +24,14 @@ module RLayout
     def load_page_content
       if File.exist?(content_path)
         @page_content = YAML::load_file(content_path)
+      elsif @book_info
+        h = {}
+        h[:seneca] = {}
+        h[:seneca][:title] = @book_info[:title]
+        h[:seneca][:subtitle] = @book_info[:subtitle]
+        h[:seneca][:author] = @book_info[:author]
+        @page_content = YAML::load(h.to_yaml)
+        File.open(content_path, 'w'){|f| f.write h.to_yaml}
       else
         @page_content = YAML::load(default_page_content)
         File.open(content_path, 'w'){|f| f.write default_page_content}

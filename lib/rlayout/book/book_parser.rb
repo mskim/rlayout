@@ -38,7 +38,7 @@ module RLayout
 
     def self.push_to_github
       BookPlan.create_github_repo(project_path)
-      
+
     end
 
     def self.create_github_repo
@@ -174,6 +174,17 @@ module RLayout
 
     def self.save_sample(path)
       File.open(path, 'w'){|f| f.write BookParser.sample_bookfile}
+    end
+
+    def self.sample_paragraph
+      <<~EOF
+      This is body text. This is body text. This is body text. 
+      This is body text. This is body text. This is body text. 
+      This is body text. This is body text. This is body text. 
+      This is body text. This is body text. This is body text. 
+      This is body text. 
+
+      EOF
     end
 
     def self.sample_bookfile

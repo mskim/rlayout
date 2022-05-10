@@ -33,7 +33,12 @@
   - how to use private gem in Dockerfile
   - how to use private docker image
   - book_plan.md parser
-
+  - create Rakefile to
+    - save book_plan.md
+    - generate_sample_book
+      - update book sample
+      - create repo from cli
+      - create gh-page branch
 ### 2022_05_05
   - add fix_text_to_area text_area
     adjust styles to fit into given area

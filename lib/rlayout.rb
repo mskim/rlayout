@@ -15,6 +15,7 @@ require 'rqrcode'
 # require "pry"
 # require "byebug"
 require "pry-byebug"
+require "debug"
 # require "mini_magick"
 # require "xml-simple"
 require File.dirname(__FILE__) + "/rlayout/version"
