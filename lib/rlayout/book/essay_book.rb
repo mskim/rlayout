@@ -12,17 +12,18 @@ module RLayout
     }
   }
 
-  class Paperback < Book
+  class EssayBook < Book
 
     def initialize(project_path, options={})
       @book_text_style_name = "paperback"
       @body_doc_type = 'chapter'
+      @has_part = true
       super
       self
     end
 
     def self.book_template_path
-      File.dirname(__FILE__) + "/book_template/paperback"
+      File.dirname(__FILE__) + "/book_template/essay_book"
     end
 
     def self.create(project_path)

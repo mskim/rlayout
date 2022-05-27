@@ -1,10 +1,22 @@
 
 module RLayout
 
-  # 2021-11-04
+  # book creating workflow
+
+  # 1. if there are no book_info.yml nor book_plan.md in the project folder,
+  # this is fresh folder, so create book_plan.md and book_info.md and return
+  
+  # 2. After intial book_plan.md is created, user should edit and update the content of book_plan.md and book_info.yml,
+  
+  # 3. if project folder has book_plan.md, assum it is edited and should parse book_plan.md and create book_cover, front_matter folder, and chapters,
+  # as 01_chapter, 02_chapter, 03_chapter,
+  
+  # 4. if chapter folders, starting with 01 are present
+  # should update contents to _build and re-generate pdfs etc ...
+  # 
   class Book
     attr_reader :book_type, :body_doc_type, :project_path, :book_info, :page_width, :width, :height
-    attr_reader :has_cover_inside_page, :has_wing, :has_toc
+    attr_reader :has_cover_inside_page, :has_wing, :has_toc, :has_part
     attr_reader :book_toc, :body_matter_toc, :rear_matter_toc, :starting_page_number
     attr_reader :rear_matter_docs, :ebook_page_contents
     attr_reader :toc_first_page_number, :toc_page_count, :toc_page_links
@@ -13,10 +25,30 @@ module RLayout
     attr_reader :html
 
     def initialize(project_path, options={})
-      @html  = options[:html]
       @project_path = project_path
-      FileUtils.mkdir_p(build_folder) unless File.exist?(build_folder)
       @book_info_path = @project_path + "/book_info.yml"
+      @book_plan_path = @project_path + "/book_plan.md"
+
+      if !File.exist?(@book_info_path) && !File.exist?(@book_plan_path)
+        # 1. if there are no book_info.yml nor book_plan.md in the project folder,
+        # this is fresh folder, so create book_plan.md and book_info.md and return
+        RLayout::BookPlan.new(@project_path)
+        return
+        # 2. After intial book_plan.md is created, user should edit and update the content of book_plan.md and book_info.yml,
+      elsif File.exist?(@book_plan_path) && !File.exist?(first_chapter_folder)
+        # 3. if project folder has book_plan.md, and first_chapter_folder is not present,
+        # assum it is edited and book_plan.md should be parsed.
+        # parsing book_plan.md should create book_cover, front_matter folder, and chapter folders,
+        # as 01, 02, 03 ...
+        RLayout::BookPlan.parse(@project_path)
+        return
+      end
+      # 4. if there are chapter folders, starting with 01 are present
+      # should update contents to _build and re-generate pdfs etc ...
+      # 
+
+      @html  = options[:html]
+      FileUtils.mkdir_p(build_folder) unless File.exist?(build_folder)
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @paper_size = @book_info[:paper_size] || 'A5'
@@ -41,7 +73,11 @@ module RLayout
       generate_pdf_for_print
       generate_ebook #unless options[:no_ebook]
     end
-    
+
+    def first_chapter_folder
+      @project_path + "/01"
+    end
+
     def source_front_matter_path
       @project_path + "/front_matter"
     end

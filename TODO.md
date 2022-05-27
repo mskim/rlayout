@@ -28,6 +28,13 @@
 
   - line_type
   - arrow_type
+
+### 2022_05_27
+
+- fix footer location
+- cation position
+- right side image and text margin
+
 ### 2022_05_09
   - use Docker bind-mount
   - how to use private gem in Dockerfile

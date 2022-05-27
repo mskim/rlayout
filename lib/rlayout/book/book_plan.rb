@@ -5,7 +5,6 @@ module RLayout
       @project_path =  project_path
       File.open(book_info_path, 'w'){|f| f.write sample_book_info}
       File.open(book_plan_path, 'w'){|f| f.write sample_book_plan}
-      
       self
     end
 
@@ -39,6 +38,31 @@ module RLayout
       ---
            
       EOF
+    end
+
+    def sample_book_plan_yml
+      <<~EOF
+      ---
+      book_info:
+        title: Bookcheego
+        subtitle: Bookcheego
+        author: Min Soo Kim
+        paper_size: A4
+      book_cover:
+        front_wing: author_bio
+        back_wing: book_promo
+      front_matter:
+        - inside_cover: true
+        - inside_cover: true
+        - isbn: true
+        - prologue: true
+      body_matter:
+        - 01: History  
+        - 02: Problem?
+        - 03: How to to solve the problem
+        - 04: Expected outcome 
+        - 04: Getting Started 
+      ---
     end
 
     def sample_book_plan
