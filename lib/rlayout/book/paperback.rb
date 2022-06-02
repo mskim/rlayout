@@ -17,6 +17,7 @@ module RLayout
     def initialize(project_path, options={})
       @book_text_style_name = "paperback"
       @body_doc_type = 'chapter'
+      # binding.pry
       super
       self
     end
@@ -26,8 +27,9 @@ module RLayout
     end
 
     def self.create(project_path)
-      template_path = PoetryBook.book_template_path
-      FileUtils.copy(template_path,project_path)
+      template_path = Paperback.book_template_path
+      # copy contents of template_path to target folder
+      FileUtils.cp_r "#{template_path}/.", project_path
     end
 
     def build_folder

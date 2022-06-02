@@ -42,7 +42,7 @@ module RLayout
       @style_guide_folder = options[:style_guide_folder] || @document_path
       @starting_page_number  = options[:starting_page_number] || 1
       @output_path = options[:output_path] || @document_path + "/chapter.pdf"
-      @page_pdf =  options[:page_pdf] || true
+      @page_pdf =  options[:page_pdf] || false
       if options[:book_info]
         @book_info      = options[:book_info]
         @paper_size     = @book_info[:paper_size] || "A5"

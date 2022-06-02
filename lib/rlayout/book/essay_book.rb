@@ -1,16 +1,16 @@
 module RLayout
 
-  PAPERBACK_STYLE = {
-    'chapter':{
+  # PAPERBACK_STYLE = {
+  #   'chapter':{
 
-    },
-    'book_cover':{
+  #   },
+  #   'book_cover':{
 
-    },
-    'front_matter':{
+  #   },
+  #   'front_matter':{
 
-    }
-  }
+  #   }
+  # }
 
   class EssayBook < Book
 
@@ -28,7 +28,8 @@ module RLayout
 
     def self.create(project_path)
       template_path = PoetryBook.book_template_path
-      FileUtils.copy(template_path,project_path)
+      # copy contents of template_path to target folder
+      FileUtils.cp_r "#{template_path}/.", project_path
     end
 
     def build_folder

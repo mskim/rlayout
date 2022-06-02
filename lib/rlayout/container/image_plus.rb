@@ -39,22 +39,25 @@ module RLayout
       caption_width                = @width
       # TODO: this should be the height of captopn
       # caption_height               = @height/10
-      caption_height               = @height/16
+      # caption_height               = @height/16
       # need caption_height to clip circle above the caption 
-      image_options[:caption_height] = caption_height
+      # image_options[:caption_height] = caption_height
       # image_options[:caption_height] = 0 unless @caption
       @image_object                = Image.new(image_options)
       if @caption
         text_options                = @image_style.dup || default_image_style
         text_options[:parent]       = self
-        text_options[:y]            = @height - caption_height
-        text_options[:height]       = caption_height
+        text_options[:y]            = @height - 10
+        text_options[:height]       = 10
         text_options[:width]        = @width
         text_options[:text_string]  = @caption.unicode_normalize
         text_options[:v_alignment]  = 'center'
         # text_options[:font_size]    = caption_height*0.7
         text_options[:font_size]    = 8.0
         @caption_object = Text.new(text_options)
+        caption_height = @caption_object.height
+        @caption_object.y = @height - caption_height
+        @image_object.height -= @caption_object.height
       end
     end
 

@@ -32,16 +32,17 @@ module RLayout
       if !File.exist?(@book_info_path) && !File.exist?(@book_plan_path)
         # 1. if there are no book_info.yml nor book_plan.md in the project folder,
         # this is fresh folder, so create book_plan.md and book_info.md and return
-        RLayout::BookPlan.new(@project_path)
+        # RLayout::BookPlan.new(@project_path)
+        self.class.create(@project_path)
         return
         # 2. After intial book_plan.md is created, user should edit and update the content of book_plan.md and book_info.yml,
-      elsif File.exist?(@book_plan_path) && !File.exist?(first_chapter_folder)
-        # 3. if project folder has book_plan.md, and first_chapter_folder is not present,
-        # assum it is edited and book_plan.md should be parsed.
-        # parsing book_plan.md should create book_cover, front_matter folder, and chapter folders,
-        # as 01, 02, 03 ...
-        RLayout::BookPlan.parse(@project_path)
-        return
+      # elsif File.exist?(@book_plan_path) && !File.exist?(first_chapter_folder)
+      #   # 3. if project folder has book_plan.md, and first_chapter_folder is not present,
+      #   # assum it is edited and book_plan.md should be parsed.
+      #   # parsing book_plan.md should create book_cover, front_matter folder, and chapter folders,
+      #   # as 01, 02, 03 ...
+      #   RLayout::BookPlan.parse(@project_path)
+      #   return
       end
       # 4. if there are chapter folders, starting with 01 are present
       # should update contents to _build and re-generate pdfs etc ...
@@ -73,6 +74,15 @@ module RLayout
       generate_pdf_for_print
       generate_ebook #unless options[:no_ebook]
     end
+
+    def self.book_template_path
+      File.dirname(__FILE__) + "/book_template/paperback"
+    end
+
+    # def self.create(project_path)
+    #   template_path = PoetryBook.book_template_path
+    #   FileUtils.cp_r(template_path, project_path)
+    # end
 
     def first_chapter_folder
       @project_path + "/01"

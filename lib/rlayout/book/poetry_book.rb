@@ -17,7 +17,8 @@ module RLayout
 
     def self.create(project_path)
       template_path = PoetryBook.book_template_path
-      FileUtils.cp_r(template_path, project_path)
+      # copy contents of template_path to target folder
+      FileUtils.cp_r "#{template_path}/.", project_path
     end
 
   end

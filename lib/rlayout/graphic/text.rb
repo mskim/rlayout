@@ -75,7 +75,7 @@ module RLayout
     # TODO: it only applies to center alignment
     def adjust_width_to_string_width
       diff = @width - @string_width
-      @width = @string_width
+      @width = @string_width.dup
       if @text_fit_type == 'fit_box_to_text'
         case @text_alignment
         when 'center'
@@ -95,7 +95,7 @@ module RLayout
           canvas_fill_color = canvas.fill_color
           # TODO fix this
           unless @style_name
-            @style_name = 'bpdy'
+            @style_name = 'body'
           end
           @style_object = @current_style_service.style_object(@style_name, adjust_size: @adjust_size)
           @font_wrapper           = @style_object.font
@@ -115,7 +115,6 @@ module RLayout
           @font_size              = @style_object.font_size
           canvas.font(@font_wrapper, size: @font_size)
         end
-
         f = flipped_origin
         @x_offset = f[0].dup
         @y_offset = f[1].dup
@@ -125,7 +124,12 @@ module RLayout
         when 'center'
           @x_offset += (@width - @string_width)/2
         when 'right'
+          # TODO fix this 
+          # why is @string_width different from initial set_string_width
+          # may style_object is diffent?
+          set_string_width
           @x_offset += @width - @string_width
+          # @x_offset = @left_margin + @width - @string_width
         else
           @x_offset += @left_margin + @left_inset
         end

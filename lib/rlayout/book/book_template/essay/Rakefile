@@ -1,0 +1,9 @@
+require 'rlayout'
+require 'pry-byebug'
+
+task :default => [:generate_book]
+
+desc 'generate EssayBook'
+task :generate_book do
+  RLayout::EssayBook.new(File.dirname(__FILE__))
+end

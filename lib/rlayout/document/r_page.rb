@@ -150,13 +150,13 @@ module RLayout
     def tables_folder
       @document.tables_folder
     end
-
     # add single float to page
     def add_float(float_info, options={})
       float_info[:parent] = self
       float_info[:is_float] = true
       case float_info[:kind]
       when 'image'
+        # ImagePlus.new(float_info)
         ImagePlus.new(float_info)
       when 'table'
         GridTable.new(float_info)
@@ -778,13 +778,14 @@ module RLayout
     end
 
     def create_footer(info_hash)
+      @book_title = info_hash[:book_titile] || "2022년 책만들기"
+      @title = info_hash[:chapter_title]
       if page_number.even?
         erb = ERB.new(left_footer_erb)
       else
         erb = ERB.new(right_footer_erb)
+        # binding.pry
       end
-      @book_title = info_hash[:book_titile]
-      @title = info_hash[:chapter_title]
       layout = erb.result(binding)
       @footer_object = eval(layout)
     end
@@ -794,19 +795,22 @@ module RLayout
     end
 
     def left_footer_erb
-      footer_options  = "parent:self, x:#{@left_margin}, y:#{@height - 100}, width: #{footer_width}, height: 12, fill_color: 'clear'"
+      # footer_options  = "parent:self, x:#{@left_margin}, y:#{@height - @bottom_margin + 30}, width: #{footer_width}, height: 12, fill_color: 'clear'"
+      footer_options  = "parent:self, x:#{@left_margin}, y:#{@height - 50}, width: #{footer_width}, height: 12, fill_color: 'clear'"
       s=<<~EOF
       RLayout::Container.new(#{footer_options}) do
-        text("<%= @page_number %>", font_size: 10, x:0, y:0, width: #{footer_width}, text_alignment: 'left')
+        text("<%= @page_number %>  <%= @book_title %>", font_size: 10, x:0, y:0, width: #{footer_width}, text_alignment: 'left')
       end
       EOF
     end
 
     def right_footer_erb
-      footer_options  = "parent:self, x:#{@left_margin}, y:#{@height - 100}, width: #{footer_width}, height: 12, fill_color: 'clear'"
+      # footer_options  = "parent:self, x:#{@left_margin}, y:#{@height - @bottom_margin + 30}, width: #{footer_width}, height: 12, fill_color: 'clear'"
+      footer_options  = "parent:self, x:#{@left_margin}, y:#{@height - 50}, width: #{footer_width}, height: 12, fill_color: 'clear'"
+      # text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
       s=<<~EOF
       RLayout::Container.new(#{footer_options}) do
-        text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
+        text("<%= @title %>  <%= @page_number %>", font_size: 9, x:0, y: 0, width:#{footer_width}, text_alignment: 'right')
       end
       EOF
     end

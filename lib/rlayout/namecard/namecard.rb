@@ -37,17 +37,34 @@ module RLayout
     attr_reader :imposition
     attr_reader :company_hash
     attr_reader :qr_code
+    attr_reader :project_path
 
-    def initialize(options={})
-      @compnay_name = options[:compnay_name]
+    def initialize(project_path, options={})
+      @compnay_name = options[:compnay_name] || "our_company"
       @imposition = options[:imposition] || true
+      @project_path  = project_path
       # super
       create_cards
       self
     end
 
+    def self.namecard_template_path
+      File.dirname(__FILE__) + "/namecard_template/paperback"
+    end
+
+    def self.create(project_path)
+      member_csv_path = project_path + "/member.csv"
+      if File.exist?(member_csv_path)
+        puts "Namecard files alreay exists !!!"
+        return
+      end
+      template_path = Namecard.namecard_template_path
+      # copy contents of template_path to target folder
+      FileUtils.cp_r "#{template_path}/.", project_path     
+    end
+    
     def text_style_path
-      @document_path + "/text_style.yml"
+      @project_path + "/text_style.yml"
     end
 
     def load_text_style
@@ -60,15 +77,15 @@ module RLayout
     end
 
     def front_layout_path
-      @document_path + "/front_layout.rb"
+      @project_path + "/front_layout.rb"
     end
 
     def back_layout_path
-      @document_path + "/back_layout.rb"
+      @project_path + "/back_layout.rb"
     end
 
     def company_info_path
-      @document_path + "/company.yml"
+      @project_path + "/company.yml"
     end
 
     def load_layout_rb
@@ -126,9 +143,9 @@ module RLayout
     def default_front_layout_rb
       s=<<~EOF
       RLayout::CardPage.new(paper_size:'NAMECARD') do
-        logo([1,1,1,1])
-        personal([5,0,7,3])
-        company([2,3,10,3])
+        logo(1,1,1,1)
+        personal(5,0,7,3)
+        company(2,3,10,3)
       end
 
       EOF
@@ -137,9 +154,9 @@ module RLayout
     def default_back_layout_rb
       s=<<~EOF
       RLayout::CardPage.new(paper_size:'NAMECARD') do
-        logo([1,1,1,1])
-        personal([5,0,7,3])
-        company([2,3,10,3])
+        logo(1,1,1,1)
+        personal(5,0,7,3)
+        company(2,3,10,3)
       end
 
       EOF
@@ -285,26 +302,27 @@ module RLayout
     end
 
     def card_layout_path
-      @document_path + "/card_layout.rb"
+      @project_path + "/card_layout.rb"
     end
 
     def company_info_path
-      @document_path + "/company_info.yml"
+      @project_path + "/company_info.yml"
     end
 
     def csv_path
-      @document_path + "/members.csv"
+      @project_path + "/members.csv"
     end
 
     def members_path
-      @document_path + "/members"
+      @project_path + "/members"
     end
 
     def qrcode_folder
-      @document_path + "/members/qrcode"
+      @project_path + "/members/qrcode"
     end
 
     def create_cards
+      load_layout_rb
       @cards_array = []
       if File.exist?(csv_path)
         @member_data = File.open(csv_path, 'r'){|f| f.read}
@@ -325,7 +343,7 @@ module RLayout
       @member_rows.each_with_index do |personal_info, i|
         @personal_info = Hash[keys.zip personal_info]
         h = {}
-        h[:document_path] = @document_path
+        h[:document_path] = @project_path
         h[:text_style]  = @text_style
         h[:personal_info] = @personal_info
         slug = @personal_info[:name].gsub(" ", "_")
@@ -369,7 +387,7 @@ module RLayout
       company_info_front[:address_1] = company_info[:address_1]
       company_info_front[:address_2] = company_info[:address_2]
       front_card.company_info = company_info_front
-      front_card.picture_path = @document_path + "/images/#{slug}"
+      front_card.picture_path = @project_path + "/images/#{slug}"
       front_card.set_content
       front_card
     end
@@ -401,7 +419,7 @@ module RLayout
       company_info_back[:en_address_1] = @company_info[:en_address_1]
       company_info_back[:en_address_2] = @company_info[:en_address_2]
       back_card.company_info = company_info_back
-      back_card.picture_path = @document_path + "/images/#{slug}"
+      back_card.picture_path = @project_path + "/images/#{slug}"
       back_card.set_content
       back_card
     end

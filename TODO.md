@@ -29,11 +29,35 @@
   - line_type
   - arrow_type
 
+### 2022_06_02
+  - mark floats as
+    - floats_1
+    - show image_tag for non-exixting image
+      this will  allow to place missing image at right place with right name.
+  - apply text_alignment for caption
+  - set sef default as 'left'
+  - merge NewsImage and ImagePlus
+### 2022_06_01
+  ImageWithCaption = NewsImage 
+### 2022_05_31
+
+- right side image and text margin
+- caption position
+
+- fix caption
+  - reduce image area for caption area
+- use new_image caption
+  - caption_height
+  - use caption style_name
+  - rename ImagePlus as ImageWithCaption, merge it with NewsImage
+- footer add style_name
+- make footer customizable
+
 ### 2022_05_27
 
 - fix footer location
-- cation position
-- right side image and text margin
+  - fix right_side margin
+  - make it customazable
 
 ### 2022_05_09
   - use Docker bind-mount

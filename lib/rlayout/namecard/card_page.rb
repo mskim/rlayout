@@ -1,8 +1,8 @@
 module RLayout
   class CardPage < CoverPage
     attr_accessor :text_style, :document_path
-    # attr_accessor :personal_info, :company_info, :logo_info, :picture_info, :qrcode_vcard, :en_qrcode_vcard
-    # attr_reader :personal_object, :company_object, :logo_object, :picture_object, :qrcode_object, :en_qrcode_object
+    attr_accessor :personal_info, :company_info, :logo_info, :picture_info, :qrcode_vcard, :en_qrcode_vcard
+    attr_reader :personal_object, :company_object, :logo_object, :picture_object, :qrcode_object, :en_qrcode_object
     attr_accessor :picture_path, :qrcode_path, :en_qrcode_path
 
     def initialize(options={}, &block)
@@ -48,37 +48,63 @@ module RLayout
 
     
     # TODO make it customizable
-    def personal(grid_frame, options={})
+    def personal(x,y,width,height, options={})
       h = {}
       h[:parent] = self
       h[:tag] = "personal"
-      h[:grid_frame]  = grid_frame
+      h[:x] = x
+      h[:y] = y
+      h[:width] = width
+      h[:height] = height
+      # h[:grid_frame]  = grid_frame
       h[:content]  = @personal_info
       h[:fill_color]  = options[:fill_color] || 'clear'
       @personal_object = RLayout::TextArea.new(h)
     end
 
     # TODO make it customizable
-    def company(grid_frame, options={})
+    def company(x,y,width,height, options={})
       h = {}
       h[:parent] = self
-      h[:grid_frame]  = grid_frame
+      h[:x] = x
+      h[:y] = y
+      h[:width] = width
+      h[:height] = height
+      # h[:grid_frame]  = grid_frame
       h[:tag] = "company"
       h[:content]  = @company_info
       h[:fill_color]  = options[:fill_color] || 'clear'
       @company_object =  RLayout::TextArea.new(h)
     end
 
-
-    def en_qrcode(grid_frame, options={})
+    def qrcode(x, y, width, height, options={})
       h = {}
       h[:parent] = self
-      h[:grid_frame]  = grid_frame
+      h[:x] = x
+      h[:y] = y
+      h[:width] = width
+      h[:height] = height
+      # h[:grid_frame]  = grid_frame
+      # TODO set frame rect
+      h[:tag] = "qrcode"
+      # h[:image_path] = options[:qrcode_path] || 'temp_path'
+      @qrcode_object = RLayout::Image.new(h)
+    end
+
+    def en_qrcode(x, y, width, height, options={})
+      h = {}
+      h[:parent] = self
+      h[:x] = x
+      h[:y] = y
+      h[:width] = width
+      h[:height] = height
+      # h[:grid_frame]  = grid_frame
       # TODO set frame rect
       h[:tag] = "en_qrcode"
       # h[:image_path] = options[:qrcode_path] || 'temp_path'
       @en_qrcode_object = RLayout::Image.new(h)
     end
+
     def default_text_style
       s=<<~EOF
       ---
