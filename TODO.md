@@ -29,7 +29,19 @@
   - line_type
   - arrow_type
 
-### 2022_06_02
+
+
+### 2022_06_04
+
+  -  add header and footer to styleable_doc.rb
+  
+    @left_footer = 
+    @right_footer = 
+    @left_header = 
+    @right_header  =
+
+
+### 2022_06_03
   - mark floats as
     - floats_1
     - show image_tag for non-exixting image
@@ -37,8 +49,13 @@
   - apply text_alignment for caption
   - set sef default as 'left'
   - merge NewsImage and ImagePlus
-### 2022_06_01
-  ImageWithCaption = NewsImage 
+
+  - ImageWithCaption = NewsImage 
+  - add floats floats.yml 
+  - add ![image]{position:3, size:'2x2', caption: "this is caption"}
+
+  - list, ordered_list
+
 ### 2022_05_31
 
 - right side image and text margin

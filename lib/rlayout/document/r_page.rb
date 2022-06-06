@@ -760,21 +760,54 @@ module RLayout
     end
 
     def left_header_erb
-      footer_options  = "parent:self, x:#{@left_margin}, y:20, width: #{footer_width}, height: 12, fill_color: 'clear'"
       s=<<~EOF
-      RLayout::Container.new(#{footer_options}) do
+      @header_options  = "parent:self, x:#{@left_margin}, y:20, width: #{footer_width}, height: 12, fill_color: 'clear'"
+      RLayout::Container.new(#{@header_options}) do
         text("<%= @page_number %>", font_size: 10, x: #{left_margin}, width: #{footer_width}, text_alignment: 'left')
       end
       EOF
     end
 
     def right_header_erb
-      footer_options  = "parent:self, x:#{@left_margin}, y:20, width: #{footer_width}, height: 12, fill_color: 'clear'"
       s=<<~EOF
-      RLayout::Container.new(#{footer_options}) do
+      @header_options  = "parent:self, x:#{@left_margin}, y:20, width: #{footer_width}, height: 12, fill_color: 'clear'"
+      RLayout::Container.new(#{@header_options}) do
         text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
       end
       EOF
+    end
+
+    # make header layout customizable
+    # user should be able to edit header layout
+    def create_header_with_layout(info_hash, left_footer_erb, right_headerer_erb)
+      @book_title = info_hash[:book_titile]
+      @title = info_hash[:chapter_title]
+      if page_number.even?
+        erb = ERB.new(left_header_erb)
+      else
+        erb = ERB.new(right_header_erb)
+      end
+
+      layout = erb.result(binding)
+      @footer_object = eval(layout)
+    end
+
+    # support customizable footer layout 
+    # user should be able to edit footer layout 
+    # and load it at run time from chapter(document generator)
+    # and pass it to page
+    def create_footer_with_layout(info_hash, left_footer_erb, right_footer_erb)
+      @book_title = info_hash[:book_titile] || "2022년 책만들기"
+      @title = info_hash[:chapter_title]
+      footer_options  = "parent:self, x:#{@left_margin}, y:#{@height - 50}, width: #{footer_width}, height: 12, fill_color: 'clear'"
+      if page_number.even?
+        erb = ERB.new(left_footer_erb)
+      else
+        erb = ERB.new(right_footer_erb)
+        # binding.pry
+      end
+      layout = erb.result(binding)
+      @footer_object = eval(layout)
     end
 
     def create_footer(info_hash)
@@ -806,8 +839,8 @@ module RLayout
 
     def right_footer_erb
       # footer_options  = "parent:self, x:#{@left_margin}, y:#{@height - @bottom_margin + 30}, width: #{footer_width}, height: 12, fill_color: 'clear'"
-      footer_options  = "parent:self, x:#{@left_margin}, y:#{@height - 50}, width: #{footer_width}, height: 12, fill_color: 'clear'"
       # text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
+      footer_options  = "parent:self, x:#{@left_margin}, y:#{@height - 50}, width: #{footer_width}, height: 12, fill_color: 'clear'"
       s=<<~EOF
       RLayout::Container.new(#{footer_options}) do
         text("<%= @title %>  <%= @page_number %>", font_size: 9, x:0, y: 0, width:#{footer_width}, text_alignment: 'right')

@@ -258,6 +258,68 @@ module RLayout
       self
     end
 
+    def default_left_header_erb
+      <<~EOF
+
+        # RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+        #   text("<%= @page_number %>", font_size: 10, x: <%= @left_margin %>, width: <%= footer_width  %>, text_alignment: 'left')
+        # end
+
+      EOF
+    end
+
+    def default_right_header_erb
+      <<~EOF
+
+        # RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+        #   text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
+        # end
+
+      EOF
+    end
+
+    def default_left_footer_erb
+      <<~EOF
+        
+        RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:#{@height - 50}, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+          text("<%= @page_number %>  <%= @book_title %>", font_size: 10, x:0, y:0, width: <%= footer_width  %>, text_alignment: 'left')
+        end
+
+      EOF
+    end
+
+    def default_right_footer_erb
+      <<~EOF
+
+        RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:#{@height - 50}, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+          text("<%= @title %>  <%= @page_number %>", font_size: 9, x:0, y: 0, width:<%= footer_width  %>, text_alignment: 'right')
+        end
+
+      EOF
+    end
+
+    def default_header_footer_yml
+      <<~EOF
+      ---
+      left_header_erb: |
+        # RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+        #   text("<%= @page_number %>", font_size: 10, x: <%= @left_margin %>, width: <%= footer_width  %>, text_alignment: 'left')
+        # end
+      right_header_erb: |
+        # RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+        #   text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
+        # end
+      left_footer_erb: |
+        RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:#{@height - 50}, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+          text("<%= @page_number %>  <%= @book_title %>", font_size: 10, x:0, y:0, width: <%= footer_width  %>, text_alignment: 'left')
+        end
+      right_footer_erb: |
+        RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:#{@height - 50}, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+          text("<%= @title %>  <%= @page_number %>", font_size: 9, x:0, y: 0, width:<%= footer_width  %>, text_alignment: 'right')
+        end
+      EOF
+    end
+
     def default_layout_rb
       @top_margin = 50
       @left_margin = 110
@@ -277,6 +339,7 @@ module RLayout
       else
         @body_line_count  = 25
       end
+      
       doc_options= {}
       doc_options[:paper_size] = @paper_size
       doc_options[:left_margin] = @left_margin
@@ -286,6 +349,7 @@ module RLayout
       doc_options[:body_line_count] = @body_line_count
       doc_options[:book_title] = @book_title || "untitled"
       doc_options[:chapter_title] = @title || "untitled"
+      
       layout =<<~EOF
         RLayout::RDocument.new(#{doc_options})
       EOF
@@ -511,12 +575,17 @@ module RLayout
       end
     end
 
-
-
     def place_header_and_footer
       chapter_info ={}
       chapter_info[:book_title] = @book_info[:title] if @book_info
       chapter_info[:chapter_title] = @title if @title
+      # binding.pry
+      #  TODO fix this use #header_footer_info
+      # if @header_footer_info['left_header_erb'] && @header_footer_info['right_header_erb']
+
+
+      # end
+
       if @has_header
         @document.pages.each_with_index do |p,i|
           # use comstom layout if given in book_info
@@ -527,7 +596,7 @@ module RLayout
       if @has_footer
         @document.pages.each_with_index do |p,i|
           chapter_info[:footer_layout]  = chapter_info[:footer_layout] if @book_info
-          p.create_footer(chapter_info) 
+          p.create_footer(chapter_info)
         end
       end
     end

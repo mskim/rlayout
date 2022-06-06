@@ -36,6 +36,7 @@ module RLayout
     attr_reader :page_pdf
     attr_reader :starting_page_number
     attr_reader :output_path
+    attr_reader :header_footer_info
 
     def initialize(options={})
       @document_path = options[:document_path]
@@ -54,6 +55,7 @@ module RLayout
       set_width_and_height_from_paper_size
       load_text_style
       load_layout_rb
+      load_hear_footer_erb
       if @layout_rb
         @document = eval(@layout_rb)
         if @document.is_a?(SyntaxError)
@@ -149,6 +151,20 @@ module RLayout
       end
     end
 
+    def style_guide_header_footer_path
+      @style_guide_folder + "/#{style_klass_name}_header_footer.yml"
+    end
+
+    def load_hear_footer_erb
+      if File.exist?(style_guide_header_footer_path)
+        @header_footer_info = YAML::load_file(style_guide_header_footer_path)
+        binding.pry
+      else
+        @header_footer_info = YAML::load(default_header_footer_yml)
+        File.open(style_guide_header_footer_path, 'w'){|f| f.write default_header_footer_yml}
+      end
+    end
+
     def width_ratio
       @width/SIZES['A4'][0]
     end
@@ -173,8 +189,51 @@ module RLayout
       @document.pages.length
     end
 
+    def default_right_header_erb
+      nil
+    end
+
+    def default_left_header_erb
+      nil
+    end
+
+    def default_right_header_erb
+      nil
+    end
+
+    def default_left_footer_erb
+      nil
+    end
+
+    def default_right_footer_erb
+      nil
+    end
+
+    def footer_width
+      @wi
+    end
+
+    def default_header_footer_yml
+      <<~EOF
+      ---
+      left_header_erb: |
+        #{default_left_header_erb}
+      right_header_erb: |
+        #{default_right_header_erb}
+      left_footer_erb: |
+        #{default_left_footer_erb}
+      right_footer_erb: |
+        #{default_right_footer_erb}
+      EOF
+    end
+
     def default_layout_rb
       s=<<~EOF
+      @left_header_erb = #{default_left_header_erb}
+      @right_header_erb = #{default_right_header_erb}
+      @left_footer_erb = #{default_left_footer_erb}
+      @right_footer_erb = #{default_right_footer_erb}
+      
       RLayout::RDocument.new(width:#{@width}, heihgt:#{@height})
       EOF
     end
