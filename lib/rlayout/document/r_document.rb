@@ -12,6 +12,8 @@ module RLayout
     attr_reader :max_page_number, :page_count
     attr_accessor :fixed_page_document
     attr_reader :column_grid, :row_grid
+    attr_reader :header_footer_info
+
     # page_type is used to add differnt types of pages in a document
     # example Toc can create Doc with TocPages
     attr_reader :page_type, :toc_data
@@ -68,6 +70,10 @@ module RLayout
         instance_eval(&block)
       end
       self
+    end
+
+    def set_header_footer_info(header_footer_info)
+      @header_footer_info = header_footer_info.dup
     end
 
     def set_margins
