@@ -301,14 +301,6 @@ module RLayout
     def default_header_footer_yml
       <<~EOF
       ---
-      left_header_erb: |
-        # RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-        #   text("<%= @page_number %>", font_size: 10, x: <%= @left_margin %>, width: <%= footer_width  %>, text_alignment: 'left')
-        # end
-      right_header_erb: |
-        # RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-        #   text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
-        # end
       left_footer_erb: |
         RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:#{@height - 50}, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
           text("<%= @page_number %>  <%= @book_title %>", font_size: 10, x:0, y:0, width: <%= footer_width  %>, text_alignment: 'left')
@@ -317,6 +309,18 @@ module RLayout
         RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:#{@height - 50}, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
           text("<%= @title %>  <%= @page_number %>", font_size: 9, x:0, y: 0, width:<%= footer_width  %>, text_alignment: 'right')
         end
+
+
+      ---
+
+      # left_header_erb: |
+        # RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+        #   text("<%= @page_number %>", font_size: 10, x: <%= @left_margin %>, width: <%= footer_width  %>, text_alignment: 'left')
+        # end
+      # right_header_erb: |
+        # RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+        #   text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
+        # end
       EOF
     end
 
@@ -579,7 +583,6 @@ module RLayout
       chapter_info ={}
       chapter_info[:book_title] = @book_info[:title] if @book_info
       chapter_info[:chapter_title] = @title if @title
-      # binding.pry
       #  TODO fix this use #header_footer_info
       # if @header_footer_info['left_header_erb'] && @header_footer_info['right_header_erb']
 

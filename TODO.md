@@ -28,18 +28,60 @@
 
   - line_type
   - arrow_type
+### 2022_06_09
+  - header_footer_info
+  - fix ImagePlus
+  - change _style_guide to style_guide
+  - add style_guide to book_template/paperback/style_guide
 
+  - add image markup to body.md
+  - drop done folder workflow to Tech D&P
+  - Resilio Sync
+
+### 2022_06_06
+  -  samples 
+    - book_cover
+      sample_wing
+        - author_profile.md
+        - book_promo.md
+    - front_matter
+      - 01_inside_cover.md
+      - 02_isbn.md
+      - 03_dedication.md
+      - 03_thanks.md
+      - 05_preface.md
+      - 05_prologue.md
+    - chapter
+    - part_cover
+     
+  - apply header_footer_info
+    - apply style_name
+  - image_plus cation style_name text_alignment
+  - generate_body_pdf
+  
+### 2022_06_05
+  - book.md
+    - yaml header
+      - title: this is title
+      - subtitle: this is subtitle
+      - starting_page: 7
+
+    - # chapter title
+    - # chapter title
+
+  - book_cover
+  - front_matter
+  - book_info.yml
 
 
 ### 2022_06_04
 
   -  add header and footer to styleable_doc.rb
-  
-    @left_footer = 
-    @right_footer = 
-    @left_header = 
-    @right_header  =
-
+  - @header_footer_info
+    -  left_header_erb: 
+    -  right_headrer_erb: 
+    -  left_footer_erb:  
+    -  right_footer_erb:  
 
 ### 2022_06_03
   - mark floats as
@@ -309,7 +351,7 @@
 
 ### 2022_03_20
   - book
-    - _style_guide folder by document_kind with size
+    - style_guide folder by document_kind with size
     - compile: build pdf without page_number 
       - with mdate dependancy
     - link: add header/footer and generate toc
@@ -362,7 +404,7 @@
     - company
     - member
 ### 2022_02_26
-  - _style_guide
+  - style_guide
   change RChapter to Chapter
 
 

@@ -1,0 +1,32 @@
+---
+body:
+  font: Shinmoon
+  font_size: 11.0
+  text_alignment: justify
+  first_line_indent: 11.0
+body_gothic:
+  font: KoPubBatangPM
+  font_size: 11.0
+  text_alignment: justify
+  first_line_indent: 11.0
+title:
+  font: KoPubBatangPB
+  font_size: 20.0
+  text_alignment: left
+  text_line_spacing: 10
+  space_before: 0
+subtitle:
+  font: KoPubDotumPL
+  font_size: 16.0
+  text_color: 'DarkGray'
+  text_alignment: center
+  text_line_spacing: 5
+  space_after: 30
+author:
+  font: KoPubDotumPL
+  font_size: 14.0
+  text_color: 'DarkGray'
+  text_alignment: center
+  text_line_spacing: 5
+  space_after: 30
+

@@ -100,7 +100,7 @@ module RLayout
     end
 
     def style_guide_folder
-      @project_path + "/_style_guide"
+      @project_path + "/style_guide"
     end
 
     # copy front_matter source file or folder to _build

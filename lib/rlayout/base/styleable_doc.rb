@@ -55,7 +55,7 @@ module RLayout
       set_width_and_height_from_paper_size
       load_text_style
       load_layout_rb
-      load_hear_footer_erb
+      load_header_footer_info
       if @layout_rb
         @document = eval(@layout_rb)
         if @document.is_a?(SyntaxError)
@@ -155,10 +155,9 @@ module RLayout
       @style_guide_folder + "/#{style_klass_name}_header_footer.yml"
     end
 
-    def load_hear_footer_erb
+    def load_header_footer_info
       if File.exist?(style_guide_header_footer_path)
         @header_footer_info = YAML::load_file(style_guide_header_footer_path)
-        binding.pry
       else
         @header_footer_info = YAML::load(default_header_footer_yml)
         File.open(style_guide_header_footer_path, 'w'){|f| f.write default_header_footer_yml}
@@ -216,14 +215,10 @@ module RLayout
     def default_header_footer_yml
       <<~EOF
       ---
-      left_header_erb: |
-        #{default_left_header_erb}
-      right_header_erb: |
-        #{default_right_header_erb}
-      left_footer_erb: |
-        #{default_left_footer_erb}
-      right_footer_erb: |
-        #{default_right_footer_erb}
+      left_header_erb: 
+      right_header_erb:
+      left_footer_erb:
+      right_footer_erb: 
       EOF
     end
 

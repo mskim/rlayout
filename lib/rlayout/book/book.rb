@@ -70,6 +70,7 @@ module RLayout
       @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number, paper_size: @paper_size)
       @rear_matter = RearMatter.new(@project_path)
       generate_toc
+      generate_body_pdf
       generate_pdf_book 
       generate_pdf_for_print
       generate_ebook #unless options[:no_ebook]
@@ -97,7 +98,7 @@ module RLayout
     end
 
     def source_body_md_path
-      @project_path + "/book.md"
+      @project_path + "/body.md"
     end
 
     def source_rear_md_path
@@ -105,11 +106,11 @@ module RLayout
     end
 
     def style_guide_folder
-      @project_path +  "/_style_guide"
+      @project_path +  "/style_guide"
     end
 
     def style_guide_folder_for_toc
-      @project_path + "/_style_guide/toc"
+      @project_path + "/style_guide/toc"
     end
 
     def toc_first_page_number
@@ -136,7 +137,7 @@ module RLayout
 
     def parse_front_matter
       if File.exist?(source_front_md_path)
-        RLayout::BookParser.new(source_front_md_path)
+        RLayout::BodyParser.new(source_front_md_path)
       else
         FileUtils.mkdir_p(build_front_matter_path) unless File.exist?(build_front_matter_path)
         return unless File.exist?(source_front_matter_path)
@@ -192,7 +193,7 @@ module RLayout
 
     def parse_body_matter
       if File.exist?(source_body_md_path)
-        RLayout::BookParser.new(source_body_md_path)
+        RLayout::BodyParser.new(source_body_md_path)
       else
         Dir.entries(@project_path).sort.each do |file|
           # copy source to build 
@@ -230,7 +231,7 @@ module RLayout
 
     def parse_rear_matter
       if File.exist?(source_rear_md_path)
-        RLayout::BookParser.new(source_rear_md_path)
+        RLayout::BodyParser.new(source_rear_md_path)
       else
       # TODO parse rear_matter 
       end
@@ -404,6 +405,15 @@ module RLayout
 
     def back_cover_2_pdf_path
       build_folder + '/book_cover/back_cover/0002/page.pdf'
+    end
+
+    def generate_body_pdf
+      unless File.exist?(pdf_folder)
+        FileUtils.mkdir_p(pdf_folder) 
+      else
+        target = HexaPDF::Document.new
+
+      end
     end
 
     def generate_pdf_book

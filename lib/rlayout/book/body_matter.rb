@@ -22,7 +22,6 @@ module RLayout
       @book_type = @book_info[:book_type] || 'chapter'
       @title = @book_info[:title]
       @part_titles = @book_info[:part]
-      # @custom_style = @book_info[:custom_style]
       @paper_size = @book_info[:paper_size]  || "A5"
       @paper_size = options[:paper_size] if options[:paper_size]
       @page_width = SIZES[@paper_size][0]
@@ -43,9 +42,9 @@ module RLayout
     def source_body_md_path
       @project_path + "/body.md"
     end
+
     # support folder as well as .md file as chapter source
     def process_body_matter
-      
       @document_folders = []
       @belongs_to_part = false
       part_order = 1
@@ -107,11 +106,11 @@ module RLayout
     end
 
     def style_guide_folder
-      @project_path + "/_style_guide/chapter"
+      @project_path + "/style_guide/chapter"
     end
 
     def style_guide_folder_for_part_cover
-      @project_path + "/_style_guide/part_cover"
+      @project_path + "/style_guide/part_cover"
     end
 
     def generate_body_matter_toc

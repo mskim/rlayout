@@ -2,17 +2,17 @@ module RLayout
   PART_START = /PART|part|파트/
   # DOC_START  start of chapter or new pdf_document
   DOC_START = /^#\s/
-  FRONT_MATTER_TYPE = /prologue|thanks|dedication/
-  REAR_MATTER_TYPE = /appendix|index/
+  # FRONT_MATTER_TYPE = /prologue|thanks|dedication/
+  # REAR_MATTER_TYPE = /appendix|index/
 
-  class  BookParser
+  class BodyParser
     attr_reader :project_path
     # attr_reader :docs, :md_file
     attr_reader :part_titles
     def initialize(md_file)
       @md_file = md_file
       @project_path = File.dirname(@md_file)
-      bookfile2docs
+      body_md2docs
       self
     end
 
@@ -38,16 +38,10 @@ module RLayout
 
     def self.push_to_github
       BookPlan.create_github_repo(project_path)
-
     end
 
-    def self.create_github_repo
-
-
-    end
-
-    #read bookfile.md and convert it to StyeleableDoc format
-    def bookfile2docs
+    #read body.md and convert it to StyeleableDoc format
+    def body_md2docs
       source = File.open(bookfile_path, 'r'){|f| f.read}
       begin
         if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
@@ -89,68 +83,29 @@ module RLayout
           part_title = first_line.split(":")[1] || ""
           @part_titles << part_title
           @chapter_order = 1
-
         elsif first_line=~DOC_START
-          if first_line =~/:/
-            @doc_type = first_line.split(":")[0].split("# ")[1]
-          else
-            @doc_type = 'chapter'
-          end
-          if first_line=~FRONT_MATTER_TYPE
-            @title = first_line.split(":")[1]
-            # save current doc
-            front_matter_order_string = @front_matter_order.to_s.rjust(2,'0')
-            @front_matter_doc_folder = front_matter_folder + "/#{front_matter_order_string}_#{@doc_type}"
-            FileUtils.mkdir_p(@front_matter_doc_folder) unless File.exist?(@front_matter_doc_folder)
-            @front_matter_order += 1
-            front_matter_doc =<<~EOF
-            ---
-            doc_type: #{@doc_type}
-            title: #{@title}
-            ---
+          @doc_type = 'chapter'
+          @title = first_line.split("# ")[1]
+          # save current doc
+          chapter_doc =<<~EOF
+          ---
+          doc_type: chapter
+          title: #{@title}
+          ---
 
-            EOF
-            while lines_block = text_blocks.shift do
-              first_line = lines_block[0]
-              if first_line =~PART_START || first_line =~DOC_START
-                doc_path =  front_matter_folder + "/story.md"
-                FileUtils.mkdir_p(front_matter_folder) unless File.exist?(front_matter_folder)
-                File.open(doc_path, 'w'){|f| f.write front_matter_doc}
-                text_blocks.unshift(lines_block)
-                break
-              else
-                front_matter_doc += "\n\n" + lines_block.join("\n")
-              end
-            end
-            
-          elsif first_line=~REAR_MATTER_TYPE
-
-            file_path = rear_matter_folder + "/#{doc_type}"
-            @rear_matter_order += 1
-          else # this is a body doc 
-            @title = first_line.split("# ")[1]
-            # save current doc
-            chapter_doc =<<~EOF
-            ---
-            doc_type: chapter
-            title: #{@title}
-            ---
-
-            EOF
-
-            while lines_block = text_blocks.shift do
-              first_line = lines_block[0]
-              if first_line =~PART_START || first_line =~DOC_START
-                chapter_folder =  @current_doc_foler + "/#{@chapter_order.to_s.rjust(2,'0')}_chapter"
-                FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
-                doc_path =  chapter_folder + "/story.md"
-                File.open(doc_path, 'w'){|f| f.write chapter_doc}
-                text_blocks.unshift(lines_block)
-                @chapter_order += 1
-                break
-              else
-                chapter_doc += "\n\n" + lines_block.join("\n")
-              end
+          EOF
+          while lines_block = text_blocks.shift do
+            first_line = lines_block[0]
+            if first_line =~PART_START || first_line =~DOC_START
+              chapter_folder =  @current_doc_foler + "/#{@chapter_order.to_s.rjust(2,'0')}_chapter"
+              FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
+              doc_path =  chapter_folder + "/story.md"
+              File.open(doc_path, 'w'){|f| f.write chapter_doc}
+              text_blocks.unshift(lines_block)
+              @chapter_order += 1
+              break
+            else
+              chapter_doc += "\n\n" + lines_block.join("\n")
             end
           end
         end
@@ -159,7 +114,6 @@ module RLayout
       update_part_titles if @part_titles.length > 0
     end
     
-
     def update_book_info(book_info)
       if File.exist?(book_info_path)
         # book_info = YAML::load_file(book_info_path)
@@ -175,7 +129,7 @@ module RLayout
     end
 
     def self.save_sample(path)
-      File.open(path, 'w'){|f| f.write BookParser.sample_bookfile}
+      File.open(path, 'w'){|f| f.write BodyParser.sample_book_md}
     end
 
     def self.sample_paragraph
@@ -189,7 +143,7 @@ module RLayout
       EOF
     end
 
-    def self.sample_bookfile
+    def self.sample_book_md
       <<~EOF
 
       ---
@@ -199,25 +153,6 @@ module RLayout
 
       ---
 
-      # prologue: Prologue
-
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. 
-
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. 
-
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. 
 
       # chapter1 title
 
@@ -261,7 +196,6 @@ module RLayout
 
       # chapter3 title
 
-
       This is body text. This is body text. This is body text. 
       This is body text. This is body text. This is body text. 
       This is body text. This is body text. This is body text. 
@@ -304,10 +238,10 @@ module RLayout
     end
 
     def self.save_sample_front_matter_doc(path)
-      File.open(path, 'w'){|f| f.write BookParser.sample_sample_front_matter_doc}
+      File.open(path, 'w'){|f| f.write BodyParser.sample_front_matter_doc}
     end
 
-    def self.sample_sample_front_matter_doc
+    def self.sample_front_matter_doc
         <<~EOF
   
         # prologue: Prologue
@@ -327,9 +261,8 @@ module RLayout
         EOF
     end
 
-
     def self.save_sample_with_part(path)
-      File.open(path, 'w'){|f| f.write BookParser.sample_with_part}
+      File.open(path, 'w'){|f| f.write BodyParser.sample_with_part}
     end
 
     def self.sample_with_part
@@ -342,25 +275,6 @@ module RLayout
 
       ---
 
-      # prologue: Prologue
-
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. 
-
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. 
-
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. This is body text. This is body text. 
-      This is body text. 
 
       PART_1
 
@@ -405,7 +319,6 @@ module RLayout
       This is body text. 
 
       # chapter3 title
-
 
       This is body text. This is body text. This is body text. 
       This is body text. This is body text. This is body text. 

@@ -47,7 +47,7 @@ module RLayout
       @book_info = options[:book_info]
       @project_path = options[:project_path]
       @source_path = options[:source_path] || File.dirname(@project_path) + "/book_cover"
-      @style_guide_folder = File.dirname(@source_path) + "/_style_guide"
+      @style_guide_folder = File.dirname(@source_path) + "/style_guide"
       @portrait  = options[:portrait] || true
       @has_no_cover_inside_page = options[:has_no_cover_inside_page]
       @has_no_wing = options[:has_no_wing]
@@ -170,7 +170,7 @@ module RLayout
     def create_back_page
       # part_path = @project_path + "/back_page"
       h = {}
-      h[:style_guide_folder] = File.dirname(@source_path) + "/_style_guide/back_page"
+      h[:style_guide_folder] = File.dirname(@source_path) + "/style_guide/back_page"
       h[:book_cover_folder] = @source_path
       h[:document_path] = @project_path + "/back_page"
       h[:width] = @page_width
@@ -191,7 +191,7 @@ module RLayout
       h[:width] =  @height
       h[:height] =  @seneca_width
       h[:book_info] = @book_info
-      h[:style_guide_folder] = File.dirname(@source_path) + "/_style_guide/seneca"
+      h[:style_guide_folder] = File.dirname(@source_path) + "/style_guide/seneca"
       @seneca = RLayout::Seneca.new(h)
       # rotae PDF 90 degree
       @current_x += @seneca_width
@@ -205,7 +205,7 @@ module RLayout
       # part_path = @project_path + "/front_page"
       h = {}
       # h[:project_path] = @project_path + "/front_page"
-      h[:style_guide_folder] = File.dirname(@source_path) + "/_style_guide/front_page"
+      h[:style_guide_folder] = File.dirname(@source_path) + "/style_guide/front_page"
       h[:book_cover_folder] = @source_path
       h[:document_path] = @project_path + "/front_page"
       h[:width] = @page_width

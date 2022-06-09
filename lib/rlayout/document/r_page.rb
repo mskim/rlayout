@@ -804,7 +804,6 @@ module RLayout
         erb = ERB.new(left_footer_erb)
       else
         erb = ERB.new(right_footer_erb)
-        # binding.pry
       end
       layout = erb.result(binding)
       @footer_object = eval(layout)
@@ -817,7 +816,6 @@ module RLayout
         erb = ERB.new(left_footer_erb)
       else
         erb = ERB.new(right_footer_erb)
-        # binding.pry
       end
       layout = erb.result(binding)
       @footer_object = eval(layout)

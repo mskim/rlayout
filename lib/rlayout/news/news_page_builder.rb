@@ -122,7 +122,7 @@ module RLayout
     end
 
     def style_guide_folder
-      publication_path + "/_style_guide"
+      publication_path + "/style_guide"
     end
 
     def heading_path

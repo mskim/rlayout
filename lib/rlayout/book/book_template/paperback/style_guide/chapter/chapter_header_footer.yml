@@ -1,0 +1,21 @@
+---
+left_footer_erb: |
+  RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:545.28, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+    text("<%= @page_number %>  <%= @book_title %>", font_size: 10, x:0, y:0, width: <%= footer_width  %>, text_alignment: 'left')
+  end
+right_footer_erb: |
+  RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:545.28, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+    text("<%= @title %>  <%= @page_number %>", font_size: 9, x:0, y: 0, width:<%= footer_width  %>, text_alignment: 'right')
+  end
+
+
+---
+
+# left_header_erb: |
+  # RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+  #   text("<%= @page_number %>", font_size: 10, x: <%= @left_margin %>, width: <%= footer_width  %>, text_alignment: 'left')
+  # end
+# right_header_erb: |
+  # RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+  #   text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
+  # end

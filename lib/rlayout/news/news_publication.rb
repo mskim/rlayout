@@ -50,7 +50,7 @@ module RLayout
     end
 
     def page_heading_rb_path
-      @project_path + "/_style_guide/page_heading"
+      @project_path + "/style_guide/page_heading"
     end
 
     def front_page_heading_rb

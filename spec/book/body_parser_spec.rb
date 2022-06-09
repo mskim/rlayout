@@ -8,13 +8,13 @@ describe 'create BookPart' do
     @pdf_path = @project_path + "/book.md"
     unless File.exist?(@project_path)
       FileUtils.mkdir_p(@project_path) 
-      BookParser.save_sample(@book_md_path) 
+      BodyParser.save_sample(@book_md_path) 
     end
-    @book_file = BookParser.new(@book_md_path)
+    @book_file = BodyParser.new(@book_md_path)
   end
 
   it 'should create BookPart' do
-    assert_equal RLayout::BookParser, @book_file.class 
+    assert_equal RLayout::BodyParser, @book_file.class 
   end
 
   # it 'should create pdf' do
@@ -30,13 +30,13 @@ describe 'create BookPart' do
     @book_md_path = @project_path + "/book.md"
     unless File.exist?(@project_path)
       FileUtils.mkdir_p(@project_path) 
-      BookParser.save_sample_with_part(@book_md_path) unless File.exist?(@sample_path)
+      BodyParser.save_sample_with_part(@book_md_path) unless File.exist?(@sample_path)
     end
-  @book_file = BookParser.new(@book_md_path)
+  @book_file = BodyParser.new(@book_md_path)
   end
 
   it 'should create BookPart' do
-    assert_equal RLayout::BookParser, @book_file.class 
+    assert_equal RLayout::BodyParser, @book_file.class 
   end
 
 end
