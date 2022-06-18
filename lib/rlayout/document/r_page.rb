@@ -711,7 +711,7 @@ module RLayout
       if page_number.even?
         erb = ERB.new(@document.header_footer_info['left_header_erb'])
       else
-        erb = ERB.new(@document.header_footer_info['right_header_erb']
+        erb = ERB.new(@document.header_footer_info['right_header_erb'])
       end
       @book_title = info_hash[:book_titile]
       @title = info_hash[:chapter_title]
@@ -751,6 +751,4 @@ module RLayout
       RLayout::ColumnText.new(h)
     end
   end
-
-
 end

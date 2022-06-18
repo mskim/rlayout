@@ -153,6 +153,7 @@ require File.dirname(__FILE__) + "/rlayout/book/thanks"
 require File.dirname(__FILE__) + "/rlayout/book/dedication"
 require File.dirname(__FILE__) + "/rlayout/book/inside_cover"
 require File.dirname(__FILE__) + "/rlayout/book/book_cover_wing"
+require File.dirname(__FILE__) + "/rlayout/book/book_txt_parser"
 
 # require File.dirname(__FILE__) + "/rlayout/styleable/book_promo"
 
