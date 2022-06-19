@@ -108,11 +108,25 @@ module RLayout
               chapter_doc += "\n\n" + lines_block.join("\n")
             end
           end
+
+          # save unsaved chapter_doc
+          # check if initial chapter_doc content was changed
+          if chapter_doc.split("\n").length > 4
+            chapter_folder =  @current_doc_foler + "/#{@chapter_order.to_s.rjust(2,'0')}_chapter"
+            FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
+            doc_path =  chapter_folder + "/story.md"
+            File.open(doc_path, 'w'){|f| f.write chapter_doc}
+            text_blocks.unshift(lines_block)
+            @chapter_order += 1
+          end
+
         end
 
       end
       update_part_titles if @part_titles.length > 0
     end
+
+
     
     def update_book_info(book_info)
       if File.exist?(book_info_path)

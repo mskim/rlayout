@@ -33,6 +33,25 @@
 
   - draw superscript
   - create footer_rect at the bottom of column
+### 2022_06_18
+
+- imlement footnote token
+- imlement footnote descripotion box in column
+
+
+### 2022_06_16
+- check support for 『폴과 비르지니』 quare quote 
+
+- implement footnote 
+  1. add footnote marker 
+  1. following line add footnote content.
+
+```  
+Here is a simple footnote[^1]. With some additional text after it.
+
+[^1]: My reference.
+
+```
 
 ### 2022_06_09
   - header_footer_info

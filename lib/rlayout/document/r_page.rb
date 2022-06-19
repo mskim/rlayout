@@ -751,6 +751,4 @@ module RLayout
       RLayout::ColumnText.new(h)
     end
   end
-
-
 end
