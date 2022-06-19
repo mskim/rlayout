@@ -19,6 +19,12 @@ module RLayout
   # article_bottom_space_in_lines
   # this is used for intensionally putting emtype space at the bottom of the columns.
   # some newspapder articles use it as such.
+
+  # add FootnoteBox
+  # empty FootnoteBox is created when creaing RColumn
+  # footnote item is added to FootnoteBox as paragraph is layed out.
+  # FootnoteBox grows from bottom to top as footnote item is added
+  # 
   class RColumn < Container
     attr_accessor :current_position, :current_grid_index
     attr_accessor :line_count, :current_line_index, :current_line
@@ -27,6 +33,7 @@ module RLayout
     attr_accessor :article_bottom_space_in_lines
     attr_accessor :column_type, :empty_lines
     attr_reader  :left_side_bar, :right_side_bar
+    attr_reader :footnote_box
 
     def initialize(options={}, &block)
       options[:width]     = 200 unless options[:width]
@@ -34,6 +41,7 @@ module RLayout
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
+      @footnote_box = FootnoteBox.new(parent:self, width: @width, y: @height + 10, height: 0, is_float: true,  fill_color: 'clear')
       @left_side_bar = options[:left_side_bar] 
       @right_side_bar = options[:right_side_bar] 
       @empty_lines          = options[:empty_lines] || false
@@ -282,6 +290,22 @@ module RLayout
       end
     end
 
+    def adjust_overlapping_footnote_box
+      return if @footnote_box.footnote_list == 0
+      @graphics.each do |line|
+        line.adjust_text_area_away_from(@footnote_box)
+      end
+    end
+
+    def footnote_list
+      @document.footnote_list
+    end
+
+    # add footnote_text with given footnote_item_number to FootnoteBox
+    def add_footnote_description_items(footnote_description_items)
+      @footnote_box.add_footnote_descriptions footnote_description_items
+    end
+
     def char_count
       lines_char_count = 0
       @graphics.each do |line|
@@ -478,4 +502,44 @@ module RLayout
 
   end
 
+  class FootnoteBox < Container
+    attr_reader :footnote_list
+    def initialize(options={})
+      super
+      @is_float = true
+      @footnote_list =  []
+      self
+    end
+
+    def add_footnote_descriptions(footnote_descripions)
+      last_footnote = @graphics.last
+      if last_footnote
+        @y_position = last_footnote.y + last_footnote.height
+      else
+        @y_position = 0
+      end
+      footnote_descripions.each do |footnotes|
+        new_footnote = create_footnote(footnotes[:para_string], y: @y_position)
+        @y_position += new_footnote.height
+      end
+      #TODO adjust footnote object position
+    end
+
+    def create_footnote(string, options={})
+      atts  = {}
+      atts[:y] = options[:y]
+      atts[:style_name]           = 'footnote'
+      atts[:text_string]          = string
+      atts[:width]                = @width
+      atts[:text_alignment]       = options[:text_alignment] || 'left'
+      atts[:fill_color]           = options.fetch(:fill_color, 'clear')
+      atts[:line_spacing]         = options.fetch(:line_spacing, 0)
+      atts[:space_before]         = options.fetch(:space_before, 0)
+      atts[:space_after]         = options.fetch(:space_before, 0)
+      atts[:parent]               = self
+      @footnote_object = TitleText.new(atts)
+      @footnote_object
+    end
+
+  end
 end

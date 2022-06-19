@@ -28,6 +28,12 @@
 
   - line_type
   - arrow_type
+
+### 2022_06_19
+
+  - draw superscript
+  - create footer_rect at the bottom of column
+
 ### 2022_06_09
   - header_footer_info
   - fix ImagePlus

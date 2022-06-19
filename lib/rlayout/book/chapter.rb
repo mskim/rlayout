@@ -212,6 +212,7 @@ module RLayout
     attr_reader :page_by_page, :story_md, :story_by_page, :toc
     attr_reader :grid, :default_image_location, :default_image_size
     attr_reader :local_image_fold
+    attr_reader :footnote_description_items
     attr_reader :starting_page_side # :left, :right, :either
                                     # Some document should start on specific side, isbn left(even), inside_cover right(odd),
                                     # blank page is inserted in front of the document to make it work.
@@ -220,6 +221,7 @@ module RLayout
       # @starting_page_number  = options[:starting_page_number] || 1
       @doc_type = options[:doc_type] || 'chapter'
       super
+      @footnote_description_items = []
       # @document_path  = options[:document_path]
       # @style_guide_folder = options[:style_guide_folder] || @document_path
       @starting_page_side = options[:starting_page_side] || :either_sid
@@ -446,6 +448,8 @@ module RLayout
           @paragraphs << RParagraph.new(para_options)
         elsif  para[:markup] == "table"
 
+        elsif  para[:markup] == "footnote_item"
+          @footnote_description_items << para
         else
           para_options = {}
           para_options[:markup]         = para[:markup]
@@ -514,6 +518,18 @@ module RLayout
       @story_by_page_hash         = {} # this is used to capter story_by_page info
       current_page_paragraph_list = []
       while @paragraph = @paragraphs.shift
+        if @paragraph.has_footnote_marker
+          current_column = @current_line.column
+          currunt_para_footnote_markers = @paragraph.footnote_marker_numbers
+          footnote_description_items_to_add_for_column = []
+          currunt_para_footnote_markers.each do |marker_number|
+            footnote_description_items_to_add_for_column += @footnote_description_items.select do |item|
+              item[:footnote_item_number] == marker_number
+            end
+          end
+          footnote_description_items_to_add_for_column.flatten
+          current_column.add_footnote_description_items(footnote_description_items_to_add_for_column)
+        end
         # TODO: capturing paragraph info to save @story_by_page
         @current_line                   = @paragraph.layout_lines(@current_line)
         current_page_paragraph_list     << @paragraph.para_info

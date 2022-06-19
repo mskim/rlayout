@@ -1,5 +1,7 @@
 
 module RLayout
+
+
   class NewLineToken < Graphic
     attr_accessor :string
     def initialize(options={})
@@ -16,6 +18,7 @@ module RLayout
     attr_reader :adjust_size
     attr_reader :style_name, :current_style
     attr_reader :font_wrapper, :glyphs, :style_object, :has_missing_glyph
+    attr_reader  :has_footnote_marker, :super_script_text, :footnote_item_number
 
     def initialize(options={})
       options[:fill_color] = options.fetch(:token_color, 'clear')
@@ -24,11 +27,25 @@ module RLayout
       @font_wrapper  = @style_object.font
       @font_size = @style_object.scaled_font_size
       @string = options[:string] || options[:text_string]
+      @token_type = options[:token_type] if options[:token_type]
+
+      if @string =~FOOTNOTE_MARKER
+        @footnote_item_number = $1
+        @has_footnote_marker = true
+        # @token_type = "has_footnote_marker"
+        @string = footnote_marker_to_parentheses(@string)
+        # @string, @super_script_text footnote_marker_to_superscript(@string)
+        # create footnote marker token
+      end
       #filter unsupported glyph!!!! replace it with ???
       @glyphs = filter_glyph(@string) 
       @width= @glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
+      
+      #TODO set  @style_object superscript: true
+      # @superscrupt_glyphs = @font_wrapper.decode_utf8(@super_script_text)
+      # @superscrupt_width= @glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
+
       @has_text         = true
-      @token_type       = options[:token_type] if options[:token_type]
       @char_half_width_cushion = 0
       @char_half_width_cushion  = @font_size/2
 
@@ -36,6 +53,21 @@ module RLayout
         @height += options[:text_line_spacing]
       end
       self
+    end
+
+    # convert 
+    def footnote_marker_to_superscript(text)
+      array = text.split("[^")
+      word = array[0]
+      super_number = array[1].sub(/]$/, "")
+      superscript_text = "(#{super_number})"
+      return word, superscript_text
+    end
+        # convert 
+    def footnote_marker_to_parentheses(text)
+      new_text = text.sub("[^", "(")
+      new_text = new_text.sub("]", ")")
+      new_text
     end
 
     def size
