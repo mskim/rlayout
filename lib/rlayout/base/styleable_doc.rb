@@ -311,7 +311,12 @@ module RLayout
         text_color: CMYK=0,0,0,100
         text_alignment: right
         tracking: -0.2
-      
+      footnote:
+        font: Shinmoon
+        font_size: 8.0
+        text_alignment: left
+        text_color: red
+        first_line_indent: 11.0
       EOF
 
     end

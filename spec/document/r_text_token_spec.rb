@@ -1,5 +1,28 @@
 require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
+describe "save r_text_token with footnote_marker" do
+  before do
+    options                 = {}
+    options[:string]        = '여기는[^1]'
+    @current_style_service  = RLayout::StyleService.shared_style_service
+    @style_object = @current_style_service.style_object('body')
+    options[:height]        = 20
+    options[:parent]        = self
+    options[:style_object]  = @style_object
+    @t = RTextToken.new(options)
+  end
+
+  it 'should filter token string' do
+    assert_equal @t.string, '여기는'
+    assert @t.has_footnote_marker
+  end
+
+
+end
+
+__END__
+
+
 describe "save r_text_token" do
   before do
     options                 = {}
@@ -27,7 +50,6 @@ describe "save r_text_token" do
   end
 end
 
-__END__
 
 describe "FORBIDDEN_FIRST_CHARS_AT_END test" do
   before do

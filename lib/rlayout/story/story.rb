@@ -220,7 +220,6 @@ module RLayout
           block2para_data(lines_block, :starting_heading_level=>starting_heading_level)
         end
       end
-
       @para_data = {:heading=>@updated_metadata, :paragraphs =>paragraphs}
     end
 
@@ -352,8 +351,16 @@ module RLayout
       # elsif s =~/^\*\s?/
       #   # unordered list uli1
       #   return {:markup =>"unordered_list", :text_block=>text_block}
+      
+      # FOOTNOTE_TEXT_ITEM = /^\[\^(\d*?)\]:/      #[^1]: footnote description tex
+      elsif s =~FOOTNOTE_TEXT_ITEM
+        footnote_item_number = $1
+        s = text_block.join("\n")
+
+        # @footnote_item << {:markup =>"footnote_item", :para_string=>text_block, :footnote_item_number=> footnote_item_number}        # 
+        return {:markup =>"footnote_item", :para_string=>s, :footnote_item_number=> footnote_item_number}        # 
       elsif s =~/^table\s?/
-        # parse block
+      # parse block
         @markup = "table"
         @string = s.sub(/table\s?/, "")
       elsif s =~/^image_\d\s?/

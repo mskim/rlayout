@@ -46,6 +46,8 @@
 # * Style#underlay_callback
 # * Style#overlay_callback
 
+
+
 module RLayout
   #TODO
   # tab stop
@@ -53,6 +55,28 @@ module RLayout
   EMPASIS_DIAMOND   = /(\*.*?\*)/    # *empais diamond string*
   EMPASIS_ARROW     = /(\*▲.*?\*)/    # *empais downarrow string*
 
+  FOOTNOTE_MARKER = /\[\^(\d*?)\]/      #[^1]
+  FOOTNOTE_TEXT_ITEM = /^\[\^(\d*?)\]:/      #[^1]: footnote description text
+  FOOTNOTE_TEXT_ITEM_NUMBER = /^\[\^(\d*?)\]:/
+  FOOTNOTE_MARKER_WITH_SPACE = /(\s\[\^\d*?\])/      # word [^1]
+
+  # footnote_marker is marker with footnote number next to a word in paragraph.
+  # footnote_text is description for footnote_marker.
+  # has_footnote_marker: true if para has footnote_marker
+  
+  # footnote_text_items shoule be written at the start of new line as following
+  # example
+
+  # This is some text word[^1] and other[^2] and let see how it is presented.
+  #
+  # [^1]: word means Englishing work
+  #
+  # [^2]: other means other
+  
+  # Ths is second paragraph[^3] with footnote marker
+  #
+  # [^3]: paragraph means a collection of words.
+  # 
   class RParagraph
     attr_reader :markup, :move_up_if_room
     attr_reader :para_string, :style_name, :para_style, :space_width
@@ -64,6 +88,8 @@ module RLayout
     attr_reader :float_info 
     attr_reader :style_object, :style_object_bold, :style_object_itaic
     attr_reader :extra_info
+    attr_reader :has_footnote_marker, :footnote_marker_numbers
+
 
     def initialize(options={})
       @tokens = []
@@ -108,6 +134,17 @@ module RLayout
         end
       end
 
+      # TODO check if there is a space between work and footnote_marker like word [^1]
+      # if so delte the space between them
+
+      # collect all footnote marker numbers into @footnote_marker_numbers array
+      if @para_string =~FOOTNOTE_MARKER
+        @has_footnote_marker = true
+        @footnote_marker_numbers = @para_string.scan(FOOTNOTE_MARKER).flatten
+      end
+
+
+      # TODO: emphsiss italic
       # TODO: fix this does not handle cases when
       # mutiple emphsiss are present in a paragraph
       if @para_string =~EMPASIS_STRONG
@@ -130,22 +167,6 @@ module RLayout
         end
       end
     end
-
-    # def create_plain_tokens(para_string)
-    #   # parse for tab first
-    #   return unless para_string
-    #   tokens_strings = para_string.split(" ")
-    #   @current_style_service = RLayout::StyleService.shared_style_service
-    #   @style_object = @current_style_service.style_object(@style_name)
-    #   tokens_strings.each do |token_string|
-    #     next unless token_string
-    #     token_options = {}
-    #     token_options[:string]      = token_string
-    #     token_options[:height]      = @para_style[:font_size]
-    #     token_options[:style_object] = @style_object
-    #     @tokens << RLayout::RTextToken.new(token_options)
-    #   end
-    # end
 
     def create_plain_tokens(para_string)
       # parse for tab first

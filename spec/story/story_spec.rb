@@ -3,9 +3,11 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'read story with image_1' do
   before do
-    @story_path  = "#{ENV["HOME"]}/test_data/chapter_with_images/story.md"
+    # @story_path  = "#{ENV["HOME"]}/test_data/chapter_with_images/story.md"
+    @story_path  = "#{ENV["HOME"]}/test_data/story/story.md"
     @story = Story.new(@story_path)
     @story_data  = @story.markdown2para_data
+
   end
 
   it 'shold create story from poem' do
@@ -13,8 +15,14 @@ describe 'read story with image_1' do
   end
 
   it 'shold create story from poem' do
-    assert_equal Hash, @story_data[:heading].class
+    # assert_equal Hash, @story_data[:heading].class
     assert_equal Array, @story_data[:paragraphs].class
+  end
+
+  it 'shold create story from poem' do
+    # assert_equal Hash, @story_data[:heading].class
+    assert_equal Array, @story_data[:paragraphs].class
+    assert_equal Array, @story_data[:footnote_item].class
   end
 
 end
