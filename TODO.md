@@ -29,6 +29,9 @@
   - line_type
   - arrow_type
 
+### 2022_06_20
+  - draw superscript
+
 ### 2022_06_19
 
   - draw superscript

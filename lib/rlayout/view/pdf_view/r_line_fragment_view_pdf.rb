@@ -87,6 +87,13 @@ module RLayout
           # align rect.x with first token.x
           token.x += @start_x 
           token.draw_pdf(canvas) # draw token_union_rect
+        elsif token.has_footnote_marker
+          canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])
+          #TODO make text_rise value relative to font_size
+          canvas.text_rise(4)
+          canvas.text(token.superscript_text, at:[@start_x + token.x + token.base_width, @start_y - token.height])
+          canvas.text_rise(0)
+
         else
           canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])
         end

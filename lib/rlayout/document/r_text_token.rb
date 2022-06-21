@@ -18,8 +18,8 @@ module RLayout
     attr_reader :adjust_size
     attr_reader :style_name, :current_style
     attr_reader :font_wrapper, :glyphs, :style_object, :has_missing_glyph
-    attr_reader  :has_footnote_marker, :super_script_text, :footnote_item_number
-
+    attr_reader  :has_footnote_marker, :footnote_item_number
+    attr_reader :base_width, :superscript_text, :superscript_width
     def initialize(options={})
       options[:fill_color] = options.fetch(:token_color, 'clear')
       super
@@ -29,21 +29,31 @@ module RLayout
       @string = options[:string] || options[:text_string]
       @token_type = options[:token_type] if options[:token_type]
 
-      if @string =~FOOTNOTE_MARKER
+      if @string =~FOOTNOTE_TEXT_ITEM
+        # TODO change front string other than [^\d]:
+        # do nothing if /^\[\^(\d*?)\]:/
+        # this is 
+        @string = "(#{$1})"
+        @glyphs = filter_glyph(@string) 
+        @width= @glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
+        # binding.pry
+      elsif @string =~FOOTNOTE_MARKER
         @footnote_item_number = $1
         @has_footnote_marker = true
-        # @token_type = "has_footnote_marker"
-        @string = footnote_marker_to_parentheses(@string)
-        # @string, @super_script_text footnote_marker_to_superscript(@string)
+        footnote_marker_to_superscript
+
+        @glyphs = filter_glyph(@string) 
+        @base_width= @glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
         # create footnote marker token
+        #TODO set  @style_object superscript: true
+        @superscrupt_glyphs = @font_wrapper.decode_utf8(@superscript_text)
+        @superscript_width= @superscrupt_glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
+        @width = @base_width + @superscript_width
+      else
+        #filter unsupported glyph!!!! replace it with ???
+        @glyphs = filter_glyph(@string) 
+        @width= @glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
       end
-      #filter unsupported glyph!!!! replace it with ???
-      @glyphs = filter_glyph(@string) 
-      @width= @glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
-      
-      #TODO set  @style_object superscript: true
-      # @superscrupt_glyphs = @font_wrapper.decode_utf8(@super_script_text)
-      # @superscrupt_width= @glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
 
       @has_text         = true
       @char_half_width_cushion = 0
@@ -55,19 +65,14 @@ module RLayout
       self
     end
 
-    # convert 
-    def footnote_marker_to_superscript(text)
-      array = text.split("[^")
-      word = array[0]
+    # split @string into @string, and @superscript_text
+    # original @string = myword[^1] 
+    # @string = myword , @superscript_text = (1)
+    def footnote_marker_to_superscript
+      array = @string.split("[^")
+      @string = array[0]
       super_number = array[1].sub(/]$/, "")
-      superscript_text = "(#{super_number})"
-      return word, superscript_text
-    end
-        # convert 
-    def footnote_marker_to_parentheses(text)
-      new_text = text.sub("[^", "(")
-      new_text = new_text.sub("]", ")")
-      new_text
+      @superscript_text = "(#{super_number})"
     end
 
     def size
