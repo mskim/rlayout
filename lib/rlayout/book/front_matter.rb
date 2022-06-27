@@ -12,22 +12,30 @@ module RLayout
     attr_reader :project_path, :book_info, :page_width, :height
     attr_reader :starting_page_number, :toc_page_count, :toc_page_links
     attr_reader :page_count, :toc_content, :document_folders
-    attr_reader :toc_first_page_number
+    attr_reader :toc_first_page_number, :jpg, :doc_options
 
-    def initialize(project_path, options={})
+    # def initialize(project_path, options={})
+    def initialize(project_path, starting_page_number, options={})
       @project_path = project_path
+      @doc_options = options.dup
       @book_info_path = @project_path + "/book_info.yml"
-      @book_info = YAML::load_file(@book_info_path)
-      @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
-      @title = @book_info[:title]
-      @toc_page_count = @book_info[:toc_page_count] || 1
-      @paper_size = @book_info[:paper_size] || 'A5'
-      @page_width = SIZES[@paper_size][0]
-      @height = SIZES[@paper_size][1]
-      @starting_page_number = options[:starting_page_number] || 1
+      @starting_page_number = starting_page_number
+      @jpg = options[:jpg]
+      # @book_info = YAML::load_file(@book_info_path)
+      # @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
+      # @width = @book_info[:width]
+      # @height = @book_info[:height]
+      # @title = @book_info[:title]
+      # @toc_page_count = @book_info[:toc_page_count] || 1
+      # @paper_size = @book_info[:paper_size] || 'A5'
+      # @page_width = @book_info[:width]
+      # @width = @page_width
+      # @height = @book_info[:height]
       @toc_page_count = options[:toc_page_count] || 1
       # @page_count = 0
-      process_front_matter
+      process_front_matter(options)
+      puts "after process_front_matter"
+
       self
     end
 
@@ -35,59 +43,98 @@ module RLayout
       @project_path + "/_build"
     end
     # create prolog, forward, isbn
-    def process_front_matter
+    def process_front_matter(options)
       @document_folders = []
       Dir.glob("#{build_front_matter_path}/*").sort.each do |file|
-          h = {}
-          h[:paper_size] = @paper_size
-          h[:book_info]  = @book_info
-          h[:page_pdf] = true
-          h[:toc] = true
-          h[:starting_page_number] = @starting_page_number
-          if file =~ /isbn$/
-            h[:document_path] = file
-            h[:toc] = false
-            h[:has_footer] = false
-            h[:has_header] = false
-            h[:style_guide_folder] = style_guide_folder + "/isbn"
-            r = RLayout::Isbn.new(h)
-            @starting_page_number += r.page_count
-            @document_folders << file
-          elsif file =~ /inside_cover$/
-            h[:document_path] = file
-            h[:front_page_pdf] = @project_path + "/_build/book_cover/front_page/output.pdf"
-            h[:toc] = false
-            h[:has_footer] = false
-            h[:has_header] = false
-            h[:style_guide_folder] = style_guide_folder + "/inside_cover"
-            r = RLayout::InsideCover.new(h)
-            @starting_page_number += r.page_count
-            @document_folders << file
-          elsif  file =~/dedication$/
-            h[:document_path] = file
-            h[:style_guide_folder] = style_guide_folder + "/dedication"
-            r = RLayout::Dedication.new(h)
-            @starting_page_number += r.page_count
-            @document_folders << file
-          elsif  file =~/thanks$/
-            h[:document_path] = file
-            h[:style_guide_folder] = style_guide_folder + "/thanks"
-            r = RLayout::Thanks.new(h)
-            @starting_page_number += r.page_count
-            @document_folders << file
-          elsif file =~/prologue$/
-            h[:document_path] = file
-            h[:style_guide_folder] = style_guide_folder + "/prologue"
-            r = RLayout::Prologue.new(h)
-            @starting_page_number += r.page_count
-            @document_folders << file
-          elsif file =~ /toc$/
-            @has_toc = true
-            @document_folders << file
-            @toc_first_page_number = @starting_page_number + 1 unless @toc_first_page_number
-            @starting_page_number += @toc_page_count
-            @book_toc = []
-          end
+        h = options.dup
+        h[:page_pdf] = true
+        h[:toc] = true
+        h[:starting_page_number] = @starting_page_number
+        if file =~ /title_page$/
+          puts "title_page"
+          h[:document_path] = file
+          h[:toc] = false
+          h[:has_footer] = false
+          h[:has_header] = false
+          h[:style_guide_folder] = style_guide_folder + "/title_page"
+          # binding.pry
+
+          r = RLayout::TitlePage.new(h)
+          @starting_page_number += r.page_count
+          @document_folders << file
+        elsif file =~ /blank_page$/
+          puts "blank_page"
+          h[:document_path] = file
+          h[:toc] = false
+          h[:has_footer] = false
+          h[:has_header] = false
+          h[:style_guide_folder] = style_guide_folder + "/blank_page"
+          # binding.pry
+          r = RLayout::BlankPage.new(h)
+          # binding.pry
+          @starting_page_number += r.page_count
+          @document_folders << file
+        elsif file =~ /isbn$/
+          puts "isbn"
+          h[:document_path] = file
+          h[:toc] = false
+          h[:has_footer] = false
+          h[:has_header] = false
+          h[:style_guide_folder] = style_guide_folder + "/isbn"
+          r = RLayout::Isbn.new(h)
+          @starting_page_number += r.page_count
+          @document_folders << file
+        elsif file =~ /inside_cover$/
+          puts "inside_cover"
+          h[:document_path] = file
+          h[:front_page_pdf] = @project_path + "/_build/book_cover/front_page/output.pdf"
+          h[:toc] = false
+          h[:has_footer] = false
+          h[:has_header] = false
+          h[:style_guide_folder] = style_guide_folder + "/inside_cover"
+          r = RLayout::InsideCover.new(h)
+          # binding.pry
+          @starting_page_number += r.page_count
+          @document_folders << file
+        elsif  file =~/dedication$/
+          puts "dedication"
+          h[:document_path] = file
+          h[:style_guide_folder] = style_guide_folder + "/dedication"
+          r = RLayout::Dedication.new(h)
+          @starting_page_number += r.page_count
+          @document_folders << file
+        elsif  file =~/thanks$/
+          puts "thanks"
+          h[:document_path] = file
+          h[:style_guide_folder] = style_guide_folder + "/thanks"
+          r = RLayout::Thanks.new(h)
+          @starting_page_number += r.page_count
+          @document_folders << file
+        elsif file =~/prologue$/
+          puts "prologue"
+          # binding.pry
+          h[:document_path] = file
+          h[:style_guide_folder] = style_guide_folder + "/prologue"
+          r = RLayout::Prologue.new(h)
+          @starting_page_number += r.page_count
+          @document_folders << file
+        elsif file =~ /help$/
+          puts "help"
+          h[:document_path] = file
+          h[:style_guide_folder] = style_guide_folder + "/help"
+          r = RLayout::Help.new(h)
+          @starting_page_number += r.page_count
+          @document_folders << file
+        elsif file =~ /toc$/
+          puts "toc"
+          @has_toc = true
+          @document_folders << file
+          @toc_first_page_number = @starting_page_number + 1 unless @toc_first_page_number
+          @starting_page_number += @toc_page_count
+          @book_toc = []
+        else
+          puts "#{file}"
+        end
       end
       unless @has_toc
         @has_toc = true
@@ -97,6 +144,7 @@ module RLayout
         @book_toc = []
       end
       generate_front_matter_toc
+
     end
 
     def style_guide_folder

@@ -31,28 +31,30 @@ module RLayout
   
   class StyleableDoc
     attr_reader :style_guide_folder
-    attr_reader :document_path, :paper_size, :width, :height
+    attr_reader :document_path
+    attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_reader :document
     attr_reader :page_pdf
     attr_reader :starting_page_number
     attr_reader :output_path
     attr_reader :header_footer_info
-
+    attr_reader :body_line_count
+    attr_reader :book_title, :chapter_title
+    
     def initialize(options={})
       @document_path = options[:document_path]
       @style_guide_folder = options[:style_guide_folder] || @document_path
       @starting_page_number  = options[:starting_page_number] || 1
       @output_path = options[:output_path] || @document_path + "/chapter.pdf"
+      @width = options[:width]
+      @height = options[:height]
+      @left_margin = options[:left_margin]
+      @top_margin = options[:top_margin]
+      @right_margin = options[:right_margin]
+      @bottom_margin = options[:bottom_margin]
       @page_pdf =  options[:page_pdf] || false
-      if options[:book_info]
-        @book_info      = options[:book_info]
-        @paper_size     = @book_info[:paper_size] || "A5"
-        @book_title     = @book_info[:tittle] || "untitled"
-      else
-        @paper_size     = options[:paper_size] || "A5"
-        @book_title     = options[:book_tittle] || "untitled"
-      end      
-      set_width_and_height_from_paper_size
+      @body_line_count = options[:body_line_count]
+      @book_title = options[:book_title]
       load_text_style
       load_layout_rb
       load_header_footer_info
@@ -75,18 +77,18 @@ module RLayout
       @document_path + "/images"
     end
     # set width and height from @paper_size
-    def set_width_and_height_from_paper_size
-      if SIZES[@paper_size]
-        @width = SIZES[@paper_size][0]
-        @height = SIZES[@paper_size][1]
-      elsif @paper_size.include?("*")
-        @width = mm2pt(@paper_size.split("*")[0].to_i)
-        @height = mm2pt(@paper_size.split("*")[1].to_i)
-      elsif @paper_size.include?("x")
-        @width = mm2pt(@paper_size.split("x")[0].to_i)
-        @height = mm2pt(@paper_size.split("x")[1].to_i)
-      end
-    end
+    # def set_width_and_height_from_paper_size
+    #   if SIZES[@paper_size]
+    #     @width = SIZES[@paper_size][0]
+    #     @height = SIZES[@paper_size][1]
+    #   elsif @paper_size.include?("*")
+    #     @width = mm2pt(@paper_size.split("*")[0].to_i)
+    #     @height = mm2pt(@paper_size.split("*")[1].to_i)
+    #   elsif @paper_size.include?("x")
+    #     @width = mm2pt(@paper_size.split("x")[0].to_i)
+    #     @height = mm2pt(@paper_size.split("x")[1].to_i)
+    #   end
+    # end
 
     def save_text_style
       File.open(text_style_path, 'w'){|f| f.write default_text_style} unless File.exist?(text_style_path)
@@ -212,15 +214,13 @@ module RLayout
       @wi
     end
 
-    def default_header_footer_yml
-      <<~EOF
-      ---
-      left_header_erb: 
-      right_header_erb:
-      left_footer_erb:
-      right_footer_erb: 
-      EOF
-    end
+    # def default_header_footer_yml
+    #   <<~EOF
+    #   ---
+
+
+    #   EOF
+    # end
 
     def default_layout_rb
       s=<<~EOF
@@ -269,14 +269,22 @@ module RLayout
       running_head:
         font: KoPubDotumPM
         font_size: 12.0
-        markup: "#"
+        markup: "##"
         text_alignment: left
         space_before: 1
       running_head_2:
         font: KoPubDotumPL
         font_size: 11.0
-        markup: "##"
+        markup: "###"
         text_alignment: middle
+        space_before: 1
+      quote:
+        font: KoPubDotumPL
+        font_size: 11.0
+        markup: "####"
+        text_alignment: left
+        left_indext: 100
+        right_indext: 100
         space_before: 1
       header:
         font: KoPubBatangPM
@@ -330,7 +338,6 @@ module RLayout
     def default_doc_info
       h=<<~EOF
       ---
-      paper_size: #{@paper_size}
       doc_type: #{self.class}
       EOF
     end

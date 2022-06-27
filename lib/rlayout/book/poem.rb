@@ -67,10 +67,6 @@ module RLayout
       @path + "/layout.rb"
     end
 
-    def output_path
-      @path + "/chapter.pdf"
-    end
-
     def save_layout
       if @layout_template_path
 
@@ -83,7 +79,7 @@ module RLayout
     def generate_pdf
       save_layout
       d = eval(layout_rb)
-      d.save_pdf(output_path, jpg:true)
+      d.save_pdf(@output_path, jpg:true)
     end
 
     def save_default_layout

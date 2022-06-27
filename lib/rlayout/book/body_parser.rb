@@ -1,7 +1,7 @@
 module RLayout
-  PART_START = /PART|part|파트/
+  # PART_START = /PART|part|파트/
   # DOC_START  start of chapter or new pdf_document
-  DOC_START = /^#\s/
+  # DOC_START = /^#\s/
   # FRONT_MATTER_TYPE = /prologue|thanks|dedication/
   # REAR_MATTER_TYPE = /appendix|index/
 

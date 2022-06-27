@@ -2,51 +2,16 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe "create Chapter with page_floats" do
   before do
     @document_path = "#{ENV["HOME"]}/test_data/chapter"
-    @chapter      = RLayout::Chapter.new(document_path: @document_path, custom_style: true)
-    @doc          = @chapter.document
+    @chapter  = RLayout::Chapter.new(document_path: @document_path, starting_page_number: 14, jpg: false)
+    @document = @chapter.document
   end
 
-  it 'should create Chapter' do
-    assert_equal Chapter, @chapter.class 
+  it "should create Chapter" do
+    assert_equal RLayout::Chapter, @chapter.class 
   end
 
-  it 'should save PDF' do
-    @pdf_path = "#{ENV["HOME"]}/test_data/chapter/chapter.pdf"
-    assert File.exist?(@pdf_path)
-    system("open #{@pdf_path}")
+  it 'should start at ' do
+    assert_equal RLayout::RDocument, @document.class 
+    assert_equal 14, @document.first_page.page_number
   end
-end
-
-__END__
-describe "create Chapter with images" do
-  before do
-    @document_path = "#{ENV["HOME"]}/test_data/chapter"
-    # @pdf_path     = "#{ENV["HOME"]}/test_data/chapter_1/chapter.pdf"
-    # @document_path = "#{ENV["HOME"]}/test_data/chapter_1"
-    # @pdf_path     = "#{ENV["HOME"]}/test_data/chapter_1/chapter.pdf"
-    @document_path  = "#{ENV["HOME"]}/test_data/chapter_with_images"
-    @chapter      = RLayout::Chapter.new(document_path: @document_path, page_pdf:true, svg:true)
-    @doc          = @chapter.document
-  end
-
-  it 'should create Chapter' do
-    assert_equal Chapter, @chapter.class 
-  end
-
-end
-
-describe "create Chapter" do
-  before do
-    @document_path = "#{ENV["HOME"]}/test_data/chapter"
-    # @pdf_path     = "#{ENV["HOME"]}/test_data/chapter_1/chapter.pdf"
-    # @document_path = "#{ENV["HOME"]}/test_data/chapter_1"
-    # @pdf_path     = "#{ENV["HOME"]}/test_data/chapter_1/chapter.pdf"
-    @chapter      = RLayout::Chapter.new(document_path: @document_path)
-    @doc          = @chapter.document
-  end
-
-  it 'should create Chapter' do
-    assert_equal Chapter, @chapter.class 
-  end
-
 end

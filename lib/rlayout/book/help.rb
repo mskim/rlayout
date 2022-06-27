@@ -1,7 +1,7 @@
 module RLayout
   # Page that starts the book.
   # With Title, author, publisher, logo
-  class Prologue < Chapter
+  class Help < Chapter
     attr_reader :book, :path, :layout_template_path
     def initialize(options={})
       super

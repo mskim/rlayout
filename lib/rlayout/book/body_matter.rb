@@ -12,22 +12,25 @@ module RLayout
     attr_reader :book_type, :project_path, :book_info, :page_width, :height
     attr_reader :document_folders, :body_matter_toc, :body_doc_type
     attr_reader :starting_page_number, :toc_page_count, :toc_page_links
-    attr_reader :toc_content, :paper_size
+    attr_reader :toc_content, :paper_size, :jpg
 
-    def initialize(project_path, options={})
+    def initialize(project_path, starting_page_number, options={})
       @project_path = project_path
+      @starting_page_number = starting_page_number
+
+      @jpg  = options[:jpg]
       @book_info_path = @project_path + "/book_info.yml"
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @book_type = @book_info[:book_type] || 'chapter'
+      @body_line_count = @book_info[:body_line_count]
       @title = @book_info[:title]
       @part_titles = @book_info[:part]
-      @paper_size = @book_info[:paper_size]  || "A5"
-      @paper_size = options[:paper_size] if options[:paper_size]
-      @page_width = SIZES[@paper_size][0]
-      @height = SIZES[@paper_size][1]
-      @starting_page_number = options[:starting_page_number] || 1
-      process_body_matter
+      @paper_size = @book_info[:paper_size] || 'A5'
+      @page_width = @book_info[:width]
+      @width = @page_width
+      @height = @book_info[:height]
+      process_body_matter(options)
       self
     end
 
@@ -44,7 +47,7 @@ module RLayout
     end
 
     # support folder as well as .md file as chapter source
-    def process_body_matter
+    def process_body_matter(options)
       @document_folders = []
       @belongs_to_part = false
       part_order = 1
@@ -56,18 +59,21 @@ module RLayout
 
         if file =~/chapter/
           @document_folders << file
-          h = {}
-          h[:book_info]  = @book_info
+          h = options.dup
+          # h[:book_info]  = @book_info
           h[:document_path] = file
-          h[:paper_size] = @paper_size
+          # h[:paper_size] = @paper_size
           h[:page_pdf] = true
+          h[:jpg] = @jpg
           h[:toc] = true
           h[:starting_page_number] = @starting_page_number
           h[:chapter_order] = chapter_order
           h[:style_guide_folder] = style_guide_folder
           h[:belongs_to_part] = @belongs_to_part
           h[:doc_type]  = @book_type
+          puts "#{chapter_order}:#{@starting_page_number}"
           r = RLayout::Chapter.new(h)
+          puts r.page_count
           @starting_page_number += r.page_count
           chapter_order += 1
 

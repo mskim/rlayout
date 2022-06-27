@@ -5,6 +5,7 @@ module RLayout
 
     def save_pdf(output_path, options={})
       # puts "genrateing pdf ruby "
+      @jpg = options[:jpg]
       start_time    = Time.now
       style_service = RLayout::StyleService.shared_style_service
       @pdf_doc  = HexaPDF::Document.new
@@ -48,7 +49,7 @@ module RLayout
           FileUtils.mkdir_p(page_folder_path) unless File.exist?(page_folder_path)
           system("cd #{folder_path} && mv #{page_pdf_basename} #{page_folder_name}/page.pdf")
           single_page_pdf_path = folder_path + "/#{page_folder_name}/page.pdf"
-          convert_pdf2jpg(single_page_pdf_path, ratio:1.3)
+          convert_pdf2jpg(single_page_pdf_path, ratio:1.3) if @jpg
         end
       end
     end

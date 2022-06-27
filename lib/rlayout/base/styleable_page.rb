@@ -3,51 +3,40 @@ module RLayout
   class StyleablePage
     attr_reader :document_path, :style_guide_folder
     attr_reader :page_content
-    attr_reader :paper_size, :width, :height
+    attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
     attr_reader :pdf_page
-    attr_reader :document
+    attr_reader :document, :output_path
+
     def initialize(options={})
       @document_path = options[:document_path]
+      @output_path = @document_path + "/output.pdf"
       @pdf_page = options[:pdf_page]
-      @paper_size = options[:paper_size] || 'A4'
-      set_width_and_height_from_paper_size
-      @width = options[:width] if options[:width]
-      @height = options[:height] if options[:height]
+      @width = options[:width]
+      @height = options[:height]
+      @left_margin = options[:left_margin]
+      @top_margin = options[:top_margin]
+      @right_margin = options[:right_margin]
+      @bottom_margin = options[:bottom_margin]
+      @page_pdf =  options[:page_pdf] || false
+      @body_line_count = options[:body_line_count]
       @style_guide_folder = options[:style_guide_folder] || @document_path
       load_layout_rb
       load_text_style
       @document = eval(@layout_rb)
       @document.document_path = @document_path
       load_page_content
-      @document.set_page_content(@page_content)
-      @document.save_pdf(output_path, pdf_page:@pdf_page, jpg:true)
+      # @document.set_page_content(@page_content)
+      @document.save_pdf(@output_path, pdf_page:@pdf_page, jpg:true)
       self
     end
 
     def local_image_path
       @document_path + "/images"
     end
-    # set width and height from @paper_size
-    def set_width_and_height_from_paper_size
-      if SIZES[@paper_size]
-        @width = SIZES[@paper_size][0]
-        @height = SIZES[@paper_size][1]
-      elsif @paper_size.include?("*")
-        @width = mm2pt(@paper_size.split("*")[0].to_i)
-        @height = mm2pt(@paper_size.split("*")[1].to_i)
-      elsif @paper_size.include?("x")
-        @width = mm2pt(@paper_size.split("x")[0].to_i)
-        @height = mm2pt(@paper_size.split("x")[1].to_i)
-      end
-    end
 
     def style_klass_name
       camel_cased_word = self.class.to_s.split("::")[1]
       underscore camel_cased_word
-    end
-
-    def output_path
-      @document_path + "/output.pdf"
     end
 
     def content_path
@@ -95,20 +84,23 @@ module RLayout
       @document_path + "/layout.rb"
     end
 
+    def style_guide_layout_path
+      @style_guide_folder + "/#{style_klass_name}_layout.rb"
+    end
+
     def load_layout_rb
-      if File.exist?(layout_rb_path)
-        @layout_rb = File.open(layout_rb_path, 'r'){|f| f.read}
+      if File.exist?(style_guide_layout_path)
+        @layout_rb = File.open(style_guide_layout_path, 'r'){|f| f.read}
       else
-        FileUtils.mkdir_p(@document_path) unless File.exist?(@document_path)
         @layout_rb = default_layout_rb
-        File.open(layout_rb_path, 'w'){|f| f.write default_layout_rb}
+        FileUtils.mkdir_p(@style_guide_folder) unless File.exist?(@style_guide_folder)
+        File.open(style_guide_layout_path, 'w'){|f| f.write default_layout_rb}
       end
     end
 
     def default_layout_rb
       <<~EOF
       RLayout::CoverPage::new(width:#{@width}, height:#{@height})
-
       EOF
     end
 

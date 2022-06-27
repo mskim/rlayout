@@ -36,7 +36,6 @@ module RLayout
         @string = "(#{$1})"
         @glyphs = filter_glyph(@string) 
         @width= @glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
-        # binding.pry
       elsif @string =~FOOTNOTE_MARKER
         @footnote_item_number = $1
         @has_footnote_marker = true

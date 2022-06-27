@@ -35,14 +35,13 @@ module RLayout
   DOC_START = /^\[.*\]/i
   FRONT_MATTER_DOC_START = /^(\[.*대도비라\]|\[.*소도비라\]|\[.* 차례.*\]|\[.*머리말\])/m
   CHAPTER_START = /^(제\d*장|\d*장|chapter_\d*|Chapter_\d*)/
-
-  # PART_START = /PART|part|파트/
+  PART_START = /PART|part|파트/
   # DOC_START  start of chapter or new pdf_document
   # DOC_START = /^#\s/
   # FRONT_MATTER_TYPE = /prologue|thanks|dedication/
   # REAR_MATTER_TYPE = /appendix|index/
 
-  class BookTxtParser
+  class BookParserTxt
     attr_reader :book_txt_path
     # attr_reader :docs, :md_file
     attr_reader :part_titles
@@ -51,10 +50,6 @@ module RLayout
       @project_path = File.dirname(@book_txt_path)
       book_txt2docs
       self
-    end
-
-    def bookfile_path
-      @md_file
     end
     
     def build_folder
@@ -67,10 +62,6 @@ module RLayout
 
     def build_front_matter_folder
       build_folder + "/front_matter"
-    end
-
-    def book_into_path
-      @project_path + "/book_info.yml"
     end
 
     def book_cover_folder

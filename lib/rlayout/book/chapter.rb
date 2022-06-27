@@ -198,13 +198,17 @@
 # toc
 # if toc options is true, save toc.yml for the chapter
 
+# starting_page_side
+# :left, :right, :either
+# Some document should start on specific side, isbn left(even), inside_cover right(odd),
+# blank page is inserted in front of the document to make it work.
 
 module RLayout
   class Chapter < StyleableDoc
     attr_reader :document_path, :story_path
     attr_reader :document, :output_path, :column_count
     attr_reader :doc_info, :toc_content
-    attr_reader :book_title, :title, :starting_page_number, :heading_height_type, :heading
+    attr_reader :title, :toc_title, :heading_height_type, :heading
     attr_reader :body_line_count, :body_line_height
     attr_reader :max_page_number, :page_floats
     attr_reader :has_footer, :has_header
@@ -213,24 +217,23 @@ module RLayout
     attr_reader :grid, :default_image_location, :default_image_size
     attr_reader :local_image_fold
     attr_reader :footnote_description_items
-    attr_reader :starting_page_side # :left, :right, :either
-                                    # Some document should start on specific side, isbn left(even), inside_cover right(odd),
-                                    # blank page is inserted in front of the document to make it work.
-
+    attr_reader :starting_page_side, :jpg
+    attr_reader :book_info
     def initialize(options={} ,&block)
+      # @document_path = options[:document_path]
       # @starting_page_number  = options[:starting_page_number] || 1
       @doc_type = options[:doc_type] || 'chapter'
+      @book_info = options.dup
+      @jpg = options[:jpg] || false
       super
       @footnote_description_items = []
-      # @document_path  = options[:document_path]
-      # @style_guide_folder = options[:style_guide_folder] || @document_path
       @starting_page_side = options[:starting_page_side] || :either_sid
       @local_image_folder = @document_path + "/images"
       @story_path     = @document_path + "/story.md"
       @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
       @story_md       = options[:story_md]
-      @has_footer    =  options[:has_footer] || true
-      @has_header    =  options[:has_header] || false
+      # @has_footer    =  options[:has_footer] || true
+      # @has_header    =  options[:has_header] || false
       @belongs_to_part = options[:belongs_to_part]
       @grid = options[:grid] || [6,12]
       @default_image_location = options[:default_image_location] || 1
@@ -242,8 +245,9 @@ module RLayout
       @toc_level      = options[:toc_level] || 'title'
       @toc_content                = []
       @document.document_path = @document_path
-      @document.starting_page_number = @starting_page_number
+      @document.set_starting_page_number(@starting_page_number)
       place_page_floats(options)
+
       if @doc_type == 'poem' || @doc_type == 'poetry_book'
         read_poem
         layout_poem
@@ -252,57 +256,19 @@ module RLayout
         layout_story
       end
       place_header_and_footer
-      @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
-      @document.save_svg(@document_path) if @svg
+      @document.save_pdf(@output_path, page_pdf:@page_pdf, jpg: @jpg) unless options[:no_output]
+      # @document.save_svg(@document_path) if @svg
       save_story_by_page if @story_by_page
       save_toc if @toc
-      # save_line_log # used for debug
       self
     end
 
-    def default_left_header_erb
-      <<~EOF
-
-        # RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-        #   text("<%= @page_number %>", font_size: 10, x: <%= @left_margin %>, width: <%= footer_width  %>, text_alignment: 'left')
-        # end
-
-      EOF
-    end
-
-    def default_right_header_erb
-      <<~EOF
-
-        # RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-        #   text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
-        # end
-
-      EOF
-    end
-
-    def default_left_footer_erb
-      <<~EOF
-        
-        RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:#{@height - 50}, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-          text("<%= @page_number %>  <%= @book_title %>", font_size: 10, x:0, y:0, width: <%= footer_width  %>, text_alignment: 'left')
-        end
-
-      EOF
-    end
-
-    def default_right_footer_erb
-      <<~EOF
-
-        RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:#{@height - 50}, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-          text("<%= @title %>  <%= @page_number %>", font_size: 9, x:0, y: 0, width:<%= footer_width  %>, text_alignment: 'right')
-        end
-
-      EOF
-    end
 
     def default_header_footer_yml
       <<~EOF
       ---
+      has_hearder: false
+      has_footer: true
       left_header_erb: |
         RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
           text("<%= @page_number %>", font_size: 10, x: <%= @left_margin %>, width: <%= footer_width  %>, text_alignment: 'left')
@@ -312,14 +278,13 @@ module RLayout
           text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
         end
       left_footer_erb: |
-        RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:#{@height - 50}, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+        RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:<%= @height - 50 %>, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
           text("<%= @page_number %>  <%= @book_title %>", font_size: 10, x:0, y:0, width: <%= footer_width  %>, text_alignment: 'left')
         end
       right_footer_erb: |
-        RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:#{@height - 50}, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
+        RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:<%= @height - 50 %>, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
           text("<%= @title %>  <%= @page_number %>", font_size: 9, x:0, y: 0, width:<%= footer_width  %>, text_alignment: 'right')
         end
-
 
       ---
 
@@ -327,27 +292,9 @@ module RLayout
     end
 
     def default_layout_rb
-      @top_margin = 50
-      @left_margin = 110
-      @right_margin = 110
-      @bottom_margin = 110
-      case @paper_size
-      when "A4"
-        @body_line_count  = 40 
-      when "A5"
-        @body_line_count  = 25
-        @top_margin = 50
-        @left_margin = 80
-        @right_margin = 80
-        @bottom_margin = 110
-      when "16절", "197x272", "197X272"
-        @body_line_count  = 25
-      else
-        @body_line_count  = 25
-      end
-      
       doc_options= {}
-      doc_options[:paper_size] = @paper_size
+      doc_options[:width] = @width
+      doc_options[:height] = @height
       doc_options[:left_margin] = @left_margin
       doc_options[:top_margin] = @top_margin
       doc_options[:right_margin] = @right_margin
@@ -355,7 +302,6 @@ module RLayout
       doc_options[:body_line_count] = @body_line_count
       doc_options[:book_title] = @book_title || "untitled"
       doc_options[:chapter_title] = @title || "untitled"
-      
       layout =<<~EOF
         RLayout::RDocument.new(#{doc_options})
       EOF
@@ -447,7 +393,6 @@ module RLayout
           para_options[:float_info] = float_info
           @paragraphs << RParagraph.new(para_options)
         elsif  para[:markup] == "table"
-
         elsif  para[:markup] == "footnote_item"
           @footnote_description_items << para
         else
@@ -596,10 +541,12 @@ module RLayout
     end
 
     def place_header_and_footer
+      # @header_footer_info = YAML::load_file(style_guide_header_footer_path)
+      @has_header = @header_footer_info['has_header'] ||  @header_footer_info[:has_header]
+      @has_footer = @header_footer_info['has_footer'] || @header_footer_info[:has_footer]
       chapter_info ={}
-      chapter_info[:book_title] = @book_info[:title] if @book_info
-      chapter_info[:chapter_title] = @title if @title
-
+      chapter_info[:book_title] = @book_info[:book_title] ||  @book_info[:title] if @book_info
+      chapter_info[:chapter_title] = @title || " " 
       if @has_header ||  @has_footer
         @document.set_header_footer_info @header_footer_info
       end
@@ -611,6 +558,7 @@ module RLayout
           p.create_header(chapter_info) 
         end
       end
+
       if @has_footer
         @document.pages.each_with_index do |p,i|
           chapter_info[:footer_layout]  = chapter_info[:footer_layout] if @book_info
@@ -649,6 +597,5 @@ module RLayout
       end
       File.open(toc_path, 'w') { |f| f.write @toc_content.to_yaml}
     end
-
   end
 end

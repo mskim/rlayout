@@ -292,7 +292,9 @@ module RLayout
     # if line is first_line 
     def place_token(token, options={})
       return if token.nil?
+      return true if token.string == ""
       return false if @room <= 0
+      
       if (@room + CharHalfWidthCushion >= token.width)
         token.parent = self
         @graphics << token

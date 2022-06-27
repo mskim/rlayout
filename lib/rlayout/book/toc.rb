@@ -23,7 +23,7 @@ module RLayout
       @no_table_title = options[:no_table_title]
       read_toc
       layout_toc
-      @link_info = update_link_info
+      # @link_info = update_link_info
       @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
       self
     end
@@ -83,7 +83,11 @@ module RLayout
 
     def update_link_info
       @document.pages.map do |page|
-        page.link_info
+        if page
+          page.link_info
+        else
+          nil
+        end
       end
 
     end
@@ -111,9 +115,8 @@ module RLayout
         @right_margin   = 50
         @bottom_margin  = 50
       end
-
       layout =<<~EOF
-        RLayout::RDocument.new(paper_size:"#{@paper_size}", page_count: #{@max_page}, page_type: "toc_page")
+        RLayout::RDocument.new(width:#{@width}, height:#{@height} , page_count: #{@max_page}, page_type: "toc_page")
       EOF
     end
   end

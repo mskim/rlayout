@@ -9,7 +9,7 @@ module RLayout
     attr_reader :float_layout, :page_by_page
     attr_reader :empty_first_column
     attr_reader :portrait_mode, :binding_margin
-    attr_accessor :page_log
+    attr_accessor :page_log, :page_number
 
     def initialize(options={}, &block)
       options[:fill_color] = 'white'
@@ -35,7 +35,6 @@ module RLayout
       @float_layout   = options[:float_layout] || []
       @first_page     = options[:first_page] || false
       @page_number    = options[:page_number] || 1
-      
       if @document
         @column_count      = @document.column_count
         @body_line_height  = @document.body_line_height
@@ -79,13 +78,13 @@ module RLayout
       page_log
     end
 
-    def page_number
-      if @document
-        @document.page_number(self)
-      else
-        1
-      end
-    end
+    # def page_number
+    #   if @document
+    #     @document.page_number(self)
+    #   else
+    #     1
+    #   end
+    # end
 
     def page_index
       if @document
@@ -720,13 +719,14 @@ module RLayout
     end
 
     def create_footer(info_hash)
-      @book_title = info_hash[:book_titile] || "2022년 책만들기"
+      @book_title = info_hash[:book_title] || "2022년 책만들기"
       @title = info_hash[:chapter_title]
       if page_number.even?
         erb = ERB.new(@document.header_footer_info['left_footer_erb'])
       else
         erb = ERB.new(@document.header_footer_info['right_footer_erb'])
       end
+      # binding.pry
       layout = erb.result(binding)
       @footer_object = eval(layout)
     end

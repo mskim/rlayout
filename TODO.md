@@ -29,6 +29,71 @@
   - line_type
   - arrow_type
 
+### 2022_06_27
+  - body_line_count not setting properly
+    set 23, but getting 22 lines
+  - pass book_info to docs with size, margins, book_title
+  - YAML exeption help, prolog
+  - TitlePage, 
+  - InsideCover 
+  - Toc 
+    - page leader char, 
+    - second page not showing
+  - add has_footer, has_header keys to be able to customize header_footer option
+  - convert SM proportional OTF fonts to ttf
+### 2022_06_25
+  - remove paper_size except on book
+    - make sure we set size and margins in book_info
+### 2022_06_24
+  - fix chapter
+    - first page page_number is set to 1 at the init and not changing
+    - book_title not being applied
+  - jpg generation option
+    - do it only when ebook options is on.
+
+  - fix print_page pdf creation
+    - wrong pdf page height is used
+
+  - fix body_line_count not matching
+    set to 23 but comes out as 22
+
+  - fix toc_page
+    - only first page is update
+    - leader chars overlapping 
+
+  - add toc_title when no chpater title is given
+    but we need title for toc
+  - update book_info 
+    - page_width
+    - page_height
+    - left_margin
+    - top_margin
+    - right_margin
+    - bottom_margin
+    - binding_margin
+
+  - fix front_matter_docs starting_page_number
+### 2022_06_21
+  - #### quote 
+    - indented left and right
+    - prefix, postfix
+      ", '
+  - book_front_matter
+    - 대도비라, inside_cover
+    - 소도비라, title_page
+    - 백, blank_doc
+    - 차례, toc
+    - 책정보, isbn
+    - 일러두기, help
+    - 머리말,  prologue
+    - 감사, thanks
+    - 헌정사, dedication
+    - 추천사, forward
+
+  - book_parser
+    - book_md_parser
+    - book_txt_parser
+
 ### 2022_06_20
   - draw superscript
 

@@ -2,6 +2,10 @@
 module RLayout
 
   # book creating workflow
+  # make sure we have necessay into for the book
+  # put width, height, margins, body_line_count,
+  # are must have into, do put them in book_info hash
+
 
   # 1. if there are no book_info.yml nor book_plan.md in the project folder,
   # this is fresh folder, so create book_plan.md and book_info.md and return
@@ -15,7 +19,10 @@ module RLayout
   # should update contents to _build and re-generate pdfs etc ...
   # 
   class Book
-    attr_reader :book_type, :body_doc_type, :project_path, :book_info, :page_width, :width, :height
+    attr_reader :book_type, :body_doc_type, :project_path
+    attr_reader :book_info, :paper_size, :width, :height
+    attr_reader :left_margin, :top_margin, :right_margin, :bottom_room_margin
+    attr_reader :body_line_count
     attr_reader :has_cover_inside_page, :has_wing, :has_toc, :has_part
     attr_reader :book_toc, :body_matter_toc, :rear_matter_toc, :starting_page_number
     attr_reader :rear_matter_docs, :ebook_page_contents
@@ -23,67 +30,99 @@ module RLayout
     attr_reader :front_matter, :body_matter, :rear_matter
     attr_reader :gripper_margin, :bleed_margin, :binding_margin
     attr_reader :html
+    attr_reader :ebook, :pdf_book, :print_book
 
     def initialize(project_path, options={})
       @project_path = project_path
       @book_info_path = @project_path + "/book_info.yml"
-      @book_plan_path = @project_path + "/book_plan.md"
-
-      if !File.exist?(@book_info_path) && !File.exist?(@book_plan_path)
-        # 1. if there are no book_info.yml nor book_plan.md in the project folder,
-        # this is fresh folder, so create book_plan.md and book_info.md and return
-        # RLayout::BookPlan.new(@project_path)
-        self.class.create(@project_path)
-        return
-        # 2. After intial book_plan.md is created, user should edit and update the content of book_plan.md and book_info.yml,
-      # elsif File.exist?(@book_plan_path) && !File.exist?(first_chapter_folder)
-      #   # 3. if project folder has book_plan.md, and first_chapter_folder is not present,
-      #   # assum it is edited and book_plan.md should be parsed.
-      #   # parsing book_plan.md should create book_cover, front_matter folder, and chapter folders,
-      #   # as 01, 02, 03 ...
-      #   RLayout::BookPlan.parse(@project_path)
-      #   return
-      end
-      # 4. if there are chapter folders, starting with 01 are present
-      # should update contents to _build and re-generate pdfs etc ...
-      # 
-
-      @html  = options[:html]
-      FileUtils.mkdir_p(build_folder) unless File.exist?(build_folder)
+      @book_md_path = @project_path + "/book.md"
+      @book_txt_path = @project_path + "/book.md"
+      @ebook = options[:ebook]  || false
+      @pdf_book = options[:pdf_book]  || false
+      @print_book = options[:pdf_book]  || true
+      BookParserMd.new(@project_path)
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
-      @paper_size = @book_info[:paper_size] || 'A5'
-      @toc_page_count = @book_info[:toc_page_count] || 1
-      @title = @book_info[:title]
-      @page_width = SIZES[@paper_size][0]
-      @width = @page_width
-      @height = SIZES[@paper_size][1]
-      @title = @book_info[:title]
+      @toc_page_count = @book_info[:toc_page_count] || 2
+      # @paper_size = @book_info[:paper_size] || 'A5'
+      @width = @book_info[:width]
+      @height = @book_info[:height]
+      @binding_margin = @book_info[:binding_margin] || 3*2.834646
+      @book_title = @book_info[:book_title] || 'untitled'
+      update_book_info
+      # @title = @book_info[:title]
       @starting_page_number = 1
-      @gripper_margin = options[:gripper_margin] || 1*28.34646
-      @binding_margin = options[:binding_margin] || 20
+      @gripper_margin = options[:gripper_margin] || 10*2.834646
       @bleed_margin = options[:bleed_margin] || 3*2.834646
-      parse_book_source
+      @book_info[:jpg] = @ebook
       create_book_cover
-      @front_matter = FrontMatter.new(@project_path)
+      @starting_page_number  = 1
+      @front_matter = FrontMatter.new(@project_path, @starting_page_number, @book_info)
       @starting_page_number += @front_matter.starting_page_number
-      @body_matter = BodyMatter.new(@project_path, starting_page_number: @starting_page_number, paper_size: @paper_size)
-      @rear_matter = RearMatter.new(@project_path)
+      @body_matter = BodyMatter.new(@project_path, @starting_page_number, @book_info )
+      # @rear_matter = RearMatter.new(@project_path, @starting_page_number, @book_info )
       generate_toc
-      generate_body_pdf
-      generate_pdf_book 
-      generate_pdf_for_print
-      generate_ebook #unless options[:no_ebook]
+      # generate_body_pdf
+      generate_pdf_book if @pdf_book
+      generate_pdf_for_print if @print_book
+      generate_ebook if @ebook
+    end
+
+    def update_book_info
+      # make sure book setup is corrent
+      # set_width_and_height_from_paper_size
+      # h[:paper_size] = @paper_size
+      @book_info[:width] = @width unless @book_info[:width]
+      @book_info[:height] = @height unless @book_info[:height]
+      @book_info[:left_margin] = @left_margin unless @book_info[:left_margin]
+      @book_info[:top_margin] = @top_margin unless @book_info[:top_margin]
+      @book_info[:right_margin] = @right_margin unless @book_info[:right_margin]
+      @book_info[:bottom_margin] = @bottom_margin unless @book_info[:bottom_margin]
+      @book_info[:binding_margin] = @binding_margin unless @book_info[:binding_margin]
+      @book_info[:body_line_count] = @body_line_count unless @book_info[:body_line_count]
+      @book_info[:book_title] = @book_title unless @book_info[:book_title]
+      
+      # File.open(@book_info_path, 'w'){|f| f.write h.to_yaml}  
+    end
+
+
+    def set_width_and_height_from_paper_size
+
+      # unless SIZES[@paper_size]
+      #   if @paper_size.downcase.include?("x")
+      #     paper_size_array = @paper_size.split("x")
+      #     width_string = paper_size_array[0]
+      #     height_string = paper_size_array[1]
+      #     if width_string.include?("mm")
+      #       @width = mm2pt(width_string.sub("mm","").to_f)
+      #     end
+      #     if height_string.include?("mm")
+      #       @height = mm2pt(height_string.sub("mm","").to_f)
+      #     end
+      #   end
+      # else
+      #   @width = SIZES[@paper_size][0]
+      #   @height = SIZES[@paper_size][1]
+      # end
+
+      if @book_info[:width] && @book_info[:height]
+        @width = @book_info[:width]
+        @height = @book_info[:height]
+      elsif SIZES[@paper_size]
+        @width = SIZES[@paper_size][0]
+        @height = SIZES[@paper_size][1]
+      elsif @paper_size.include?("*")
+        @width = mm2pt(@paper_size.split("*")[0].to_i)
+        @height = mm2pt(@paper_size.split("*")[1].to_i)
+      elsif @paper_size.include?("x")
+        @width = mm2pt(@paper_size.split("x")[0].to_i)
+        @height = mm2pt(@paper_size.split("x")[1].to_i)
+      end
     end
 
     def self.book_template_path
       File.dirname(__FILE__) + "/book_template/paperback"
     end
-
-    # def self.create(project_path)
-    #   template_path = PoetryBook.book_template_path
-    #   FileUtils.cp_r(template_path, project_path)
-    # end
 
     def first_chapter_folder
       @project_path + "/01"
@@ -237,7 +276,9 @@ module RLayout
       end
     end
 
+    # do not create book_cover unless there is a source_book_cover_path
     def create_book_cover
+      return unless File.exist?(source_book_cover_path)
       FileUtils.mkdir_p(build_folder) unless File.exist?(build_folder)
       RLayout::BookCover.new(project_path: build_book_cover_path, source_path: source_book_cover_path, book_info: @book_info)
     end
@@ -283,9 +324,13 @@ module RLayout
     def generate_toc
       FileUtils.mkdir_p(toc_folder) unless File.exist?(toc_folder)
       save_book_toc
-      h = {}
+
+      h = @book_info.dup
+      h[:page_pdf] = true
+      # h[:starting_page_number] = @starting_page_number
+      # h = {}
       h[:document_path] = toc_folder
-      h[:paper_size]    = @paper_size
+      # h[:paper_size]    = @paper_size
       h[:page_pdf]      = true
       h[:max_page]      = @toc_page_count
       h[:toc_item_count] = @book_toc.length
@@ -341,7 +386,7 @@ module RLayout
     def generate_pdf_for_print
       FileUtils.mkdir_p(print_folder) unless File.exist?(print_folder)
       copy_book_cover_pdf
-      generate_inner_book
+      generate_inner_book_for_print
     end
 
     def build_book_cover_pdf_path
@@ -353,16 +398,17 @@ module RLayout
     end
 
     def copy_book_cover_pdf
-      FileUtils.cp(build_book_cover_pdf_path, print_book_cover_pdf_path)
+      FileUtils.cp(build_book_cover_pdf_path, print_book_cover_pdf_path) if File.exist?(build_book_cover_pdf_path)
     end
 
     def place_page_in_print_page(page_path, side)
-      print_page_width = @page_width + @gripper_margin*2
+      print_page_width = @width + @gripper_margin*2
       print_page_height = @height + @gripper_margin*2
+      # binding.pry
       RLayout::PrintPage.new(page_path:page_path, side:side, width: print_page_width, height: print_page_height, gripper_margin: @gripper_margin, bleed_margin: @bleed_margin, binding_margin: @binding_margin)
     end
 
-    def generate_inner_book
+    def generate_inner_book_for_print
       # merge pdf files into book without cover
       # add cutting page with cutting_line, binding_margin
       # left_page  = left_print_page
@@ -412,7 +458,6 @@ module RLayout
         FileUtils.mkdir_p(pdf_folder) 
       else
         target = HexaPDF::Document.new
-
       end
     end
 

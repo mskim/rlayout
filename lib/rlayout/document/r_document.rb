@@ -63,6 +63,11 @@ module RLayout
       @pages            = []
       @page_count       = options[:page_count] || 1
       @page_float_layout = options[:page_float_layout]
+      if @pages.length > 0
+        @pages.each_with_index do |page, i|
+          page.page_number = i + @starting_page_number
+        end
+      end
       @page_count.times do |i|
         add_new_page(page_index: i)
       end
@@ -70,6 +75,10 @@ module RLayout
         instance_eval(&block)
       end
       self
+    end
+
+    def first_page
+      @pages.first
     end
 
     def set_header_footer_info(header_footer_info)
@@ -156,7 +165,12 @@ module RLayout
       [@left_margin, @top_margin, @width - @left_margin - @right_margin, @height - @top_margin - @bottom_margin]
     end
 
-  
+    def set_starting_page_number(new_starting_page_number)
+      @starting_page_number = new_starting_page_number
+      @pages.each_with_index do |page, i|
+        page.page_number = @starting_page_number + i
+      end
+    end
     # create new page and return first line of new page
     def add_new_page(options={})
       if @page_type == "toc_page"
@@ -172,7 +186,7 @@ module RLayout
         h[:parent]        = self
         h[:width]         = @width
         h[:height]        = @height
-        h[:page_number]   = @pages.length + 1
+        h[:page_number]   = @pages.length + @starting_page_number
         # h[:toc_data]      = @toc_data
         new_page          = InsideCoverPage.new(h)
         # inside_cover
@@ -183,7 +197,7 @@ module RLayout
         h[:parent]        = self
         h[:width]         = @width
         h[:height]        = @height
-        h[:page_number]   = @pages.length + 1
+        h[:page_number]   = @pages.length + @starting_page_number
         # h[:toc_data]      = @toc_data
         new_page          = ColumnTextPage.new(h)
       else

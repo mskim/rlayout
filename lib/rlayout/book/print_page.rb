@@ -13,6 +13,8 @@ module RLayout
       @binding_margin = option[:binding_margin]
       shift_and_place_page
       draw_cutting_lines
+      # @print_page_path = @page_path.sub("page.pdf", "print_page.pdf")
+      # save_pdf(@print_page_path)
       pdf_page
     end
 
