@@ -200,8 +200,8 @@
 # Some document should start on specific side, isbn left(even), inside_cover right(odd),
 # blank page is inserted in front of the document to make it work.
 
-# StyleableDoc module
-# StyleableDoc module allows customizarion of documents
+# Styleable module
+# Styleable module allows customizarion of documents
 # There are tree part to customizarion
 # text_style, header_footer, and layout
 # styles can be modified by changing saved default values,
@@ -210,10 +210,8 @@
 
 module RLayout
   class Chapter
-    # attr_reader :style_guide_folder
     attr_reader :document_path
     attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
-    # attr_reader :document
     attr_reader :page_pdf
     attr_reader :starting_page_number
     attr_reader :output_path

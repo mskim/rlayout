@@ -2,10 +2,11 @@ module RLayout
 
   # PillarPage
   # BoxArticles flow as vertival direction
-  class PillarPage < StyleableDoc
-
+  class PillarPage
+    include Styleable
     def initialize(options={})
-      super
+
+      
       self
     end
 

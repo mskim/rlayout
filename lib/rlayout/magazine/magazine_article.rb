@@ -1,20 +1,33 @@
 # encoding: utf-8
 
 module RLayout
-  class MagazineArticle < StyleableDoc
+  class MagazineArticle
     attr_reader :date
     attr_reader :layout_path, :story_path, :images_dir, :tables_dir
-    attr_reader :document, :style, :starting_page_number, :page_count, :page_type # spread, left, right
+    attr_reader :style, :starting_page_number, :page_count, :page_type # spread, left, right
     attr_reader :doc_info_path, :page_floats, :output_path
-    attr_reader :page_count, :column_count, :gutter
-    
+    attr_reader :column_count, :gutter
+    include Styleable
+
     def initialize(options={} ,&block)
-      @paper_size = options[:paper_size] || 'A4' 
+
+      @style_guide_folder = options[:style_guide_folder] || @document_path
+      @document_path = options[:document_path]
+      @style_guide_folder = options[:style_guide_folder] || @document_path
+      @output_path = @document_path + "/output.pdf"
+      @starting_page_number = options[:starting_page_number] || 1
+      @page_pdf = options[:page_pdf] || true
+      @width = options[:width]
+      @height = options[:height]
+      @left_margin = options[:left_margin]
+      @top_margin = options[:top_margin] 
+      @right_margin = options[:right_margin]
+      @bottom_margin = options[:bottom_margin]
+      @jpg = options[:jpg] || false
       @page_count = options[:page_count] || 2 
       @gutter = options[:gutter] || 10
       @column_count = options[:column_count] || 3
       @document_path = options[:document_path]
-      @style_guide_folder = options[:style_guide_folder] || @document_path
       @doc_info_path = @document_path + "/doc_info.yml"
       load_text_style
       load_layout_rb

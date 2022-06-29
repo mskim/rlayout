@@ -1,8 +1,8 @@
 module RLayout
 
-  class Calendar  < StyleableDoc
+  class Calendar
     attr_reader :year, :titile, :events
-
+    include Styleable
     def initialize(options={})
       super
       load_envents

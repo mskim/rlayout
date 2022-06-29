@@ -5,7 +5,7 @@ module RLayout
   # Once style_guide is tweaked by the designer, 
   # similar publications can re-use the copy of the style_guide with new content.
   
-  # StyleableDoc class.
+  # Styleable module.
   # There are text_styles and layout_rb for each "styleable document".
   # StyleableDoc is super class for customizable document.
   # book_cover_docs
@@ -24,6 +24,10 @@ module RLayout
 
   # def load_layout_rb
   # read rlayout.rb if they exist or save default layout_rb so that designer can customize it.
+  
+  # def load_header_footer
+  # read header_footer.yml if they exist or save default layout_rb so that designer can customize it.
+
 
   # style_guide_folder
   # for books where multiple documents with same style are used, like chapters
@@ -33,7 +37,7 @@ module RLayout
     attr_reader :style_guide_folder
     attr_reader :document
     attr_reader :layout_rb
-
+    # including class shold have the following class attributes
     # attr_reader :document_path
     # attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
     # attr_reader :document

@@ -3,7 +3,6 @@ module RLayout
   # With Title, author, publisher, logo
   # Replica of front cover image
   
-  # class InsideCover < StyleableDoc
   class InsideCover
     include Styleable
     attr_reader :cover_image_path
@@ -22,9 +21,10 @@ module RLayout
       @top_margin = options[:top_margin] 
       @right_margin = options[:right_margin]
       @bottom_margin = options[:bottom_margin]
+      @jpg = options[:jpg] || false
+
       # use image that was created for BookCover front_page image
       @front_page_pdf = options[:front_page_pdf]
-      @jpg = options[:jpg] || false
       load_text_style
       load_layout_rb
       load_document

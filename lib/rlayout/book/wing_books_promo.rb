@@ -1,9 +1,10 @@
 
 module RLayout
-  class WingBookPromotion < StyleableDoc
+  class WingBookPromotion
     attr_reader :publisher, :items
+    incldue Styleable
+    
     def initialize(options={})
-      super
 
 
 

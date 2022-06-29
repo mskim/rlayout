@@ -2,15 +2,29 @@ module RLayout
 
   # TODO
   # hande two page part_cover
-  class PartCover < StyleableDoc
+  class PartCover
     attr_reader :book, :title, :order, :page_count
-
+    attr_reader :document_path
+    attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
+    
+    include Styleable
     def initialize(options={})
+      @document_path = options[:document_path]
+      @style_guide_folder = options[:style_guide_folder] || @document_path
+      @output_path = @document_path + "/output.pdf"
+      @starting_page_number = options[:starting_page_number] || 1
+      @page_pdf = options[:page_pdf] || true
+      @width = options[:width]
+      @height = options[:height]
+      @left_margin = options[:left_margin]
+      @top_margin = options[:top_margin] 
+      @right_margin = options[:right_margin]
+      @bottom_margin = options[:bottom_margin]
+      @jpg = options[:jpg] || false
       @page_count = options[:page_count] || 1
       @title = options[:title] || 'The Name of the Part'
       @order = options[:order] || '01'
       @order = options[:order] || '01'
-      super
       @document.set_page_content(part_cover_data)
       @document.save_pdf(output_path, page_pdf:true, jpg:true)
       save_toc

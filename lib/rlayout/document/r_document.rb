@@ -18,26 +18,16 @@ module RLayout
     # example Toc can create Doc with TocPages
     attr_reader :page_type, :toc_data
     def initialize(options={}, &block)
-      if options[:paper_size] && SIZES[options[:paper_size]]
-        @paper_size      = options[:paper_size]
-        @width          = SIZES[options[:paper_size]][0]
-        @height         = SIZES[options[:paper_size]][1]
-      elsif options[:width] && options[:height] 
-        @width          = options[:width]
-        @height         = options[:height]
-      else
-        @paper_size      = "A4"
-        @width          = 595.28
-        @height         = 841.89
-      end
+      @width          = options[:width]
+      @height         = options[:height]
       @page_type        = options[:page_type]
       @toc_data         = options[:toc_data]
       @fixed_page_document = false
       @starting_page_number = options[:starting_page_number]   || 1
       @max_page_number  = options[:max_page_number] || 999
-      if options[:body_line_count]
-        @body_line_count  = options[:body_line_count]
-      else
+      @body_line_count  = options[:body_line_count]
+      # binding.pry if @body_line_count == 23
+      unless @body_line_count
         case @paper_size 
         when "A4"
           @body_line_count  = 40
@@ -83,18 +73,6 @@ module RLayout
 
     def set_header_footer_info(header_footer_info)
       @header_footer_info = header_footer_info.dup
-    end
-
-    def set_margins
-
-    end
-
-    def set_column_size
-
-    end
-    
-    def set_body_line_height
-      
     end
 
     def log
@@ -205,6 +183,7 @@ module RLayout
         h[:parent]        = self
         h[:width]         = @width
         h[:height]        = @height
+        h[:body_line_count] = @body_line_count
         h[:page_number]   = @pages.length + @starting_page_number
         h[:float_layout]  += page_float_layout[options[:page_index]] if @page_float_layout
         previous_line = @pages.last.last_line if @pages.length > 0 && @pages.last.last_line
