@@ -27,7 +27,7 @@ module RLayout
 
   class BookParserMd
     attr_reader :project_path, :book_txt_path, :book_md_path, :book_info_path
-    attr_reader :part_titles, :has_parts
+    attr_reader :part_titles, :has_parts, :toc_folder
     def initialize(project_path, options={})
       @project_path = project_path
       @book_md_path = @project_path + "/book.md"
@@ -148,17 +148,30 @@ module RLayout
             # handle front_matter docs
             # front_matter_item = true
             # save front_matter_doc to _build/front_matter
+            doc_chunk_in_array = doc_chunk.split("\n")
+            first_line = doc_chunk_in_array[0..0][0]
+            if first_line.include?(":")
+              chapter_title = first_line.split(":")[1].strip
+            else
+              chapter_title = doc_string.sub("[", "").sub("]","")
+            end
             doc_class = doc_tyle2class_name(doc_name)
             h = {}
-            h[:doc_type] = doc_class
-            h[:starting_page] = starting_page if starting_page
-            h[:page_count] = page_count if page_count
+            h['doc_type'] = doc_class
+            h['starting_page'] = starting_page if starting_page
+            h['page_count'] = page_count if page_count
+            h['title'] = chapter_title
+            
             doc_content = h.to_yaml
             doc_content += "---\n\n"
             doc_chunk_without_first_line = doc_chunk.split("\n")[1..-1].join("\n")
             doc_content += doc_chunk_without_first_line
             doc_folder = build_front_matter_folder + "/#{i}_#{doc_class}"
             FileUtils.mkdir_p(doc_folder) unless File.exist?(doc_folder)
+            if doc_class == 'toc'
+              @toc_folder = doc_folder
+            end
+
             doc_path = doc_folder + "/story.md"
             File.open(doc_path, 'w'){|f| f.write doc_content}
           elsif doc_name = is_body_matter_item?(doc_string)
@@ -171,8 +184,8 @@ module RLayout
               chapter_title = doc_string.sub("[", "").sub("]","")
             end
             h = {}
-            h[:doc_type] = doc_tyle2class_name(doc_name)
-            h[:title] = chapter_title
+            h['doc_type'] = doc_tyle2class_name(doc_name)
+            h['title'] = chapter_title
             doc_content = h.to_yaml
             doc_content += "---\n\n"
             # doc_content += doc_chunk  
