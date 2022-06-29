@@ -89,6 +89,25 @@ module RLayout
       self
     end
 
+    def content_width
+      @width - @left_margin - @right_margin
+    end
+
+    def content_height
+      @height - @top_margin - @bottom_margin
+    end
+
+    def add_image(image_path)
+      options = {}
+      options[:parent] = self
+      options[:image_path] = image_path
+      options[:x] = @left_margin
+      options[:y] = @top_margin
+      options[:width] = content_width
+      options[:height] = content_height
+      Image.new(options)
+    end
+
     def default_layout_rb
       <<~EOF
       RLayout::Container.new(width: 300, height:500) do
