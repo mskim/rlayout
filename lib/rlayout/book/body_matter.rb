@@ -121,7 +121,7 @@ module RLayout
 
     def generate_body_matter_toc
       @body_matter_toc = []
-      @document_folders.each do |chapter_folder|
+      @document_folders.sort.each do |chapter_folder|
         toc = chapter_folder + "/toc.yml"
         @body_matter_toc << YAML::load_file(toc) if File.exist?(toc)
       end

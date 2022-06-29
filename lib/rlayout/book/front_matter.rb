@@ -42,6 +42,11 @@ module RLayout
     def build_folder
       @project_path + "/_build"
     end
+    
+    def style_guide_folder
+      @project_path + "/style_guide"
+    end
+    
     # create prolog, forward, isbn
     def process_front_matter(options)
       @document_folders = []
@@ -57,21 +62,16 @@ module RLayout
           h[:has_footer] = false
           h[:has_header] = false
           h[:style_guide_folder] = style_guide_folder + "/title_page"
-          # binding.pry
-
           r = RLayout::TitlePage.new(h)
           @starting_page_number += r.page_count
           @document_folders << file
         elsif file =~ /blank_page$/
-          puts "blank_page"
           h[:document_path] = file
           h[:toc] = false
           h[:has_footer] = false
           h[:has_header] = false
           h[:style_guide_folder] = style_guide_folder + "/blank_page"
-          # binding.pry
           r = RLayout::BlankPage.new(h)
-          # binding.pry
           @starting_page_number += r.page_count
           @document_folders << file
         elsif file =~ /isbn$/
@@ -85,7 +85,6 @@ module RLayout
           @starting_page_number += r.page_count
           @document_folders << file
         elsif file =~ /inside_cover$/
-          puts "inside_cover"
           h[:document_path] = file
           h[:front_page_pdf] = @project_path + "/_build/book_cover/front_page/output.pdf"
           h[:toc] = false
@@ -93,49 +92,47 @@ module RLayout
           h[:has_header] = false
           h[:style_guide_folder] = style_guide_folder + "/inside_cover"
           r = RLayout::InsideCover.new(h)
-          # binding.pry
           @starting_page_number += r.page_count
           @document_folders << file
-        elsif  file =~/dedication$/
+        elsif file =~/dedication$/
           puts "dedication"
           h[:document_path] = file
           h[:style_guide_folder] = style_guide_folder + "/dedication"
           r = RLayout::Dedication.new(h)
           @starting_page_number += r.page_count
           @document_folders << file
-        elsif  file =~/thanks$/
-          puts "thanks"
+        elsif file =~/thanks$/
           h[:document_path] = file
           h[:style_guide_folder] = style_guide_folder + "/thanks"
           r = RLayout::Thanks.new(h)
           @starting_page_number += r.page_count
           @document_folders << file
         elsif file =~/prologue$/
-          puts "prologue"
-          # binding.pry
           h[:document_path] = file
           h[:style_guide_folder] = style_guide_folder + "/prologue"
           r = RLayout::Prologue.new(h)
           @starting_page_number += r.page_count
           @document_folders << file
         elsif file =~ /help$/
-          puts "help"
           h[:document_path] = file
           h[:style_guide_folder] = style_guide_folder + "/help"
           r = RLayout::Help.new(h)
           @starting_page_number += r.page_count
           @document_folders << file
         elsif file =~ /toc$/
-          puts "toc"
           @has_toc = true
           @document_folders << file
-          @toc_first_page_number = @starting_page_number + 1 unless @toc_first_page_number
-          @starting_page_number += @toc_page_count
+          if @toc_page_count
+            @starting_page_number += @toc_page_count
+          else
+            @starting_page_number += 1
+          end
           @book_toc = []
         else
           puts "#{file}"
         end
       end
+
       unless @has_toc
         @has_toc = true
         @document_folders << 'toc' 
@@ -143,12 +140,8 @@ module RLayout
         @starting_page_number += @toc_page_count
         @book_toc = []
       end
+      
       generate_front_matter_toc
-
-    end
-
-    def style_guide_folder
-      @project_path + "/style_guide"
     end
 
     # copy front_matter source file or folder to _build
@@ -165,7 +158,6 @@ module RLayout
           File.open(source_full_story_path, 'w'){|f| f.write sample_story}
           File.open(story_md_destination_path, 'w'){|f| f.write sample_story}
         end
-
         # copy folder to build area
         system("cp -r #{source_full_path}/ #{destination_path}/")
       else

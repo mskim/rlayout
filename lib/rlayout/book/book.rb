@@ -40,7 +40,8 @@ module RLayout
       @ebook = options[:ebook]  || false
       @pdf_book = options[:pdf_book]  || false
       @print_book = options[:pdf_book]  || true
-      BookParserMd.new(@project_path)
+      @parser = BookParserMd.new(@project_path)
+      @toc_folder = @parser.toc_folder
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @toc_page_count = @book_info[:toc_page_count] || 2
@@ -67,6 +68,10 @@ module RLayout
       generate_pdf_for_print if @print_book
       generate_ebook if @ebook
     end
+
+    # def toc_folder
+    #   build_folder + "/front_matter/toc"
+    # end
 
     def update_book_info
       # make sure book setup is corrent
@@ -322,17 +327,15 @@ module RLayout
 
     ########### toc ###########
     def generate_toc
-      FileUtils.mkdir_p(toc_folder) unless File.exist?(toc_folder)
+      FileUtils.mkdir_p(@toc_folder) unless File.exist?(@toc_folder)
       save_book_toc
-
       h = @book_info.dup
       h[:page_pdf] = true
       # h[:starting_page_number] = @starting_page_number
       # h = {}
-      h[:document_path] = toc_folder
-      # h[:paper_size]    = @paper_size
+      h[:document_path] = @toc_folder
       h[:page_pdf]      = true
-      h[:max_page]      = @toc_page_count
+      h[:page_count]      = @toc_page_count
       h[:toc_item_count] = @book_toc.length
       h[:no_table_title] = false # tells not to creat toc titl
       h[:style_guide_folder] = style_guide_folder_for_toc
@@ -341,12 +344,8 @@ module RLayout
       @toc_page_links = r.link_info
     end
 
-    def toc_folder
-      build_folder + "/front_matter/toc"
-    end
-
     def toc_yml_path
-      build_folder + "/front_matter/toc/toc_content.yml"
+      @toc_folder + "/toc_content.yml"
     end
 
     def save_book_toc
