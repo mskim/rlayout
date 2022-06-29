@@ -175,10 +175,10 @@ module RLayout
             h[:title] = chapter_title
             doc_content = h.to_yaml
             doc_content += "---\n\n"
-            # doc_content += doc_chunk
+            # doc_content += doc_chunk  
             doc_chunk_without_first_line = doc_chunk_in_array[1..-1].join("\n")
             doc_content += doc_chunk_without_first_line
-            chapter_folder = build_folder + "/chapter_#{body_matter_index}"
+            chapter_folder = build_folder + "/chapter_#{body_matter_index.to_s.rjust(2,"0")}"
             FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
             story_path = chapter_folder + "/story.md"
             File.open(story_path, 'w'){|f| f.write doc_content}
