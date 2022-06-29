@@ -199,7 +199,11 @@ module RLayout
           @updated_metadata = {}
           @metadata = @metadata.each do |k, v|
             next if k == 'demotion'
-            @updated_metadata[k] = RubyPants.new(v).to_html if v
+            if v && v.class == String
+              @updated_metadata[k] = RubyPants.new(v).to_html 
+            elsif v
+              @updated_metadata[k] = v
+            end
           end
           starting_heading_level += @metadata['demotion'].to_i if @metadata['demotion']
         else

@@ -7,6 +7,7 @@ module RLayout
       super
       options[:heading_height_type] = "natural"
       @output_path = @document_path + "/chapter.pdf"
+      self
     end
 
     def self.sample_story
