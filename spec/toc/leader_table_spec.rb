@@ -2,6 +2,57 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create RLeaderTable' do
   before do
+    @data_path  = "#{ENV["HOME"]}/Development/tech_media/green_garden/_build/front_matter/toc/toc_content.yml"
+    @data = YAML::load_file(@data_path)
+    @style = {}
+    @table        = RLayout::RLeaderTable.new( width: 300, height: 532, table_data:@data, table_style: @style)
+    @body_row     = @table.graphics[1]
+    @cell         = @table.graphics.first.graphics.first
+    @second_cell  = @table.graphics.first.graphics[1]
+    @pdf_path     = "#{ENV["HOME"]}/test_data/leader_table/leader_table.pdf"
+  end
+
+  it 'should create RLeaderTable' do
+    assert_equal RLayout::RLeaderTable, @table.class 
+  end
+
+  it 'should create RLeaderTable with given width and height' do
+    assert_equal 300, @table.width
+    assert_equal 400, @table.height
+  end
+
+  it 'should create table with 8 rows' do
+    assert_equal 9, @table.graphics.length 
+    assert_equal RLayout::LeaderRow, @table.graphics.first.class 
+    assert_equal 3, @body_row.graphics.length
+    assert_equal 300, @table.graphics.first.width 
+    assert_equal 0, @table.graphics.first.x 
+    assert_in_delta 0.1, 400/9, @table.graphics.first.height 
+    assert_in_delta 0.1, 400/9, @table.graphics[2].height 
+  end
+  
+  it 'should create Cell with Text' do
+    assert_equal TextCell, @cell.class
+    assert_equal '찬송', @cell.text_string
+  end
+
+  it 'should create LeadeCell' do
+    # assert_equal Text, @second_cell.class
+    assert_equal LeaderCell, @second_cell.class
+  end
+
+  it 'should save table pdf' do
+    @table.save_pdf(@pdf_path)
+    assert File.exist?(@pdf_path)
+    system "open #{@pdf_path}"
+  end
+
+
+end
+
+__END__
+describe 'create RLeaderTable' do
+  before do
     # data_path    = "#{ENV["HOME"]}/test_data/demo_table/story.md"
     @data = [
       ['찬송', '320', '다같이'],

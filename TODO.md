@@ -29,6 +29,16 @@
   - line_type
   - arrow_type
 
+### 2022_06_29
+  - fix chapter_folder name with rjust, this was cause all the trouble on toc
+  - fix  toc ... leader char
+  - column lines missing a line
+### 2022_06_28
+  - Chapter include styleable module instead of sub-clssing styleable_doc
+  - TitlePage include styleable module instead of sub-clssing styleable_page
+  - InsideCover include styleable module instead of sub-clssing styleable_article
+
+  - fix TOC
 ### 2022_06_27
   - body_line_count not setting properly
     set 23, but getting 22 lines
@@ -253,9 +263,9 @@ Here is a simple footnote[^1]. With some additional text after it.
 
   - fix first_line_indent bug
 ### 2022_04_26
-  StyleablePage used content.yml
-  - FrontPage < StyleablePage
-  - BackPage < StyleablePage
+  Styleable used content.yml
+  - FrontPage < Styleable
+  - BackPage < Styleable
 
   StyleableArticle used story.md
   - FrontWing <  StyleableArticle
@@ -270,7 +280,7 @@ Here is a simple footnote[^1]. With some additional text after it.
     - markup with ## table:
 
 
-  - update namecard with CoverPage and StyleablePage
+  - update namecard with CoverPage and Styleable
 
 
 
@@ -288,7 +298,7 @@ Here is a simple footnote[^1]. With some additional text after it.
   - separate book souce
       separate book.md into \d\d files and book_info.yml
 ### 2022_04_20
-  - StyleablePage
+  - Styleable
       style_guide_folder
       document_path
       super
@@ -519,7 +529,7 @@ Here is a simple footnote[^1]. With some additional text after it.
       - study_book, newspaper catalog_heading
 
 ### 2022_02_25
-    - add StyleablePage
+    - add Styleable
     - add CoverPage
     - rename StyleableNewsArticle to StyleableArticle
 

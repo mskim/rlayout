@@ -26,9 +26,10 @@ module RLayout
     def	initialize(options={})
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
-      # options[:stroke_width]      = 1
+      options[:stroke_width]      = 1
       options[:stroke_color]      = 'black'
       options[:fill_color]        = 'gray'
+      options[:fill_color]        = 'yellow'
       @space_width                = options[:space_width] || 7
       @char_half_width_cushion    = @space_width/3
       options[:right_margin]      = 2 
@@ -58,10 +59,6 @@ module RLayout
       @token_union_style = @parent.token_union_style if @parent.respond_to?(:token_union_style)
       self
     end
-
-    # def room
-    #   @text_area[2]
-    # end
     
     def log
       "#{page_number}_#{line_index}:#{line_string}\n"

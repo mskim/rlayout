@@ -7,8 +7,7 @@ module RLayout
     include Stylable
 
     def initialize(options={})
-      options[:starting_page_side] = :left_side
-      options[:page_type] = :column_text
+
       @document_path = options[:document_path]
       @style_guide_folder = options[:style_guide_folder] || @document_path
       @output_path = @document_path + "/output.pdf"

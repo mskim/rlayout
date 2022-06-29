@@ -4,12 +4,32 @@ module RLayout
   # Replica of front cover image
   # use RCover
   # 
-  class BackPage < StyleablePage
+  class BackPage
     attr_reader :book_cover_folder, :document_path, :book_info, :pdf_page
-
+    attr_reader :document_path, :info_text, :isbn_text
+    attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
+    
+    include Styleable
     def initialize(options={})
-      super
-     
+      @book_info = options[:book_info]
+      options[:starting_page_side] = :left_side
+      options[:page_type] = :column_text
+      @document_path = options[:document_path]
+      @style_guide_folder = options[:style_guide_folder] || @document_path
+      @output_path = @document_path + "/output.pdf"
+      @starting_page_number = options[:starting_page_number] || 1
+      @page_pdf = options[:page_pdf] || true
+      @width = options[:width]
+      @height = options[:height]
+      @left_margin = options[:left_margin]
+      @top_margin = options[:top_margin] 
+      @right_margin = options[:right_margin]
+      @bottom_margin = options[:bottom_margin]
+      load_text_style
+      load_layout_rb
+      load_page_content    
+      @document.save_pdf(@output_path, page_pdf: @page_pdf, jpg:@static_jpg_url)
+
       self
     end
 

@@ -214,13 +214,11 @@ module RLayout
       @wi
     end
 
-    # def default_header_footer_yml
-    #   <<~EOF
-    #   ---
-
-
-    #   EOF
-    # end
+    def default_header_footer_yml
+      <<~EOF
+      ---
+      EOF
+    end
 
     def default_layout_rb
       s=<<~EOF

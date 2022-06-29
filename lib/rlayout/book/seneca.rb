@@ -1,20 +1,34 @@
 module RLayout
 
-  class Seneca < StyleablePage
+  class Seneca
     attr_reader :content, :updated
 
     # Seneca direction can be horizontal or vertical
     attr_reader :direction, :book_info
+    attr_reader :publisher, :items
+    attr_reader :document_path, :info_text, :isbn_text
+    attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
+    
+    include Stylable
 
     def initialize(options={}, &block)
       @document_path = options[:document_path]
-      @book_info = options[:book_info]
-      super
+      @style_guide_folder = options[:style_guide_folder] || @document_path
+      @output_path = @document_path + "/output.pdf"
+      @starting_page_number = options[:starting_page_number] || 1
+      @page_pdf = options[:page_pdf] || true
+      @width = options[:width]
+      @height = options[:height]
+      @left_margin = options[:left_margin]
+      @top_margin = options[:top_margin] 
+      @right_margin = options[:right_margin]
+      @bottom_margin = options[:bottom_margin]
+      @jpg = options[:jpg] || false
+      load_style
+      load_layout_rb
+      load_page_content
+      @document.save_pdf(@output_path, jpg: @jpg)
       self
-    end
-
-    def output_path
-      @document_path + "/output.pdf"
     end
 
     def content_path

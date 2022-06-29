@@ -118,11 +118,17 @@ module RLayout
         f = flipped_origin
         @x_offset = f[0].dup
         @y_offset = f[1].dup
+        # binding.pry if self.class == RLayout::LeaderCell
         case @text_alignment
         when 'left'
           @x_offset += @left_margin + @left_inset
         when 'center'
-          @x_offset += (@width - @string_width)/2
+          # TODO: this is hack fix this
+          if self.class == RLayout::LeaderCell
+            @x_offset += (@width - @string_width)/2.0 - 50
+          else
+            @x_offset = (@width - @string_width)/2
+          end
         when 'right'
           # TODO fix this 
           # why is @string_width different from initial set_string_width

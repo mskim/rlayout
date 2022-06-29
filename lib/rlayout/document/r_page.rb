@@ -78,14 +78,6 @@ module RLayout
       page_log
     end
 
-    # def page_number
-    #   if @document
-    #     @document.page_number(self)
-    #   else
-    #     1
-    #   end
-    # end
-
     def page_index
       if @document
         @document.pages.index(self)

@@ -19,10 +19,13 @@ module RLayout
     attr_accessor :column_index, :row_index
     attr_accessor :style_object
     def initialize(options={})
+      # options[:stroke_width] = 1.0
+      options[:text_alignment] = 'center'
+      options[:v_alignment] = 'center'
       super
       # @height = @parent.height if @parent
-      @text_alignment = 'center'
-      @v_alignment    = 'center'
+      # @text_alignment = 'center'
+      # @v_alignment    = 'center'
       # @stroke[:thickness] = 1
       # @stroke[:color] = 'red'
       # @fill[:color] = 'blue'
@@ -41,11 +44,13 @@ module RLayout
         @style_object = @current_style_service.style_object_from_para_style(para_style) 
       # end
       @font_wrapper = @style_object.font
-      glyphs        = @font_wrapper.decode_utf8(@text_string)
-      @string_width = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
+      @font_size = @style_object.font_size
+      @string_width = @font_size/4.0
+      # @string_width = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
       if @string_width < @width
         room = @width - @string_width
         multiples = (room/@string_width).round
+        # binding.pry
         @text_string = @text_string*multiples if multiples > 0
         set_string_width
       end
