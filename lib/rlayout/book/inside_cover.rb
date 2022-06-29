@@ -4,17 +4,32 @@ module RLayout
   # Replica of front cover image
   
   # class InsideCover < StyleableDoc
-  class InsideCover < StyleablePage
-      attr_reader :cover_image_path
+  class InsideCover
+    include Styleable
+    attr_reader :cover_image_path
+    attr_reader :document_path
+    attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
     
     def initialize(options={} ,&block)
+      @document_path = options[:document_path]
+      @style_guide_folder = options[:style_guide_folder] || @document_path
+      @output_path = @document_path + "/output.pdf"
       @starting_page_number = options[:starting_page_number] || 1
       @page_pdf = options[:page_pdf] || true
-      super
+      @width = options[:width]
+      @height = options[:height]
+      @left_margin = options[:left_margin]
+      @top_margin = options[:top_margin] 
+      @right_margin = options[:right_margin]
+      @bottom_margin = options[:bottom_margin]
+      # use image that was created for BookCover front_page image
       @front_page_pdf = options[:front_page_pdf]
-      page = @document.pages.last
-      page.add_image(@front_page_pdf)
-      @document.save_pdf(@output_path, page_pdf:@page_pdf)
+      @jpg = options[:jpg] || false
+      load_text_style
+      load_layout_rb
+      load_document
+      @document.add_image(@front_page_pdf)
+      @document.save_pdf(@output_path, page_pdf:@page_pdf, jpg:@jpg)
       self
     end
 
@@ -26,11 +41,7 @@ module RLayout
       end
     end
 
-    def default_layout_rb
-      @top_margin = 50
-      @left_margin = 50
-      @right_margin = 50
-      @bottom_margin = 50
+    def default_layout_r
       doc_options= {}
       doc_options[:paper_size] = @paper_size
       doc_options[:width] = @width
@@ -40,7 +51,7 @@ module RLayout
       doc_options[:right_margin] = @right_margin
       doc_options[:bottom_margin] = @bottom_margin
       layout =<<~EOF
-        RLayout::RDocument.new(#{doc_options})
+        RLayout::CoverPage.new(#{doc_options})
       EOF
     end
 

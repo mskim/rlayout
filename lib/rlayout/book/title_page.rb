@@ -3,17 +3,40 @@ module RLayout
   # With Title, author, publisher, logo
   # Replica of front cover image
   
-  class TitlePage < StyleablePage
-    attr_reader :cover_image_path
+  class TitlePage
+    include Styleable
+    attr_reader :document_path
+    attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
     
     def initialize(options={} ,&block)
+      @document_path = options[:document_path]
+      @style_guide_folder = options[:style_guide_folder] || @document_path
+      @output_path = @document_path + "/output.pdf"
       @starting_page_number = options[:starting_page_number] || 1
+      @width = options[:width]
+      @height = options[:height]
+      @left_margin = options[:left_margin]
+      @top_margin = options[:top_margin] 
+      @right_margin = options[:right_margin]
+      @bottom_margin = options[:bottom_margin]
       @page_pdf = options[:page_pdf] || true
-      super
-      @front_page_pdf = options[:front_page_pdf]
-      page = @document.pages.last
-      @document.save_pdf(@output_path, page_pdf:@page_pdf) unless options[:no_output]
+      @book_title  = options[:book_title]
+      @jpg = options[:jpg] || false
+      load_text_style
+      load_layout_rb
+      load_document
+      @document.set_page_content(YAML::load(heading_yaml))
+      @document.save_pdf(@output_path, page_pdf:@page_pdf, jpg:@jpg)
       self
+    end
+
+    def heading_yaml
+      <<~EOF
+      ---
+      heading:
+        title: #{@book_titile}
+      EOF
+
     end
 
     def page_count
@@ -25,10 +48,7 @@ module RLayout
     end
 
     def default_layout_rb
-      # @top_margin = 50
-      # @left_margin = 50
-      # @right_margin = 50
-      # @bottom_margin = 50
+
       doc_options= {}
       # doc_options[:paper_size] = @paper_size
       doc_options[:width] = @width
@@ -38,7 +58,9 @@ module RLayout
       doc_options[:right_margin] = @right_margin
       doc_options[:bottom_margin] = @bottom_margin
       layout =<<~EOF
-        RLayout::RDocument.new(#{doc_options})
+        RLayout::CoverPage.new(#{doc_options}) do
+          heading(0,0,2,2)
+        end
       EOF
     end
 

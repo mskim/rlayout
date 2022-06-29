@@ -10,7 +10,6 @@
 # There are two ways of placing images in the long document.
 # 1. inline image markup
 # 2. pre-planed separate yaml file containeing image info for page.
-
 # 3. inserting pre-made PDF photo pages with markup at insertion point
 
 ### First method is to inline image markup in the text.
@@ -155,9 +154,7 @@
 
 # heading_height_type
 #   fixed height: use HeightContent
-
-#   natural, quarter, half, full_page
-
+#   natural, quarter, half, full_pag
 #   natural: growing height: use Heading
 
 # chapter folder
@@ -203,13 +200,31 @@
 # Some document should start on specific side, isbn left(even), inside_cover right(odd),
 # blank page is inserted in front of the document to make it work.
 
+# StyleableDoc module
+# StyleableDoc module allows customizarion of documents
+# There are tree part to customizarion
+# text_style, header_footer, and layout
+# styles can be modified by changing saved default values,
+# default style are save at /style_guide/class_name folder
+# and modified version gets applied.
+
 module RLayout
-  class Chapter < StyleableDoc
-    attr_reader :document_path, :story_path
-    attr_reader :document, :output_path, :column_count
+  class Chapter
+    # attr_reader :style_guide_folder
+    attr_reader :document_path
+    attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
+    # attr_reader :document
+    attr_reader :page_pdf
+    attr_reader :starting_page_number
+    attr_reader :output_path
+    attr_reader :header_footer_info
+    attr_reader :body_line_count
+    attr_reader :book_title, :chapter_title
+    attr_reader :story_path
+    attr_reader :column_count
     attr_reader :doc_info, :toc_content
     attr_reader :title, :toc_title, :heading_height_type, :heading
-    attr_reader :body_line_count, :body_line_height
+    attr_reader :body_line_height
     attr_reader :max_page_number, :page_floats
     attr_reader :has_footer, :has_header
     attr_reader :belongs_to_part, :paper_size
@@ -219,21 +234,35 @@ module RLayout
     attr_reader :footnote_description_items
     attr_reader :starting_page_side, :jpg
     attr_reader :book_info
+
+    include Styleable
+
     def initialize(options={} ,&block)
-      # @document_path = options[:document_path]
-      # @starting_page_number  = options[:starting_page_number] || 1
       @doc_type = options[:doc_type] || 'chapter'
       @book_info = options.dup
       @jpg = options[:jpg] || false
-      super
+      @style_guide_folder = options[:style_guide_folder] || @document_path
+      @document_path = options[:document_path]
+      @starting_page_number  = options[:starting_page_number] || 1
+      puts "@starting_page_number:#{@starting_page_number}"
+      @output_path = options[:output_path] || @document_path + "/chapter.pdf"
+      @width = options[:width]
+      @height = options[:height]
+      @left_margin = options[:left_margin]
+      @top_margin = options[:top_margin]
+      @right_margin = options[:right_margin]
+      @bottom_margin = options[:bottom_margin]
+      @page_pdf =  options[:page_pdf] || false
+      @body_line_count = options[:body_line_count]
+      @book_title = options[:book_title]
+      # super
+      load_style
       @footnote_description_items = []
       @starting_page_side = options[:starting_page_side] || :either_sid
       @local_image_folder = @document_path + "/images"
       @story_path     = @document_path + "/story.md"
       @output_path    = options[:output_path] || @document_path + "/chapter.pdf"
       @story_md       = options[:story_md]
-      # @has_footer    =  options[:has_footer] || true
-      # @has_header    =  options[:has_header] || false
       @belongs_to_part = options[:belongs_to_part]
       @grid = options[:grid] || [6,12]
       @default_image_location = options[:default_image_location] || 1
@@ -300,8 +329,6 @@ module RLayout
       doc_options[:right_margin] = @right_margin
       doc_options[:bottom_margin] = @bottom_margin
       doc_options[:body_line_count] = @body_line_count
-      doc_options[:book_title] = @book_title || "untitled"
-      doc_options[:chapter_title] = @title || "untitled"
       layout =<<~EOF
         RLayout::RDocument.new(#{doc_options})
       EOF
@@ -460,7 +487,7 @@ module RLayout
         @current_line = @first_text_page.first_text_line
       end
       page_key                    = @current_line.page_number
-      @story_by_page_hash         = {} # this is used to capter story_by_page info
+      @story_by_page_hash         = {} # this is used to capture story_by_page info
       current_page_paragraph_list = []
       while @paragraph = @paragraphs.shift
         if @paragraph.has_footnote_marker
@@ -539,6 +566,11 @@ module RLayout
         @starting_y += line_height
       end
     end
+
+    # @header_footer_info hash is read by StyleableDoc
+    # @header_footer_info keys include has_header, has_footer, 
+    # these values can be customized to true or false for each class
+    # /style_guide/chapter_header_footer.yml
 
     def place_header_and_footer
       # @header_footer_info = YAML::load_file(style_guide_header_footer_path)
