@@ -388,6 +388,7 @@ module RLayout
       # end
       while token
         return unless @current_line
+        # binding.pry if token.string ==  "공화국이"
         result = @current_line.place_token(token)
         # token is broken into two, second part is returned
         if result.class == RTextToken
@@ -406,6 +407,10 @@ module RLayout
             # break #reached end of last column
             # tokens_copy.unshift(result) #stick the unplace token back to the tokens_copy
             token = result
+            column = @current_line.column
+            page = column.page
+            @current_line.set_paragraph_info(self, "middle_line")
+            @line_count += 1
           end
         elsif result
           # puts "entire token placed succefully, returned result is true"
@@ -425,9 +430,16 @@ module RLayout
             if @current_line.parent.fixed_page_document?
               return nil
             end
-            @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
-            # tokens.unshift(token) #stick the unplace token back to the tokens_copy
-            # break #reached end of column
+            if @current_line.parent.respond_to?(:add_new_page)
+              @current_line = @current_line.parent.add_new_page 
+              # tokens.unshift(token) #stick the unplace token back to the tokens_copy
+              # break #reached end of column
+
+              column = @current_line.column
+              page = column.page
+              @current_line.set_paragraph_info(self, "middle_line")
+              @line_count += 1
+            end
           end
         end
       end
