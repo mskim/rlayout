@@ -718,7 +718,6 @@ module RLayout
       else
         erb = ERB.new(@document.header_footer_info['right_footer_erb'])
       end
-      # binding.pry
       layout = erb.result(binding)
       @footer_object = eval(layout)
     end

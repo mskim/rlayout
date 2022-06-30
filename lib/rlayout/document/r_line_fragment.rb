@@ -33,11 +33,12 @@ module RLayout
       @space_width                = options[:space_width] || 7
       @char_half_width_cushion    = @space_width/3
       options[:right_margin]      = 2 
+      options[:stroke_width] = 1.0
+
       super
       @content_source = options[:content_source]
       if options[:style_name]
         @style_name = options[:style_name]
-
       elsif options[:para_style]
         @para_style       = options[:para_style]
         @font             = @para_style[:font]
@@ -45,6 +46,8 @@ module RLayout
         @text_alignment   = @para_style[:text_alignment] || 'left'
       elsif options[:parent] && options[:parent].respond_to?(:para_style)
         @para_style       = options[:parent].para_style
+      else
+        @style_name = 'body'
       end
       @adjust_size      = options[:adjust_size] if options[:adjust_size]
       @text_alignment   = options[:text_alignment] if options[:text_alignment]

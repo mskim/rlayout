@@ -121,7 +121,6 @@ module RLayout
             part_title = doc_chunk.split(":")[1]
             @part_titles << part_title
           elsif doc_name = is_front_matter_item?(doc_string)
-            # binding.pry
             # strip off []
             doc_string = doc_string.sub("[", "").sub("]","")
             doc_string_array =  doc_string.split("p")
@@ -161,7 +160,7 @@ module RLayout
             h['starting_page'] = starting_page if starting_page
             h['page_count'] = page_count if page_count
             h['title'] = chapter_title
-            
+
             doc_content = h.to_yaml
             doc_content += "---\n\n"
             doc_chunk_without_first_line = doc_chunk.split("\n")[1..-1].join("\n")

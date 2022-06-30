@@ -157,7 +157,6 @@ module RLayout
       if File.exist?(style_guide_layout_path)
         @layout_rb = File.open(style_guide_layout_path, 'r'){|f| f.read}
       else
-        # binding.pry
         @layout_rb = default_layout_rb
         File.open(style_guide_layout_path, 'w'){|f| f.write default_layout_rb}
       end

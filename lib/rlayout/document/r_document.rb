@@ -26,7 +26,6 @@ module RLayout
       @starting_page_number = options[:starting_page_number]   || 1
       @max_page_number  = options[:max_page_number] || 999
       @body_line_count  = options[:body_line_count]
-      # binding.pry if @body_line_count == 23
       unless @body_line_count
         case @paper_size 
         when "A4"

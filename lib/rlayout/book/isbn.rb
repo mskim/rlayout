@@ -7,7 +7,7 @@ module RLayout
     attr_reader :document_path, :info_text, :isbn_text
     attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
     
-    include Stylable
+    include Styleable
 
     def initialize(options={})
       options[:starting_page_side] = :left_side

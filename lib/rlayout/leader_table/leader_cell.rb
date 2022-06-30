@@ -50,7 +50,6 @@ module RLayout
       if @string_width < @width
         room = @width - @string_width
         multiples = (room/@string_width).round
-        # binding.pry
         @text_string = @text_string*multiples if multiples > 0
         set_string_width
       end

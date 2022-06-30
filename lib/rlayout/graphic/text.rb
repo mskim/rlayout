@@ -118,7 +118,6 @@ module RLayout
         f = flipped_origin
         @x_offset = f[0].dup
         @y_offset = f[1].dup
-        # binding.pry if self.class == RLayout::LeaderCell
         case @text_alignment
         when 'left'
           @x_offset += @left_margin + @left_inset

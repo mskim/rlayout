@@ -403,7 +403,6 @@ module RLayout
     def place_page_in_print_page(page_path, side)
       print_page_width = @width + @gripper_margin*2
       print_page_height = @height + @gripper_margin*2
-      # binding.pry
       RLayout::PrintPage.new(page_path:page_path, side:side, width: print_page_width, height: print_page_height, gripper_margin: @gripper_margin, bleed_margin: @bleed_margin, binding_margin: @binding_margin)
     end
 
