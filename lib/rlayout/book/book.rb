@@ -49,7 +49,7 @@ module RLayout
       @width = @book_info[:width]
       @height = @book_info[:height]
       @binding_margin = @book_info[:binding_margin] || 3*2.834646
-      @book_title = @book_info[:book_title] || 'untitled'
+      @book_title = @book_info[:book_title] || @book_info[:title] || 'untitled'
       update_book_info
       # @title = @book_info[:title]
       @starting_page_number = 1
@@ -59,7 +59,7 @@ module RLayout
       create_book_cover
       @starting_page_number  = 1
       @front_matter = FrontMatter.new(@project_path, @starting_page_number, @book_info)
-      @starting_page_number += @front_matter.starting_page_number
+      @starting_page_number = @front_matter.starting_page_number
       @body_matter = BodyMatter.new(@project_path, @starting_page_number, @book_info )
       # @rear_matter = RearMatter.new(@project_path, @starting_page_number, @book_info )
       generate_toc
@@ -85,7 +85,7 @@ module RLayout
       @book_info[:bottom_margin] = @bottom_margin unless @book_info[:bottom_margin]
       @book_info[:binding_margin] = @binding_margin unless @book_info[:binding_margin]
       @book_info[:body_line_count] = @body_line_count unless @book_info[:body_line_count]
-      @book_info[:book_title] = @book_title unless @book_info[:book_title]
+      @book_info[:title] = @book_title unless @book_info[:title]
       
       # File.open(@book_info_path, 'w'){|f| f.write h.to_yaml}  
     end
@@ -339,6 +339,12 @@ module RLayout
       h[:toc_item_count] = @book_toc.length
       h[:no_table_title] = false # tells not to creat toc titl
       h[:style_guide_folder] = style_guide_folder_for_toc
+      h[:width] = @width
+      h[:height] = @height
+      h[:left_margin] = @book_info[:left_margin]
+      h[:top_margin] = @book_info[:top_margin]
+      h[:right_margin] = @book_info[:right_margin]
+      h[:bottom_margin] = @book_info[:bottom_margin]
       r = RLayout::Toc.new(h)
       new_page_count = r.page_count
       @toc_page_links = r.link_info
