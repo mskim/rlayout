@@ -88,7 +88,7 @@ module RLayout
 
     def draw_text(canvas)
       if @text_string.length > 0
-        # canvas.fill_color(@fill_color)
+        # canvas.fill_color('red')
         if canvas.font
           canvas_font_name = canvas.font.wrapped_font.font_name
           canvas_font_size  = canvas.font_size
@@ -102,18 +102,28 @@ module RLayout
           @font_name              = @font_wrapper.wrapped_font.font_name
           @font_size              = @style_object.font_size
           space_glyph             = @font_wrapper.decode_utf8(" ").first
-
           if @font_name == canvas_font_name && @font_size == canvas_font_size            
           elsif @font_name != canvas_font_name
             canvas.font(@font_wrapper, size: @font_size)
           elsif @font_size != canvas_font_size
             canvas.font(canvas.font, size: @font_size)
           end
+          glyphs        = @font_wrapper.decode_utf8(@text_string)
+          @string_width = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
+        elsif @style_name
+          @style_object = @current_style_service.style_object(@style_name)
+          @font_wrapper           = @style_object.font
+          @font_size              = @style_object.font_size
+          canvas.font(@font_wrapper, size: @font_size)
+          glyphs        = @font_wrapper.decode_utf8(@text_string)
+          @string_width = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
         else
           @style_object = @current_style_service.style_object('body')
           @font_wrapper           = @style_object.font
           @font_size              = @style_object.font_size
           canvas.font(@font_wrapper, size: @font_size)
+          glyphs        = @font_wrapper.decode_utf8(@text_string)
+          @string_width = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
         end
         f = flipped_origin
         @x_offset = f[0].dup
@@ -122,11 +132,10 @@ module RLayout
         when 'left'
           @x_offset += @left_margin + @left_inset
         when 'center'
-          # TODO: this is hack fix this
           if self.class == RLayout::LeaderCell
-            @x_offset += (@width - @string_width)/2.0 - 50
+            @x_offset += (@width - @string_width)/2.0
           else
-            @x_offset = (@width - @string_width)/2
+            @x_offset += (@width - @string_width)/2.0
           end
         when 'right'
           # TODO fix this 

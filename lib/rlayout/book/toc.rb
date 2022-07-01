@@ -124,30 +124,17 @@ module RLayout
     end
 
     def default_layout_rb
-      case @paper_size
-      when "A4"
-        @left_margin    = 100
-        @top_margin     = 100
-        @right_margin   = 100
-        @bottom_margin  = 100
-      when "16절"
-        @left_margin    = 80
-        @top_margin     = 50
-        @right_margin   = 80
-        @bottom_margin  = 50
-      when "A5"
-        @left_margin    = 30
-        @top_margin     = 50
-        @right_margin   = 50
-        @bottom_margin  = 50
-      else 
-        @left_margin    = 50
-        @top_margin     = 50
-        @right_margin   = 50
-        @bottom_margin  = 50
-      end
+      h = {}
+      h[:width] = @width
+      h[:height] = @height
+      h[:left_margin] = @left_margin
+      h[:top_margin] = @top_margin
+      h[:right_margin] = @right_margin
+      h[:bottom_margin] = @bottom_margin
+      h[:page_count] = @page_count
+      h[:page_type] = 'toc_page'
       layout =<<~EOF
-        RLayout::RDocument.new(width:#{@width}, height:#{@height} , page_count: #{@max_page}, page_type: "toc_page")
+        RLayout::RDocument.new(#{h})
       EOF
     end
 
