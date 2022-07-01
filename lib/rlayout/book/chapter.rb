@@ -253,8 +253,7 @@ module RLayout
       @page_pdf =  options[:page_pdf] || false
       @body_line_count = options[:body_line_count]
       @book_title = options[:book_title]
-      # super
-      load_style
+      load_doc_style
       @footnote_description_items = []
       @starting_page_side = options[:starting_page_side] || :either_sid
       @local_image_folder = @document_path + "/images"
