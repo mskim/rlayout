@@ -48,23 +48,19 @@ module RLayout
     # attr_reader :body_line_count
     # attr_reader :book_title, :chapter_title
     
-    def load_style
+    def load_doc_style
       load_text_style
       load_layout_rb
       load_header_footer_info
-      if @layout_rb
-        @document = eval(@layout_rb)
-        if @document.is_a?(SyntaxError)
-          puts "SyntaxError in #{@document} !!!!"
-          return
-        end
-        unless @document.kind_of?(RLayout::RDocument) || @document.kind_of?(RLayout::Container)
-          puts "Not a @document kind created !!!"
-          return
-        end
-        # @document.local_image_path = local_image_path
-      end
+      load_document
       self
+    end
+
+    def load_page_style
+      load_text_style
+      load_layout_rb
+      load_document
+      load_page_content
     end
 
     def load_document
@@ -85,20 +81,7 @@ module RLayout
     def local_image_path
       @document_path + "/images"
     end
-    # set width and height from @paper_size
-    # def set_width_and_height_from_paper_size
-    #   if SIZES[@paper_size]
-    #     @width = SIZES[@paper_size][0]
-    #     @height = SIZES[@paper_size][1]
-    #   elsif @paper_size.include?("*")
-    #     @width = mm2pt(@paper_size.split("*")[0].to_i)
-    #     @height = mm2pt(@paper_size.split("*")[1].to_i)
-    #   elsif @paper_size.include?("x")
-    #     @width = mm2pt(@paper_size.split("x")[0].to_i)
-    #     @height = mm2pt(@paper_size.split("x")[1].to_i)
-    #   end
-    # end
-
+ 
     def save_text_style
       File.open(text_style_path, 'w'){|f| f.write default_text_style} unless File.exist?(text_style_path)
     end
@@ -202,6 +185,21 @@ module RLayout
       end
       @document.set_page_content(@page_content) if @document && @document.class == RLayout::CoverPage
     end
+
+    def default_page_content
+      <<~EOF
+      ---
+      heading:
+        title : 2022년에 책만들기
+        subtitle: 지난 40년간 해오던 편식방식을 개선하기
+        author: 김민수
+
+      ---
+      
+      EOF
+
+    end
+
 
     def width_ratio
       @width/SIZES['A4'][0]
