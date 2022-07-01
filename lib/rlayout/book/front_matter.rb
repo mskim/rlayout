@@ -62,6 +62,7 @@ module RLayout
           h[:has_footer] = false
           h[:has_header] = false
           h[:style_guide_folder] = style_guide_folder + "/title_page"
+          h[:title] = options[:title]
           r = RLayout::TitlePage.new(h)
           @starting_page_number += r.page_count
           @document_folders << file
@@ -91,6 +92,10 @@ module RLayout
           h[:has_footer] = false
           h[:has_header] = false
           h[:style_guide_folder] = style_guide_folder + "/inside_cover"
+          h[:title] = options[:title]
+          h[:subtitle] = options[:subtitle]
+          h[:author] = options[:author]
+
           r = RLayout::InsideCover.new(h)
           @starting_page_number += r.page_count
           @document_folders << file
