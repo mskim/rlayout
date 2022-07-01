@@ -20,7 +20,7 @@ module RLayout
       @right_margin = options[:right_margin]
       @bottom_margin = options[:bottom_margin]
       @jpg = options[:jpg] || false
-      load_style
+      load_doc_style
       @document.save_pdf(@output_path, jpg: @jpg)
       self
     end

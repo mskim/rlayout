@@ -21,6 +21,15 @@ module RLayout
     def initialize(options={})
       @document_path = options[:document_path]
       @style_guide_folder = options[:style_guide_folder] || @document_path
+      @output_path = options[:output_path] || @document_path + "/chapter.pdf"
+      @width = options[:width]
+      @height = options[:height]
+      @left_margin = options[:left_margin]
+      @top_margin = options[:top_margin]
+      @right_margin = options[:right_margin]
+      @bottom_margin = options[:bottom_margin]
+      @page_pdf =  options[:page_pdf] || false
+      
       @page_count = options[:page_count]
       @max_page = options[:max_page] || 1
       @toc_item_count = options[:toc_item_count] || 20
@@ -28,7 +37,7 @@ module RLayout
       @no_table_title = options[:no_table_title]
       @page_pdf = options[:page_pdf] || true
       @jpg = options[:jpg] || false
-      load_style
+      load_doc_style
       read_toc
       layout_toc
       # @link_info = update_link_info
@@ -74,7 +83,6 @@ module RLayout
         h[:layout_expand] = [:height]
         first_page.add_toc_title(h)
       end
-
       if @page_count 
         page_item_count = (@toc_content.length / @page_count.to_f).ceil
         @toc_content_for_page = @toc_content.each_slice(page_item_count).to_a
@@ -86,7 +94,7 @@ module RLayout
       end
 
       if @document.pages.length < @toc_content_for_page.length
-        needed_page_count = @toc_content_for_page - @document.pages.length
+        needed_page_count = @toc_content_for_page.length - @document.pages.length
         needed_page_count.times do
           @document.add_new_page
         end

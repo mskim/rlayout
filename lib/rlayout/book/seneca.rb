@@ -24,9 +24,7 @@ module RLayout
       @right_margin = options[:right_margin]
       @bottom_margin = options[:bottom_margin]
       @jpg = options[:jpg] || false
-      load_style
-      load_layout_rb
-      load_page_content
+      load_page_style
       @document.save_pdf(@output_path, jpg: @jpg)
       self
     end
