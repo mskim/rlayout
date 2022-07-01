@@ -73,7 +73,6 @@ module RLayout
           h[:doc_type]  = @book_type
           puts "#{chapter_order}:#{@starting_page_number}"
           r = RLayout::Chapter.new(h)
-          puts r.page_count
           @starting_page_number += r.page_count
           chapter_order += 1
 

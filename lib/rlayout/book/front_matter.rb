@@ -34,7 +34,6 @@ module RLayout
       @toc_page_count = options[:toc_page_count] || 1
       # @page_count = 0
       process_front_matter(options)
-      puts "after process_front_matter"
 
       self
     end
@@ -56,7 +55,6 @@ module RLayout
         h[:toc] = true
         h[:starting_page_number] = @starting_page_number
         if file =~ /title_page$/
-          puts "title_page"
           h[:document_path] = file
           h[:toc] = false
           h[:has_footer] = false
@@ -76,7 +74,6 @@ module RLayout
           @starting_page_number += r.page_count
           @document_folders << file
         elsif file =~ /isbn$/
-          puts "isbn"
           h[:document_path] = file
           h[:toc] = false
           h[:has_footer] = false
@@ -100,7 +97,6 @@ module RLayout
           @starting_page_number += r.page_count
           @document_folders << file
         elsif file =~/dedication$/
-          puts "dedication"
           h[:document_path] = file
           h[:style_guide_folder] = style_guide_folder + "/dedication"
           r = RLayout::Dedication.new(h)

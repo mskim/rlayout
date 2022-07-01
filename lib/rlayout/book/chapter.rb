@@ -25,7 +25,7 @@
 # - 그림_4 기본은 (위치:상단, 크기:반)
 # - 그림_5,
 
-# - We can also puts multiple images in the same page, for this we need to group them as "그림_조합_1"
+# - We can also put multiple images in the same page, for this we need to group them as "그림_조합_1"
 # - this represents collection of images that will be place in the same page.
 # - multiple_image can be placed in a single page by
 # - putting using 그림_조합_1 same image info in the same text block
@@ -242,7 +242,6 @@ module RLayout
       @style_guide_folder = options[:style_guide_folder] || @document_path
       @document_path = options[:document_path]
       @starting_page_number  = options[:starting_page_number] || 1
-      puts "@starting_page_number:#{@starting_page_number}"
       @output_path = options[:output_path] || @document_path + "/chapter.pdf"
       @width = options[:width]
       @height = options[:height]
