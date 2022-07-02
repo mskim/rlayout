@@ -95,6 +95,10 @@ module RLayout
           canvas.text_rise(4)
           canvas.text(token.superscript_text, at:[@start_x + token.x + token.base_width, @start_y - token.height])
           canvas.text_rise(0)
+          if token.post_superscript_text
+            canvas.text(token.post_superscript_text, at:[@start_x + token.x + token.base_width + token.superscript_width , @start_y - token.height])
+
+          end
         else
           canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])
         end

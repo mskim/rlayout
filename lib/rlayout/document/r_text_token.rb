@@ -19,7 +19,7 @@ module RLayout
     attr_reader :style_name, :current_style
     attr_reader :font_wrapper, :glyphs, :style_object, :has_missing_glyph
     attr_reader  :has_footnote_marker, :footnote_item_number
-    attr_reader :base_width, :superscript_text, :superscript_width
+    attr_reader :base_width, :superscript_text, :superscript_width, :post_superscript_text, :post_superscript_width
     def initialize(options={})
       options[:fill_color] = options.fetch(:token_color, 'clear')
       super
@@ -40,14 +40,20 @@ module RLayout
         @footnote_item_number = $1
         @has_footnote_marker = true
         footnote_marker_to_superscript
-
         @glyphs = filter_glyph(@string) 
         @base_width= @glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
         # create footnote marker token
         #TODO set  @style_object superscript: true
-        @superscrupt_glyphs = @font_wrapper.decode_utf8(@superscript_text)
-        @superscript_width= @superscrupt_glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
-        @width = @base_width + @superscript_width
+        superscrupt_glyphs = @font_wrapper.decode_utf8(@superscript_text)
+        # TODO 
+        @superscript_width= superscrupt_glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
+        @post_superscript_width =  0
+        if @post_superscript_text
+          #  단어[^1]로  로 is @post_superscript_text
+          post_superscrupt_glyphs  = @font_wrapper.decode_utf8(@superscript_text)
+          @post_superscript_width= post_superscrupt_glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
+        end
+        @width = @base_width + @superscript_width + @post_superscript_width
       else
         #filter unsupported glyph!!!! replace it with ???
         @glyphs = filter_glyph(@string) 
@@ -70,8 +76,12 @@ module RLayout
     def footnote_marker_to_superscript
       array = @string.split("[^")
       @string = array[0]
-      super_number = array[1].sub(/]$/, "")
+      # super_number = array[1].sub(/]$/, "") can't hanle post_superscript_text
+      # handle case for 단어[^1]의
+      post_super_array = array[1].split("]")
+      super_number = post_super_array[0]
       @superscript_text = "(#{super_number})"
+      @post_superscript_text =  post_super_array[1] if post_super_array.length > 1
     end
 
     def size
