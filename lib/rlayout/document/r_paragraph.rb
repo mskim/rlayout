@@ -388,7 +388,6 @@ module RLayout
       # end
       while token
         return unless @current_line
-        # binding.pry if token.string ==  "공화국이"
         result = @current_line.place_token(token)
         # token is broken into two, second part is returned
         if result.class == RTextToken

@@ -28,6 +28,8 @@ module RLayout
   class BookParserMd
     attr_reader :project_path, :book_txt_path, :book_md_path, :book_info_path
     attr_reader :part_titles, :has_parts, :toc_folder
+    attr_reader :footnote_markup,  :h2_markup, :h3_markup, :h4_markup
+
     def initialize(project_path, options={})
       @project_path = project_path
       @book_md_path = @project_path + "/book.md"
@@ -38,6 +40,7 @@ module RLayout
       else File.exist?(@book_txt_path)
         convert_txt2md
       end
+      
       book_md2docs
       self
     end
@@ -72,6 +75,8 @@ module RLayout
       indices = source.to_enum(:scan, /^\[[^\^].+\]/i).map do |some|
         Regexp.last_match.begin(0)
       end
+      first_chunk = source.slice(0, indices[0])
+      parse_first_chunk(first_chunk)
       end_indece =  source.length
       book_document_contents = []
       indices.each_with_index do |indice, i|
@@ -86,6 +91,25 @@ module RLayout
       end
 
       save_doc_content(book_document_contents)
+    end
+
+    # parse local markup
+    def parse_first_chunk(first_chunk)
+      first_chunk_line_array = first_chunk.split("\n")
+      first_chunk_line_array.each do |line_string|
+        if line_string.include?("->")
+          local_markup_array = line_string.split("->")
+          if local_markup_array[1].include?("각주")
+            @footnote_markup = local_markup_array[0].gsub(" ","")
+          elsif local_markup_array[1].include?("볼드")
+            @h2_markup = local_markup_array[0].gsub(" ","")
+          elsif local_markup_array[1].include?("오른쪽")
+            @h3_markup = local_markup_array[0].gsub(" ","")
+          elsif local_markup_array[1].include?("인용")
+            @h4_markup = local_markup_array[0].gsub(" ","")
+          end
+        end
+      end
     end
 
     def save_doc_content(book_document_contents)
@@ -172,6 +196,11 @@ module RLayout
             end
 
             doc_path = doc_folder + "/story.md"
+            if doc_class == 'toc' || doc_class == 'title_page' || doc_class == 'blank_page' || doc_class == 'inside_cover' 
+            else
+              doc_content = filter_content(doc_content)
+            end
+
             File.open(doc_path, 'w'){|f| f.write doc_content}
           elsif doc_name = is_body_matter_item?(doc_string)
             # handle body_matter docs
@@ -193,6 +222,7 @@ module RLayout
             chapter_folder = build_folder + "/chapter_#{body_matter_index.to_s.rjust(2,"0")}"
             FileUtils.mkdir_p(chapter_folder) unless File.exist?(chapter_folder)
             story_path = chapter_folder + "/story.md"
+            doc_content = filter_content(doc_content)
             File.open(story_path, 'w'){|f| f.write doc_content}
             body_matter_index += 1
           else
@@ -222,10 +252,73 @@ module RLayout
     end
 
     def save_book_info(path, book_info_content)
+      # convert local markups to markdown markups
       File.open(path , 'w'){|f| f.write book_info_content}
     end
-    # front_matter_items =%[ 대도비라 소도비라 차례 머리말 백 일러두기]
 
+    def filter_content(content)
+      # \r\n => \n\n, \n => \n\n, 
+      content = filter_double_newline(content)
+      # footnote_marker
+      content = filter_footnote(content) if @footnote_markup
+      # gothic left align
+      content = filter_h2(content) if @h2_marku
+      # gothic quote left and right indent
+      content = filter_h4(content) if @h3_markup
+      # gothic quote left and right indent
+      content = filter_h4(content) if @h4_markup
+      content
+    end
+
+    def filter_double_newline(content)
+      content = content.dup
+      content.gsub!("\r\n", "\n")
+      content.gsub!(/\n/,"\n\n")
+      content
+    end
+
+    def filter_footnote(content)
+      content = content.dup
+      matching_array = content.scan(/#{@footnote_markup}.*?#{@footnote_markup}/)
+      matching_array.each_with_index do |matching_string, i|
+        replacement = matching_string.match(/#{@footnote_markup}(.*?)#{@footnote_markup}/)        
+        new_string = $1 + "[^#{i + 1}]"
+        content.sub!(matching_string, new_string)
+      end
+      content
+    end
+
+    def filter_h2(content)
+      matching_array = content.scan(/#{@h2_markup}.*?#{@h2_markup}/)
+      matching_array.each_with_index do |matching_string, i| 
+        replacement = matching_string.match(/#{@h2_markup}(.*?)#{@h2_markup}/)
+        new_string = $1 + "[^#{i + 1}]"
+        content.sub!(matching_string, new_string)
+      end
+      content
+    end
+
+    def filter_h3(content)
+      matching_array = content.scan(/#{@h3_markup}.*?#{@h3_markup}/)
+      matching_array.each_with_index do |matching_string, i| 
+        replacement = matching_string.match(/#{@h3_markup}(.*?)#{@h3_markup}/)
+        new_string = $1 + "[^#{i + 1}]"
+        content.sub!(matching_string, new_string)
+      end
+      content
+    end
+
+    def filter_h4(content)
+      matching_array = content.scan(/#{@h4_markup}.*?#{@h4_markup}/)
+      matching_array.each_with_index do |matching_string, i| 
+        replacement = matching_string.match(/#{@h4_markup}(.*?)#{@h4_markup}/)
+        new_string = $1 + "[^#{i + 1}]"
+        content.sub!(matching_string, new_string)
+      end
+      content
+    end
+
+    # front_matter_items =%[ 대도비라 소도비라 차례 머리말 백 일러두기
     def doc_tyle2class_name(doc_type)
       case doc_type
       when '대도비라', 'title_page'

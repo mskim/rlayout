@@ -29,7 +29,13 @@
   - line_type
   - arrow_type
 
-
+### 222_07_03
+  - footnote marker filtering O.K
+  - fix footnote marker 
+    - token creaition
+    - drawing three level tokne, 
+      - bug 퀴닌(1]이) should be 퀴닌(1)이
+      - 퀴닌(^1]의 plain-supter-plain
 ### 222_06_30
   - NewsArticle < StyleablArticle => NewsArticle
   - FrontWing < StyleablArticle => NewsArticle
