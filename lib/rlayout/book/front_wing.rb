@@ -4,13 +4,17 @@ module RLayout
   # Instead of manually creating layout using Illusgtrator, designers should be able to "code" the design
   # AuthorProfile is create by adding
   # ## profile_image: image_path.jpg
-  class FrontWing < StyleableArticle
+  class FrontWing
     attr_reader :project_path, :output_path, :column, :content
-    attr_reader :width, :height
+    attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
+    include Styleable
     # attr_reader :document
 
     def initialize(options={})
-      super
+      load_layout_rb
+      load_text_style
+      load_document
+
       self
     end
 

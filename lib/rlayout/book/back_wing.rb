@@ -5,9 +5,15 @@ module RLayout
   # Instead of manually creating layout using Illusgtrator, designers should be able to "code" the design
   # so that developers do not have to hard coded the layout.
   # Designers should be able to design the layout with content set and corresponding layout.erb.
-  class BackWing < StyleableArticle
+  class BackWing
+    attr_reader :project_path, :output_path, :column, :content
+    attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
+    include Styleable
+
     def initialize(options={})
-      super
+      load_layout_rb
+      load_text_style
+      load_document      
       self
     end
 
@@ -101,14 +107,6 @@ module RLayout
       @document.layout_floats
       @document.adjust_overlapping_lines_with_floats
     end
-
-    # def default_layout
-    #   layout =<<~EOF
-    #   RLayout::RColumn.new(width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 16) do
-    #   end
-
-    #   EOF
-    # end
 
     def default_layout_rb
       # before rotating 90 

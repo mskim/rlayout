@@ -21,12 +21,13 @@ module RLayout
   class Book
     attr_reader :book_type, :body_doc_type, :project_path
     attr_reader :book_info, :paper_size, :width, :height
-    attr_reader :left_margin, :top_margin, :right_margin, :bottom_room_margin
+    attr_reader :left_margin, :top_margin, :right_margin, :bottom_margin
+    attr_reader :width_mm, :height_mm, :left_margin_mm, :top_margin_mm, :right_margin_mm, :bottom_margin_mm, :binding_margin_mm
     attr_reader :body_line_count
     attr_reader :has_cover_inside_page, :has_wing, :has_toc, :has_part
     attr_reader :book_toc, :body_matter_toc, :rear_matter_toc, :starting_page_number
     attr_reader :rear_matter_docs, :ebook_page_contents
-    attr_reader :toc_first_page_number, :toc_page_count, :toc_page_links
+    attr_reader :toc_folder, :toc_first_page_number, :toc_page_count, :toc_page_links
     attr_reader :front_matter, :body_matter, :rear_matter
     attr_reader :gripper_margin, :bleed_margin, :binding_margin
     attr_reader :html
@@ -45,13 +46,8 @@ module RLayout
       @book_info = YAML::load_file(@book_info_path)
       @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @toc_page_count = @book_info[:toc_page_count] || 2
-      # @paper_size = @book_info[:paper_size] || 'A5'
-      @width = @book_info[:width]
-      @height = @book_info[:height]
-      @binding_margin = @book_info[:binding_margin] || 3*2.834646
       @book_title = @book_info[:book_title] || @book_info[:title] || 'untitled'
-      update_book_info
-      # @title = @book_info[:title]
+      update_book_info_unit
       @starting_page_number = 1
       @gripper_margin = options[:gripper_margin] || 10*2.834646
       @bleed_margin = options[:bleed_margin] || 3*2.834646
@@ -69,59 +65,43 @@ module RLayout
       generate_ebook if @ebook
     end
 
-    # def toc_folder
-    #   build_folder + "/front_matter/toc"
-    # end
-
-    def update_book_info
-      # make sure book setup is corrent
-      # set_width_and_height_from_paper_size
-      # h[:paper_size] = @paper_size
-      @book_info[:width] = @width unless @book_info[:width]
-      @book_info[:height] = @height unless @book_info[:height]
-      @book_info[:left_margin] = @left_margin unless @book_info[:left_margin]
-      @book_info[:top_margin] = @top_margin unless @book_info[:top_margin]
-      @book_info[:right_margin] = @right_margin unless @book_info[:right_margin]
-      @book_info[:bottom_margin] = @bottom_margin unless @book_info[:bottom_margin]
-      @book_info[:binding_margin] = @binding_margin unless @book_info[:binding_margin]
-      @book_info[:body_line_count] = @body_line_count unless @book_info[:body_line_count]
-      @book_info[:title] = @book_title unless @book_info[:title]
-      
-      # File.open(@book_info_path, 'w'){|f| f.write h.to_yaml}  
+    # make sure dimensionare in point setup is corrent
+    # convert inits from mm to points
+    def update_book_info_unit
+      set_width_and_height_from_paper_size
+      @book_info = Hash[@book_info.map{ |k, v| [k, mm_string2pt(v)] }]
+      @width = @book_info[:width]
+      @height = @book_info[:height]
+      @binding_margin = @book_info[:binding_margin] || 3*2.834646
     end
 
+    def mm_string2pt(value)
+      return value if value.class != String
+      return value if value.include?("x")
+      return value unless value.include?("mm")
+      mm2pt(value.sub("mm","").to_i)
+    end
 
     def set_width_and_height_from_paper_size
-
-      # unless SIZES[@paper_size]
-      #   if @paper_size.downcase.include?("x")
-      #     paper_size_array = @paper_size.split("x")
-      #     width_string = paper_size_array[0]
-      #     height_string = paper_size_array[1]
-      #     if width_string.include?("mm")
-      #       @width = mm2pt(width_string.sub("mm","").to_f)
-      #     end
-      #     if height_string.include?("mm")
-      #       @height = mm2pt(height_string.sub("mm","").to_f)
-      #     end
-      #   end
-      # else
-      #   @width = SIZES[@paper_size][0]
-      #   @height = SIZES[@paper_size][1]
-      # end
-
-      if @book_info[:width] && @book_info[:height]
-        @width = @book_info[:width]
-        @height = @book_info[:height]
-      elsif SIZES[@paper_size]
+      if SIZES[@paper_size]
         @width = SIZES[@paper_size][0]
         @height = SIZES[@paper_size][1]
-      elsif @paper_size.include?("*")
-        @width = mm2pt(@paper_size.split("*")[0].to_i)
-        @height = mm2pt(@paper_size.split("*")[1].to_i)
-      elsif @paper_size.include?("x")
-        @width = mm2pt(@paper_size.split("x")[0].to_i)
-        @height = mm2pt(@paper_size.split("x")[1].to_i)
+      else
+        if @paper_size && @paper_size.downcase.include?("x")
+          paper_size_array = @paper_size.split("x")
+          width_string = paper_size_array[0]
+          height_string = paper_size_array[1]
+          if width_string.include?("mm")
+            @width_mm = width_string
+            @width = mm2pt(width_string.sub("mm","").to_f)
+            @book_info[:width] = @width
+          end
+          if height_string.include?("mm")
+            @width_mm = height_string
+            @height = mm2pt(height_string.sub("mm","").to_f)
+            @book_info[:height] = @height
+          end
+        end
       end
     end
 
@@ -208,7 +188,6 @@ module RLayout
               @has_toc = true
           end
         end
-
       end
     end
 
@@ -296,22 +275,6 @@ module RLayout
       @book_info[:title] || 'untitled'
     end
   
-    def left_margin
-      50
-    end
-    
-    def right_margin
-      50
-    end
-  
-    def top_margin
-      50
-    end
-  
-    def bottom_margin
-      50
-    end
-  
     def rear_matter_path
       @project_path + "/rear_matter"
     end
@@ -321,18 +284,11 @@ module RLayout
     end
     
     ########### toc ###########
-    def  generate_html
-      puts "generating html ..."
-    end
-
-    ########### toc ###########
     def generate_toc
       FileUtils.mkdir_p(@toc_folder) unless File.exist?(@toc_folder)
       save_book_toc
       h = @book_info.dup
       h[:page_pdf] = true
-      # h[:starting_page_number] = @starting_page_number
-      # h = {}
       h[:document_path] = @toc_folder
       h[:page_pdf]      = true
       h[:page_count]      = @toc_page_count

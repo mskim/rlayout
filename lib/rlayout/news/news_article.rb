@@ -1,12 +1,16 @@
 
 module RLayout
 
-  class NewsArticle < StyleableArticle
+  class NewsArticle
     attr_reader :layout_info, :page_images
+    attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
+    include Styleable
     def initialize(options={})
+
       @layout_info = options[:layout_info]
-      super
-      # load_layout_rb
+      load_layout_rb
+      load_text_style
+      load_document
 
       if @layout_rb
         @document = eval(@layout_rb)

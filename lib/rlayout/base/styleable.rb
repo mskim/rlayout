@@ -81,19 +81,7 @@ module RLayout
     def local_image_path
       @document_path + "/images"
     end
- 
-    def save_text_style
-      File.open(text_style_path, 'w'){|f| f.write default_text_style} unless File.exist?(text_style_path)
-    end
-
-    def text_style_path
-      @document_path + "/text_style.yml"
-    end
     
-    def save_text_style
-      File.open(text_style_path, 'w'){|f| f.write default_text_style} unless File.exist?(text_style_path)
-    end
-
     def style_guide_text_style_path
       @style_guide_folder + "/#{style_klass_name}_text_style.yml"
     end

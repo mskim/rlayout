@@ -29,15 +29,11 @@
   - line_type
   - arrow_type
 
-### 2022_06_29
 
-  - fix chapter_folder name with rjust, this was cause all the trouble on toc
-  - column lines missing a line 22, when expecting 23
-    - the line is there but doesn't show or draw?????
-    - line had no style_name not lien_type info, so it did not draw
-      - apply line attribute at line layout
-      
-  - title_page, inside_page
+### 222_06_30
+  - NewsArticle < StyleablArticle => NewsArticle
+  - FrontWing < StyleablArticle => NewsArticle
+  - BackWing < StyleablArticle => NewsArticle
 
   - book.txt to book.md
     =>@@
@@ -47,6 +43,16 @@
   - fix  toc ... leader char
 
   - do BookCover
+### 2022_06_29
+
+  - fix chapter_folder name with rjust, this was cause all the trouble on toc
+  - column lines missing a line 22, when expecting 23
+    - the line is there but doesn't show or draw?????
+    - line had no style_name not lien_type info, so it did not draw
+      - apply line attribute at line layout
+  - title_page, inside_page
+
+
 ### 2022_06_28
 
   - Chapter include styleable module instead of sub-clssing styleable_doc
