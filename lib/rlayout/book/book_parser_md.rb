@@ -37,7 +37,7 @@ module RLayout
       @book_info_path = @project_path + "/book_info.yml"
 
       if File.exist?(@book_md_path)
-      else File.exist?(@book_txt_path)
+      elsif File.exist?(@book_txt_path)
         convert_txt2md
       else
         save_sample_book_md
@@ -68,11 +68,11 @@ module RLayout
     end
 
     def convert_txt2md(book_txt_path)
-
+      puts "to  be implemented !!!!"
+      return
     end
 
     def book_md2docs
-      @each_with_index
       source = File.open(@book_md_path, 'r'){|f| f.read}
       indices = source.to_enum(:scan, /^\[[^\^].+\]/i).map do |some|
         Regexp.last_match.begin(0)
