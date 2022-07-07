@@ -83,6 +83,15 @@ module RLayout
         h[:style_name] = 'title' # toc_title
         h[:layout_length] = 2
         h[:layout_expand] = [:height]
+        binding.pry
+        case @toc_type
+        when 'right_aligned'
+          h[:text_alignment] = 'right'
+        when 'left_aligned'
+          h[:text_alignment] = 'left'
+        else
+          h[:text_alignment] = 'center'
+        end
         first_page.add_toc_title(h)
       end
       if @page_count 

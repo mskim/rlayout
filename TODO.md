@@ -33,10 +33,10 @@
   - set footer and header font size
   - chapter heading height
     - if integer is given it means line_count:9 
-  
   - toc right_aligned
+  - footer font_size, y
+  - footnotebox top divider_line
 
-  - 인용문 스타일
 
 
   - isbn
@@ -48,10 +48,11 @@
       - char_style for *
       - *고딕* 명조 
       - ## *고딕* 명조 
+
+  - 인용문 스타일
+
   - footnotebox marker symbol
   - footnote description *marker
-  - footnotebox stroke_sides [0,1,0,0]
-  - footer font_size, y
   - inside_cover logo
   - 일러두기
   - otf to ttf font
