@@ -10,6 +10,7 @@ module RLayout
     attr_reader :empty_first_column
     attr_reader :portrait_mode, :binding_margin
     attr_accessor :page_log, :page_number
+    attr_reader :body_line_height
 
     def initialize(options={}, &block)
       options[:fill_color] = 'white'

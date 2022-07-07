@@ -41,7 +41,7 @@ module RLayout
       # options[:stroke_width] = 1.0
       # options[:stroke_width] = 1
       super
-      @footnote_box = FootnoteBox.new(parent:self, width: @width, y: @height + 10, height: 0, is_float: true,  fill_color: 'clear')
+      @footnote_box = FootnoteBox.new(parent:self, width: @width, y: @height + 3, height: 0, is_float: true,  fill_color: 'clear')
       @left_side_bar = options[:left_side_bar] 
       @right_side_bar = options[:right_side_bar] 
       @empty_lines          = options[:empty_lines] || false
@@ -504,6 +504,8 @@ module RLayout
 
   class FootnoteBox < Container
     attr_reader :footnote_list
+    attr_reader :divider_line
+
     def initialize(options={})
       super
       @is_float = true
@@ -511,17 +513,30 @@ module RLayout
       self
     end
 
+    def draw_divier_line
+      h = {}
+      h[:parent] = self
+      h[:thickness] = 0.5
+      h[:x1] = 0
+      h[:y1] = @height
+      h[:x2] = 50
+      h[:y2] = @height
+      Line.new(**h)
+    end
+
     def add_footnote_descriptions(footnote_descripions)
       last_footnote = @graphics.last
       if last_footnote
         @y_position = last_footnote.y + last_footnote.height
       else
-        @y_position = 0
+        @y_position = 5
       end
       footnote_descripions.each do |footnotes|
         new_footnote = create_footnote(footnotes[:para_string], y: @y_position)
         @y_position += new_footnote.height
       end
+      draw_divier_line
+
       #TODO adjust footnote object position
     end
 

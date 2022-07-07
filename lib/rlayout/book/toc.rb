@@ -16,7 +16,8 @@ module RLayout
     attr_reader :toc_item_count, :paper_size, :custom_style
     attr_reader :document_path
     attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
-    # attr_reader :document
+    attr_reader :toc_type
+
     include Styleable
     def initialize(options={})
       @document_path = options[:document_path]
@@ -29,7 +30,7 @@ module RLayout
       @right_margin = options[:right_margin]
       @bottom_margin = options[:bottom_margin]
       @page_pdf =  options[:page_pdf] || false
-      
+      @toc_type  = options[:toc_type] || 'leader_justify'
       @page_count = options[:page_count]
       @max_page = options[:max_page] || 1
       @toc_item_count = options[:toc_item_count] || 20
@@ -61,6 +62,7 @@ module RLayout
           ['여기는 제목 10',  '102'],
         ]
         @toc_title = @toc_content.shift.first
+        File.open(@toc_content_path,  'w'){|f| f.write @toc_content}
       else
         @toc_content = YAML::load_file(@toc_content_path)
         if @toc_content.first.length == 1
@@ -107,6 +109,7 @@ module RLayout
         h[:layout_length] = 10
         h[:layout_expand] = [:height]
         h[:table_data]    = page_data
+        h[:toc_type]    = @toc_type
         page.add_toc_table(h)
         page.relayout!
       end
@@ -123,6 +126,34 @@ module RLayout
 
     end
 
+    # allow values to be customizable
+    def load_defaults
+      if File.exist?(style_guide_defaults_path)
+        default_options = YAML::load_file(style_guide_defaults_path)
+      else
+        default_options = YAML::load(defaults)
+        File.open(style_guide_defaults_path, 'w'){|f| f.write defaults}
+      end
+      # TODO ??? how to set values to instance varible with same name
+      @heading_height_type  = default_options['heading_height_type']
+      @heading_height_in_line_count  = default_options['heading_height_in_line_count']
+      @toc_type = default_options['toc_type']
+    end
+
+    def  defaults
+      # toc_type: left_aligned
+      # toc_type: center_aligned
+      # toc_type: right_aligned
+      # toc_type: leader_justify
+
+      <<~EOF
+      ---
+      heading_height_type: quarter
+      toc_type: leader_justify
+
+      EOF
+    end
+
     def default_layout_rb
       h = {}
       h[:width] = @width
@@ -133,6 +164,7 @@ module RLayout
       h[:bottom_margin] = @bottom_margin
       h[:page_count] = @page_count
       h[:page_type] = 'toc_page'
+      h[:toc_type] = @toc_type  #'leader_justify' # right_aligned, center_aligned
       layout =<<~EOF
         RLayout::RDocument.new(#{h})
       EOF

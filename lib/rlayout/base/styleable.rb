@@ -49,6 +49,7 @@ module RLayout
     # attr_reader :book_title, :chapter_title
     
     def load_doc_style
+      load_defaults
       load_text_style
       load_layout_rb
       load_header_footer_info
@@ -61,6 +62,33 @@ module RLayout
       load_layout_rb
       load_document
       load_page_content
+    end
+
+    def style_guide_defaults_path
+      @style_guide_folder + "/#{style_klass_name}_defaults.yml"
+    end
+
+    # allow values to be customizable
+    def load_defaults
+      if File.exist?(style_guide_defaults_path)
+        default_options = YAML::load_file(style_guide_defaults_path)
+      else
+        default_options = YAML::load(defaults)
+        File.open(style_guide_defaults_path, 'w'){|f| f.write defaults}
+      end
+      # TODO ??? how to set values to instance varible with same name
+      @heading_height_type  = default_options['heading_height_type']
+      @heading_height_in_line_count  = default_options['heading_height_in_line_count']
+      @footnote_description_text_prefix = default_options['footnote_description_text_prefix']
+    end
+
+    def  defaults
+      <<~EOF
+      ---
+      heading_height_type: quarter
+      heading_height_in_line_count: 9
+      # footnote_description_text_prefix: *
+      EOF
     end
 
     def load_document

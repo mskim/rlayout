@@ -249,15 +249,21 @@ module RLayout
       RLayout::Image.new(h)
     end
 
-    def qrcode(grid_frame, options={})
+    def qrcode(grid_x, grid_y, grid_width, grid_height, options={})
       h = {}
       h[:parent] = self
-      h[:grid_frame]  = grid_frame
+      h[:grid_frame]  = [grid_x, grid_y, grid_width, grid_height]
       h[:tag] = "qrcode"
       RLayout::Image.new(h)
     end
 
-    
+    def info_box(grid_x, grid_y, grid_width, grid_height, options={})
+      h = {}
+      h[:parent] = self
+      h[:grid_frame]  = [grid_x, grid_y, grid_width, grid_height]
+      h[:tag] = "info_box"
+      RLayout::InfoArea.new(h)
+    end
   end
 
 

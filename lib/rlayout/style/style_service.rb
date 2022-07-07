@@ -1276,7 +1276,8 @@ module RLayout
       h[:font_size]           += options[:adjust_size]  if options[:adjust_size]
       h[:character_spacing]   = style[:tracking]        if style[:tracking] && style[:tracking] != 0
       h[:horizontal_scaling]  = style[:scale]           if style[:scale] && style[:scale] != 100
-      h[:align]               = style[:text_alignment].to_sym
+      h[:align]               = :left
+      h[:align]               = style[:text_alignment].to_sym if style[:text_alignment]
       h
       style_object = HexaPDF::Layout::Style.new(**h)
       # return style_object, font_wrapper

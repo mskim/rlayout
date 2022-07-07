@@ -11,19 +11,36 @@ module RLayout
   # sometext ...... some ..... some_ending
   # it is used in toc ,jubo, and munu 
 
-  # TextCell = Text
+  # right_aligned
+  #                             sometext 1
+  #                        sometext_text 3
+  #            sometext some_ending_more 5
+  #                         some_ending 10
+  #                         some_ending 15
+
+
+  # center_aligned
+  #            sometext 1
+  #         sometext_text 3
+  #   sometext some_ending_more 5
+  #         some_ending 10
+  #         some_ending 15
+
   class LeaderRow < Container
     attr_reader :row_data, :leading_char
     attr_accessor :row_index
+    attr_reader :toc_type, :space_width
     def initialize(options={})
       options[:stroke_width] = 0
+      # options[:stroke_width]  = 1
       super
+      @space_width = 10
       @row_index    = options[:row_index]
       @row_data     = options[:row_data]
+      #'leader_justify' # left_aligned, center_aligned, right_aligned
+      @toc_type     = options[:toc_type] || 'leader_justify'
       @leading_char = options[:leading_char] || "."
       create_text_cells
-      insert_leader_cells
-      align_cells
       self
     end
 
@@ -31,7 +48,47 @@ module RLayout
       parent.leader_style_object
     end
 
-    def align_cells
+    def total_token_width
+      @graphics.map{|c| c.width}.reduce(:+)
+    end
+    
+    def total_space_width 
+      (@graphics.length - 1)*@space_width
+    end
+
+
+    # for text
+    def align_text_cells
+      @starting_position = 0
+      case @toc_type
+      when 'left_aligned'
+        x_position = @starting_position
+        @graphics = @graphics.each do |cell|
+          cell.x = x_position
+          x_position += cell.width + @space_width
+        end
+      when 'center_aligned'
+        leftover_room  = @width - (total_token_width + total_space_width)
+        shift = leftover_room/2.0
+        x_position = @starting_position + shift
+        @graphics = @graphics.map do |cell|
+          cell.x = x_position
+          x_position += cell.width + @space_width
+          cell
+        end
+      when 'right_aligned'
+        leftover_room  = @width - (total_token_width + total_space_width)
+        x_position = leftover_room
+        @graphics = @graphics.map do |cell|
+          cell.x = x_position
+          x_position += cell.width + @space_width
+          cell
+        end
+      end
+    end
+
+    # for leader row
+    def align_leader_cells
       x_position = 0
       @graphics.each_with_index do |g, i|
         g.row_index = @row_index
@@ -60,19 +117,47 @@ module RLayout
 
     # create text cell and calucate 
     def create_text_cells
-      @row_data.each_with_index do |cell, i|
-        h                     = {}
-        h[:parent]            = self
-        h[:layout_expand]     = nil
-        h[:height]            = @height
-        h[:layout_direction]  = 'horizontal'
-        h[:string]            = cell
-        h[:text_style]        = {font: 'Shinmoon', font_size: 12, text_color: 'black'}
-        h[:style_name]        = tag || 'body'
-        h[:style_name]        = 'subtitle'
-        h[:v_alignment]       = 'top'
-        h[:text_fit_type]     = 'fit_box_to_text'
-        t = TextCell.new(h)
+      case @toc_type 
+
+      when 'left_aligned', 'center_aligned',  'right_aligned'
+        @row_data.each_with_index do |cell, i|
+          h                     = {}
+          h[:parent]            = self
+          h[:layout_member]     = false
+          h[:x]            = 0
+          h[:y]            = 0
+          h[:layout_direction]  = 'horizontal'
+          h[:string]            = cell
+          # h[:text_style]        = {font: 'Shinmoon', font_size: 12, text_color: 'black'}
+          # h[:style_name]        = tag || 'body'
+          h[:style_name]        = 'subtitle'
+          h[:v_alignment]       = 'top'
+          h[:text_fit_type]     = 'fit_box_to_text'
+          h[:text_alignment]     = 'right'
+          # t = TextCell.new(h)
+          # h[:stroke_width]     = 1
+          t = Text.new(**h)
+
+        end
+        align_text_cells
+
+      else #leader_justify
+        @row_data.each_with_index do |cell, i|
+          h                     = {}
+          h[:parent]            = self
+          h[:layout_expand]     = nil
+          h[:height]            = @height
+          h[:layout_direction]  = 'horizontal'
+          h[:string]            = cell
+          h[:text_style]        = {font: 'Shinmoon', font_size: 12, text_color: 'black'}
+          h[:style_name]        = tag || 'body'
+          h[:style_name]        = 'subtitle'
+          h[:v_alignment]       = 'top'
+          h[:text_fit_type]     = 'fit_box_to_text'
+          t = TextCell.new(h)
+        end
+        insert_leader_cells
+        align_leader_cells
       end
     end
 

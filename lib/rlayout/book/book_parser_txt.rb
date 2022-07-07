@@ -41,285 +41,239 @@ module RLayout
   # FRONT_MATTER_TYPE = /prologue|thanks|dedication/
   # REAR_MATTER_TYPE = /appendix|index/
 
-  class BookParserTxt
-    attr_reader :book_txt_path
-    # attr_reader :docs, :md_file
-    attr_reader :part_titles
-    def initialize(book_txt_path)
-      @book_txt_path = book_txt_path
-      @project_path = File.dirname(@book_txt_path)
-      book_txt2docs
-      self
-    end
-    
-    def build_folder
-      @project_path + "/_build"
-    end
+  class BookParserMd
 
-    def build_folder
-      @project_path + "/_build"
-    end
+    def convert_txt2md
+      @source  = filter_chapter_markers(@source)
 
-    def build_front_matter_folder
-      build_folder + "/front_matter"
-    end
-
-    def book_cover_folder
-      build_folder + "/book_cover"
-    end
-
-    def self.push_to_github
-      BookPlan.create_github_repo(project_path)
-    end
-
-    def book_md_path
-      @project_path + "/book.md"
-    end
-
-    def book_txt2docs
-      source = File.open(@book_txt_path, 'r'){|f| f.read}
-      indices = source.to_enum(:scan, /^\[.+\]/i).map do |some|
+      indices = @source.to_enum(:scan, /^\[[^\^].+\]/i).map do |some|
         Regexp.last_match.begin(0)
       end
-      end_indece =  source.length
-      book_document_contents = []
-      indices.each_with_index do |indice, i|
-        if i < indices.length - 1
-          chunk_length = indices[i+1] - indice
-          book_document_contents << source.slice(indice, chunk_length)
-        else
-          chunk_length = end_indece - indice
-          book_document_contents << source.slice(indice, chunk_length)
+      first_chunk = @source.slice(0, indices[0])
+      parse_local_markup(first_chunk)
+      source = filter_content(source)
+      source
+    end
+
+    # parse local markup of book.txt
+    # by parsing front part(first_chunk) of book.txt
+    def parse_local_markup(first_chunk)
+      first_chunk_line_array = first_chunk.split("\n")
+      first_chunk_line_array.each do |line_string|
+        if line_string.include?("->")
+          local_markup_array = line_string.split("->")
+          if local_markup_array[1].include?("각주")
+            @footnote_markup = local_markup_array[0].gsub(" ","")
+          elsif local_markup_array[1].include?("볼드")
+            @h2_markup = local_markup_array[0].gsub(" ","")
+          elsif local_markup_array[1].include?("오른쪽")
+            @h3_markup = local_markup_array[0].gsub(" ","")
+          elsif local_markup_array[1].include?("인용")
+            @h4_markup = local_markup_array[0].gsub(" ","")
+          end
         end
       end
-      book_md_array = book_document_contents.map do |doc_content|
-        convert_tech_media_text(doc_content)
+    end
+
+    def filter_content(content)
+      # \r\n => \n\n, \n => \n\n, 
+      # content = filter_double_newline(content)
+      content = filter_chapter_markers(content)
+      # footnote_marker
+      content = filter_footnote(content) if @footnote_markup
+      # gothic left align
+      content = filter_h2(content) if @h2_marku
+      # gothic quote left and right indent
+      content = filter_h4(content) if @h3_markup
+      # gothic quote left and right indent
+      content = filter_h4(content) if @h4_markup
+      content
+    end
+
+    # 10장 => [10장]
+    # 제10장 => [제10장]
+    # chapter_10 => [chapter_10]
+    # Chapter_10 => [Chapter_10]
+    def filter_chapter_markers(source)
+      source = source.dup
+      chapter_start_arrays  = source.scan(CHAPTER_START)
+      chapter_start_arrays.each do |chapter_start|
+        source.sub!(chapter_start)
       end
-      book_md =  book_md_array.join("\n")
-
-      File.open(book_md_path, 'w'){|f| f.write book_md}
+      source
     end
 
-    def convert_tech_media_text(text)
-      text = convert_tech_media_gotic(text)
-      text = convert_tech_media_quoted(text)
-      text = convert_tech_media_footnote(text)
-      text
+    def filter_footnote(content)
+      content = content.dup
+      matching_array = content.scan(/#{@footnote_markup}.*?#{@footnote_markup}/)
+      matching_array.each_with_index do |matching_string, i|
+        replacement = matching_string.match(/#{@footnote_markup}(.*?)#{@footnote_markup}/)        
+        new_string = $1 + "[^#{i + 1}]"
+        content.sub!(matching_string, new_string)
+      end
+      content
     end
+
 
     # @@ -> 주석
     # ## -> 인용 스타일
     # $$ -> 오른쪽 정렬
     # ^^ -> 고딕
-
     # @@text@@ -> text[^#{number}]
-    def convert_tech_media_footnote(text)
-      text = text.dup
-      # .*? is non-greedy version of .*
-      # .* will parse upto end of string. 
-      footnotes = text.scan(/@@.*?@@/)
-      puts footnotes
-      footnotes.each_with_index  do |footnote,i|
-        new_string = footnote.gsub("@@", "")
-        text.gsub!(footnote, "#{new_string}[^#{i + 1}]")
+    # def convert_tech_media_footnote(text)
+    #   text = text.dup
+    #   # .*? is non-greedy version of .*
+    #   # .* will parse upto end of string. 
+    #   footnotes = text.scan(/@@.*?@@/)
+    #   puts footnotes
+    #   footnotes.each_with_index  do |footnote,i|
+    #     new_string = footnote.gsub("@@", "")
+    #     text.gsub!(footnote, "#{new_string}[^#{i + 1}]")
+    #   end
+    #   text
+    # end
+
+    def filter_h2(content)
+      matching_array = content.scan(/#{@h2_markup}.*?#{@h2_markup}/)
+      matching_array.each_with_index do |matching_string, i| 
+        replacement = matching_string.match(/#{@h2_markup}(.*?)#{@h2_markup}/)
+        new_string = $1 + "[^#{i + 1}]"
+        content.sub!(matching_string, new_string)
       end
-      text
+      content
     end
 
-    # ##text## -> ### text\n\n
-    def convert_tech_media_quoted(text)
-      # .*? is non-greedy version of .*
-      quotes = text.scan(/\^\^.*?\^\^/)
-      quotes.each  do |quote|
-        new_form = quote.gsub("##", "")
-        text.gsub!(quote, "### #{new_form}\n\n")
+    def filter_h3(content)
+      matching_array = content.scan(/#{@h3_markup}.*?#{@h3_markup}/)
+      matching_array.each_with_index do |matching_string, i| 
+        replacement = matching_string.match(/#{@h3_markup}(.*?)#{@h3_markup}/)
+        new_string = $1 + "[^#{i + 1}]"
+        content.sub!(matching_string, new_string)
       end
-      text
+      content
     end
 
-    # ^^text^^ -> ## text\n\n
-    def convert_tech_media_gotic(text)
-      # .*? is non-greedy version of .*
-      gothics = text.scan(/\^\^.*?\^\^/)
-      gothics.each  do |gothic|
-        new_form = gothic.gsub("^^", "")
-        text.gsub!(gothic, "## #{new_form}\n\n")
-      end  
-      text
-    end
-
-    def parse_front_matter_from_book_txt(front_matter_content)
-
-      # filtered_front_matter_contents = RubyPants.new(front_matter_content).to_html if front_matter_content
-      reader = RLayout::Reader.new front_matter_content.to_s, nil
-      text_blocks = reader.text_blocks.dup
-      front_matter_doc_content = []
-      while lines_block = text_blocks.shift do
-        first_line = lines_block[0]
-        if first_line =~ FRONT_MATTER_DOC_START
-          if first_line.include?('책정보')
-            save_book_info(lines_block)
-          elsif first_line.include?('대도비라')
-            doc_content = ['대도비라', lines_block]
-            front_matter_doc_content << doc_content
-          elsif first_line.include?('소도비라')
-            doc_content = ['소도비라', lines_block]
-            front_matter_doc_content << doc_content          
-          elsif first_line.include?('차례')
-            doc_content = ['차례', lines_block]
-            front_matter_doc_content << doc_content          
-          elsif first_line.include?('일러두기')
-            doc_content = ['일러두기', lines_block]
-            front_matter_doc_content << doc_content          
-          elsif first_line.include?('머리말')
-            doc_content = ['머리말', lines_block]
-            front_matter_doc_content << doc_content  
-          elsif first_line.include?('백')
-            # doc_content = ['백', lines_block]
-            # front_matter_doc_content << doc_content 
-          else 
-          end
-        end
+    def filter_h4(content)
+      matching_array = content.scan(/#{@h4_markup}.*?#{@h4_markup}/)
+      matching_array.each_with_index do |matching_string, i| 
+        replacement = matching_string.match(/#{@h4_markup}(.*?)#{@h4_markup}/)
+        new_string = $1 + "[^#{i + 1}]"
+        content.sub!(matching_string, new_string)
       end
-      create_front_matter_docs(front_matter_doc_content)
-
+      content
     end
     
-    def save_book_info(book_info_text)
-      book_info_content = book_info_text.dup
-      book_info_content.shift
-      book_info_content.unshift("---")
-      book_info_yml  = book_info_content.join("\n")
-      File.open( book_into_path , 'w'){|f| f.write book_info_yml}
+    # def convert_tech_media_text(text)
+    #   text = convert_tech_media_gotic(text)
+    #   text = convert_tech_media_quoted(text)
+    #   text = convert_tech_media_footnote(text)
+    #   text
+    # end
+
+    # # ##text## -> ### text\n\n
+    # def convert_tech_media_quoted(text)
+    #   # .*? is non-greedy version of .*
+    #   quotes = text.scan(/\^\^.*?\^\^/)
+    #   quotes.each  do |quote|
+    #     new_form = quote.gsub("##", "")
+    #     text.gsub!(quote, "### #{new_form}\n\n")
+    #   end
+    #   text
+    # end
+
+    # # ^^text^^ -> ## text\n\n
+    # def convert_tech_media_gotic(text)
+    #   # .*? is non-greedy version of .*
+    #   gothics = text.scan(/\^\^.*?\^\^/)
+    #   gothics.each  do |gothic|
+    #     new_form = gothic.gsub("^^", "")
+    #     text.gsub!(gothic, "## #{new_form}\n\n")
+    #   end  
+    #   text
+    # end
+
+    def self.save_sample_book_txt(book_txt_path)
+      File.open(book_txt_path, 'w'){|f| f.write self.sample_book_txt}
     end
 
-    def create_front_matter_docs(front_matter_doc_content)
-      front_matter_doc_content.each_with_index do |marker, i|
-        # name, starting_page, page_count, order
-        h = {}
-        order = i + 1
-        name  = marker[0]
-        first_line =  marker[1][0]
-        first_line.sub!("[", "")
-        first_line.sub!("]","")
-        page_string = first_line =~/^(\d*)~?(\d?)p/
-        starging_page = $1.to_i if $1 && $1 != ""
-        ending_page = $2.to_i if $2 != ""
-        page_count = 1
-        if starging_page && ending_page
-          page_count = ending_page - starging_page
-        else
-          ending_page = starging_page + 1
-        end
-        # remove first line
-        content = marker.flatten.last
-        # @front_matter_path = @project_path + "/front_matter"
-        # FileUtils.mkdir_p(@front_matter_path) unless File.exist?(@front_matter_path)
-        front_matter_doc_body = content
-        case name
-        when "대도비라", "inside_cover"
-          front_matter_doc_folder_path = build_front_matter_folder  + "/#{order}_#{name}"
-          FileUtils.mkdir_p(front_matter_doc_folder_path) unless File.exist?(front_matter_doc_folder_path)
-          front_matter_doc_path = front_matter_doc_folder_path + "/story.md"
-          File.open(front_matter_doc_path, 'w'){|f| f.write front_matter_doc_body}
-        when "소도비라", "inside_cover_2"
-          front_matter_doc_folder_path = build_front_matter_folder  + "/#{order}_#{name}"
-          FileUtils.mkdir_p(front_matter_doc_folder_path) unless File.exist?(front_matter_doc_folder_path)
-          front_matter_doc_path = front_matter_doc_folder_path + "/story.md"
-          File.open(front_matter_doc_path, 'w'){|f| f.write front_matter_doc_body}
-        when "차례", "toc"
-          front_matter_doc_folder_path = build_front_matter_folder  + "/#{order}_#{name}"
-          FileUtils.mkdir_p(front_matter_doc_folder_path) unless File.exist?(front_matter_doc_folder_path)
-          front_matter_doc_path = front_matter_doc_folder_path + "/story.md"
-          File.open(front_matter_doc_path, 'w'){|f| f.write front_matter_doc_body}
-        when "백", "blank"
-          front_matter_doc_folder_path = build_front_matter_folder  + "/#{order}_#{name}"
-          FileUtils.mkdir_p(front_matter_doc_folder_path) unless File.exist?(front_matter_doc_folder_path)
-          front_matter_doc_path = front_matter_doc_folder_path + "/story.md"
-          File.open(front_matter_doc_path, 'w'){|f| f.write front_matter_doc_body}
-        when "머릿말",  "prologue"
-          front_matter_doc_folder_path = build_front_matter_folder  + "/#{order}_#{name}"
-          FileUtils.mkdir_p(front_matter_doc_folder_path) unless File.exist?(front_matter_doc_folder_path)
-          front_matter_doc_path = front_matter_doc_folder_path + "/story.md"
-          File.open(front_matter_doc_path, 'w'){|f| f.write front_matter_doc_body}
-        when "일러두기",  "info"
-          front_matter_doc_folder_path = build_front_matter_folder  + "/#{order}_#{name}"
-          FileUtils.mkdir_p(front_matter_doc_folder_path) unless File.exist?(front_matter_doc_folder_path)
-          front_matter_doc_path = front_matter_doc_folder_path + "/story.md"
-          File.open(front_matter_doc_path, 'w'){|f| f.write front_matter_doc_body}
-        end
-      end
-    end
+    def self.sample_book_txt
+      <<~EOF
 
-    def parse_body_matter_from_book_txt(body_matter_content)
-        filtered_body_matter_contents = RubyPants.new(body_matter_content).to_html if body_matter_content
-        reader = RLayout::Reader.new filtered_body_matter_contents, nil
-        text_blocks = reader.text_blocks.dup
-        @part_titles = []
-        @front_matter_order = 1
-        @part_order = 1
-        @chapter_order = 1
-        @rear_matter_order = 0
-        @current_doc_foler = build_folder
-        while lines_block = text_blocks.shift do
-          first_line = lines_block[0]
-          if first_line =~PART_START
-            @current_part_folder = build_folder + "/part_#{@part_order.to_s.rjust(2,'0')}"
-            FileUtils.mkdir_p(@current_part_folder) unless File.exist?(@current_part_folder)
-            @current_doc_foler = @current_part_folder
-            part_cover_foler = @current_doc_foler + "/00_part_cover"
-            FileUtils.mkdir_p(part_cover_foler) unless File.exist?(part_cover_foler)
-            @part_order += 1
-            part_title = first_line.split(":")[1] || ""
-            @part_titles << part_title
-            @chapter_order = 1
-          elsif first_line=~CHAPTER_START
-            @doc_type = 'chapter'
-            # @title = first_line.split(":")[1]
-            # save current doc
-            # chapter_doc =<<~EOF
-            # ---
-            # doc_type: chapter
-            # title: #{@title}
-            # ---
-  
-            # EOF
-            chapter_doc = ""
+      @@ -> 주석
+      ## -> 인용 스타일
+      $$ -> 오른쪽 정렬
+      ^^ -> 고딕
 
-            while lines_block = text_blocks.shift do
-              first_line = lines_block[0]
-              if first_line =~PART_START || first_line =~CHAPTER_START
-                build_chapter_folder =  build_folder + "/#{@chapter_order.to_s.rjust(2,'0')}_chapter"
-                FileUtils.mkdir_p(build_chapter_folder) unless File.exist?(build_chapter_folder)
-                chapter_story_path = build_chapter_folder + "/story.md"
-                dobue_spaced_chapter_doc = chapter_doc.gsub("\s\n", "\n")
-                dobue_spaced_chapter_doc = chapter_doc.gsub(".\n", ".\n\n")
-                File.open(chapter_story_path, 'w'){|f| f.write dobue_spaced_chapter_doc}
-                @chapter_order += 1
-                # text_blocks.unshift(lines_block)
+      [book_info]
+      ---
+      paper_size: 125mmx188mm
+      width: 125mm
+      height: 188mm
+      left_margin: 20mm
+      top_margi: 14mm
+      right_margin: 20mm
+      bottom_margin: 25mm
+      binding_margin: 3mm
+      body_line_count: 23
+      toc_page_count: 2
+      title: 2022년에 책만들기
+      subtitle: 새로운 솔류션을 이용하자
+      author: 김민수
+      
+      [1p-대도비라]
+      
+      title: 2020년에 책만들기
+      
+      [2p-백]
+      
+      [3p-소도비라]
+      
+      title: 2020년에 책만들기
+      author: 김민수
+      
+      [4p-백]
+      
+      [5p-차례]
+      
+      
+      [7p- 서문] : 서문 
+      
+      
+      [1장]: 지난 35년을 둘러보며
+      
+      
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
 
-                break
-              else
-                chapter_doc += "\n\n" + lines_block.join("\n")
-              end
-            end
-            if chapter_doc != ""
-              build_chapter_folder =  build_folder + "/#{@chapter_order.to_s.rjust(2,'0')}_chapter"
-              FileUtils.mkdir_p(build_chapter_folder) unless File.exist?(build_chapter_folder)
-              chapter_story_path = build_chapter_folder + "/story.md"
-              dobue_spaced_chapter_doc = chapter_doc.gsub(".\n", ".\n\n")
-              File.open(chapter_story_path, 'w'){|f| f.write dobue_spaced_chapter_doc}
-              @chapter_order += 1
-            end
-          end
-  
-        end
-        update_part_titles if @part_titles.length > 0
-    end
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+
+      [2장]: 앞으로 35년을 상상해 보며
     
-    def single_new_line2docunle_new_line(single_line_text)
-      single_line_text.gub(".\n", ".\n\n")
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+
+      EOF
     end
+
+
     
   end
 

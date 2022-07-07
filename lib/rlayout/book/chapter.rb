@@ -288,6 +288,29 @@ module RLayout
       self
     end
 
+    # allow values to be customizable
+    def load_defaults
+      if File.exist?(style_guide_defaults_path)
+        default_options = YAML::load_file(style_guide_defaults_path)
+      else
+        default_options = YAML::load(defaults)
+        File.open(style_guide_defaults_path, 'w'){|f| f.write defaults}
+      end
+      # TODO ??? how to set values to instance varible with same name
+      @heading_height_type  = default_options['heading_height_type']
+      @heading_height_in_line_count  = default_options['heading_height_in_line_count']
+      @footnote_description_text_prefix = default_options['footnote_description_text_prefix']
+    end
+
+    def  defaults
+      <<~EOF
+      ---
+      heading_height_type: quarter
+      heading_height_in_line_count: 9
+
+      EOF
+    end
+
 
     def default_header_footer_yml
       <<~EOF
@@ -296,19 +319,19 @@ module RLayout
       has_footer: true
       left_header_erb: |
         RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-          text("<%= @page_number %>", font_size: 10, x: <%= @left_margin %>, width: <%= footer_width  %>, text_alignment: 'left')
+          text("<%= @page_number %>", style_name: 'header, x: <%= @left_margin %>, width: <%= footer_width  %>, text_alignment: 'left')
         end
       right_header_erb: |
         RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-          text("<%= @title %>  <%= @page_number %>", font_size: 9, from_right:0, y: 0, text_alignment: 'right')
+          text("<%= @title %>  <%= @page_number %>", style_name: 'header, from_right:0, y: 0, text_alignment: 'right')
         end
       left_footer_erb: |
         RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:<%= @height - 50 %>, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-          text("<%= @page_number %>  <%= @book_title %>", font_size: 10, x:0, y:0, width: <%= footer_width  %>, text_alignment: 'left')
+          text("<%= @page_number %>  <%= @book_title %>", style_name: 'footer, x:0, y:0, width: <%= footer_width  %>, text_alignment: 'left')
         end
       right_footer_erb: |
         RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:<%= @height - 50 %>, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-          text("<%= @title %>  <%= @page_number %>", font_size: 9, x:0, y: 0, width:<%= footer_width  %>, text_alignment: 'right')
+          text("<%= @title %>  <%= @page_number %>", style_name: 'footer, x:0, y: 0, width:<%= footer_width  %>, text_alignment: 'right')
         end
 
       ---
@@ -380,7 +403,8 @@ module RLayout
         @heading[:y]      = @first_page.top_margin
         @heading[:width]  = @first_page.content_width # - @first_page.left_margin - @first_page.right_margin
         @heading[:is_float] = true
-        @heading[:heading_height_type] = 'quarter'
+        @heading[:heading_height_type] = 'quarter' # 9 as line_count
+        @heading[:heading_height_in_line_count] = @heading_height_in_line_count # 9 as body_line_count
         RHeading.new(@heading)
         @first_page.layout_floats
         @first_page.adjust_overlapping_columns

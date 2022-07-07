@@ -19,10 +19,11 @@ module RLayout
     attr_reader :body_styles
     attr_reader :table_data, :table_style
     attr_reader :style_serice, :leader_style_object
-
+    attr_reader :toc_type
     def initialize(options={})
-      options[:stroke_width] = 0
+      # options[:stroke_width] = 
       super
+      @toc_type = options[:toc_type] || "leader_justify"
       @pdf_doc = @parent.pdf_doc if @parent
       @table_data = options[:table_data]
       if options[:box_text_style]
@@ -63,6 +64,7 @@ module RLayout
         h[:layout_expand] = [:height]
         h[:row_data]      = row
         h[:row_index]     = i
+        h[:toc_type]      = @toc_type
         RLayout::LeaderRow.new(h)
         y_position += row_height
       end

@@ -71,20 +71,10 @@ module RLayout
     def self.sample_story
       <<~EOF
 
-
-
-
-
-
-
-
-
-
-      
-
       지은이: 홍길동
       책임편집: 임꺽정
-      ISBN: 334-555-666
+      ISBN: 978-89-364-4444-6 03300
+
       출판사: 죽전출판
 
       EOF
@@ -92,7 +82,9 @@ module RLayout
 
     def default_layout_rb
       s=<<~EOF
-      RLayout::RDocument.new( width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 16)
+      RLayout::CoverPage.new( width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 16) do
+        InfoArea(0,0,6,12)
+      end
       EOF
     end
 

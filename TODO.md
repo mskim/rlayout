@@ -29,6 +29,33 @@
   - line_type
   - arrow_type
 
+### 222_07_06
+  - set footer and header font size
+  - chapter heading height
+    - if integer is given it means line_count:9 
+  
+  - toc right_aligned
+
+  - 인용문 스타일
+
+
+  - isbn
+      - define in CoverPage method
+        - read story.md
+        - def info_box
+        - class info_box
+      - def default_layout_rb
+      - char_style for *
+      - *고딕* 명조 
+      - ## *고딕* 명조 
+  - footnotebox marker symbol
+  - footnote description *marker
+  - footnotebox stroke_sides [0,1,0,0]
+  - footer font_size, y
+  - inside_cover logo
+  - 일러두기
+  - otf to ttf font
+
 ### 222_07_03
   - footnote marker filtering O.K
   - fix footnote marker 

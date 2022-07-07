@@ -39,12 +39,14 @@ module RLayout
     attr_accessor :number_object, :title_object, :subtitle_object, :quote_object, :author_object
     attr_reader :align_to_body_text, :output_path
     attr_reader :height_sum, :heading_height_type # natural, quarter, half, full
+    attr_reader :heading_height_in_line_count
 
     def initialize(options={}, &block)
       # options[:stroke_width] = 1.0
       # options[:stroke_color] = 'yellow'
       super
       @heading_height_type  = options[:heading_height_type] || "natural"
+      @heading_height_in_line_count = options[:heading_height_in_line_count]
       if @parent
         # @pdf_doc = @parent.pdf_doc        
         case @heading_height_type
@@ -54,7 +56,11 @@ module RLayout
         when "half"
           @height = @parent.layout_size[1]/2
         end
+        if @heading_height_in_line_count
+          @height = @heading_height_in_line_count*@parent.body_line_height
+        end
       end
+
       @output_path        = options[:output_path]
       @layout_alignment   = options[:v_alignment]
       @align_to_body_text = options[:align_to_body_text] if options[:align_to_body_text]

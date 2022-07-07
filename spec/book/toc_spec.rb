@@ -4,7 +4,17 @@ describe 'create Toc' do
   before do
     @document_path  = "#{ENV["HOME"]}/test_data/toc"
     @pdf_path       = "#{ENV["HOME"]}/test_data/toc/toc.pdf"
-    @toc            = Toc.new(document_path: @document_path )
+    h = {}
+    h[:document_path] =  @document_path
+    h[:width] =  SIZES['A5'][0]
+    h[:height] =  SIZES['A5'][1]
+    h[:left_margin] = 50
+    h[:top_margin] = 50
+    h[:right_margin] = 50
+    h[:bottom_margin] = 50
+    h[:page_count]  = 1
+    h[:toc_type] = 'leader_justify'
+    @toc            = Toc.new(**h)
     @document       = @toc.document
   end
 
@@ -24,9 +34,9 @@ describe 'create Toc' do
     first_page = @document.pages.first
     assert_equal TocPage, first_page.class
     assert_equal 50, first_page.left_margin
-    assert_equal 80, first_page.top_margin
+    assert_equal 50, first_page.top_margin
     assert_equal 50, first_page.right_margin
-    assert_equal 80, first_page.bottom_margin
+    assert_equal 50, first_page.bottom_margin
   end  
 
   it 'document should have one RLeaderTable' do
