@@ -35,6 +35,7 @@
       - current_area
   
   - 인용문 스타일
+    implement > 
   - inside_cover logo
   - fix Text draw_text position lower drawing position by font_size
   - footnotebox marker symbol
