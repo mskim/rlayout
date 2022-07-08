@@ -252,7 +252,6 @@ module RLayout
       @page_pdf =  options[:page_pdf] || false
       @body_line_count = options[:body_line_count]
       @book_title = options[:book_title]
-      binding.pry
       load_doc_style
       @footnote_description_items = []
       @starting_page_side = options[:starting_page_side] || :either_sid
