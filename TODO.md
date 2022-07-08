@@ -30,10 +30,17 @@
   - arrow_type
 
 ### 222_07_08
-  - fix Text draw_text position lower drawing position by font_size
   - book_parser_md
     - add isbn at rear_matter
       - current_area
+  
+  - 인용문 스타일
+  - inside_cover logo
+  - fix Text draw_text position lower drawing position by font_size
+  - footnotebox marker symbol
+  - footnote description *marker
+  - 일러두기
+  - otf to ttf font
 ### 222_07_06
   - set footer and header font size
   - chapter heading height
@@ -54,13 +61,7 @@
       - *고딕* 명조 
       - ## *고딕* 명조 
 
-  - 인용문 스타일
 
-  - footnotebox marker symbol
-  - footnote description *marker
-  - inside_cover logo
-  - 일러두기
-  - otf to ttf font
 
 ### 222_07_03
   - footnote marker filtering O.K

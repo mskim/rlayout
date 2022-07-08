@@ -239,8 +239,8 @@ module RLayout
       @doc_type = options[:doc_type] || 'chapter'
       @book_info = options.dup
       @jpg = options[:jpg] || false
-      @style_guide_folder = options[:style_guide_folder] || @document_path
       @document_path = options[:document_path]
+      @style_guide_folder = options[:style_guide_folder] || @document_path
       @starting_page_number  = options[:starting_page_number] || 1
       @output_path = options[:output_path] || @document_path + "/chapter.pdf"
       @width = options[:width]
@@ -252,6 +252,7 @@ module RLayout
       @page_pdf =  options[:page_pdf] || false
       @body_line_count = options[:body_line_count]
       @book_title = options[:book_title]
+      binding.pry
       load_doc_style
       @footnote_description_items = []
       @starting_page_side = options[:starting_page_side] || :either_sid

@@ -239,7 +239,7 @@ module RLayout
     end
 
     def is_front_matter_item?(doc_type)
-      front_matter_items =%w[책정보 대도비라 소도비라 앞정보 차례 머리말 백 서문 일러두기 안내]
+      front_matter_items =%w[책정보 대도비라 소도비라 앞정보 차례 머리말 백 서문 일러두기 안내, isbn]
       front_matter_items.each do |front_item|
         return front_item if doc_type.include?(front_item)
       end
@@ -255,7 +255,7 @@ module RLayout
     end
 
     def is_rear_matter_item?(doc_type)
-      rear_matter_items =%w[뒷정보 back_info]
+      rear_matter_items =%w[뒷정보, back_isbn]
       rear_matter_items.each do |rear_item|
         return rear_item if doc_type.include?(rear_item)
       end
@@ -285,7 +285,7 @@ module RLayout
         'toc'
       when '장','chapter','Chapter', '부록'
         'chapter'
-      when '앞정보','뒷정보'
+      when '앞정보','뒷정보', 'isbn'
         'isbn'
       end
     end

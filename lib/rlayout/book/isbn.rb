@@ -51,7 +51,7 @@ module RLayout
     def layout_story
       # body
       @starting_y = 100
-      line_height = 20
+      line_height = 12
 
       @text_lines.each do |line_text|
         line_options = {}
