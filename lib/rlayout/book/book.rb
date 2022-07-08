@@ -57,7 +57,7 @@ module RLayout
       @front_matter = FrontMatter.new(@project_path, @starting_page_number, @book_info)
       @starting_page_number = @front_matter.starting_page_number
       @body_matter = BodyMatter.new(@project_path, @starting_page_number, @book_info )
-      # @rear_matter = RearMatter.new(@project_path, @starting_page_number, @book_info )
+      @rear_matter = RearMatter.new(@project_path, @starting_page_number, @book_info )
       generate_toc
       # generate_body_pdf
       generate_pdf_book if @pdf_book
@@ -323,7 +323,7 @@ module RLayout
       pdf_docs = []
       pdf_docs += @front_matter.pdf_docs
       pdf_docs += @body_matter.pdf_docs
-      # pdf_docs += rear_matter_docs_pdf
+      pdf_docs += @rear_matter.pdf_docs
       pdf_docs
     end
 
@@ -331,7 +331,7 @@ module RLayout
       pdf_pages = []
       pdf_pages += @front_matter.pdf_pages if @front_matter
       pdf_pages += @body_matter.pdf_pages
-      # pdf_docs += rear_matter_docs_pdf
+      pdf_pages += @rear_matter.pdf_pages if @rear_matter
       pdf_pages.flatten
       pdf_pages
     end

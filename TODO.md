@@ -29,6 +29,11 @@
   - line_type
   - arrow_type
 
+### 222_07_08
+  - fix Text draw_text position lower drawing position by font_size
+  - book_parser_md
+    - add isbn at rear_matter
+      - current_area
 ### 222_07_06
   - set footer and header font size
   - chapter heading height

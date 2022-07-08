@@ -59,6 +59,10 @@ module RLayout
       build_folder + "/front_matter"
     end
 
+    def build_rear_matter_folder
+      build_folder + "/rear_matter"
+    end
+
     def book_cover_folder
       build_folder + "/book_cover"
     end
@@ -105,6 +109,7 @@ module RLayout
       # PART_START = /PART|part|파트/
       part_index = 1
       body_matter_index = 1
+      rear_matter_index = 1
       @part_titles = []
       book_document_contents.each_with_index do |doc_chunk, i|
         starting_page = nil
@@ -172,7 +177,6 @@ module RLayout
             h['starting_page'] = starting_page if starting_page
             h['page_count'] = page_count if page_count
             h['title'] = chapter_title
-
             doc_content = h.to_yaml
             doc_content += "---\n\n"
             doc_chunk_without_first_line = doc_chunk.split("\n")[1..-1].join("\n")
@@ -214,6 +218,16 @@ module RLayout
             
             File.open(story_path, 'w'){|f| f.write doc_content}
             body_matter_index += 1
+          elsif doc_name = is_rear_matter_item?(doc_string)
+            doc_chunk_in_array = doc_chunk.split("\n")
+            doc_chunk_without_first_line = doc_chunk_in_array[1..-1].join("\n")
+            doc_content = doc_chunk_without_first_line
+            doc_class = doc_tyle2class_name(doc_name)
+            doc_folder = build_rear_matter_folder + "/#{rear_matter_index}_#{doc_class}"
+            FileUtils.mkdir_p(doc_folder) unless File.exist?(doc_folder)
+            story_path = doc_folder + "/story.md"
+            File.open(story_path, 'w'){|f| f.write doc_content}
+            rear_matter_index += 1
           else
             # handle unknown type docs
             puts "Unsopported doc_type: #{doc_string} found!!!"  
@@ -225,7 +239,7 @@ module RLayout
     end
 
     def is_front_matter_item?(doc_type)
-      front_matter_items =%w[책정보 대도비라 소도비라 차례 머리말 백 서문 일러두기 안내]
+      front_matter_items =%w[책정보 대도비라 소도비라 앞정보 차례 머리말 백 서문 일러두기 안내]
       front_matter_items.each do |front_item|
         return front_item if doc_type.include?(front_item)
       end
@@ -236,6 +250,14 @@ module RLayout
       body_matter_items =%w[장 chapter Chapter 부록]
       body_matter_items.each do |body_item|
         return body_item if doc_type.include?(body_item)
+      end
+      false
+    end
+
+    def is_rear_matter_item?(doc_type)
+      rear_matter_items =%w[뒷정보 back_info]
+      rear_matter_items.each do |rear_item|
+        return rear_item if doc_type.include?(rear_item)
       end
       false
     end
@@ -263,6 +285,8 @@ module RLayout
         'toc'
       when '장','chapter','Chapter', '부록'
         'chapter'
+      when '앞정보','뒷정보'
+        'isbn'
       end
     end
     # update book_info part

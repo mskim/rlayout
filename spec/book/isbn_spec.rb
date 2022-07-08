@@ -6,7 +6,16 @@ describe 'create Prologue' do
     @document_path  = "#{ENV["HOME"]}/test_data/isbn"
     @pdf_path = "#{ENV["HOME"]}/test_data/isbn/chapter.pdf"
     FileUtils.mkdir_p(@document_path) unless File.exist?(@document_path)
-    @prologue = Isbn.new(document_path: @document_path)
+    h = {}
+    h[:document_path] = @document_path
+    h[:width] = SIZES['A4'][0]
+    h[:height] = SIZES['A4'][1]
+    h[:left_margin] = 50
+    h[:top_margin] = 50
+    h[:right_margin] = 50
+    h[:bottom_margin] = 50
+
+    @prologue = Isbn.new(**h)
   end
 
   it 'should create FrontWing' do

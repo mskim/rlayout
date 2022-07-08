@@ -1,17 +1,17 @@
 module RLayout
-  # Page that starts the book.
-  # With Title, author, publisher, logo
-  # Replica of front cover image
+  # Page that contains information about the book.
+  # With Title, author, publisher, logo, ISBN
   
   class Isbn
-    attr_reader :document_path, :info_text, :isbn_text
+    attr_reader :document_path, :isbn_text
     attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
-    
+    attr_reader :book_info
     include Styleable
 
     def initialize(options={})
       options[:starting_page_side] = :left_side
       options[:page_type] = :column_text
+      @book_info = options[:book_info]
       @document_path = options[:document_path]
       @style_guide_folder = options[:style_guide_folder] || @document_path
       @output_path = @document_path + "/output.pdf"
@@ -35,14 +35,14 @@ module RLayout
     end
 
     def page_count
-      @document.pages.length
+      1
     end
 
     def read_story
       if File.exist?(@isbn_text_path)
         @isbn_text = File.open(@isbn_text_path, 'r'){|f|  f.read}
       else
-        @isbn_text = Isbn.sample_story
+        @isbn_text = default_content
         File.open(@isbn_text_path, 'w'){|f| f.write @isbn_text}
       end
       @text_lines = @isbn_text.split("\n")
@@ -52,17 +52,22 @@ module RLayout
       # body
       @starting_y = 100
       line_height = 20
-      @last_page = @document.pages.last
 
       @text_lines.each do |line_text|
         line_options = {}
         line_options[:x]  = 50
         line_options[:y]  = @starting_y
-        line_options[:width]  = @last_page.width
+        line_options[:width]  = @document.width
         line_options[:height]  = line_height
-        line_options[:text_string]    = line_text
-        line_options[:parent] = @last_page
+        line_options[:parent] = @document
         line_options[:font_size] = 12
+        if line_text =~/{}$/
+          line_options[:stroke_sides] = [0,1,0,1]
+          line_options[:stroke_width] = 0.3
+          line_options[:text_string]    = line_text.sub("{}","")
+        else
+          line_options[:text_string]    = line_text
+        end
         Text.new(line_options)
         @starting_y += line_height
       end
@@ -82,33 +87,22 @@ module RLayout
 
     def default_layout_rb
       s=<<~EOF
-      RLayout::CoverPage.new( width:#{@width}, height:#{@height}, top_inset: 5, left_inset: 5, right_inset: 10, body_line_height: 16) do
-        InfoArea(0,0,6,12)
+      RLayout::CoverPage.new( width:#{@width}, height:#{@height}, left_margin:  #{@left_margin}, top_margin: #{@top_margin},   right_margin:  #{@right_margin}, bottom_margin:  #{@bottom_margin}) do
+        info_area(0,0,6,12)
       end
       EOF
     end
 
     def default_content
-      h =<<~EOF
+      <<~EOF
 
-      ## 홍길동의 전설
-   
-        죽전출판
+      제목: 홍길동의 전설
+      지은이: 홍길동
+      책임편집: 임꺽정
+      ISBN: 978-89-364-4444-6 03300
 
-        여기는 제목
-
-        여기는 부제목
-  
-        초판 1쇄 발행/2021년 9월 15일
-
-        지은이/홍길동
-
-        펴낸이/임꺽정
-
-        책입편집/김개똥
-
-        ISBN 978-89-364-4444-6 03300
-  
+      출판사: 죽전출판
+        
       EOF
     end
 

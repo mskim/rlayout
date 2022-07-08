@@ -7,7 +7,6 @@ module RLayout
     attr_reader :text_string, :font_name, :font_size, :font_color, :tracking
     attr_reader :style_name, :string_width
     attr_accessor :text_alignment, :v_alignment, :text_fit_type
-
     def init_text(options={})
       # @stroke[:thickness] = 1
       # @stroke[:color] = 'black'

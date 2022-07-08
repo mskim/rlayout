@@ -27,6 +27,7 @@ require File.dirname(__FILE__) + "/rlayout/base/styleable_page"
 require File.dirname(__FILE__) + "/rlayout/base/text_area"
 require File.dirname(__FILE__) + "/rlayout/base/text_bar"
 require File.dirname(__FILE__) + "/rlayout/base/cover_page"
+require File.dirname(__FILE__) + "/rlayout/base/info_area"
 
 require File.dirname(__FILE__) + "/rlayout/graphic/fill"
 require File.dirname(__FILE__) + "/rlayout/graphic/graphic_struct"

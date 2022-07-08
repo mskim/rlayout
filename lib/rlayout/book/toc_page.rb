@@ -64,7 +64,6 @@ module RLayout
       # options[:text_alignment] = "center"
       options[:width] = @width - @left_margin - @right_margin
       options[:style_name] = 'title'
-      binding.pry
       @heading  = Text.new(options)
     end
 

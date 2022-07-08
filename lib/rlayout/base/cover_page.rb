@@ -257,11 +257,11 @@ module RLayout
       RLayout::Image.new(h)
     end
 
-    def info_box(grid_x, grid_y, grid_width, grid_height, options={})
+    def info_area(grid_x, grid_y, grid_width, grid_height, options={})
       h = {}
       h[:parent] = self
       h[:grid_frame]  = [grid_x, grid_y, grid_width, grid_height]
-      h[:tag] = "info_box"
+      h[:tag] = "info_area"
       RLayout::InfoArea.new(h)
     end
   end
