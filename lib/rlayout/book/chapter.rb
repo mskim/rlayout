@@ -208,6 +208,10 @@
 # default style are save at /style_guide/class_name folder
 # and modified version gets applied.
 
+# How footnote is implemented?
+# footnote_marker, 
+# footnote_description, 
+# footnote_box
 module RLayout
   class Chapter
     attr_reader :document_path
@@ -229,7 +233,6 @@ module RLayout
     attr_reader :page_by_page, :story_md, :story_by_page, :toc
     attr_reader :grid, :default_image_location, :default_image_size
     attr_reader :local_image_fold
-    attr_reader :footnote_description_items
     attr_reader :starting_page_side, :jpg
     attr_reader :book_info
 
@@ -253,7 +256,7 @@ module RLayout
       @body_line_count = options[:body_line_count]
       @book_title = options[:book_title]
       load_doc_style
-      @footnote_description_items = []
+      $footnote_description_list = []
       @starting_page_side = options[:starting_page_side] || :either_sid
       @local_image_folder = @document_path + "/images"
       @story_path     = @document_path + "/story.md"
@@ -319,19 +322,19 @@ module RLayout
       has_footer: true
       left_header_erb: |
         RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-          text("<%= @page_number %>", style_name: 'header, x: <%= @left_margin %>, width: <%= footer_width  %>, text_alignment: 'left')
+          text("<%= @page_number %>", style_name: 'header', x: <%= @left_margin %>, width: <%= footer_width  %>, text_alignment: 'left')
         end
       right_header_erb: |
         RLayout::Container.new(parent:self, x: <%= @left_margin %>, y:20, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-          text("<%= @title %>  <%= @page_number %>", style_name: 'header, from_right:0, y: 0, text_alignment: 'right')
+          text("<%= @title %>  <%= @page_number %>", style_name: 'header', from_right:0, y: 0, text_alignment: 'right')
         end
       left_footer_erb: |
         RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:<%= @height - 50 %>, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-          text("<%= @page_number %>  <%= @book_title %>", style_name: 'footer, x:0, y:0, width: <%= footer_width  %>, text_alignment: 'left')
+          text("<%= @page_number %>  <%= @book_title %>", style_name: 'footer', x:0, y:0, width: <%= footer_width  %>, text_alignment: 'left')
         end
       right_footer_erb: |
         RLayout::Container.new(parent:self, x:<%= @left_margin %>, y:<%= @height - 50 %>, width: <%= footer_width  %>, height: 12, fill_color: 'clear') do
-          text("<%= @title %>  <%= @page_number %>", style_name: 'footer, x:0, y: 0, width:<%= footer_width  %>, text_alignment: 'right')
+          text("<%= @title %>  <%= @page_number %>", style_name: 'footer', x:0, y: 0, width:<%= footer_width  %>, text_alignment: 'right')
         end
 
       ---
@@ -441,7 +444,7 @@ module RLayout
           @paragraphs << RParagraph.new(para_options)
         elsif  para[:markup] == "table"
         elsif  para[:markup] == "footnote_item"
-          @footnote_description_items << para
+          $footnote_description_list << para
         else
           para_options = {}
           para_options[:markup]         = para[:markup]
@@ -510,18 +513,7 @@ module RLayout
       @story_by_page_hash         = {} # this is used to capture story_by_page info
       current_page_paragraph_list = []
       while @paragraph = @paragraphs.shift
-        if @paragraph.has_footnote_marker
-          current_column = @current_line.column
-          currunt_para_footnote_markers = @paragraph.footnote_marker_numbers
-          footnote_description_items_to_add_for_column = []
-          currunt_para_footnote_markers.each do |marker_number|
-            footnote_description_items_to_add_for_column += @footnote_description_items.select do |item|
-              item[:footnote_item_number] == marker_number
-            end
-          end
-          footnote_description_items_to_add_for_column.flatten
-          current_column.add_footnote_description_items(footnote_description_items_to_add_for_column)
-        end
+
         # TODO: capturing paragraph info to save @story_by_page
         @current_line                   = @paragraph.layout_lines(@current_line)
         current_page_paragraph_list     << @paragraph.para_info

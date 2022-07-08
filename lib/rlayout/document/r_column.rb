@@ -297,13 +297,11 @@ module RLayout
       end
     end
 
-    def footnote_list
-      @document.footnote_list
-    end
+
 
     # add footnote_text with given footnote_item_number to FootnoteBox
-    def add_footnote_description_items(footnote_description_items)
-      @footnote_box.add_footnote_descriptions footnote_description_items
+    def add_footnote_description_item(item_number)
+      @footnote_box.add_footnote_description $footnote_description_list[item_number]
     end
 
     def char_count
@@ -521,21 +519,20 @@ module RLayout
       h[:y1] = @height
       h[:x2] = 50
       h[:y2] = @height
-      Line.new(**h)
+      @divider_line = Line.new(**h)
     end
 
-    def add_footnote_descriptions(footnote_descripions)
+    def add_footnote_description(footnote_descripion)
       last_footnote = @graphics.last
       if last_footnote
         @y_position = last_footnote.y + last_footnote.height
       else
         @y_position = 5
       end
-      footnote_descripions.each do |footnotes|
-        new_footnote = create_footnote(footnotes[:para_string], y: @y_position)
-        @y_position += new_footnote.height
-      end
-      draw_divier_line
+      new_footnote = create_footnote(footnote_descripion[:para_string], y: @y_position)
+      @y_position += new_footnote.height
+      
+      draw_divier_line unless @line_object
 
       #TODO adjust footnote object position
     end

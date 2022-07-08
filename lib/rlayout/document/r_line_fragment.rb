@@ -142,6 +142,12 @@ module RLayout
       end
     end
 
+    def document
+      if page
+        @page.parent
+      end
+    end
+
     def mark_overflow
       return if @floats.length > 0
       @stroke.color = 'red'
@@ -249,17 +255,35 @@ module RLayout
     end
     # set line type, and paragraph information for line
     def set_paragraph_info(paragraph, line_type)
-      @para_style       = paragraph.para_style
       @style_name       = paragraph.style_name
-      @font             = @para_style[:font]
-      @font_size        = @para_style[:font_size]
-      @space_width      = @para_style[:space_width] || 3.0
-      @text_alignment   = @para_style[:text_alignment] || "left"
-      @v_offset         = @para_style[:v_offset] || 0
-      @first_line_indent = @para_style[:first_line_indent] || 0
-      @right_indent      = @para_style[:right_indent] || 0
-      @left_indent       = @para_style[:left_indent] || 0
-      if @text_alignment == "left" || @text_alignment == "justify"
+      @para_style       = paragraph.para_style
+      if @para_style
+        @font             = @para_style[:font]
+        @font_size        = @para_style[:font_size]
+        @space_width      = @para_style[:space_width] || 3.0
+        @text_alignment   = @para_style[:text_alignment] || "left"
+        @v_offset         = @para_style[:v_offset] || 0
+        @first_line_indent = @para_style[:first_line_indent] || 0
+        @right_indent      = @para_style[:right_indent] || 0
+        @left_indent       = @para_style[:left_indent] || 0
+      else
+        binding.pry
+      end
+
+      @line_type = line_type
+      if @line_type == 'first_line'
+        @starting_position  = @first_line_indent
+        @first_line_width   = @text_area[2] - @first_line_indent - @right_indent
+        @text_area[2] = @first_line_width
+        @room = @text_area[2]
+      else
+        @starting_position  = para_style[:left_indent] || 0
+        @middle_line_width  = @text_area[2] - @left_indent - @right_indent
+        @text_area[2]    = @middle_line_width
+        @room = @text_area[2]
+      end
+
+      if @text_alignment == "left" || @text_alignment == "justify"        
         @first_line_width   = @text_area[2] - @first_line_indent - @right_indent
         @middle_line_width  = @text_area[2] - @left_indent - @right_indent
       else
@@ -270,17 +294,10 @@ module RLayout
           @middle_line_width  = @text_area[2] - para_style[:left_indent] - para_style[:right_indent]
         end
       end
+    end
 
-      @line_type = line_type
-      if @line_type == 'first_line'
-        @starting_position  = @first_line_indent
-        @text_area[2]    = @first_line_width
-        @room = @text_area[2]
-      else
-        @starting_position  = para_style[:left_indent] || 0
-        @text_area[2]    = @middle_line_width
-        @room = @text_area[2]
-      end
+    def add_footnote_description_to_column(token)
+      column.add_footnote_description_item(token.footnote_item_number.to_i - 1)
     end
 
     # place tokens in the line, given tokens array
@@ -307,6 +324,7 @@ module RLayout
       else
         return false if @text_alignment != 'justify'
         return false if options[:do_not_break]
+        return false if token.has_footnote_marker
         if @graphics.length < 4
           options[:char_half_width_cushion] = @graphics.length
         elsif @graphics.length <= 5
@@ -381,45 +399,45 @@ module RLayout
       case @text_alignment
       when 'justify'
         # in justifed paragraph, we have to treat the last line as left aligned.
-        x = @starting_position
+        x_position = @starting_position
         if @line_type == "last_line" && leftover_room > 0
           @graphics.each do |token|
-            token.x = x
-            x += token.width + @space_width
+            token.x = x_position
+            x_position += token.width + @space_width
           end
         else
           @space_width = (@text_area[2] - 1  - @total_token_width)/(@graphics.length - 1)
           @graphics.each do |token|
-            token.x = x
-            x += token.width + @space_width
+            token.x = x_position
+            x_position += token.width + @space_width
           end
         end
       when 'left'
-        x = @starting_position
+        x_position = @starting_position
         @graphics.each do |token|
-          token.x = x
-          x += token.width + @space_width
+          token.x = x_position
+          x_position += token.width + @space_width
         end
       when 'center'
         shift = leftover_room/2.0
-        x = @starting_position + shift
+        x_position = @starting_position + shift
         @graphics.each do |token|
-          token.x = x
-          x += token.width + @space_width
+          token.x = x_position
+          x_position += token.width + @space_width
         end
       when 'right'
-        x = leftover_room
+        x_position = leftover_room
         @graphics.each do |token|
-          token.x += x
+          token.x += x_position
           token.y = @v_offset
-          x += token.width + @space_width
+          x_position += token.width + @space_width
         end
       else
         # do as left
-        x = @starting_position
+        x_position = @starting_position
         @graphics.each do |token|
-          token.x = x
-          x += token.width + @space_width
+          token.x = x_position
+          x_position += token.width + @space_width
         end
       end
       create_token_union_rect

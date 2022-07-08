@@ -303,8 +303,7 @@ module RLayout
       token = tokens_copy.shift
       if token && token.token_type == 'diamond_emphasis'
         # if first token is diamond emphasis, no head indent
-        unless @current_line.first_text_line?
-          
+        unless @current_line.first_text_line? 
           @current_line = @current_line.next_text_line
         end
         @current_line.layed_out_line = true
@@ -412,6 +411,9 @@ module RLayout
             @line_count += 1
           end
         elsif result
+          if token.has_footnote_marker
+            @current_line.add_footnote_description_to_column(token) 
+          end
           # puts "entire token placed succefully, returned result is true"
           token = tokens_copy.shift
         # entire token was rejected,
@@ -560,7 +562,11 @@ module RLayout
         # @para_string = "▸▸" + @para_string
         @para_string = "\u25b6\u25b6" + " " + @para_string
       end
-
+      if @markup == 'quote'
+        @style_name  = 'quote'
+        style_hash = current_style[@style_name]
+        @para_style  = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+      end
       unless @para_style
         @style_name  = 'body'
         style_hash = current_style[@style_name]
