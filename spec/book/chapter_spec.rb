@@ -12,8 +12,7 @@ describe "create Chapter with page_floats" do
     h[:document_path] = @document_path
     h[:starting_page_number] = 14
     h[:jpg] = false
-
-    
+    h[:body_line_count] = 40
     @chapter  = RLayout::Chapter.new(**h)
     @document = @chapter.document
   end

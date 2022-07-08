@@ -69,7 +69,7 @@ module RLayout
           elsif local_markup_array[1].include?("오른쪽")
             @h3_markup = local_markup_array[0].gsub(" ","")
           elsif local_markup_array[1].include?("인용")
-            @h4_markup = local_markup_array[0].gsub(" ","")
+            @quote_markup = local_markup_array[0].gsub(" ","")
           end
         end
       end
@@ -86,7 +86,7 @@ module RLayout
       # gothic quote left and right indent
       content = filter_h4(content) if @h3_markup
       # gothic quote left and right indent
-      content = filter_h4(content) if @h4_markup
+      content = filter_quote(content) if @quote_markup
       content
     end
 
@@ -119,6 +119,7 @@ module RLayout
     # ## -> 인용 스타일
     # $$ -> 오른쪽 정렬
     # ^^ -> 고딕
+    
     # @@text@@ -> text[^#{number}]
     # def convert_tech_media_footnote(text)
     #   text = text.dup
@@ -133,11 +134,21 @@ module RLayout
     #   text
     # end
 
+    def filter_quote(content)
+      matching_array = content.scan(/#{@quote_markup}.*?#{@quote_markup}/)
+      matching_array.each_with_index do |matching_string, i| 
+        replacement = matching_string.match(/#{@quote_markup}(.*?)#{@quote_markup}/)
+        new_string = "\n\n" + "> " +  $1 + "\n\n" 
+        content.sub!(matching_string, new_string)
+      end
+      content
+    end
+
     def filter_h2(content)
       matching_array = content.scan(/#{@h2_markup}.*?#{@h2_markup}/)
       matching_array.each_with_index do |matching_string, i| 
         replacement = matching_string.match(/#{@h2_markup}(.*?)#{@h2_markup}/)
-        new_string = $1 + "[^#{i + 1}]"
+        new_string = "\n\n" + "## " +  $1 + "\n\n" 
         content.sub!(matching_string, new_string)
       end
       content
@@ -147,7 +158,7 @@ module RLayout
       matching_array = content.scan(/#{@h3_markup}.*?#{@h3_markup}/)
       matching_array.each_with_index do |matching_string, i| 
         replacement = matching_string.match(/#{@h3_markup}(.*?)#{@h3_markup}/)
-        new_string = $1 + "[^#{i + 1}]"
+        new_string = "\n\n" + "### " +  $1 + "\n\n" 
         content.sub!(matching_string, new_string)
       end
       content
@@ -157,7 +168,7 @@ module RLayout
       matching_array = content.scan(/#{@h4_markup}.*?#{@h4_markup}/)
       matching_array.each_with_index do |matching_string, i| 
         replacement = matching_string.match(/#{@h4_markup}(.*?)#{@h4_markup}/)
-        new_string = $1 + "[^#{i + 1}]"
+        new_string = "\n\n" + "#### " +  $1 + "\n\n" 
         content.sub!(matching_string, new_string)
       end
       content

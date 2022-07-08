@@ -34,6 +34,8 @@
     - add isbn at rear_matter
       - current_area
   
+
+  - fix footnote marker place in the wrong page, one page before
   - 인용문 스타일
     implement > 
   - inside_cover logo
@@ -42,6 +44,7 @@
   - footnote description *marker
   - 일러두기
   - otf to ttf font
+
 ### 222_07_06
   - set footer and header font size
   - chapter heading height

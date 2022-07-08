@@ -315,6 +315,10 @@ module RLayout
       if  s =~/^<br>/ || s =~/^<\/br>/ || s =~/^<br\/>/
         @markup = "br"
         @string = ""
+      elsif s =~/^>\s/
+        @markup = "quote"
+        s = text_block.join("\n")
+        @string = s.sub(/^>\s/, "")
       elsif s =~/^#\s/ || s =~/^=\s/
         @markup = "h#{starting_heading_level}"
         s = text_block.join("\n")
