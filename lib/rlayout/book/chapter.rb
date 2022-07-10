@@ -579,7 +579,7 @@ module RLayout
       end
     end
 
-    # @header_footer_info hash is read by StyleableDoc
+    # @header_footer_info hash is read by Styleable
     # @header_footer_info keys include has_header, has_footer, 
     # these values can be customized to true or false for each class
     # /style_guide/chapter_header_footer.yml

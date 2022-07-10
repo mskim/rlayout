@@ -16,10 +16,13 @@ describe 'create new book ' do
     h[:jpg] = false
     @chapter  = RLayout::Chapter.new(**h)
     @document = @chapter.document
+    @pdf_path = "#{ENV["HOME"]}/test_data/quote/chapter.pdf"
+
   end
 
   it 'should create Book' do
-    assert_equal RLayout::Chapter, @chapter.class 
+    assert_equal RLayout::Chapter, @chapter.class
+    system "open #{@pdf_path}"
   end
 end
 

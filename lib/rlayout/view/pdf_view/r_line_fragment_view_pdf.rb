@@ -2,12 +2,12 @@ module RLayout
   class RLineFragment < Container
     def draw_pdf(canvas, options={})
       return unless @graphics.length > 0
-
       @pdf_doc = parent.pdf_doc
       @style_service = RLayout::StyleService.shared_style_service
       @flipped = flipped_origin
       @start_x = flipped[0]
       @start_y = flipped[1]
+      draw_stroke(canvas)
 
       if @fill.color == 'red'
         canvas.save_graphics_state do

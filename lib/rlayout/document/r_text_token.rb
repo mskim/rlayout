@@ -22,6 +22,7 @@ module RLayout
     attr_reader :base_width, :superscript_text, :superscript_width, :post_superscript_text, :post_superscript_width
     def initialize(options={})
       options[:fill_color] = options.fetch(:token_color, 'clear')
+      options[:stroke_width] = 1
       super
       @style_object  = options[:style_object]
       @font_wrapper  = @style_object.font

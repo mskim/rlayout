@@ -89,8 +89,8 @@ module RLayout
     attr_reader :style_object, :style_object_bold, :style_object_itaic
     attr_reader :extra_info
     attr_reader :has_footnote_marker, :footnote_marker_numbers
-
-
+    attr_reader :drap_cap_object
+    attr_reader :drop_lines, :drop_char_count
     def initialize(options={})
       @tokens = []
       @markup         = options.fetch(:markup, 'p')
@@ -99,7 +99,8 @@ module RLayout
       @line_count     = 0
       @line_width     = options[:line_width] || 130
       @article_type   = options[:article_type]
-      parse_style_name
+      set_style_name_from_markup
+      add_drop_cap if options[:draw_drap_cap]
 
       if @markup == 'br'
       else
@@ -107,10 +108,14 @@ module RLayout
         create_tokens
       end
       @float_info = options[:float_info]
-      create_para_lines if options[:create_para_lines]
       self
     end
 
+    def add_drop_cap
+      # h  = {}
+      # h[:parent] = self
+      # @drapcap_object = DropCap.new(**h)
+    end
     # para_info is used to display editing UI from front-end
     def para_info
       h = {}
@@ -289,6 +294,11 @@ module RLayout
       end
     end
 
+    def is_member_of_body_blocks?(markup)
+      body_block_member_markup =  %w[h1 h2  h3 h4  h5  h6 quote]
+      body_block_member_markup.include?(markup)
+    end
+
     def layout_lines(current_line, options={})
       return unless current_line
       @para_rect  = []
@@ -308,18 +318,21 @@ module RLayout
         end
         @current_line.layed_out_line = true
         @current_line.set_paragraph_info(self, "middle_line")
-      elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4'
-        unless @current_line.first_text_line?
-          if @para_style[:space_before_in_lines] == 1
-            @current_line.layed_out_line = true
-            unless @current_line.next_text_line
-              @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
-            end
-            @current_line = @current_line.next_text_line
-          end
+      # elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4' || @markup == 'quote'
+      elsif is_member_of_body_blocks?(@markup) &&  !@current_line.first_text_line?
+        if @para_style[:space_before_in_lines] == 1
           @current_line.layed_out_line = true
-          @current_line.token_union_style = @token_union_style if @token_union_style
+          unless @current_line.next_text_line
+            @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
+          end
+          @current_line = @current_line.next_text_line
         end
+        if @para_style[:space_after_in_lines] == 1
+          @space_after_in_lines = @para_style[:space_after_in_lines]
+        end
+
+        @current_line.layed_out_line = true
+        @current_line.token_union_style = @token_union_style if @token_union_style
         if @markup == 'h2' && @extra_info
           extra_hash = eval(@extra_info)
           if extra_hash[:side_image]
@@ -450,6 +463,7 @@ module RLayout
         @current_line.set_paragraph_info(self, "last_line")
       end
       @current_line.align_tokens
+      @current_line= @current_line.next_text_line if @space_after_in_lines
 
       if @move_up_if_room 
         if found_previous_line = previous_line_has_room(@current_line)
@@ -496,7 +510,7 @@ module RLayout
       h
     end
 
-    def parse_style_name
+    def set_style_name_from_markup
       current_style = RLayout::StyleService.shared_style_service.current_style
       if current_style.class == String
         if current_style =~/^---/
@@ -585,70 +599,18 @@ module RLayout
       Hash[list_only.collect{|k,v| [k.to_s.sub("list_","").to_sym, v]}]
     end
 
-    # layout paragragraph
-    def self.layout_paragraph(para_string, markup, column_width)
-      p = RParagraph.new(para_string: para_string, markup: markup, line_width: column_width)
-      p.create_para_lines(options)
-      if options[:text_lines_array]
-        # layout lines with given text_lines_array
-      end
-      p.para_lines
+
+  end
+
+
+  # TODO is_float????
+  class DropCap < Container
+    attr_reader :text_string
+    def initialize(options={})
+      super
+
+      self
     end
-
-    def create_para_lines
-      return if tokens.length == 0
-      @para_lines = []
-      tokens_copy = tokens.dup
-      @current_line = RLayout::RLineFragment.new(line_type: "first_line", width: @line_width)
-      token = tokens_copy.shift
-      if token && token.token_type == 'diamond_emphasis'
-        @current_line.line_type = "middle_line"
-      elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4'
-        @current_line.token_union_style = @token_union_style if @token_union_style
-        @current_line.line_type =  "middle_line"
-      end
-
-      while token
-        result = @current_line.place_token(token)
-        
-        if result.class == RTextToken
-          # token is broken into two, second part is returned
-          @current_line.align_tokens
-          @current_line.room = 0
-          @current_line = RLayout::RLineFragment.new(line_type: "middle_line", width: @line_width)
-          @para_lines << @current_line
-          token = result          
-        elsif result
-          # puts "entire token placed succefully, returned result is true"
-          token = tokens_copy.shift
-        else
-          # entire token was rejected,
-          @current_line.align_tokens
-          @current_line.room = 0
-          @current_line = RLayout::RLineFragment.new(line_type: "middle_line", width: @line_width)
-          @para_lines << @current_line
-        end
-        @para_lines
-      end
-
-      @current_line.align_tokens
-      if @move_up_if_room 
-        if found_previous_line = previous_line_has_room(@current_line)
-          move_tokens_to_previous_line(@current_line, found_previous_line)
-          @current_line.layed_out_line = false
-          @current_line
-        else
-          @current_line.next_text_line
-        end
-      else
-        @current_line.next_text_line
-      end
-    end
-
-    def layout_para_lines_with_text_lines(text_lines_array)
-      
-    end
-
   end
 
 end

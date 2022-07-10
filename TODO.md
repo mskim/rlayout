@@ -29,7 +29,50 @@
   - line_type
   - arrow_type
 
-### 222_07_08
+### 2022_07_10
+  - space_before_in_lines, space_after_in_lines
+    - space_before_in_line  # body_lines
+    - space_before # points
+    - space_after_in_line  # body_lines
+    - space_after # points
+
+  - add heading_quote 제목인용
+  - add quote 본문인용문  > 
+  - body respect_new_line: true
+
+  - fix Text draw_text position lower drawing position by font_size
+  - {=}?? or implement it with stroke_sides
+  - otf to ttf font
+
+  - put layout_rb info as hash into default.yml
+    - document_type # RDocument, CoverPage, 
+    - width, height, margins
+    - body_line_count
+    - heading_height_type
+    - heading_height_in_lines
+    - toc_members ['h1', 'h2']
+### 2022_07_09
+  - fix r_paragraph 
+    - indent
+      - first_line_indent
+      - left_indent
+      - right_indent
+
+    - drop_cap
+
+  - footnote marking
+    - auto numbering [^1] marker and 
+    [^1]: footnote description text this should be in the sampe paragraph block.
+    Starting at the new line, numbers can strart from 1 for each paragrph, 
+    numbers will be auto corrected by chapter.
+
+  - book_cover
+    - wing
+      - profile
+      - book_promo
+      - story
+
+### 2022_07_08
   - book_parser_md
     - add isbn at rear_matter
       - current_area
@@ -39,13 +82,11 @@
   - 인용문 스타일
     implement > 
   - inside_cover logo
-  - fix Text draw_text position lower drawing position by font_size
   - footnotebox marker symbol
   - footnote description *marker
   - 일러두기
-  - otf to ttf font
 
-### 222_07_06
+### 2022_07_06
   - set footer and header font size
   - chapter heading height
     - if integer is given it means line_count:9 
@@ -67,14 +108,14 @@
 
 
 
-### 222_07_03
+### 2022_07_03
   - footnote marker filtering O.K
   - fix footnote marker 
     - token creaition
     - drawing three level tokne, 
       - bug 퀴닌(1]이) should be 퀴닌(1)이
       - 퀴닌(^1]의 plain-supter-plain
-### 222_06_30
+### 2022_06_30
   - NewsArticle < StyleablArticle => NewsArticle
   - FrontWing < StyleablArticle => NewsArticle
   - BackWing < StyleablArticle => NewsArticle

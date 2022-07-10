@@ -264,7 +264,6 @@ module RLayout
     # place tokens in the line, given tokens array
     # return loft over tokens array if not all tokens are layed out
     # return false if no leftvver tokens
-    #CharHalfWidthCushion = 5.0
     def place_token(token)
       if @room  >= token.width
         # place token in line.

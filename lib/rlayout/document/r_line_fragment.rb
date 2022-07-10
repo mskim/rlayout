@@ -1,7 +1,6 @@
 #
 #
-# CharHalfWidthCushion  = 5.0
-CharHalfWidthCushion  = 4.0
+# CharHalfWidthCushion  = 4.0
 MinimunLineRoom       = 4.0
 
 module RLayout
@@ -12,7 +11,7 @@ module RLayout
 
   class	RLineFragment < Container
     attr_accessor :next_line, :layed_out_line
-    attr_accessor :total_token_width, :overlap
+    attr_accessor :overlap
     attr_accessor :text_area, :room, :space_width, :char_half_width_cushion
     attr_accessor :line_type #first_line, last_line, drop_cap, drop_cap_side
     attr_accessor :left_indent, :right_indent,  :text_alignment, :starting_position, :first_line_indent
@@ -26,14 +25,13 @@ module RLayout
     def	initialize(options={})
       options[:layout_direction]  = 'horizontal'
       options[:fill_color]        = options.fetch(:line_color, 'clear')
-      options[:stroke_width]      = 1
-      options[:stroke_color]      = 'black'
-      options[:fill_color]        = 'gray'
-      options[:fill_color]        = 'yellow'
+      # options[:stroke_width]      = 1
+      # options[:stroke_color]      = 'black'
+      # options[:fill_color]        = 'gray'
+      # options[:fill_color]        = 'yellow'
       @space_width                = options[:space_width] || 7
       @char_half_width_cushion    = @space_width/3
       options[:right_margin]      = 2 
-      options[:stroke_width] = 1.0
 
       super
       @content_source = options[:content_source]
@@ -53,7 +51,7 @@ module RLayout
       @text_alignment   = options[:text_alignment] if options[:text_alignment]
       @debug            = options[:debug]
       @graphics         = options[:tokens] || []
-      @starting_position = @left_inset || 0
+      @starting_position = @left_indent || 0
       @stroke_width     = 1
       @text_area        = [@x, @y, @width, @height]
       @room             = @width
@@ -139,12 +137,6 @@ module RLayout
         @parent.parent
       else
         nil
-      end
-    end
-
-    def document
-      if page
-        @page.parent
       end
     end
 
@@ -260,7 +252,7 @@ module RLayout
       if @para_style
         @font             = @para_style[:font]
         @font_size        = @para_style[:font_size]
-        @space_width      = @para_style[:space_width] || 3.0
+        @space_width      = @para_style[:space_width] || @font_size/3.0
         @text_alignment   = @para_style[:text_alignment] || "left"
         @v_offset         = @para_style[:v_offset] || 0
         @first_line_indent = @para_style[:first_line_indent] || 0
@@ -273,27 +265,38 @@ module RLayout
       @line_type = line_type
       if @line_type == 'first_line'
         @starting_position  = @first_line_indent
-        @first_line_width   = @text_area[2] - @first_line_indent - @right_indent
+        @text_area[0] = @starting_position
+        if overlap
+          @first_line_width   = @text_area[2] - @first_line_indent - @right_indent
+        else 
+          @first_line_width  = @width - @first_line_indent - @right_indent
+        end
         @text_area[2] = @first_line_width
         @room = @text_area[2]
       else
-        @starting_position  = para_style[:left_indent] || 0
-        @middle_line_width  = @text_area[2] - @left_indent - @right_indent
-        @text_area[2]    = @middle_line_width
+        @starting_position  = @left_indent || 0
+        @text_area[0] = @starting_position
+        if overlap
+          @middle_line_width  = @text_area[2] - @left_indent - @right_indent
+        else 
+          @middle_line_width  = @width - @left_indent - @right_indent
+        end
+        @text_area[2] = @middle_line_width
         @room = @text_area[2]
       end
 
-      if @text_alignment == "left" || @text_alignment == "justify"        
-        @first_line_width   = @text_area[2] - @first_line_indent - @right_indent
-        @middle_line_width  = @text_area[2] - @left_indent - @right_indent
-      else
-        @first_line_width   = @text_area[2]
-        @middle_line_width  = @text_area[2]
-        if para_style[:left_indent] && para_style[:right_indent]
-          @first_line_width   = @text_area[2] - para_style[:left_indent] - para_style[:right_indent]
-          @middle_line_width  = @text_area[2] - para_style[:left_indent] - para_style[:right_indent]
-        end
-      end
+      # TODO why this ???
+      # if @text_alignment == "left" || @text_alignment == "justify"        
+      #   @first_line_width   = @text_area[2] - @first_line_indent - @right_indent
+      #   @middle_line_width  = @text_area[2] - @left_indent - @right_indent
+      # else
+      #   @first_line_width   = @text_area[2]
+      #   @middle_line_width  = @text_area[2]
+      #   if para_style[:left_indent] && para_style[:right_indent]
+      #     @first_line_width   = @text_area[2] - @left_indent - @right_indent
+      #     @middle_line_width  = @text_area[2] - @left_indent - @right_indent
+      #   end
+      # end
     end
 
     def add_footnote_description_to_column(token)
@@ -303,7 +306,6 @@ module RLayout
     # place tokens in the line, given tokens array
     # return left over tokens array if not all tokens are layed out
     # return false if no leftvver tokens
-    # CharHalfWidthCushion = 5.0
 
     # TODO reduce room by first_line_indent
     # if line is first_line 
@@ -311,8 +313,8 @@ module RLayout
       return if token.nil?
       return true if token.string == ""
       return false if @room <= 0
-      
-      if (@room + CharHalfWidthCushion >= token.width)
+      half_space_width = @space_width/2.0
+      if (@room + half_space_width >= token.width)
         token.parent = self
         @graphics << token
         @room -= token.width
@@ -325,15 +327,10 @@ module RLayout
         return false if @text_alignment != 'justify'
         return false if options[:do_not_break]
         return false if token.has_footnote_marker
-        if @graphics.length < 4
-          options[:char_half_width_cushion] = @graphics.length
-        elsif @graphics.length <= 5
-          # puts "in @graphics.length <= 5"
-          options[:char_half_width_cushion] = @graphics.length
-        else
-          options[:char_half_width_cushion] = @graphics.length + 3
-        end
-        if @room + options[:char_half_width_cushion] >= token.width
+
+        min_space_room = 3*@graphics.length
+        # if @room + options[:char_half_width_cushion] >= token.width
+        if (text_area[2] - token_width_sum - min_space_room) >= token.width
           token.parent = self
           @graphics << token
           @room -= token.width
@@ -378,20 +375,22 @@ module RLayout
       @layed_out_line == true
     end
 
+    def rect
+      [@x, @y, @width, @height]
+    end
+
     def token_width_sum
       @graphics.map{|t| t.width}.reduce(0, :+)
     end
 
-    def rect
-      [@x, @y, @width, @height]
+    def total_space_width 
+      (@graphics.length - 1)*@space_width
     end
 
     def align_tokens
       return if @graphics.length <= 0
       x  = @starting_position
-      @total_token_width = token_width_sum
-      @total_space_width = (@graphics.length - 1)*@space_width
-      leftover_room  = @text_area[2] - (@total_token_width + @total_space_width)
+      leftover_room  = @text_area[2] - (token_width_sum + total_space_width)
       # when column @inset > 0,  @text_area[0] is not 0
       # so handle it by @text_area[0] - @x
       @starting_position += @text_area[0] - @x if @text_area[0] - @x != 0
@@ -400,13 +399,21 @@ module RLayout
       when 'justify'
         # in justifed paragraph, we have to treat the last line as left aligned.
         x_position = @starting_position
-        if @line_type == "last_line" && leftover_room > 0
+        if @line_type == "first_line"
+          x_position = @first_line_indent
+          @space_width = (@text_area[2] - 1  - token_width_sum)/(@graphics.length - 1)
           @graphics.each do |token|
             token.x = x_position
             x_position += token.width + @space_width
           end
+        elsif @line_type == "last_line" 
+            @graphics.each do |token|
+            token.x = x_position
+            x_position += token.width + @space_width
+          end
         else
-          @space_width = (@text_area[2] - 1  - @total_token_width)/(@graphics.length - 1)
+          x_position = @left_indent
+          @space_width = (@text_area[2] - 1  - token_width_sum)/(@graphics.length - 1)
           @graphics.each do |token|
             token.x = x_position
             x_position += token.width + @space_width
@@ -420,7 +427,7 @@ module RLayout
         end
       when 'center'
         shift = leftover_room/2.0
-        x_position = @starting_position + shift
+        x_position = @left_indent + shift
         @graphics.each do |token|
           token.x = x_position
           x_position += token.width + @space_width

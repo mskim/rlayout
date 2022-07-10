@@ -22,7 +22,7 @@ module RLayout
       @space_width      = @parent.space_width
       @text_alignment   = @parent.para_style[:text_alignment]
       @starting_position = @left_inset || 0
-      @stroke_width     = 1
+      # @stroke_width     = 1
       @text_area        = [@x, @y, @width, @height]
       self
     end
@@ -85,7 +85,6 @@ module RLayout
     # place tokens in the line, given tokens array
     # return loft over tokens array if not all tokens are layed out
     # return false if no leftvver tokens
-    #CharHalfWidthCushion = 5.0
     def place_token(token, options={})
       if room + CharHalfWidthCushion >= token.width
         # place token in line.
