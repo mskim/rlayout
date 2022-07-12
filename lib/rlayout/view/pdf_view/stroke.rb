@@ -2,6 +2,7 @@ module RLayout
 class Graphic
   attr_accessor :line_position, :stroke_rect
   def draw_stroke(canvas)
+    # binding.pry if self.class == RLayout::Text
     if @stroke.color.class == String
       if @stroke.color == 'clear'
         @stroke.color = [0.0, 0.0, 0.0, 0.0]
@@ -69,6 +70,8 @@ class Graphic
   end
 
   def draw_sides(canvas)
+    # binding.pry if self.class == RLayout::Text
+
     rect = stroke_rect
     flipped = flipped_origin
     if @stroke[:type]==nil

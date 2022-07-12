@@ -68,7 +68,11 @@ module RLayout
       @font_wrapper =  @style_object.font
       @font_size = @style_object.font_size
       glyphs        = @font_wrapper.decode_utf8(@text_string)
-      @string_width = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
+      if glyphs.length == 0
+        @string_width = 0 
+      else
+        @string_width = glyphs.map{|g| @style_object.scaled_item_width(g)}.reduce(:+)
+      end
     end
 
     # TODO: it only applies to center alignment
@@ -141,7 +145,7 @@ module RLayout
           # TODO fix this 
           # why is @string_width different from initial set_string_width
           # may style_object is diffent?
-          set_string_width
+          set_string_width unless @string_width
           @x_offset += @width - @string_width
           # @x_offset = @left_margin + @width - @string_width
         else
@@ -161,7 +165,7 @@ module RLayout
           canvas.fill_color(RLayout::color_from_string(@font_color))
         end
         # canvas.text(@text_string, at: [@x_offset, @y_offset + @font_size/2])
-        canvas.text(@text_string, at: [@x_offset, @y_offset])
+        canvas.text(@text_string, at: [@x_offset, @y_offset - @font_size])
       end
     end
 

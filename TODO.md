@@ -29,19 +29,22 @@
   - line_type
   - arrow_type
 
-### 2022_07_10
-  - space_before_in_lines, space_after_in_lines
-    - space_before_in_line  # body_lines
-    - space_before # points
-    - space_after_in_line  # body_lines
-    - space_after # points
-
-  - add heading_quote 제목인용
-  - add quote 본문인용문  > 
-  - body respect_new_line: true
+### 2022_07_12
 
   - fix Text draw_text position lower drawing position by font_size
   - {=}?? or implement it with stroke_sides
+  - ruby spec/book/isbn_spec.rb
+  - styleable
+    - move rlayout_rb into defaults
+    - document_options:
+    - document_layout: |
+      RLayout:RDocument.new(document_options)
+    - document_layout: |
+      RLayout:CoverPage.new(document_options) do
+        heading(0,0,4,6)
+      end
+    -  respect_new_line_in_body: true
+
   - otf to ttf font
 
   - put layout_rb info as hash into default.yml
@@ -51,6 +54,18 @@
     - heading_height_type
     - heading_height_in_lines
     - toc_members ['h1', 'h2']
+### 2022_07_10
+  - space_before_in_lines, space_after_in_lines
+    - space_before_in_line  # body_lines
+    - space_before # points
+    - space_after_in_line  # body_lines
+    - space_after # points
+
+  - add heading_quote 제목인용
+  - add quote 본문인용문  > 
+
+
+
 ### 2022_07_09
   - fix r_paragraph 
     - indent

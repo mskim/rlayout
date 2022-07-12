@@ -14,7 +14,8 @@ module RLayout
       @book_info = options[:book_info]
       @document_path = options[:document_path]
       @style_guide_folder = options[:style_guide_folder] || @document_path
-      @output_path = @document_path + "/output.pdf"
+      # @output_path = @document_path + "/output.pdf"
+      @output_path = @document_path + "/chapter.pdf"
       @starting_page_number = options[:starting_page_number] || 1
       @page_pdf = options[:page_pdf] || true
       @width = options[:width]
@@ -61,6 +62,8 @@ module RLayout
         line_options[:height]  = line_height
         line_options[:parent] = @document
         line_options[:font_size] = 12
+        line_options[:text_fit_type] = 'fit_box_to_text'
+
         if line_text =~/{}$/
           line_options[:stroke_sides] = [0,1,0,1]
           line_options[:stroke_width] = 0.3
