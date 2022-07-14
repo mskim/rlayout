@@ -32,7 +32,9 @@ module RLayout
       @space_width                = options[:space_width] || 7
       @char_half_width_cushion    = @space_width/3
       options[:right_margin]      = 2 
-
+      @left_indent = 0 unless options[:left_indent] 
+      @right_indent = 0 unless options[:right_indent] 
+      
       super
       @content_source = options[:content_source]
       if options[:style_name]
