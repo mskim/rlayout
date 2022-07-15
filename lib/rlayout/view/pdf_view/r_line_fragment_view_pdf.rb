@@ -1,5 +1,11 @@
 module RLayout
   class RLineFragment < Container
+
+    def has_latex_token?
+      result = @graphics.select{|g| g.class == RLayout::LatexToken}
+      result.length > 0
+    end
+
     def draw_pdf(canvas, options={})
       return unless @graphics.length > 0
       @pdf_doc = parent.pdf_doc
@@ -30,7 +36,9 @@ module RLayout
         end
       elsif @style_name
         canvas.save_graphics_state do
-          if has_mixed_style_token?
+          if  has_latex_token?
+            draw_mixed_style_tokens(canvas)
+          elsif has_mixed_style_token?
             draw_mixed_style_tokens(canvas)
           else
             @style_service.set_canvas_text_style(canvas, @style_name, adjust_size: @adjust_size)
@@ -97,8 +105,9 @@ module RLayout
           canvas.text_rise(0)
           if token.post_superscript_text
             canvas.text(token.post_superscript_text, at:[@start_x + token.x + token.base_width + token.superscript_width , @start_y - token.height])
-
           end
+        # elsif  token.class == RLayout::LatexToken
+        #   puts "drawing #{t.image_path}" 
         else
           canvas.text(token.string, at:[@start_x + token.x, @start_y - token.height])
         end
@@ -109,9 +118,13 @@ module RLayout
     def draw_mixed_style_tokens(canvas)
       token = @graphics.first
       current_style_name = token.style_name
+      #TODO why is current_style_name nil?
+      current_style_name  = 'body' unless current_style_name
       @style_service.set_canvas_text_style(canvas, current_style_name)
       @graphics.each do |token|
-        if token.class == RLayout::Rectangle
+        if token.class == RLayout::LatexToken
+          canvas.image(token.image_path, at: [@start_x + token.x, @start_y - token.height], width: token.width, height: token.height)
+        elsif token.class == RLayout::Rectangle
           token.x += @start_x 
           token.draw_pdf(canvas) # draw token_union_rect
         elsif token.style_name != current_style_name

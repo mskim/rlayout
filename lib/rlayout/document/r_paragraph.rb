@@ -19,7 +19,7 @@
 # RParagraph is used in middle to long document.
 
 # announcement paragragraph
-# line takes up 2 or multples of body_line_height
+# line takes up 2 or multiples of body_line_height
 # it has line space of 1 before
 
 # ruby_pdf supported attributes
@@ -51,6 +51,10 @@
 module RLayout
   #TODO
   # tab stop
+
+  EMPASIS_BOLD    = /(\*\*.*?\*\*)/ # **some bold string**
+  EMPASIS_ITALIC    = /(\*\*.*?\*\*)/ # **some italic string**
+
   EMPASIS_STRONG    = /(\*\*.*?\*\*)/ # **some strong string**
   EMPASIS_DIAMOND   = /(\*.*?\*)/    # *empais diamond string*
   EMPASIS_ARROW     = /(\*▲.*?\*)/    # *empais downarrow string*
@@ -77,6 +81,18 @@ module RLayout
   #
   # [^3]: paragraph means a collection of words.
   # 
+
+  MATH_STRING = /\$.*?\$/
+  # has_math_string
+  # this has math $\frac{a}{b}$ token.
+
+  RLAYOUT_STRING = /{{.*?}}/
+  # has_erb_string
+  # this has rlyout {{ "my_string".ruby("stop_string") }} token.
+  # this has rlyout {{ "my_string".each_top_char("*") }} token.
+  # this has rlyout {{ "my_string".bottom("bottom_string") }} token.
+  # this has rlyout {{ "my_string".box") }} token.
+
   class RParagraph
     attr_reader :markup, :move_up_if_room
     attr_reader :para_string, :style_name, :para_style, :space_width
@@ -89,6 +105,8 @@ module RLayout
     attr_reader :style_object, :style_object_bold, :style_object_itaic
     attr_reader :extra_info
     attr_reader :has_footnote_marker, :footnote_marker_numbers
+    attr_reader :has_math_string, :math_strings
+
     attr_reader :drap_cap_object
     attr_reader :drop_lines, :drop_char_count
     def initialize(options={})
@@ -148,6 +166,9 @@ module RLayout
         @footnote_marker_numbers = @para_string.scan(FOOTNOTE_MARKER).flatten
       end
 
+      # check if there is any math_token $math$
+      check_for_math_string
+
 
       # TODO: emphsiss italic
       # TODO: fix this does not handle cases when
@@ -173,6 +194,53 @@ module RLayout
       end
     end
 
+    def escape_math_string(math)
+      @escaped_string   = math.gsub("\\","!") 
+      # @escaped_string   = Shellwords.escape(@escaped_string)   
+      @escaped_string   = @escaped_string.gsub(" ","%") 
+    end
+
+    def check_for_math_string
+      if @para_string =~MATH_STRING
+        @has_math_string = true
+        @math_strings = @para_string.scan(MATH_STRING).flatten
+        @math_strings.each do |math|
+          @para_string.gsub!(math, escape_math_string(math))
+        end
+      end
+    end
+
+    # merge emphsis strings into single string by replacing
+    # space char with "%" templarily, to make it easy for parsing.
+    # **this is bold** => **this%is%bold**
+    # __this is bold__ => __this%is%bold__
+    # and when generating tokens, this string is reverted back into word original string.
+    # this seem lots simpler to parse tokens.  
+    def merge_emphsis_strings_into_one(string)
+      # @escaped_string   = Shellwords.escape(@escaped_string)   
+      @escaped_string   = @escaped_string.gsub(" ","%") 
+    end
+
+    def check_for_bold_string
+      if @para_string =~MATH_STRING
+        @has_math_string = true
+        @math_strings = @para_string.scan(MATH_STRING).flatten
+        @emphasis_strings.each do |emps|
+          @para_string.gsub!(emps, merge_emphsis_strings_into_one(emps))
+        end
+      end
+    end
+
+    def check_for_itlic_string
+      if @para_string =~MATH_STRING
+        @has_math_string = true
+        @math_strings = @para_string.scan(MATH_STRING).flatten
+        @math_strings.each do |math|
+          @para_string.gsub!(math, escape_math_string(math))
+        end
+      end
+    end
+
     def create_plain_tokens(para_string)
       # parse for tab first
       return unless para_string
@@ -180,11 +248,20 @@ module RLayout
       @style_object = @current_style_service.style_object(@style_name)
       para_string.split(" ").each do |token_string|
         next unless token_string
-        options = {}
-        options[:string]      = token_string
-        options[:height]      = @style_object.font_size
-        options[:style_object] = @style_object
-        @tokens << RLayout::RTextToken.new(options)
+        if token_string =~MATH_STRING
+          options = {}
+          # options[:escaped_string] = token_string
+          latex_string = token_string.gsub("!", "\\")
+          options[:latex_string] = latex_string.gsub("%", " ")
+          options[:height] = @style_object.font_size
+          @tokens << RLayout::LatexToken.new(options)
+        else
+          options = {}
+          options[:string]      = token_string
+          options[:height]      = @style_object.font_size
+          options[:style_object] = @style_object
+          @tokens << RLayout::RTextToken.new(options)
+        end
       end
     end
 

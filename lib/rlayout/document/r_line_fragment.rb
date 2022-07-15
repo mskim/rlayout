@@ -32,9 +32,8 @@ module RLayout
       @space_width                = options[:space_width] || 7
       @char_half_width_cushion    = @space_width/3
       options[:right_margin]      = 2 
-      @left_indent = 0 unless options[:left_indent] 
-      @right_indent = 0 unless options[:right_indent] 
-      
+      @left_indent = 0 unless options[:left_indent]
+      @right_indent = 0 unless options[:right_indent]
       super
       @content_source = options[:content_source]
       if options[:style_name]
@@ -313,7 +312,7 @@ module RLayout
     # if line is first_line 
     def place_token(token, options={})
       return if token.nil?
-      return true if token.string == ""
+      return true if token.class == RLayout::RTextToken && token.string == ""
       return false if @room <= 0
       half_space_width = @space_width/2.0
       if (@room + half_space_width >= token.width)
