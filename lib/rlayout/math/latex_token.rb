@@ -1,20 +1,23 @@
 
 module RLayout
   
-  class LatexToken < Graphic
+  class LatexToken < Image
     
     attr_accessor :latex_string, :escaped_string, :math_file_path, :math_image
-    attr_accessor :math_lib_path, :math_latex_path, :font_size
-    
+    attr_accessor :math_lib_path, :math_latex_path, :font_size, :token_type
+    attr_reader :has_footnote_marker, :style_name
+
     def initialize(options={})
-      @latex_string     = options[:latex_string]      
+      # @escaped_string = options[:escaped_string]
+      @latex_string     = options[:latex_string] 
       @font_size        = options.fetch(font_size, 10)
+      @token_type = 'math'
       #TODO
       # take care fo space char using Shellwords.escape
-      
       @escaped_string   = @latex_string.gsub("\\","!") 
-      # @escaped_string   = Shellwords.escape(@escaped_string)   
       @escaped_string   = @escaped_string.gsub(" ","")    
+      @escaped_string   = @escaped_string.gsub("$","")    
+      # @escaped_string   = Shellwords.escape(@escaped_string)   
       @math_lib_path    = "/Users/Shared/SoftwareLab/math/lib"
       @math_latex_path  = "/Users/Shared/SoftwareLab/math/latex"
       system("mkdir -p #{@math_lib_path}") unless File.directory?(@math_lib_path)
@@ -25,34 +28,40 @@ module RLayout
       else
         options[:image_path] = create_latex_pdf
       end
-      # set width and height
+      # TODO set width and height proportoin to height
+      math_pd_doc = HexaPDF::Document.open(@math_file_path)
+      options[:width] = math_pd_doc.pages.first.box.width
+      options[:height] = math_pd_doc.pages.first.box.height
+      # @height = math_pd_doc.pages.first.box.height
       super
       self
     end
-    
+
+    def string
+      @escaped_string
+    end
+
     def create_latex_pdf
+      # single quote version
+      latex_template=<<~EOF
+      \\documentclass[10]{article}
+      \\pagestyle{empty}
+      \\usepackage{amssymb,amsmath,amsfonts}
+      \\usepackage[utf8]{inputenc}
+      \\begin{document}
+        $<%= @latex_string %>$
+      \\end{document}
+      EOF
 
-# single quote version
-latex_template= <<EOF
-\\documentclass[10]{article}
-\\pagenumbering{gobble}
-\\usepackage{amssymb}
-\\usepackage{amsmath}
-\\usepackage[utf8]{inputenc}
-\\begin{document}
-  $<%= @latex_string %>$
-\\end{document}
-EOF
+      latex_template =<<~EOF
+      \\documentclass[10]{article}
+      \\pagenumbering{gobble}
+      \\usepackage{amsmath}
+      \\begin{document}
+        $<%= @latex_string %>$
+      \\end{document}
 
-latex_template =<<EOF
-\\documentclass[10]{article}
-\\pagenumbering{gobble}
-\\usepackage{amsmath}
-\\begin{document}
-  $<%= @latex_string %>$
-\\end{document}
-
-EOF
+      EOF
 
       erb       = ERB.new(latex_template)
       template  = erb.result(binding)
@@ -63,7 +72,7 @@ EOF
       tex_file_base_name = File.basename(tex_file)
       base_name = File.basename(pdf_file)
       lib_file  = @math_lib_path + "/#{base_name}"
-      system("cd #{@math_latex_path} && /usr/local/texlive/2015/bin/universal-darwin/pdflatex #{tex_file_base_name}")
+      system("cd #{@math_latex_path} && pdflatex #{tex_file_base_name}")
       system("pdfcrop #{pdf_file}  #{lib_file}")
       lib_file
     end

@@ -29,6 +29,9 @@
   - line_type
   - arrow_type
 
+### 2022_07_13
+  - add math_token
+
 ### 2022_07_12
 
   - fix Text draw_text position lower drawing position by font_size

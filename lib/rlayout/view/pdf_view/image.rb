@@ -74,7 +74,7 @@ module RLayout
           canvas.clip_path(:nonzero)
           canvas.end_path
           canvas.image(@image_path, at: image_origin, width: @width, height: @height)
-          canvas.image(@image_path, at: image_origin, width: @width, height: @height)
+          # canvas.image(@image_path, at: image_origin, width: @width, height: @height)
           canvas.restore_graphics_state
         else
           canvas.image(@image_path, at: image_origin, width: @width, height: @height)

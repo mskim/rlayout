@@ -92,7 +92,6 @@ module RLayout
     def draw_text(canvas)
       if @text_string.length > 0
         # canvas.fill_color('red')
-        # binding.pry if @text_string =~ /녹색의/
         if canvas.font
           canvas_font_name = canvas.font.wrapped_font.font_name
           canvas_font_size  = canvas.font_size

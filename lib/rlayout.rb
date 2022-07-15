@@ -214,7 +214,7 @@ require File.dirname(__FILE__) + "/rlayout/svg/text"
 
 # require File.dirname(__FILE__) + "/rlayout/math/eqn"
 # require File.dirname(__FILE__) + "/rlayout/math/math_token"
-# require File.dirname(__FILE__) + "/rlayout/math/latex_math"
+require File.dirname(__FILE__) + "/rlayout/math/latex_token"
 
 require File.dirname(__FILE__) + "/rlayout/deco_text/deco_string"
 require File.dirname(__FILE__) + "/rlayout/deco_text/deco_char"
