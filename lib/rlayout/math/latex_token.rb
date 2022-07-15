@@ -15,7 +15,9 @@ module RLayout
       #TODO
       # take care fo space char using Shellwords.escape
       @escaped_string   = @latex_string.gsub("\\","!") 
-      @escaped_string   = @escaped_string.gsub(" ","")    
+      # @escaped_string   = @escaped_string.gsub(" ","")
+      # -sp- is used to represent space
+      @escaped_string   = @escaped_string.gsub(" ","-sp-")    
       @escaped_string   = @escaped_string.gsub("$","")    
       # @escaped_string   = Shellwords.escape(@escaped_string)   
       @math_lib_path    = "/Users/Shared/SoftwareLab/math/lib"
@@ -39,6 +41,11 @@ module RLayout
 
     def string
       @escaped_string
+    end
+
+    def self.escaped_string_to_latex(escaped_string)
+      escaped_string = escaped_string.gsub!("!", "\\")
+      escaped_string = escaped_string.gsub!("-sp-", " ")
     end
 
     def create_latex_pdf

@@ -52,8 +52,8 @@ module RLayout
   #TODO
   # tab stop
 
-  EMPASIS_BOLD    = /(\*\*.*?\*\*)/ # **some bold string**
-  EMPASIS_ITALIC    = /(\*\*.*?\*\*)/ # **some italic string**
+  BOLD_STRING    = /(\*\*.*?\*\*)/ # **some bold string**
+  ITALIC_STRING    = /(\*\*.*?\*\*)/ # **some italic string**
 
   EMPASIS_STRONG    = /(\*\*.*?\*\*)/ # **some strong string**
   EMPASIS_DIAMOND   = /(\*.*?\*)/    # *empais diamond string*
@@ -102,10 +102,12 @@ module RLayout
     attr_accessor :tokens, :para_lines, :pdf_doc
     attr_reader :para_rect
     attr_reader :float_info 
-    attr_reader :style_object, :style_object_bold, :style_object_itaic
+    attr_reader :style_object, :style_object_bold, :style_object_italic
     attr_reader :extra_info
-    attr_reader :has_footnote_marker, :footnote_marker_numbers
-    attr_reader :has_math_string, :math_strings
+    attr_reader :has_footnote_marker, :footnote_markers
+    attr_reader :has_math_string
+    attr_reader :has_bold_string
+    attr_reader :has_itlic_string
 
     attr_reader :drap_cap_object
     attr_reader :drop_lines, :drop_char_count
@@ -160,31 +162,26 @@ module RLayout
       # TODO check if there is a space between work and footnote_marker like word [^1]
       # if so delte the space between them
 
-      # collect all footnote marker numbers into @footnote_marker_numbers array
+      # collect all footnote marker numbers into @footnote_markers array
       if @para_string =~FOOTNOTE_MARKER
         @has_footnote_marker = true
-        @footnote_marker_numbers = @para_string.scan(FOOTNOTE_MARKER).flatten
+        @footnote_markers = @para_string.scan(FOOTNOTE_MARKER).flatten
       end
 
-      # check if there is any math_token $math$
+      # check if there is any bold, italic, or math strings,
+      # the tricky part is that they may contain space characters within the range, 
+      # making it tricky for creating multiple token from series of words.
+      # if so, one of the solution is to first merge all the word as a single string and split it back to word.
+      # merge string as single string by replacing space with "<sp>" for easy parsing.
       check_for_math_string
-
-
-      # TODO: emphsiss italic
-      # TODO: fix this does not handle cases when
-      # mutiple emphsiss are present in a paragraph
-      if @para_string =~EMPASIS_STRONG
-        create_tokens_with_emphasis_strong(@para_string)
-      elsif @para_string =~EMPASIS_ARROW
-        create_tokens_with_emphasis_arrow(@para_string)
-      elsif @para_string =~EMPASIS_DIAMOND
-        create_tokens_with_emphasis_diamond(@para_string)
-      else
-        # all tokens are plaine token
-        create_plain_tokens(@para_string)
-      end
+      # check if there is any bold_token **bold**, if so merge string as single without space
+      check_for_bold_string
+      # check if there is any italic_token *italic*, if so merge string as single without space
+      check_for_italic_string
+      # create tokens from merged @para_string
+      create_tokens_with_merged_strings(@para_string)
       token_heights_are_equal = true
-      return unless  @tokens.length > 0
+      # return unless  @tokens.length > 0
       tallest_token_height = @tokens.first.height
       @tokens.each do |token|
         if token.height > tallest_token_height
@@ -197,51 +194,50 @@ module RLayout
     def escape_math_string(math)
       @escaped_string   = math.gsub("\\","!") 
       # @escaped_string   = Shellwords.escape(@escaped_string)   
-      @escaped_string   = @escaped_string.gsub(" ","%") 
+      @escaped_string   = @escaped_string.gsub(" ","<sp>") 
     end
 
     def check_for_math_string
       if @para_string =~MATH_STRING
         @has_math_string = true
-        @math_strings = @para_string.scan(MATH_STRING).flatten
-        @math_strings.each do |math|
+        math_strings = @para_string.scan(MATH_STRING).flatten
+        math_strings.each do |math|
           @para_string.gsub!(math, escape_math_string(math))
+        end
+      end
+    end
+
+    def check_for_bold_string
+      if @para_string =~BOLD_STRING
+        @has_bold_string = true
+        bold_strings = @para_string.scan(BOLD_STRING).flatten
+        bold_strings.each do |bold|
+          @para_string.gsub!(bold, merge_emphsis_strings_into_one(bold))
+        end
+      end
+    end
+
+    def check_for_italic_string
+      if @para_string =~ITALIC_STRING
+        @has_math_string = true
+        italic_strings = @para_string.scan(ITALIC_STRING).flatten
+        italic_strings.each do |italic|
+          @para_string.gsub!(italic, merge_emphsis_strings_into_one(italic))
         end
       end
     end
 
     # merge emphsis strings into single string by replacing
-    # space char with "%" templarily, to make it easy for parsing.
-    # **this is bold** => **this%is%bold**
-    # __this is bold__ => __this%is%bold__
+    # space char with "<sp>" templarily, to make it easy for parsing.
+    # **this is bold** => **this<sp>is<sp>bold**
+    # __this is bold__ => __this<sp>is<sp>bold__
     # and when generating tokens, this string is reverted back into word original string.
     # this seem lots simpler to parse tokens.  
     def merge_emphsis_strings_into_one(string)
-      # @escaped_string   = Shellwords.escape(@escaped_string)   
-      @escaped_string   = @escaped_string.gsub(" ","%") 
+      string.gsub(" ","<sp>") 
     end
 
-    def check_for_bold_string
-      if @para_string =~MATH_STRING
-        @has_math_string = true
-        @math_strings = @para_string.scan(MATH_STRING).flatten
-        @emphasis_strings.each do |emps|
-          @para_string.gsub!(emps, merge_emphsis_strings_into_one(emps))
-        end
-      end
-    end
-
-    def check_for_itlic_string
-      if @para_string =~MATH_STRING
-        @has_math_string = true
-        @math_strings = @para_string.scan(MATH_STRING).flatten
-        @math_strings.each do |math|
-          @para_string.gsub!(math, escape_math_string(math))
-        end
-      end
-    end
-
-    def create_plain_tokens(para_string)
+    def create_tokens_with_merged_strings(para_string)
       # parse for tab first
       return unless para_string
       @current_style_service = RLayout::StyleService.shared_style_service
@@ -250,13 +246,29 @@ module RLayout
         next unless token_string
         if token_string =~MATH_STRING
           options = {}
+          options[:token_type]  = 'math'
           # options[:escaped_string] = token_string
           latex_string = token_string.gsub("!", "\\")
-          options[:latex_string] = latex_string.gsub("%", " ")
+          options[:latex_string] = latex_string.gsub("<sp>", " ")
           options[:height] = @style_object.font_size
           @tokens << RLayout::LatexToken.new(options)
+        elsif token_string =~BOLD_STRING
+          options = {}
+          options[:token_type] = 'bold'
+          options[:string] = token_string
+          options[:height] = @style_object.font_size
+          options[:style_object] = @style_object
+          @tokens << RLayout::RTextToken.new(options)
+        elsif token_string =~ITALIC_STRING
+          options = {}
+          options[:token_type]  = 'italic'
+          options[:string] = token_string
+          options[:height] = @style_object.font_size
+          options[:style_object] = @style_object
+          @tokens << RLayout::RTextToken.new(options)
         else
           options = {}
+          options[:token_type]  = 'plain'
           options[:string]      = token_string
           options[:height]      = @style_object.font_size
           options[:style_object] = @style_object
@@ -265,111 +277,111 @@ module RLayout
       end
     end
 
-    def create_tokens_with_emphasis_strong(para_string)
-      para_string.chomp!
-      para_string.sub!(/^\s*/, "")
-      split_array = para_string.split(EMPASIS_STRONG)
-      # splited array contains strong content
-      split_array.each do |token_group|
-        if token_group =~EMPASIS_STRONG
-          token_group.gsub!("**", "")
-          # get font and size
-          current_style = RLayout::StyleService.shared_style_service.current_style
-          style_hash = current_style['body_gothic'] #'strong_emphasis'
-          @emphasis_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-          @current_style_service = RLayout::StyleService.shared_style_service
-          @style_object = @current_style_service.style_object(@style_name) 
-          tokens_array = token_group.split(" ")
-          tokens_array.each do |token_string|
-            emphasis_style              = {}
-            emphasis_style[:string]     = token_string
-            emphasis_style[:height]     = @emphasis_para_style[:font_size]
-            token_options[:style_object] = @style_object
-            @tokens << RLayout::RTextToken.new(emphasis_style)
-          end
-        else
-          # line text with just noral text tokens
-          create_plain_tokens(token_group)
-        end
-      end
-    end
+    # def create_tokens_with_emphasis_strong(para_string)
+    #   para_string.chomp!
+    #   para_string.sub!(/^\s*/, "")
+    #   split_array = para_string.split(EMPASIS_STRONG)
+    #   # splited array contains strong content
+    #   split_array.each do |token_group|
+    #     if token_group =~EMPASIS_STRONG
+    #       token_group.gsub!("**", "")
+    #       # get font and size
+    #       current_style = RLayout::StyleService.shared_style_service.current_style
+    #       style_hash = current_style['body_gothic'] #'strong_emphasis'
+    #       @emphasis_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+    #       @current_style_service = RLayout::StyleService.shared_style_service
+    #       @style_object = @current_style_service.style_object(@style_name) 
+    #       tokens_array = token_group.split(" ")
+    #       tokens_array.each do |token_string|
+    #         emphasis_style              = {}
+    #         emphasis_style[:string]     = token_string
+    #         emphasis_style[:height]     = @emphasis_para_style[:font_size]
+    #         token_options[:style_object] = @style_object
+    #         @tokens << RLayout::RTextToken.new(emphasis_style)
+    #       end
+    #     else
+    #       # line text with just noral text tokens
+    #       create_plain_tokens(token_group)
+    #     end
+    #   end
+    # end
 
-    def create_tokens_with_emphasis_diamond(para_string)
-      para_string.chomp!
-      para_string.sub!(/^\s*/, "")
-      split_array = para_string.split(EMPASIS_DIAMOND)
-      # splited array contains strong content
-      split_array.each do |token_group|
-        if token_group =~EMPASIS_DIAMOND
-          token_group.gsub!("*", "")
-          # get font and size
-          if token_group =~ /◆/
-            token_group = token_group + "="
-          else
-            token_group.strip!
-            token_group = "◆" + token_group + " ="
-          end
-          current_style = RLayout::StyleService.shared_style_service.current_style
-          style_hash = current_style['body_gothic'] #'diamond_emphasis'
-          @diamond_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-          @current_style_service = RLayout::StyleService.shared_style_service
-          @style_object = @current_style_service.style_object(@style_name) 
-          tokens_array = token_group.split(" ")
-          tokens_array.each do |token_string|
-            emphasis_style              = {}
-            emphasis_style[:string]     = token_string
-            # emphasis_style[:style_name] = 'body_gothic'
-            # emphasis_style[:para_style] = @diamond_para_style
-            emphasis_style[:height]     = @diamond_para_style[:font_size]
-            emphasis_style[:token_type] = 'diamond_emphasis'
-            token_options[:style_object] = @style_object
-            @tokens << RLayout::RTextToken.new(emphasis_style)
-          end
-        else
-          # line text with just noral text tokens
-          # puts "token_group for plain: #{token_group}"
-          create_plain_tokens(token_group)
-        end
-      end
-    end
+    # def create_tokens_with_emphasis_diamond(para_string)
+    #   para_string.chomp!
+    #   para_string.sub!(/^\s*/, "")
+    #   split_array = para_string.split(EMPASIS_DIAMOND)
+    #   # splited array contains strong content
+    #   split_array.each do |token_group|
+    #     if token_group =~EMPASIS_DIAMOND
+    #       token_group.gsub!("*", "")
+    #       # get font and size
+    #       if token_group =~ /◆/
+    #         token_group = token_group + "="
+    #       else
+    #         token_group.strip!
+    #         token_group = "◆" + token_group + " ="
+    #       end
+    #       current_style = RLayout::StyleService.shared_style_service.current_style
+    #       style_hash = current_style['body_gothic'] #'diamond_emphasis'
+    #       @diamond_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+    #       @current_style_service = RLayout::StyleService.shared_style_service
+    #       @style_object = @current_style_service.style_object(@style_name) 
+    #       tokens_array = token_group.split(" ")
+    #       tokens_array.each do |token_string|
+    #         emphasis_style              = {}
+    #         emphasis_style[:string]     = token_string
+    #         # emphasis_style[:style_name] = 'body_gothic'
+    #         # emphasis_style[:para_style] = @diamond_para_style
+    #         emphasis_style[:height]     = @diamond_para_style[:font_size]
+    #         emphasis_style[:token_type] = 'diamond_emphasis'
+    #         token_options[:style_object] = @style_object
+    #         @tokens << RLayout::RTextToken.new(emphasis_style)
+    #       end
+    #     else
+    #       # line text with just noral text tokens
+    #       # puts "token_group for plain: #{token_group}"
+    #       create_plain_tokens(token_group)
+    #     end
+    #   end
+    # end
 
-    def create_tokens_with_emphasis_arrow(para_string)
-      para_string.chomp!
-      para_string.sub!(/^\s*/, "")
+    # def create_tokens_with_emphasis_arrow(para_string)
+    #   para_string.chomp!
+    #   para_string.sub!(/^\s*/, "")
 
-      split_array = para_string.split(EMPASIS_DIAMOND)
-      # splited array contains strong content
-      split_array.each do |token_group|
-        if token_group =~EMPASIS_ARROW
-          token_group.gsub!("*▲", "")
-          token_group.sub!("*", "")
-          # get font and size
-          unless token_group =~ />/
-            token_group.strip!
-            token_group = "▲" + token_group
-          end
-          current_style = RLayout::StyleService.shared_style_service.current_style
-          style_hash = current_style['body_gothic'] #'diamond_emphasis'
-          @diamond_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-          @current_style_service = RLayout::StyleService.shared_style_service
-          @style_object = @current_style_service.style_object(@style_name)
-          tokens_array = token_group.split(" ")
-          tokens_array.each do |token_string|
-            emphasis_style              = {}
-            emphasis_style[:string]     = token_string
-            # emphasis_style[:style_name] = 'body_gothic'
-            # emphasis_style[:para_style] = @diamond_para_style
-            emphasis_style[:height]     = @diamond_para_style[:font_size]
-            emphasis_style[:token_type] = 'diamond_emphasis'
-            token_options[:style_object] = @style_object
-            @tokens << RLayout::RTextToken.new(emphasis_style)
-          end
-        else
-          # line text with just noral text tokens
-          create_plain_tokens(token_group)
-        end
-      end
-    end
+    #   split_array = para_string.split(EMPASIS_DIAMOND)
+    #   # splited array contains strong content
+    #   split_array.each do |token_group|
+    #     if token_group =~EMPASIS_ARROW
+    #       token_group.gsub!("*▲", "")
+    #       token_group.sub!("*", "")
+    #       # get font and size
+    #       unless token_group =~ />/
+    #         token_group.strip!
+    #         token_group = "▲" + token_group
+    #       end
+    #       current_style = RLayout::StyleService.shared_style_service.current_style
+    #       style_hash = current_style['body_gothic'] #'diamond_emphasis'
+    #       @diamond_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
+    #       @current_style_service = RLayout::StyleService.shared_style_service
+    #       @style_object = @current_style_service.style_object(@style_name)
+    #       tokens_array = token_group.split(" ")
+    #       tokens_array.each do |token_string|
+    #         emphasis_style              = {}
+    #         emphasis_style[:string]     = token_string
+    #         # emphasis_style[:style_name] = 'body_gothic'
+    #         # emphasis_style[:para_style] = @diamond_para_style
+    #         emphasis_style[:height]     = @diamond_para_style[:font_size]
+    #         emphasis_style[:token_type] = 'diamond_emphasis'
+    #         token_options[:style_object] = @style_object
+    #         @tokens << RLayout::RTextToken.new(emphasis_style)
+    #       end
+    #     else
+    #       # line text with just noral text tokens
+    #       create_plain_tokens(token_group)
+    #     end
+    #   end
+    # end
 
     def is_member_of_body_blocks?(markup)
       body_block_member_markup =  %w[h1 h2  h3 h4  h5  h6 quote]

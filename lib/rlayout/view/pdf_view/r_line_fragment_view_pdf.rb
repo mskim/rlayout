@@ -36,16 +36,15 @@ module RLayout
         end
       elsif @style_name
         canvas.save_graphics_state do
-          if  has_latex_token?
-            draw_mixed_style_tokens(canvas)
-          elsif has_mixed_style_token?
+          # if  has_latex_token?
+          #   draw_mixed_style_tokens(canvas)
+          if has_mixed_style_token?
             draw_mixed_style_tokens(canvas)
           else
             @style_service.set_canvas_text_style(canvas, @style_name, adjust_size: @adjust_size)
             draw_tokens(canvas)
           end
         end
-
       # this is line from Text, where there is no @style_name 
       # a free format text.
       #  Where did @para_style come from???
@@ -81,7 +80,7 @@ module RLayout
       @graphics.shift if @graphics.first.class == RLayout::NewLineToken
       current_style_name = @graphics.first.style_name
       @graphics.each do |token|
-        next if token.class != RLayout::RTextToken
+        return true if token.class != RLayout::RTextToken
         return true if token.style_name != current_style_name
       end
       false

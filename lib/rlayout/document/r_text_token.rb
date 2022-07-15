@@ -20,6 +20,7 @@ module RLayout
     attr_reader :font_wrapper, :glyphs, :style_object, :has_missing_glyph
     attr_reader  :has_footnote_marker, :footnote_item_number
     attr_reader :base_width, :superscript_text, :superscript_width, :post_superscript_text, :post_superscript_width
+
     def initialize(options={})
       options[:fill_color] = options.fetch(:token_color, 'clear')
       options[:stroke_width] = 1
