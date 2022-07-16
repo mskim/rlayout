@@ -26,7 +26,6 @@ module RLayout
     def initialize(options={})
       @text_string                 = options.delete(:text_string)
       # parse for adjust_size pattern, which is at the end of string with {}
-      # if @text_string =~/\{\s*(-?\d)\s?\}\s?$/
       if @text_string =~/\{\s*(-*\+*\d)\s*\}\s*$/
         @adjust_size = $1.to_i
         @text_string = @text_string.sub(/\{\s?(-?\d)\s?\}\s?$/, "")
@@ -60,7 +59,6 @@ module RLayout
         end
         @style_object = @current_style_service.style_object(@style_name, adjust_size: @adjust_size)
         para_hash = @current_style_service.current_style[@style_name]
-
         if para_hash.class == String
           @para_style = YAML::load(para_hash)
           @text_alignment = @para_style[:text_alignment] || @para_style['text_alignment'] || 'left'
@@ -102,12 +100,10 @@ module RLayout
       unless @body_line_height
         @body_line_height == @line_height
       end
-      # @line_height            = @font_wrapper[:font_size] + @line_space
       @current_line           = RLineFragment.new(parent:self, contnet_source: self, x: @starting_x, y:@current_line_y,  width: @line_width, height:@line_height, style_name: @style_name, para_style: @para_style,  text_alignment: @text_alignment, space_width: @space_width, top_margin: @top_margin, adjust_size: adjust_size)
       @current_line_y         +=@current_line.height + @text_line_spacing
       create_tokens
       layout_tokens
-      # TODO
       ajust_height_as_body_height_multiples
       self
     end

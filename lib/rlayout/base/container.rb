@@ -27,11 +27,13 @@ module RLayout
     attr_accessor :layout_direction, :layout_space, :layout_align, :stack
     attr_accessor :draw_gutter_stroke, :gutter_stroke
     attr_accessor :floats, :document_path
+    attr_reader :grid  # [6,12]
 
     def initialize(options={}, &block)
       @graphics             = []
       @floats               = options.fetch(:floats, [])
       @stack                = options[:stack] if options[:stack]
+      @grid                 = options[grid] || [6,12]
       super
       layout_defaults_hash  = auto_layout_defaults
       @layout_direction     = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])
@@ -136,13 +138,21 @@ module RLayout
       h
     end
 
+    def grid_width
+      (@width - @left_margin - @right_margin - @left_inset - @right_inset)/@grid[0]
+    end
+
+    def grid_height
+      (@height - @top_margin - @bottom_margin - @top_inset - @bottom_inset)/@grid[1]
+    end
+
     def grid_rect_to_frame(grid_frame)
-      @grid_width = (@width - @left_margin - @right_margin)/@grid[0]
-      @grid_height = (@height - @top_margin - @bottom_margin)/@grid[1]
-      x = grid_frame[0]*@grid_width + @left_margin
-      y = grid_frame[1]*@grid_height + @top_margin
-      width = grid_frame[2]*@grid_width
-      height = grid_frame[3]*@grid_height
+      # @grid_width = (@width - @left_margin - @right_margin)/@grid[0]
+      # @grid_height = (@height - @top_margin - @bottom_margin)/@grid[1]
+      x = grid_frame[0]*grid_width + @left_margin + @left_inset
+      y = grid_frame[1]*grid_height + @top_margin + @top_inset
+      width = grid_frame[2]*grid_width
+      height = grid_frame[3]*grid_height
       [x,y,width,height]
     end
 

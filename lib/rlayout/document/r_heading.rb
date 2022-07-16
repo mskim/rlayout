@@ -255,9 +255,7 @@ module RLayout
       atts[:line_spacing]         = options.fetch(:fill_color, 0)
       atts[:space_before]         = options.fetch(:space_before, 0)
       atts[:space_after]         = options.fetch(:space_before, 0)
-
       atts[:parent]               = self
-      # @title_object               = Text.new(atts)
       @title_object               = TitleText.new(atts)
       @title_object.layout_length = @title_object.height
       @title_object

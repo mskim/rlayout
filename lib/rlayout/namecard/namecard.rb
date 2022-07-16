@@ -38,12 +38,13 @@ module RLayout
     attr_reader :company_hash
     attr_reader :qr_code
     attr_reader :project_path
+    attr_reader :logo_path
 
     def initialize(project_path, options={})
       @compnay_name = options[:compnay_name] || "our_company"
       @imposition = options[:imposition] || true
       @project_path  = project_path
-      # super
+      @logo_path = @project_path + "/logo.pdf"
       create_cards
       self
     end
@@ -143,9 +144,10 @@ module RLayout
     def default_front_layout_rb
       s=<<~EOF
       RLayout::CardPage.new(paper_size:'NAMECARD') do
-        logo(1,1,1,1)
-        personal(5,0,7,3)
-        company(2,3,10,3)
+        logo(0,0,1,2)
+        qrcode(0,4,2,5)
+        personal(2.5,0,3,4)
+        company(1.5,9,6,2)
       end
 
       EOF
@@ -154,9 +156,9 @@ module RLayout
     def default_back_layout_rb
       s=<<~EOF
       RLayout::CardPage.new(paper_size:'NAMECARD') do
-        logo(1,1,1,1)
-        personal(5,0,7,3)
-        company(2,3,10,3)
+        logo(0,0,1,2)
+        personal(2.5,0,7,3)
+        company(1.5,9,10,3)
       end
 
       EOF
@@ -360,7 +362,7 @@ module RLayout
       end
     end
 
-    def create_front_side(personal_info, company_info)
+    def create_front_side(personal_info, company_info)      
       front_card = eval(@front_layout_rb)
       if front_card.qrcode_object
         vcard_info = {}
@@ -388,6 +390,7 @@ module RLayout
       company_info_front[:address_2] = company_info[:address_2]
       front_card.company_info = company_info_front
       front_card.picture_path = @project_path + "/images/#{slug}"
+      front_card.logo_path = @logo_path
       front_card.set_content
       front_card
     end
@@ -405,7 +408,7 @@ module RLayout
         en_vcard_info[:address] = "#{@company_info[:en_address_1]} #{@company_info[:en_address_2]}"
         en_qrcode_path = qrcode_folder + "/#{slug}_en.png"
         generarate_vcard_qrcode(en_vcard_info, en_qrcode_path)
-        back_card.qrcode_object.image_path = qrcode_path
+        back_card.qrcode_object.image_path = qrcode_path if back_card.qrcode_object
       end
       back_card.text_style = @text_style
       personal_info_back = {}
@@ -420,6 +423,7 @@ module RLayout
       company_info_back[:en_address_2] = @company_info[:en_address_2]
       back_card.company_info = company_info_back
       back_card.picture_path = @project_path + "/images/#{slug}"
+      back_card.logo_object.image_path = @logo_path if back_card.logo_object
       back_card.set_content
       back_card
     end

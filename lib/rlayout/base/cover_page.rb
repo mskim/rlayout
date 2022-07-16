@@ -61,12 +61,10 @@ module RLayout
   # where name and page_data key would match.
 
   class CoverPage < Container
-
     attr_reader :paper_size
-    attr_reader :grid
 
     def initialize(options={}, &block)
-      @grid = options[:grid_size] || [6,12]
+      options[:grid] = [6,12] unless options[:grid]
       @paper_size = options[:paper_size] || "A4"
       options[:width] = SIZES[@paper_size][0]  unless options[:width]
       options[:height] = SIZES[@paper_size][1]  unless options[:height]
@@ -77,7 +75,7 @@ module RLayout
       elsif options[:left_margin]
         options[:margin] =  options[:left_margin]
       else
-        options[:margin] = 10
+        options[:margin] = 0
       end
 
       # load_text_style

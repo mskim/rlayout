@@ -236,6 +236,8 @@ require File.dirname(__FILE__) + "/rlayout/church/ch_page"
 require File.dirname(__FILE__) + "/rlayout/church/ch_index"
 require File.dirname(__FILE__) + "/rlayout/church/ch_index_page"
 
+require File.dirname(__FILE__) + "/rlayout/qrcode/qr_generator"
+
 module RLayout
 
 end

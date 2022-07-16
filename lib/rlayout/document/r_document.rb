@@ -18,9 +18,14 @@ module RLayout
     # example Toc can create Doc with TocPages
     attr_reader :page_type, :toc_data
     def initialize(options={}, &block)
-      @width          = options[:width]
-      @height         = options[:height]
-      @page_type        = options[:page_type]
+      @paper_size        = options[:paper_size]
+      if @paper_size && SIZES[@paper_size]
+        @width          = SIZES[@paper_size][0]
+        @height         = SIZES[@paper_size][1]
+      else
+        @width          = options[:width]
+        @height         = options[:height]
+      end
       @toc_data         = options[:toc_data]
       @fixed_page_document = false
       @starting_page_number = options[:starting_page_number]   || 1
