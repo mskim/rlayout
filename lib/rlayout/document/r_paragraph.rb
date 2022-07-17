@@ -181,7 +181,7 @@ module RLayout
       # create tokens from merged @para_string
       create_tokens_with_merged_strings(@para_string)
       token_heights_are_equal = true
-      # return unless  @tokens.length > 0
+      return unless  @tokens.length > 0
       tallest_token_height = @tokens.first.height
       @tokens.each do |token|
         if token.height > tallest_token_height

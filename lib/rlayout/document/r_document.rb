@@ -19,6 +19,7 @@ module RLayout
     attr_reader :page_type, :toc_data
     def initialize(options={}, &block)
       @paper_size        = options[:paper_size]
+      @page_type = options[:page_type]
       if @paper_size && SIZES[@paper_size]
         @width          = SIZES[@paper_size][0]
         @height         = SIZES[@paper_size][1]

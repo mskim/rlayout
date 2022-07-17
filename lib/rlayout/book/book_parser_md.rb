@@ -84,9 +84,10 @@ module RLayout
 
     def book_md2docs
       indices = @source.to_enum(:scan, /^\[[^\^].+\]/i).map do |some|
-        Regexp.last_match.begin(0)
+      # indices = @source.to_enum(:scan, /^#\s\[.+?\]/i).map do |some|
+          Regexp.last_match.begin(0)
       end
-      first_chunk = @source.slice(0, indices[0])
+      # first_chunk = @source.slice(0, indices[0])
       # parse_first_chunk(first_chunk)
       end_indece =  @source.length
       book_document_contents = []
@@ -115,6 +116,7 @@ module RLayout
         starting_page = nil
         ending_page = nil
         page_count = nil
+
         if doc_string = doc_chunk.match(/^\[\d.*?.*?\]|^\[.*?\]/)
           doc_string = doc_string.to_s
           if doc_string.include?("책정보") || doc_string.include?("book_info")
