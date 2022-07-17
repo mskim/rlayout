@@ -33,7 +33,7 @@ module RLayout
       @graphics             = []
       @floats               = options.fetch(:floats, [])
       @stack                = options[:stack] if options[:stack]
-      @grid                 = options[grid] || [6,12]
+      @grid                 = options[:grid] || [6,12]
       super
       layout_defaults_hash  = auto_layout_defaults
       @layout_direction     = options.fetch(:layout_direction, layout_defaults_hash[:layout_direction])

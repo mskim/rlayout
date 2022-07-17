@@ -144,10 +144,10 @@ module RLayout
     def default_front_layout_rb
       s=<<~EOF
       RLayout::CardPage.new(paper_size:'NAMECARD') do
-        logo(0,0,1,2)
-        qrcode(0,4,2,5)
-        personal(2.5,0,3,4)
-        company(1.5,9,6,2)
+        logo(0,0,1.5,2)
+        qrcode(0,2,2,2.5)
+        personal(2.5,0,3,2)
+        company(1.5,4.25,6,1)
       end
 
       EOF
@@ -156,9 +156,9 @@ module RLayout
     def default_back_layout_rb
       s=<<~EOF
       RLayout::CardPage.new(paper_size:'NAMECARD') do
-        logo(0,0,1,2)
-        personal(2.5,0,7,3)
-        company(1.5,9,10,3)
+        logo(0,0,1.5,2)
+        personal(2.5,0,3,2)
+        company(1.5,4.25,6,1)
       end
 
       EOF

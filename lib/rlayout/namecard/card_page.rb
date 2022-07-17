@@ -8,7 +8,7 @@ module RLayout
 
     def initialize(options={}, &block)
       options[:paper_size] = 'NAMECARD'
-      # options[:fill_color] = 'yellow'
+      options[:grid] = [6,6]
       options[:left_inset] = 10
       options[:top_inset] = 10
       options[:right_inset] = 10
