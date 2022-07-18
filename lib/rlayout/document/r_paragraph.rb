@@ -59,11 +59,15 @@ module RLayout
   EMPASIS_DIAMOND   = /(\*.*?\*)/    # *empais diamond string*
   EMPASIS_ARROW     = /(\*▲.*?\*)/    # *empais downarrow string*
 
-  FOOTNOTE_MARKER = /\[\^(\d*?)\]/      #[^1]
-  FOOTNOTE_TEXT_ITEM = /^\[\^(\d*?)\]:/      #[^1]: footnote description text
+  # FOOTNOTE_TEXT_ITEM = /^\[\^(\d*?)\]:/      #[^1]: footnote description text
+  FOOTNOTE_TEXT_ITEM = /^\[\^\]:/      #[^]: footnote description text
+  FOOTNOTE_MARKER = /.*?^\[\^\]:/ 
+  
+  
   FOOTNOTE_TEXT_ITEM_NUMBER = /^\[\^(\d*?)\]:/
   FOOTNOTE_MARKER_WITH_SPACE = /(\s\[\^\d*?\])/      # word [^1]
 
+   
   # footnote_marker is marker with footnote number next to a word in paragraph.
   # footnote_text is description for footnote_marker.
   # has_footnote_marker: true if para has footnote_marker

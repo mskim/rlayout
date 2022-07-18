@@ -83,8 +83,8 @@ module RLayout
     end
 
     def book_md2docs
-      indices = @source.to_enum(:scan, /^\[[^\^].+\]/i).map do |some|
-      # indices = @source.to_enum(:scan, /^#\s\[.+?\]/i).map do |some|
+      # indices = @source.to_enum(:scan, /^\[[^\^].+\]/i).map do |some|
+      indices = @source.to_enum(:scan, /^#\s\[.+?\]/i).map do |some|
           Regexp.last_match.begin(0)
       end
       # first_chunk = @source.slice(0, indices[0])
@@ -117,8 +117,10 @@ module RLayout
         ending_page = nil
         page_count = nil
 
-        if doc_string = doc_chunk.match(/^\[\d.*?.*?\]|^\[.*?\]/)
-          doc_string = doc_string.to_s
+        # if doc_string = doc_chunk.match(/^\[\d.*?.*?\]|^\[.*?\]/)
+        # this is [1p 도비라] or [책정보]
+        if doc_string = doc_chunk.match(/^#\s\[\d.*?.*?\]|^#\s\[.*?\]/)
+            doc_string = doc_string.to_s
           if doc_string.include?("책정보") || doc_string.include?("book_info")
             book_info_yaml_mark = "---\n"
             book_info_yaml_mark_with_r = "---\r\n"
@@ -222,6 +224,7 @@ module RLayout
             body_matter_index += 1
           elsif doc_name = is_rear_matter_item?(doc_string)
             doc_chunk_in_array = doc_chunk.split("\n")
+            first_line = doc_chunk_in_array[0..0][0]
             doc_chunk_without_first_line = doc_chunk_in_array[1..-1].join("\n")
             doc_content = doc_chunk_without_first_line
             doc_class = doc_tyle2class_name(doc_name)
@@ -241,7 +244,7 @@ module RLayout
     end
 
     def is_front_matter_item?(doc_type)
-      front_matter_items =%w[책정보 대도비라 소도비라 앞정보 차례 머리말 백 서문 일러두기 안내, isbn]
+      front_matter_items =%w[책정보 대도비라 소도비라 앞정보 차례 머리말 백 서문 일러두기 안내 title_page inside_cover blank prologue toc isbn]
       front_matter_items.each do |front_item|
         return front_item if doc_type.include?(front_item)
       end
@@ -257,7 +260,7 @@ module RLayout
     end
 
     def is_rear_matter_item?(doc_type)
-      rear_matter_items =%w[뒷정보, back_isbn]
+      rear_matter_items =%w[뒷정보 back_isbn]
       rear_matter_items.each do |rear_item|
         return rear_item if doc_type.include?(rear_item)
       end
@@ -277,7 +280,7 @@ module RLayout
         'title_page'
       when '소도비라', 'inside_cover'
         'inside_cover' 
-      when '백', 'blank_page'
+      when '백', 'blank_page', 'blank'
         'blank_page' 
       when '일러두기', 'help'
         'help' 

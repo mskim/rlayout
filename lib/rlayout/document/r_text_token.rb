@@ -54,8 +54,10 @@ module RLayout
           #  단어[^1]로  로 is @post_superscript_text
           post_superscrupt_glyphs  = @font_wrapper.decode_utf8(@superscript_text)
           @post_superscript_width= post_superscrupt_glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
+          @width = @base_width + @superscript_width + @post_superscript_width
+        else
+          @width = @base_width + @superscript_width
         end
-        @width = @base_width + @superscript_width + @post_superscript_width
       else
         #filter unsupported glyph!!!! replace it with ???
         @glyphs = filter_glyph(@string) 

@@ -3,7 +3,8 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 describe 'create new book ' do
   before do
     # @project_path  = "#{ENV["HOME"]}/test_data/book/fresh_start"
-    @project_path  = "#{ENV["HOME"]}/Development/docker/book_starters/danhangbon"
+    # @project_path  = "#{ENV["HOME"]}/Development/docker/book_starters/danhangbon"
+    @project_path  = "#{ENV["HOME"]}/Development/bookdown"
     @book = Book.new(@project_path)
   end
 

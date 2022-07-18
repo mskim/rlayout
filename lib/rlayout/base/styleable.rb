@@ -49,6 +49,7 @@ module RLayout
     # attr_reader :book_title, :chapter_title
     
     def load_doc_style
+      FileUtils.mkdir_p(@style_guide_folder) unless File.exist?(@style_guide_folder)
       load_defaults
       load_text_style
       load_layout_rb
@@ -58,6 +59,7 @@ module RLayout
     end
 
     def load_page_style
+      FileUtils.mkdir_p(@style_guide_folder) unless File.exist?(@style_guide_folder)
       load_text_style
       load_layout_rb
       load_document

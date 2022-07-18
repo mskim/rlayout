@@ -3,11 +3,42 @@ module RLayout
   # With Title, author, publisher, logo
   class Prologue < Chapter
     attr_reader :book, :path, :layout_template_path
+
     def initialize(options={})
+      @doc_type = options[:doc_type] || 'chapter'
+      @book_info = options.dup
+      @jpg = options[:jpg] || false
+      @document_path = options[:document_path]
+      @style_guide_folder = options[:style_guide_folder] || @document_path
+      @starting_page_number  = options[:starting_page_number] || 1
+      @output_path = options[:output_path] || @document_path + "/chapter.pdf"
+      @width = options[:width]
+      @height = options[:height]
+      @left_margin = options[:left_margin]
+      @top_margin = options[:top_margin]
+      @right_margin = options[:right_margin]
+      @bottom_margin = options[:bottom_margin]
+      @page_pdf =  options[:page_pdf] || false
+      @body_line_count = options[:body_line_count]
+      @book_title = options[:book_title]      
       super
       options[:heading_height_type] = "natural"
       @output_path = @document_path + "/chapter.pdf"
       self
+    end
+
+    def load_defaults
+      FileUtils.mkdir_p(@style_guide_folder) unless File.exist?(@style_guide_folder)
+      if File.exist?(style_guide_defaults_path)
+        default_options = YAML::load_file(style_guide_defaults_path)
+      else
+        default_options = YAML::load(defaults)
+        File.open(style_guide_defaults_path, 'w'){|f| f.write defaults}
+      end
+      # TODO ??? how to set values to instance varible with same name
+      @heading_height_type  = default_options['heading_height_type']
+      @heading_height_in_line_count  = default_options['heading_height_in_line_count']
+      @footnote_description_text_prefix = default_options['footnote_description_text_prefix']
     end
 
     def self.sample_story
@@ -68,12 +99,16 @@ module RLayout
       h[:heading_height_type] = "quarter"
       h[:width] = @width
       h[:height] = @height
+      h[:left_margin] = @left_margin
+      h[:right_margin] = @right_margin
+      h[:top_margin] = @top_margin
+      h[:bottom_margin] = @bottom_margin
       h[:page_pdf] = true
       h[:toc] = true
       h
     end
 
-    def layout_rb
+    def default_layout_rb
       s =<<~EOF
         RLayout::RDocument.new(#{layout_options})
       EOF
