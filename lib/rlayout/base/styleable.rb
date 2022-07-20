@@ -293,9 +293,11 @@ module RLayout
         font_size: 11.0
         markup: "####"
         text_alignment: left
-        left_indext: 100
-        right_indext: 100
-        space_before: 1
+        first_line_indent: 20
+        left_indent: 20
+        right_indent: 20
+        space_before_in_lines: 1
+        space_after_in_lines: 1
       header:
         font: KoPubBatangPM
         font_size: 7.0      
