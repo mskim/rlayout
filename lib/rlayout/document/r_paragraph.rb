@@ -59,13 +59,13 @@ module RLayout
   EMPASIS_DIAMOND   = /(\*.*?\*)/    # *empais diamond string*
   EMPASIS_ARROW     = /(\*▲.*?\*)/    # *empais downarrow string*
 
-  # FOOTNOTE_TEXT_ITEM = /^\[\^(\d*?)\]:/      #[^1]: footnote description text
-  FOOTNOTE_TEXT_ITEM = /^\[\^\]:/      #[^]: footnote description text
-  FOOTNOTE_MARKER = /.*?^\[\^\]:/ 
+  FOOTNOTE_TEXT_ITEM = /^\[\^(\d*?)\]:/      #[^1]: footnote description text
+  # FOOTNOTE_TEXT_ITEM = /^\[\^\d\]:/      #[^]: footnote description text
+  FOOTNOTE_MARKER = /.*?\[\^(\d*?)\]/ 
+  FOOTNOTE_SIZE_RATIO = 0.7
   
-  
-  FOOTNOTE_TEXT_ITEM_NUMBER = /^\[\^(\d*?)\]:/
-  FOOTNOTE_MARKER_WITH_SPACE = /(\s\[\^\d*?\])/      # word [^1]
+  # FOOTNOTE_TEXT_ITEM_NUMBER = /^\[\^(\d*?)\]:/
+  # FOOTNOTE_MARKER_WITH_SPACE = /(\s\[\^\d*?\])/      # word [^1]
 
    
   # footnote_marker is marker with footnote number next to a word in paragraph.
@@ -167,10 +167,7 @@ module RLayout
       # if so delte the space between them
 
       # collect all footnote marker numbers into @footnote_markers array
-      if @para_string =~FOOTNOTE_MARKER
-        @has_footnote_marker = true
-        @footnote_markers = @para_string.scan(FOOTNOTE_MARKER).flatten
-      end
+      check_for_footnote_string
 
       # check if there is any bold, italic, or math strings,
       # the tricky part is that they may contain space characters within the range, 
@@ -199,6 +196,13 @@ module RLayout
       @escaped_string   = math.gsub("\\","!") 
       # @escaped_string   = Shellwords.escape(@escaped_string)   
       @escaped_string   = @escaped_string.gsub(" ","<sp>") 
+    end
+
+    def check_for_footnote_string
+      if @para_string =~FOOTNOTE_MARKER
+        @has_footnote_marker = true
+        @footnote_markers = @para_string.scan(FOOTNOTE_MARKER).flatten
+      end
     end
 
     def check_for_math_string

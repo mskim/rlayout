@@ -48,7 +48,7 @@ module RLayout
         #TODO set  @style_object superscript: true
         superscrupt_glyphs = @font_wrapper.decode_utf8(@superscript_text)
         # TODO 
-        @superscript_width= superscrupt_glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)
+        @superscript_width= superscrupt_glyphs.map {|g| @style_object.scaled_item_width(g)}.reduce(:+)*FOOTNOTE_SIZE_RATIO
         @post_superscript_width =  0
         if @post_superscript_text
           #  단어[^1]로  로 is @post_superscript_text

@@ -32,9 +32,17 @@
 
 ### 2022_07_19
   - remove # from # [chapter]
-  - book_front, 앞기본??
-    use this for title_page, blank, inside_cover, isbn, toc
+  - support chapter title with or without : 
+    - [chapter]: this is title
+    - [chapter] this is title
 
+  - footnote marker font_size too big
+    - set footnote number width and rise value relative to font_size
+  - footnote auto numbering
+  
+  - multiline quote handling
+  - book_front, 앞기본??
+      - use it to represent title_page, blank, inside_cover, isbn, toc
 ### 2022_07_13
   - add math_token
 
