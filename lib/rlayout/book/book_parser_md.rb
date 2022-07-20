@@ -143,7 +143,7 @@ module RLayout
             @part_titles << part_title
           elsif doc_name = is_front_matter_item?(doc_string)
             # strip off []
-            doc_string = doc_string.sub("[", "").sub("]","")
+            doc_string = doc_string.sub("# [", "").sub("]","")
             doc_string_array =  doc_string.split("p")
             if doc_string_array.length == 1
               # no page info is present
@@ -169,7 +169,7 @@ module RLayout
             # front_matter_item = true
             # save front_matter_doc to _build/front_matter
             doc_chunk_in_array = doc_chunk.split("\n")
-            first_line = doc_chunk_in_array[0..0][0]
+            first_line = doc_chunk_in_array[0]
             if first_line.include?(":")
               chapter_title = first_line.split(":")[1].strip
             else
@@ -201,11 +201,15 @@ module RLayout
           elsif doc_name = is_body_matter_item?(doc_string)
             # handle body_matter docs
             doc_chunk_in_array = doc_chunk.split("\n")
-            first_line = doc_chunk_in_array[0..0][0]
+            first_line = doc_chunk_in_array[0]
             if first_line.include?(":")
-              chapter_title = first_line.split(":")[1].strip
+              # [chapter]: this is title
+              chapter_title = first_line.split("]:")[1].strip
+            elsif first_line.strip.split("\] ").length > 1
+              chapter_title = first_line.split("\]")[1].strip
+              # [chapter] this is title
             else
-              chapter_title = doc_string.sub("[", "").sub("]","")
+              chapter_title = doc_string.sub("# \[", "").sub("\]","")
             end
             h = {}
             h['doc_type'] = doc_tyle2class_name(doc_name)

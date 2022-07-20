@@ -1,6 +1,7 @@
 ## TODO List
   - add save_rakefile to Book, RDOcument, ColumnArticle 
   - add html folder
+
 ### 2022_01_??
   - hwp parse
   - newspaper
@@ -28,6 +29,11 @@
 
   - line_type
   - arrow_type
+
+### 2022_07_19
+  - remove # from # [chapter]
+  - book_front, 앞기본??
+    use this for title_page, blank, inside_cover, isbn, toc
 
 ### 2022_07_13
   - add math_token
