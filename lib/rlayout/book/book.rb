@@ -37,10 +37,14 @@ module RLayout
       @project_path = project_path
       @book_info_path = @project_path + "/book_info.yml"
       @book_md_path = @project_path + "/book.md"
-      @book_txt_path = @project_path + "/book.md"
+      @book_txt_path = @project_path + "/book.txt"
       @ebook = options[:ebook]  || false
       @pdf_book = options[:pdf_book]  || false
       @print_book = options[:pdf_book]  || true
+      if File.exist?(@book_md_path)
+      else
+        save_sample_book_md
+      end
       @parser = BookParserMd.new(@project_path)
       @toc_folder = @parser.toc_folder
       @book_info = YAML::load_file(@book_info_path)
@@ -917,6 +921,87 @@ module RLayout
 
     def save_github_action_workflow
       File.open(git_action_content_path, 'w'){|f| f.write git_action_content}
+    end
+
+    def save_sample_book_md
+      File.open(@book_md_path, 'w'){|f| f.write sample_book_md}
+    end
+
+    def sample_book_md
+      <<~EOF
+      footnote => word[^1]
+      footnote_description =^[^1]: footnote description first char in line with new line
+
+      heading left_align    => ## first char in line with new line
+      heading right_align   => ### first char in line with new line
+      heading center_align  => #### first char in line with new line
+
+      [book_info]
+      ---
+      paper_size: 125mmx188mm
+      width: 125mm
+      height: 188mm
+      left_margin: 20mm
+      top_margi: 14mm
+      right_margin: 20mm
+      bottom_margin: 25mm
+      binding_margin: 3mm
+      body_line_count: 23
+      toc_page_count: 2
+      title: 2022년에 책만들기
+      subtitle: 새로운 솔류션을 이용하자
+      author: 김민수
+      
+      # [1p-대도비라]
+      
+      title: 2020년에 책만들기
+      
+      # [2p-백]
+      
+      # [3p-소도비라]
+      
+      title: 2020년에 책만들기
+      author: 김민수
+      
+      # [4p-백]
+      
+      # [5p-차례]
+      
+      
+      # [7p- 서문] : 서문 
+      
+      
+      # [1장]: 지난 35년을 둘러보며
+      
+      
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+
+      # [2장]: 앞으로 35년을 상상해 보며
+    
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      EOF
     end
 
   end
