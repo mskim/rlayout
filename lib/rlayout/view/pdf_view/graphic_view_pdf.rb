@@ -27,6 +27,10 @@ module RLayout
       # puts "It took:#{ending_time - start_time}" if options[:time]
     end
 
+    def split_pdf(path)
+      RLayout::split_pdf(path)
+    end
+    
     # using vips
     # require 'fileutils'
     # require 'vips'
