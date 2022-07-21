@@ -27,28 +27,6 @@ module RLayout
       # puts "It took:#{ending_time - start_time}" if options[:time]
     end
 
-
-
-    # split pdf_file_path file into single page pdf and move it to page folder
-    def split_pdf(pdf_file_path)
-      folder_path  = File.dirname(pdf_file_path)
-      pdf_basename = File.basename(pdf_file_path)
-      # split output_path pdf into 4 digit single page pdfs
-      # 0001.pdf, 0002.pdf, 0003.pdf ...
-      system("cd #{folder_path} && hexapdf split #{pdf_basename} --force")
-      Dir.glob("#{folder_path}/*.pdf").each do |pdf|
-        if pdf=~/(\d\d\d\d)\.pdf$/
-          page_pdf_basename = File.basename(pdf)
-          page_folder_name = $1
-          page_folder_path = folder_path + "/#{page_folder_name}"
-          FileUtils.mkdir_p(page_folder_path) unless File.exist?(page_folder_path)
-          system("cd #{folder_path} && mv #{page_pdf_basename} #{page_folder_name}/page.pdf")
-          single_page_pdf_path = folder_path + "/#{page_folder_name}/page.pdf"
-          # convert_pdf2jpg(single_page_pdf_path, ratio:1.3)
-        end
-      end
-    end
-
     # using vips
     # require 'fileutils'
     # require 'vips'

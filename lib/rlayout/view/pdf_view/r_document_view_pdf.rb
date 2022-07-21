@@ -21,37 +21,8 @@ module RLayout
       if options[:page_pdf]
         split_pdf(output_path)
       end
-      puts "It took:#{ending_time - start_time}" if options[:time]
-    end
 
-    def clean_previous_generated_folders(folder_path)
-      # delete previously generated left over folders. 
-      Dir.glob("#{folder_path}/*").each do |file|
-        if file=~/\d\d\d\d/ && File.directory?(file)
-          system("cd #{folder_path} && rm -rf #{file}")
-        end
-      end
-    end
-    
-    # split pdf_file_path file into single page pdf and move it to page folder
-    def split_pdf(pdf_file_path)
-      folder_path  = File.dirname(pdf_file_path)
-      pdf_basename = File.basename(pdf_file_path)
-      clean_previous_generated_folders(folder_path)
-      # split output_path pdf into 4 digit single page pdfs
-      # 0001.pdf, 0002.pdf, 0003.pdf ...
-      system("cd #{folder_path} && hexapdf split #{pdf_basename} --force")
-      Dir.glob("#{folder_path}/*.pdf").each do |pdf|
-        if pdf=~/(\d\d\d\d)\.pdf$/
-          page_pdf_basename = File.basename(pdf)
-          page_folder_name = $1
-          page_folder_path = folder_path + "/#{page_folder_name}"
-          FileUtils.mkdir_p(page_folder_path) unless File.exist?(page_folder_path)
-          system("cd #{folder_path} && mv #{page_pdf_basename} #{page_folder_name}/page.pdf")
-          single_page_pdf_path = folder_path + "/#{page_folder_name}/page.pdf"
-          convert_pdf2jpg(single_page_pdf_path, ratio:1.3) if @jpg
-        end
-      end
+      puts "It took:#{ending_time - start_time}" if options[:time]
     end
 
     # using vips convert pdf 2 jpg
