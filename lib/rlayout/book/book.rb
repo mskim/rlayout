@@ -91,7 +91,7 @@ module RLayout
     end
 
     def set_width_and_height_from_paper_size
-      @paper_size = @book_info[:paper_size]
+      @paper_size = @book_info[:paper_size] || @book_info['paper_size']
       if SIZES[@paper_size]
         @width = SIZES[@paper_size][0]
         @height = SIZES[@paper_size][1]
