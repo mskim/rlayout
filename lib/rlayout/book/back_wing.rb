@@ -22,11 +22,11 @@ module RLayout
         @width = SIZES[@paper_size][0]
         @height = SIZES[@paper_size][1]
       elsif @paper_size.include?("*")
-        @width = mm2pt(@paper_size.split("*")[0].to_i)
-        @height = mm2pt(@paper_size.split("*")[1].to_i)
+        @width = RLayout::mm2pt(@paper_size.split("*")[0].to_i)
+        @height = RLayout::mm2pt(@paper_size.split("*")[1].to_i)
       elsif @paper_size.include?("x")
-        @width = mm2pt(@paper_size.split("x")[0].to_i)
-        @height = mm2pt(@paper_size.split("x")[1].to_i)
+        @width = RLayout::mm2pt(@paper_size.split("x")[0].to_i)
+        @height = RLayout::mm2pt(@paper_size.split("x")[1].to_i)
       end
       @width = @width/2
     end

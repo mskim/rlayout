@@ -101,12 +101,12 @@ module RLayout
         height_string = paper_size_array[1]
         if width_string.include?("mm")
           @width_mm = width_string
-          @width = mm2pt(width_string.sub("mm","").to_f)
+          @width = RLayout::mm2pt(width_string.sub("mm","").to_f)
           @book_info[:width] = @width
         end
         if height_string.include?("mm")
           @width_mm = height_string
-          @height = mm2pt(height_string.sub("mm","").to_f)
+          @height =RLayout::mm2pt(height_string.sub("mm","").to_f)
           @book_info[:height] = @height
         end
       end
