@@ -42,6 +42,7 @@ module RLayout
       @pdf_book = options[:pdf_book]  || false
       @print_book = options[:pdf_book]  || true
       unless File.exist?(@book_info_path)
+        @book_info = YAML::load(default_book_info)
         save_default_book_info
       else
         @book_info = YAML::load_file(@book_info_path)
