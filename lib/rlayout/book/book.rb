@@ -41,21 +41,24 @@ module RLayout
       @ebook = options[:ebook]  || false
       @pdf_book = options[:pdf_book]  || false
       @print_book = options[:pdf_book]  || true
-      if File.exist?(@book_md_path)
+      unless File.exist?(@book_info_path)
+        save_default_book_info
       else
+        @book_info = YAML::load_file(@book_info_path)
+        @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
+      end
+      update_book_info_unit
+      unless File.exist?(@book_md_path)
         save_sample_book_md
       end
-      @parser = BookParserMd.new(@project_path)
-      @toc_folder = @parser.toc_folder
-      @book_info = YAML::load_file(@book_info_path)
-      @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @toc_page_count = @book_info[:toc_page_count] || 2
       @book_title = @book_info[:book_title] || @book_info[:title] || 'untitled'
-      update_book_info_unit
       @starting_page_number = 1
       @gripper_margin = options[:gripper_margin] || 10*2.834646
       @bleed_margin = options[:bleed_margin] || 3*2.834646
       @book_info[:jpg] = @ebook
+      @parser = BookParserMd.new(@project_path)
+      @toc_folder = @parser.toc_folder
       create_book_cover
       @starting_page_number  = 1
       @front_matter = FrontMatter.new(@project_path, @starting_page_number, @book_info)
@@ -80,31 +83,31 @@ module RLayout
     end
 
     def mm_string2pt(value)
-      return value if value.class != String
-      return value if value.include?("x")
+      return value if value.class == Integer
+      return value if value.class == Float
+      # return value if value.include?("x")
       return value unless value.include?("mm")
       mm2pt(value.sub("mm","").to_i)
     end
 
     def set_width_and_height_from_paper_size
+      @paper_size = @book_info[:paper_size]
       if SIZES[@paper_size]
         @width = SIZES[@paper_size][0]
         @height = SIZES[@paper_size][1]
-      else
-        if @paper_size && @paper_size.downcase.include?("x")
-          paper_size_array = @paper_size.split("x")
-          width_string = paper_size_array[0]
-          height_string = paper_size_array[1]
-          if width_string.include?("mm")
-            @width_mm = width_string
-            @width = mm2pt(width_string.sub("mm","").to_f)
-            @book_info[:width] = @width
-          end
-          if height_string.include?("mm")
-            @width_mm = height_string
-            @height = mm2pt(height_string.sub("mm","").to_f)
-            @book_info[:height] = @height
-          end
+      elsif @paper_size && @paper_size.downcase.include?("x")
+        paper_size_array = @paper_size.split("x")
+        width_string = paper_size_array[0]
+        height_string = paper_size_array[1]
+        if width_string.include?("mm")
+          @width_mm = width_string
+          @width = mm2pt(width_string.sub("mm","").to_f)
+          @book_info[:width] = @width
+        end
+        if height_string.include?("mm")
+          @width_mm = height_string
+          @height = mm2pt(height_string.sub("mm","").to_f)
+          @book_info[:height] = @height
         end
       end
     end
@@ -927,14 +930,33 @@ module RLayout
       File.open(@book_md_path, 'w'){|f| f.write sample_book_md}
     end
 
+    def save_default_book_info
+      File.open(@book_info_path, 'w'){|f| f.write default_book_info}
+    end
+
+    def default_book_info
+      <<~EOF
+      ---
+      paper_size: 125mmx188mm
+      width: 125mm
+      height: 188mm
+      left_margin: 20mm
+      top_margi: 14mm
+      right_margin: 20mm
+      bottom_margin: 25mm
+      binding_margin: 3mm
+      body_line_count: 23
+      toc_page_count: 2
+      title: 2022년에 책만들기
+      subtitle: 새로운 솔류션을 이용하자
+      author: 김민수
+      EOF
+    end
+
     def sample_book_md
       <<~EOF
-      footnote => word[^1]
-      footnote_description =^[^1]: footnote description first char in line with new line
 
-      heading left_align    => ## first char in line with new line
-      heading right_align   => ### first char in line with new line
-      heading center_align  => #### first char in line with new line
+
 
       [book_info]
       ---
@@ -970,7 +992,9 @@ module RLayout
       
       # [7p- 서문] : 서문 
       
-      
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
       # [1장]: 지난 35년을 둘러보며
       
       
@@ -984,6 +1008,9 @@ module RLayout
 
       여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
 
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
       여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
 
 
@@ -999,6 +1026,13 @@ module RLayout
 
       여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
 
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
+      여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
       여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 여기에 내용물 입력. 
 
       EOF

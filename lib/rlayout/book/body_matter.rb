@@ -17,20 +17,20 @@ module RLayout
     def initialize(project_path, starting_page_number, options={})
       @project_path = project_path
       @starting_page_number = starting_page_number
-
-      @jpg  = options[:jpg]
-      @book_info_path = @project_path + "/book_info.yml"
-      @book_info = YAML::load_file(@book_info_path)
-      @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
+      @book_info = options.dup
+      @jpg = options[:jpg]
+      # @book_info_path = @project_path + "/book_info.yml"
+      # @book_info = YAML::load_file(@book_info_path)
+      # @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
       @book_type = @book_info[:book_type] || 'chapter'
       @body_line_count = @book_info[:body_line_count]
       @title = @book_info[:title]
       @part_titles = @book_info[:part]
-      @paper_size = @book_info[:paper_size] || 'A5'
-      @page_width = @book_info[:width]
-      @width = @page_width
-      @height = @book_info[:height]
-      process_body_matter(options)
+      # @paper_size = @book_info[:paper_size] || 'A5'
+      # @page_width = @book_info[:width]
+      # @width = @page_width
+      # @height = @book_info[:height]
+      process_body_matter(@book_info)
       self
     end
 

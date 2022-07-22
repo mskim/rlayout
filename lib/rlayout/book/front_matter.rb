@@ -17,12 +17,13 @@ module RLayout
     # def initialize(project_path, options={})
     def initialize(project_path, starting_page_number, options={})
       @project_path = project_path
-      @doc_options = options.dup
-      @book_info_path = @project_path + "/book_info.yml"
+      # @doc_options = options.dup
+      # @book_info_path = @project_path + "/book_info.yml"
       @starting_page_number = starting_page_number
       @jpg = options[:jpg]
       # @book_info = YAML::load_file(@book_info_path)
       # @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
+      @book_info = options.dup
       # @width = @book_info[:width]
       # @height = @book_info[:height]
       # @title = @book_info[:title]
@@ -31,9 +32,9 @@ module RLayout
       # @page_width = @book_info[:width]
       # @width = @page_width
       # @height = @book_info[:height]
-      @toc_page_count = options[:toc_page_count] || 1
+      # @toc_page_count = options[:toc_page_count] || 1
       # @page_count = 0
-      process_front_matter(options)
+      process_front_matter(@book_info)
 
       self
     end
