@@ -87,7 +87,7 @@ module RLayout
       return value if value.class == Float
       # return value if value.include?("x")
       return value unless value.include?("mm")
-      mm2pt(value.sub("mm","").to_i)
+      RLayout::mm2pt(value.sub("mm","").to_i)
     end
 
     def set_width_and_height_from_paper_size
