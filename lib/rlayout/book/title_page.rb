@@ -46,7 +46,6 @@ module RLayout
     end
 
     def default_layout_rb
-      binding.pry
       doc_options= {}
       # doc_options[:paper_size] = @paper_size
       doc_options[:width] = @width
