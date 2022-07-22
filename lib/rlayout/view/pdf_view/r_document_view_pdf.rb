@@ -19,7 +19,7 @@ module RLayout
       @pdf_doc.write(output_path)
       ending_time = Time.now
       if options[:page_pdf]
-        split_pdf(output_path)
+        RLayout::split_pdf(output_path)
       end
 
       puts "It took:#{ending_time - start_time}" if options[:time]

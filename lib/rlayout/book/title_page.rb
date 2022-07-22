@@ -45,9 +45,17 @@ module RLayout
       1
     end
 
+    def load_layout_rb
+      if File.exist?(style_guide_layout_path)
+        @layout_rb = File.open(style_guide_layout_path, 'r'){|f| f.read}
+      else
+        @layout_rb = default_layout_rb
+        File.open(style_guide_layout_path, 'w'){|f| f.write default_layout_rb}
+      end
+    end
+
     def default_layout_rb
       doc_options= {}
-      # doc_options[:paper_size] = @paper_size
       doc_options[:width] = @width
       doc_options[:height] = @height
       doc_options[:left_margin] = @left_margin
