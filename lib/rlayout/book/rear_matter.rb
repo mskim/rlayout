@@ -9,16 +9,11 @@ module RLayout
 
     def initialize(project_path, starting_page_number, options={})
       @project_path = project_path
-      @book_info_path = @project_path + "/book_info.yml"
-      @book_info = YAML::load_file(@book_info_path)
-      @book_info = Hash[@book_info.map{ |k, v| [k.to_sym, v] }]
+      @book_info = options.dup
       @title = @book_info[:title]
-      @page_size = options['paper_size'] || 'A5'
-      @page_width = SIZES[@page_size][0]
-      @height = SIZES[@page_size][1]
       @starting_page_number = options[:starting_page_number] || 1
       @page_count = 0
-      process_rear_matter(options)
+      process_rear_matter(@book_info)
       self
     end
 
@@ -29,10 +24,6 @@ module RLayout
     def style_guide_folder
       @project_path + "/style_guide"
     end
-    # def process_rear_matter
-    #   @rear_matter_docs = []
-    #   generate_rear_matter_toc
-    # end
 
     # create prolog, forward, isbn
     def process_rear_matter(options)
