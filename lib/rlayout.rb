@@ -21,9 +21,7 @@ require File.dirname(__FILE__) + "/rlayout/base/graphic"
 require File.dirname(__FILE__) + "/rlayout/base/container"
 require File.dirname(__FILE__) + "/rlayout/base/rjob"
 require File.dirname(__FILE__) + "/rlayout/base/styleable"
-# require File.dirname(__FILE__) + "/rlayout/base/styleable_doc"
-# require File.dirname(__FILE__) + "/rlayout/base/styleable_article"
-# require File.dirname(__FILE__) + "/rlayout/base/styleable_page"
+
 require File.dirname(__FILE__) + "/rlayout/base/text_area"
 require File.dirname(__FILE__) + "/rlayout/base/text_bar"
 require File.dirname(__FILE__) + "/rlayout/base/cover_page"
@@ -52,15 +50,8 @@ require File.dirname(__FILE__) + "/rlayout/grid/group_image"
 require File.dirname(__FILE__) + "/rlayout/grid/grouped_caption"
 require File.dirname(__FILE__) + "/rlayout/grid/grid_table"
 
-# require File.dirname(__FILE__) + "/rlayout/db_publishing/db_item"
-# require File.dirname(__FILE__) + "/rlayout/container_extended/photo_item"
-# require File.dirname(__FILE__) + "/rlayout/container_extended/place_item"
-# require File.dirname(__FILE__) + "/rlayout/container_extended/memo_area"
-
 require File.dirname(__FILE__) + "/rlayout/style/style_service"
 
-# require File.dirname(__FILE__) + "/rlayout/style/grid_layout"
-# require File.dirname(__FILE__) + "/rlayout/style/image_layout"
 require File.dirname(__FILE__) + "/rlayout/pdf/pdf_utils"
 
 require File.dirname(__FILE__) + "/rlayout/view/svg_view/graphic_view_svg"
@@ -71,14 +62,13 @@ require File.dirname(__FILE__) + "/rlayout/view/svg_view/r_line_fragment_view_sv
 require File.dirname(__FILE__) + "/rlayout/view/svg_view/r_page_view_svg"
 require File.dirname(__FILE__) + "/rlayout/view/svg_view/r_document_view_svg"
 
-# require File.dirname(__FILE__) + "/rlayout/view/pdf_view/r_text_token_view_pdf"
 require File.dirname(__FILE__) + "/rlayout/view/pdf_view/r_line_fragment_view_pdf"
 require File.dirname(__FILE__) + "/rlayout/view/pdf_view/r_document_view_pdf"
 require File.dirname(__FILE__) + "/rlayout/view/pdf_view/r_heading_pdf_view"  
 require File.dirname(__FILE__) + "/rlayout/view/pdf_view/stroke"
 require File.dirname(__FILE__) + "/rlayout/view/pdf_view/fill"
 require File.dirname(__FILE__) + "/rlayout/view/pdf_view/image"
-# require File.dirname(__FILE__) + "/rlayout/view/pdf_view/text"
+
 require File.dirname(__FILE__) + "/rlayout/view/pdf_view/graphic_view_pdf"
 require File.dirname(__FILE__) + "/rlayout/view/pdf_view/container_view_pdf"
 require File.dirname(__FILE__) + "/rlayout/view/pdf_view/grid_view_pdf"
@@ -104,7 +94,6 @@ require File.dirname(__FILE__) + "/rlayout/text/title_text"
 require File.dirname(__FILE__) + "/rlayout/graphic/text_cell"
 
 require File.dirname(__FILE__) + "/rlayout/text/text_train"
-# require File.dirname(__FILE__) + "/rlayout/text/heading"
 
 require File.dirname(__FILE__) + "/rlayout/table/list.rb"
 require File.dirname(__FILE__) + "/rlayout/table/simple_table.rb"
@@ -123,7 +112,6 @@ require File.dirname(__FILE__) + "/rlayout/leader_table/jubo"
 
 
 require File.dirname(__FILE__) + "/rlayout/book/body_parser"
-# require File.dirname(__FILE__) + "/rlayout/book/book_plan"
 # require File.dirname(__FILE__) + "/rlayout/book/book_merger"
 require File.dirname(__FILE__) + "/rlayout/book/toc"
 require File.dirname(__FILE__) + "/rlayout/book/toc_page"
@@ -160,6 +148,10 @@ require File.dirname(__FILE__) + "/rlayout/book/book_parser_md"
 require File.dirname(__FILE__) + "/rlayout/book/title_page"
 require File.dirname(__FILE__) + "/rlayout/book/blank_page"
 require File.dirname(__FILE__) + "/rlayout/book/help"
+
+require File.dirname(__FILE__) + "/rlayout/page_by_page/page_by_page"
+require File.dirname(__FILE__) + "/rlayout/page_by_page/fit_page"
+require File.dirname(__FILE__) + "/rlayout/page_by_page/r_line_fragment"
 
 # require File.dirname(__FILE__) + "/rlayout/styleable/book_promo"
 
@@ -212,15 +204,10 @@ require File.dirname(__FILE__) + "/rlayout/svg/rectangle"
 require File.dirname(__FILE__) + "/rlayout/svg/text"
 # require File.dirname(__FILE__) + "/rlayout/svg/svg2pdf"
 
-# require File.dirname(__FILE__) + "/rlayout/math/eqn"
-# require File.dirname(__FILE__) + "/rlayout/math/math_token"
 require File.dirname(__FILE__) + "/rlayout/math/latex_token"
 
 require File.dirname(__FILE__) + "/rlayout/deco_text/deco_string"
 require File.dirname(__FILE__) + "/rlayout/deco_text/deco_char"
-
-
-# require File.dirname(__FILE__) + "/rlayout/article/float_group"
 
 require File.dirname(__FILE__) + "/rlayout/yearbook/yearbook"
 require File.dirname(__FILE__) + "/rlayout/yearbook/yb_page"

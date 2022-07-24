@@ -89,7 +89,7 @@ module RLayout
   MATH_STRING = /\$.*?\$/
   # has_math_string
   # this has math $\frac{a}{b}$ token.
-
+  PAGE_BREAK_STRING = /^<p(\d+?)>/
   RLAYOUT_STRING = /{{.*?}}/
   # has_erb_string
   # this has rlyout {{ "my_string".ruby("stop_string") }} token.
@@ -236,7 +236,7 @@ module RLayout
     end
 
     # merge emphsis strings into single string by replacing
-    # space char with "<sp>" templarily, to make it easy for parsing.
+    # space char with "<sp>" temporally, to make it easy for parsing.
     # **this is bold** => **this<sp>is<sp>bold**
     # __this is bold__ => __this<sp>is<sp>bold__
     # and when generating tokens, this string is reverted back into word original string.
@@ -260,6 +260,10 @@ module RLayout
           options[:latex_string] = latex_string.gsub("<sp>", " ")
           options[:height] = @style_object.font_size
           @tokens << RLayout::LatexToken.new(options)
+        elsif token_string =~PAGE_BREAK_STRING
+          options = {}
+          # options[:token_type]  = 'page_brake'
+          @tokens << RLayout::PageBreakToken.new(options)
         elsif token_string =~BOLD_STRING
           options = {}
           options[:token_type] = 'bold'
@@ -285,112 +289,6 @@ module RLayout
       end
     end
 
-    # def create_tokens_with_emphasis_strong(para_string)
-    #   para_string.chomp!
-    #   para_string.sub!(/^\s*/, "")
-    #   split_array = para_string.split(EMPASIS_STRONG)
-    #   # splited array contains strong content
-    #   split_array.each do |token_group|
-    #     if token_group =~EMPASIS_STRONG
-    #       token_group.gsub!("**", "")
-    #       # get font and size
-    #       current_style = RLayout::StyleService.shared_style_service.current_style
-    #       style_hash = current_style['body_gothic'] #'strong_emphasis'
-    #       @emphasis_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-    #       @current_style_service = RLayout::StyleService.shared_style_service
-    #       @style_object = @current_style_service.style_object(@style_name) 
-    #       tokens_array = token_group.split(" ")
-    #       tokens_array.each do |token_string|
-    #         emphasis_style              = {}
-    #         emphasis_style[:string]     = token_string
-    #         emphasis_style[:height]     = @emphasis_para_style[:font_size]
-    #         token_options[:style_object] = @style_object
-    #         @tokens << RLayout::RTextToken.new(emphasis_style)
-    #       end
-    #     else
-    #       # line text with just noral text tokens
-    #       create_plain_tokens(token_group)
-    #     end
-    #   end
-    # end
-
-    # def create_tokens_with_emphasis_diamond(para_string)
-    #   para_string.chomp!
-    #   para_string.sub!(/^\s*/, "")
-    #   split_array = para_string.split(EMPASIS_DIAMOND)
-    #   # splited array contains strong content
-    #   split_array.each do |token_group|
-    #     if token_group =~EMPASIS_DIAMOND
-    #       token_group.gsub!("*", "")
-    #       # get font and size
-    #       if token_group =~ /◆/
-    #         token_group = token_group + "="
-    #       else
-    #         token_group.strip!
-    #         token_group = "◆" + token_group + " ="
-    #       end
-    #       current_style = RLayout::StyleService.shared_style_service.current_style
-    #       style_hash = current_style['body_gothic'] #'diamond_emphasis'
-    #       @diamond_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-    #       @current_style_service = RLayout::StyleService.shared_style_service
-    #       @style_object = @current_style_service.style_object(@style_name) 
-    #       tokens_array = token_group.split(" ")
-    #       tokens_array.each do |token_string|
-    #         emphasis_style              = {}
-    #         emphasis_style[:string]     = token_string
-    #         # emphasis_style[:style_name] = 'body_gothic'
-    #         # emphasis_style[:para_style] = @diamond_para_style
-    #         emphasis_style[:height]     = @diamond_para_style[:font_size]
-    #         emphasis_style[:token_type] = 'diamond_emphasis'
-    #         token_options[:style_object] = @style_object
-    #         @tokens << RLayout::RTextToken.new(emphasis_style)
-    #       end
-    #     else
-    #       # line text with just noral text tokens
-    #       # puts "token_group for plain: #{token_group}"
-    #       create_plain_tokens(token_group)
-    #     end
-    #   end
-    # end
-
-    # def create_tokens_with_emphasis_arrow(para_string)
-    #   para_string.chomp!
-    #   para_string.sub!(/^\s*/, "")
-
-    #   split_array = para_string.split(EMPASIS_DIAMOND)
-    #   # splited array contains strong content
-    #   split_array.each do |token_group|
-    #     if token_group =~EMPASIS_ARROW
-    #       token_group.gsub!("*▲", "")
-    #       token_group.sub!("*", "")
-    #       # get font and size
-    #       unless token_group =~ />/
-    #         token_group.strip!
-    #         token_group = "▲" + token_group
-    #       end
-    #       current_style = RLayout::StyleService.shared_style_service.current_style
-    #       style_hash = current_style['body_gothic'] #'diamond_emphasis'
-    #       @diamond_para_style = Hash[style_hash.map{ |k, v| [k.to_sym, v] }]
-    #       @current_style_service = RLayout::StyleService.shared_style_service
-    #       @style_object = @current_style_service.style_object(@style_name)
-    #       tokens_array = token_group.split(" ")
-    #       tokens_array.each do |token_string|
-    #         emphasis_style              = {}
-    #         emphasis_style[:string]     = token_string
-    #         # emphasis_style[:style_name] = 'body_gothic'
-    #         # emphasis_style[:para_style] = @diamond_para_style
-    #         emphasis_style[:height]     = @diamond_para_style[:font_size]
-    #         emphasis_style[:token_type] = 'diamond_emphasis'
-    #         token_options[:style_object] = @style_object
-    #         @tokens << RLayout::RTextToken.new(emphasis_style)
-    #       end
-    #     else
-    #       # line text with just noral text tokens
-    #       create_plain_tokens(token_group)
-    #     end
-    #   end
-    # end
-
     def is_member_of_body_blocks?(markup)
       body_block_member_markup =  %w[h1 h2  h3 h4  h5  h6 quote]
       body_block_member_markup.include?(markup)
@@ -398,6 +296,8 @@ module RLayout
 
     def layout_lines(current_line, options={})
       return unless current_line
+      @space_bofore_in_lines = 0
+      @space_after_in_lines = 0
       @para_rect  = []
       tokens_copy = tokens.dup
       @current_line = current_line
@@ -408,23 +308,24 @@ module RLayout
       @line_count = 1
       @current_line.set_paragraph_info(self, "first_line")
       token = tokens_copy.shift
-      if token && token.token_type == 'diamond_emphasis'
-        # if first token is diamond emphasis, no head indent
-        unless @current_line.first_text_line? 
-          @current_line = @current_line.next_text_line
-        end
+      # if token && token.token_type == 'diamond_emphasis'
+      if token && token.class == RLayout::PageBreakToken
+          # if first token is diamond emphasis, no head inden
         @current_line.layed_out_line = true
         @current_line.set_paragraph_info(self, "middle_line")
+        token = tokens_copy.shift
       # elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4' || @markup == 'quote'
-      elsif is_member_of_body_blocks?(@markup) &&  !@current_line.first_text_line?
-        if @para_style[:space_before_in_lines] == 1
+      elsif is_member_of_body_blocks?(@markup) 
+        if @para_style[:space_before_in_lines]  && !@current_line.first_text_line?
           @current_line.layed_out_line = true
-          unless @current_line.next_text_line
-            @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
+          @para_style[:space_before_in_lines].times do 
+            unless @current_line.next_text_line
+              @current_line = @current_line.parent.add_new_page if @current_line.parent.respond_to?(:add_new_page)
+            end
+            @current_line = @current_line.next_text_line
           end
-          @current_line = @current_line.next_text_line
         end
-        if @para_style[:space_after_in_lines] == 1
+        if @para_style[:space_after_in_lines]
           @space_after_in_lines = @para_style[:space_after_in_lines]
         end
 
@@ -515,10 +416,12 @@ module RLayout
             # break #reached end of last column
             # tokens_copy.unshift(result) #stick the unplace token back to the tokens_copy
             token = result
-            column = @current_line.column
-            page = column.page
-            @current_line.set_paragraph_info(self, "middle_line")
-            @line_count += 1
+            if @current_line
+              column = @current_line.column
+              page = column.page
+              @current_line.set_paragraph_info(self, "middle_line")
+              @line_count += 1
+            end
           end
         elsif result
           if token.has_footnote_marker
@@ -545,11 +448,12 @@ module RLayout
               @current_line = @current_line.parent.add_new_page 
               # tokens.unshift(token) #stick the unplace token back to the tokens_copy
               # break #reached end of column
-
-              column = @current_line.column
-              page = column.page
-              @current_line.set_paragraph_info(self, "middle_line")
-              @line_count += 1
+              if @current_line
+                column = @current_line.column
+                page = column.page
+                @current_line.set_paragraph_info(self, "middle_line")
+                @line_count += 1
+              end
             end
           end
         end
@@ -560,7 +464,11 @@ module RLayout
         @current_line.set_paragraph_info(self, "last_line")
       end
       @current_line.align_tokens
-      @current_line= @current_line.next_text_line if @space_after_in_lines
+      if @space_after_in_lines
+        @space_after_in_lines.times do 
+          @current_line= @current_line.next_text_line 
+        end
+      end
 
       if @move_up_if_room 
         if found_previous_line = previous_line_has_room(@current_line)

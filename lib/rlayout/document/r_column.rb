@@ -196,7 +196,7 @@ module RLayout
     end
 
     def add_new_page
-      @parent.add_new_page if @parent && @parent.is_a?(RPage)
+      result = @parent.add_new_page if @parent && @parent.is_a?(RPage)
     end
 
     def next_text_line(current_line)

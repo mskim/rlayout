@@ -29,6 +29,7 @@ module RLayout
       end
       @toc_data         = options[:toc_data]
       @fixed_page_document = false
+      @fixed_page_document = true if @max_page_number
       @starting_page_number = options[:starting_page_number]   || 1
       @max_page_number  = options[:max_page_number] || 999
       @body_line_count  = options[:body_line_count]
@@ -156,6 +157,10 @@ module RLayout
     end
     # create new page and return first line of new page
     def add_new_page(options={})
+      if @pages.length >= @max_page_number
+        # puts "max_page_number reaached"
+        return false
+      end
       if @page_type == "toc_page"
         h                 = {}
         h[:parent]        = self
@@ -202,7 +207,7 @@ module RLayout
     def next_page(page)
       index = pages.index(page)
       new_index = index + 1
-      if new_index < max_page_number 
+      if new_index < @max_page_number 
         new_p = pages[new_index]
         if new_p
           new_p.first_text_line

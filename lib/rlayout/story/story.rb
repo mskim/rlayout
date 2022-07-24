@@ -366,7 +366,7 @@ module RLayout
         s = text_block.join("\n")
 
         # @footnote_item << {:markup =>"footnote_item", :para_string=>text_block, :footnote_item_number=> footnote_item_number}        # 
-        return {:markup =>"footnote_item", :para_string=>s, :footnote_item_number=> footnote_item_number}        # 
+        return {:markup =>"footnote_text", :para_string=>s, :footnote_item_number=> footnote_item_number}        # 
       elsif s =~/^table\s?/
       # parse block
         @markup = "table"

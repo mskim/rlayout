@@ -388,10 +388,18 @@ module RLayout
       (@graphics.length - 1)*@space_width
     end
 
+    def line_space_width
+      (@text_area[2] - token_width_sum)/(@graphics.length - 1)
+    end
+
+    def leftover_room
+      @text_area[2] - (token_width_sum + total_space_width)
+    end
+
     def align_tokens
       return if @graphics.length <= 0
       x  = @starting_position
-      leftover_room  = @text_area[2] - (token_width_sum + total_space_width)
+      # leftover_room  = @text_area[2] - (token_width_sum + total_space_width)
       # when column @inset > 0,  @text_area[0] is not 0
       # so handle it by @text_area[0] - @x
       @starting_position += @text_area[0] - @x if @text_area[0] - @x != 0
@@ -530,13 +538,43 @@ module RLayout
         "x='#{x}' y='#{y}' width='#{w}' height='#{h}'"
       end
     end
-    
 
-    # def to_svg
-    #   s = "<rect fill='gray' #{svg_rect_string} />"
-    #   return s if @graphics.length > 0 && @layed_out_line
-    #   "" 
-    # end
+    # check if this line is last line of paragraph
+    # the last token include "."
+    def last_paragraph_line?
+      if @graphics.last
+        return true if @graphics.last.string.include?(".")
+      end
+      false
+    end
+
+    def empty?
+      @graphics.length == 0
+    end
+
+    def total_content_width
+      token_width_sum +  total_space_width
+    end
+
+    # check for extra space
+    def need_token_to_fill?
+      extra_space > 100
+    end
+
+    # extra space
+    def extra_space
+      @width - total_content_width
+    end
+
+    # pop tokens from the line
+    def get_tokens_of_length(needed_space)
+      puts __method__
+    end
+
+    # prepend tokens to the line
+    def prepend_tokens(tokens)
+      puts __method_
+    end
   end
 
   class OverFlowMarker < Graphic
@@ -551,6 +589,25 @@ module RLayout
       @stroke_width     = 1
       @stroke_sides     = [1,1,1,1,1,1]
       self
+    end
+
+
+    # fit page
+    def take_tokens_from_prev_line(prev_line, max_space_allowed)
+      last_token_from_prv_line = prev_line.graphics.last
+
+      ## take 3 tokens
+
+      ## take 2 tokens
+
+      ## take 1 tokens
+
+
+      if last_token_from_prv_line.width + @space_width < max_space_allowed
+
+      else
+
+      end
     end
 
   end

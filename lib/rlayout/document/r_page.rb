@@ -104,6 +104,14 @@ module RLayout
       link_column_lines
     end
 
+    def first_column
+      @graphics.first
+    end
+
+    def last_column
+      @graphics.last
+    end
+
     def next_text_line(column)
       if @graphics.last == column
         @parent.next_text_line(self)
@@ -373,7 +381,7 @@ module RLayout
     end
 
     def add_new_page
-      @parent.add_new_page
+      result = @parent.add_new_page
     end
 
     def adjust_page_size_to_document

@@ -20,7 +20,7 @@ module RLayout
     attr_reader :font_wrapper, :glyphs, :style_object, :has_missing_glyph
     attr_reader  :has_footnote_marker, :footnote_item_number
     attr_reader :base_width, :superscript_text, :superscript_width, :post_superscript_text, :post_superscript_width
-
+    attr_reader :hyphenated, :min_hyphen_char_length
     def initialize(options={})
       options[:fill_color] = options.fetch(:token_color, 'clear')
       options[:stroke_width] = 1
@@ -239,8 +239,9 @@ module RLayout
       elsif hyphenated_result.class == String
         @width = width_of_string(@string)
         # "‘회"  10.372000000000002
+        @hyphenated = true
         second_half_width = width_of_string(hyphenated_result) + @left_margin + @right_margin
-        second_half = RTextToken.new(string: hyphenated_result, style_object: @style_object, width: second_half_width, height: @height)
+        second_half = RTextToken.new(string: hyphenated_result, style_object: @style_object, width: second_half_width, height: @height, hyphenated: true)
         return second_half
       else
         return false
@@ -314,6 +315,22 @@ module RLayout
         end
       end
       false
+    end
+
+    def prepend_token(head_token)
+      # TODO
+      @string = head_token.string + @string
+      @width += head_token.width
+      @hyphenated = nil
+      # second_token.hyphenated = nil
+    end
+
+    def merge_token(second_token)
+      # TODO
+      @string += second_token.string
+      @width += second_token.width
+      @hyphenated = nil
+      second_token.hyphenated = nil
     end
   end
 end

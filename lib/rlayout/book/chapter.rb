@@ -445,7 +445,7 @@ module RLayout
           para_options[:float_info] = float_info
           @paragraphs << RParagraph.new(para_options)
         elsif  para[:markup] == "table"
-        elsif  para[:markup] == "footnote_item"
+        elsif  para[:markup] == "footnote_text"
           $footnote_description_list << para
         else
           para_options = {}
