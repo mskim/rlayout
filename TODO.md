@@ -31,12 +31,15 @@
   - arrow_type
 
 ### 2022_07_23
+  - page_by_page.txt parsing
+    - check for new line and make it new pararagraph start
+
   - FitPage
+    - overflow case reduce  font_size as increment of .2
     - footer with page_number , set page_number with page_path
   - PageByPage
     - save _print 
-  - page_by_page.txt parsing
-    - check for new line
+
   - split_pdf with starging_page option
   - save story page
     - add <p23> at the top  to inicate continuing paragraph

@@ -13,7 +13,8 @@ module RLayout
   class FitPage
     attr_reader :page_path, :book_path, :page_number, :text_style
     attr_reader :toc_content, :overflow
-    attr_reader :current_style
+    attr_reader :current_style, :header_footer_info
+
 
     def initialize(page_path, page_content)
       @page_path = page_path
@@ -25,14 +26,19 @@ module RLayout
         File.open(story_path, 'w'){|f| f.write page_content}
       end
       @book_path = File.dirname(File.dirname(@page_path))
+      @book_info_path = @book_path + "/book_info.yml"
+      @book_info = YAML::load_file(@book_info_path)
       @output_path = @page_path + "/#{@page_number}.pdf"
       load_layout
       load_text_style
+      load_header_footer_info
       @document = eval(@layout_rb)
+      @document.first_page.page_number = @page_number
       read_story
       layout_story
+      place_header_and_footer
       @document.save_pdf(@output_path)
-      fit_page
+      # fit_page
       self
     end
 
@@ -216,6 +222,18 @@ module RLayout
       end
     end
 
+    def style_guide_header_footer_path
+      @book_path + "/style_guide/chapter/chapter_header_footer.yml"
+    end
+
+    def load_header_footer_info
+      if File.exist?(style_guide_header_footer_path)
+        @header_footer_info = YAML::load_file(style_guide_header_footer_path)
+      else
+        puts "header_footer info not found!!!"
+      end
+    end
+
     # layout page 
     # 1. adjust font_size for multiple line miss match
     # 2. adjust paragraph tracking
@@ -247,6 +265,7 @@ module RLayout
         last_line.line_type = 'middle_line'
         last_line.align_tokens
       end
+      place_header_and_footer
       @output_path_fixed = @page_path + "/#{@page_number}_fixed.pdf"
       @document.save_pdf(@output_path_fixed)
     end
@@ -272,9 +291,34 @@ module RLayout
           break
         end
       end
- 
     end
     
+    def place_header_and_footer
+      @has_header = @header_footer_info['has_header'] ||  @header_footer_info[:has_header]
+      @has_footer = @header_footer_info['has_footer'] || @header_footer_info[:has_footer]
+      chapter_info ={}
+      chapter_info[:book_title] = @book_info[:book_title] ||  @book_info[:title] ||  @book_info['title'] if @book_info
+      chapter_info[:chapter_title] = @title || " " 
+      if @has_header ||  @has_footer
+        @document.set_header_footer_info @header_footer_info
+      end
+
+      if @has_header
+        @document.pages.each_with_index do |p,i|
+          # use comstom layout if given in book_info
+          chapter_info[:footer_layout]  = chapter_info[:footer_layout] if @book_info
+          p.create_header(chapter_info) 
+        end
+      end
+
+      if @has_footer
+        @document.pages.each_with_index do |p,i|
+          chapter_info[:footer_layout]  = chapter_info[:footer_layout] if @book_info
+          p.create_footer(chapter_info)
+        end
+      end
+    end
+
     def take_token_from_prev_line
       puts __method__
       # reversed_text_lines  = first_page.text_lines.reverse
