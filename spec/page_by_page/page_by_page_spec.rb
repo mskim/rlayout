@@ -11,6 +11,21 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 #   end
 # end
 
+
+describe 'generate FitPages' do
+  before do
+    @projext_path  = "#{ENV["HOME"]}/test_data/page_by_page"
+    @build_path = @projext_path + "/_build"
+    PageByPage.generate_print(@projext_path)
+    
+  end
+
+  it 'should create Book' do
+    assert File.exist?(@build_path)
+  end
+end
+
+__END__
 describe 'generate FitPages' do
   before do
     @projext_path  = "#{ENV["HOME"]}/test_data/page_by_page"

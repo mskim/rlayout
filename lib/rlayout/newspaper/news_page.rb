@@ -19,18 +19,22 @@ module RLayout
     
     def initialize(options={}, &block)
       super
-      stamp_time      unless options[:time_stamp] == false
       @page_path      = options[:page_path]
+      @page_md_path = @page_path + "/page.md"
+      @build_path = @page_path + "/_build"
+      unless File.exist?(@page_md_path)
+        save_sample_page_md
+      end
       @relayout       = options[:relayout]
       @update_if_changed = options[:update_if_changed]
-      config_path     = @page_path + "/config.yml"
+      @config_path     = @page_path + "/config.yml"
       if File.exist?(config_path)
-        @config_hash = File.open(config_path, 'r'){|f| f.read}
-        @config_hash = YAML::load(config_hash)
-        setup(@config_hash)
+        @config_hash = YAML::load_file(config_hash)
       else
-        return 'config.yml not found!!!'
+        @config_hash = YAML::load(sample_config_yaml)
+        save_sample_config_file
       end
+      setup(@config_hash)
       relayout_pillars if @relayout
 
       if @update_if_changed
@@ -42,11 +46,39 @@ module RLayout
       self
     end
 
-    def stamp_time
-      t = Time.now
-      h = t.hour
-      @time_stamp = "#{t.day.to_s.rjust(2, '0')}#{t.hour.to_s.rjust(2, '0')}#{t.min.to_s.rjust(2, '0')}#{t.sec.to_s.rjust(2, '0')}"
+    def save_sample_config_file
+      File.open(@config_path, 'w'){|f| f.write sample_config_yaml}
+
     end
+
+    def sample_config_yaml
+      <<~EOF
+
+
+
+
+      EOF
+
+    end
+
+    def save_sample_page_md
+      File.open(@page_md_path, 'w'){|f| f.write sample_page_md}
+    end
+
+    def sample_page_md
+      <<~EOF
+
+
+
+
+      EOF
+    end
+
+    # def stamp_time
+    #   t = Time.now
+    #   h = t.hour
+    #   @time_stamp = "#{t.day.to_s.rjust(2, '0')}#{t.hour.to_s.rjust(2, '0')}#{t.min.to_s.rjust(2, '0')}#{t.sec.to_s.rjust(2, '0')}"
+    # end
 
     def relayout_pillars
       pillars_path.each_with_index do |pillar_path, i|

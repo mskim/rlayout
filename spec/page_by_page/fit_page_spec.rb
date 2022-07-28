@@ -2,8 +2,8 @@ require File.dirname(File.expand_path(__FILE__)) + "/../spec_helper"
 
 describe 'create FitPage ' do
   before do
-    @page_path  = "#{ENV["HOME"]}/test_data/page_by_page/_build/0008"
-    @pdf_path  = @page_path + "/8.pdf"
+    @page_path  = "#{ENV["HOME"]}/test_data/page_by_page/_build/0014"
+    @pdf_path  = @page_path + "/14.pdf"
     @fit_page = FitPage.new(@page_path, nil)
   end
 

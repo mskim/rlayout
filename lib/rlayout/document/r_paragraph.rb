@@ -90,6 +90,7 @@ module RLayout
   # has_math_string
   # this has math $\frac{a}{b}$ token.
   PAGE_BREAK_STRING = /^<p(\d+?)>/
+  BR_STRING = /<\/br>/
   RLAYOUT_STRING = /{{.*?}}/
   # has_erb_string
   # this has rlyout {{ "my_string".ruby("stop_string") }} token.
@@ -315,7 +316,9 @@ module RLayout
         @current_line.set_paragraph_info(self, "middle_line")
         token = tokens_copy.shift
       # elsif @markup == 'h1' || @markup == 'h2' || @markup == 'h3' ||  @markup == 'h4' || @markup == 'quote'
-      elsif is_member_of_body_blocks?(@markup) 
+      elsif is_member_of_body_blocks?(@markup)
+        # TODO </br> for newline
+
         if @para_style[:space_before_in_lines]  && !@current_line.first_text_line?
           @current_line.layed_out_line = true
           @para_style[:space_before_in_lines].times do 

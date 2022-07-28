@@ -5,7 +5,8 @@ describe 'create new book ' do
     # @project_path  = "#{ENV["HOME"]}/test_data/book/fresh_start"
     # @project_path  = "#{ENV["HOME"]}/Development/docker/book_starters/danhangbon"
     @project_path  = "#{ENV["HOME"]}/Development/bookdown"
-    @project_path  = "#{ENV["HOME"]}/Development/book_starters/book_starter"
+    # @project_path  = "#{ENV["HOME"]}/Development/book_starters/book_starter"
+    @project_path  = "#{ENV["HOME"]}/Development/docker/book_starters/danhangbon"
     @book = Book.new(@project_path)
   end
 

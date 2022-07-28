@@ -244,8 +244,7 @@ module RLayout
 
     def fit_page
       if @overflow
-        puts "we have overflow"
-        return
+        relayout_page_with_smaller_font_size
       end
       last_line =  first_page.last_line
       if last_line.last_paragraph_line?
@@ -270,26 +269,58 @@ module RLayout
       @document.save_pdf(@output_path_fixed)
     end
 
-    def relayout_page_with_larger_font_size
-      puts __method__
-      puts @page_path
-      @document = eval(@layout_rb)
-      # set font_size
-      # first try
+    def relayout_page_with_different_font_size(font_size_increment)
       acceptable_extra_space = @current_style['body']['font_size']*4
-
+      @document = eval(@layout_rb)
       4.times do |i|
         puts "try No.#{i + 1}"
-        @current_style['body']['font_size'] = @current_style['body']['font_size'] +  0.3
+        @current_style['body']['font_size'] = @current_style['body']['font_size'] + font_size_increment
         puts "#{@current_style['body']['font_size']}"
         re_generate_tokens
         layout_story
         last_line =  first_page.last_line
-
         if last_line.extra_space < acceptable_extra_space
           last_line.relayout_line_to_fit(acceptable_extra_space)
           break
         end
+        @document = eval(@layout_rb)
+      end
+    end
+
+    def relayout_page_with_smaller_font_size
+      acceptable_extra_space = @current_style['body']['font_size']*4
+      @document = eval(@layout_rb)
+      4.times do |i|
+        puts "try No.#{i + 1}"
+        @current_style['body']['font_size'] = @current_style['body']['font_size'] - 0.3
+        puts "#{@current_style['body']['font_size']}"
+        re_generate_tokens
+        layout_story
+        last_line =  first_page.last_line
+        # if last_line.extra_space < acceptable_extra_space
+        unless @overflow
+            last_line.relayout_line_to_fit(acceptable_extra_space)
+          break
+        end
+        @document = eval(@layout_rb)
+      end
+    end
+
+    def relayout_page_with_larger_font_size
+
+      acceptable_extra_space = @current_style['body']['font_size']*4
+      @document = eval(@layout_rb)
+      4.times do |i|
+        @current_style['body']['font_size'] = @current_style['body']['font_size'] +  0.3
+        re_generate_tokens
+        layout_story
+        last_line =  first_page.last_line
+        if last_line.extra_space < acceptable_extra_space
+          last_line.relayout_line_to_fit(acceptable_extra_space)
+          break
+        end
+        @document = eval(@layout_rb)
+
       end
     end
     

@@ -276,13 +276,13 @@ module RLayout
       @document.set_starting_page_number(@starting_page_number)
       place_page_floats(options)
 
-      if @doc_type == 'poem' || @doc_type == 'poetry_book'
-        read_poem
-        layout_poem
-      else
-        read_story
-        layout_story
-      end
+      # if @doc_type == 'poem' || @doc_type == 'poetry_book'
+      #   read_poem
+      #   layout_poem
+      # else
+      read_story
+      layout_story
+      # end
       place_header_and_footer
       
       @document.save_pdf(@output_path, page_pdf:@page_pdf, jpg: @jpg) unless options[:no_output]
@@ -587,11 +587,10 @@ module RLayout
     # /style_guide/chapter_header_footer.yml
 
     def place_header_and_footer
-      # @header_footer_info = YAML::load_file(style_guide_header_footer_path)
       @has_header = @header_footer_info['has_header'] ||  @header_footer_info[:has_header]
       @has_footer = @header_footer_info['has_footer'] || @header_footer_info[:has_footer]
       chapter_info ={}
-      chapter_info[:book_title] = @book_info[:book_title] ||  @book_info[:title] if @book_info
+      chapter_info[:book_title] =  @book_info[:title] || @book_info['title'] if @book_info
       chapter_info[:chapter_title] = @title || " " 
       if @has_header ||  @has_footer
         @document.set_header_footer_info @header_footer_info

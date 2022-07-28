@@ -32,8 +32,7 @@ module RLayout
     
     def merge_front_matter
       @merged_story = book_info_yaml
-      @merged_story += "\n"
-
+      @merged_story += "\n
       Dir.glob("#{front_matter_path}/**").each do |folder|
         doc_type = File.basename(folder).split("_")[1]
         story_path = folder + "/story.md"

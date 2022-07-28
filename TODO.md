@@ -30,19 +30,35 @@
   - line_type
   - arrow_type
 
+  - site to book
+  - qestion class
+  - github action  with docker image minsookim/rlayout
+### 2022_07_29
+  - print page
+  - add rake docker to run docker 
+
+  -  use Kramedown for story
+    - table, code_block, list, image
+    - base_content_tree structure
+
+  - story parsing 
+    - for ## headings use </br> for for newline insertion
+    - for others check for \n or \r\n for newline insertion
+     
 ### 2022_07_23
-  - page_by_page.txt parsing
-    - check for new line and make it new pararagraph start
 
   - FitPage
-    - overflow case reduce  font_size as increment of .2
     - footer with page_number , set page_number with page_path
+    - overflow case reduce  font_size as increment of .2
+
   - PageByPage
+    - page_by_page.txt parsing
+    - check for new line and make it new pararagraph start
     - save _print 
 
-  - split_pdf with starging_page option
+  - split_pdf with starting_page option
   - save story page
-    - add <p23> at the top  to inicate continuing paragraph
+  - add <p\d+?> at the top  to inicate continuing paragraph
   - merge story page
 
 ### 2022_07_19

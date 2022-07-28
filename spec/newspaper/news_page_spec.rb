@@ -2,7 +2,8 @@ require File.dirname((File.expand_path __FILE__)) + "/../spec_helper"
 
 describe 'NewsPage update_changes_only ' do
   before do
-    @page_path   =  "#{ENV["HOME"]}/test_data/newsgo/2021-01-29/2"
+    # @page_path   =  "#{ENV["HOME"]}/test_data/newsgo/2021-01-29/2"
+    @page_path   = "#{ENV["HOME"]}/test_data/news_page"
     @page        = NewsPage.new(page_path: @page_path, update_if_changed: true)
   end
 
