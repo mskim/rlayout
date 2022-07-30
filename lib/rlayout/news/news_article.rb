@@ -2,16 +2,16 @@
 module RLayout
 
   class NewsArticle
-    attr_reader :layout_info, :page_images
+    attr_reader :layout_info, :page_images, :style_guide_folder
     attr_reader :width, :height, :left_margin, :top_margin, :right_margin, :bottom_margin
     include Styleable
     def initialize(options={})
-
+      @document_path = options[:document_path]
+      @style_guide_folder  = options[:style_guide_folder] || @document_path
       @layout_info = options[:layout_info]
-      load_layout_rb
+      @layout_rb_path = @document_path + "/layout.rb"
+      @layout_rb = File.open(@layout_rb_path,'r'){|f| f.read}
       load_text_style
-      load_document
-
       if @layout_rb
         @document = eval(@layout_rb)
         if @document.is_a?(SyntaxError)
@@ -30,11 +30,11 @@ module RLayout
       @issue_images_path = File.dirname(@page_path) + "/images"
       layout_rb_path  = @document_path + "/layout.rb"
       layout_rb = File.open(layout_rb_path, 'r'){|f| f.read }
-      @article = eval(layout_rb)
-      @news_article.document_path = @document_path 
+      # @article = eval(layout_rb)
+      @document.document_path = @document_path 
       read_story
       layout_story
-      @article.save_pdf(@output_path)
+      @document.save_pdf(@output_path)
       self
     end
 
@@ -45,13 +45,13 @@ module RLayout
         @story  = Story.new(@story_path).markdown2para_data
       end
       @heading                = @story[:heading] || {}
-      @heading[:is_front_page]= @news_article.is_front_page
-      @heading[:top_story]    = @news_article.top_story
-      @heading[:top_position] = @news_article.top_position
+      @heading[:is_front_page]= @document.is_front_page
+      @heading[:top_story]    = @document.top_story
+      @heading[:top_position] = @document.top_position
       if @heading
-        @news_article.make_article_heading(@heading)
+        @document.make_article_heading(@heading)
         # make other floats quotes, opinition writer's personal_picture
-        @news_article.make_floats(@heading)
+        @document.make_floats(@heading)
         # make other floats quotes, opinition writer's personal_picture
         if @heading['image']
           @image_info = {}
@@ -62,14 +62,14 @@ module RLayout
           @image_info[:caption] = @heading['caption']
           @image_info[:caption_title] = @heading['caption_title']
           
-          @news_article.news_image(@image_info)
+          @document.news_image(@image_info)
         end
         if @heading['quote']
           @quote_info = {}
           @quote_info[:quote_box_size] = @heading['quote_box_size'] || 4
           @quote_info[:column] = @heading['column'] || 2 
           @quote_info[:position] = @heading['image_position'] || 3
-          @news_article.float_quote(@quote_info)
+          @document.float_quote(@quote_info)
         end
       end
 
@@ -79,9 +79,9 @@ module RLayout
         para_options[:markup]         = para[:markup]
         para_options[:layout_expand]  = [:width]
         para_options[:para_string]    = para[:para_string]
-        para_options[:article_type]   = @news_article.kind
+        para_options[:article_type]   = @document.kind
         # para_options[:text_fit]       = FIT_FONT_SIZE
-        para_options[:line_width]     = @news_article.column_width  if para_options[:create_para_lines]
+        para_options[:line_width]     = @document.column_width  if para_options[:create_para_lines]
         @paragraphs << RParagraph.new(para_options)
       end
     end
@@ -89,20 +89,20 @@ module RLayout
 
     def layout_story
       if @fixed_height_in_lines
-        @news_article.set_to_fixed_height(@fixed_height_in_lines)
+        @document.set_to_fixed_height(@fixed_height_in_lines)
       end
-      @news_article.layout_floats!
-      @news_article.adjust_overlapping_columns
-      @news_article.layout_items(@paragraphs.dup)
-      @adjusted_line_count  = @news_article.adjusted_line_count
-      @new_height_in_lines  = @news_article.new_height_in_lines
-      if  @news_article.adjustable_height
-        line_content          = @news_article.collect_column_content
-        @news_article.adjust_height
-        @adjusted_line_count  = @news_article.adjusted_line_count
-        @new_height_in_lines  = @news_article.new_height_in_lines
-        @news_article.adjust_middle_and_bottom_floats_position(@adjusted_line_count)
-        @news_article.relayout_line_content(line_content)
+      @document.layout_floats!
+      @document.adjust_overlapping_columns
+      @document.layout_items(@paragraphs.dup)
+      @adjusted_line_count  = @document.adjusted_line_count
+      @new_height_in_lines  = @document.new_height_in_lines
+      if  @document.adjustable_height
+        line_content          = @document.collect_column_content
+        @document.adjust_height
+        @adjusted_line_count  = @document.adjusted_line_count
+        @new_height_in_lines  = @document.new_height_in_lines
+        @document.adjust_middle_and_bottom_floats_position(@adjusted_line_count)
+        @document.relayout_line_content(line_content)
       end
     end
     
