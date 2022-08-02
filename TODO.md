@@ -33,6 +33,13 @@
   - site to book
   - qestion class
   - github action  with docker image minsookim/rlayout
+
+
+### 2022_08_02
+  - news
+    - add heading_bg in publication
+    - add ad folder in publication
+
 ### 2022_07_29
   - print page
   - add rake docker to run docker 

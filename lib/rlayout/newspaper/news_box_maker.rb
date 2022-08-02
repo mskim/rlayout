@@ -1029,4 +1029,18 @@ title_main_5:
   markup: ''
   graphic_attributes: ''
   publication_id: 1
+section_name:
+  korean_name: 면머리_섹션명
+  font: KoPubBatangPM
+  font_size: 20.5
+  text_color: CMYK=0,0,0,100
+  text_alignment: center
+  tracking: -1.0
+page_number:
+  korean_name: 면머리_페이지번호
+  font: KoPubDotumPL
+  font_size: 36.0
+  text_color: CMYK=0,0,0,100
+  text_alignment: center
+  tracking: -1.0
 EOF

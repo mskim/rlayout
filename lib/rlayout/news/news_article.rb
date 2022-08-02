@@ -114,7 +114,7 @@ module RLayout
     end
   
     def default_text_style
-  
+      DEFAULT_STYLES
     end
   end
 

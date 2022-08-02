@@ -12,16 +12,18 @@ module RLayout
 
   class NewsPageBuilder
     attr_reader :page_path, :pillars, :articles
-    attr_reader :page_number, :date
+    attr_reader :page_number, :date, :issue_number
 
-    def initialize(options={})
-      @page_path = options[:page_path]
-      @page_number = File.basename(@page_path).to_i
-      @date = '2022년 4월 29일 금요일 (00100호)'
+    def initialize(page_path, options={})
+      @page_path = page_path
+      @basename = File.basename(@page_path)
+      @page_number = @basename.split("_")[1].to_i
+      @date = File.basename(issue_path)
       load_publication_info
-      generate_page_heading
+      load_issue_plan
       create_pillar_map
       generate_article_pdf
+      generate_page_heading
       merge_page_pdf
       self
     end
@@ -29,6 +31,10 @@ module RLayout
     def issue_path
       File.dirname(@page_path)
     end
+
+    def issue_plan_path
+      issue_path + "/issue_plan.yml"
+    end   
 
     def publication_path
       File.dirname(issue_path)
@@ -52,13 +58,40 @@ module RLayout
       h[:column_count] = 6
       h[:grid_width] = (h[:width] - h[:left_margin] - h[:right_margin])/h[:column_count]
       h[:grid_height] = (h[:height] - h[:top_margin] - h[:bottom_margin])/15 
-      h[:grid_height] = 97.322
+      # h[:grid_width] = 146.996
+      # h[:grid_height] = 97.322
       h[:article_line_draw_sides] = [0, 1, 0, 1]
       h[:article_bottom_space_in_lines] = 2
       h[:article_line_thickness] = 0.3
       h[:draw_divider] = false
       h
     end
+
+    def default_issue_plan
+      <<~EOF
+
+      ---
+      date: #{@date}
+      pages:
+      - page_number: 1
+        section_name: 1면
+        pillars: [[4,2], [2,3]]
+        ad_type: 5단통
+        advertiser: 삼성전자
+      - page_number: 2
+        section_name: 소식
+        pillars: [[2,3], [2,3], [2,3]]
+      - page_number: 3
+        section_name: 소식
+        pillars: [[2,3], [2,3], [2,3]]
+      - page_number: 4
+        section_name: 전면광고
+        ad_type: 15단통
+        advertiser: LG전자
+
+      EOF
+    end
+
 
     def article_base_info
       h = {}
@@ -82,6 +115,15 @@ module RLayout
       FileUtils.mkdir_p(style_guide_folder) unless File.exist?(style_guide_folder)      
     end
 
+    def load_issue_plan
+      if File.exist?(issue_plan_path)
+        @issue_plan = YAML::load_file(issue_plan_path)
+      else
+        @issue_plan = default_issue_plan
+        File.open(issue_plan_path, 'w'){|f| f.write default_issue_plan.to_yaml}
+      end
+      @issue_number = @issue_plan[:issue_number] || @issue_plan['issue_number'] 
+    end
     # create_pillar_map and save it in page config.yml
     # update layout_rb for each article by pillar
 
@@ -110,10 +152,12 @@ module RLayout
     end
 
     def page_config
+      page_info = @issue_plan['pages'][@page_number-1]
+      pillar_width = page_info['pillars'].map{|p| p[0]} if page_info['pillars']
       h = {}
-      h[:section_name] = @section_name
+      h[:section_name] = page_info['section_name']
       h[:page_number] = @page_number || 1
-      h[:pillar_width] = [4,2] #@pillar_width_array
+      h[:pillar_width] = pillar_width
       h[:page_heading_margin_in_lines] = 3
       h[:page_heading_margin_in_lines] = 10 if h[:page_number] == 1
       h[:pillar_map] = @pillar_map
@@ -154,17 +198,7 @@ module RLayout
     end
 
     def generate_page_heading
-      if @page_number == 1
-        page_heading = front_page_heading_rb
-      elsif @page_number.odd?
-        page_heading = front_page_heading_rb
-      else
-        page_heading = front_page_heading_rb
-      end
-      heading = eval(page_heading)
-      FileUtils.mkdir_p(heading_path) unless File.exist?(heading_path)
-      File.open(heading_layout_path, 'w'){|f| f.write page_heading}
-      heading.save_pdf(heading_pdf_path, jpg:true)
+      RLayout::NewsHeading.new(heading_path, page_number: @page_number, date:@date, issue_number: @issue_number)
     end
 
     # generate layout.rb for articles
@@ -180,20 +214,21 @@ module RLayout
         article_rows = (pillar_height_in_grid/article_count).to_i
         remainder = pillar_height_in_grid % article_count
         layout_options = article_base_info.dup
-        layout_options[:column] = page_config[:pillar_width][pillar_index]# @pillar_width[pillar_index
+        layout_options[:column] = page_config[:pillar_width][pillar_index] # @pillar_width[pillar_index
+        binding.b unless layout_options[:column]
         layout_options[:on_left_edge] = true if pillar_index == 0
         layout_options[:on_right_edge] = true if pillar_index + 1 == @pillar_map.length
         pillar.each_with_index do |article, article_index|
           # filtere heading folder
           next unless article=~/\d\d$/
-          layout_path = article + "/layout.yml"
+          # layout_path = article + "/layout.yml"
           layout_rb_path = article + "/layout.rb"
           article_info = layout_options
           article_info[:pillar_order] = pillar_index + 1
           article_info[:order] = article_index + 1
           article_info[:row] = article_rows
           article_info[:row] += 1 if article_index < remainder 
-          article_info[:top_story] = true if article_index == 0 && pillar_index ==0
+          article_info[:top_story] = true if @page_number == 1 && article_index == 0 && pillar_index ==0
           article_info[:top_position] = true if article_index == 0
           article_info[:article_bottom_space_in_lines] = 2
           article_info[:gutter] = 12.759
@@ -224,43 +259,6 @@ module RLayout
       EOF
     end
 
-
-    def front_page_heading_rb
-      <<~EOF
-      RLayout::Container.new(width: 1028.9763779528, height: 139.0326207874, layout_direction: 'horinoztal') do
-        image(image_path: '#{front_page_heading_bg_path}', x:0, y:0, width: 1028.9763779528, height: 139.0326207874)
-        text('#{@date}', x: 828.00, y: 109.25, fill_color:'clear', width: 200, font: 'KoPubDotumPL', font_size: 9.5, text_color: "CMYK=0,0,0,100", text_alignment: 'right')
-        image(local_image: 'heading_ad.pdf', x:809.137, y:13.043, width: 219.257, height: 71.2)
-      end
-
-      EOF
-    end
-
-    def odd_page_heading_rb
-      <<~EOF
-      RLayout::Container.new(width: 1028.9763779528, height: 41.70978623622, layout_direction: 'horinoztal') do
-        image(local_image: 'even.pdf', x: 0, y: 0, width: 1028.9763779528, height: 41.70978623622, fit_type: 0)
-        t = text('<%= @section_name %>', font_size: 20.5, x: 464.0, y: 0.5, width: 100, font: 'KoPubBatangPM', text_color: "CMYK=0,0,0,100", fill_color:'clear', text_fit_type: 'fit_box_to_text', anchor_type: 'center')
-        line(x: t.x, y:27.6, width: t.width, stroke_width: 1, height:0, storke_color:"CMYK=0,0,0,100")
-        text('<%= @page_number %>', tracking: -0.2, x: 0, y: -6.47, font: 'Helvetica-Light', font_size: 36, text_color: "CMYK=0,0,0,100", width: 50, height: 44, fill_color: 'clear')
-        text('<%= @date %>', tracking: -0.7, x: 50, y: 12.16, width: 200, font: 'KoPubDotumPL', font_size: 10.5, text_color: "CMYK=0,0,0,100", text_alignment: 'left', fill_color: 'clear')
-      end
-
-      EOF
-    end
-
-    def even_page_heading_rb
-      <<~EOF
-      RLayout::Container.new(width: 1028.9763779528, height: 41.70978623622, layout_direction: 'horinoztal') do
-        image(local_image: 'odd.pdf', width: 1028.9763779528, height: 41.70978623622, fit_type: 0)
-        t = text('<%= @section_name %>', font_size: 20.5,x: 464.0, y: 0.5, width: 100, font: 'KoPubBatangPM', text_color: "CMYK=0,0,0,100", fill_color:'clear', text_fit_type: 'fit_box_to_text', anchor_type: 'center')
-        line(x: t.x, y:27.6, width: t.width, stroke_width: 1, height:0, storke_color:"CMYK=0,0,0,100")
-        text('<%= @date %>', tracking: -0.7, x: 779.213, y: 12.16,  width: 200, font: 'KoPubDotumPL', font_size: 10.5, text_color: "CMYK=0,0,0,100", text_alignment: 'right', fill_color:'clear')
-        text('<%= @page_number %>', tracking: -0.2, x: 974.69, y: -6.47, font: 'Helvetica-Light', font_size: 36, text_color: "CMYK=0,0,0,100", width: 50, height: 44, fill_color:'clear', text_alignment: 'right')
-      end
-
-      EOF
-    end
 
   end
 

@@ -26,12 +26,15 @@ module RLayout
         @page_heading_margin_in_lines = 3
         @page_heading_margin_in_lines = 10 if @page_number == 1
       end
-      @page_column = @pillar_width[0] + @pillar_width[1]
+      @page_column = 6
+      @page_column = @pillar_width.reduce(:+)  if @pillar_width
       @ad_type = @page_config[:ad_type]
       @advertiser = @page_config[:advertiser] || @ad_type
       options.merge!(@publication_info)
       @body_line_height = @publication_info[:body_line_height] #  14.1222
       super
+      @grid_width = @publication_info[:grid_width]
+      @grid_height = @publication_info[:grid_height]
       @grid_width = (@width - @left_margin - @right_margin)/@page_column
       @grid_height = (@height - @top_margin - @bottom_margin)/15
       layout_page_heading
@@ -71,9 +74,11 @@ module RLayout
     end
 
     def layout_page_heading
-      # width: 1028.9763779528, height: 139.0326207874
-      # Image.new(parent:self, x: 42, y: 42, width:1028.9763779528, heihgt: 139.0326207874, image_path: heading_pdf_path, image_fit_type: IMAGE_FIT_TYPE_VERTICAL)
-      Image.new(parent:self, x: 42, y: 42, width:1028.9763779528, height: 139.0326207874, image_path: heading_pdf_path)
+      if @page_number  == 1
+        Image.new(parent:self, x: 42, y: 42, width:1028.9763779528, height: 139.0326207874, image_path: heading_pdf_path)
+      else
+        Image.new(parent:self, x: 42, y: 42, width:1028.9763779528, height: 41.709, image_path: heading_pdf_path)
+      end
     end
 
     def ad_images_path
@@ -96,10 +101,9 @@ module RLayout
 
     def merge_article_pdf
       pillars = @page_config[:pillar_map]
-      @column_count = @page_config[:pillar_width].map{|f| f}.reduce(:+) # TODO
+      @column_count = 6
+      @column_count = @page_config[:pillar_width].map{|f| f}.reduce(:+) if @page_config[:pillar_width]
       @column_width = @width/@column_count
-      @pillar_x_grid = 0
-      puts "@page_heading_margin_in_lines:#{@page_heading_margin_in_lines}"
       @pillar_top_position =  @body_line_height*@page_heading_margin_in_lines + @top_margin
       pillar_x = @left_margin
       pillars.each_with_index do |pillar, pillar_index|
@@ -147,13 +151,15 @@ module RLayout
             article_height_sum += article_height 
           end
         end
-        @pillar_x_grid = @page_config[:pillar_width][pillar_index]
-        pillar_x += @pillar_x_grid*@grid_width
+
+        @pillar_width_in_grid = @page_config[:pillar_width][pillar_index]
+        pillar_x += @pillar_width_in_grid*@grid_width
       end
 
       # create_pillar_divider_lines if @draw_divider
       # delete_old_files
-      save_pdf(output_path, :jpg=>true, :ratio => 2.0)
+      # save_pdf(output_path, :jpg=>true, :ratio => 2.0)
+      save_pdf(output_path)
 
     end
 

@@ -18,36 +18,32 @@ module RLayout
   #   config.yml
   #
   class NewsPageParser
-    attr_reader :project_path, :page_md_path, :md_file_path, :page_number
+    attr_reader :project_path, :page_md_path, :page_number
     attr_reader :filtered_metadata
     attr_reader :page_map
     attr_reader :ad_type
     attr_reader :section_name
 
-    def initialize(options={})
-      @project_path = options[:project_path]
-      @date = options[:date]
-      @page_number = options[:page_number]
-      @md_file_path = @project_path + "/#{@date}_#{@page_number.to_s.rjust(2,'0')}.md"
-      @basename = File.basename(@md_file_path, '.md')
-      # @date = @basename.split("_")[0]
-      # @page_number = @basename.split("_")[1].to_i
-      @build_folder = @project_path + "/#{@date}/#{@page_number.to_s.rjust(2,'0')}"
+    def initialize(page_md_path, options={})
+      @page_md_path = page_md_path
+      @issue_path = File.dirname(@page_md_path)
+      @basename = File.basename(@page_md_path, '.md')
+      # page_01.md, get 01
+      @page_number = @basename.split("_")[1]
+      @build_folder = @issue_path + "/#{@basename}"
       FileUtils.mkdir_p(@build_folder) unless File.exist?(@build_folder)
       if options[:merge_story]
         # merge edited stoies back to page source markdown file. 
         merge_story
       else
-        parse_newspage_md 
+        parse_page_md 
       end
       self
     end
     
-
-
-    # parse newspage.md and create article folders and save it as story.md 
-    def parse_newspage_md
-      source = File.open(@md_file_path, 'r'){|f| f.read}
+    # parse page_01.md and create article folders and save it as story.md 
+    def parse_page_md
+      source = File.open(@page_md_path, 'r'){|f| f.read}
       begin
         if (md = source.match(/^(---\s*\n.*?\n?)^(---\s*$\n?)/m))
           @contents = md.post_match
@@ -57,7 +53,7 @@ module RLayout
           @filtered_metadata = {}
           @metadata = @metadata.each do |k, v|
             next if k == 'demotion'
-            @filtered_metadata[k] = RubyPants.new(v).to_html if v
+            @filtered_metadata[k] = RubyPants.new(v).to_html if v && v.class == 'String'
           end
           @section_name = @filtered_metadata[:section_name] || '1면'
           @pillar_width_array = @filtered_metadata[:pillar_width] || [6]
@@ -73,10 +69,6 @@ module RLayout
 
       reader = RLayout::Reader.new @contents, nil
       text_blocks = reader.text_blocks.dup
-
-      # divide text block by pillar
-
-
 
       @pillar_order = 1
       @article_order = 1
@@ -336,7 +328,7 @@ module RLayout
         end
       end
       # save it to page story source
-      File.open(md_file_path, 'w'){|f| f.write @page_story}
+      File.open(@page_md_path, 'w'){|f| f.write @page_story}
     end
     
   end

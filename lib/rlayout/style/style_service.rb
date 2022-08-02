@@ -687,7 +687,7 @@ title_main_5:
   font_family: KoPub바탕체_Pro Bold
   font: KoPubBatangPB
   font_size: 42.0
-  text_color: ''
+  text_color: CMYK=0,0,0,100
   text_alignment: left
   tracking: -1.0
   space_width: 10.0
@@ -699,7 +699,20 @@ title_main_5:
   box_attributes: ''
   markup: ''
   graphic_attributes: ''
-
+section_name:
+  korean_name: 면머리_섹션명
+  font: KoPubBatangPM
+  font_size: 20.5
+  text_color: CMYK=0,0,0,100
+  text_alignment: center
+  tracking: -1.0
+page_number:
+  korean_name: 면머리_페이지번호
+  font: KoPubDotumPL
+  font_size: 36.0
+  text_color: CMYK=0,0,0,100
+  text_alignment: center
+  tracking: -1.0
 EOF
 
 
